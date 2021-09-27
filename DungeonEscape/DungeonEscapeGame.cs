@@ -4,12 +4,12 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DungeonEscape
 {
-    public class Game1 : Game
+    public class DungeonEscapeGame : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        public Game1()
+        public DungeonEscapeGame()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";

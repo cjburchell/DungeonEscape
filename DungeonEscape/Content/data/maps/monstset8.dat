@@ -1,0 +1,10 @@
+1   0   1  0   muchc.bmp    store   0  1 38 32 0 2
+1   0   1  0   healc.bmp    heal    0  1 10 8  1 1
+1   0   1  0   wizc.bmp     save    0  1 36 16 1 3
+1   0   1  0   healc.bmp    venture-into-the-desert  0  1 29 9 1 5
+1   0   1  0   gard.bmp     welcome-to-forest 0  1 32 40 0 5
+1   0   1  0   gard.bmp     welcome-to-the-forest-palce 0  1 24 14 0 5
+1   0   1  0   gard.bmp     welcome 0  1 38 25 1 5
+1   0   1  0   gard.bmp     welcome 0  1 38 8 1 5
+1   0   1  0   gard.bmp     welcome 0  1 24 17 0 5
+1   0   1  0   gard.bmp     welcome 0  1 24 24 1 5

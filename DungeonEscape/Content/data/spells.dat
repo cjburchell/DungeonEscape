@@ -1,0 +1,6 @@
+Heal      0 1  5 healspell.bmp
+Outside   1 1 10 outside.bmp
+FireBall  2 1 10 fireball.bmp
+LitBall   3 1 15 Lightning.bmp
+FireBlast 2 2 25 FireBlast.bmp
+LitBlast  3 2 30 LitBlast.bmp

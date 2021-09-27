@@ -1,0 +1,9 @@
+1   0   1  0   muchc.bmp    store   0  1 12 32 0 2
+1   0   1  0   healc.bmp    heal    0  1 28 22 1 1
+1   0   1  0   wizc.bmp     save    0  1 21 8 0 3
+1   0   1  0   gard.bmp     beware-of-the-leviathan 0  1 20 17 0 5
+1   0   1  0   gard.bmp     welcome-to-Isis  0  1 19 33 0 5
+1   0   1  0   healc.bmp    dragons-are-very-powerful 0  1 13 27 1 5
+1   0   1  0   wizc.bmp     the-sea-is-very-dangerus#do-not-veture-there-until#you-are-experencd 0  1 30 30 1 5
+1   0   1  0   muchc.bmp    run-if-you-are-unshure 0  1 11 15 1 5
+1   0   1  1   muchc.bmp    hello   1  1 23 20 1 5

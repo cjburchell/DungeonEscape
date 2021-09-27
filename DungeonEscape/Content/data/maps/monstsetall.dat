@@ -1,0 +1,52 @@
+grass
+1   -2  5   6    peed.bmp     GiantCentipede  3   2 0 0 1 0
+1   0   9   10   band.bmp     Bandit         20   1 0 0 1 0
+1   -2  4   6    bee.bmp      GiantBee       5   1 0 0 1 0
+2   0   7   25   beet.bmp     TigerBeetle    10  1 0 0 1 0
+3   0   9   35   bore.bmp     Boar           15  2 0 0 1 0
+1   0   10  10   elf.bmp      EvilDwarf      5   1 0 0 1 0
+2   0   9   20   fly.bmp      RobberFly      9   1 0 0 1 8
+1   0   2   2    slime.bmp    Slime          2   1 0 0 1 0
+5   0   12  125  ant.bmp      GiantAnt       50   1 0 0 1 0
+4   0   20  75   defalt.bmp   Panther        40  1 0 0 1 0
+20  100 2   100  slimeti.bmp  SlimeTI        2  1 0 0 1 0
+10  100 100 2300 dblue.bmp    BlueDragon     2000 3 0 0 1 8
+water
+3   0   4  50     ssnake.bmp SeaSnake      20   1 0 0 1 0
+3   0   4  50     weard.bmp  WaterWeird    20   2 0 0 1 0
+2   0   5  25     eeal.bmp   ElectricEel   10   1 0 0 1 8
+6   0   11 500    shark.bmp Shark         200  1 0 0 1 0
+6   0   30  275   defalt.bmp SeaSerpent    300  1 0 0 1 0
+8   0   30 650    oct.bmp    GiantOctopus  250  2 0 0 1 0
+4   0   40 175    man.bmp    Man-O-War     75   1 0 0 1 0
+9   0   60 900    defalt.bmp SerpentWeed   400  1 0 0 1 0
+6   0   100 275   Squid.bmp  GiantSquid    300  3 0 0 1 0
+8   100 100 1750  defalt.bmp SeaDragon     1000 1 0 0 1 7
+64  0   300 26000 karken.bmp Kraken        3000 3 0 0 1 0
+70  0   200 57500 lav.bmp    Leviathan     4000 3 0 0 1 0
+trees
+4    0   9   75     ape.bmp  ApeWhite       40 1 0 0 1 0
+2    0   10  20     bab.bmp     Baboon         10 2 0 0 1 0
+4    0   13  75     bbare.bmp   BlackBear      40 2 0 0 1 0
+1    0  9   5       gob.bmp     Goblin         5 1 0 0 1 0
+2    1  9   15      hgob.bmp    Hobgoblin      22 1 0 0 1 0
+1    0  8   13      shu.bmp     Shrew          21 1 0 0 1 0
+3    0  12  50      wido.bmp    BlackWidow     50 1 0 0 1 0
+2    2  7   25      dog.bmp     Wolf           15 1 0 0 1 0
+5    0  25  175     defalt.bmp  OwlBear        70 1 0 0 1 0
+5    0  25  175     defalt.bmp  Lion           70 1 0 0 1 0
+5    0   30  175    gris.bmp    Griz_Bear      70 2  0 0 1 0
+6    0  30  275     defalt.bmp  Tiger          140 1 0 0 1 0
+100  100 100 1750   dGreen.bmp  GreenDragon    1000 3 0 0 1 7
+desert
+3    1    9    50     geco.bmp    Gecko           35   1 0 0 1 0
+1    0    3    13     Cobra.bmp   Cobra           10   1 0 0 1 0
+4    0    5    125    rsnake.bmp  Rattler         50   1 0 0 1 0
+4    0    7    125    sgost.bmp   DesertGost      50   1 0 0 1 0
+1    -8   1    6      scorp.bmp   Scorpion        1    2 0 0 1 0
+2    1    6    35     sands.bmp   SandSpider      15   1 0 0 1 0
+1    -3   5    5      bird.bmp    PiranhaBird     4    1 0 0 1 7
+4    2    11   125    draco.bmp  Draco           50   1 0 0 1 0
+5    0    12   125    ant.bmp     GiantAnt        50   1 0 0 1 0
+3    2    13   50     defalt.bmp  MountainLion    35   1 0 0 1 0
+60   0    300  35750  dlav.bmp    DesertLeviathan 3000 3 0 0 1 0

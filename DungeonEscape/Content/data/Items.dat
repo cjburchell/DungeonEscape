@@ -1,0 +1,26 @@
+Potion         40 0  0  0  16    0 Potion.bmp
+Robe           0  1  0  0  5     2 Robe.bmp
+Dagger         0  0  2  0  10    1 Dagger.bmp
+Lether_Armor   0  4  0  0  40    2 LeatherA.bmp
+Small_Shield   0  2  0  0  60    3 SmallShield.bmp
+Club           0  0  4  0  60    1 Club.bmp
+Short_Sword    0  0  10 0  180   1 ShortSord.bmp
+Chain_Mail     0  12 0  0  300   2 chainmail.bmp
+Long_Sword     0  0  20 0  1500  1 LongSword.bmp
+Large_Shield   0  10 0  0  2000  3 LargeShield.bmp
+Spiked_Armor   0  15 5  0  2500  2 SpikedArmor.bmp
+Battle_Axe     0  0  22 0  3000  1 BattleAxe.bmp
+Mace_of_speed  0  0  15 3  3100  1 Mace.bmp
+Super_Potion   100 0 0  0  100   0 SPotion.bmp
+Hevy_Armor     0  27 -1 -2 3500  2 HevyArmor.bmp
+Full_Plate     0  24 0  0  3000  2 FullArmor.bmp
+Tower_Shield   0  15 0  0  10000 3 TowerShield.bmp
+Blizzard_Sword 0  0  40 0  25000 1 BlizzardSword.bmp
+Magic_Armor    0  30 1  4  30000 2 MagicArmor.bmp
+Flame_Shield   0  19 3  0  51000 3 FlameShield.bmp
+Kings_Sword    0  4  50 5  55000 1 KingsSword.bmp
+Kings_Armor    0  44 8  3  65000 2 KingsArmor.bmp
+Elixer_Strength 0 0  1  0  5000  0 GreenPotion.bmp
+Elixer_Defence 0  1  0  0  5000  0 BluePotion.bmp
+Elixer_Agility 0  0  0  1  5000  0 PurplePotion.bmp
+ 

@@ -1,0 +1,10 @@
+1    0   9   10     band.bmp    Bandit         20 1 7 7 1 0
+1    0   9   10     band.bmp    Bandit         20 1 16 14 1 0
+1    0  9   5       gob.bmp     Goblin         5 1 15 19 1 0
+1    0  9   5       gob.bmp     Goblin         5 1 27 36 1 0
+1    0  9   5       gob.bmp     Goblin         5 1 32 34 1 0
+2    1  9   15      hgob.bmp    Hobgoblin      22 1 25 25 1 0
+1    0  8   13      shu.bmp     Shrew          21 1 20 26 1 0
+3    0  12  50      wido.bmp    BlackWidow     50 1 15 26 1 0
+2    2  7   25      dog.bmp     Wolf           15 1 27 28 1 0
+2    2  7   25      dog.bmp     Wolf           15 1 8 8 1 0

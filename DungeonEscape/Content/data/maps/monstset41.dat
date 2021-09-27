@@ -1,0 +1,7 @@
+5    0    12   125    ant.bmp     GiantAnt       50  1 4 5 1 0
+2    1    6    35     sands.bmp   SandSpider     15  1 8 4 1 0
+10   100  100  2300   dblue.bmp   BlueDragon     2000 3 2 12 1 8
+2    1    9    15     hgob.bmp    Hobgoblin      22  1 12 15 1 0
+3    0    12   50     wido.bmp    BlackWidow     50  1 15 12 1 0
+4    2    11   125    defalt.bmp  Draco          50  1 14 3 1 0
+2    0    9    20     fly.bmp     RobberFly      9   1 12 10 1 8

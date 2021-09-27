@@ -1,0 +1,12 @@
+1   0   1  0   muchc.bmp    key     0  1 10 24  1  4
+1   0   1  0   muchc.bmp    store   0  1 10 12 0  2
+1   0   1  0   healc.bmp    heal    0  1 15 11  1 1
+1   0   1  0   wizc.bmp     save    0  1 28 10 1  3
+1   0   1  0   wizc.bmp     There-is-a-key-in#the-tower-to-the#north 0 1 26 24 1 5
+1   0   1  0   gard.bmp     the-strange-old-man#knows-the-way  0 1 22 5 1 5
+1   0   1  0   gard.bmp     You-are-not-suppose#to-be-on-the-wall  0 1 18 5 1 5
+1   0   1  0   gard.bmp     The-View-Is-Great#you-can-almost-see#the-southern-desert 0 1 7 5 1 5
+1   0   1  0   gard.bmp     this-is-the-walled-city  0 1 7 33 1 5
+1   0   1  0   gard.bmp     garding-the-wall-is-fun  0 1 34 33 1 5
+1   0   1  0   gard.bmp     do-not-under-estmate-the#power-of-dragons 0 1 34 5 1 5
+1   0   1  0   muchc.bmp    The-guy-next-door-locked#himself-Inside   0 1 16 27 1 5

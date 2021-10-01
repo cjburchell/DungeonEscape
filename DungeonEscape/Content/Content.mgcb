@@ -493,6 +493,18 @@
 /processorParam:TextureFormat=Color
 /build:images/sprites/bore.bmp
 
+#begin images/sprites/chest.bmp
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/sprites/chest.bmp
+
 #begin images/sprites/cobra.bmp
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -516,6 +528,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:images/sprites/dblue.bmp
+
+#begin images/sprites/defalt.bmp
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/sprites/defalt.bmp
 
 #begin images/sprites/dgreen.bmp
 /importer:TextureImporter
@@ -552,6 +576,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:images/sprites/dog.bmp
+
+#begin images/sprites/door.bmp
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/sprites/door.bmp
 
 #begin images/sprites/draco.bmp
 /importer:TextureImporter
@@ -768,6 +804,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:images/sprites/muchc.bmp
+
+#begin images/sprites/ochest.bmp
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/sprites/ochest.bmp
 
 #begin images/sprites/oct.bmp
 /importer:TextureImporter
@@ -1117,18 +1165,6 @@
 /processorParam:TextureFormat=Color
 /build:images/tiles/cave.bmp
 
-#begin images/tiles/chest.bmp
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:images/tiles/chest.bmp
-
 #begin images/tiles/collom.bmp
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1345,18 +1381,6 @@
 /processorParam:TextureFormat=Color
 /build:images/tiles/desert.bmp
 
-#begin images/tiles/door.bmp
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:images/tiles/door.bmp
-
 #begin images/tiles/Floor.bmp
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1429,7 +1453,7 @@
 /processorParam:TextureFormat=Color
 /build:images/tiles/ice2.bmp
 
-#begin images/tiles/ochest.bmp
+#begin images/tiles/mountan.bmp
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1439,7 +1463,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:images/tiles/ochest.bmp
+/build:images/tiles/mountan.bmp
 
 #begin images/tiles/shrin.bmp
 /importer:TextureImporter

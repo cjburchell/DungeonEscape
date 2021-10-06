@@ -103,5 +103,6 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\GameFile\GameFile.csproj" />
+      <ProjectReference Include="..\Nez.Portable\Nez.csproj" />
     </ItemGroup>
 </Project>

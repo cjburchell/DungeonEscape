@@ -58,7 +58,7 @@ namespace ConvertMaps
 
         private static void RunOptions(Options opts)
         {
-            var MapsDirectory = Path.Combine(opts.OutputDirectory, "maps");
+            var MapsDirectory = opts.OutputDirectory;
             
             if (opts.Clear && Directory.Exists(opts.OutputDirectory))
             {

@@ -1,7 +1,7 @@
 [
   {
     "Name": "Heal",
-    "Id": "b647f9206b4f42c5808d966d72871cc0",
+    "Id": "e1e04fb6f2c74933be714fb6c56d7b0c",
     "Type": 0,
     "Power": 1,
     "Cost": 5,
@@ -9,7 +9,7 @@
   },
   {
     "Name": "Outside",
-    "Id": "d1ec37d40423496380c8874acb35534d",
+    "Id": "33293bc842f543f58047be9867ee5f5f",
     "Type": 1,
     "Power": 1,
     "Cost": 10,
@@ -17,7 +17,7 @@
   },
   {
     "Name": "FireBall",
-    "Id": "54ca7925bd214a09b7457cdae861c237",
+    "Id": "927eb987030f4cf5aa89ddfc55fe34da",
     "Type": 2,
     "Power": 1,
     "Cost": 10,
@@ -25,7 +25,7 @@
   },
   {
     "Name": "LitBall",
-    "Id": "3b69c2da3e514dc98b9ea89d0cf9cf77",
+    "Id": "4e4c7ff85c4c4d5dbf08f47df6430b80",
     "Type": 3,
     "Power": 1,
     "Cost": 15,
@@ -33,7 +33,7 @@
   },
   {
     "Name": "FireBlast",
-    "Id": "c5963cce245647b3b88a380cf08c5447",
+    "Id": "a0ec4b7d5f994f03a921273b8b8f32cf",
     "Type": 2,
     "Power": 2,
     "Cost": 25,
@@ -41,7 +41,7 @@
   },
   {
     "Name": "LitBlast",
-    "Id": "b6a49c67122648fa81d8fa13204fddc2",
+    "Id": "a4cbba2460aa4d3da932ded028e64127",
     "Type": 3,
     "Power": 2,
     "Cost": 30,

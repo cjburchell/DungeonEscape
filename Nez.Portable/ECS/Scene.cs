@@ -311,8 +311,6 @@ namespace Nez
 			_resolutionPolicy = _defaultSceneResolutionPolicy;
 			_designResolutionSize = _defaultDesignResolutionSize;
 			_designBleedSize = _defaultDesignBleedSize;
-
-			Initialize();
 		}
 
 

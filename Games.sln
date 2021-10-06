@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvertMaps", "ConvertMaps\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameFile", "GameFile\GameFile.csproj", "{11BD3DA3-D406-43D6-BADE-278FE71566AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nez", "Nez.Portable\Nez.csproj", "{99102E4F-944E-42DF-BFE0-5A7720CB04EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nez.MG38", "Nez.Portable\Nez.MG38.csproj", "{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,9 +26,9 @@ Global
 		{11BD3DA3-D406-43D6-BADE-278FE71566AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11BD3DA3-D406-43D6-BADE-278FE71566AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11BD3DA3-D406-43D6-BADE-278FE71566AE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{99102E4F-944E-42DF-BFE0-5A7720CB04EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99102E4F-944E-42DF-BFE0-5A7720CB04EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99102E4F-944E-42DF-BFE0-5A7720CB04EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99102E4F-944E-42DF-BFE0-5A7720CB04EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

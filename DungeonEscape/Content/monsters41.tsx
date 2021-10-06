@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Monsters 40" tilewidth="32" tileheight="32" tilecount="7" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
+<tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Monsters 41" tilewidth="96" tileheight="96" tilecount="7" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
   <tile id="54" type="GiantAnt">
     <image width="32" height="32" source="images/sprites/ant.bmp" />
     <properties>
@@ -24,16 +24,17 @@
       <property name="Heath" type="int" value="2" />
     </properties>
   </tile>
-  <tile id="49" type="TigerBeetle">
-    <image width="32" height="32" source="images/sprites/beet.bmp" />
+  <tile id="57" type="BlueDragon">
+    <image width="96" height="96" source="images/sprites/dblue.bmp" />
     <properties>
       <property name="Biome" type="string" value="All" />
-      <property name="Heath" type="int" value="2" />
-      <property name="HeathConst" type="int" value="0" />
-      <property name="Attack" type="int" value="7" />
-      <property name="XP" type="int" value="25" />
-      <property name="Gold" type="int" value="10" />
-      <property name="Heath" type="int" value="2" />
+      <property name="Heath" type="int" value="10" />
+      <property name="HeathConst" type="int" value="100" />
+      <property name="Attack" type="int" value="100" />
+      <property name="XP" type="int" value="2300" />
+      <property name="Gold" type="int" value="2000" />
+      <property name="Heath" type="int" value="10" />
+      <property name="Spell0" type="int" value="a0ec4b7d5f994f03a921273b8b8f32cf" />
     </properties>
   </tile>
   <tile id="80" type="Hobgoblin">
@@ -82,7 +83,7 @@
       <property name="XP" type="int" value="20" />
       <property name="Gold" type="int" value="9" />
       <property name="Heath" type="int" value="2" />
-      <property name="Spell0" type="int" value="c5963cce245647b3b88a380cf08c5447" />
+      <property name="Spell0" type="int" value="a0ec4b7d5f994f03a921273b8b8f32cf" />
     </properties>
   </tile>
 </tileset>

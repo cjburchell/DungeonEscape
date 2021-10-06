@@ -82,7 +82,7 @@
       <property name="XP" type="int" value="20" />
       <property name="Gold" type="int" value="9" />
       <property name="Heath" type="int" value="2" />
-      <property name="Spell0" type="int" value="c5963cce245647b3b88a380cf08c5447" />
+      <property name="Spell0" type="int" value="a0ec4b7d5f994f03a921273b8b8f32cf" />
     </properties>
   </tile>
   <tile id="53" type="Slime">
@@ -143,7 +143,7 @@
       <property name="XP" type="int" value="2300" />
       <property name="Gold" type="int" value="2000" />
       <property name="Heath" type="int" value="10" />
-      <property name="Spell0" type="int" value="b6a49c67122648fa81d8fa13204fddc2" />
+      <property name="Spell0" type="int" value="a4cbba2460aa4d3da932ded028e64127" />
     </properties>
   </tile>
   <tile id="58" type="SeaSnake">
@@ -180,7 +180,7 @@
       <property name="XP" type="int" value="25" />
       <property name="Gold" type="int" value="10" />
       <property name="Heath" type="int" value="2" />
-      <property name="Spell0" type="int" value="c5963cce245647b3b88a380cf08c5447" />
+      <property name="Spell0" type="int" value="a0ec4b7d5f994f03a921273b8b8f32cf" />
     </properties>
   </tile>
   <tile id="61" type="Shark">
@@ -253,7 +253,7 @@
       <property name="XP" type="int" value="1750" />
       <property name="Gold" type="int" value="1000" />
       <property name="Heath" type="int" value="8" />
-      <property name="Spell0" type="int" value="b6a49c67122648fa81d8fa13204fddc2" />
+      <property name="Spell0" type="int" value="a4cbba2460aa4d3da932ded028e64127" />
     </properties>
   </tile>
   <tile id="65" type="Kraken">
@@ -338,7 +338,7 @@
       <property name="XP" type="int" value="20" />
       <property name="Gold" type="int" value="9" />
       <property name="Heath" type="int" value="2" />
-      <property name="Spell0" type="int" value="c5963cce245647b3b88a380cf08c5447" />
+      <property name="Spell0" type="int" value="a0ec4b7d5f994f03a921273b8b8f32cf" />
     </properties>
   </tile>
   <tile id="71" type="Scorpion">
@@ -375,7 +375,7 @@
       <property name="XP" type="int" value="5" />
       <property name="Gold" type="int" value="4" />
       <property name="Heath" type="int" value="1" />
-      <property name="Spell0" type="int" value="b6a49c67122648fa81d8fa13204fddc2" />
+      <property name="Spell0" type="int" value="a4cbba2460aa4d3da932ded028e64127" />
     </properties>
   </tile>
   <tile id="74" type="Goblin">
@@ -448,7 +448,7 @@
       <property name="XP" type="int" value="2300" />
       <property name="Gold" type="int" value="2000" />
       <property name="Heath" type="int" value="10" />
-      <property name="Spell0" type="int" value="c5963cce245647b3b88a380cf08c5447" />
+      <property name="Spell0" type="int" value="a0ec4b7d5f994f03a921273b8b8f32cf" />
     </properties>
   </tile>
   <tile id="76" type="DesertLeviathan">
@@ -545,7 +545,7 @@
       <property name="XP" type="int" value="20" />
       <property name="Gold" type="int" value="9" />
       <property name="Heath" type="int" value="2" />
-      <property name="Spell0" type="int" value="c5963cce245647b3b88a380cf08c5447" />
+      <property name="Spell0" type="int" value="a0ec4b7d5f994f03a921273b8b8f32cf" />
     </properties>
   </tile>
   <tile id="53" type="Slime">
@@ -606,7 +606,7 @@
       <property name="XP" type="int" value="2300" />
       <property name="Gold" type="int" value="2000" />
       <property name="Heath" type="int" value="10" />
-      <property name="Spell0" type="int" value="b6a49c67122648fa81d8fa13204fddc2" />
+      <property name="Spell0" type="int" value="a4cbba2460aa4d3da932ded028e64127" />
     </properties>
   </tile>
   <tile id="77" type="ApeWhite">
@@ -787,7 +787,7 @@
       <property name="XP" type="int" value="1750" />
       <property name="Gold" type="int" value="1000" />
       <property name="Heath" type="int" value="100" />
-      <property name="Spell0" type="int" value="b6a49c67122648fa81d8fa13204fddc2" />
+      <property name="Spell0" type="int" value="a4cbba2460aa4d3da932ded028e64127" />
     </properties>
   </tile>
   <tile id="46" type="GiantCentipede">
@@ -872,7 +872,7 @@
       <property name="XP" type="int" value="20" />
       <property name="Gold" type="int" value="9" />
       <property name="Heath" type="int" value="2" />
-      <property name="Spell0" type="int" value="c5963cce245647b3b88a380cf08c5447" />
+      <property name="Spell0" type="int" value="a0ec4b7d5f994f03a921273b8b8f32cf" />
     </properties>
   </tile>
   <tile id="53" type="Slime">
@@ -933,7 +933,7 @@
       <property name="XP" type="int" value="2300" />
       <property name="Gold" type="int" value="2000" />
       <property name="Heath" type="int" value="10" />
-      <property name="Spell0" type="int" value="b6a49c67122648fa81d8fa13204fddc2" />
+      <property name="Spell0" type="int" value="a4cbba2460aa4d3da932ded028e64127" />
     </properties>
   </tile>
 </tileset>

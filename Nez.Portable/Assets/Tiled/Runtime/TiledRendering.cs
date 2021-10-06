@@ -241,7 +241,18 @@ namespace Nez.Tiled
 
 						var tileset = objGroup.Map.GetTilesetForTileGid(obj.Tile.Gid);
 						var sourceRect = tileset.TileRegions[obj.Tile.Gid];
-						batcher.Draw(tileset.Image.Texture, pos, sourceRect, Color.White, 0, Vector2.Zero, scale, spriteEffects, layerDepth);
+						if (tileset.Image != null)
+						{
+							batcher.Draw(tileset.Image.Texture, pos, sourceRect, Color.White, 0, Vector2.Zero, scale, spriteEffects, layerDepth);
+						}
+						else
+						{
+							if (tileset.Tiles != null)
+							{
+								batcher.Draw(tileset.Tiles[obj.Tile.Gid - tileset.FirstGid].Image.Texture, pos, sourceRect, Color.White, 0, Vector2.Zero, scale, spriteEffects, layerDepth);
+							}
+						}
+						
 						goto default;
 					case TmxObjectType.Ellipse:
 						pos = new Vector2(obj.X + obj.Width * 0.5f, obj.Y + obj.Height * 0.5f) * scale;

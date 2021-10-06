@@ -10,7 +10,7 @@
       <property name="XP" type="int" value="1750" />
       <property name="Gold" type="int" value="1000" />
       <property name="Heath" type="int" value="100" />
-      <property name="Spell0" type="int" value="b6a49c67122648fa81d8fa13204fddc2" />
+      <property name="Spell0" type="int" value="a4cbba2460aa4d3da932ded028e64127" />
     </properties>
   </tile>
 </tileset>

@@ -19,19 +19,26 @@ namespace Nez
 		public override float Width => TiledMap.Width * TiledMap.TileWidth;
 		public override float Height => TiledMap.Height * TiledMap.TileHeight;
 
-		public TmxLayer CollisionLayer;
+		public List<TmxLayer> CollisionLayers;
 
 		bool _shouldCreateColliders;
 		Collider[] _colliders;
 
 
-		public TiledMapRenderer(TmxMap tiledMap, string collisionLayerName = null, bool shouldCreateColliders = true)
+		public TiledMapRenderer(TmxMap tiledMap, string[] collisionLayerNames = null, bool shouldCreateColliders = true)
 		{
 			TiledMap = tiledMap;
 			_shouldCreateColliders = shouldCreateColliders;
 
-			if (collisionLayerName != null)
-				CollisionLayer = tiledMap.TileLayers[collisionLayerName];
+			if (collisionLayerNames != null)
+			{
+				CollisionLayers = new List<TmxLayer>();
+				foreach (var layerName in collisionLayerNames)
+				{
+					CollisionLayers.Add(tiledMap.TileLayers[layerName]);
+				}
+			}
+				
 		}
 
 		/// <summary>
@@ -76,12 +83,20 @@ namespace Nez
 		/// </summary>
 		public TmxLayerTile GetTileAtWorldPosition(Vector2 worldPos)
 		{
-			Insist.IsNotNull(CollisionLayer, "collisionLayer must not be null!");
+			Insist.IsNotNull(CollisionLayers, "collisionLayer must not be null!");
 
 			// offset the passed in world position to compensate for the entity position
 			worldPos -= Entity.Transform.Position + _localOffset;
 
-			return CollisionLayer.GetTileAtWorldPosition(worldPos);
+			foreach (var layer in this.CollisionLayers)
+			{
+				var tile = layer.GetTileAtWorldPosition(worldPos);
+				if (tile != null)
+				{
+					return tile;
+				}
+			}
+			return null;
 		}
 
 		/// <summary>
@@ -92,11 +107,17 @@ namespace Nez
 		/// <param name="bounds">Bounds.</param>
 		public List<TmxLayerTile> GetTilesIntersectingBounds(Rectangle bounds)
 		{
-			Insist.IsNotNull(CollisionLayer, "collisionLayer must not be null!");
+			Insist.IsNotNull(CollisionLayers, "collisionLayer must not be null!");
 
 			// offset the passed in world position to compensate for the entity position
 			bounds.Location -= (Entity.Transform.Position + _localOffset).ToPoint();
-			return CollisionLayer.GetTilesIntersectingBounds(bounds);
+			var list = new List<TmxLayerTile>();
+			foreach (var layer in this.CollisionLayers)
+			{
+				list.AddRange(layer.GetTilesIntersectingBounds(bounds));
+			}
+
+			return list;
 		}
 
 		#endregion
@@ -155,12 +176,16 @@ namespace Nez
 
 		public void AddColliders()
 		{
-			if (CollisionLayer == null || !_shouldCreateColliders)
+			if (CollisionLayers == null || !_shouldCreateColliders)
 				return;
 
 			// fetch the collision layer and its rects for collision
-			var collisionRects = CollisionLayer.GetCollisionRectangles();
-
+			var collisionRects = new List<Rectangle>();
+			foreach (var layer in this.CollisionLayers)
+			{
+				collisionRects.AddRange(layer.GetCollisionRectangles());
+			}
+			
 			// create colliders for the rects we received
 			_colliders = new Collider[collisionRects.Count];
 			for (var i = 0; i < collisionRects.Count; i++)

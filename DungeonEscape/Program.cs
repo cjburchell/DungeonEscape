@@ -7,7 +7,7 @@ namespace DungeonEscape
         [STAThread]
         static void Main()
         {
-            using var game = new DungeonEscapeGame();
+            using var game = new DungeonEscapeGameOld();
             game.Run();
         }
     }

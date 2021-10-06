@@ -10,7 +10,7 @@ namespace DungeonEscape
     using World;
     using Map = World.Map;
 
-    public class DungeonEscapeGame : Game
+    public class DungeonEscapeGameOld : Game
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
@@ -23,7 +23,7 @@ namespace DungeonEscape
         private const int screenHeight = 15;
 
 
-        public DungeonEscapeGame()
+        public DungeonEscapeGameOld()
         {
             this.graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";

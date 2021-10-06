@@ -25,7 +25,7 @@
 
         public bool Load(int mapId)
         {
-            var filename = $"data/maps/map{mapId}.json";
+            var filename = $"dataold/maps/map{mapId}.json";
             if (!File.Exists(filename))
                 return false;
             

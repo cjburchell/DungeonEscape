@@ -1,0 +1,50 @@
+[
+  {
+    "Name": "Heal",
+    "Id": "97d392ee761d4850b2b374d1bb307132",
+    "Type": 0,
+    "Power": 1,
+    "Cost": 5,
+    "Image": "images/items/healspell"
+  },
+  {
+    "Name": "Outside",
+    "Id": "788d92fccc2846f5b6434be692131e16",
+    "Type": 1,
+    "Power": 1,
+    "Cost": 10,
+    "Image": "images/items/outside"
+  },
+  {
+    "Name": "FireBall",
+    "Id": "27c7c019a63f4df284c07395198d3f3f",
+    "Type": 2,
+    "Power": 1,
+    "Cost": 10,
+    "Image": "images/items/fireball"
+  },
+  {
+    "Name": "LitBall",
+    "Id": "ba088ffe71f444518001623cdcdd461b",
+    "Type": 3,
+    "Power": 1,
+    "Cost": 15,
+    "Image": "images/items/Lightning"
+  },
+  {
+    "Name": "FireBlast",
+    "Id": "0100404674134687b91c32deb93e2a31",
+    "Type": 2,
+    "Power": 2,
+    "Cost": 25,
+    "Image": "images/items/FireBlast"
+  },
+  {
+    "Name": "LitBlast",
+    "Id": "eb66f8270d7c4e9abda6b3bc11506291",
+    "Type": 3,
+    "Power": 2,
+    "Cost": 30,
+    "Image": "images/items/LitBlast"
+  }
+]

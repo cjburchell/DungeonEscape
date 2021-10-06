@@ -1,0 +1,663 @@
+{
+  "name": "tiles",
+  "tilewidth": 96,
+  "tileheight": 96,
+  "tilecount": 93,
+  "columns": 0,
+  "spacing": 0,
+  "margin": 0,
+  "tiles": [
+    {
+      "id": 1,
+      "image": "images/tiles/grass.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 2,
+      "image": "images/tiles/cwall6.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 3,
+      "image": "images/tiles/cwall7.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 4,
+      "image": "images/tiles/ship.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 5,
+      "image": "images/tiles/cwall8.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 6,
+      "image": "images/tiles/cwall9.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 7,
+      "image": "images/tiles/cwall10.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 8,
+      "image": "images/tiles/desert.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 9,
+      "image": "images/tiles/wall2y.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 10,
+      "image": "images/tiles/wall1y.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 11,
+      "image": "images/tiles/Floor.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 12,
+      "image": "images/tiles/stairup.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 13,
+      "image": "images/tiles/stairdw.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 14,
+      "image": "images/tiles/warp.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 15,
+      "image": "images/tiles/wall2.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 16,
+      "image": "images/tiles/fstars.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 17,
+      "image": "images/tiles/wall1.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 18,
+      "image": "images/tiles/sky.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 19,
+      "image": "images/tiles/brige.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 20,
+      "image": "images/tiles/collom.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 21,
+      "image": "images/tiles/defalt.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 22,
+      "image": "images/tiles/town.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 23,
+      "image": "images/tiles/shrin.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 24,
+      "image": "images/tiles/cave.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 25,
+      "image": "images/tiles/cwall13.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 26,
+      "image": "images/tiles/cwall12.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 27,
+      "image": "images/tiles/swamp.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 28,
+      "image": "images/tiles/brick.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 29,
+      "image": "images/tiles/Snow.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 30,
+      "image": "images/tiles/grBrick.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 31,
+      "image": "images/tiles/wground.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 32,
+      "image": "images/tiles/cwall3.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 33,
+      "image": "images/tiles/ice2.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 34,
+      "image": "images/tiles/mountan.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 35,
+      "image": "images/tiles/cwall5.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 36,
+      "image": "images/tiles/cwall1.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 37,
+      "image": "images/tiles/cwall2.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 38,
+      "image": "images/tiles/cwall4.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 39,
+      "image": "images/tiles/tree.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 40,
+      "image": "images/tiles/water.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 41,
+      "image": "images/tiles/cwall14.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 42,
+      "image": "images/tiles/cwall15.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 43,
+      "image": "images/tiles/ice1.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 44,
+      "image": "images/tiles/tower.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 45,
+      "image": "images/sprites/ship1.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 46,
+      "image": "images/sprites/peed.bmp",
+      "imageheight": 64,
+      "imagewidth": 64,
+      "probability": 0.0
+    },
+    {
+      "id": 47,
+      "image": "images/sprites/band.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 48,
+      "image": "images/sprites/bee.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 49,
+      "image": "images/sprites/beet.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 50,
+      "image": "images/sprites/bore.bmp",
+      "imageheight": 64,
+      "imagewidth": 64,
+      "probability": 0.0
+    },
+    {
+      "id": 51,
+      "image": "images/sprites/elf.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 52,
+      "image": "images/sprites/fly.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 53,
+      "image": "images/sprites/slime.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 54,
+      "image": "images/sprites/ant.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 55,
+      "image": "images/sprites/defalt.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 56,
+      "image": "images/sprites/slimeti.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 57,
+      "image": "images/sprites/dblue.bmp",
+      "imageheight": 96,
+      "imagewidth": 96,
+      "probability": 0.0
+    },
+    {
+      "id": 58,
+      "image": "images/sprites/ssnake.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 59,
+      "image": "images/sprites/weard.bmp",
+      "imageheight": 64,
+      "imagewidth": 64,
+      "probability": 0.0
+    },
+    {
+      "id": 60,
+      "image": "images/sprites/eeal.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 61,
+      "image": "images/sprites/shark.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 62,
+      "image": "images/sprites/oct.bmp",
+      "imageheight": 64,
+      "imagewidth": 64,
+      "probability": 0.0
+    },
+    {
+      "id": 63,
+      "image": "images/sprites/man.bmp",
+      "imageheight": 64,
+      "imagewidth": 64,
+      "probability": 0.0
+    },
+    {
+      "id": 64,
+      "image": "images/sprites/Squid.bmp",
+      "imageheight": 96,
+      "imagewidth": 96,
+      "probability": 0.0
+    },
+    {
+      "id": 65,
+      "image": "images/sprites/karken.bmp",
+      "imageheight": 96,
+      "imagewidth": 96,
+      "probability": 0.0
+    },
+    {
+      "id": 66,
+      "image": "images/sprites/lav.bmp",
+      "imageheight": 96,
+      "imagewidth": 96,
+      "probability": 0.0
+    },
+    {
+      "id": 67,
+      "image": "images/sprites/geco.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 68,
+      "image": "images/sprites/Cobra.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 69,
+      "image": "images/sprites/rsnake.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 70,
+      "image": "images/sprites/sgost.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 71,
+      "image": "images/sprites/scorp.bmp",
+      "imageheight": 64,
+      "imagewidth": 64,
+      "probability": 0.0
+    },
+    {
+      "id": 72,
+      "image": "images/sprites/sands.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 73,
+      "image": "images/sprites/bird.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 74,
+      "image": "images/sprites/gob.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 75,
+      "image": "images/sprites/draco.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 76,
+      "image": "images/sprites/dlav.bmp",
+      "imageheight": 96,
+      "imagewidth": 96,
+      "probability": 0.0
+    },
+    {
+      "id": 77,
+      "image": "images/sprites/ape.bmp",
+      "imageheight": 64,
+      "imagewidth": 64,
+      "probability": 0.0
+    },
+    {
+      "id": 78,
+      "image": "images/sprites/bab.bmp",
+      "imageheight": 64,
+      "imagewidth": 64,
+      "probability": 0.0
+    },
+    {
+      "id": 79,
+      "image": "images/sprites/bbare.bmp",
+      "imageheight": 64,
+      "imagewidth": 64,
+      "probability": 0.0
+    },
+    {
+      "id": 80,
+      "image": "images/sprites/hgob.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 81,
+      "image": "images/sprites/shu.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 82,
+      "image": "images/sprites/wido.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 83,
+      "image": "images/sprites/dog.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 84,
+      "image": "images/sprites/gris.bmp",
+      "imageheight": 64,
+      "imagewidth": 64,
+      "probability": 0.0
+    },
+    {
+      "id": 85,
+      "image": "images/sprites/dGreen.bmp",
+      "imageheight": 96,
+      "imagewidth": 96,
+      "probability": 0.0
+    },
+    {
+      "id": 86,
+      "image": "images/sprites/chest.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 87,
+      "image": "images/sprites/muchc.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 88,
+      "image": "images/sprites/healc.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 89,
+      "image": "images/sprites/wizc.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 90,
+      "image": "images/sprites/gard.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 91,
+      "image": "images/sprites/door.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    },
+    {
+      "id": 92,
+      "image": "images/sprites/polerb.bmp",
+      "imageheight": 64,
+      "imagewidth": 64,
+      "probability": 0.0
+    },
+    {
+      "id": 93,
+      "image": "images/sprites/ochest.bmp",
+      "imageheight": 32,
+      "imagewidth": 32,
+      "probability": 0.0
+    }
+  ],
+  "firstgid": 1
+}

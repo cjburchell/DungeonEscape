@@ -39,23 +39,54 @@ namespace ConvertMaps
             
             [Option('m', "map", Required = false, HelpText = "Map to convert", Default = -1)]
             public int MapId { get; set; }
+            
+            [Option('c', "clear", Required = false, HelpText = "Clear directory", Default = true)]
+            public bool Clear { get; set; }
         }
         
 
         public static void Main(string[] args)
         {
-            CommandLine.Parser.Default.ParseArguments<Options>(args)
+           var parser = new Parser(settings =>
+           {
+               settings.HelpWriter = Console.Error;
+               settings.CaseInsensitiveEnumValues = true;
+           });
+           parser.ParseArguments<Options>(args)
                 .WithParsed(RunOptions);
         }
 
         private static void RunOptions(Options opts)
         {
-            const string MapsDirectory = "maps";
+            var MapsDirectory = Path.Combine(opts.OutputDirectory, "maps");
+            
+            if (opts.Clear && Directory.Exists(opts.OutputDirectory))
+            {
+                var di = new DirectoryInfo(MapsDirectory);
+                foreach (var file in di.GetFiles())
+                {
+                    if (file.Name.EndsWith(".json") || file.Name.EndsWith(".tsx") || file.Name.EndsWith(".tmx"))
+                    {
+                        file.Delete();
+                    } 
+                }
+                
+                File.Delete(Path.Combine(opts.OutputDirectory, "spells.json"));
+                File.Delete(Path.Combine(opts.OutputDirectory, "items.json"));
+            }
+
+            if (opts.OutputType == OutputType.none)
+            {
+                return;
+            }
+            
+            
+            
             var spells = LoadSpells(Path.Combine(opts.InputDirectory, "spells.dat"));
             var items = LoadItems(Path.Combine(opts.InputDirectory, "items.dat"));
             var tiles = LoadTiles(opts.InputDirectory);
             var maps = new List<Map>();
-            var inputMapPath = Path.Combine(opts.InputDirectory, MapsDirectory);
+            var inputMapPath = Path.Combine(opts.InputDirectory, "maps");
             
             if (opts.MapId == -1)
             {
@@ -113,7 +144,7 @@ namespace ConvertMaps
             }
             
             Directory.CreateDirectory(opts.OutputDirectory);
-            Directory.CreateDirectory(Path.Combine(opts.OutputDirectory, MapsDirectory));
+            Directory.CreateDirectory(MapsDirectory);
             Console.WriteLine($"writing {Path.Combine(opts.OutputDirectory, "spells.json")}");
             File.WriteAllText( Path.Combine(opts.OutputDirectory, "spells.json"),JsonConvert.SerializeObject(spells, Formatting.Indented, new JsonSerializerSettings { 
                 NullValueHandling = NullValueHandling.Ignore
@@ -125,62 +156,88 @@ namespace ConvertMaps
             }));
 
 
+            if(opts.MapId == -1)
             {
-                var tileset = ToTileSet(tiles);
-                Console.WriteLine($"writing {Path.Combine(opts.OutputDirectory, MapsDirectory, "tiles.tsx.json")}");
-                File.WriteAllText(Path.Combine(opts.OutputDirectory, MapsDirectory, "tiles.tsx.json"),
-                    JsonConvert.SerializeObject(tileset, Formatting.Indented, new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Ignore
-                    }));
-
-
-                Console.WriteLine($"writing {Path.Combine(opts.OutputDirectory, MapsDirectory, "tiles.tsx")}");
-                var serializer = new XmlSerializer(typeof(TiledTileset));
-                using var reader = new StreamWriter(Path.Combine(opts.OutputDirectory, "maps", "tiles.tsx"), false);
-                serializer.Serialize(reader, tileset);
+                var tileset = ToTileSet(tiles, "All Tiles");
+                if (opts.OutputType == OutputType.json || opts.OutputType == OutputType.all)
+                {
+                    Console.WriteLine($"writing {Path.Combine(MapsDirectory, "tiles.tsx.json")}");
+                    File.WriteAllText(Path.Combine("tiles.tsx.json"),
+                        JsonConvert.SerializeObject(tileset, Formatting.Indented, new JsonSerializerSettings
+                        {
+                            NullValueHandling = NullValueHandling.Ignore
+                        }));
+                }
+                
+                if (opts.OutputType == OutputType.tmx || opts.OutputType == OutputType.all)
+                {
+                    Console.WriteLine($"writing {Path.Combine(MapsDirectory, "tiles.tsx")}");
+                    var serializer = new XmlSerializer(typeof(TiledTileset));
+                    using var reader = new StreamWriter(Path.Combine(MapsDirectory, "tiles.tsx"), false);
+                    serializer.Serialize(reader, tileset);
+                }
             }
 
             foreach (var map in maps)
             {
-                Console.WriteLine($"writing { Path.Combine(opts.OutputDirectory, MapsDirectory, $"map{map.Id}.json")}");
-                File.WriteAllText( Path.Combine(opts.OutputDirectory, MapsDirectory, $"map{map.Id}.json"),JsonConvert.SerializeObject(map, Formatting.Indented, new JsonSerializerSettings { 
-                    NullValueHandling = NullValueHandling.Ignore
-                }));
-
-                if (map.RandomMonsters.Count != 0)
+                if (opts.OutputType == OutputType.custom || opts.OutputType == OutputType.all)
                 {
-                    var monstTileset = ToMonsterTileSet(map.RandomMonstersTileInfo, map.RandomMonsters);
-                    Console.WriteLine(
-                        $"writing {Path.Combine(opts.OutputDirectory, MapsDirectory, $"monsters{map.Id}.tsx.json")}");
-                    File.WriteAllText(Path.Combine(opts.OutputDirectory, MapsDirectory, $"monsters{map.Id}.tsx.json"),
-                        JsonConvert.SerializeObject(monstTileset, Formatting.Indented,
-                            new JsonSerializerSettings
-                            {
-                                NullValueHandling = NullValueHandling.Ignore
-                            }));
-                    
-                    Console.WriteLine($"writing { Path.Combine(opts.OutputDirectory, MapsDirectory, $"monsters{map.Id}.tsx")}");
-                    var serializer = new XmlSerializer(typeof(TiledTileset));
-                    using var reader = new StreamWriter(Path.Combine(opts.OutputDirectory, MapsDirectory, $"monsters{map.Id}.tsx"), false);
-                    serializer.Serialize( reader, monstTileset);
-                }
-
-                {
-
-                    var tilemap = ToTileMap(map);
-                    Console.WriteLine(
-                        $"writing {Path.Combine(opts.OutputDirectory, MapsDirectory, $"map{map.Id}.tmx.json")}");
-                    File.WriteAllText(Path.Combine(opts.OutputDirectory, MapsDirectory, $"map{map.Id}.tmx.json"),
-                        JsonConvert.SerializeObject(tilemap, Formatting.Indented, new JsonSerializerSettings
+                    Console.WriteLine($"writing {Path.Combine(MapsDirectory, $"map{map.Id}.json")}");
+                    File.WriteAllText(Path.Combine(MapsDirectory, $"map{map.Id}.json"), JsonConvert.SerializeObject(map,
+                        Formatting.Indented, new JsonSerializerSettings
                         {
                             NullValueHandling = NullValueHandling.Ignore
                         }));
+                }
 
-                    Console.WriteLine($"writing {Path.Combine(opts.OutputDirectory, MapsDirectory, $"map{map.Id}.tmx")}");
-                    var serializer = new XmlSerializer(typeof(TiledMap));
-                    using var reader = new StreamWriter(Path.Combine(opts.OutputDirectory, MapsDirectory, $"map{map.Id}.tmx"), false);
-                    serializer.Serialize(reader, tilemap);
+                if (map.RandomMonsters.Count != 0 && opts.OutputType != OutputType.custom)
+                {
+                    var monstTileset = ToMonsterTileSet(map.RandomMonstersTileInfo, map.RandomMonsters, $"Monsters {map.Id}");
+
+                    if (opts.OutputType == OutputType.json || opts.OutputType == OutputType.all)
+                    {
+                        Console.WriteLine(
+                            $"writing {Path.Combine(MapsDirectory, $"monsters{map.Id}.tsx.json")}");
+                        File.WriteAllText(Path.Combine(MapsDirectory, $"monsters{map.Id}.tsx.json"),
+                            JsonConvert.SerializeObject(monstTileset, Formatting.Indented,
+                                new JsonSerializerSettings
+                                {
+                                    NullValueHandling = NullValueHandling.Ignore
+                                }));
+                    }
+
+                    if (opts.OutputType == OutputType.tmx || opts.OutputType == OutputType.all)
+                    {
+                        Console.WriteLine($"writing {Path.Combine(MapsDirectory, $"monsters{map.Id}.tsx")}");
+                        var serializer = new XmlSerializer(typeof(TiledTileset));
+                        using var reader =
+                            new StreamWriter(Path.Combine(MapsDirectory, $"monsters{map.Id}.tsx"), false);
+                        serializer.Serialize(reader, monstTileset);
+                    }
+                }
+
+                if (opts.OutputType != OutputType.custom)
+                {
+
+                    var tilemap = ToTileMap(map);
+                    if (opts.OutputType == OutputType.json || opts.OutputType == OutputType.all)
+                    {
+                        Console.WriteLine(
+                            $"writing {Path.Combine(MapsDirectory, $"map{map.Id}.tmx.json")}");
+                        File.WriteAllText(Path.Combine(MapsDirectory, $"map{map.Id}.tmx.json"),
+                            JsonConvert.SerializeObject(tilemap, Formatting.Indented, new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore
+                            }));
+                    }
+
+                    if (opts.OutputType == OutputType.tmx || opts.OutputType == OutputType.all)
+                    {
+                        Console.WriteLine($"writing {Path.Combine(MapsDirectory, $"map{map.Id}.tmx")}");
+                        var serializer = new XmlSerializer(typeof(TiledMap));
+                        using var reader = new StreamWriter(Path.Combine(MapsDirectory, $"map{map.Id}.tmx"), false);
+                        serializer.Serialize(reader, tilemap);
+                    }
                 }
             }
         }
@@ -266,7 +323,7 @@ namespace ConvertMaps
                 type = "map",
                 version = "1.6",
                 //tilesets = new[] {new TiledTileset {firstgid = 0, source = "tiles.tsx.json"}},
-                tilesets = new[] {ToTileSet(map.TileInfo)},
+                tilesets = new[] {ToTileSet(map.TileInfo, $"Map Tiles")},
                 layers = new TiledLayer[]
                 {
                     new TiledLayerGroup
@@ -369,7 +426,7 @@ namespace ConvertMaps
             return tiledMap;
         }
 
-        private static TiledTileset ToTileSet(IEnumerable<TileInfo> mapTileInfo)
+        private static TiledTileset ToTileSet(IEnumerable<TileInfo> mapTileInfo, string name)
         {
             var tileInfos = mapTileInfo as TileInfo[] ?? mapTileInfo.ToArray();
             var tiledSet = new TiledTileset
@@ -378,7 +435,8 @@ namespace ConvertMaps
                 tilewidth = tileInfos.Max(item=> item.size),
                 tileheight = tileInfos.Max(item=> item.size),
                 tilecount = tileInfos.Length,
-                name = "tiles",
+                name = name,
+                transparentcolor = "#FF00FF",
                 //tiledversion = "1.7.2",
                 //version = "1.6",
                 //type = "tileset",
@@ -388,7 +446,7 @@ namespace ConvertMaps
             return tiledSet;
         }
         
-        private static TiledTileset ToMonsterTileSet(IEnumerable<TileInfo> mapTileInfo, IEnumerable<Monster> monsters)
+        private static TiledTileset ToMonsterTileSet(IEnumerable<TileInfo> mapTileInfo, IEnumerable<Monster> monsters, string name)
         {
             var tileInfos = mapTileInfo as TileInfo[] ?? mapTileInfo.ToArray();
             var tiles = new List<TiledTile>();
@@ -441,7 +499,8 @@ namespace ConvertMaps
                 tilewidth = tileInfos.Max(item=> item.size),
                 tileheight = tileInfos.Max(item=> item.size),
                 tilecount = tileInfos.Length,
-                name = "tiles",
+                name = name,
+                transparentcolor = "#FF00FF",
                 //tiledversion = "1.7.2",
                 //version = "1.6",
                 //type = "tileset",

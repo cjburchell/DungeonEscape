@@ -9,12 +9,12 @@
         public int Width;
         public int Height;
         public Point DefaultStart = new Point();
-        public string DefaultTileId;
+        public int DefaultTileId;
 
         public List<Tile> Tiles = new List<Tile>();
         public List<TileInfo> TileInfo = new List<TileInfo>();
         public List<Sprite> Sprites = new List<Sprite>();
-        public List<SpriteInfo> SpriteInfo = new List<SpriteInfo>();
         public List<Monster> RandomMonsters = new List<Monster>();
+        public List<TileInfo> RandomMonstersTileInfo = new List<TileInfo>();
     }
 }

@@ -46,11 +46,11 @@
                 }
                 catch (ContentLoadException ex)
                 {
-                    Console.WriteLine($"Unable do load file {tile.Image} for {tile.OldId}({tile.Name}) : {ex.Message}");
+                    Console.WriteLine($"Unable do load file {tile.Image} for {tile.OldIds} : {ex.Message}");
                 }
             }
 
-            foreach (var spriteInfo in this.MapFile.SpriteInfo)
+            foreach (var spriteInfo in this.MapFile.RandomMonstersTileInfo)
             {
                 visuals.Add(new Image {Id = spriteInfo.Id, Texture = content.Load<Texture2D>(spriteInfo.Image)});
             }
@@ -64,7 +64,7 @@
                     Visual = this.visuals.FirstOrDefault(item => item.Id == instance.Id),
                     Info = this.MapFile.TileInfo.FirstOrDefault(item => item.Id == instance.Id),
                     Location = new Vector2(instance.Position.X * TileSize, instance.Position.Y * TileSize),
-                    Collideable = instance.Type != TileType.Ground || instance.Warp != null
+                    Collideable = instance.Type != TileType.Ground
                 });
             }
             
@@ -75,7 +75,6 @@
                 {
                     Instance = instance,
                     Visual = this.visuals.FirstOrDefault(item => item.Id == instance.Id),
-                    Info = this.MapFile.SpriteInfo.FirstOrDefault(item => item.Id == instance.Id),
                     Location = new Vector2(instance.StartPosition.X * TileSize, instance.StartPosition.Y * TileSize),
                     Collideable = true
                 });

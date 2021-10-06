@@ -4,9 +4,11 @@ namespace DungeonEscape
 {
     using System;
     using System.Linq;
+    using GameFile;
     using Microsoft.Xna.Framework.Graphics;
     using Microsoft.Xna.Framework.Input;
     using World;
+    using Map = World.Map;
 
     public class DungeonEscapeGame : Game
     {
@@ -127,7 +129,11 @@ namespace DungeonEscape
             var spriteList = sprites.ToList();
             if ( tileList.Count != 0 )
             {
-                var warpTile = tileList.FirstOrDefault(item => item.Instance.Warp != null);
+                this.player.Location = oldLocation;
+            }
+            else if ( spriteList.Count != 0)
+            {
+                var warpTile = spriteList.FirstOrDefault(item => item.Instance.Type == SpriteType.Warp && item.Instance.Warp != null);
                 if(warpTile != null)
                 {
                     if (this.map.MapId == OverWorldMapId)
@@ -149,15 +155,10 @@ namespace DungeonEscape
                 }
                 else
                 {
-                    this.player.Location = oldLocation;
-                }
-                
-            }
-            else if ( spriteList.Count != 0)
-            {
-                if (spriteList.Any(item => item.Instance.Collideable))
-                {
-                    //this.player.Location = oldLocation;
+                    if (spriteList.Any(item => item.Instance.Collideable))
+                    {
+                        //this.player.Location = oldLocation;
+                    }
                 }
             }
 

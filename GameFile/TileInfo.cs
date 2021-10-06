@@ -1,14 +1,22 @@
 ﻿namespace GameFile
 {
+    using System.Collections.Generic;
     using Newtonsoft.Json;
 
     public class TileInfo
     {
-        public string Name { get; set; }
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Image { get; set; }
         
+        public List<int> OldIds { get; set; }
+
         [JsonIgnore]
-        public int OldId { get; set; }
+        public string ImageFile { get; set; }
+        
+        [JsonIgnore]
+        public int size { get; set; }
+        
+        [JsonIgnore]
+        public string OldImage { get; set; }
     }
 }

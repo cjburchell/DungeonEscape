@@ -4,3 +4,9 @@ obj
 
 *.xnb
 bin
+
+DungeonEscape/data/maps/images
+
+DungeonEscape/data/de.tiled-project
+
+DungeonEscape/data/de.tiled-session

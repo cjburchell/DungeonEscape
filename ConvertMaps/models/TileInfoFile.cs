@@ -8,7 +8,7 @@
     public class TileInfoFile
     {
         [XmlElement("Tile")]
-        public List<TileInfo> Tiles;
+        public List<TileFileInfo> Tiles;
         
         public static TileInfoFile Deserialize(string file)
         {

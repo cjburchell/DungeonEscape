@@ -6,7 +6,7 @@
     public class Sprite : GameObject
     {
         public GameFile.Sprite Instance { get; set; }
-        public SpriteInfo Info { get; set; }
+        public TileInfo Info { get; set; }
         
         public override Rectangle BoundingBox =>
             new Rectangle(

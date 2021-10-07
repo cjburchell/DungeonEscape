@@ -15,7 +15,6 @@ namespace ConvertMaps
         {
             all,
             none,
-            custom,
             json,
             tmx,
         }
@@ -103,7 +102,7 @@ namespace ConvertMaps
 
         private static void WriteRandomMonsters(Map map, string outputDirectory, OutputType outputType)
         {
-            if (map.RandomMonsters.Count == 0 || outputType == OutputType.custom)
+            if (map.RandomMonsters.Count == 0)
             {
                 return;
             }
@@ -133,21 +132,6 @@ namespace ConvertMaps
 
         private static void WriteMap(Map map, string outputDirectory, OutputType outputType)
         {
-            if (outputType == OutputType.custom || outputType == OutputType.all)
-            {
-                Console.WriteLine($"writing {Path.Combine(outputDirectory, $"map{map.Id}.json")}");
-                File.WriteAllText(Path.Combine(outputDirectory, $"map{map.Id}.json"), JsonConvert.SerializeObject(map,
-                    Formatting.Indented, new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Ignore
-                    }));
-            }
-
-            if (outputType == OutputType.custom)
-            {
-                return;
-            }
-
             var tilemap = TiledConverter.ToTileMap(map);
             if (outputType == OutputType.json || outputType == OutputType.all)
             {
@@ -191,79 +175,54 @@ namespace ConvertMaps
             }
         }
 
-        private static void WriteItems(IReadOnlyCollection<Item> items, IEnumerable<TileInfo> tiles, string outputDirectory, OutputType outputType)
+        private static void WriteItems(IReadOnlyCollection<Item> items, IEnumerable<TileInfo> tiles,
+            string outputDirectory, OutputType outputType)
         {
-            if (outputType == OutputType.custom || outputType == OutputType.all)
+            var itemTileSet = TiledConverter.ToItemTileset(items, tiles);
+            if (outputType == OutputType.json || outputType == OutputType.all)
             {
-                Console.WriteLine($"writing {Path.Combine(outputDirectory, "items.json")}");
-                File.WriteAllText(Path.Combine(outputDirectory, "items.json"), JsonConvert.SerializeObject(items,
-                    Formatting.Indented, new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Ignore
-                    }));
+                Console.WriteLine(
+                    $"writing {Path.Combine(outputDirectory, $"items.tsx.json")}");
+                File.WriteAllText(Path.Combine(outputDirectory, $"items.tsx.json"),
+                    JsonConvert.SerializeObject(itemTileSet, Formatting.Indented,
+                        new JsonSerializerSettings
+                        {
+                            NullValueHandling = NullValueHandling.Ignore
+                        }));
             }
 
-            if (outputType != OutputType.custom)
+            if (outputType == OutputType.tmx || outputType == OutputType.all)
             {
-                var itemTileSet = TiledConverter.ToItemTileset(items, tiles);
-                if (outputType == OutputType.json || outputType == OutputType.all)
-                {
-                    Console.WriteLine(
-                        $"writing {Path.Combine(outputDirectory, $"items.tsx.json")}");
-                    File.WriteAllText(Path.Combine(outputDirectory, $"items.tsx.json"),
-                        JsonConvert.SerializeObject(itemTileSet, Formatting.Indented,
-                            new JsonSerializerSettings
-                            {
-                                NullValueHandling = NullValueHandling.Ignore
-                            }));
-                }
-
-                if (outputType == OutputType.tmx || outputType == OutputType.all)
-                {
-                    Console.WriteLine($"writing {Path.Combine(outputDirectory, $"items.tsx")}");
-                    var serializer = new XmlSerializer(typeof(TiledTileset));
-                    using var reader =
-                        new StreamWriter(Path.Combine(outputDirectory, $"items.tsx"), false);
-                    serializer.Serialize(reader, itemTileSet);
-                }
+                Console.WriteLine($"writing {Path.Combine(outputDirectory, $"items.tsx")}");
+                var serializer = new XmlSerializer(typeof(TiledTileset));
+                using var reader =
+                    new StreamWriter(Path.Combine(outputDirectory, $"items.tsx"), false);
+                serializer.Serialize(reader, itemTileSet);
             }
         }
 
         private static void WriteSpells(IReadOnlyCollection<Spell> spells, IEnumerable<TileInfo> tiles, string outputDirectory, OutputType outputType)
         {
-            if (outputType == OutputType.custom || outputType == OutputType.all)
+            var itemTileSet = TiledConverter.ToSpellTileset(spells, tiles);
+            if (outputType == OutputType.json || outputType == OutputType.all)
             {
-                Console.WriteLine($"writing {Path.Combine(outputDirectory, "spells.json")}");
-                File.WriteAllText(Path.Combine(outputDirectory, "spells.json"), JsonConvert.SerializeObject(spells,
-                    Formatting.Indented, new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Ignore
-                    }));
+                Console.WriteLine(
+                    $"writing {Path.Combine(outputDirectory, $"spells.tsx.json")}");
+                File.WriteAllText(Path.Combine(outputDirectory, $"spells.tsx.json"),
+                    JsonConvert.SerializeObject(itemTileSet, Formatting.Indented,
+                        new JsonSerializerSettings
+                        {
+                            NullValueHandling = NullValueHandling.Ignore
+                        }));
             }
 
-            if (outputType != OutputType.custom)
+            if (outputType == OutputType.tmx || outputType == OutputType.all)
             {
-                var itemTileSet = TiledConverter.ToSpellTileset(spells, tiles);
-                if (outputType == OutputType.json || outputType == OutputType.all)
-                {
-                    Console.WriteLine(
-                        $"writing {Path.Combine(outputDirectory, $"spells.tsx.json")}");
-                    File.WriteAllText(Path.Combine(outputDirectory, $"spells.tsx.json"),
-                        JsonConvert.SerializeObject(itemTileSet, Formatting.Indented,
-                            new JsonSerializerSettings
-                            {
-                                NullValueHandling = NullValueHandling.Ignore
-                            }));
-                }
-
-                if (outputType == OutputType.tmx || outputType == OutputType.all)
-                {
-                    Console.WriteLine($"writing {Path.Combine(outputDirectory, $"spells.tsx")}");
-                    var serializer = new XmlSerializer(typeof(TiledTileset));
-                    using var reader =
-                        new StreamWriter(Path.Combine(outputDirectory, $"spells.tsx"), false);
-                    serializer.Serialize(reader, itemTileSet);
-                }
+                Console.WriteLine($"writing {Path.Combine(outputDirectory, $"spells.tsx")}");
+                var serializer = new XmlSerializer(typeof(TiledTileset));
+                using var reader =
+                    new StreamWriter(Path.Combine(outputDirectory, $"spells.tsx"), false);
+                serializer.Serialize(reader, itemTileSet);
             }
         }
     }

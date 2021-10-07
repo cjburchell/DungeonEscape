@@ -1,7 +1,7 @@
+using System.Xml.Serialization;
+
 namespace ConvertMaps.Tiled
 {
-    using System.Xml.Serialization;
-
     [XmlRoot("map")]
     /// <summary>
     /// Represents a Tiled map

@@ -1,13 +1,13 @@
-﻿using DungeonEscape.Components;
+﻿
+using System;
+using DungeonEscape.Components;
+using Microsoft.Xna.Framework;
+using Nez;
+using Point = GameFile.Point;
 
 namespace DungeonEscape.Scene
 {
-    using System;
-    using Microsoft.Xna.Framework;
-    using Nez;
-    using Point = GameFile.Point;
-
-    public class MapScene : Scene
+    public class MapScene : Nez.Scene
     {
         private const int ScreenSpaceRenderLayer = 999;
         public const int screenWidth = 16;
@@ -96,6 +96,18 @@ namespace DungeonEscape.Scene
             playerEntity.AddComponent(new BoxCollider(-8, -8, 16, 16));
 
             this.Camera.Entity.AddComponent(new FollowCamera(playerEntity));
+        }
+
+        
+        [Nez.Console.Command("map", "switches to map")]
+        public static void SetMap(int mapId = 0)
+        {
+            Core.StartSceneTransition(new FadeTransition(() =>
+            {
+                var map = new MapScene(mapId);
+                map.Initialize();
+                return map;
+            }));
         }
     }
 }

@@ -1,8 +1,8 @@
+using System.Xml.Serialization;
+using Newtonsoft.Json;
+
 namespace ConvertMaps.Tiled
 {
-    using System.Xml.Serialization;
-    using Newtonsoft.Json;
-
     /// <summary>
     /// Represents an element within the Tilesets array of a TiledMap object
     /// </summary>

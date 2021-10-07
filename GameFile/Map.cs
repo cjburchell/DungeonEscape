@@ -1,7 +1,7 @@
-﻿namespace GameFile
-{
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
+namespace GameFile
+{
     public class Map
     {
         public int Id;

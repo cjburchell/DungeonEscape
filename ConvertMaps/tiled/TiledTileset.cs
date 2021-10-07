@@ -2,7 +2,6 @@ using System.Xml.Serialization;
 
 namespace ConvertMaps.Tiled
 {
-    
     /// <summary>
     /// Represents a Tiled tileset
     /// </summary>

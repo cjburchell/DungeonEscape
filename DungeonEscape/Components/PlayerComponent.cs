@@ -1,16 +1,15 @@
 ﻿using GameFile;
+using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using Nez;
+using Nez.Sprites;
+using DungeonEscape.Scene;
+using Point = GameFile.Point;
 
 namespace DungeonEscape.Components
 {
-    using System;
-    using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Input;
-    using Nez;
-    using Nez.Sprites;
-    using Nez.Textures;
-    using Scene;
-    using Point = GameFile.Point;
-
+    
     public class PlayerComponent : Component, IUpdatable, ITriggerListener
     {
         private const float MoveSpeed = 150;
@@ -24,7 +23,7 @@ namespace DungeonEscape.Components
         public override void OnAddedToEntity()
         {
             var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/playeranimation.png");
-            var sprites = Sprite.SpritesFromAtlas(texture, 32, 32);
+            var sprites =  Nez.Textures.Sprite.SpritesFromAtlas(texture, 32, 32);
             
             this.mover = this.Entity.AddComponent(new Mover());
             this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));

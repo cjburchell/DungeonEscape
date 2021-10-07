@@ -1,9 +1,9 @@
-﻿namespace DungeonEscape.Components
-{
-    using Microsoft.Xna.Framework;
-    using Nez;
-    using Nez.Tiled;
+﻿using Microsoft.Xna.Framework;
+using Nez;
+using Nez.Tiled;
 
+namespace DungeonEscape.Components
+{
     public class ObjectBoxCollider : BoxCollider
     {
         public TmxObject Object { get; private set; }

@@ -1,8 +1,8 @@
-﻿namespace DungeonEscape.Components
-{
-    using Microsoft.Xna.Framework;
-    using Nez;
+﻿using Microsoft.Xna.Framework;
+using Nez;
 
+namespace DungeonEscape.Components
+{
     public class CameraBounds : Component, IUpdatable
     {
         public Vector2 Min, Max;

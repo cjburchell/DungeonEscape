@@ -7,16 +7,6 @@ using GameFile;
 
 namespace ConvertMaps
 {
-    public static class IdGenerator
-    {
-        private static int TileId = 1;
-
-        public static int New()
-        {
-            return TileId++;
-        }
-    }
-    
     public static class OldFormat
     {
         public static List<Map> LoadMaps(string inputDirectory,

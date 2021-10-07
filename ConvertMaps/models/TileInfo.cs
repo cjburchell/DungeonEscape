@@ -1,7 +1,7 @@
-﻿namespace ConvertMaps.Models
-{
-    using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
+namespace ConvertMaps.Models
+{
     public class TileFileInfo
     {
         [XmlAttribute("index")] public int OldId { get; set; }

@@ -1,8 +1,8 @@
-﻿namespace GameFile
-{
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
+namespace GameFile
+{
     public class Sprite
     {
         public Point StartPosition { get; set; } = new Point();

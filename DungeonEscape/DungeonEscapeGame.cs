@@ -1,8 +1,8 @@
-﻿namespace DungeonEscape
-{
-    using Nez;
-    using Scene;
+﻿using DungeonEscape.Scene;
+using Nez;
 
+namespace DungeonEscape
+{
     public class DungeonEscapeGame : Core
     {
         protected override void Initialize()

@@ -1,9 +1,9 @@
-﻿namespace GameFile
-{
-    using System.Collections.Generic;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
+namespace GameFile
+{
     public class Monster
     {
         public int Id { get; set; }

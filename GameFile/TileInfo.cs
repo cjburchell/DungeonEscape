@@ -1,8 +1,8 @@
-﻿namespace GameFile
-{
-    using System.Collections.Generic;
-    using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
+namespace GameFile
+{
     public class TileInfo
     {
         public int Id { get; set; }

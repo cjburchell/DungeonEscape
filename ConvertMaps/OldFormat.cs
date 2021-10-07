@@ -9,66 +9,41 @@ namespace ConvertMaps
 {
     public static class OldFormat
     {
-        public static List<Map> LoadMaps(string inputDirectory,
-            int mapId, List<Spell> spells, List<TileInfo> tiles)
+        public static List<Map> LoadMaps(string inputDirectory, List<Spell> spells, List<TileInfo> tiles)
         {
             var maps = new List<Map>();
             var inputMapPath = Path.Combine(inputDirectory, "maps");
-            if (mapId == -1)
+
+            for (var i = 0; i < 100; i++)
             {
-                for (var i = 0; i < 100; i++)
+                if (i == 1 || i == 2 || i == 3 || i == 4 || i == 5)
                 {
-                    if (i == 1 || i == 2 || i == 3 || i == 4 || i == 5)
-                    {
-                        continue;
-                    }
-
-                    var map = LoadMap(i, inputMapPath, tiles);
-                    if (map == null)
-                    {
-                        continue;
-                    }
-
-                    if (i == 0)
-                    {
-                        LoadSprites(1, map, inputMapPath, spells, tiles, Biome.Grassland);
-                        LoadSprites(2, map, inputMapPath, spells, tiles, Biome.Water);
-                        LoadSprites(3, map, inputMapPath, spells, tiles, Biome.Desert);
-                        LoadSprites(4, map, inputMapPath, spells, tiles, Biome.Hills);
-                        LoadSprites(5, map, inputMapPath, spells, tiles, Biome.Forest);
-                        LoadSprites(4, map, inputMapPath, spells, tiles, Biome.Swamp);
-                    }
-                    else
-                    {
-                        LoadSprites(i, map, inputMapPath, spells, tiles);
-                    }
-
-                    maps.Add(map);
+                    continue;
                 }
-            }
-            else
-            {
-                var map = LoadMap(mapId, inputMapPath, tiles);
-                if (map != null)
+
+                var map = LoadMap(i, inputMapPath, tiles);
+                if (map == null)
                 {
-                    if (mapId == 0)
-                    {
-                        LoadSprites(1, map, inputMapPath, spells, tiles, Biome.Grassland);
-                        LoadSprites(2, map, inputMapPath, spells, tiles, Biome.Water);
-                        LoadSprites(3, map, inputMapPath, spells, tiles, Biome.Desert);
-                        LoadSprites(4, map, inputMapPath, spells, tiles, Biome.Hills);
-                        LoadSprites(5, map, inputMapPath, spells, tiles, Biome.Forest);
-                        LoadSprites(4, map, inputMapPath, spells, tiles, Biome.Swamp);
-                    }
-                    else
-                    {
-                        LoadSprites(mapId, map, inputMapPath, spells, tiles);
-                    }
-
-                    maps.Add(map);
+                    continue;
                 }
-            }
 
+                if (i == 0)
+                {
+                    LoadSprites(1, map, inputMapPath, spells, tiles, Biome.Grassland);
+                    LoadSprites(2, map, inputMapPath, spells, tiles, Biome.Water);
+                    LoadSprites(3, map, inputMapPath, spells, tiles, Biome.Desert);
+                    LoadSprites(4, map, inputMapPath, spells, tiles, Biome.Hills);
+                    LoadSprites(5, map, inputMapPath, spells, tiles, Biome.Forest);
+                    LoadSprites(4, map, inputMapPath, spells, tiles, Biome.Swamp);
+                }
+                else
+                {
+                    LoadSprites(i, map, inputMapPath, spells, tiles);
+                }
+
+                maps.Add(map);
+            }
+            
             return maps;
         }
 
@@ -112,11 +87,12 @@ namespace ConvertMaps
             return gameTiles;
         }
 
-        public static List<Item> LoadItems(string inputDirectory)
+        public static List<Item> LoadItems(string inputDirectory, ICollection<TileInfo> tiles)
         {
             var fileName = Path.Combine(inputDirectory, "items.dat");
             var items = new List<Item>();
             var lines = File.ReadLines(fileName).ToList();
+            var lindIndex = 0;
             foreach (var line in lines)
             {
                 if (string.IsNullOrWhiteSpace(line))
@@ -125,9 +101,10 @@ namespace ConvertMaps
                 }
 
                 var lineItems = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                var info = GetSprite(null, tiles, lineItems[7], 32, "images/items/");
                 var item = new Item
                 {
-                    Id = IdGenerator.New(),
+                    Id = info.Id,
                     Name = lineItems[0].Replace('_', ' '),
                     Health = int.Parse(lineItems[1]),
                     Defence = int.Parse(lineItems[2]),
@@ -135,20 +112,22 @@ namespace ConvertMaps
                     Agility = int.Parse(lineItems[4]),
                     Cost = int.Parse(lineItems[5]),
                     Type = (ItemType) int.Parse(lineItems[6]),
-                    Image = $"images/items/{Path.GetFileNameWithoutExtension(lineItems[7])}"
+                    MinLevel = (lindIndex/7) * 6
                 };
 
+                lindIndex++;
                 items.Add(item);
             }
 
             return items;
         }
 
-        public static List<Spell> LoadSpells(string inputDirectory)
-        {
-            var fileName = Path.Combine(inputDirectory, "items.dat");
+        public static List<Spell> LoadSpells(string inputDirectory, ICollection<TileInfo> tiles)
+        {    
+            var fileName = Path.Combine(inputDirectory, "spells.dat");
             var spells = new List<Spell>();
             var lines = File.ReadLines(fileName).ToList();
+            int spellIndex = 0;
             foreach (var line in lines)
             {
                 if (string.IsNullOrWhiteSpace(line))
@@ -157,16 +136,18 @@ namespace ConvertMaps
                 }
 
                 var lineItems = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                var info = GetSprite(null, tiles, lineItems[4], 32, "images/items/");
                 var spell = new Spell
                 {
-                    Id = IdGenerator.New(),
+                    Id = info.Id,
                     Name = lineItems[0],
-                    Type = int.Parse(lineItems[1]),
+                    Type = (SpellType) int.Parse(lineItems[1]),
                     Power = int.Parse(lineItems[2]),
                     Cost = int.Parse(lineItems[3]),
-                    Image = $"images/items/{Path.GetFileNameWithoutExtension(lineItems[4])}"
+                    MinLevel = spellIndex*2 + 2,
                 };
 
+                spellIndex++;
                 spells.Add(spell);
             }
 
@@ -415,11 +396,11 @@ namespace ConvertMaps
         }
 
         private static TileInfo GetSprite(ICollection<TileInfo> mapTiles, ICollection<TileInfo> tiles, string image,
-            int size = 32)
+            int size = 32, string path="images/sprites/")
         {
-            var imagePath = $"images/sprites/{Path.GetFileNameWithoutExtension(image)}";
+            var imagePath = $"{path}{Path.GetFileNameWithoutExtension(image)}";
 
-            var info = mapTiles.FirstOrDefault(item => item.Image == imagePath);
+            var info = mapTiles?.FirstOrDefault(item => item.Image == imagePath);
             if (info != null)
             {
                 return info;
@@ -432,14 +413,15 @@ namespace ConvertMaps
                 {
                     Id = IdGenerator.New(),
                     OldImage = image,
-                    ImageFile = $"images/sprites/{image}",
+                    ImageFile = $"{path}{image}",
                     Image = imagePath,
                     size = size
                 };
                 tiles.Add(gameTileInfo);
             }
 
-            mapTiles.Add(gameTileInfo);
+            mapTiles?.Add(gameTileInfo);
+            
             return gameTileInfo;
         }
 

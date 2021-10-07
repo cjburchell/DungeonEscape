@@ -1,14 +1,21 @@
-﻿using GameFile;
-using System;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.Sprites;
 using DungeonEscape.Scene;
-using Point = GameFile.Point;
 
 namespace DungeonEscape.Components
 {
+    public enum SpriteType
+    {
+        Ship,
+        Door,
+        Chest,
+        NPC,
+        Monster,
+        Warp
+    }
     
     public class PlayerComponent : Component, IUpdatable, ITriggerListener
     {

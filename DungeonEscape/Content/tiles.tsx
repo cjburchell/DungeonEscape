@@ -1,282 +1,375 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Tiles" tilewidth="96" tileheight="96" tilecount="93" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
-  <tile id="51">
+<tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Tiles" tilewidth="96" tileheight="96" tilecount="124" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
+  <tile id="1">
     <image width="32" height="32" source="images/tiles/grass.bmp" />
   </tile>
-  <tile id="52">
+  <tile id="2">
     <image width="32" height="32" source="images/tiles/cwall6.bmp" />
   </tile>
-  <tile id="53">
+  <tile id="3">
     <image width="32" height="32" source="images/tiles/cwall7.bmp" />
   </tile>
-  <tile id="54">
+  <tile id="4">
     <image width="32" height="32" source="images/tiles/ship.bmp" />
   </tile>
-  <tile id="55">
+  <tile id="5">
     <image width="32" height="32" source="images/tiles/cwall8.bmp" />
   </tile>
-  <tile id="56">
+  <tile id="6">
     <image width="32" height="32" source="images/tiles/cwall9.bmp" />
   </tile>
-  <tile id="57">
+  <tile id="7">
     <image width="32" height="32" source="images/tiles/cwall10.bmp" />
   </tile>
-  <tile id="58">
+  <tile id="8">
     <image width="32" height="32" source="images/tiles/desert.bmp" />
   </tile>
-  <tile id="59">
+  <tile id="9">
     <image width="32" height="32" source="images/tiles/wall2y.bmp" />
   </tile>
-  <tile id="60">
+  <tile id="10">
     <image width="32" height="32" source="images/tiles/wall1y.bmp" />
   </tile>
-  <tile id="61">
+  <tile id="11">
     <image width="32" height="32" source="images/tiles/Floor.bmp" />
   </tile>
-  <tile id="62">
+  <tile id="12">
     <image width="32" height="32" source="images/tiles/stairup.bmp" />
   </tile>
-  <tile id="63">
+  <tile id="13">
     <image width="32" height="32" source="images/tiles/stairdw.bmp" />
   </tile>
-  <tile id="64">
+  <tile id="14">
     <image width="32" height="32" source="images/tiles/warp.bmp" />
   </tile>
-  <tile id="65">
+  <tile id="15">
     <image width="32" height="32" source="images/tiles/wall2.bmp" />
   </tile>
-  <tile id="66">
+  <tile id="16">
     <image width="32" height="32" source="images/tiles/fstars.bmp" />
   </tile>
-  <tile id="67">
+  <tile id="17">
     <image width="32" height="32" source="images/tiles/wall1.bmp" />
   </tile>
-  <tile id="68">
+  <tile id="18">
     <image width="32" height="32" source="images/tiles/sky.bmp" />
   </tile>
-  <tile id="69">
+  <tile id="19">
     <image width="32" height="32" source="images/tiles/brige.bmp" />
   </tile>
-  <tile id="70">
+  <tile id="20">
     <image width="32" height="32" source="images/tiles/collom.bmp" />
   </tile>
-  <tile id="71">
+  <tile id="21">
     <image width="32" height="32" source="images/tiles/defalt.bmp" />
   </tile>
-  <tile id="72">
+  <tile id="22">
     <image width="32" height="32" source="images/tiles/town.bmp" />
   </tile>
-  <tile id="73">
+  <tile id="23">
     <image width="32" height="32" source="images/tiles/shrin.bmp" />
   </tile>
-  <tile id="74">
+  <tile id="24">
     <image width="32" height="32" source="images/tiles/cave.bmp" />
   </tile>
-  <tile id="75">
+  <tile id="25">
     <image width="32" height="32" source="images/tiles/cwall13.bmp" />
   </tile>
-  <tile id="76">
+  <tile id="26">
     <image width="32" height="32" source="images/tiles/cwall12.bmp" />
   </tile>
-  <tile id="77">
+  <tile id="27">
     <image width="32" height="32" source="images/tiles/swamp.bmp" />
   </tile>
-  <tile id="78">
+  <tile id="28">
     <image width="32" height="32" source="images/tiles/brick.bmp" />
   </tile>
-  <tile id="79">
+  <tile id="29">
     <image width="32" height="32" source="images/tiles/Snow.bmp" />
   </tile>
-  <tile id="80">
+  <tile id="30">
     <image width="32" height="32" source="images/tiles/grBrick.bmp" />
   </tile>
-  <tile id="81">
+  <tile id="31">
     <image width="32" height="32" source="images/tiles/wground.bmp" />
   </tile>
-  <tile id="82">
+  <tile id="32">
     <image width="32" height="32" source="images/tiles/cwall3.bmp" />
   </tile>
-  <tile id="83">
+  <tile id="33">
     <image width="32" height="32" source="images/tiles/ice2.bmp" />
   </tile>
-  <tile id="84">
+  <tile id="34">
     <image width="32" height="32" source="images/tiles/mountan.bmp" />
   </tile>
-  <tile id="85">
+  <tile id="35">
     <image width="32" height="32" source="images/tiles/cwall5.bmp" />
   </tile>
-  <tile id="86">
+  <tile id="36">
     <image width="32" height="32" source="images/tiles/cwall1.bmp" />
   </tile>
-  <tile id="87">
+  <tile id="37">
     <image width="32" height="32" source="images/tiles/cwall2.bmp" />
   </tile>
-  <tile id="88">
+  <tile id="38">
     <image width="32" height="32" source="images/tiles/cwall4.bmp" />
   </tile>
-  <tile id="89">
+  <tile id="39">
     <image width="32" height="32" source="images/tiles/tree.bmp" />
   </tile>
-  <tile id="90">
+  <tile id="40">
     <image width="32" height="32" source="images/tiles/water.bmp" />
   </tile>
-  <tile id="91">
+  <tile id="41">
     <image width="32" height="32" source="images/tiles/cwall14.bmp" />
   </tile>
-  <tile id="92">
+  <tile id="42">
     <image width="32" height="32" source="images/tiles/cwall15.bmp" />
   </tile>
-  <tile id="93">
+  <tile id="43">
     <image width="32" height="32" source="images/tiles/ice1.bmp" />
   </tile>
-  <tile id="94">
+  <tile id="44">
     <image width="32" height="32" source="images/tiles/tower.bmp" />
   </tile>
-  <tile id="95">
+  <tile id="45">
+    <image width="32" height="32" source="images/items/healspell.bmp" />
+  </tile>
+  <tile id="46">
+    <image width="32" height="32" source="images/items/outside.bmp" />
+  </tile>
+  <tile id="47">
+    <image width="32" height="32" source="images/items/fireball.bmp" />
+  </tile>
+  <tile id="48">
+    <image width="32" height="32" source="images/items/Lightning.bmp" />
+  </tile>
+  <tile id="49">
+    <image width="32" height="32" source="images/items/FireBlast.bmp" />
+  </tile>
+  <tile id="50">
+    <image width="32" height="32" source="images/items/LitBlast.bmp" />
+  </tile>
+  <tile id="51">
+    <image width="32" height="32" source="images/items/Potion.bmp" />
+  </tile>
+  <tile id="52">
+    <image width="32" height="32" source="images/items/Robe.bmp" />
+  </tile>
+  <tile id="53">
+    <image width="32" height="32" source="images/items/Dagger.bmp" />
+  </tile>
+  <tile id="54">
+    <image width="32" height="32" source="images/items/LeatherA.bmp" />
+  </tile>
+  <tile id="55">
+    <image width="32" height="32" source="images/items/SmallShield.bmp" />
+  </tile>
+  <tile id="56">
+    <image width="32" height="32" source="images/items/Club.bmp" />
+  </tile>
+  <tile id="57">
+    <image width="32" height="32" source="images/items/ShortSord.bmp" />
+  </tile>
+  <tile id="58">
+    <image width="32" height="32" source="images/items/chainmail.bmp" />
+  </tile>
+  <tile id="59">
+    <image width="32" height="32" source="images/items/LongSword.bmp" />
+  </tile>
+  <tile id="60">
+    <image width="32" height="32" source="images/items/LargeShield.bmp" />
+  </tile>
+  <tile id="61">
+    <image width="32" height="32" source="images/items/SpikedArmor.bmp" />
+  </tile>
+  <tile id="62">
+    <image width="32" height="32" source="images/items/BattleAxe.bmp" />
+  </tile>
+  <tile id="63">
+    <image width="32" height="32" source="images/items/Mace.bmp" />
+  </tile>
+  <tile id="64">
+    <image width="32" height="32" source="images/items/SPotion.bmp" />
+  </tile>
+  <tile id="65">
+    <image width="32" height="32" source="images/items/HevyArmor.bmp" />
+  </tile>
+  <tile id="66">
+    <image width="32" height="32" source="images/items/FullArmor.bmp" />
+  </tile>
+  <tile id="67">
+    <image width="32" height="32" source="images/items/TowerShield.bmp" />
+  </tile>
+  <tile id="68">
+    <image width="32" height="32" source="images/items/BlizzardSword.bmp" />
+  </tile>
+  <tile id="69">
+    <image width="32" height="32" source="images/items/MagicArmor.bmp" />
+  </tile>
+  <tile id="70">
+    <image width="32" height="32" source="images/items/FlameShield.bmp" />
+  </tile>
+  <tile id="71">
+    <image width="32" height="32" source="images/items/KingsSword.bmp" />
+  </tile>
+  <tile id="72">
+    <image width="32" height="32" source="images/items/KingsArmor.bmp" />
+  </tile>
+  <tile id="73">
+    <image width="32" height="32" source="images/items/GreenPotion.bmp" />
+  </tile>
+  <tile id="74">
+    <image width="32" height="32" source="images/items/BluePotion.bmp" />
+  </tile>
+  <tile id="75">
+    <image width="32" height="32" source="images/items/PurplePotion.bmp" />
+  </tile>
+  <tile id="76">
     <image width="32" height="32" source="images/sprites/ship1.bmp" />
   </tile>
-  <tile id="96">
+  <tile id="77">
     <image width="64" height="64" source="images/sprites/peed.bmp" />
   </tile>
-  <tile id="97">
+  <tile id="78">
     <image width="32" height="32" source="images/sprites/band.bmp" />
   </tile>
-  <tile id="98">
+  <tile id="79">
     <image width="32" height="32" source="images/sprites/bee.bmp" />
   </tile>
-  <tile id="99">
+  <tile id="80">
     <image width="32" height="32" source="images/sprites/beet.bmp" />
   </tile>
-  <tile id="100">
+  <tile id="81">
     <image width="64" height="64" source="images/sprites/bore.bmp" />
   </tile>
-  <tile id="101">
+  <tile id="82">
     <image width="32" height="32" source="images/sprites/elf.bmp" />
   </tile>
-  <tile id="102">
+  <tile id="83">
     <image width="32" height="32" source="images/sprites/fly.bmp" />
   </tile>
-  <tile id="103">
+  <tile id="84">
     <image width="32" height="32" source="images/sprites/slime.bmp" />
   </tile>
-  <tile id="104">
+  <tile id="85">
     <image width="32" height="32" source="images/sprites/ant.bmp" />
   </tile>
-  <tile id="105">
+  <tile id="86">
     <image width="32" height="32" source="images/sprites/defalt.bmp" />
   </tile>
-  <tile id="106">
+  <tile id="87">
     <image width="32" height="32" source="images/sprites/slimeti.bmp" />
   </tile>
-  <tile id="107">
+  <tile id="88">
     <image width="96" height="96" source="images/sprites/dblue.bmp" />
   </tile>
-  <tile id="108">
+  <tile id="89">
     <image width="32" height="32" source="images/sprites/ssnake.bmp" />
   </tile>
-  <tile id="109">
+  <tile id="90">
     <image width="64" height="64" source="images/sprites/weard.bmp" />
   </tile>
-  <tile id="110">
+  <tile id="91">
     <image width="32" height="32" source="images/sprites/eeal.bmp" />
   </tile>
-  <tile id="111">
+  <tile id="92">
     <image width="32" height="32" source="images/sprites/shark.bmp" />
   </tile>
-  <tile id="112">
+  <tile id="93">
     <image width="64" height="64" source="images/sprites/oct.bmp" />
   </tile>
-  <tile id="113">
+  <tile id="94">
     <image width="64" height="64" source="images/sprites/man.bmp" />
   </tile>
-  <tile id="114">
+  <tile id="95">
     <image width="96" height="96" source="images/sprites/Squid.bmp" />
   </tile>
-  <tile id="115">
+  <tile id="96">
     <image width="96" height="96" source="images/sprites/karken.bmp" />
   </tile>
-  <tile id="116">
+  <tile id="97">
     <image width="96" height="96" source="images/sprites/lav.bmp" />
   </tile>
-  <tile id="117">
+  <tile id="98">
     <image width="32" height="32" source="images/sprites/geco.bmp" />
   </tile>
-  <tile id="118">
+  <tile id="99">
     <image width="32" height="32" source="images/sprites/Cobra.bmp" />
   </tile>
-  <tile id="119">
+  <tile id="100">
     <image width="32" height="32" source="images/sprites/rsnake.bmp" />
   </tile>
-  <tile id="120">
+  <tile id="101">
     <image width="32" height="32" source="images/sprites/sgost.bmp" />
   </tile>
-  <tile id="121">
+  <tile id="102">
     <image width="64" height="64" source="images/sprites/scorp.bmp" />
   </tile>
-  <tile id="122">
+  <tile id="103">
     <image width="32" height="32" source="images/sprites/sands.bmp" />
   </tile>
-  <tile id="123">
+  <tile id="104">
     <image width="32" height="32" source="images/sprites/bird.bmp" />
   </tile>
-  <tile id="124">
+  <tile id="105">
     <image width="32" height="32" source="images/sprites/gob.bmp" />
   </tile>
-  <tile id="125">
+  <tile id="106">
     <image width="32" height="32" source="images/sprites/draco.bmp" />
   </tile>
-  <tile id="126">
+  <tile id="107">
     <image width="96" height="96" source="images/sprites/dlav.bmp" />
   </tile>
-  <tile id="127">
+  <tile id="108">
     <image width="64" height="64" source="images/sprites/ape.bmp" />
   </tile>
-  <tile id="128">
+  <tile id="109">
     <image width="64" height="64" source="images/sprites/bab.bmp" />
   </tile>
-  <tile id="129">
+  <tile id="110">
     <image width="64" height="64" source="images/sprites/bbare.bmp" />
   </tile>
-  <tile id="130">
+  <tile id="111">
     <image width="32" height="32" source="images/sprites/hgob.bmp" />
   </tile>
-  <tile id="131">
+  <tile id="112">
     <image width="32" height="32" source="images/sprites/shu.bmp" />
   </tile>
-  <tile id="132">
+  <tile id="113">
     <image width="32" height="32" source="images/sprites/wido.bmp" />
   </tile>
-  <tile id="133">
+  <tile id="114">
     <image width="32" height="32" source="images/sprites/dog.bmp" />
   </tile>
-  <tile id="134">
+  <tile id="115">
     <image width="64" height="64" source="images/sprites/gris.bmp" />
   </tile>
-  <tile id="135">
+  <tile id="116">
     <image width="96" height="96" source="images/sprites/dGreen.bmp" />
   </tile>
-  <tile id="136">
+  <tile id="117">
     <image width="32" height="32" source="images/sprites/chest.bmp" />
   </tile>
-  <tile id="137">
+  <tile id="118">
     <image width="32" height="32" source="images/sprites/muchc.bmp" />
   </tile>
-  <tile id="138">
+  <tile id="119">
     <image width="32" height="32" source="images/sprites/healc.bmp" />
   </tile>
-  <tile id="139">
+  <tile id="120">
     <image width="32" height="32" source="images/sprites/wizc.bmp" />
   </tile>
-  <tile id="140">
+  <tile id="121">
     <image width="32" height="32" source="images/sprites/gard.bmp" />
   </tile>
-  <tile id="141">
+  <tile id="122">
     <image width="32" height="32" source="images/sprites/door.bmp" />
   </tile>
-  <tile id="142">
+  <tile id="123">
     <image width="64" height="64" source="images/sprites/polerb.bmp" />
   </tile>
-  <tile id="143">
+  <tile id="124">
     <image width="32" height="32" source="images/sprites/ochest.bmp" />
   </tile>
 </tileset>

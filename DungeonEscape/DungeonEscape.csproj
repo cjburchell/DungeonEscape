@@ -656,6 +656,12 @@
         <None Update="Content\nez\effects\transitions\Wind.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Content\spells.tsx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\items.tsx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Icon.ico" />
@@ -668,7 +674,6 @@
         <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\GameFile\GameFile.csproj" />
       <ProjectReference Include="..\Nez.Portable\Nez.MG38.csproj" />
     </ItemGroup>
     <ItemGroup>

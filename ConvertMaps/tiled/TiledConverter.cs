@@ -280,12 +280,101 @@ namespace ConvertMaps.Tiled
                 tilecount = tileInfos.Length,
                 name = name,
                 transparentcolor = "#FF00FF",
-                //tiledversion = "1.7.2",
-                //version = "1.6",
-                //type = "tileset",
                 tiles = tiles.ToArray()
             };
 
+            return tiledSet;
+        }
+
+        public static TiledTileset ToSpellTileset(IEnumerable<Spell> spells, IEnumerable<TileInfo> tileInfo)
+        {
+            var tileInfos = tileInfo.ToList();
+            var tiles = new List<TiledTile>();
+            foreach (var spell in spells)
+            {
+                var spellTile = tileInfos.FirstOrDefault(item => item.Id == spell.Id);
+                var size = spellTile?.size ?? 0;
+                
+                var properties = new List<TiledProperty>
+                {
+                    new TiledProperty {name = "Name", type = "string", value = spell.Name},
+                    new TiledProperty {name = "Power", type = "int", value = spell.Power.ToString()},
+                    new TiledProperty {name = "Cost", type = "int", value = spell.Cost.ToString()},
+                    new TiledProperty {name = "MinLevel", type = "int", value = spell.MinLevel.ToString()}
+                };
+                
+                var tile = new TiledTile
+                {
+                    type = spell.Type.ToString(),
+                    id = spell.Id,
+                    image = spellTile?.ImageFile, 
+                    imageheight = size,
+                    imagewidth = size,
+                    properties = properties.ToArray(),
+                    imageObj = new TiledImage {source = spellTile?.ImageFile, height = size, width = size}
+                };
+                
+                tiles.Add(tile);
+            }
+            
+            var tiledSet = new TiledTileset
+            {
+                firstgid = 1,
+                tilewidth = tiles.Max(item=> item.imagewidth),
+                tileheight = tiles.Max(item=> item.imageheight),
+                tilecount = tiles.Count,
+                name = "spells",
+                transparentcolor = "#FF00FF",
+                tiles = tiles.ToArray()
+            };
+            return tiledSet;
+        }
+        
+        public static TiledTileset ToItemTileset(IEnumerable<Item> items, IEnumerable<TileInfo> tileInfo)
+        {
+            var tileInfos = tileInfo.ToList();
+            var tiles = new List<TiledTile>();
+            foreach (var item in items)
+            {
+                var itemTile = tileInfos.FirstOrDefault(i => i.Id == item.Id);
+                var size = itemTile?.size ?? 0;
+                
+                var properties = new List<TiledProperty>
+                {
+                    new TiledProperty {name = "Name", type = "string", value = item.Name},
+                    new TiledProperty {name = "Defence", type = "int", value = item.Defence.ToString()},
+                    new TiledProperty {name = "Health", type = "int", value = item.Health.ToString()},
+                    new TiledProperty {name = "Attack", type = "int", value = item.Attack.ToString()},
+                    new TiledProperty {name = "Attack", type = "int", value = item.Attack.ToString()},
+                    new TiledProperty {name = "Agility", type = "int", value = item.Agility.ToString()},
+                    new TiledProperty {name = "Cost", type = "int", value = item.Cost.ToString()},
+                    new TiledProperty {name = "MinLevel", type = "int", value = item.MinLevel.ToString()}
+                };
+                
+                var tile = new TiledTile
+                {
+                    type = item.Type.ToString(),
+                    id = item.Id,
+                    image = itemTile?.ImageFile, 
+                    imageheight = size,
+                    imagewidth = size,
+                    properties = properties.ToArray(),
+                    imageObj = new TiledImage {source = itemTile?.ImageFile, height = size, width = size}
+                };
+                
+                tiles.Add(tile);
+            }
+            
+            var tiledSet = new TiledTileset
+            {
+                firstgid = 1,
+                tilewidth = tiles.Max(item=> item.imagewidth),
+                tileheight = tiles.Max(item=> item.imageheight),
+                tilecount = tiles.Count,
+                name = "items",
+                transparentcolor = "#FF00FF",
+                tiles = tiles.ToArray()
+            };
             return tiledSet;
         }
     }

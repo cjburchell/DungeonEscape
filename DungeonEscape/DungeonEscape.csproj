@@ -647,6 +647,15 @@
         <None Update="Content\images\tiles\wall1y.bmp">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Content\nez\effects\transitions\Squares.mgfxo">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\nez\effects\transitions\TextureWipe.mgfxo">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\nez\effects\transitions\Wind.mgfxo">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Icon.ico" />
@@ -661,5 +670,8 @@
     <ItemGroup>
       <ProjectReference Include="..\GameFile\GameFile.csproj" />
       <ProjectReference Include="..\Nez.Portable\Nez.MG38.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Content\nez" />
     </ItemGroup>
 </Project>

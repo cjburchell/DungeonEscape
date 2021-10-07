@@ -17,6 +17,13 @@ namespace DungeonEscape.Components
         private VirtualIntegerAxis xAxisInput;
         private VirtualIntegerAxis yAxisInput;
         SubpixelVector2 subpixelV2;
+        private bool isInTransition;
+        private readonly IGame gameState;
+
+        public PlayerComponent(IGame gameState)
+        {
+            this.gameState = gameState;
+        }
 
         private Mover mover;
 
@@ -76,25 +83,47 @@ namespace DungeonEscape.Components
             var animation = "WalkDown";
 
             if (moveDir.X < 0)
+            {
                 animation = "WalkLeft";
+            }
             else if (moveDir.X > 0)
+            {
                 animation = "WalkRight";
+            }
 
             if (moveDir.Y < 0)
+            {
                 animation = "WalkUp";
+            }
             else if (moveDir.Y > 0)
+            {
                 animation = "WalkDown";
-            
+            }
+
             if (moveDir != Vector2.Zero)
             {
+                if (this.gameState.CurrentMapId == 0)
+                {
+                    this.gameState.Player.OverWorldPos = this.Entity.Transform.Position;
+                }
+
+                //var girdPos = this.Entity.Transform.Position;
+                //girdPos.X = (int)(girdPos.X / 32);
+                //girdPos.Y = (int)(girdPos.Y / 32);
+                //Console.WriteLine(girdPos.ToString());
+                
                 if (!this.animator.IsAnimationActive(animation))
+                {
                     this.animator.Play(animation);
+                }
                 else
+                {
                     this.animator.UnPause();
+                }
 
                 var movement = moveDir * MoveSpeed * Time.DeltaTime;
 
-                this.mover.CalculateMovement(ref movement, out var res);
+                this.mover.CalculateMovement(ref movement, out _);
                 this.subpixelV2.Update(ref movement);
                 this.mover.ApplyMovement(movement);
             }
@@ -104,7 +133,7 @@ namespace DungeonEscape.Components
             }
         }
 
-        private bool isInTransition = false;
+
 
         public void OnTriggerEnter(Collider other, Collider local)
         {
@@ -120,20 +149,28 @@ namespace DungeonEscape.Components
                 {
                     this.isInTransition = true;
                     var mapId = int.Parse(objCollider.Object.Properties["WarpMap"]);
-                    Point point = null;
+                    Vector2? point = null;
                     if (objCollider.Object.Properties.ContainsKey("WarpMapX") &&
                         objCollider.Object.Properties.ContainsKey("WarpMapX"))
                     {
-                        point = new Point()
+                        var map = this.gameState.GetMap(mapId);
+                        point = new Vector2()
                         {
-                            X =  int.Parse(objCollider.Object.Properties["WarpMapX"]),
-                            Y = int.Parse(objCollider.Object.Properties["WarpMapY"])
+                            X = int.Parse(objCollider.Object.Properties["WarpMapX"]) * map.TileHeight + map.TileHeight / 2.0f,
+                            Y = int.Parse(objCollider.Object.Properties["WarpMapY"]) * map.TileWidth + map.TileWidth / 2.0f
                         };
+                    }
+                    else
+                    {
+                        if (mapId == 0 && this.gameState.Player.OverWorldPos != Vector2.Zero)
+                        {
+                            point = this.gameState.Player.OverWorldPos;
+                        }
                     }
 
                     Core.StartSceneTransition(new FadeTransition(() =>
                     {
-                        var map = new MapScene(mapId, point);
+                        var map = new MapScene(this.gameState, mapId, point);
                         map.Initialize();
                         return map;
                     }));

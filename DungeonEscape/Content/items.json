@@ -8,7 +8,7 @@
     "Agility": 0,
     "Cost": 16,
     "Image": "images/items/Potion",
-    "Id": "90e307cfacc245908c11ffa41f2792bc"
+    "Id": 26
   },
   {
     "Type": "Armor",
@@ -19,7 +19,7 @@
     "Agility": 0,
     "Cost": 5,
     "Image": "images/items/Robe",
-    "Id": "9ac3eb6440934a218dd2f380732002a2"
+    "Id": 27
   },
   {
     "Type": "Weapon",
@@ -30,7 +30,7 @@
     "Agility": 0,
     "Cost": 10,
     "Image": "images/items/Dagger",
-    "Id": "df34b0e7a9ac4df38e94be9f68e4c16e"
+    "Id": 28
   },
   {
     "Type": "Armor",
@@ -41,7 +41,7 @@
     "Agility": 0,
     "Cost": 40,
     "Image": "images/items/LeatherA",
-    "Id": "69dd1bee95c9417d9b7cf2122907f4a4"
+    "Id": 29
   },
   {
     "Type": "Shield",
@@ -52,7 +52,7 @@
     "Agility": 0,
     "Cost": 60,
     "Image": "images/items/SmallShield",
-    "Id": "a1cfd680fdb84e01be21e14bdde3a434"
+    "Id": 30
   },
   {
     "Type": "Weapon",
@@ -63,7 +63,7 @@
     "Agility": 0,
     "Cost": 60,
     "Image": "images/items/Club",
-    "Id": "31a6bac1160448409a9271c053ea8ee7"
+    "Id": 31
   },
   {
     "Type": "Weapon",
@@ -74,7 +74,7 @@
     "Agility": 0,
     "Cost": 180,
     "Image": "images/items/ShortSord",
-    "Id": "658e387698744324b634b0a7185fbcf9"
+    "Id": 32
   },
   {
     "Type": "Armor",
@@ -85,7 +85,7 @@
     "Agility": 0,
     "Cost": 300,
     "Image": "images/items/chainmail",
-    "Id": "3bfbef9ba6cf44a1bdebbbb021fdddd7"
+    "Id": 33
   },
   {
     "Type": "Weapon",
@@ -96,7 +96,7 @@
     "Agility": 0,
     "Cost": 1500,
     "Image": "images/items/LongSword",
-    "Id": "5c2d10e15ca248b9ae9e81757f7c05d7"
+    "Id": 34
   },
   {
     "Type": "Shield",
@@ -107,7 +107,7 @@
     "Agility": 0,
     "Cost": 2000,
     "Image": "images/items/LargeShield",
-    "Id": "4319154c570946f191f1f0bccfaed710"
+    "Id": 35
   },
   {
     "Type": "Armor",
@@ -118,7 +118,7 @@
     "Agility": 0,
     "Cost": 2500,
     "Image": "images/items/SpikedArmor",
-    "Id": "8327c652beee4845a118276c7e8a7fc7"
+    "Id": 36
   },
   {
     "Type": "Weapon",
@@ -129,7 +129,7 @@
     "Agility": 0,
     "Cost": 3000,
     "Image": "images/items/BattleAxe",
-    "Id": "ed291228225941f8a128ede5d067e0d8"
+    "Id": 37
   },
   {
     "Type": "Weapon",
@@ -140,7 +140,7 @@
     "Agility": 3,
     "Cost": 3100,
     "Image": "images/items/Mace",
-    "Id": "458ac899d47d499d8bc05ae00d930508"
+    "Id": 38
   },
   {
     "Type": "OneUse",
@@ -151,7 +151,7 @@
     "Agility": 0,
     "Cost": 100,
     "Image": "images/items/SPotion",
-    "Id": "09102d3cb8ba411c949c43c4f956f9bf"
+    "Id": 39
   },
   {
     "Type": "Armor",
@@ -162,7 +162,7 @@
     "Agility": -2,
     "Cost": 3500,
     "Image": "images/items/HevyArmor",
-    "Id": "c47b19b0fafa46a0a52dd5b9a7bf36ac"
+    "Id": 40
   },
   {
     "Type": "Armor",
@@ -173,7 +173,7 @@
     "Agility": 0,
     "Cost": 3000,
     "Image": "images/items/FullArmor",
-    "Id": "5f7c294be0f64666b5536065d2215912"
+    "Id": 41
   },
   {
     "Type": "Shield",
@@ -184,7 +184,7 @@
     "Agility": 0,
     "Cost": 10000,
     "Image": "images/items/TowerShield",
-    "Id": "8c233817b0534662a456d1f15aaf2530"
+    "Id": 42
   },
   {
     "Type": "Weapon",
@@ -195,7 +195,7 @@
     "Agility": 0,
     "Cost": 25000,
     "Image": "images/items/BlizzardSword",
-    "Id": "da94847e8b38421c86c3dea70ba3d571"
+    "Id": 43
   },
   {
     "Type": "Armor",
@@ -206,7 +206,7 @@
     "Agility": 4,
     "Cost": 30000,
     "Image": "images/items/MagicArmor",
-    "Id": "30a8d581dad04d30b2e5ce9379fdfe7e"
+    "Id": 44
   },
   {
     "Type": "Shield",
@@ -217,7 +217,7 @@
     "Agility": 0,
     "Cost": 51000,
     "Image": "images/items/FlameShield",
-    "Id": "c227028dc90d41cd8daff8a9e5c6effd"
+    "Id": 45
   },
   {
     "Type": "Weapon",
@@ -228,7 +228,7 @@
     "Agility": 5,
     "Cost": 55000,
     "Image": "images/items/KingsSword",
-    "Id": "51872217ebfb4f5bb49a08e57d01548d"
+    "Id": 46
   },
   {
     "Type": "Armor",
@@ -239,7 +239,7 @@
     "Agility": 3,
     "Cost": 65000,
     "Image": "images/items/KingsArmor",
-    "Id": "09bd47d000974be0a3c0544e43547f8b"
+    "Id": 47
   },
   {
     "Type": "OneUse",
@@ -250,7 +250,7 @@
     "Agility": 0,
     "Cost": 5000,
     "Image": "images/items/GreenPotion",
-    "Id": "ff4b812b1b414129abe92471a448529e"
+    "Id": 48
   },
   {
     "Type": "OneUse",
@@ -261,7 +261,7 @@
     "Agility": 0,
     "Cost": 5000,
     "Image": "images/items/BluePotion",
-    "Id": "ca9935a71b6d4d7e845ee7d68371f92e"
+    "Id": 49
   },
   {
     "Type": "OneUse",
@@ -272,6 +272,6 @@
     "Agility": 1,
     "Cost": 5000,
     "Image": "images/items/PurplePotion",
-    "Id": "3a4c1a3fb2de409b99088d34efb56f96"
+    "Id": 50
   }
 ]

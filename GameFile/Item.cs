@@ -15,6 +15,6 @@
         public int Agility { get; set; }
         public int Cost { get; set; }
         public string Image { get; set; }
-        public string Id { get; set; }
+        public int Id { get; set; }
     }
 }

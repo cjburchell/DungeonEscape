@@ -1,4 +1,4 @@
-namespace TiledCS
+namespace ConvertMaps.Tiled
 {
     using System.Xml.Serialization;
     using Newtonsoft.Json;

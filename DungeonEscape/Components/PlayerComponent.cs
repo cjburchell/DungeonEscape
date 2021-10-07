@@ -1,4 +1,6 @@
-﻿namespace DungeonEscape.Components
+﻿using GameFile;
+
+namespace DungeonEscape.Components
 {
     using System;
     using Microsoft.Xna.Framework;
@@ -109,8 +111,13 @@
         {
             if (other is ObjectBoxCollider objCollider)
             {
+                
+                if (objCollider.Object.Type == SpriteType.NPC.ToString())
+                {
+                    Console.WriteLine($"Npc: {objCollider.Object.Name}");
+                }
                 Console.WriteLine($"triggerEnter: {objCollider.Object.Name}");
-                if (objCollider.Object.Type == "Warp" && !this.isInTransition)
+                if (objCollider.Object.Type == SpriteType.Warp.ToString() && !this.isInTransition)
                 {
                     this.isInTransition = true;
                     var mapId = int.Parse(objCollider.Object.Properties["WarpMap"]);
@@ -124,15 +131,7 @@
                             Y = int.Parse(objCollider.Object.Properties["WarpMapY"])
                         };
                     }
-                    else if(mapId == 0)
-                    {
-                        point = new Point()
-                        {
-                            X =  int.Parse(objCollider.Object.Properties["WarpMapX"]),
-                            Y = int.Parse(objCollider.Object.Properties["WarpMapY"])
-                        };
-                    }
-                    
+
                     Core.StartSceneTransition(new FadeTransition(() =>
                     {
                         var map = new MapScene(mapId, point);

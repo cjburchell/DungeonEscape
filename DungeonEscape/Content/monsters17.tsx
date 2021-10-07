@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Monsters 17" tilewidth="32" tileheight="32" tilecount="6" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
-  <tile id="47" type="Bandit">
+  <tile id="97" type="Bandit">
     <image width="32" height="32" source="images/sprites/band.bmp" />
     <properties>
       <property name="Biome" type="string" value="All" />
@@ -12,7 +12,7 @@
       <property name="Heath" type="int" value="1" />
     </properties>
   </tile>
-  <tile id="74" type="Goblin">
+  <tile id="124" type="Goblin">
     <image width="32" height="32" source="images/sprites/gob.bmp" />
     <properties>
       <property name="Biome" type="string" value="All" />
@@ -24,7 +24,7 @@
       <property name="Heath" type="int" value="1" />
     </properties>
   </tile>
-  <tile id="80" type="Hobgoblin">
+  <tile id="130" type="Hobgoblin">
     <image width="32" height="32" source="images/sprites/hgob.bmp" />
     <properties>
       <property name="Biome" type="string" value="All" />
@@ -36,7 +36,7 @@
       <property name="Heath" type="int" value="2" />
     </properties>
   </tile>
-  <tile id="81" type="Shrew">
+  <tile id="131" type="Shrew">
     <image width="32" height="32" source="images/sprites/shu.bmp" />
     <properties>
       <property name="Biome" type="string" value="All" />
@@ -48,7 +48,7 @@
       <property name="Heath" type="int" value="1" />
     </properties>
   </tile>
-  <tile id="82" type="BlackWidow">
+  <tile id="132" type="BlackWidow">
     <image width="32" height="32" source="images/sprites/wido.bmp" />
     <properties>
       <property name="Biome" type="string" value="All" />
@@ -60,7 +60,7 @@
       <property name="Heath" type="int" value="3" />
     </properties>
   </tile>
-  <tile id="83" type="Wolf">
+  <tile id="133" type="Wolf">
     <image width="32" height="32" source="images/sprites/dog.bmp" />
     <properties>
       <property name="Biome" type="string" value="All" />

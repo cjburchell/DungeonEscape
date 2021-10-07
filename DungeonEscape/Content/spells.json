@@ -1,50 +1,202 @@
 [
   {
-    "Name": "Heal",
-    "Id": "e1e04fb6f2c74933be714fb6c56d7b0c",
+    "Name": "Potion",
+    "Id": 1,
+    "Type": 40,
+    "Power": 0,
+    "Cost": 0,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Robe",
+    "Id": 2,
     "Type": 0,
     "Power": 1,
+    "Cost": 0,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Dagger",
+    "Id": 3,
+    "Type": 0,
+    "Power": 0,
+    "Cost": 2,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Lether_Armor",
+    "Id": 4,
+    "Type": 0,
+    "Power": 4,
+    "Cost": 0,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Small_Shield",
+    "Id": 5,
+    "Type": 0,
+    "Power": 2,
+    "Cost": 0,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Club",
+    "Id": 6,
+    "Type": 0,
+    "Power": 0,
+    "Cost": 4,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Short_Sword",
+    "Id": 7,
+    "Type": 0,
+    "Power": 0,
+    "Cost": 10,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Chain_Mail",
+    "Id": 8,
+    "Type": 0,
+    "Power": 12,
+    "Cost": 0,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Long_Sword",
+    "Id": 9,
+    "Type": 0,
+    "Power": 0,
+    "Cost": 20,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Large_Shield",
+    "Id": 10,
+    "Type": 0,
+    "Power": 10,
+    "Cost": 0,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Spiked_Armor",
+    "Id": 11,
+    "Type": 0,
+    "Power": 15,
     "Cost": 5,
-    "Image": "images/items/healspell"
+    "Image": "images/items/0"
   },
   {
-    "Name": "Outside",
-    "Id": "33293bc842f543f58047be9867ee5f5f",
-    "Type": 1,
-    "Power": 1,
-    "Cost": 10,
-    "Image": "images/items/outside"
+    "Name": "Battle_Axe",
+    "Id": 12,
+    "Type": 0,
+    "Power": 0,
+    "Cost": 22,
+    "Image": "images/items/0"
   },
   {
-    "Name": "FireBall",
-    "Id": "927eb987030f4cf5aa89ddfc55fe34da",
-    "Type": 2,
-    "Power": 1,
-    "Cost": 10,
-    "Image": "images/items/fireball"
-  },
-  {
-    "Name": "LitBall",
-    "Id": "4e4c7ff85c4c4d5dbf08f47df6430b80",
-    "Type": 3,
-    "Power": 1,
+    "Name": "Mace_of_speed",
+    "Id": 13,
+    "Type": 0,
+    "Power": 0,
     "Cost": 15,
-    "Image": "images/items/Lightning"
+    "Image": "images/items/3"
   },
   {
-    "Name": "FireBlast",
-    "Id": "a0ec4b7d5f994f03a921273b8b8f32cf",
-    "Type": 2,
-    "Power": 2,
-    "Cost": 25,
-    "Image": "images/items/FireBlast"
+    "Name": "Super_Potion",
+    "Id": 14,
+    "Type": 100,
+    "Power": 0,
+    "Cost": 0,
+    "Image": "images/items/0"
   },
   {
-    "Name": "LitBlast",
-    "Id": "a4cbba2460aa4d3da932ded028e64127",
-    "Type": 3,
-    "Power": 2,
-    "Cost": 30,
-    "Image": "images/items/LitBlast"
+    "Name": "Hevy_Armor",
+    "Id": 15,
+    "Type": 0,
+    "Power": 27,
+    "Cost": -1,
+    "Image": "images/items/-2"
+  },
+  {
+    "Name": "Full_Plate",
+    "Id": 16,
+    "Type": 0,
+    "Power": 24,
+    "Cost": 0,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Tower_Shield",
+    "Id": 17,
+    "Type": 0,
+    "Power": 15,
+    "Cost": 0,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Blizzard_Sword",
+    "Id": 18,
+    "Type": 0,
+    "Power": 0,
+    "Cost": 40,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Magic_Armor",
+    "Id": 19,
+    "Type": 0,
+    "Power": 30,
+    "Cost": 1,
+    "Image": "images/items/4"
+  },
+  {
+    "Name": "Flame_Shield",
+    "Id": 20,
+    "Type": 0,
+    "Power": 19,
+    "Cost": 3,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Kings_Sword",
+    "Id": 21,
+    "Type": 0,
+    "Power": 4,
+    "Cost": 50,
+    "Image": "images/items/5"
+  },
+  {
+    "Name": "Kings_Armor",
+    "Id": 22,
+    "Type": 0,
+    "Power": 44,
+    "Cost": 8,
+    "Image": "images/items/3"
+  },
+  {
+    "Name": "Elixer_Strength",
+    "Id": 23,
+    "Type": 0,
+    "Power": 0,
+    "Cost": 1,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Elixer_Defence",
+    "Id": 24,
+    "Type": 0,
+    "Power": 1,
+    "Cost": 0,
+    "Image": "images/items/0"
+  },
+  {
+    "Name": "Elixer_Agility",
+    "Id": 25,
+    "Type": 0,
+    "Power": 0,
+    "Cost": 0,
+    "Image": "images/items/1"
   }
 ]

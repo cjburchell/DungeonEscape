@@ -15,7 +15,7 @@ namespace DungeonEscape.Scene
         private readonly int mapId;
         private readonly Point start;
 
-        public MapScene(int mapId, Point start = null) : base()
+        public MapScene(int mapId, Point start = null)
         {
             this.mapId = mapId;
             this.start = start;
@@ -24,23 +24,52 @@ namespace DungeonEscape.Scene
         public override void Initialize()
         {
             base.Initialize();
-
-            this.SetDesignResolution(screenWidth * 32, screenHeight * 32, Core.DebugRenderEnabled? SceneResolutionPolicy.BestFit:SceneResolutionPolicy.ShowAllPixelPerfect);
-
-            Screen.SetSize(screenWidth * 32, screenHeight * 32);
+            
+            var map = this.Content.LoadTiledMap($"Content/map{this.mapId}.tmx");
+            this.SetDesignResolution(screenWidth * map.TileWidth, screenHeight * map.TileHeight, SceneResolutionPolicy.ShowAll);
+            
             Console.WriteLine($"Loading Map {this.mapId}");
             this.AddRenderer(new ScreenSpaceRenderer(100, ScreenSpaceRenderLayer));
             var tiledEntity = this.CreateEntity("map");
-            var map = this.Content.LoadTiledMap($"Content/map{this.mapId}.tmx");
             var tiledMapRenderer =  tiledEntity.AddComponent(new TiledMapRenderer(map, new[] {"wall", "water"}));
             tiledMapRenderer.RenderLayer = 10;
+            map.GetObjectGroup("objects").Visible = false;
+           
 
-            var objects = map.GetObjectGroup("objects");
-            var warpsEntity = this.CreateEntity("objects");
+            var objects = map.GetObjectGroup("items");
+            objects.Visible = true;
+            var itemsEntity = this.CreateEntity("items");
             foreach (var item in objects.Objects)
             {
-                var collider = warpsEntity.AddComponent(new ObjectBoxCollider(item, new Rectangle{X = (int)item.X, Y= (int)item.Y, Width = (int)item.Width, Height = (int)item.Height}));
+                var collider = itemsEntity.AddComponent(new ObjectBoxCollider(item, new Rectangle{X = (int)item.X, Y= (int)item.Y-map.TileHeight, Width = (int)item.Width, Height = (int)item.Height}));
                 collider.IsTrigger = true;
+                
+                if (!bool.Parse(item.Properties["Collideable"]))
+                {
+                    continue;
+                }
+                
+                var offsetWidth =(int)( item.Width * (1.0f / 4.0f));
+                var offsetHeight =(int)( item.Height * (1.0f / 4.0f));
+                itemsEntity.AddComponent(new BoxCollider(new Rectangle{X = (int)item.X + offsetWidth/2, Y= (int)item.Y-map.TileHeight + offsetHeight/2, Width = (int)item.Width-offsetWidth, Height = (int)item.Height - offsetHeight}));
+            }
+            
+            var sprites = map.GetObjectGroup("sprites");
+            sprites.Visible = true;
+            var spritessEntity = this.CreateEntity("sprites");
+            foreach (var item in sprites.Objects)
+            {
+                var collider = spritessEntity.AddComponent(new ObjectBoxCollider(item, new Rectangle{X = (int)item.X, Y= (int)item.Y-map.TileHeight, Width = (int)item.Width, Height = (int)item.Height}));
+                collider.IsTrigger = true;
+
+                if (!bool.Parse(item.Properties["Collideable"]))
+                {
+                    continue;
+                }
+
+                var offsetWidth =(int)( item.Width * (1.0f / 4.0f));
+                var offsetHeight =(int)( item.Height * (1.0f / 4.0f));
+                spritessEntity.AddComponent(new BoxCollider(new Rectangle{X = (int)item.X + offsetWidth/2, Y= (int)item.Y-map.TileHeight, Width = (int)item.Width-offsetWidth, Height = (int)item.Height - offsetHeight/2}));
             }
             
             var topLeft = new Vector2(map.TileWidth, map.TileWidth);
@@ -48,12 +77,13 @@ namespace DungeonEscape.Scene
                 map.TileWidth * (map.Height - 1));
             tiledEntity.AddComponent(new CameraBounds(topLeft, bottomRight));
 
-            int spawnX;
-            int spawnY;
+            float spawnX;
+            float spawnY;
             if (this.start == null)
             {
-                spawnX = int.Parse(map.Properties["DefaultStartX"]) * 32;
-                spawnY = int.Parse(map.Properties["DefaultStartY"]) * 32;
+                var spawnObject = map.GetObjectGroup("objects").Objects["spawn"];
+                spawnX = spawnObject.X + (map.TileHeight/2.0f);
+                spawnY = spawnObject.Y - (map.TileWidth/2.0f);
             }
             else
             {

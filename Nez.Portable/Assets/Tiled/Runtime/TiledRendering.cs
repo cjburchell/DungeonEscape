@@ -217,7 +217,7 @@ namespace Nez.Tiled
                         continue;
                 }
 
-                var pos = position + new Vector2(obj.X, obj.Y) * scale;
+                var pos = position + new Vector2(obj.X, obj.Y - objGroup.Map.TileHeight) * scale;
 				switch (obj.ObjectType)
 				{
 					case TmxObjectType.Basic:
@@ -230,9 +230,6 @@ namespace Nez.Tiled
 						batcher.DrawPixel(pos, objGroup.Color, (int)size);
 						goto default;
 					case TmxObjectType.Tile:
-						var tx = obj.Tile.X * objGroup.Map.TileWidth * scale.X;
-						var ty = obj.Tile.Y * objGroup.Map.TileHeight * scale.Y;
-
 						var spriteEffects = SpriteEffects.None;
 						if (obj.Tile.HorizontalFlip)
 							spriteEffects |= SpriteEffects.FlipHorizontally;

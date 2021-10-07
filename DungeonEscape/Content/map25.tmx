@@ -1,249 +1,244 @@
 <?xml version="1.0" encoding="utf-8"?>
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.6" type="map" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="35" height="35" tilewidth="32" tileheight="32">
-  <properties>
-    <property name="DefaultTileId" type="int" value="1" />
-    <property name="DefaultStartX" type="int" value="15" />
-    <property name="DefaultStartY" type="int" value="30" />
-  </properties>
   <tileset name="Map Tiles" tilewidth="32" tileheight="32" tilecount="7" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
-    <tile id="1">
+    <tile id="51">
       <image width="32" height="32" source="images/tiles/grass.bmp" />
     </tile>
-    <tile id="40">
+    <tile id="90">
       <image width="32" height="32" source="images/tiles/water.bmp" />
     </tile>
-    <tile id="39">
+    <tile id="89">
       <image width="32" height="32" source="images/tiles/tree.bmp" />
     </tile>
-    <tile id="15">
+    <tile id="65">
       <image width="32" height="32" source="images/tiles/wall2.bmp" />
     </tile>
-    <tile id="17">
+    <tile id="67">
       <image width="32" height="32" source="images/tiles/wall1.bmp" />
     </tile>
-    <tile id="28">
+    <tile id="78">
       <image width="32" height="32" source="images/tiles/brick.bmp" />
     </tile>
-    <tile id="12">
+    <tile id="62">
       <image width="32" height="32" source="images/tiles/stairup.bmp" />
     </tile>
   </tileset>
   <layer id="1" name="floor" width="35" height="35" type="tilelayer" visible="true" locked="false" x="0" y="0" opacity="1">
-    <data encoding="csv">0,2,2,2,2,2,2,2,2,2,2,2,2,40,40,40,40,2,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,2,0,2,2,2,2,2,2,2,2,2,2,40,40,40,40,40,40,40,40,2,40,2,40,40,40,2,40,2,40,40,40,40,2,40,2,2,2,2,2,2,2,2,2,2,40,40,40,40,40,40,40,40,40,40,2,40,40,40,40,40,2,40,40,40,40,2,2,2,2,2,2,2,2,2,2,2,40,40,40,40,40,40,40,40,40,40,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,2,2,2,2,2,2,2,2,0,0,2,2,2,2,40,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,40,40,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,29,29,29,29,29,29,29,29,29,29,29,0,0,2,2,2,40,40,40,40,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,29,29,29,0,29,29,29,29,29,29,29,29,0,0,2,40,40,40,40,40,2,2,0,0,0,0,0,0,0,0,0,2,0,29,0,0,2,29,0,29,29,0,0,0,29,29,29,29,0,2,40,40,40,40,40,40,2,0,0,0,0,0,0,0,0,0,2,0,29,29,0,0,29,0,29,29,0,29,0,29,29,29,29,0,2,2,40,40,40,40,40,2,0,0,0,0,0,0,0,0,0,2,0,29,29,29,0,0,0,29,29,0,29,0,0,0,0,0,0,2,2,40,40,40,40,2,2,0,0,0,0,0,0,0,0,0,2,0,29,0,29,29,29,29,29,29,0,29,29,0,29,29,29,0,2,2,2,40,40,40,40,2,0,0,0,0,0,0,0,0,0,2,0,29,0,0,29,29,29,29,29,0,29,29,0,2,29,29,0,2,2,40,40,40,40,2,2,0,0,0,0,0,0,0,2,2,2,0,29,29,0,0,0,29,29,29,29,29,29,0,29,29,29,0,2,2,40,40,40,40,40,2,0,0,0,0,0,0,2,2,2,2,0,29,29,29,29,0,29,29,29,29,29,29,0,29,29,29,0,2,2,2,40,40,40,40,2,0,0,0,0,0,0,2,2,2,2,0,29,29,29,29,0,29,29,29,29,29,29,0,29,29,29,0,2,40,40,40,40,40,40,2,0,0,0,0,0,2,2,2,2,2,0,29,0,2,29,0,0,0,0,29,29,29,0,0,29,29,0,2,40,2,40,40,40,40,2,0,0,0,0,0,2,2,2,2,2,0,0,0,0,0,0,29,29,0,29,29,29,29,0,0,29,0,2,40,40,40,40,40,40,2,0,0,0,0,0,2,2,2,2,2,0,29,29,29,29,0,29,29,0,29,29,29,29,29,29,29,0,2,2,40,40,40,40,40,2,0,0,0,0,0,2,2,2,2,2,0,0,29,29,29,0,29,29,29,29,29,29,29,29,29,0,0,2,2,2,40,40,2,40,2,0,0,0,0,2,2,2,2,2,2,2,0,0,29,29,29,29,29,29,29,29,29,29,29,0,0,2,2,2,2,2,40,40,40,2,0,0,0,0,2,2,2,2,2,2,2,2,0,0,0,0,29,29,29,0,0,0,0,0,0,2,2,2,2,2,40,40,40,40,2,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,40,40,40,40,40,2,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,40,40,40,40,2,40,2,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,40,40,2,40,40,40,40,2,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,40,40,40,40,40,40,40,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,40,40,40,40,40,40,40,40,40,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,40,40,40,40,40,40,2,40,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,40,40,40,40,40,2,2,40,40,40,40,40,40,40,40,40,40,40,40,2</data>
+    <data encoding="csv">0,52,52,52,52,52,52,52,52,52,52,52,52,90,90,90,90,52,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,52,0,52,52,52,52,52,52,52,52,52,52,90,90,90,90,90,90,90,90,52,90,52,90,90,90,52,90,52,90,90,90,90,52,90,52,52,52,52,52,52,52,52,52,52,90,90,90,90,90,90,90,90,90,90,52,90,90,90,90,90,52,90,90,90,90,52,52,52,52,52,52,52,52,52,52,52,90,90,90,90,90,90,90,90,90,90,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,52,52,52,0,0,52,52,52,52,52,52,52,52,0,0,52,52,52,52,90,52,52,52,0,0,0,0,0,0,0,0,0,0,0,52,0,0,0,0,0,0,0,0,0,0,0,0,0,52,52,52,52,52,90,90,52,52,52,0,0,0,0,0,0,0,0,0,0,0,0,0,79,79,79,79,79,79,79,79,79,79,79,0,0,52,52,52,90,90,90,90,52,52,0,0,0,0,0,0,0,0,0,0,0,0,0,79,79,79,0,79,79,79,79,79,79,79,79,0,0,52,90,90,90,90,90,52,52,0,0,0,0,0,0,0,0,0,52,0,79,0,0,52,79,0,79,79,0,0,0,79,79,79,79,0,52,90,90,90,90,90,90,52,0,0,0,0,0,0,0,0,0,52,0,79,79,0,0,79,0,79,79,0,79,0,79,79,79,79,0,52,52,90,90,90,90,90,52,0,0,0,0,0,0,0,0,0,52,0,79,79,79,0,0,0,79,79,0,79,0,0,0,0,0,0,52,52,90,90,90,90,52,52,0,0,0,0,0,0,0,0,0,52,0,79,0,79,79,79,79,79,79,0,79,79,0,79,79,79,0,52,52,52,90,90,90,90,52,0,0,0,0,0,0,0,0,0,52,0,79,0,0,79,79,79,79,79,0,79,79,0,52,79,79,0,52,52,90,90,90,90,52,52,0,0,0,0,0,0,0,52,52,52,0,79,79,0,0,0,79,79,79,79,79,79,0,79,79,79,0,52,52,90,90,90,90,90,52,0,0,0,0,0,0,52,52,52,52,0,79,79,79,79,0,79,79,79,79,79,79,0,79,79,79,0,52,52,52,90,90,90,90,52,0,0,0,0,0,0,52,52,52,52,0,79,79,79,79,0,79,79,79,79,79,79,0,79,79,79,0,52,90,90,90,90,90,90,52,0,0,0,0,0,52,52,52,52,52,0,79,0,52,79,0,0,0,0,79,79,79,0,0,79,79,0,52,90,52,90,90,90,90,52,0,0,0,0,0,52,52,52,52,52,0,0,0,0,0,0,79,79,0,79,79,79,79,0,0,79,0,52,90,90,90,90,90,90,52,0,0,0,0,0,52,52,52,52,52,0,79,79,79,79,0,79,79,0,79,79,79,79,79,79,79,0,52,52,90,90,90,90,90,52,0,0,0,0,0,52,52,52,52,52,0,0,79,79,79,0,79,79,79,79,79,79,79,79,79,0,0,52,52,52,90,90,52,90,52,0,0,0,0,52,52,52,52,52,52,52,0,0,79,79,79,79,79,79,79,79,79,79,79,0,0,52,52,52,52,52,90,90,90,52,0,0,0,0,52,52,52,52,52,52,52,52,0,0,0,0,79,79,79,0,0,0,0,0,0,52,52,52,52,52,90,90,90,90,52,0,0,0,0,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,90,90,90,90,90,52,0,0,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,90,90,90,90,52,90,52,0,0,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,90,90,52,90,90,90,90,52,0,0,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,90,90,90,90,90,90,90,52,0,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,90,90,90,90,90,90,90,90,90,52,0,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,90,90,90,90,90,90,52,90,52,0,52,52,52,52,52,52,52,52,52,52,52,52,52,52,90,90,90,90,90,52,52,90,90,90,90,90,90,90,90,90,90,90,90,52</data>
     <properties>
       <property name="LayerType" type="string" value="Ground" />
     </properties>
   </layer>
   <layer id="2" name="water" width="35" height="35" type="tilelayer" visible="true" locked="false" x="0" y="0" opacity="1">
-    <data encoding="csv">41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,0,0,0,41,41,0,0,0,0,0,0,0,0,41,41,0,0,0,0,0,0,0,0,41,41,41,41,41,41,41,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,41,41,41,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,41,41,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,41,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,41,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,41,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,41,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,41,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0</data>
+    <data encoding="csv">91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,0,0,0,91,91,0,0,0,0,0,0,0,0,91,91,0,0,0,0,0,0,0,0,91,91,91,91,91,91,91,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,91,91,91,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,91,91,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,91,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,91,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,91,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,91,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,91,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0</data>
     <properties>
       <property name="LayerType" type="string" value="Water" />
     </properties>
   </layer>
   <layer id="3" name="wall" width="35" height="35" type="tilelayer" visible="true" locked="false" x="0" y="0" opacity="1">
-    <data encoding="csv">0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,18,18,18,18,18,18,18,18,18,18,18,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,16,0,0,0,0,0,0,0,0,0,0,0,18,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,18,16,0,0,0,16,0,0,0,0,0,0,0,0,18,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,18,16,0,0,16,0,0,16,18,16,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,18,16,0,16,0,0,16,0,16,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,18,18,18,0,0,16,0,18,16,18,18,18,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,16,0,0,0,0,0,0,16,0,0,16,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,18,16,0,0,0,0,0,18,0,0,16,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,18,18,16,0,0,0,0,0,0,16,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,16,0,0,0,0,0,0,16,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,16,0,0,0,0,0,0,16,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,16,0,0,16,18,18,16,0,0,0,18,16,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,18,18,18,18,16,0,0,16,0,0,0,0,18,18,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,16,0,0,18,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,18,16,0,0,0,18,0,0,0,0,0,0,0,0,0,16,18,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,18,16,0,0,0,0,0,0,0,0,0,0,0,16,18,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,18,18,18,18,0,0,0,18,18,18,18,18,18,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0</data>
+    <data encoding="csv">0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,66,68,68,68,68,68,68,68,68,68,68,68,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,66,66,0,0,0,0,0,0,0,0,0,0,0,68,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,66,68,66,0,0,0,66,0,0,0,0,0,0,0,0,68,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,66,0,68,66,0,0,66,0,0,66,68,66,0,0,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,66,0,0,68,66,0,66,0,0,66,0,66,0,0,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,66,0,0,0,68,68,68,0,0,66,0,68,66,68,68,68,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,66,0,66,0,0,0,0,0,0,66,0,0,66,0,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,66,0,68,66,0,0,0,0,0,68,0,0,66,0,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,66,0,0,68,68,66,0,0,0,0,0,0,66,0,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,66,0,0,0,0,66,0,0,0,0,0,0,66,0,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,66,0,0,0,0,66,0,0,0,0,0,0,66,0,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,66,0,66,0,0,66,68,68,66,0,0,0,68,66,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,66,68,68,68,68,66,0,0,66,0,0,0,0,68,68,0,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,66,0,0,0,0,66,0,0,68,0,0,0,0,0,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,68,66,0,0,0,68,0,0,0,0,0,0,0,0,0,66,68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,68,66,0,0,0,0,0,0,0,0,0,0,0,66,68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,68,68,68,68,0,0,0,68,68,68,68,68,68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0</data>
     <properties>
       <property name="LayerType" type="string" value="Wall" />
     </properties>
   </layer>
-  <objectgroup id="4" name="objects" width="0" height="0" type="objectgroup" visible="true" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="0" name="Water Exit 0" type="Warp" x="32" y="32" rotation="0" width="32" height="32" gid="41" visible="true">
+  <objectgroup id="4" name="items" width="0" height="0" type="objectgroup" visible="true" locked="false" x="0" y="0" opacity="1" draworder="topdown">
+    <object id="0" name="Water Exit 0" type="Warp" x="32" y="32" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="64" y="32" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="64" y="32" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="96" y="32" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="96" y="32" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="128" y="32" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="128" y="32" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="160" y="32" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="160" y="32" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="192" y="32" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="192" y="32" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="224" y="32" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="224" y="32" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="256" y="32" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="256" y="32" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="288" y="32" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="288" y="32" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="320" y="32" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="320" y="32" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="352" y="32" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="352" y="32" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="384" y="32" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="384" y="32" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="544" y="32" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="544" y="32" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="1088" y="32" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="1088" y="32" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="32" y="64" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="32" y="64" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="64" y="64" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="64" y="64" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="96" y="64" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="96" y="64" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="128" y="64" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="128" y="64" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="160" y="64" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="160" y="64" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="320" y="64" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="320" y="64" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="0" y="96" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="0" y="96" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="32" y="96" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="32" y="96" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="64" y="96" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="64" y="96" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="96" y="96" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="96" y="96" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="0" y="128" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="0" y="128" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="32" y="128" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="32" y="128" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="64" y="128" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="64" y="128" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="96" y="128" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="96" y="128" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Stairs to 40" type="Warp" x="448" y="480" rotation="0" width="32" height="32" gid="13" visible="true">
+    <object id="0" name="Stairs to 40" type="Warp" x="448" y="480" rotation="0" width="32" height="32" gid="63" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -252,7 +247,7 @@
         <property name="WarpMapY" type="int" value="5" />
       </properties>
     </object>
-    <object id="0" name="Stairs to 40" type="Warp" x="736" y="608" rotation="0" width="32" height="32" gid="13" visible="true">
+    <object id="0" name="Stairs to 40" type="Warp" x="736" y="608" rotation="0" width="32" height="32" gid="63" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -261,7 +256,7 @@
         <property name="WarpMapY" type="int" value="9" />
       </properties>
     </object>
-    <object id="0" name="Stairs to 40" type="Warp" x="416" y="736" rotation="0" width="32" height="32" gid="13" visible="true">
+    <object id="0" name="Stairs to 40" type="Warp" x="416" y="736" rotation="0" width="32" height="32" gid="63" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -270,511 +265,511 @@
         <property name="WarpMapY" type="int" value="13" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="320" y="864" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="320" y="864" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="128" y="896" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="128" y="896" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="320" y="896" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="320" y="896" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="800" y="896" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="800" y="896" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="128" y="928" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="128" y="928" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="160" y="928" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="160" y="928" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="320" y="928" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="320" y="928" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="800" y="928" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="800" y="928" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="64" y="960" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="64" y="960" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="96" y="960" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="96" y="960" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="128" y="960" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="128" y="960" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="160" y="960" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="160" y="960" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="192" y="960" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="192" y="960" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="224" y="960" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="224" y="960" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="320" y="960" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="320" y="960" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="800" y="960" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="800" y="960" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="64" y="992" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="64" y="992" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="96" y="992" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="96" y="992" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="128" y="992" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="128" y="992" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="160" y="992" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="160" y="992" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="192" y="992" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="192" y="992" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="224" y="992" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="224" y="992" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="256" y="992" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="256" y="992" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="320" y="992" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="320" y="992" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="800" y="992" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="800" y="992" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="64" y="1024" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="64" y="1024" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="96" y="1024" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="96" y="1024" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="128" y="1024" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="128" y="1024" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="160" y="1024" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="160" y="1024" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="192" y="1024" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="192" y="1024" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="224" y="1024" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="224" y="1024" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="256" y="1024" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="256" y="1024" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="288" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="288" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="320" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="320" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="352" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="352" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="384" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="384" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="416" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="416" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="448" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="448" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="480" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="480" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="512" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="512" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="544" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="544" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="576" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="576" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="608" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="608" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="640" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="640" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="672" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="672" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="704" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="704" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="736" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="736" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="768" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="768" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="800" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="800" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="832" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="832" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="1088" y="1024" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="1088" y="1024" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="32" y="1056" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="32" y="1056" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="64" y="1056" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="64" y="1056" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="96" y="1056" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="96" y="1056" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="128" y="1056" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="128" y="1056" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="160" y="1056" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="160" y="1056" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="192" y="1056" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="192" y="1056" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="224" y="1056" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="224" y="1056" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="320" y="1056" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="320" y="1056" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="32" y="1088" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="32" y="1088" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="64" y="1088" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="64" y="1088" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="96" y="1088" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="96" y="1088" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="128" y="1088" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="128" y="1088" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="160" y="1088" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="160" y="1088" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="192" y="1088" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="192" y="1088" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="320" y="1088" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="320" y="1088" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="32" y="1120" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="32" y="1120" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="64" y="1120" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="64" y="1120" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="96" y="1120" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="96" y="1120" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="128" y="1120" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="128" y="1120" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="160" y="1120" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="160" y="1120" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Water Exit 0" type="Warp" x="192" y="1120" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Water Exit 0" type="Warp" x="192" y="1120" rotation="0" width="32" height="32" gid="91" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="320" y="1120" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="0" name="Exit 0" type="Warp" x="320" y="1120" rotation="0" width="32" height="32" gid="52" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -783,4 +778,7 @@
     </object>
   </objectgroup>
   <objectgroup id="5" name="sprites" width="0" height="0" type="objectgroup" visible="true" locked="false" x="0" y="0" opacity="1" draworder="topdown" />
+  <objectgroup id="6" name="objects" width="0" height="0" type="objectgroup" visible="false" locked="false" x="0" y="0" opacity="1" draworder="topdown">
+    <object id="0" name="spawn" type="Spawn" x="480" y="992" rotation="0" width="32" height="32" gid="0" visible="false" />
+  </objectgroup>
 </map>

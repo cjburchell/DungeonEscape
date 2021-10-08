@@ -219,7 +219,7 @@ namespace ConvertMaps.Tiled
                 //tiledversion = "1.7.2",
                 //version = "1.6",
                 //type = "tileset",
-                tiles = tileInfos.Select(mapTile => new TiledTile {id = mapTile.Id, imageObj = new TiledImage {source = mapTile.ImageFile, height = mapTile.size, width = mapTile.size},image = mapTile.ImageFile, imageheight = mapTile.size, imagewidth = mapTile.size}).ToArray()
+                tiles = tileInfos.Select(mapTile => new TiledTile {id = mapTile.Id, imageObj = new TiledImage {source = mapTile.Image, height = mapTile.size, width = mapTile.size},image = mapTile.Image, imageheight = mapTile.size, imagewidth = mapTile.size}).ToArray()
             };
 
             return tiledSet;
@@ -259,12 +259,12 @@ namespace ConvertMaps.Tiled
                     {
                         type = monster.Name,
                         id = mapTile.Id, 
-                        image = mapTile.ImageFile, 
+                        image = mapTile.Image, 
                         imageheight = mapTile.size,
                         imagewidth = mapTile.size,
                         probability =  monster.Chance/(double)totalMonsters,
                         properties = properties.ToArray(),
-                        imageObj = new TiledImage {source = mapTile.ImageFile, height = mapTile.size, width = mapTile.size}
+                        imageObj = new TiledImage {source = mapTile.Image, height = mapTile.size, width = mapTile.size}
                     };
 
                     tiles.Add(tile);
@@ -307,11 +307,11 @@ namespace ConvertMaps.Tiled
                 {
                     type = spell.Type.ToString(),
                     id = spell.Id,
-                    image = spellTile?.ImageFile, 
+                    image = spellTile?.Image, 
                     imageheight = size,
                     imagewidth = size,
                     properties = properties.ToArray(),
-                    imageObj = new TiledImage {source = spellTile?.ImageFile, height = size, width = size}
+                    imageObj = new TiledImage {source = spellTile?.Image, height = size, width = size}
                 };
                 
                 tiles.Add(tile);
@@ -355,11 +355,11 @@ namespace ConvertMaps.Tiled
                 {
                     type = item.Type.ToString(),
                     id = item.Id,
-                    image = itemTile?.ImageFile, 
+                    image = itemTile?.Image, 
                     imageheight = size,
                     imagewidth = size,
                     properties = properties.ToArray(),
-                    imageObj = new TiledImage {source = itemTile?.ImageFile, height = size, width = size}
+                    imageObj = new TiledImage {source = itemTile?.Image, height = size, width = size}
                 };
                 
                 tiles.Add(tile);

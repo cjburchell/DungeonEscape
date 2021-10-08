@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Monsters 19" tilewidth="32" tileheight="32" tilecount="4" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
-  <tile id="78" type="Bandit">
-    <image width="32" height="32" source="images/sprites/band.bmp" />
+  <tile id="74" type="Bandit">
+    <image width="32" height="32" source="images/sprites/band.png" />
     <properties>
       <property name="Biome" type="string" value="All" />
       <property name="Heath" type="int" value="1" />
@@ -12,8 +12,8 @@
       <property name="Heath" type="int" value="1" />
     </properties>
   </tile>
-  <tile id="84" type="Slime">
-    <image width="32" height="32" source="images/sprites/slime.bmp" />
+  <tile id="80" type="Slime">
+    <image width="32" height="32" source="images/sprites/slime.png" />
     <properties>
       <property name="Biome" type="string" value="All" />
       <property name="Heath" type="int" value="1" />
@@ -24,8 +24,8 @@
       <property name="Heath" type="int" value="1" />
     </properties>
   </tile>
-  <tile id="105" type="Goblin">
-    <image width="32" height="32" source="images/sprites/gob.bmp" />
+  <tile id="101" type="Goblin">
+    <image width="32" height="32" source="images/sprites/gob.png" />
     <properties>
       <property name="Biome" type="string" value="All" />
       <property name="Heath" type="int" value="1" />
@@ -36,8 +36,8 @@
       <property name="Heath" type="int" value="1" />
     </properties>
   </tile>
-  <tile id="112" type="Shrew">
-    <image width="32" height="32" source="images/sprites/shu.bmp" />
+  <tile id="108" type="Shrew">
+    <image width="32" height="32" source="images/sprites/shu.png" />
     <properties>
       <property name="Biome" type="string" value="All" />
       <property name="Heath" type="int" value="1" />

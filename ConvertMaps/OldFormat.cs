@@ -64,7 +64,9 @@ namespace ConvertMaps
 
             foreach (var tile in tileList.Tiles.Where(item => item.FileName != null))
             {
-                var gameTile = gameTiles.FirstOrDefault(item => item.ImageFile == $"images/tiles/{tile.FileName}");
+
+                var imageFileName = $"images/tiles/{Path.GetFileNameWithoutExtension(tile.FileName)}.png";
+                var gameTile = gameTiles.FirstOrDefault(item => item.Image == imageFileName);
                 if (gameTile != null)
                 {
                     gameTile.OldIds.Add(tile.OldId);
@@ -73,8 +75,7 @@ namespace ConvertMaps
                 {
                     gameTile = new TileInfo
                     {
-                        ImageFile = $"images/tiles/{tile.FileName}",
-                        Image = $"images/tiles/{Path.GetFileNameWithoutExtension(tile.FileName)}",
+                        Image = imageFileName,
                         Id = IdGenerator.New(),
                         OldIds = new List<int> {tile.OldId},
                         size = 32
@@ -398,7 +399,7 @@ namespace ConvertMaps
         private static TileInfo GetSprite(ICollection<TileInfo> mapTiles, ICollection<TileInfo> tiles, string image,
             int size = 32, string path="images/sprites/")
         {
-            var imagePath = $"{path}{Path.GetFileNameWithoutExtension(image)}";
+            var imagePath = $"{path}{Path.GetFileNameWithoutExtension(image)}.png";
 
             var info = mapTiles?.FirstOrDefault(item => item.Image == imagePath);
             if (info != null)
@@ -413,7 +414,6 @@ namespace ConvertMaps
                 {
                     Id = IdGenerator.New(),
                     OldImage = image,
-                    ImageFile = $"{path}{image}",
                     Image = imagePath,
                     size = size
                 };
@@ -525,87 +525,98 @@ namespace ConvertMaps
                             Id = sprite.Id, Name = "Ship", State = 1, Collideable = false, Type = SpriteType.Ship
                         }, 'w');
             }
-
+            
             var warp = GetWarp(tileId, exits);
-            if (warp != null)
+            if (warp == null)
             {
-                int spriteTileId;
-                var name = "Warp";
-                switch (tileId)
-                {
-                    case '1':
-                    case '2':
-                    case '3':
-                    case '4':
-                    case '5':
-                    case '6':
-                    case '7':
-                    case '8':
-                        name = $"Stairs to {warp.MapId}";
-                        spriteTileId = GetTileInfo(mapTiles, tiles, tileId)?.Id ?? 0;
-                        break;
-                    case '9':
-                        name = $"Warp to {warp.MapId}";
-                        spriteTileId = GetTileInfo(mapTiles, tiles, tileId)?.Id ?? 0;
-                        break;
-                    case 'I':
-                    case 'J':
-                    case 'K':
-                    case 'L':
-                    case 'M':
-                    case 'N':
-                    case 'O':
-                        name = $"Town {warp.MapId}";
-                        spriteTileId = GetTileInfo(mapTiles, tiles, tileId)?.Id ?? 0;
-                        break;
-                    case 'P':
-                    case 'Q':
-                    case 'R':
-                    case 'S':
-                        name = $"Shrine {warp.MapId}";
-                        spriteTileId = GetTileInfo(mapTiles, tiles, tileId)?.Id ?? 0;
-                        break;
-                    case 'T':
-                    case 'U':
-                    case 'V':
-                    case 'W':
-                    case 'X':
-                    case 'Y':
-                    case 'Z':
-                        name = $"Cave {warp.MapId}";
-                        spriteTileId = GetTileInfo(mapTiles, tiles, tileId)?.Id ?? 0;
-                        break;
-                    case 'a':
-                        name = $"Tower {warp.MapId}";
-                        spriteTileId = GetTileInfo(mapTiles, tiles, tileId)?.Id ?? 0;
-                        break;
-                    case 'c':
-                        name = $"Tower {warp.MapId}";
-                        spriteTileId = GetTileInfo(mapTiles, tiles, tileId)?.Id ?? 0;
-                        break;
-                    case 'z':
-                        name = $"Water Exit {warp.MapId}";
-                        spriteTileId = GetTileInfo(mapTiles, tiles, 'w')?.Id ?? 0;
-                        break;
-                    case 'y':
-                        name = $"Exit {warp.MapId}";
-                        spriteTileId = defaultTileId;
-                        break;
-                    default:
-                        Console.WriteLine($"Unknown Warp Type {tileId}");
-                        spriteTileId = GetTileInfo(mapTiles, tiles, tileId)?.Id ?? 0;
-                        break;
-                }
-
-                return (
-                    new Sprite
-                    {
-                        Id = spriteTileId, Type = SpriteType.Warp, Name = name, State = 0, Collideable = false,
-                        Warp = warp
-                    }, (char) 0);
+                return (null, (char) 0);
             }
 
-            return (null, (char) 0);
+            int spriteTileId;
+            var warpBackground = (char) 0;
+            var name = "Warp";
+            switch (tileId)
+            {
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                    name = $"Stairs up to {warp.MapId}";
+                    spriteTileId = GetSprite(mapTiles, tiles, "stairup.bmp")?.Id ?? 0;
+                    break;
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                    name = $"Stairs down to {warp.MapId}";
+                    spriteTileId = GetSprite(mapTiles, tiles, "stairdw.bmp")?.Id ?? 0;
+                    break;
+                case '9':
+                    name = $"Warp to {warp.MapId}";
+                    spriteTileId = GetSprite(mapTiles, tiles, "warp.bmp")?.Id ?? 0;
+                    break;
+                case 'I':
+                case 'J':
+                case 'K':
+                case 'L':
+                case 'M':
+                case 'N':
+                case 'O':
+                    name = $"Town {warp.MapId}";
+                    spriteTileId = GetSprite(mapTiles, tiles, "town.bmp")?.Id ?? 0;
+                    warpBackground = ' ';
+                    break;
+                case 'P':
+                case 'Q':
+                case 'R':
+                case 'S':
+                    name = $"Shrine {warp.MapId}";
+                    spriteTileId = GetSprite(mapTiles, tiles, "shrin.bmp")?.Id ?? 0;
+                    warpBackground = ' ';
+                    break;
+                case 'T':
+                case 'U':
+                case 'V':
+                case 'W':
+                case 'X':
+                case 'Y':
+                case 'Z':
+                    name = $"Cave {warp.MapId}";
+                    spriteTileId = GetSprite(mapTiles, tiles, "cave.bmp")?.Id ?? 0;
+                    warpBackground = ' ';
+                    break;
+                case 'a':
+                    name = $"Tower {warp.MapId}";
+                    spriteTileId = GetSprite(mapTiles, tiles, "tower.bmp")?.Id ?? 0;
+                    warpBackground = ' ';
+                    break;
+                case 'c':
+                    name = $"Tower {warp.MapId}";
+                    spriteTileId = GetSprite(mapTiles, tiles, "tower.bmp")?.Id ?? 0;
+                    warpBackground = ' ';
+                    break;
+                case 'z':
+                    name = $"Water Exit {warp.MapId}";
+                    spriteTileId = GetTileInfo(mapTiles, tiles, 'w')?.Id ?? 0;
+                    warpBackground = 'w';
+                    break;
+                case 'y':
+                    name = $"Exit {warp.MapId}";
+                    spriteTileId = defaultTileId;
+                    break;
+                default:
+                    Console.WriteLine($"Unknown Warp Type {tileId}");
+                    spriteTileId = GetTileInfo(mapTiles, tiles, tileId)?.Id ?? 0;
+                    break;
+            }
+
+            return (
+                new Sprite
+                {
+                    Id = spriteTileId, Type = SpriteType.Warp, Name = name, State = 0, Collideable = false,
+                    Warp = warp
+                }, warpBackground);
+
         }
 
         private static TileType GetTileType(char tileIndex)

@@ -11,9 +11,6 @@ namespace GameFile
         public List<int> OldIds { get; set; }
 
         [JsonIgnore]
-        public string ImageFile { get; set; }
-        
-        [JsonIgnore]
         public int size { get; set; }
         
         [JsonIgnore]

@@ -13,392 +13,392 @@
     </PropertyGroup>
     <ItemGroup>
         <None Remove="Icon.ico" />
-        <None Remove="Icon.bmp" />
-        <None Update="Content\images\items\BattleAxe.bmp">
+        <None Remove="Icon.png" />
+        <None Update="Content\images\items\BattleAxe.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\BlizzardSword.bmp">
+        <None Update="Content\images\items\BlizzardSword.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\BluePotion.bmp">
+        <None Update="Content\images\items\BluePotion.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\chainmail.bmp">
+        <None Update="Content\images\items\chainmail.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\Club.bmp">
+        <None Update="Content\images\items\Club.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\Dagger.bmp">
+        <None Update="Content\images\items\Dagger.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\fireball.bmp">
+        <None Update="Content\images\items\fireball.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\FireBlast.bmp">
+        <None Update="Content\images\items\FireBlast.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\FlameShield.bmp">
+        <None Update="Content\images\items\FlameShield.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\FullArmor.bmp">
+        <None Update="Content\images\items\FullArmor.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\GreenPotion.bmp">
+        <None Update="Content\images\items\GreenPotion.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\healspell.bmp">
+        <None Update="Content\images\items\healspell.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\HevyArmor.bmp">
+        <None Update="Content\images\items\HevyArmor.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\KingsArmor.bmp">
+        <None Update="Content\images\items\KingsArmor.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\KingsSword.bmp">
+        <None Update="Content\images\items\KingsSword.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\LargeShield.bmp">
+        <None Update="Content\images\items\LargeShield.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\LeatherA.bmp">
+        <None Update="Content\images\items\LeatherA.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\Lightning.bmp">
+        <None Update="Content\images\items\Lightning.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\LitBlast.bmp">
+        <None Update="Content\images\items\LitBlast.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\LongSword.bmp">
+        <None Update="Content\images\items\LongSword.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\Mace.bmp">
+        <None Update="Content\images\items\Mace.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\MagicArmor.bmp">
+        <None Update="Content\images\items\MagicArmor.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\outside.bmp">
+        <None Update="Content\images\items\outside.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\Potion.bmp">
+        <None Update="Content\images\items\Potion.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\PurplePotion.bmp">
+        <None Update="Content\images\items\PurplePotion.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\Robe.bmp">
+        <None Update="Content\images\items\Robe.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\ShortSord.bmp">
+        <None Update="Content\images\items\ShortSord.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\SmallShield.bmp">
+        <None Update="Content\images\items\SmallShield.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\SpikedArmor.bmp">
+        <None Update="Content\images\items\SpikedArmor.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\SPotion.bmp">
+        <None Update="Content\images\items\SPotion.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\TowerShield.bmp">
+        <None Update="Content\images\items\TowerShield.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\ant.bmp">
+        <None Update="Content\images\sprites\ant.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\ape.bmp">
+        <None Update="Content\images\sprites\ape.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\bab.bmp">
+        <None Update="Content\images\sprites\bab.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\band.bmp">
+        <None Update="Content\images\sprites\band.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\bbare.bmp">
+        <None Update="Content\images\sprites\bbare.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\bee.bmp">
+        <None Update="Content\images\sprites\bee.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\beet.bmp">
+        <None Update="Content\images\sprites\beet.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\bird.bmp">
+        <None Update="Content\images\sprites\bird.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\bore.bmp">
+        <None Update="Content\images\sprites\bore.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\cave.bmp">
+        <None Update="Content\images\sprites\cave.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\chest.bmp">
+        <None Update="Content\images\sprites\chest.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\cobra.bmp">
+        <None Update="Content\images\sprites\cobra.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\dblue.bmp">
+        <None Update="Content\images\sprites\dblue.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\defalt.bmp">
+        <None Update="Content\images\sprites\defalt.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\dgreen.bmp">
+        <None Update="Content\images\sprites\dgreen.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\dlav.bmp">
+        <None Update="Content\images\sprites\dlav.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\dog.bmp">
+        <None Update="Content\images\sprites\dog.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\door.bmp">
+        <None Update="Content\images\sprites\door.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\draco.bmp">
+        <None Update="Content\images\sprites\draco.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\eeal.bmp">
+        <None Update="Content\images\sprites\eeal.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\elf.bmp">
+        <None Update="Content\images\sprites\elf.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\fball.bmp">
+        <None Update="Content\images\sprites\fball.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\fly.bmp">
+        <None Update="Content\images\sprites\fly.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\gard.bmp">
+        <None Update="Content\images\sprites\gard.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\geco.bmp">
+        <None Update="Content\images\sprites\geco.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\gob.bmp">
+        <None Update="Content\images\sprites\gob.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\gris.bmp">
+        <None Update="Content\images\sprites\gris.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\healc.bmp">
+        <None Update="Content\images\sprites\healc.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\hgob.bmp">
+        <None Update="Content\images\sprites\hgob.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\karken.bmp">
+        <None Update="Content\images\sprites\karken.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\lav.bmp">
+        <None Update="Content\images\sprites\lav.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\lball.bmp">
+        <None Update="Content\images\sprites\lball.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\man.bmp">
+        <None Update="Content\images\sprites\man.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\mountan.bmp">
+        <None Update="Content\images\sprites\mountan.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\much.bmp">
+        <None Update="Content\images\sprites\much.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\muchc.bmp">
+        <None Update="Content\images\sprites\muchc.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\ochest.bmp">
+        <None Update="Content\images\sprites\ochest.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\oct.bmp">
+        <None Update="Content\images\sprites\oct.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\peed.bmp">
+        <None Update="Content\images\sprites\peed.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\player.bmp">
+        <None Update="Content\images\sprites\player.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\player1.bmp">
+        <None Update="Content\images\sprites\player1.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\player2.bmp">
+        <None Update="Content\images\sprites\player2.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\player2b.bmp">
+        <None Update="Content\images\sprites\player2b.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\player3.bmp">
+        <None Update="Content\images\sprites\player3.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\player3b.bmp">
+        <None Update="Content\images\sprites\player3b.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\player4.bmp">
+        <None Update="Content\images\sprites\player4.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\player4b.bmp">
+        <None Update="Content\images\sprites\player4b.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\polerb.bmp">
+        <None Update="Content\images\sprites\polerb.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\rsnake.bmp">
+        <None Update="Content\images\sprites\rsnake.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\sands.bmp">
+        <None Update="Content\images\sprites\sands.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\scorp.bmp">
+        <None Update="Content\images\sprites\scorp.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\sgost.bmp">
+        <None Update="Content\images\sprites\sgost.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\shark.bmp">
+        <None Update="Content\images\sprites\shark.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\Ship1b.bmp">
+        <None Update="Content\images\sprites\Ship1b.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\shrin.bmp">
+        <None Update="Content\images\sprites\shrin.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\shu.bmp">
+        <None Update="Content\images\sprites\shu.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\slime.bmp">
+        <None Update="Content\images\sprites\slime.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\slimeti.bmp">
+        <None Update="Content\images\sprites\slimeti.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\squid.bmp">
+        <None Update="Content\images\sprites\squid.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\ssnake.bmp">
+        <None Update="Content\images\sprites\ssnake.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\stairdw.bmp">
+        <None Update="Content\images\sprites\stairdw.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\stairup.bmp">
+        <None Update="Content\images\sprites\stairup.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\tower.bmp">
+        <None Update="Content\images\sprites\tower.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\town.bmp">
+        <None Update="Content\images\sprites\town.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\warp.bmp">
+        <None Update="Content\images\sprites\warp.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\weard.bmp">
+        <None Update="Content\images\sprites\weard.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\wido.bmp">
+        <None Update="Content\images\sprites\wido.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\wizc.bmp">
+        <None Update="Content\images\sprites\wizc.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\collom.bmp">
+        <None Update="Content\images\tiles\collom.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cwall10.bmp">
+        <None Update="Content\images\tiles\cwall10.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cwall11.bmp">
+        <None Update="Content\images\tiles\cwall11.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cwall12.bmp">
+        <None Update="Content\images\tiles\cwall12.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cwall13.bmp">
+        <None Update="Content\images\tiles\cwall13.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cwall14.bmp">
+        <None Update="Content\images\tiles\cwall14.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cwall15.bmp">
+        <None Update="Content\images\tiles\cwall15.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cwall2.bmp">
+        <None Update="Content\images\tiles\cwall2.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cwall3.bmp">
+        <None Update="Content\images\tiles\cwall3.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cwall4.bmp">
+        <None Update="Content\images\tiles\cwall4.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cwall5.bmp">
+        <None Update="Content\images\tiles\cwall5.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cwall6.bmp">
+        <None Update="Content\images\tiles\cwall6.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cwall7.bmp">
+        <None Update="Content\images\tiles\cwall7.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cwall8.bmp">
+        <None Update="Content\images\tiles\cwall8.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cwall9.bmp">
+        <None Update="Content\images\tiles\cwall9.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\defalt.bmp">
+        <None Update="Content\images\tiles\defalt.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\Floor.bmp">
+        <None Update="Content\images\tiles\Floor.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\fstars.bmp">
+        <None Update="Content\images\tiles\fstars.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\grbrick.bmp">
+        <None Update="Content\images\tiles\grbrick.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\ice1.bmp">
+        <None Update="Content\images\tiles\ice1.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\ice2.bmp">
+        <None Update="Content\images\tiles\ice2.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\Ship.bmp">
+        <None Update="Content\images\tiles\Ship.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\sky.bmp">
+        <None Update="Content\images\tiles\sky.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\stairdw.bmp">
+        <None Update="Content\images\tiles\stairdw.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\stairup.bmp">
+        <None Update="Content\images\tiles\stairup.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\wall2.bmp">
+        <None Update="Content\images\tiles\wall2.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\wall2y.bmp">
+        <None Update="Content\images\tiles\wall2y.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\wall3.bmp">
+        <None Update="Content\images\tiles\wall3.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\warp.bmp">
+        <None Update="Content\images\tiles\warp.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\wground.bmp">
+        <None Update="Content\images\tiles\wground.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\map16.tmx">
@@ -572,46 +572,46 @@
         <None Update="Content\monsters0.tsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\brick.bmp">
+        <None Update="Content\images\tiles\brick.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\water.bmp">
+        <None Update="Content\images\tiles\water.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\tree.bmp">
+        <None Update="Content\images\tiles\tree.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\snow.bmp">
+        <None Update="Content\images\tiles\snow.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\mountan.bmp">
+        <None Update="Content\images\tiles\mountan.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\grass.bmp">
+        <None Update="Content\images\tiles\grass.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\shrin.bmp">
+        <None Update="Content\images\tiles\shrin.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\Ship1.bmp">
+        <None Update="Content\images\sprites\Ship1.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\desert.bmp">
+        <None Update="Content\images\tiles\desert.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\town.bmp">
+        <None Update="Content\images\tiles\town.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\tower.bmp">
+        <None Update="Content\images\tiles\tower.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\swamp.bmp">
+        <None Update="Content\images\tiles\swamp.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cave.bmp">
+        <None Update="Content\images\tiles\cave.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\brige.bmp">
+        <None Update="Content\images\tiles\brige.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\sprites\playeranimation.png">
@@ -626,7 +626,7 @@
         <None Update="Content\map15.tmx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\cwall1.bmp">
+        <None Update="Content\images\tiles\cwall1.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\Sound\DRUMC0.wav">
@@ -641,10 +641,10 @@
         <None Update="Content\Sound\WOUND.wav">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\wall1.bmp">
+        <None Update="Content\images\tiles\wall1.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\wall1y.bmp">
+        <None Update="Content\images\tiles\wall1y.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\nez\effects\transitions\Squares.mgfxo">

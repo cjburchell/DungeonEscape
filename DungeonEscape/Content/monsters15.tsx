@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Monsters 15" tilewidth="64" tileheight="64" tilecount="2" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
-  <tile id="123" type="Polar_Bear">
-    <image width="64" height="64" source="images/sprites/polerb.bmp" />
+  <tile id="121" type="Polar_Bear">
+    <image width="64" height="64" source="images/sprites/polerb.png" />
     <properties>
       <property name="Biome" type="string" value="All" />
       <property name="Heath" type="int" value="8" />
@@ -12,8 +12,8 @@
       <property name="Heath" type="int" value="8" />
     </properties>
   </tile>
-  <tile id="87" type="SlimeTI">
-    <image width="32" height="32" source="images/sprites/slimeti.bmp" />
+  <tile id="83" type="SlimeTI">
+    <image width="32" height="32" source="images/sprites/slimeti.png" />
     <properties>
       <property name="Biome" type="string" value="All" />
       <property name="Heath" type="int" value="20" />

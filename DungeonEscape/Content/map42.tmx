@@ -10,7 +10,7 @@
     <tile id="13">
       <image width="32" height="32" source="images/tiles/wall1.png" />
     </tile>
-    <tile id="123">
+    <tile id="124">
       <image width="32" height="32" source="images/sprites/ochest.png" />
     </tile>
     <tile id="21">
@@ -42,49 +42,49 @@
     </properties>
   </layer>
   <objectgroup id="4" name="items" width="0" height="0" type="objectgroup" visible="true" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="0" name="Open Chest" type="Chest" x="224" y="256" rotation="0" width="32" height="32" gid="124" visible="true">
+    <object id="0" name="Open Chest" type="Chest" x="224" y="256" rotation="0" width="32" height="32" gid="125" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Open Chest" type="Chest" x="256" y="256" rotation="0" width="32" height="32" gid="124" visible="true">
+    <object id="0" name="Open Chest" type="Chest" x="256" y="256" rotation="0" width="32" height="32" gid="125" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Open Chest" type="Chest" x="192" y="288" rotation="0" width="32" height="32" gid="124" visible="true">
+    <object id="0" name="Open Chest" type="Chest" x="192" y="288" rotation="0" width="32" height="32" gid="125" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Open Chest" type="Chest" x="224" y="288" rotation="0" width="32" height="32" gid="124" visible="true">
+    <object id="0" name="Open Chest" type="Chest" x="224" y="288" rotation="0" width="32" height="32" gid="125" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Open Chest" type="Chest" x="256" y="288" rotation="0" width="32" height="32" gid="124" visible="true">
+    <object id="0" name="Open Chest" type="Chest" x="256" y="288" rotation="0" width="32" height="32" gid="125" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Open Chest" type="Chest" x="192" y="320" rotation="0" width="32" height="32" gid="124" visible="true">
+    <object id="0" name="Open Chest" type="Chest" x="192" y="320" rotation="0" width="32" height="32" gid="125" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Open Chest" type="Chest" x="224" y="320" rotation="0" width="32" height="32" gid="124" visible="true">
+    <object id="0" name="Open Chest" type="Chest" x="224" y="320" rotation="0" width="32" height="32" gid="125" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Open Chest" type="Chest" x="256" y="320" rotation="0" width="32" height="32" gid="124" visible="true">
+    <object id="0" name="Open Chest" type="Chest" x="256" y="320" rotation="0" width="32" height="32" gid="125" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />

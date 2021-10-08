@@ -321,7 +321,7 @@ namespace ConvertMaps
 
                 if (spriteType == SpriteType.Monster)
                 {
-                    var spriteInfo = GetSprite(map.RandomMonstersTileInfo, tiles, image, size * 32);
+                    var spriteInfo = GetSprite(map.RandomMonstersTileInfo, tiles, image, size * 32, "images/monsters/");
                     var monster = map.RandomMonsters.FirstOrDefault(item =>
                         item.Id == spriteInfo.Id && item.Name == name && item.Biome == biome);
                     if (monster == null)
@@ -407,13 +407,12 @@ namespace ConvertMaps
                 return info;
             }
 
-            var gameTileInfo = tiles.FirstOrDefault(item => item.OldImage == image);
+            var gameTileInfo = tiles.FirstOrDefault(item => item.Image == imagePath);
             if (gameTileInfo == null)
             {
                 gameTileInfo = new TileInfo
                 {
                     Id = IdGenerator.New(),
-                    OldImage = image,
                     Image = imagePath,
                     size = size
                 };

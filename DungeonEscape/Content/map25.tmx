@@ -19,7 +19,7 @@
     <tile id="21">
       <image width="32" height="32" source="images/tiles/brick.png" />
     </tile>
-    <tile id="122">
+    <tile id="123">
       <image width="32" height="32" source="images/sprites/stairup.png" />
     </tile>
   </tileset>
@@ -238,7 +238,7 @@
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Stairs up to 40" type="Warp" x="448" y="480" rotation="0" width="32" height="32" gid="123" visible="true">
+    <object id="0" name="Stairs up to 40" type="Warp" x="448" y="480" rotation="0" width="32" height="32" gid="124" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -247,7 +247,7 @@
         <property name="WarpMapY" type="int" value="5" />
       </properties>
     </object>
-    <object id="0" name="Stairs up to 40" type="Warp" x="736" y="608" rotation="0" width="32" height="32" gid="123" visible="true">
+    <object id="0" name="Stairs up to 40" type="Warp" x="736" y="608" rotation="0" width="32" height="32" gid="124" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -256,7 +256,7 @@
         <property name="WarpMapY" type="int" value="9" />
       </properties>
     </object>
-    <object id="0" name="Stairs up to 40" type="Warp" x="416" y="736" rotation="0" width="32" height="32" gid="123" visible="true">
+    <object id="0" name="Stairs up to 40" type="Warp" x="416" y="736" rotation="0" width="32" height="32" gid="124" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />

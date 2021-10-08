@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Tiles" tilewidth="96" tileheight="96" tilecount="123" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
+<tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Tiles" tilewidth="96" tileheight="96" tilecount="125" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
   <tile id="1">
     <image width="32" height="32" source="images/tiles/grass.png" />
   </tile>
@@ -217,124 +217,124 @@
     <image width="32" height="32" source="images/sprites/cave.png" />
   </tile>
   <tile id="73">
-    <image width="64" height="64" source="images/sprites/peed.png" />
+    <image width="64" height="64" source="images/monsters/peed.png" />
   </tile>
   <tile id="74">
-    <image width="32" height="32" source="images/sprites/band.png" />
+    <image width="32" height="32" source="images/monsters/band.png" />
   </tile>
   <tile id="75">
-    <image width="32" height="32" source="images/sprites/bee.png" />
+    <image width="32" height="32" source="images/monsters/bee.png" />
   </tile>
   <tile id="76">
-    <image width="32" height="32" source="images/sprites/beet.png" />
+    <image width="32" height="32" source="images/monsters/beet.png" />
   </tile>
   <tile id="77">
-    <image width="64" height="64" source="images/sprites/bore.png" />
+    <image width="64" height="64" source="images/monsters/bore.png" />
   </tile>
   <tile id="78">
-    <image width="32" height="32" source="images/sprites/elf.png" />
+    <image width="32" height="32" source="images/monsters/elf.png" />
   </tile>
   <tile id="79">
-    <image width="32" height="32" source="images/sprites/fly.png" />
+    <image width="32" height="32" source="images/monsters/fly.png" />
   </tile>
   <tile id="80">
-    <image width="32" height="32" source="images/sprites/slime.png" />
+    <image width="32" height="32" source="images/monsters/slime.png" />
   </tile>
   <tile id="81">
-    <image width="32" height="32" source="images/sprites/ant.png" />
+    <image width="32" height="32" source="images/monsters/ant.png" />
   </tile>
   <tile id="82">
-    <image width="32" height="32" source="images/sprites/defalt.png" />
+    <image width="32" height="32" source="images/monsters/defalt.png" />
   </tile>
   <tile id="83">
-    <image width="32" height="32" source="images/sprites/slimeti.png" />
+    <image width="32" height="32" source="images/monsters/slimeti.png" />
   </tile>
   <tile id="84">
-    <image width="96" height="96" source="images/sprites/dblue.png" />
+    <image width="96" height="96" source="images/monsters/dblue.png" />
   </tile>
   <tile id="85">
-    <image width="32" height="32" source="images/sprites/ssnake.png" />
+    <image width="32" height="32" source="images/monsters/ssnake.png" />
   </tile>
   <tile id="86">
-    <image width="64" height="64" source="images/sprites/weard.png" />
+    <image width="64" height="64" source="images/monsters/weard.png" />
   </tile>
   <tile id="87">
-    <image width="32" height="32" source="images/sprites/eeal.png" />
+    <image width="32" height="32" source="images/monsters/eeal.png" />
   </tile>
   <tile id="88">
-    <image width="32" height="32" source="images/sprites/shark.png" />
+    <image width="32" height="32" source="images/monsters/shark.png" />
   </tile>
   <tile id="89">
-    <image width="64" height="64" source="images/sprites/oct.png" />
+    <image width="64" height="64" source="images/monsters/oct.png" />
   </tile>
   <tile id="90">
-    <image width="64" height="64" source="images/sprites/man.png" />
+    <image width="64" height="64" source="images/monsters/man.png" />
   </tile>
   <tile id="91">
-    <image width="96" height="96" source="images/sprites/Squid.png" />
+    <image width="96" height="96" source="images/monsters/Squid.png" />
   </tile>
   <tile id="92">
-    <image width="96" height="96" source="images/sprites/karken.png" />
+    <image width="96" height="96" source="images/monsters/karken.png" />
   </tile>
   <tile id="93">
-    <image width="96" height="96" source="images/sprites/lav.png" />
+    <image width="96" height="96" source="images/monsters/lav.png" />
   </tile>
   <tile id="94">
-    <image width="32" height="32" source="images/sprites/geco.png" />
+    <image width="32" height="32" source="images/monsters/geco.png" />
   </tile>
   <tile id="95">
-    <image width="32" height="32" source="images/sprites/Cobra.png" />
+    <image width="32" height="32" source="images/monsters/Cobra.png" />
   </tile>
   <tile id="96">
-    <image width="32" height="32" source="images/sprites/rsnake.png" />
+    <image width="32" height="32" source="images/monsters/rsnake.png" />
   </tile>
   <tile id="97">
-    <image width="32" height="32" source="images/sprites/sgost.png" />
+    <image width="32" height="32" source="images/monsters/sgost.png" />
   </tile>
   <tile id="98">
-    <image width="64" height="64" source="images/sprites/scorp.png" />
+    <image width="64" height="64" source="images/monsters/scorp.png" />
   </tile>
   <tile id="99">
-    <image width="32" height="32" source="images/sprites/sands.png" />
+    <image width="32" height="32" source="images/monsters/sands.png" />
   </tile>
   <tile id="100">
-    <image width="32" height="32" source="images/sprites/bird.png" />
+    <image width="32" height="32" source="images/monsters/bird.png" />
   </tile>
   <tile id="101">
-    <image width="32" height="32" source="images/sprites/gob.png" />
+    <image width="32" height="32" source="images/monsters/gob.png" />
   </tile>
   <tile id="102">
-    <image width="32" height="32" source="images/sprites/draco.png" />
+    <image width="32" height="32" source="images/monsters/draco.png" />
   </tile>
   <tile id="103">
-    <image width="96" height="96" source="images/sprites/dlav.png" />
+    <image width="96" height="96" source="images/monsters/dlav.png" />
   </tile>
   <tile id="104">
-    <image width="64" height="64" source="images/sprites/ape.png" />
+    <image width="64" height="64" source="images/monsters/ape.png" />
   </tile>
   <tile id="105">
-    <image width="64" height="64" source="images/sprites/bab.png" />
+    <image width="64" height="64" source="images/monsters/bab.png" />
   </tile>
   <tile id="106">
-    <image width="64" height="64" source="images/sprites/bbare.png" />
+    <image width="64" height="64" source="images/monsters/bbare.png" />
   </tile>
   <tile id="107">
-    <image width="32" height="32" source="images/sprites/hgob.png" />
+    <image width="32" height="32" source="images/monsters/hgob.png" />
   </tile>
   <tile id="108">
-    <image width="32" height="32" source="images/sprites/shu.png" />
+    <image width="32" height="32" source="images/monsters/shu.png" />
   </tile>
   <tile id="109">
-    <image width="32" height="32" source="images/sprites/wido.png" />
+    <image width="32" height="32" source="images/monsters/wido.png" />
   </tile>
   <tile id="110">
-    <image width="32" height="32" source="images/sprites/dog.png" />
+    <image width="32" height="32" source="images/monsters/dog.png" />
   </tile>
   <tile id="111">
-    <image width="64" height="64" source="images/sprites/gris.png" />
+    <image width="64" height="64" source="images/monsters/gris.png" />
   </tile>
   <tile id="112">
-    <image width="96" height="96" source="images/sprites/dGreen.png" />
+    <image width="96" height="96" source="images/monsters/dGreen.png" />
   </tile>
   <tile id="113">
     <image width="32" height="32" source="images/sprites/chest.png" />
@@ -361,12 +361,18 @@
     <image width="32" height="32" source="images/sprites/stairdw.png" />
   </tile>
   <tile id="121">
-    <image width="64" height="64" source="images/sprites/polerb.png" />
+    <image width="32" height="32" source="images/sprites/shu.png" />
   </tile>
   <tile id="122">
-    <image width="32" height="32" source="images/sprites/stairup.png" />
+    <image width="64" height="64" source="images/monsters/polerb.png" />
   </tile>
   <tile id="123">
+    <image width="32" height="32" source="images/sprites/stairup.png" />
+  </tile>
+  <tile id="124">
     <image width="32" height="32" source="images/sprites/ochest.png" />
+  </tile>
+  <tile id="125">
+    <image width="96" height="96" source="images/sprites/dlav.png" />
   </tile>
 </tileset>

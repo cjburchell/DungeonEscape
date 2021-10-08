@@ -12,8 +12,5 @@ namespace GameFile
 
         [JsonIgnore]
         public int size { get; set; }
-        
-        [JsonIgnore]
-        public string OldImage { get; set; }
     }
 }

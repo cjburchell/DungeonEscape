@@ -34,7 +34,7 @@
     <tile id="119">
       <image width="32" height="32" source="images/sprites/door.png" />
     </tile>
-    <tile id="122">
+    <tile id="123">
       <image width="32" height="32" source="images/sprites/stairup.png" />
     </tile>
   </tileset>
@@ -108,7 +108,7 @@
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="0" name="Stairs up to 43" type="Warp" x="544" y="768" rotation="0" width="32" height="32" gid="123" visible="true">
+    <object id="0" name="Stairs up to 43" type="Warp" x="544" y="768" rotation="0" width="32" height="32" gid="124" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />

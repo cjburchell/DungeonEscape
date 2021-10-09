@@ -220,7 +220,8 @@ namespace ConvertMaps
                     var tile = new Tile
                     {
                         Position = {X = xPos, Y = yPos},
-                        Type = GetTileType(tileId)
+                        Type = GetTileType(tileId),
+                        Biome = GetTileBiome(tileId)
                     };
 
 
@@ -618,6 +619,30 @@ namespace ConvertMaps
 
         }
 
+        private static Biome GetTileBiome(char tileIndex)
+        {
+            switch (tileIndex)
+            {
+                case (char) 0:
+                case (char) 10:
+                case 'B':
+                case 'w':
+                    return Biome.Water;
+                case 'f':
+                    return Biome.Hills;
+                case '*':
+                    return Biome.Desert;
+                case 't':
+                    return Biome.Forest;
+                case '^':
+                    return Biome.Swamp;
+                case ' ':
+                    return Biome.Grassland;
+                default:
+                    return Biome.None;
+            }
+        }
+
         private static TileType GetTileType(char tileIndex)
         {
             switch (tileIndex)
@@ -677,6 +702,7 @@ namespace ConvertMaps
                 case ' ':
                 case '.':
                 case 'i':
+                case '^':
                     return TileType.Ground;
                 default:
                     return TileType.Wall;

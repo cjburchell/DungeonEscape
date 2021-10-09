@@ -10,5 +10,8 @@ namespace GameFile
 
         [JsonConverter(typeof(StringEnumConverter))]
         public TileType Type { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public Biome Biome { get; set; }
     }
 }

@@ -9,5 +9,6 @@
         Hills,
         Desert,
         Swamp,
+        None,
     }
 }

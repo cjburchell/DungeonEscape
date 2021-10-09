@@ -2,7 +2,6 @@
 .idea
 obj
 
-*.xnb
 bin
 
 DungeonEscape/data/maps/images

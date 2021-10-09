@@ -13,6 +13,14 @@ namespace ConvertMaps.Tiled
             var floor = new List<int>();
             var water = new List<int>();
             var wall = new List<int>();
+            
+            var waterBiome = new List<int>();
+            var hills = new List<int>();
+            var desert = new List<int>();
+            var forest = new List<int>();
+            var swamp = new List<int>();
+            var grassland = new List<int>();
+
             for (var y = 0; y < map.Width; y++)
             {
                 for (var x = 0; x < map.Height; x++)
@@ -21,6 +29,17 @@ namespace ConvertMaps.Tiled
                     floor.Add(tile != null && tile.Type == TileType.Ground ? tile.Id + offset : 0);
                     water.Add(tile != null && tile.Type == TileType.Water ? tile.Id + offset : 0);
                     wall.Add(tile != null && tile.Type == TileType.Wall ? tile.Id + offset : 0);
+                    if (map.Id != 0)
+                    {
+                        continue;
+                    }
+
+                    waterBiome.Add(tile != null && tile.Biome == Biome.Water ? tile.Id + offset : 0);
+                    hills.Add(tile != null && tile.Biome == Biome.Hills ? tile.Id + offset : 0);
+                    desert.Add(tile != null && tile.Biome == Biome.Desert ? tile.Id + offset : 0);
+                    forest.Add(tile != null && tile.Biome == Biome.Forest ? tile.Id + offset : 0);
+                    swamp.Add(tile != null && tile.Biome == Biome.Swamp ? tile.Id + offset : 0);
+                    grassland.Add(tile != null && tile.Biome == Biome.Grassland ? tile.Id + offset : 0);
                 }
             }
 
@@ -74,7 +93,35 @@ namespace ConvertMaps.Tiled
                     objects.Add(obj);
                 }
             }
-
+            
+            var layers = new List<TiledLayer>();
+            var id = 1;
+            layers.Add(ToTiledLayer(id++, "floor", floor, map, TileType.Ground));
+            layers.Add(ToTiledLayer(id++, "water", water, map, TileType.Water));
+            layers.Add(ToTiledLayer(id++, "wall",wall, map, TileType.Wall));
+            if (map.Id == 0)
+            {
+                layers.Add(ToTiledLayer(id++, "biome_water", waterBiome,  map, TileType.Ground, false));
+                layers.Add(ToTiledLayer(id++, "biome_hills", hills,  map, TileType.Ground, false));
+                layers.Add(ToTiledLayer(id++, "biome_desert", desert,  map, TileType.Ground, false));
+                layers.Add(ToTiledLayer(id++, "biome_forest", forest,  map, TileType.Ground, false));
+                layers.Add(ToTiledLayer(id++, "biome_swamp", swamp,  map, TileType.Ground, false));
+                layers.Add(ToTiledLayer(id++, "biome_grassland", grassland,  map, TileType.Ground, false));
+            }
+            
+            layers.Add(ToObjectGroup(id++, "items", objects));
+            layers.Add(ToObjectGroup(id++,"sprites", sprites));
+            layers.Add(ToObjectGroup(id,"objects", new List<TiledObject>(){new TiledObject
+            {
+                name = "spawn",
+                x = map.DefaultStart.X * 32,
+                y = (map.DefaultStart.Y+1) * 32,
+                width = 32,
+                height = 32,
+                type = "Spawn",
+                visible = false,
+            }}, false));
+            
             var tiledMap = new TiledMap
             {
                 height = map.Height,
@@ -87,122 +134,52 @@ namespace ConvertMaps.Tiled
                 type = "map",
                 version = "1.6",
                 tilesets = new[] {ToTileSet(map.TileInfo, $"Map Tiles")},
-                layers = new TiledLayer[]
-                {
-                    new TiledLayerGroup
-                    {
-                        height = map.Height,
-                        width = map.Width,
-                        id = 1,
-                        name = "floor",
-                        visible = true,
-                        opacity = 1,
-                        type = "tilelayer",
-                        x = 0,
-                        y = 0,
-                        data = floor.ToArray(),
-                        layerData = new TiledLayerData
-                        {
-                            data = string.Join(",", floor)
-                        },
-                        properties = new[]
-                        {
-                            new TiledProperty {name = "LayerType", type = "string", value = TileType.Ground.ToString()},
-                        }
-                    },
-                    new TiledLayerGroup
-                    {
-                        height = map.Height,
-                        width = map.Width,
-                        id = 2,
-                        name = "water",
-                        visible = true,
-                        opacity = 1,
-                        type = "tilelayer",
-                        x = 0,
-                        y = 0,
-                        data = water.ToArray(),
-                        layerData = new TiledLayerData
-                        {
-                            data = string.Join(",", water)
-                        },
-                        properties = new[]
-                        {
-                            new TiledProperty {name = "LayerType", type = "string", value = TileType.Water.ToString()},
-                        }
-                    },
-                    new TiledLayerGroup
-                    {
-                        height = map.Height,
-                        width = map.Width,
-                        id = 3,
-                        name = "wall",
-                        visible = true,
-                        opacity = 1,
-                        type = "tilelayer",
-                        x = 0,
-                        y = 0,
-                        data = wall.ToArray(),
-                        layerData = new TiledLayerData
-                        {
-                            data = string.Join(",", wall)
-                        },
-                        properties = new[]
-                        {
-                            new TiledProperty {name = "LayerType", type = "string", value = TileType.Wall.ToString()},
-                        }
-                    },
-                    new ObjectGroup
-                    {
-                        id = 4,
-                        name = "items",
-                        type = "objectgroup",
-                        visible = true,
-                        opacity = 1,
-                        x = 0,
-                        y = 0,
-                        objects = objects.ToArray(),
-                        draworder = "topdown",
-                    },
-                    new ObjectGroup
-                    {
-                        id = 5,
-                        name = "sprites",
-                        type = "objectgroup",
-                        visible = true,
-                        opacity = 1,
-                        x = 0,
-                        y = 0,
-                        objects = sprites.ToArray(),
-                        draworder = "topdown"
-                    },
-                    new ObjectGroup
-                    {
-                        id = 6,
-                        name = "objects",
-                        type = "objectgroup",
-                        visible = false,
-                        opacity = 1,
-                        x = 0,
-                        y = 0,
-                        objects =new []{
-                            new TiledObject
-                            {
-                                name = "spawn",
-                                x = map.DefaultStart.X * 32,
-                                y = (map.DefaultStart.Y+1) * 32,
-                                width = 32,
-                                height = 32,
-                                type = "Spawn",
-                                visible = false,
-                            }},
-                        draworder = "topdown"
-                    }
-                }
+                layers = layers.ToArray()
             };
 
 
             return tiledMap;
+        }
+
+        private static TiledLayer ToObjectGroup(int id, string name, List<TiledObject> objects, bool visible = true)
+        {
+            return new ObjectGroup
+            {
+                id = id,
+                name = name,
+                type = "objectgroup",
+                visible = visible ? 1: 0,
+                opacity = 1,
+                x = 0,
+                y = 0,
+                objects = objects.ToArray(),
+                draworder = "topdown"
+            };
+        }
+
+        private static TiledLayer ToTiledLayer(int id, string name, List<int> tiles, Map map, TileType type, bool visible = true )
+        {
+            return new TiledLayerGroup
+            {
+                height = map.Height,
+                width = map.Width,
+                id = id,
+                name = name,
+                visible = visible ? 1: 0,
+                opacity = 1,
+                type = "tilelayer",
+                x = 0,
+                y = 0,
+                data = tiles.ToArray(),
+                layerData = new TiledLayerData
+                {
+                    data = string.Join(",", tiles)
+                },
+                properties = new[]
+                {
+                    new TiledProperty {name = "LayerType", type = "string", value = TileType.Ground.ToString()},
+                }
+            };
         }
 
         public static TiledTileset ToTileSet(IEnumerable<TileInfo> mapTileInfo, string name)

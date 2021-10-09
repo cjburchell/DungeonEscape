@@ -80,7 +80,7 @@ namespace ConvertMaps.Tiled
         /// <summary>
         /// Defines if the layer is visible in the editor
         /// </summary>
-        [XmlAttribute] public bool visible;
+        [XmlAttribute] public int visible;
         /// <summary>
         /// Is true when the layer is locked
         /// </summary>

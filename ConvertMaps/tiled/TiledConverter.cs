@@ -14,12 +14,13 @@ namespace ConvertMaps.Tiled
             var water = new List<int>();
             var wall = new List<int>();
             
-            var waterBiome = new List<int>();
-            var hills = new List<int>();
-            var desert = new List<int>();
-            var forest = new List<int>();
-            var swamp = new List<int>();
-            var grassland = new List<int>();
+            //var waterBiome = new List<int>();
+            //var hills = new List<int>();
+            //var desert = new List<int>();
+            //var forest = new List<int>();
+            //var swamp = new List<int>();
+            //var grassland = new List<int>();
+            var biomes = new List<int>();
 
             for (var y = 0; y < map.Width; y++)
             {
@@ -34,12 +35,13 @@ namespace ConvertMaps.Tiled
                         continue;
                     }
 
-                    waterBiome.Add(tile != null && tile.Biome == Biome.Water ? tile.Id + offset : 0);
-                    hills.Add(tile != null && tile.Biome == Biome.Hills ? tile.Id + offset : 0);
-                    desert.Add(tile != null && tile.Biome == Biome.Desert ? tile.Id + offset : 0);
-                    forest.Add(tile != null && tile.Biome == Biome.Forest ? tile.Id + offset : 0);
-                    swamp.Add(tile != null && tile.Biome == Biome.Swamp ? tile.Id + offset : 0);
-                    grassland.Add(tile != null && tile.Biome == Biome.Grassland ? tile.Id + offset : 0);
+                    //waterBiome.Add(tile != null && tile.Biome == Biome.Water ? tile.Id + offset : 0);
+                    //hills.Add(tile != null && tile.Biome == Biome.Hills ? tile.Id + offset : 0);
+                    //desert.Add(tile != null && tile.Biome == Biome.Desert ? tile.Id + offset : 0);
+                    //forest.Add(tile != null && tile.Biome == Biome.Forest ? tile.Id + offset : 0);
+                    //swamp.Add(tile != null && tile.Biome == Biome.Swamp ? tile.Id + offset : 0);
+                    //grassland.Add(tile != null && tile.Biome == Biome.Grassland ? tile.Id + offset : 0);
+                    biomes.Add(tile != null && tile.Biome != Biome.None ? (int) tile.Biome : 0);
                 }
             }
 
@@ -101,12 +103,13 @@ namespace ConvertMaps.Tiled
             layers.Add(ToTiledLayer(id++, "wall",wall, map, TileType.Wall));
             if (map.Id == 0)
             {
-                layers.Add(ToTiledLayer(id++, "biome_water", waterBiome,  map, TileType.Ground, false));
-                layers.Add(ToTiledLayer(id++, "biome_hills", hills,  map, TileType.Ground, false));
-                layers.Add(ToTiledLayer(id++, "biome_desert", desert,  map, TileType.Ground, false));
-                layers.Add(ToTiledLayer(id++, "biome_forest", forest,  map, TileType.Ground, false));
-                layers.Add(ToTiledLayer(id++, "biome_swamp", swamp,  map, TileType.Ground, false));
-                layers.Add(ToTiledLayer(id++, "biome_grassland", grassland,  map, TileType.Ground, false));
+                //layers.Add(ToTiledLayer(id++, "biome_water", waterBiome,  map, TileType.Ground, false));
+                //layers.Add(ToTiledLayer(id++, "biome_hills", hills,  map, TileType.Ground, false));
+                //layers.Add(ToTiledLayer(id++, "biome_desert", desert,  map, TileType.Ground, false));
+                //layers.Add(ToTiledLayer(id++, "biome_forest", forest,  map, TileType.Ground, false));
+                //layers.Add(ToTiledLayer(id++, "biome_swamp", swamp,  map, TileType.Ground, false));
+                //layers.Add(ToTiledLayer(id++, "biome_grassland", grassland,  map, TileType.Ground, false));
+                layers.Add(ToTiledLayer(id++, "biomes", biomes,  map, TileType.Ground, false));
             }
             
             layers.Add(ToObjectGroup(id++, "items", objects));

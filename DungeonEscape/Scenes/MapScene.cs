@@ -35,6 +35,7 @@ namespace DungeonEscape.Scene
             var tiledEntity = this.CreateEntity("map");
             var tiledMapRenderer =  tiledEntity.AddComponent(new TiledMapRenderer(map, new[] {"wall", "water"}));
             tiledMapRenderer.RenderLayer = 10;
+            tiledMapRenderer.SetLayersToRender(new[]{ "wall", "water", "floor", "items", "sprites"});
             map.GetObjectGroup("objects").Visible = false;
 
             var objects = map.GetObjectGroup("items");

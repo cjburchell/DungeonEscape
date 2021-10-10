@@ -2,11 +2,13 @@
 {
     public static class IdGenerator
     {
-        private static int TileId = 1;
+        private static int tileId = 1;
 
         public static int New()
         {
-            return TileId++;
+            return tileId++;
         }
+
+        public static int NextTileId => tileId;
     }
 }

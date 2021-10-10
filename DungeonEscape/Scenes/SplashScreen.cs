@@ -7,25 +7,29 @@ namespace DungeonEscape.Scene
 {
     public class SplashScreen : Nez.Scene
     {
+        private bool inTransistion;
+        
         public override void Initialize()
         {
-            this.AddRenderer(new DefaultRenderer());
             this.SetDesignResolution(640, 480, SceneResolutionPolicy.ShowAll);
             var texture = this.Content.LoadTexture("Content/images/ui/splash.png");
-            var splash = this.CreateEntity("splash", Vector2.Zero);
-            splash.Components.Add(new SpriteRenderer(new Sprite(texture, 0,0,640,480)));
+            var splash = this.CreateEntity("splash");
+            var renderer = new SpriteRenderer(new Sprite(texture)) {Origin = Vector2.Zero};
+            splash.AddComponent(renderer);
+
             splash.Position = Vector2.Zero;
             base.Initialize();
         }
 
         public override void Update()
         {
-            if (Time.TimeSinceSceneLoad > 10.0f)
-            {
-               MapScene.SetMap();
-            }
-            
             base.Update();
+
+            if (!inTransistion && Time.TimeSinceSceneLoad > 3.0f)
+            {
+                inTransistion = true;
+                MapScene.SetMap();
+            }
         }
     }
 }

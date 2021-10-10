@@ -189,7 +189,7 @@ namespace DungeonEscape.Components
                 }
             }
 
-            
+            this.IsInTransition = true;
             MapScene.SetMap(mapId, point);
         }
 

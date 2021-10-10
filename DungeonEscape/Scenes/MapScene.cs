@@ -13,7 +13,8 @@ namespace DungeonEscape.Scene
         public const int screenHeight = 15;
         private readonly int mapId;
         private readonly Vector2? start;
-        private readonly IGame gameState;    
+        private readonly IGame gameState;
+        private PlayerComponent playerComponent;
 
         public MapScene(IGame game, int mapId, Vector2? start = null)
         {
@@ -94,7 +95,7 @@ namespace DungeonEscape.Scene
 
             Console.WriteLine();
             var playerEntity = this.CreateEntity("player", spawn);
-            playerEntity.AddComponent(new PlayerComponent(this.gameState));
+            playerComponent = playerEntity.AddComponent(new PlayerComponent(this.gameState));
             playerEntity.AddComponent(new BoxCollider(-8, -8, 16, 16));
 
             this.Camera.Entity.AddComponent(new FollowCamera(playerEntity));
@@ -102,14 +103,23 @@ namespace DungeonEscape.Scene
 
         
         [Nez.Console.Command("map", "switches to map")]
-        public static void SetMap(int mapId = 0)
+        public static void SetMap(int mapId = 0, Vector2? point = null)
         {
-            Core.StartSceneTransition(new FadeTransition(() =>
+            var map = new MapScene(Core.Instance as IGame, mapId, point);
+            var transition = new FadeTransition(() =>
             {
-                var map = new MapScene( Core.Instance as IGame, mapId);
                 map.Initialize();
                 return map;
-            }));
+            });
+            transition.OnTransitionCompleted += map.FinishedTransition;
+            
+            Core.StartSceneTransition(transition);
+        }
+
+        private void FinishedTransition()
+        {
+            Console.WriteLine("FinishedTransition");
+            playerComponent.IsInTransition = false;
         }
     }
 }

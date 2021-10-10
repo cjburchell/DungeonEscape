@@ -24,7 +24,7 @@ namespace DungeonEscape.Components
         private VirtualIntegerAxis xAxisInput;
         private VirtualIntegerAxis yAxisInput;
         SubpixelVector2 subpixelV2;
-        private bool isInTransition;
+        public bool IsInTransition { get; set; } = true;
         private readonly IGame gameState;
 
         public PlayerComponent(IGame gameState)
@@ -85,6 +85,11 @@ namespace DungeonEscape.Components
 
         void IUpdatable.Update()
         {
+            if (this.IsInTransition)
+            {
+                return;
+            }
+
             // handle movement and animations
             var moveDir = new Vector2(this.xAxisInput.Value, this.yAxisInput.Value);
             var animation = "WalkDown";
@@ -144,46 +149,48 @@ namespace DungeonEscape.Components
 
         public void OnTriggerEnter(Collider other, Collider local)
         {
-            if (other is ObjectBoxCollider objCollider)
+            if (this.IsInTransition)
             {
-                
-                if (objCollider.Object.Type == SpriteType.NPC.ToString())
-                {
-                    Console.WriteLine($"Npc: {objCollider.Object.Name}");
-                }
-                Console.WriteLine($"triggerEnter: {objCollider.Object.Name}");
-                if (objCollider.Object.Type == SpriteType.Warp.ToString() && !this.isInTransition)
-                {
-                    this.isInTransition = true;
-                    var mapId = int.Parse(objCollider.Object.Properties["WarpMap"]);
-                    Vector2? point = null;
-                    if (objCollider.Object.Properties.ContainsKey("WarpMapX") &&
-                        objCollider.Object.Properties.ContainsKey("WarpMapX"))
-                    {
-                        var map = this.gameState.GetMap(mapId);
-                        point = new Vector2()
-                        {
-                            X = int.Parse(objCollider.Object.Properties["WarpMapX"]) * map.TileHeight + map.TileHeight / 2.0f,
-                            Y = int.Parse(objCollider.Object.Properties["WarpMapY"]) * map.TileWidth + map.TileWidth / 2.0f
-                        };
-                    }
-                    else
-                    {
-                        if (mapId == 0 && this.gameState.Player.OverWorldPos != Vector2.Zero)
-                        {
-                            point = this.gameState.Player.OverWorldPos;
-                        }
-                    }
+                return;
+            }
 
-                    Core.StartSceneTransition(new FadeTransition(() =>
-                    {
-                        var map = new MapScene(this.gameState, mapId, point);
-                        map.Initialize();
-                        return map;
-                    }));
-                }
+            if (!(other is ObjectBoxCollider objCollider))
+            {
+                return;
             }
             
+            if (objCollider.Object.Type == SpriteType.NPC.ToString())
+            {
+                Console.WriteLine($"Npc: {objCollider.Object.Name}");
+            }
+            Console.WriteLine($"triggerEnter: {objCollider.Object.Name}");
+            if (objCollider.Object.Type != SpriteType.Warp.ToString())
+            {
+                return;
+            }
+            
+            var mapId = int.Parse(objCollider.Object.Properties["WarpMap"]);
+            Vector2? point = null;
+            if (objCollider.Object.Properties.ContainsKey("WarpMapX") &&
+                objCollider.Object.Properties.ContainsKey("WarpMapX"))
+            {
+                var map = this.gameState.GetMap(mapId);
+                point = new Vector2()
+                {
+                    X = int.Parse(objCollider.Object.Properties["WarpMapX"]) * map.TileHeight + map.TileHeight / 2.0f,
+                    Y = int.Parse(objCollider.Object.Properties["WarpMapY"]) * map.TileWidth + map.TileWidth / 2.0f
+                };
+            }
+            else
+            {
+                if (mapId == 0 && this.gameState.Player.OverWorldPos != Vector2.Zero)
+                {
+                    point = this.gameState.Player.OverWorldPos;
+                }
+            }
+
+            
+            MapScene.SetMap(mapId, point);
         }
 
         public void OnTriggerExit(Collider other, Collider local)

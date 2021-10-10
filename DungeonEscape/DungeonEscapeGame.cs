@@ -34,7 +34,12 @@ namespace DungeonEscape
             Window.AllowUserResizing = true;
             Screen.SetSize(MapScene.screenWidth * 32, MapScene.screenHeight * 32);
             Scene = new EmptyScene();
-            MapScene.SetMap(0);
+            StartSceneTransition(new FadeTransition(() =>
+            {
+                var map = new SplashScreen();
+                map.Initialize();
+                return map;
+            }));
         }
 
         public TmxMap GetMap(int mapId)

@@ -20,15 +20,10 @@ namespace DungeonEscape.Scene
 
         public override void Update()
         {
-            /*if (Time.TimeSinceSceneLoad > 10.0f)
+            if (Time.TimeSinceSceneLoad > 10.0f)
             {
-                Core.StartSceneTransition(new FadeTransition(() =>
-                {
-                    var map = new MapScene(Core.Instance as IGame,0);
-                    map.Initialize();
-                    return map;
-                }));
-            }*/
+               MapScene.SetMap();
+            }
             
             base.Update();
         }

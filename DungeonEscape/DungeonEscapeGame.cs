@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DungeonEscape.Scene;
+using DungeonEscape.Scenes;
 using Microsoft.Xna.Framework;
 using Nez;
 using Nez.Tiled;
@@ -32,13 +32,13 @@ namespace DungeonEscape
             base.Initialize();
             DebugRenderEnabled = false;
             Window.AllowUserResizing = true;
-            Screen.SetSize(MapScene.screenWidth * 32, MapScene.screenHeight * 32);
+            Screen.SetSize(MapScene.ScreenWidth * 32, MapScene.ScreenHeight * 32);
             Scene = new EmptyScene();
             StartSceneTransition(new FadeTransition(() =>
             {
-                var map = new SplashScreen();
-                map.Initialize();
-                return map;
+                var splash = new SplashScreen();
+                splash.Initialize();
+                return splash;
             }));
         }
 

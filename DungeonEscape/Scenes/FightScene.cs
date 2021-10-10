@@ -1,4 +1,4 @@
-﻿namespace DungeonEscape.Scene
+﻿namespace DungeonEscape.Scenes
 {
     public class FightScene : Nez.Scene
     {

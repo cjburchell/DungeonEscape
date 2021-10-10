@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.Sprites;
-using DungeonEscape.Scene;
+using DungeonEscape.Scenes;
 
 namespace DungeonEscape.Components
 {

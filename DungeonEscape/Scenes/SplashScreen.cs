@@ -3,11 +3,11 @@ using Nez;
 using Nez.Sprites;
 using Nez.Textures;
 
-namespace DungeonEscape.Scene
+namespace DungeonEscape.Scenes
 {
-    public class SplashScreen : Nez.Scene
+    public class SplashScreen : Scene
     {
-        private bool inTransistion;
+        private bool inTransition;
         
         public override void Initialize()
         {
@@ -16,8 +16,6 @@ namespace DungeonEscape.Scene
             var splash = this.CreateEntity("splash");
             var renderer = new SpriteRenderer(new Sprite(texture)) {Origin = Vector2.Zero};
             splash.AddComponent(renderer);
-
-            splash.Position = Vector2.Zero;
             base.Initialize();
         }
 
@@ -25,11 +23,19 @@ namespace DungeonEscape.Scene
         {
             base.Update();
 
-            if (!inTransistion && Time.TimeSinceSceneLoad > 3.0f)
+            if (inTransition || !(Time.TimeSinceSceneLoad > 2.0f))
             {
-                inTransistion = true;
-                MapScene.SetMap();
+                return;
             }
+            
+            inTransition = true;
+            
+            Core.StartSceneTransition(new FadeTransition(() =>
+            {
+                var splash = new MainMenu();
+                splash.Initialize();
+                return splash;
+            }));
         }
     }
 }

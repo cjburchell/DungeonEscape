@@ -1,16 +1,15 @@
-﻿
-using System;
+﻿using System;
 using DungeonEscape.Components;
 using Microsoft.Xna.Framework;
 using Nez;
 
-namespace DungeonEscape.Scene
+namespace DungeonEscape.Scenes
 {
     public class MapScene : Nez.Scene
     {
         private const int ScreenSpaceRenderLayer = 999;
-        public const int screenWidth = 16;
-        public const int screenHeight = 15;
+        public const int ScreenWidth = 16;
+        public const int ScreenHeight = 15;
         private readonly int mapId;
         private readonly Vector2? start;
         private readonly IGame gameState;
@@ -28,7 +27,7 @@ namespace DungeonEscape.Scene
             base.Initialize();
             
             var map = this.gameState.GetMap(this.mapId);
-            this.SetDesignResolution(screenWidth * map.TileWidth, screenHeight * map.TileHeight, SceneResolutionPolicy.ShowAll);
+            this.SetDesignResolution(ScreenWidth * map.TileWidth, ScreenHeight * map.TileHeight, SceneResolutionPolicy.ShowAll);
 
             this.gameState.CurrentMapId = this.mapId;
             Console.WriteLine($"Loading Map {this.mapId}");

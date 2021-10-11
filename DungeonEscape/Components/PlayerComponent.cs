@@ -70,11 +70,15 @@ namespace DungeonEscape.Components
             this.xAxisInput.Nodes.Add(new VirtualAxis.GamePadDpadLeftRight());
             this.xAxisInput.Nodes.Add(new VirtualAxis.GamePadLeftStickX());
             this.xAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.Left, Keys.Right));
+            this.xAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.A, Keys.D));
             
             this.yAxisInput = new VirtualIntegerAxis();
             this.yAxisInput.Nodes.Add(new VirtualAxis.GamePadDpadUpDown());
             this.yAxisInput.Nodes.Add(new VirtualAxis.GamePadLeftStickY());
             this.yAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.Up, Keys.Down));
+            this.yAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.W, Keys.S));
+            
+            this.Entity.AddComponent(new BoxCollider(-8, -8, 16, 16));
         }
 
         public override void OnRemovedFromEntity()

@@ -34,7 +34,7 @@ namespace DungeonEscape
             
             var imGui = new ImGuiManager();
             RegisterGlobalManager(imGui);
-            //imGui.Enabled = false;
+            imGui.Enabled = false;
             
             ExitOnEscapeKeypress = false;
             PauseOnFocusLost = false;

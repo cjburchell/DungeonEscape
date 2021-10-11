@@ -44,17 +44,7 @@ namespace DungeonEscape.Scenes
             foreach (var item in objects.Objects)
             {
                 var itemEntity = this.CreateEntity(item.Name);
-                var collider = itemEntity.AddComponent(new ObjectBoxCollider(item, new Rectangle{X = (int)item.X, Y= (int)item.Y-map.TileHeight, Width = (int)item.Width, Height = (int)item.Height}));
-                collider.IsTrigger = true;
-                
-                if (!bool.Parse(item.Properties["Collideable"]))
-                {
-                    continue;
-                }
-                
-                var offsetWidth =(int)( item.Width * (1.0f / 4.0f));
-                var offsetHeight =(int)( item.Height * (1.0f / 4.0f));
-                itemEntity.AddComponent(new BoxCollider(new Rectangle{X = (int)item.X + offsetWidth/2, Y= (int)item.Y-map.TileHeight + offsetHeight/2, Width = (int)item.Width-offsetWidth, Height = (int)item.Height - offsetHeight}));
+                itemEntity.AddComponent(new MapObject(item, map.Height));
             }
             
             var sprites = map.GetObjectGroup("sprites");
@@ -62,17 +52,7 @@ namespace DungeonEscape.Scenes
             foreach (var item in sprites.Objects)
             {
                 var spriteEntity = this.CreateEntity(item.Name);
-                var collider = spriteEntity.AddComponent(new ObjectBoxCollider(item, new Rectangle{X = (int)item.X, Y= (int)item.Y-map.TileHeight, Width = (int)item.Width, Height = (int)item.Height}));
-                collider.IsTrigger = true;
-
-                if (!bool.Parse(item.Properties["Collideable"]))
-                {
-                    continue;
-                }
-
-                var offsetWidth =(int)( item.Width * (1.0f / 4.0f));
-                var offsetHeight =(int)( item.Height * (1.0f / 4.0f));
-                spriteEntity.AddComponent(new BoxCollider(new Rectangle{X = (int)item.X + offsetWidth/2, Y= (int)item.Y-map.TileHeight, Width = (int)item.Width-offsetWidth, Height = (int)item.Height - offsetHeight/2}));
+                spriteEntity.AddComponent(new SpriteComponent(item, map.TileHeight, map.TileWidth, map.GetTilesetTile(item.Tile.Gid)));
             }
             
             var topLeft = new Vector2(map.TileWidth, map.TileWidth);
@@ -94,9 +74,8 @@ namespace DungeonEscape.Scenes
 
             Console.WriteLine();
             var playerEntity = this.CreateEntity("player", spawn);
-            playerComponent = playerEntity.AddComponent(new PlayerComponent(this.gameState));
-            playerEntity.AddComponent(new BoxCollider(-8, -8, 16, 16));
-
+            this.playerComponent = playerEntity.AddComponent(new PlayerComponent(this.gameState));
+            
             this.Camera.Entity.AddComponent(new FollowCamera(playerEntity));
         }
 

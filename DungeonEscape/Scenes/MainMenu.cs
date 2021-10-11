@@ -16,10 +16,10 @@ namespace DungeonEscape.Scenes
             //this.AddRenderer(new ScreenSpaceRenderer(100, 999));
             this.SetDesignResolution(1024, 768, SceneResolutionPolicy.ShowAll);
             this.AddRenderer(new DefaultRenderer());
-            var Canvas = this.CreateEntity("ui-canvas").AddComponent(new UICanvas());
+            var canvas = this.CreateEntity("ui-canvas").AddComponent(new UICanvas());
             //Canvas.IsFullScreen = true;
-            Canvas.SetRenderLayer(999);
-            this.table = Canvas.Stage.AddElement(new Table());
+            canvas.SetRenderLayer(999);
+            this.table = canvas.Stage.AddElement(new Table());
             this.table.SetFillParent(true);
             this.table.Top().PadLeft(10).PadTop(50);
             this.table.Add(new Label("Dungeon Escape").SetFontScale(5));

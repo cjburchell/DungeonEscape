@@ -680,6 +680,7 @@
         <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
     </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\Nez.ImGui\Nez.MG38.ImGui.csproj" />
       <ProjectReference Include="..\Nez.Portable\Nez.MG38.csproj" />
     </ItemGroup>
     <ItemGroup>

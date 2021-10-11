@@ -2,6 +2,7 @@
 using DungeonEscape.Scenes;
 using Microsoft.Xna.Framework;
 using Nez;
+using Nez.ImGuiTools;
 using Nez.Tiled;
 
 namespace DungeonEscape
@@ -30,6 +31,13 @@ namespace DungeonEscape
         protected override void Initialize()
         {
             base.Initialize();
+            
+            var imGui = new ImGuiManager();
+            RegisterGlobalManager(imGui);
+            //imGui.Enabled = false;
+            
+            ExitOnEscapeKeypress = false;
+            PauseOnFocusLost = false;
 
             DebugRenderEnabled = false;
             Window.AllowUserResizing = true;

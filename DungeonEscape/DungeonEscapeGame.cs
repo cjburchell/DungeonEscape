@@ -30,6 +30,7 @@ namespace DungeonEscape
         protected override void Initialize()
         {
             base.Initialize();
+
             DebugRenderEnabled = false;
             Window.AllowUserResizing = true;
             Screen.SetSize(MapScene.ScreenWidth * 32, MapScene.ScreenHeight * 32);

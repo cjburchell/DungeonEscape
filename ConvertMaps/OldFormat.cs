@@ -9,7 +9,7 @@ namespace ConvertMaps
 {
     public static class OldFormat
     {
-        public static List<Map> LoadMaps(string inputDirectory, List<Spell> spells, List<TileInfo> tiles)
+        public static IEnumerable<Map> LoadMaps(string inputDirectory, List<Spell> spells, List<TileInfo> tiles)
         {
             var maps = new List<Map>();
             var inputMapPath = Path.Combine(inputDirectory, "maps");

@@ -23,12 +23,12 @@ namespace DungeonEscape.Scenes
         {
             base.Update();
 
-            if (inTransition || !(Time.TimeSinceSceneLoad > 2.0f))
+            if (this.inTransition || !(Time.TimeSinceSceneLoad > 2.0f))
             {
                 return;
             }
-            
-            inTransition = true;
+
+            this.inTransition = true;
             
             Core.StartSceneTransition(new FadeTransition(() =>
             {

@@ -44,7 +44,7 @@ namespace DungeonEscape.Scenes
             foreach (var item in objects.Objects)
             {
                 var itemEntity = this.CreateEntity(item.Name);
-                itemEntity.AddComponent(new MapObject(item, map.Height));
+                itemEntity.AddComponent(new MapObject(item, map.TileHeight));
             }
             
             var sprites = map.GetObjectGroup("sprites");

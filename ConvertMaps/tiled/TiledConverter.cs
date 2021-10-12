@@ -13,35 +13,36 @@ namespace ConvertMaps.Tiled
             var floor = new List<int>();
             var water = new List<int>();
             var wall = new List<int>();
-            
-            //var waterBiome = new List<int>();
-            //var hills = new List<int>();
-            //var desert = new List<int>();
-            //var forest = new List<int>();
-            //var swamp = new List<int>();
-            //var grassland = new List<int>();
             var biomes = new List<int>();
 
             for (var y = 0; y < map.Width; y++)
             {
                 for (var x = 0; x < map.Height; x++)
                 {
-                    var tile = map.Tiles.FirstOrDefault(item => item.Position.X == x && item.Position.Y == y);
-                    floor.Add(tile != null && tile.Type == TileType.Ground ? tile.Id + offset : 0);
-                    water.Add(tile != null && tile.Type == TileType.Water ? tile.Id + offset : 0);
-                    wall.Add(tile != null && tile.Type == TileType.Wall ? tile.Id + offset : 0);
+                    var floorTile = map.FloorLayer.FirstOrDefault(item => item.Position.X == x && item.Position.Y == y);
+                    floor.Add(floorTile?.Id + offset ?? 0);
+                    
+                    var waterTile = map.WaterLayer.FirstOrDefault(item => item.Position.X == x && item.Position.Y == y);
+                    water.Add(waterTile?.Id + offset ?? 0);
+                    
+                    var wallTile = map.WallLayer.FirstOrDefault(item => item.Position.X == x && item.Position.Y == y);
+                    wall.Add(wallTile?.Id + offset ?? 0);
                     if (map.Id != 0)
                     {
                         continue;
                     }
 
-                    //waterBiome.Add(tile != null && tile.Biome == Biome.Water ? tile.Id + offset : 0);
-                    //hills.Add(tile != null && tile.Biome == Biome.Hills ? tile.Id + offset : 0);
-                    //desert.Add(tile != null && tile.Biome == Biome.Desert ? tile.Id + offset : 0);
-                    //forest.Add(tile != null && tile.Biome == Biome.Forest ? tile.Id + offset : 0);
-                    //swamp.Add(tile != null && tile.Biome == Biome.Swamp ? tile.Id + offset : 0);
-                    //grassland.Add(tile != null && tile.Biome == Biome.Grassland ? tile.Id + offset : 0);
-                    biomes.Add(tile != null && tile.Biome != Biome.None ? (int) tile.Biome : 0);
+                    var biome = Biome.None;
+                    if (floorTile != null)
+                    {
+                        biome = floorTile.Biome;
+                    }
+                    else if(wallTile != null)
+                    {
+                        biome = wallTile.Biome;
+                    }
+                    
+                    biomes.Add((int)biome);
                 }
             }
 
@@ -98,18 +99,12 @@ namespace ConvertMaps.Tiled
             
             var layers = new List<TiledLayer>();
             var id = 1;
-            layers.Add(ToTiledLayer(id++, "floor", floor, map, TileType.Ground));
-            layers.Add(ToTiledLayer(id++, "water", water, map, TileType.Water));
-            layers.Add(ToTiledLayer(id++, "wall",wall, map, TileType.Wall));
+            layers.Add(ToTiledLayer(id++, "floor", floor, map));
+            layers.Add(ToTiledLayer(id++, "water", water, map));
+            layers.Add(ToTiledLayer(id++, "wall",wall, map));
             if (map.Id == 0)
             {
-                //layers.Add(ToTiledLayer(id++, "biome_water", waterBiome,  map, TileType.Ground, false));
-                //layers.Add(ToTiledLayer(id++, "biome_hills", hills,  map, TileType.Ground, false));
-                //layers.Add(ToTiledLayer(id++, "biome_desert", desert,  map, TileType.Ground, false));
-                //layers.Add(ToTiledLayer(id++, "biome_forest", forest,  map, TileType.Ground, false));
-                //layers.Add(ToTiledLayer(id++, "biome_swamp", swamp,  map, TileType.Ground, false));
-                //layers.Add(ToTiledLayer(id++, "biome_grassland", grassland,  map, TileType.Ground, false));
-                layers.Add(ToTiledLayer(id++, "biomes", biomes,  map, TileType.Ground, false));
+                layers.Add(ToTiledLayer(id++, "biomes", biomes,  map, false));
             }
             
             layers.Add(ToObjectGroup(id++, "items", objects));
@@ -136,7 +131,8 @@ namespace ConvertMaps.Tiled
                 tilewidth = 32,
                 type = "map",
                 version = "1.6",
-                tilesets = new[] {ToTileSet(map.TileInfo, $"Map Tiles")},
+                //tilesets = new[] {ToTileSet(map.TileInfo, $"Map Tiles")},
+                tilesets = new[] {new TiledTileset {firstgid = 1, source = "tiles.tsx"}},
                 layers = layers.ToArray()
             };
 
@@ -160,7 +156,7 @@ namespace ConvertMaps.Tiled
             };
         }
 
-        private static TiledLayer ToTiledLayer(int id, string name, List<int> tiles, Map map, TileType type, bool visible = true )
+        private static TiledLayer ToTiledLayer(int id, string name, List<int> tiles, Map map, bool visible = true )
         {
             return new TiledLayerGroup
             {
@@ -177,10 +173,6 @@ namespace ConvertMaps.Tiled
                 layerData = new TiledLayerData
                 {
                     data = string.Join(",", tiles)
-                },
-                properties = new[]
-                {
-                    new TiledProperty {name = "LayerType", type = "string", value = TileType.Ground.ToString()},
                 }
             };
         }
@@ -266,14 +258,12 @@ namespace ConvertMaps.Tiled
             return tiledSet;
         }
 
-        public static TiledTileset ToSpellTileset(IEnumerable<Spell> spells, IEnumerable<TileInfo> tileInfo)
+        public static TiledTileset ToSpellTileset(IEnumerable<Spell> spells)
         {
-            var tileInfos = tileInfo.ToList();
             var tiles = new List<TiledTile>();
             foreach (var spell in spells)
             {
-                var spellTile = tileInfos.FirstOrDefault(item => item.Id == spell.Id);
-                var size = spellTile?.size ?? 0;
+                var size = spell.Info.size;
                 
                 var properties = new List<TiledProperty>
                 {
@@ -286,12 +276,12 @@ namespace ConvertMaps.Tiled
                 var tile = new TiledTile
                 {
                     type = spell.Type.ToString(),
-                    id = spell.Id,
-                    image = spellTile?.Image, 
+                    id = spell.Info.Id,
+                    image = spell.Info.Image, 
                     imageheight = size,
                     imagewidth = size,
                     properties = properties.ToArray(),
-                    imageObj = new TiledImage {source = spellTile?.Image, height = size, width = size}
+                    imageObj = new TiledImage {source = spell.Info.Image, height = size, width = size}
                 };
                 
                 tiles.Add(tile);
@@ -310,14 +300,12 @@ namespace ConvertMaps.Tiled
             return tiledSet;
         }
         
-        public static TiledTileset ToItemTileset(IEnumerable<Item> items, IEnumerable<TileInfo> tileInfo)
+        public static TiledTileset ToItemTileset(IEnumerable<Item> items)
         {
-            var tileInfos = tileInfo.ToList();
             var tiles = new List<TiledTile>();
             foreach (var item in items)
             {
-                var itemTile = tileInfos.FirstOrDefault(i => i.Id == item.Id);
-                var size = itemTile?.size ?? 0;
+                var size = item.Info.size;
                 
                 var properties = new List<TiledProperty>
                 {
@@ -334,12 +322,12 @@ namespace ConvertMaps.Tiled
                 var tile = new TiledTile
                 {
                     type = item.Type.ToString(),
-                    id = item.Id,
-                    image = itemTile?.Image, 
+                    id = item.Info.Id,
+                    image = item.Info.Image, 
                     imageheight = size,
                     imagewidth = size,
                     properties = properties.ToArray(),
-                    imageObj = new TiledImage {source = itemTile?.Image, height = size, width = size}
+                    imageObj = new TiledImage {source = item.Info.Image, height = size, width = size}
                 };
                 
                 tiles.Add(tile);

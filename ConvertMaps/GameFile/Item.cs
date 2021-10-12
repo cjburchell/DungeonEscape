@@ -14,7 +14,7 @@ namespace GameFile
         public int Attack { get; set; }
         public int Agility { get; set; }
         public int Cost { get; set; }
-        public int Id { get; set; }
+        public TileInfo Info { get; set; }
         public int MinLevel { get; set; }
     }
 }

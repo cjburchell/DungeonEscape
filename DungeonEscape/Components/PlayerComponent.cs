@@ -123,11 +123,6 @@ namespace DungeonEscape.Components
                     this.gameState.Player.OverWorldPos = this.Entity.Transform.Position;
                 }
 
-                //var girdPos = this.Entity.Transform.Position;
-                //girdPos.X = (int)(girdPos.X / 32);
-                //girdPos.Y = (int)(girdPos.Y / 32);
-                //Console.WriteLine(girdPos.ToString());
-                
                 if (!this.animator.IsAnimationActive(animation))
                 {
                     this.animator.Play(animation);

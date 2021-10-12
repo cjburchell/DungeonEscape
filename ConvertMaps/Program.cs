@@ -81,15 +81,15 @@ namespace ConvertMaps
             }
             
             var tiles = OldFormat.LoadTiles(opts.InputDirectory);
-            var spells = OldFormat.LoadSpells(opts.InputDirectory, tiles);
-            var items = OldFormat.LoadItems(opts.InputDirectory, tiles);
+            var spells = OldFormat.LoadSpells(opts.InputDirectory, null);
+            var items = OldFormat.LoadItems(opts.InputDirectory, null);
             var maps = OldFormat.LoadMaps(opts.InputDirectory, spells, tiles);
 
             Directory.CreateDirectory(opts.OutputDirectory);
             if (opts.MapId == -1)
             {
-                WriteSpells(spells, tiles, opts.OutputDirectory, opts.OutputType);
-                WriteItems(items, tiles, opts.OutputDirectory, opts.OutputType);
+                WriteSpells(spells, opts.OutputDirectory, opts.OutputType);
+                WriteItems(items, opts.OutputDirectory, opts.OutputType);
                 WriteAllTileSet(tiles, opts.OutputDirectory, opts.OutputType);
             }
 
@@ -175,10 +175,10 @@ namespace ConvertMaps
             }
         }
 
-        private static void WriteItems(IReadOnlyCollection<Item> items, IEnumerable<TileInfo> tiles,
+        private static void WriteItems(IReadOnlyCollection<Item> items,
             string outputDirectory, OutputType outputType)
         {
-            var itemTileSet = TiledConverter.ToItemTileset(items, tiles);
+            var itemTileSet = TiledConverter.ToItemTileset(items);
             if (outputType == OutputType.json || outputType == OutputType.all)
             {
                 Console.WriteLine(
@@ -201,9 +201,9 @@ namespace ConvertMaps
             }
         }
 
-        private static void WriteSpells(IReadOnlyCollection<Spell> spells, IEnumerable<TileInfo> tiles, string outputDirectory, OutputType outputType)
+        private static void WriteSpells(IReadOnlyCollection<Spell> spells, string outputDirectory, OutputType outputType)
         {
-            var itemTileSet = TiledConverter.ToSpellTileset(spells, tiles);
+            var itemTileSet = TiledConverter.ToSpellTileset(spells);
             if (outputType == OutputType.json || outputType == OutputType.all)
             {
                 Console.WriteLine(

@@ -12,7 +12,7 @@
       <property name="Heath" type="int" value="8" />
     </properties>
   </tile>
-  <tile id="83" type="SlimeTI">
+  <tile id="123" type="SlimeTI">
     <image width="32" height="32" source="images/monsters/slimeti.png" />
     <properties>
       <property name="Biome" type="string" value="All" />

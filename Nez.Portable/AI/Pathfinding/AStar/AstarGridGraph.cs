@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using Nez.Tiled;
 
 
@@ -38,18 +39,20 @@ namespace Nez.AI.Pathfinding
 		/// <summary>
 		/// creates a WeightedGridGraph from a TiledTileLayer. Present tile are walls and empty tiles are passable.
 		/// </summary>
-		/// <param name="tiledLayer">Tiled layer.</param>
-		public AstarGridGraph(TmxLayer tiledLayer)
+		/// <param name="tiledLayers">Tiled layers.</param>
+		public AstarGridGraph(TmxLayer[] tiledLayers)
 		{
-			_width = tiledLayer.Width;
-			_height = tiledLayer.Height;
+			_width = tiledLayers[0].Width;
+			_height = tiledLayers[0].Height;
 
-			for (var y = 0; y < tiledLayer.Map.Height; y++)
+			for (var y = 0; y < tiledLayers[0].Map.Height; y++)
 			{
-				for (var x = 0; x < tiledLayer.Map.Width; x++)
+				for (var x = 0; x < tiledLayers[0].Map.Width; x++)
 				{
-					if (tiledLayer.GetTile(x, y) != null)
-						Walls.Add(new Point(x, y));
+					if (tiledLayers.Any(layer => layer.GetTile(x, y) != null))
+					{
+						this.Walls.Add(new Point(x, y));
+					}
 				}
 			}
 		}

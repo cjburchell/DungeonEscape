@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Monsters 42" tilewidth="96" tileheight="96" tilecount="1" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
-  <tile id="112" type="GreenDragon">
+  <tile id="159" type="GreenDragon">
     <image width="96" height="96" source="images/monsters/dGreen.png" />
     <properties>
       <property name="Biome" type="string" value="All" />

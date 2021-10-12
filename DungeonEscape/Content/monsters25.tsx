@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Monsters 25" tilewidth="64" tileheight="64" tilecount="7" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
-  <tile id="81" type="GiantAnt">
+  <tile id="137" type="GiantAnt">
     <image width="32" height="32" source="images/monsters/ant.png" />
     <properties>
       <property name="Biome" type="string" value="All" />
@@ -12,7 +12,7 @@
       <property name="Heath" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="99" type="SandSpider">
+  <tile id="138" type="SandSpider">
     <image width="32" height="32" source="images/monsters/sands.png" />
     <properties>
       <property name="Biome" type="string" value="All" />
@@ -24,7 +24,7 @@
       <property name="Heath" type="int" value="2" />
     </properties>
   </tile>
-  <tile id="76" type="TigerBeetle">
+  <tile id="139" type="TigerBeetle">
     <image width="32" height="32" source="images/monsters/beet.png" />
     <properties>
       <property name="Biome" type="string" value="All" />
@@ -36,7 +36,7 @@
       <property name="Heath" type="int" value="2" />
     </properties>
   </tile>
-  <tile id="107" type="Hobgoblin">
+  <tile id="140" type="Hobgoblin">
     <image width="32" height="32" source="images/monsters/hgob.png" />
     <properties>
       <property name="Biome" type="string" value="All" />
@@ -48,7 +48,7 @@
       <property name="Heath" type="int" value="2" />
     </properties>
   </tile>
-  <tile id="109" type="BlackWidow">
+  <tile id="141" type="BlackWidow">
     <image width="32" height="32" source="images/monsters/wido.png" />
     <properties>
       <property name="Biome" type="string" value="All" />
@@ -60,7 +60,7 @@
       <property name="Heath" type="int" value="3" />
     </properties>
   </tile>
-  <tile id="102" type="Draco">
+  <tile id="142" type="Draco">
     <image width="32" height="32" source="images/monsters/draco.png" />
     <properties>
       <property name="Biome" type="string" value="All" />
@@ -72,7 +72,7 @@
       <property name="Heath" type="int" value="4" />
     </properties>
   </tile>
-  <tile id="111" type="Griz_Bear">
+  <tile id="143" type="Griz_Bear">
     <image width="64" height="64" source="images/monsters/gris.png" />
     <properties>
       <property name="Biome" type="string" value="All" />

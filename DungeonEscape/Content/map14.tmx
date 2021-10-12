@@ -1,51 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.6" type="map" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32">
-  <tileset name="Map Tiles" tilewidth="32" tileheight="32" tilecount="9" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
-    <tile id="1">
-      <image width="32" height="32" source="images/tiles/grass.png" />
-    </tile>
-    <tile id="13">
-      <image width="32" height="32" source="images/tiles/wall1.png" />
-    </tile>
-    <tile id="11">
-      <image width="32" height="32" source="images/tiles/wall2.png" />
-    </tile>
-    <tile id="16">
-      <image width="32" height="32" source="images/tiles/collom.png" />
-    </tile>
-    <tile id="32">
-      <image width="32" height="32" source="images/tiles/tree.png" />
-    </tile>
-    <tile id="10">
-      <image width="32" height="32" source="images/tiles/Floor.png" />
-    </tile>
-    <tile id="113">
-      <image width="32" height="32" source="images/sprites/chest.png" />
-    </tile>
-    <tile id="21">
-      <image width="32" height="32" source="images/tiles/brick.png" />
-    </tile>
-    <tile id="116">
-      <image width="32" height="32" source="images/sprites/healc.png" />
-    </tile>
-  </tileset>
+  <tileset tilewidth="0" tileheight="0" tilecount="0" columns="0" spacing="0" margin="0" source="tiles.tsx" firstgid="1" />
   <layer id="1" name="floor" width="20" height="20" type="tilelayer" visible="1" locked="false" x="0" y="0" opacity="1">
     <data encoding="csv">2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,33,2,2,2,2,33,2,33,0,2,2,2,2,2,2,2,2,2,0,2,2,11,11,33,11,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,11,0,11,11,2,0,2,2,0,2,2,2,2,2,2,2,2,2,2,0,2,2,22,22,22,2,2,0,2,2,2,2,2,2,2,2,2,2,2,0,2,2,22,22,22,2,2,0,0,2,2,2,2,2,2,2,2,2,2,2,33,2,22,22,22,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,11,11,11,0,2,33,0,2,2,2,2,2,2,2,2,2,2,2,2,11,11,11,11,11,2,2,0,2,2,2,2,2,2,2,2,2,2,0,2,0,0,11,2,0,2,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2</data>
-    <properties>
-      <property name="LayerType" type="string" value="Ground" />
-    </properties>
   </layer>
   <layer id="2" name="water" width="20" height="20" type="tilelayer" visible="1" locked="false" x="0" y="0" opacity="1">
     <data encoding="csv">0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0</data>
-    <properties>
-      <property name="LayerType" type="string" value="Ground" />
-    </properties>
   </layer>
   <layer id="3" name="wall" width="20" height="20" type="tilelayer" visible="1" locked="false" x="0" y="0" opacity="1">
     <data encoding="csv">0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,17,17,17,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,0,0,0,0,0,0,0,0,0,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,17,0,0,0,17,0,0,14,0,0,0,0,0,0,0,0,0,0,17,0,0,0,0,0,0,0,17,0,0,0,0,0,0,0,0,0,0,0,17,0,0,0,0,0,0,0,17,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,17,0,0,0,17,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,14,0,14,14,0,0,14,0,14,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0</data>
-    <properties>
-      <property name="LayerType" type="string" value="Ground" />
-    </properties>
   </layer>
   <objectgroup id="4" name="items" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
     <object id="0" name="Exit 0" type="Warp" x="160" y="224" rotation="0" width="32" height="32" gid="2" visible="true">
@@ -419,14 +382,14 @@
     </object>
   </objectgroup>
   <objectgroup id="5" name="sprites" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="0" name="npc" type="NPC" x="288" y="384" rotation="0" width="32" height="32" gid="117" visible="true">
+    <object id="0" name="npc" type="NPC" x="256" y="320" rotation="0" width="32" height="32" gid="117" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="npc" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="320" y="416" rotation="0" width="32" height="32" gid="117" visible="true">
+    <object id="0" name="npc" type="NPC" x="320" y="384" rotation="0" width="32" height="32" gid="117" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />

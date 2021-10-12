@@ -105,7 +105,7 @@ namespace ConvertMaps
                 var info = GetSprite(null, tiles, lineItems[7], 32, "images/items/");
                 var item = new Item
                 {
-                    Id = info.Id,
+                    Info = info,
                     Name = lineItems[0].Replace('_', ' '),
                     Health = int.Parse(lineItems[1]),
                     Defence = int.Parse(lineItems[2]),
@@ -140,7 +140,7 @@ namespace ConvertMaps
                 var info = GetSprite(null, tiles, lineItems[4], 32, "images/items/");
                 var spell = new Spell
                 {
-                    Id = info.Id,
+                    Info = info,
                     Name = lineItems[0],
                     Type = (SpellType) int.Parse(lineItems[1]),
                     Power = int.Parse(lineItems[2]),
@@ -217,10 +217,10 @@ namespace ConvertMaps
                 var xPos = 0;
                 foreach (var tileId in lineString)
                 {
+                    var type = GetTileType(tileId);
                     var tile = new Tile
                     {
                         Position = {X = xPos, Y = yPos},
-                        Type = GetTileType(tileId),
                         Biome = GetTileBiome(tileId)
                     };
 
@@ -259,15 +259,21 @@ namespace ConvertMaps
                         }
                     }
 
-                    map.Tiles.Add(tile);
+                    switch (type)
+                    {
+                        case TileType.Water:
+                            map.WaterLayer.Add(tile);
+                            break;
+                        case TileType.Ground:
+                            map.FloorLayer.Add(tile);
+                            break;
+                        case TileType.Wall:
+                            map.WallLayer.Add(tile);
+                            break;
+                    }
+                    
                     xPos++;
                 }
-            }
-
-            if (map.Tiles.Count != map.Height * map.Width)
-            {
-                Console.WriteLine(
-                    $"Loaded {map.Tiles.Count} Tiles for map {id} Expected {map.Height * map.Width}");
             }
 
             return map;
@@ -322,7 +328,7 @@ namespace ConvertMaps
 
                 if (spriteType == SpriteType.Monster)
                 {
-                    var spriteInfo = GetSprite(map.RandomMonstersTileInfo, tiles, image, size * 32, "images/monsters/");
+                    var spriteInfo = GetSprite(map.RandomMonstersTileInfo, null, image, size * 32, "images/monsters/");
                     var monster = map.RandomMonsters.FirstOrDefault(item =>
                         item.Id == spriteInfo.Id && item.Name == name && item.Biome == biome);
                     if (monster == null)
@@ -335,7 +341,7 @@ namespace ConvertMaps
                                 var spell = spells.FirstOrDefault(item => item.Name == "LitBlast");
                                 if (spell != null)
                                 {
-                                    spriteSpells = new List<SpriteSpell> {new SpriteSpell {Id = spell.Id}};
+                                    spriteSpells = new List<SpriteSpell> {new SpriteSpell {Id = spell.Info.Id}};
                                 }
 
                                 break;
@@ -345,7 +351,7 @@ namespace ConvertMaps
                                 var spell = spells.FirstOrDefault(item => item.Name == "FireBlast");
                                 if (spell != null)
                                 {
-                                    spriteSpells = new List<SpriteSpell> {new SpriteSpell {Id = spell.Id}};
+                                    spriteSpells = new List<SpriteSpell> {new SpriteSpell {Id = spell.Info.Id}};
                                 }
 
                                 break;
@@ -408,7 +414,7 @@ namespace ConvertMaps
                 return info;
             }
 
-            var gameTileInfo = tiles.FirstOrDefault(item => item.Image == imagePath);
+            var gameTileInfo = tiles?.FirstOrDefault(item => item.Image == imagePath);
             if (gameTileInfo == null)
             {
                 gameTileInfo = new TileInfo
@@ -417,7 +423,7 @@ namespace ConvertMaps
                     Image = imagePath,
                     size = size
                 };
-                tiles.Add(gameTileInfo);
+                tiles?.Add(gameTileInfo);
             }
 
             mapTiles?.Add(gameTileInfo);
@@ -708,5 +714,12 @@ namespace ConvertMaps
                     return TileType.Wall;
             }
         }
+    }
+
+    internal enum TileType
+    {
+        Water,
+        Ground,
+        Wall
     }
 }

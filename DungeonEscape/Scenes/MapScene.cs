@@ -35,7 +35,7 @@ namespace DungeonEscape.Scenes
             var tiledEntity = this.CreateEntity("map");
             var tiledMapRenderer =  tiledEntity.AddComponent(new TiledMapRenderer(map, new[] {"wall", "water"}));
             tiledMapRenderer.RenderLayer = 10;
-            tiledMapRenderer.SetLayersToRender("wall", "water", "floor", "items");
+            tiledMapRenderer.SetLayersToRender("wall", "water", "floor");
             map.GetObjectGroup("objects").Visible = false;
 
             var objects = map.GetObjectGroup("items");
@@ -44,7 +44,7 @@ namespace DungeonEscape.Scenes
             foreach (var item in objects.Objects)
             {
                 var itemEntity = this.CreateEntity(item.Name);
-                itemEntity.AddComponent(new MapObject(item, map.TileHeight));
+                itemEntity.AddComponent(new MapObject(item, map.TileHeight, map.TileWidth, map.GetTilesetTile(item.Tile.Gid)));
             }
             
             var sprites = map.GetObjectGroup("sprites");
@@ -52,7 +52,7 @@ namespace DungeonEscape.Scenes
             foreach (var item in sprites.Objects)
             {
                 var spriteEntity = this.CreateEntity(item.Name);
-                spriteEntity.AddComponent(new SpriteComponent(item, map.TileHeight, map.TileWidth, map.GetTilesetTile(item.Tile.Gid)));
+                spriteEntity.AddComponent(new SpriteComponent(item, map));
             }
             
             var topLeft = new Vector2(map.TileWidth, map.TileWidth);

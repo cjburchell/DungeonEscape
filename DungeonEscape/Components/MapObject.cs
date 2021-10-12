@@ -30,6 +30,7 @@ namespace DungeonEscape.Components
             
             var sprites = Nez.Textures.Sprite.SpritesFromAtlas(mapTile.Image.Texture, 32, 32);
             this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
+            this.animator.LayerDepth = 11;
 
             var collider = this.Entity.AddComponent(new ObjectBoxCollider(this.tmxObject,
                 new Rectangle

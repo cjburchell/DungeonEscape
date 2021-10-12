@@ -41,7 +41,8 @@ namespace DungeonEscape.Components
             
             this.mover = this.Entity.AddComponent(new Mover());
             this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
-            
+            this.animator.LayerDepth = 13;
+
             this.animator.AddAnimation("WalkDown", new[]
             {
                 sprites[0],

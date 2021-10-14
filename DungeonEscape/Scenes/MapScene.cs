@@ -13,7 +13,7 @@ namespace DungeonEscape.Scenes
         private readonly int mapId;
         private readonly Vector2? start;
         private readonly IGame gameState;
-        private PlayerComponent playerComponent;
+        private Components.Player player;
 
         private MapScene(IGame game, int mapId, Vector2? start = null)
         {
@@ -44,7 +44,7 @@ namespace DungeonEscape.Scenes
             foreach (var item in objects.Objects)
             {
                 var itemEntity = this.CreateEntity(item.Name);
-                itemEntity.AddComponent(new MapObject(item, map.TileHeight, map.TileWidth, map.GetTilesetTile(item.Tile.Gid)));
+                itemEntity.AddComponent(MapObject.Create(item, map.TileHeight, map.TileWidth, map.GetTilesetTile(item.Tile.Gid)));
             }
             
             var sprites = map.GetObjectGroup("sprites");
@@ -52,7 +52,7 @@ namespace DungeonEscape.Scenes
             foreach (var item in sprites.Objects)
             {
                 var spriteEntity = this.CreateEntity(item.Name);
-                spriteEntity.AddComponent(new SpriteComponent(item, map));
+                spriteEntity.AddComponent(Sprite.Create(item, map));
             }
             
             var topLeft = new Vector2(map.TileWidth, map.TileWidth);
@@ -74,9 +74,14 @@ namespace DungeonEscape.Scenes
 
             Console.WriteLine();
             var playerEntity = this.CreateEntity("player", spawn);
-            this.playerComponent = playerEntity.AddComponent(new PlayerComponent(this.gameState));
+            this.player = playerEntity.AddComponent(new Components.Player(this.gameState));
             
             this.Camera.Entity.AddComponent(new FollowCamera(playerEntity));
+            
+            var canvas = this.CreateEntity("ui-canvas").AddComponent(new UICanvas());
+            canvas.SetRenderLayer(999);
+
+            canvas.AddComponent(new CommandMenu(canvas, this.player));
         }
 
         
@@ -97,7 +102,7 @@ namespace DungeonEscape.Scenes
         private void FinishedTransition()
         {
             Console.WriteLine("FinishedTransition");
-            this.playerComponent.IsInTransition = false;
+            this.player.IsControllable = true;
         }
     }
 }

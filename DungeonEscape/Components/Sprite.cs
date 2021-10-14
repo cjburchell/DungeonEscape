@@ -15,7 +15,9 @@ namespace DungeonEscape.Components
         Stopped,
     }
     
-    public class SpriteComponent : Component, IUpdatable
+    
+    
+    public class Sprite : Component, IUpdatable, ICollidable
     {
         private readonly TmxObject tmxObject;
         private readonly TmxMap map;
@@ -27,9 +29,23 @@ namespace DungeonEscape.Components
         private AstarGridGraph graph;
         private List<Point> path;
         private const float MoveSpeed = 75;
+        
+        public static Sprite Create(TmxObject tmxObject, TmxMap map)
+        {
+            if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
+            {
+                return null;
+            }
 
-
-        public SpriteComponent(TmxObject tmxObject, TmxMap map)
+            return spriteType switch
+            {
+                SpriteType.Monster => new Sprite(tmxObject, map),
+                SpriteType.NPC => new Character(tmxObject, map),
+                _ => new Sprite(tmxObject, map)
+            };
+        }
+        
+        protected Sprite(TmxObject tmxObject, TmxMap map)
         {
             this.tmxObject = tmxObject;
             this.map = map;
@@ -60,7 +76,7 @@ namespace DungeonEscape.Components
             this.graph = new AstarGridGraph(new[] {wall, water, itemLayer});
         }
 
-        private float elapsedTime = 0.0f;
+        private float elapsedTime;
         private float nextElapsedTime = Random.NextInt(5) + 1;
 
         public override void OnAddedToEntity()
@@ -73,7 +89,7 @@ namespace DungeonEscape.Components
             this.canMove = bool.Parse(this.tmxObject.Properties["CanMove"]);
             this.animator.LayerDepth = 12;
 
-            var collider = this.Entity.AddComponent(new ObjectBoxCollider(this.tmxObject,
+            var collider = this.Entity.AddComponent(new ObjectBoxCollider(this,
                 new Rectangle
                 {
                     X = (int)(-this.tmxObject.Width/2.0f), 
@@ -99,12 +115,17 @@ namespace DungeonEscape.Components
             }));
         }
 
+        protected void DisplayVisual(bool display = true)
+        {
+            this.animator.SetEnabled(display);
+        }
+
         private Vector2 FromMapToReal(Point point)
         {
             return new Vector2(point.X * this.map.TileWidth + this.map.TileWidth/2, point.Y * this.map.TileHeight + this.map.TileHeight/2);
         }
 
-        private int currentPathIndex = 0;
+        private int currentPathIndex;
 
         void IUpdatable.Update()
         {
@@ -196,6 +217,15 @@ namespace DungeonEscape.Components
                 }
             }
             
+        }
+
+        public virtual void OnHit(Player player)
+        {
+        }
+
+        public virtual bool OnAction(Player player)
+        {
+            return false;
         }
     }
 }

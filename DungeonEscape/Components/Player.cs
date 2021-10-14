@@ -1,9 +1,8 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.Sprites;
-using DungeonEscape.Scenes;
 
 namespace DungeonEscape.Components
 {
@@ -17,22 +16,23 @@ namespace DungeonEscape.Components
         Warp
     }
     
-    public class PlayerComponent : Component, IUpdatable, ITriggerListener
+    public class Player : Component, IUpdatable, ITriggerListener
     {
         private const float MoveSpeed = 150;
         private SpriteAnimator animator;
         private VirtualIntegerAxis xAxisInput;
         private VirtualIntegerAxis yAxisInput;
         SubpixelVector2 subpixelV2;
-        public bool IsInTransition { get; set; } = true;
-        private readonly IGame gameState;
+        public bool IsControllable { get; set; }
+        public IGame GameState { get; }
 
-        public PlayerComponent(IGame gameState)
+        public Player(IGame gameState)
         {
-            this.gameState = gameState;
+            this.GameState = gameState;
         }
 
         private Mover mover;
+        private VirtualButton actionButton;
 
         public override void OnAddedToEntity()
         {
@@ -42,7 +42,6 @@ namespace DungeonEscape.Components
             this.mover = this.Entity.AddComponent(new Mover());
             this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
             this.animator.LayerDepth = 13;
-
             this.animator.AddAnimation("WalkDown", new[]
             {
                 sprites[0],
@@ -67,6 +66,8 @@ namespace DungeonEscape.Components
                 sprites[7]
             });
             
+            this.Entity.AddComponent(new BoxCollider(-8, -8, 16, 16));
+            
             this.xAxisInput = new VirtualIntegerAxis();
             this.xAxisInput.Nodes.Add(new VirtualAxis.GamePadDpadLeftRight());
             this.xAxisInput.Nodes.Add(new VirtualAxis.GamePadLeftStickX());
@@ -79,22 +80,20 @@ namespace DungeonEscape.Components
             this.yAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.Up, Keys.Down));
             this.yAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.W, Keys.S));
             
-            this.Entity.AddComponent(new BoxCollider(-8, -8, 16, 16));
+            this.actionButton = new VirtualButton();
+            this.actionButton.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Space));
+            this.actionButton.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.A));
         }
 
         public override void OnRemovedFromEntity()
         {
             this.xAxisInput.Deregister();
             this.yAxisInput.Deregister();
+            this.actionButton.Deregister();
         }
 
-        void IUpdatable.Update()
+        private void UpdateMovement()
         {
-            if (this.IsInTransition)
-            {
-                return;
-            }
-
             // handle movement and animations
             var moveDir = new Vector2(this.xAxisInput.Value, this.yAxisInput.Value);
             var animation = "WalkDown";
@@ -119,9 +118,9 @@ namespace DungeonEscape.Components
 
             if (moveDir != Vector2.Zero)
             {
-                if (this.gameState.CurrentMapId == 0)
+                if (this.GameState.CurrentMapId == 0)
                 {
-                    this.gameState.Player.OverWorldPos = this.Entity.Transform.Position;
+                    this.GameState.Player.OverWorldPos = this.Entity.Transform.Position;
                 }
 
                 if (!this.animator.IsAnimationActive(animation))
@@ -145,11 +144,32 @@ namespace DungeonEscape.Components
             }
         }
 
+        void IUpdatable.Update()
+        {
+            if (!this.IsControllable)
+            {
+                return;
+            }
 
+            if (this.actionButton.IsPressed)
+            {
+                foreach (var overObject in this.currentlyOverObjects)
+                {
+                    if (overObject.OnAction(this))
+                    {
+                        break;
+                    }
+                }
+            }
 
+            this.UpdateMovement();
+        }
+        
+        private List<ICollidable> currentlyOverObjects = new List<ICollidable>();
+       
         public void OnTriggerEnter(Collider other, Collider local)
         {
-            if (this.IsInTransition)
+            if (!this.IsControllable)
             {
                 return;
             }
@@ -159,46 +179,34 @@ namespace DungeonEscape.Components
                 return;
             }
             
-            if (objCollider.Object.Type == SpriteType.NPC.ToString())
-            {
-                Console.WriteLine($"Npc: {objCollider.Object.Name}");
-            }
-            Console.WriteLine($"triggerEnter: {objCollider.Object.Name}");
-            if (objCollider.Object.Type != SpriteType.Warp.ToString())
-            {
-                return;
-            }
+            this.currentlyOverObjects.Add(objCollider.Object);
             
-            var mapId = int.Parse(objCollider.Object.Properties["WarpMap"]);
-            Vector2? point = null;
-            if (objCollider.Object.Properties.ContainsKey("WarpMapX") &&
-                objCollider.Object.Properties.ContainsKey("WarpMapX"))
-            {
-                var map = this.gameState.GetMap(mapId);
-                point = new Vector2()
-                {
-                    X = int.Parse(objCollider.Object.Properties["WarpMapX"]) * map.TileHeight + map.TileHeight / 2.0f,
-                    Y = int.Parse(objCollider.Object.Properties["WarpMapY"]) * map.TileWidth + map.TileWidth / 2.0f
-                };
-            }
-            else
-            {
-                if (mapId == 0 && this.gameState.Player.OverWorldPos != Vector2.Zero)
-                {
-                    point = this.gameState.Player.OverWorldPos;
-                }
-            }
-
-            this.IsInTransition = true;
-            MapScene.SetMap(mapId, point);
+            objCollider.Object.OnHit(this);
         }
 
         public void OnTriggerExit(Collider other, Collider local)
         {
-            if (other is ObjectBoxCollider objCollider)
+            if (!this.IsControllable)
             {
-                Console.WriteLine($"triggerEnter: {objCollider.Object.Name}");
+                return;
             }
+
+            if (!(other is ObjectBoxCollider objCollider))
+            {
+                return;
+            }
+
+            this.currentlyOverObjects.Remove(objCollider.Object);
+        }
+
+        public bool CanOpenDoor(in int doorLevel)
+        {
+            return true;
+        }
+
+        public bool CanOpenChest(in int level)
+        {
+            return true;
         }
     }
-}
+}    

@@ -435,45 +435,50 @@ namespace Nez.UI
 
 		void UpdateGamepadState()
 		{
-			if (_gamepadFocusElement != null)
+			if (this._gamepadFocusElement == null)
 			{
-				if (Input.GamePads[0].IsButtonPressed(GamepadActionButton) ||
-					(KeyboardEmulatesGamepad && Input.IsKeyPressed(KeyboardActionKey)))
-					_gamepadFocusElement.OnActionButtonPressed();
-				else if (Input.GamePads[0].IsButtonReleased(GamepadActionButton) ||
-						 (KeyboardEmulatesGamepad && Input.IsKeyReleased(KeyboardActionKey)))
-					_gamepadFocusElement.OnActionButtonReleased();
+				return;
 			}
 
-			IGamepadFocusable nextElement = null;
+			if (Input.GamePads[0].IsButtonPressed(this.GamepadActionButton) ||
+			    (this.KeyboardEmulatesGamepad && Input.IsKeyPressed(this.KeyboardActionKey)))
+				this._gamepadFocusElement.OnActionButtonPressed();
+			else if (Input.GamePads[0].IsButtonReleased(this.GamepadActionButton) ||
+			         (this.KeyboardEmulatesGamepad && Input.IsKeyReleased(this.KeyboardActionKey)))
+				this._gamepadFocusElement.OnActionButtonReleased();
+			
 			var direction = Direction.None;
 			if (Input.GamePads[0].DpadLeftPressed || Input.GamePads[0].IsLeftStickLeftPressed() ||
-				(KeyboardEmulatesGamepad && Input.IsKeyPressed(Keys.Left)))
+			    (this.KeyboardEmulatesGamepad && Input.IsKeyPressed(Keys.Left)))
 				direction = Direction.Left;
 			else if (Input.GamePads[0].DpadRightPressed || Input.GamePads[0].IsLeftStickRightPressed() ||
-					 (KeyboardEmulatesGamepad && Input.IsKeyPressed(Keys.Right)))
+			         (this.KeyboardEmulatesGamepad && Input.IsKeyPressed(Keys.Right)))
 				direction = Direction.Right;
 			else if (Input.GamePads[0].DpadUpPressed || Input.GamePads[0].IsLeftStickUpPressed() ||
-					 (KeyboardEmulatesGamepad && Input.IsKeyPressed(Keys.Up)))
+			         (this.KeyboardEmulatesGamepad && Input.IsKeyPressed(Keys.Up)))
 				direction = Direction.Up;
 			else if (Input.GamePads[0].DpadDownPressed || Input.GamePads[0].IsLeftStickDownPressed() ||
-					 (KeyboardEmulatesGamepad && Input.IsKeyPressed(Keys.Down)))
+			         (this.KeyboardEmulatesGamepad && Input.IsKeyPressed(Keys.Down)))
 				direction = Direction.Down;
 
 			// make sure we have a valid direction
-			if (direction != Direction.None)
+			if (direction == Direction.None)
 			{
-				nextElement = FindNextGamepadFocusable(_gamepadFocusElement, direction);
-				if (nextElement == null)
+				return;
+			}
+
+			var nextElement = this.FindNextGamepadFocusable(this._gamepadFocusElement, direction);
+			if (nextElement == null)
+			{
+				// we have no next Element so if the current Element has explicit focuasable control send along the unhandled direction
+				if (this._gamepadFocusElement.ShouldUseExplicitFocusableControl)
 				{
-					// we have no next Element so if the current Element has explicit focuasable control send along the unhandled direction
-					if (_gamepadFocusElement.ShouldUseExplicitFocusableControl)
-						_gamepadFocusElement.OnUnhandledDirectionPressed(direction);
+					this._gamepadFocusElement.OnUnhandledDirectionPressed(direction);
 				}
-				else
-				{
-					SetGamepadFocusElement(nextElement);
-				}
+			}
+			else
+			{
+				this.SetGamepadFocusElement(nextElement);
 			}
 		}
 

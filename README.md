@@ -6,7 +6,6 @@
     * Chests
     * Ship
 - Sprites
-    - Moving Sprites
     - Talking to sprites
     - Stores
     - Healers

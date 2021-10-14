@@ -4,13 +4,19 @@ using Nez.Tiled;
 
 namespace DungeonEscape.Components
 {
+    public interface ICollidable
+    {
+        void OnHit(Player player);
+        bool OnAction(Player player);
+    }
+    
     public class ObjectBoxCollider : BoxCollider
     {
-        public TmxObject Object { get; private set; }
+        public ICollidable Object { get; private set; }
 
-        public ObjectBoxCollider(TmxObject tmxObject, Rectangle rectangle) : base(rectangle)
+        public ObjectBoxCollider(ICollidable collidable, Rectangle rectangle) : base(rectangle)
         {
-            this.Object = tmxObject;
+            this.Object = collidable;
         }
     }
 }

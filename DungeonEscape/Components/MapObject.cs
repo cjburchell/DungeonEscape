@@ -1,19 +1,36 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Nez;
 using Nez.Sprites;
 using Nez.Tiled;
 
 namespace DungeonEscape.Components
 {
-    public class MapObject: Component
+    public class MapObject: Component, ICollidable
     {
-        private readonly TmxObject tmxObject;
+        protected readonly TmxObject tmxObject;
         private readonly int gridTileHeight;
         private readonly int gridTileWidth;
         private readonly TmxTilesetTile mapTile;
         private SpriteAnimator animator;
+        
+        public static MapObject Create(TmxObject tmxObject,int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile)
+        {
+            if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
+            {
+                return null;
+            }
 
-        public MapObject(TmxObject tmxObject,int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile)
+            return spriteType switch
+            {
+                SpriteType.Warp => new Warp(tmxObject, gridTileHeight, gridTileWidth, mapTile),
+                SpriteType.Chest => new Chest(tmxObject, gridTileHeight, gridTileWidth, mapTile),
+                SpriteType.Door => new Door(tmxObject, gridTileHeight, gridTileWidth, mapTile),
+                _ => new MapObject(tmxObject, gridTileHeight, gridTileWidth, mapTile)
+            };
+        }
+
+        protected MapObject(TmxObject tmxObject,int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile)
         {
             this.tmxObject = tmxObject;
             this.gridTileHeight = gridTileHeight;
@@ -32,7 +49,7 @@ namespace DungeonEscape.Components
             this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
             this.animator.LayerDepth = 11;
 
-            var collider = this.Entity.AddComponent(new ObjectBoxCollider(this.tmxObject,
+            var collider = this.Entity.AddComponent(new ObjectBoxCollider(this,
                 new Rectangle
                 {
                     X = (int)(-this.tmxObject.Width/2.0f), 
@@ -41,20 +58,20 @@ namespace DungeonEscape.Components
                     Height = (int) this.tmxObject.Height
                 }));
             collider.IsTrigger = true;
-            if (!bool.Parse(this.tmxObject.Properties["Collideable"]))
-            {
-                return;
-            }
+        }
+        
+        protected void DisplayVisual(bool display = true)
+        {
+            this.animator.SetEnabled(display);
+        }
 
-            var offsetWidth = (int) (this.tmxObject.Width * (1.0f / 4.0f));
-            var offsetHeight = (int) (this.tmxObject.Height * (1.0f / 4.0f));
-            this.Entity.AddComponent(new BoxCollider(new Rectangle
-            {
-                X = (int)(-this.tmxObject.Width/2.0f) + offsetWidth / 2, 
-                Y = (int)(-this.tmxObject.Height/2.0f) + offsetHeight / 2,
-                Width = (int) this.tmxObject.Width - offsetWidth, 
-                Height = (int) this.tmxObject.Height - offsetHeight
-            }));
+        public virtual void OnHit(Player player)
+        {
+        }
+
+        public virtual bool OnAction(Player player)
+        {
+            return false;
         }
     }
 }

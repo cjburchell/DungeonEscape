@@ -53,42 +53,42 @@
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="hello" />
       </properties>
     </object>
     <object id="0" name="npc" type="NPC" x="608" y="896" rotation="0" width="32" height="32" gid="119" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="Welcome to the shrine of healing" />
       </properties>
     </object>
     <object id="0" name="npc" type="NPC" x="352" y="544" rotation="0" width="32" height="32" gid="117" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="Welcome" />
       </properties>
     </object>
     <object id="0" name="npc" type="NPC" x="704" y="544" rotation="0" width="32" height="32" gid="117" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="Have a nice day" />
       </properties>
     </object>
     <object id="0" name="npc" type="NPC" x="640" y="704" rotation="0" width="32" height="32" gid="122" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="chrip" />
       </properties>
     </object>
     <object id="0" name="npc" type="NPC" x="448" y="704" rotation="0" width="32" height="32" gid="122" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="eeek" />
       </properties>
     </object>
   </objectgroup>

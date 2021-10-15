@@ -321,8 +321,8 @@ namespace ConvertMaps
                 string text = null;
                 if (npcType == 5)
                 {
-                    name = "npc";
                     text = name.Replace('-', ' ').Replace('#', '\n');
+                    name = "npc";
                 }
 
 

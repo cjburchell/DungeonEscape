@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Nez;
 
-namespace DungeonEscape.Components
+namespace DungeonEscape.Scenes.Map.Components
 {
     public class CameraBounds : Component, IUpdatable
     {

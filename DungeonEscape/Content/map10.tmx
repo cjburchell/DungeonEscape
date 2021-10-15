@@ -106,56 +106,56 @@
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="There is a key in&#xA;the tower to the&#xA;north" />
       </properties>
     </object>
     <object id="0" name="npc" type="NPC" x="704" y="192" rotation="0" width="32" height="32" gid="119" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="the strange old man&#xA;knows the way" />
       </properties>
     </object>
     <object id="0" name="npc" type="NPC" x="576" y="192" rotation="0" width="32" height="32" gid="119" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="You are not suppose&#xA;to be on the wall" />
       </properties>
     </object>
     <object id="0" name="npc" type="NPC" x="224" y="192" rotation="0" width="32" height="32" gid="119" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="The View Is Great&#xA;you can almost see&#xA;the southern desert" />
       </properties>
     </object>
     <object id="0" name="npc" type="NPC" x="224" y="1088" rotation="0" width="32" height="32" gid="119" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="this is the walled city" />
       </properties>
     </object>
     <object id="0" name="npc" type="NPC" x="1088" y="1088" rotation="0" width="32" height="32" gid="119" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="garding the wall is fun" />
       </properties>
     </object>
     <object id="0" name="npc" type="NPC" x="1088" y="192" rotation="0" width="32" height="32" gid="119" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="do not under estmate the&#xA;power of dragons" />
       </properties>
     </object>
     <object id="0" name="npc" type="NPC" x="512" y="896" rotation="0" width="32" height="32" gid="116" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="The guy next door locked&#xA;himself Inside" />
       </properties>
     </object>
   </objectgroup>

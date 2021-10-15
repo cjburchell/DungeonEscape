@@ -386,14 +386,14 @@
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="you must find a ship&#xA;and get to the forest contnent" />
       </properties>
     </object>
     <object id="0" name="npc" type="NPC" x="320" y="384" rotation="0" width="32" height="32" gid="117" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
-        <property name="Text" type="string" value="npc" />
+        <property name="Text" type="string" value="the leviathan must&#xA;be defeted" />
       </properties>
     </object>
   </objectgroup>

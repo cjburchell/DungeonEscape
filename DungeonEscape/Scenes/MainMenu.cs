@@ -1,4 +1,4 @@
-﻿using DungeonEscape.Components;
+﻿using DungeonEscape.Scenes.Map.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Nez;

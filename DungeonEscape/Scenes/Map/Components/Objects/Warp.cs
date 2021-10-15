@@ -1,8 +1,7 @@
-﻿using DungeonEscape.Scenes;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Nez.Tiled;
 
-namespace DungeonEscape.Components
+namespace DungeonEscape.Scenes.Map.Components.Objects
 {
     public class Warp : MapObject
     {
@@ -41,7 +40,7 @@ namespace DungeonEscape.Components
                 }
             }
 
-            player.IsControllable = false;
+            player.GameState.IsPaused = true;
             MapScene.SetMap(this.mapId, point);
         }
     }

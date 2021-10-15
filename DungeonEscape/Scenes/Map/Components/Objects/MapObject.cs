@@ -1,10 +1,11 @@
 ﻿using System;
+using DungeonEscape.Scenes.Map.Components.UI;
 using Microsoft.Xna.Framework;
 using Nez;
 using Nez.Sprites;
 using Nez.Tiled;
 
-namespace DungeonEscape.Components
+namespace DungeonEscape.Scenes.Map.Components.Objects
 {
     public class MapObject: Component, ICollidable
     {
@@ -13,8 +14,8 @@ namespace DungeonEscape.Components
         private readonly int gridTileWidth;
         private readonly TmxTilesetTile mapTile;
         private SpriteAnimator animator;
-        
-        public static MapObject Create(TmxObject tmxObject,int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile)
+
+        public static MapObject Create(TmxObject tmxObject,int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, TalkWindow talkWindow)
         {
             if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
             {
@@ -24,8 +25,8 @@ namespace DungeonEscape.Components
             return spriteType switch
             {
                 SpriteType.Warp => new Warp(tmxObject, gridTileHeight, gridTileWidth, mapTile),
-                SpriteType.Chest => new Chest(tmxObject, gridTileHeight, gridTileWidth, mapTile),
-                SpriteType.Door => new Door(tmxObject, gridTileHeight, gridTileWidth, mapTile),
+                SpriteType.Chest => new Chest(tmxObject, gridTileHeight, gridTileWidth, mapTile, talkWindow),
+                SpriteType.Door => new Door(tmxObject, gridTileHeight, gridTileWidth, mapTile, talkWindow),
                 _ => new MapObject(tmxObject, gridTileHeight, gridTileWidth, mapTile)
             };
         }
@@ -47,7 +48,7 @@ namespace DungeonEscape.Components
             
             var sprites = Nez.Textures.Sprite.SpritesFromAtlas(mapTile.Image.Texture, 32, 32);
             this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
-            this.animator.LayerDepth = 11;
+            this.animator.RenderLayer = 20;
 
             var collider = this.Entity.AddComponent(new ObjectBoxCollider(this,
                 new Rectangle

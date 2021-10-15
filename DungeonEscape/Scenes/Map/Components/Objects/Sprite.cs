@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
+using DungeonEscape.Scenes.Map.Components.UI;
 using Microsoft.Xna.Framework;
 using Nez;
 using Nez.AI.Pathfinding;
@@ -7,20 +9,13 @@ using Nez.Sprites;
 using Nez.Tiled;
 using Random = Nez.Random;
 
-namespace DungeonEscape.Components
+namespace DungeonEscape.Scenes.Map.Components.Objects
 {
-    public enum MoveState
-    {
-        Moving,
-        Stopped,
-    }
-    
-    
-    
     public class Sprite : Component, IUpdatable, ICollidable
     {
         private readonly TmxObject tmxObject;
         private readonly TmxMap map;
+        private readonly IGame gameState;
         private readonly TmxTilesetTile mapTile;
         private SpriteAnimator animator;
         private Mover mover;
@@ -30,7 +25,7 @@ namespace DungeonEscape.Components
         private List<Point> path;
         private const float MoveSpeed = 75;
         
-        public static Sprite Create(TmxObject tmxObject, TmxMap map)
+        public static Sprite Create(TmxObject tmxObject, TmxMap map, TalkWindow talkWindow, IGame gameState)
         {
             if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
             {
@@ -39,16 +34,17 @@ namespace DungeonEscape.Components
 
             return spriteType switch
             {
-                SpriteType.Monster => new Sprite(tmxObject, map),
-                SpriteType.NPC => new Character(tmxObject, map),
-                _ => new Sprite(tmxObject, map)
+                SpriteType.Monster => new Sprite(tmxObject, map, gameState),
+                SpriteType.NPC => new Character(tmxObject, map, talkWindow, gameState),
+                _ => new Sprite(tmxObject, map, gameState)
             };
         }
         
-        protected Sprite(TmxObject tmxObject, TmxMap map)
+        protected Sprite(TmxObject tmxObject, TmxMap map, IGame gameState)
         {
             this.tmxObject = tmxObject;
             this.map = map;
+            this.gameState = gameState;
             this.mapTile = map.GetTilesetTile(tmxObject.Tile.Gid);
 
             var wall = map.GetLayer<TmxLayer>("wall");
@@ -87,7 +83,7 @@ namespace DungeonEscape.Components
             this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
             this.mover = this.Entity.AddComponent(new Mover());
             this.canMove = bool.Parse(this.tmxObject.Properties["CanMove"]);
-            this.animator.LayerDepth = 12;
+            this.animator.RenderLayer = 15;
 
             var collider = this.Entity.AddComponent(new ObjectBoxCollider(this,
                 new Rectangle
@@ -129,6 +125,10 @@ namespace DungeonEscape.Components
 
         void IUpdatable.Update()
         {
+            if (this.gameState.IsPaused)
+            {
+                return;
+            }
             
             if (!this.canMove)
             {

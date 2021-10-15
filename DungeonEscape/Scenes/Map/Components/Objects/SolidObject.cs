@@ -2,7 +2,7 @@
 using Nez;
 using Nez.Tiled;
 
-namespace DungeonEscape.Components
+namespace DungeonEscape.Scenes.Map.Components.Objects
 {
     public class SolidObject : MapObject
     {

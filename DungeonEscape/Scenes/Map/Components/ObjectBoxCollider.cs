@@ -1,8 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using DungeonEscape.Scenes.Map.Components.Objects;
+using Microsoft.Xna.Framework;
 using Nez;
 using Nez.Tiled;
 
-namespace DungeonEscape.Components
+namespace DungeonEscape.Scenes.Map.Components
 {
     public interface ICollidable
     {

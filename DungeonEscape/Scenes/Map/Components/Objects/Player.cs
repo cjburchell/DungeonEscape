@@ -1,21 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.Sprites;
 
-namespace DungeonEscape.Components
+namespace DungeonEscape.Scenes.Map.Components.Objects
 {
-    public enum SpriteType
-    {
-        Ship,
-        Door,
-        Chest,
-        NPC,
-        Monster,
-        Warp
-    }
-    
     public class Player : Component, IUpdatable, ITriggerListener
     {
         private const float MoveSpeed = 150;
@@ -23,7 +14,6 @@ namespace DungeonEscape.Components
         private VirtualIntegerAxis xAxisInput;
         private VirtualIntegerAxis yAxisInput;
         SubpixelVector2 subpixelV2;
-        public bool IsControllable { get; set; }
         public IGame GameState { get; }
 
         public Player(IGame gameState)
@@ -38,10 +28,9 @@ namespace DungeonEscape.Components
         {
             var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/playeranimation.png");
             var sprites =  Nez.Textures.Sprite.SpritesFromAtlas(texture, 32, 32);
-            
             this.mover = this.Entity.AddComponent(new Mover());
             this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
-            this.animator.LayerDepth = 13;
+            this.animator.RenderLayer = 10;
             this.animator.AddAnimation("WalkDown", new[]
             {
                 sprites[0],
@@ -146,7 +135,7 @@ namespace DungeonEscape.Components
 
         void IUpdatable.Update()
         {
-            if (!this.IsControllable)
+            if (this.GameState.IsPaused)
             {
                 return;
             }
@@ -169,7 +158,7 @@ namespace DungeonEscape.Components
        
         public void OnTriggerEnter(Collider other, Collider local)
         {
-            if (!this.IsControllable)
+            if (this.GameState.IsPaused)
             {
                 return;
             }
@@ -179,6 +168,7 @@ namespace DungeonEscape.Components
                 return;
             }
             
+            Console.WriteLine($"Over Object");
             this.currentlyOverObjects.Add(objCollider.Object);
             
             objCollider.Object.OnHit(this);
@@ -186,7 +176,7 @@ namespace DungeonEscape.Components
 
         public void OnTriggerExit(Collider other, Collider local)
         {
-            if (!this.IsControllable)
+            if (this.GameState.IsPaused)
             {
                 return;
             }
@@ -196,6 +186,7 @@ namespace DungeonEscape.Components
                 return;
             }
 
+            Console.WriteLine($"Removed Object");
             this.currentlyOverObjects.Remove(objCollider.Object);
         }
 

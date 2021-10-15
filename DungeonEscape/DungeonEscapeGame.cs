@@ -1,29 +1,15 @@
 ﻿using System.Collections.Generic;
 using DungeonEscape.Scenes;
-using Microsoft.Xna.Framework;
 using Nez;
 using Nez.ImGuiTools;
 using Nez.Tiled;
 
 namespace DungeonEscape
 {
-    public class Player
-    {
-        public Vector2 OverWorldPos { get; set; } = Vector2.Zero;
-    }
-
-    public interface IGame
-    {
-        TmxMap GetMap(int mapId);
-
-        int CurrentMapId { get; set; }
-
-        Player Player { get; }
-    }
-
     public class DungeonEscapeGame : Core, IGame
     {
-        public Player Player { get; } = new Player();
+        public State.Player Player { get; } = new State.Player();
+        public bool IsPaused { get; set; }
         private readonly Dictionary<int, TmxMap> loadedMaps = new Dictionary<int, TmxMap>();
         
         public int CurrentMapId { get; set; }

@@ -4,20 +4,25 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.Sprites;
+using Nez.Tiled;
+using Nez.UI;
 
 namespace DungeonEscape.Scenes.Map.Components.Objects
 {
     public class Player : Component, IUpdatable, ITriggerListener
     {
+        private readonly TmxMap map;
+        private readonly Label debugText;
         private const float MoveSpeed = 150;
         private SpriteAnimator animator;
         private VirtualIntegerAxis xAxisInput;
         private VirtualIntegerAxis yAxisInput;
-        SubpixelVector2 subpixelV2;
         public IGame GameState { get; }
 
-        public Player(IGame gameState)
+        public Player(IGame gameState, TmxMap map, Label debugText)
         {
+            this.map = map;
+            this.debugText = debugText;
             this.GameState = gameState;
         }
 
@@ -30,6 +35,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             var sprites =  Nez.Textures.Sprite.SpritesFromAtlas(texture, 32, 32);
             this.mover = this.Entity.AddComponent(new Mover());
             this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
+            this.animator.Speed = 0.5f;
             this.animator.RenderLayer = 10;
             this.animator.AddAnimation("WalkDown", new[]
             {
@@ -109,7 +115,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             {
                 if (this.GameState.CurrentMapId == 0)
                 {
-                    this.GameState.Player.OverWorldPos = this.Entity.Transform.Position;
+                    this.GameState.Player.OverWorldPos = MapScene.ToMapGrid(this.Entity.Position, this.map);
                 }
 
                 if (!this.animator.IsAnimationActive(animation))
@@ -124,7 +130,6 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 var movement = moveDir * MoveSpeed * Time.DeltaTime;
 
                 this.mover.CalculateMovement(ref movement, out _);
-                this.subpixelV2.Update(ref movement);
                 this.mover.ApplyMovement(movement);
             }
             else
@@ -140,6 +145,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 return;
             }
 
+            this.debugText.SetText($"G: {MapScene.ToMapGrid(this.Entity.Position, this.map)}, R: {this.Entity.Position}");
+
             if (this.actionButton.IsPressed)
             {
                 foreach (var overObject in this.currentlyOverObjects)
@@ -154,8 +161,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.UpdateMovement();
         }
         
-        private List<ICollidable> currentlyOverObjects = new List<ICollidable>();
-       
+        private readonly List<ICollidable> currentlyOverObjects = new List<ICollidable>();
+
         public void OnTriggerEnter(Collider other, Collider local)
         {
             if (this.GameState.IsPaused)
@@ -168,7 +175,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 return;
             }
             
-            Console.WriteLine($"Over Object");
+            Console.WriteLine("Over Object");
             this.currentlyOverObjects.Add(objCollider.Object);
             
             objCollider.Object.OnHit(this);
@@ -186,16 +193,16 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 return;
             }
 
-            Console.WriteLine($"Removed Object");
+            Console.WriteLine("Removed Object");
             this.currentlyOverObjects.Remove(objCollider.Object);
         }
 
-        public bool CanOpenDoor(in int doorLevel)
+        public bool CanOpenDoor(int doorLevel)
         {
             return true;
         }
 
-        public bool CanOpenChest(in int level)
+        public bool CanOpenChest(int level)
         {
             return true;
         }

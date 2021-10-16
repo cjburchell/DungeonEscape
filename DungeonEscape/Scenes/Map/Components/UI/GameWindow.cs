@@ -38,8 +38,7 @@ namespace DungeonEscape.Scenes.Map.Components
         
         public override void OnAddedToEntity()
         {
-            this.Window = new Window(this.title, skin);
-            this.canvas.Stage.AddElement(this.Window);
+            this.Window = this.canvas.Stage.AddElement(new Window(this.title, skin));
             this.Window.SetPosition(this.position.X, this.position.Y);
             this.Window.SetWidth(this.width);
             this.Window.SetHeight(this.height);

@@ -633,6 +633,7 @@ namespace ConvertMaps
                 case (char) 10:
                 case 'B':
                 case 'w':
+                case '#':
                     return Biome.Water;
                 case 'f':
                     return Biome.Hills;
@@ -656,6 +657,7 @@ namespace ConvertMaps
                 case (char) 0:
                 case (char) 10:
                 case 'w':
+                case '#':
                     return TileType.Water;
                 case 'd':
                 case 'I':
@@ -689,7 +691,6 @@ namespace ConvertMaps
                 case '9':
                 case 'z':
                 case 'y':
-                case '#':
                 case '<':
                 case ':':
                 case '_':

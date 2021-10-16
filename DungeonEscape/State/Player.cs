@@ -4,6 +4,6 @@ namespace DungeonEscape.State
 {
     public class Player
     {
-        public Vector2 OverWorldPos { get; set; } = Vector2.Zero;
+        public Point OverWorldPos { get; set; } = Point.Zero;
     }
 }

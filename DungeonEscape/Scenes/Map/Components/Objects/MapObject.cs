@@ -43,8 +43,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         {
             base.Initialize();
 
-            this.Entity.SetPosition(this.tmxObject.X + (int) (gridTileWidth / 2.0),
-                this.tmxObject.Y - (int) (gridTileHeight / 2.0));
+            this.Entity.SetPosition(this.tmxObject.X + (int) (this.gridTileWidth / 2.0),
+                this.tmxObject.Y - (int) (this.gridTileHeight / 2.0));
             
             var sprites = Nez.Textures.Sprite.SpritesFromAtlas(mapTile.Image.Texture, 32, 32);
             this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));

@@ -115,12 +115,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         {
             this.animator.SetEnabled(display);
         }
-
-        private Vector2 FromMapToReal(Point point)
-        {
-            return new Vector2(point.X * this.map.TileWidth + this.map.TileWidth/2, point.Y * this.map.TileHeight + this.map.TileHeight/2);
-        }
-
+        
         private int currentPathIndex;
 
         void IUpdatable.Update()
@@ -168,13 +163,10 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                         mapGoTo.X = this.map.Height-1;
                     }
                     
-                    var (x, y) = pos + this.FromMapToReal(mapGoTo);
-                    
-                    //Console.WriteLine($"Updating Sprite {this.tmxObject.Name} Location {mapGoTo}");
-                    
+                    var toPos = pos + MapScene.ToRealLocation(mapGoTo, this.map);
                     this.path = this.graph.Search(
-                        new Point((int) pos.X / this.map.TileWidth, (int) pos.Y / this.map.TileHeight),
-                        new Point((int) (x / this.map.TileWidth), (int) (y / this.map.TileHeight)));
+                        MapScene.ToMapGrid(pos, this.map),
+                        MapScene.ToMapGrid(toPos, this.map));
 
                     if (this.path == null)
                     {
@@ -196,8 +188,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 else
                 {
                     var p1 = this.Entity.Position;
-                    //var mapPoint = new Point((int) (p1.X/this.map.TileHeight), (int) (p1.Y/this.map.TileHeight));
-                    if (Vector2.Distance(p1,this.FromMapToReal(this.path[this.currentPathIndex])) <= 1)
+                    if (Vector2.Distance(p1,MapScene.ToRealLocation(this.path[this.currentPathIndex], this.map)) <= 1)
                     {
                         this.currentPathIndex++;
                         if (this.currentPathIndex >= this.path.Count)
@@ -207,7 +198,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                         }
                     }
                     
-                    var p2 = this.FromMapToReal(this.path[this.currentPathIndex]);
+                    var p2 = MapScene.ToRealLocation(this.path[this.currentPathIndex], this.map);
                     var angle = (float)Math.Atan2(p2.Y - p1.Y, p2.X - p1.X);
                     //Console.WriteLine($"Moving Sprite {this.tmxObject.Name} from: {mapPoint} to: {this.path[this.currentPathIndex]} angle:{MathHelper.ToDegrees(angle)}");
                     var vector = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));

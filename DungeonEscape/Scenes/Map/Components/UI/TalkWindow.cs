@@ -20,8 +20,6 @@ namespace DungeonEscape.Scenes.Map.Components.UI
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
-            
-            base.OnAddedToEntity();
             var table = this.Window.AddElement(new Table());
 
             this.closeButton =new TextButton("Close", skin);

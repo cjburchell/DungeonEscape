@@ -7,12 +7,17 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
     public class SolidObject : MapObject
     {
         private readonly Rectangle collideRect;
-        private readonly bool collideable;
+
+        protected bool Collideable
+        {
+            get => bool.Parse(this.tmxObject.Properties["Collideable"]);
+            set => this.tmxObject.Properties["Collideable"] = value.ToString();
+        }
+
         private BoxCollider boxCollider;
 
         protected SolidObject(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile)
         {
-            this.collideable = bool.Parse(tmxObject.Properties["Collideable"]);
             var offsetWidth = (int) (tmxObject.Width * (1.0f / 4.0f));
             var offsetHeight = (int) (tmxObject.Height * (1.0f / 4.0f));
             this.collideRect = new Rectangle
@@ -26,14 +31,14 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
         public void SetEnableCollider(bool enable)
         {
-            this.boxCollider.SetEnabled(enable);
+            this.boxCollider?.SetEnabled(enable);
         }
 
         public override void Initialize()
         {
             base.Initialize();
             
-            if (!this.collideable)
+            if (!this.Collideable)
             {
                 return;
             }

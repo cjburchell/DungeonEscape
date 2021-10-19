@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using DungeonEscape.State;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Nez;
@@ -15,6 +17,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly Label debugText;
         private const float MoveSpeed = 150;
         private SpriteAnimator animator;
+        private SpriteAnimator shipAnimator;
         private VirtualIntegerAxis xAxisInput;
         private VirtualIntegerAxis yAxisInput;
         public IGame GameState { get; }
@@ -31,36 +34,69 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
         public override void OnAddedToEntity()
         {
-            var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/playeranimation.png");
-            var sprites =  Nez.Textures.Sprite.SpritesFromAtlas(texture, 32, 32);
             this.mover = this.Entity.AddComponent(new Mover());
-            this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
-            this.animator.Speed = 0.5f;
-            this.animator.RenderLayer = 10;
-            this.animator.AddAnimation("WalkDown", new[]
             {
-                sprites[0],
-                sprites[1]
-            });
-            
-            this.animator.AddAnimation("WalkUp", new[]
+                var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/playeranimation.png");
+                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, 32, 32);
+                this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
+                this.animator.Speed = 0.5f;
+                this.animator.RenderLayer = 10;
+                this.animator.AddAnimation("WalkDown", new[]
+                {
+                    sprites[0],
+                    sprites[1]
+                });
+
+                this.animator.AddAnimation("WalkUp", new[]
+                {
+                    sprites[2],
+                    sprites[3]
+                });
+
+                this.animator.AddAnimation("WalkRight", new[]
+                {
+                    sprites[4],
+                    sprites[5]
+                });
+
+                this.animator.AddAnimation("WalkLeft", new[]
+                {
+                    sprites[6],
+                    sprites[7]
+                });
+            }
+
             {
-                sprites[2],
-                sprites[3]
-            });
-            
-            this.animator.AddAnimation("WalkRight", new[]
-            {
-                sprites[4],
-                sprites[5]
-            });
-            
-            this.animator.AddAnimation("WalkLeft", new[]
-            {
-                sprites[6],
-                sprites[7]
-            });
-            
+                var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/ship.png");
+                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, 32, 32);
+                this.shipAnimator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
+                this.shipAnimator.Speed = 0.5f;
+                this.shipAnimator.RenderLayer = 10;
+                this.shipAnimator.AddAnimation("WalkDown", new[]
+                {
+                    sprites[0],
+                    sprites[1]
+                });
+
+                this.shipAnimator.AddAnimation("WalkUp", new[]
+                {
+                    sprites[2],
+                    sprites[3]
+                });
+
+                this.shipAnimator.AddAnimation("WalkRight", new[]
+                {
+                    sprites[4],
+                    sprites[5]
+                });
+
+                this.shipAnimator.AddAnimation("WalkLeft", new[]
+                {
+                    sprites[6],
+                    sprites[7]
+                });
+            }
+
             this.Entity.AddComponent(new BoxCollider(-8, -8, 16, 16));
             
             this.xAxisInput = new VirtualIntegerAxis();
@@ -89,6 +125,26 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
         private void UpdateMovement()
         {
+            var mapPoint = MapScene.ToMapGrid(this.Entity.Position, this.map);
+            var tile = this.map.GetLayer<TmxLayer>("water").GetTile(mapPoint.X, mapPoint.Y);
+            if (tile != null && tile.Gid != 0)
+            {
+                this.shipAnimator.SetEnabled(true);
+            }
+            else
+            {
+                this.shipAnimator.SetEnabled(false);
+            }
+            
+            if (tile != null && tile.Gid != 0)
+            {
+                this.animator.SetEnabled(false);
+            }
+            else
+            {
+                this.animator.SetEnabled(true);
+            }
+
             // handle movement and animations
             var moveDir = new Vector2(this.xAxisInput.Value, this.yAxisInput.Value);
             var animation = "WalkDown";
@@ -113,6 +169,36 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             if (moveDir != Vector2.Zero)
             {
+                var movement = moveDir * MoveSpeed * Time.DeltaTime;
+                var newPoint = movement + this.Entity.Position;
+
+                var minX = this.map.TileWidth / 2.0f;
+                var maxX = this.map.Width * this.map.TileWidth - this.map.TileWidth/2.0f;
+                
+                if (newPoint.X < minX)
+                {
+                    newPoint.X = this.GameState.CurrentMapId != 0 ? minX : maxX;
+                }
+                else if (newPoint.X > maxX)
+                {
+                    newPoint.X = this.GameState.CurrentMapId != 0 ? maxX : minX;
+                }
+
+                var minY = this.map.TileHeight / 2.0f;
+                var maxY = this.map.Height * this.map.TileHeight - this.map.TileHeight/2.0f;
+                
+                if (newPoint.Y < minY)
+                {
+                    newPoint.Y = this.GameState.CurrentMapId != 0 ? minY : maxY;
+                }
+                else if (newPoint.Y > maxY)
+                {
+                    newPoint.Y = this.GameState.CurrentMapId != 0 ? maxY : minY;
+                }
+
+                movement = newPoint - this.Entity.Position;
+
+
                 if (this.GameState.CurrentMapId == 0)
                 {
                     this.GameState.Player.OverWorldPos = MapScene.ToMapGrid(this.Entity.Position, this.map);
@@ -127,13 +213,21 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                     this.animator.UnPause();
                 }
 
-                var movement = moveDir * MoveSpeed * Time.DeltaTime;
+                if (!this.shipAnimator.IsAnimationActive(animation))
+                {
+                    this.shipAnimator.Play(animation);
+                }
+                else
+                {
+                    this.shipAnimator.UnPause();
+                }
 
                 this.mover.CalculateMovement(ref movement, out _);
                 this.mover.ApplyMovement(movement);
             }
             else
             {
+                this.shipAnimator.Pause();
                 this.animator.Pause();
             }
         }
@@ -162,6 +256,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         }
         
         private readonly List<ICollidable> currentlyOverObjects = new List<ICollidable>();
+
 
         public void OnTriggerEnter(Collider other, Collider local)
         {
@@ -199,7 +294,14 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
         public bool CanOpenDoor(int doorLevel)
         {
-            return true;
+            var key = this.GameState.Player.Items.FirstOrDefault(item => item.Type == ItemType.Key);
+            if (key == null)
+            {
+                return false;
+            }
+
+            this.GameState.Player.Items.Remove(key);
+            return  true;
         }
 
         public bool CanOpenChest(int level)

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using DungeonEscape.Scenes.Map.Components.UI;
+using DungeonEscape.State;
 using Microsoft.Xna.Framework;
 using Nez;
 using Nez.Sprites;
@@ -15,7 +17,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly TmxTilesetTile mapTile;
         private SpriteAnimator animator;
 
-        public static MapObject Create(TmxObject tmxObject,int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, TalkWindow talkWindow)
+        public static MapObject Create(TmxObject tmxObject,int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, TalkWindow talkWindow, IEnumerable<Item> items)
         {
             if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
             {
@@ -24,8 +26,9 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             return spriteType switch
             {
+                SpriteType.Ship => new Ship(tmxObject, gridTileHeight, gridTileWidth, mapTile),
                 SpriteType.Warp => new Warp(tmxObject, gridTileHeight, gridTileWidth, mapTile),
-                SpriteType.Chest => new Chest(tmxObject, gridTileHeight, gridTileWidth, mapTile, talkWindow),
+                SpriteType.Chest => new Chest(tmxObject, gridTileHeight, gridTileWidth, mapTile, talkWindow, items),
                 SpriteType.Door => new Door(tmxObject, gridTileHeight, gridTileWidth, mapTile, talkWindow),
                 _ => new MapObject(tmxObject, gridTileHeight, gridTileWidth, mapTile)
             };

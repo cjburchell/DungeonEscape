@@ -46,6 +46,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.SetEnableCollider(false);
             this.DisplayVisual(false);
             this.isOpen = true;
+            this.Collideable = false;
             return true;
         }
     }

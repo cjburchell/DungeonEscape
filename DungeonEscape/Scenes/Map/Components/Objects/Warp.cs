@@ -9,7 +9,11 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private Point? warpMap;
         public Warp(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile)
         {
-            this.mapId = int.Parse(tmxObject.Properties["WarpMap"]);
+            if (tmxObject.Properties.ContainsKey("WarpMap"))
+            {
+                this.mapId = int.Parse(tmxObject.Properties["WarpMap"]);
+            }
+
             if (tmxObject.Properties.ContainsKey("WarpMapX") &&
                 tmxObject.Properties.ContainsKey("WarpMapY"))
             {

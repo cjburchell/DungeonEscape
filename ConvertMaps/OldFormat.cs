@@ -657,8 +657,8 @@ namespace ConvertMaps
                 case (char) 0:
                 case (char) 10:
                 case 'w':
-                case '#':
                     return TileType.Water;
+                case '#':
                 case 'd':
                 case 'I':
                 case 'J':

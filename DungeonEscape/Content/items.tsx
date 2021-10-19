@@ -7,7 +7,6 @@
       <property name="Defence" type="int" value="0" />
       <property name="Health" type="int" value="40" />
       <property name="Attack" type="int" value="0" />
-      <property name="Attack" type="int" value="0" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="16" />
       <property name="MinLevel" type="int" value="0" />
@@ -19,7 +18,6 @@
       <property name="Name" type="string" value="Robe" />
       <property name="Defence" type="int" value="1" />
       <property name="Health" type="int" value="0" />
-      <property name="Attack" type="int" value="0" />
       <property name="Attack" type="int" value="0" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="5" />
@@ -33,7 +31,6 @@
       <property name="Defence" type="int" value="0" />
       <property name="Health" type="int" value="0" />
       <property name="Attack" type="int" value="2" />
-      <property name="Attack" type="int" value="2" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="10" />
       <property name="MinLevel" type="int" value="0" />
@@ -45,7 +42,6 @@
       <property name="Name" type="string" value="Lether Armor" />
       <property name="Defence" type="int" value="4" />
       <property name="Health" type="int" value="0" />
-      <property name="Attack" type="int" value="0" />
       <property name="Attack" type="int" value="0" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="40" />
@@ -59,7 +55,6 @@
       <property name="Defence" type="int" value="2" />
       <property name="Health" type="int" value="0" />
       <property name="Attack" type="int" value="0" />
-      <property name="Attack" type="int" value="0" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="60" />
       <property name="MinLevel" type="int" value="0" />
@@ -71,7 +66,6 @@
       <property name="Name" type="string" value="Club" />
       <property name="Defence" type="int" value="0" />
       <property name="Health" type="int" value="0" />
-      <property name="Attack" type="int" value="4" />
       <property name="Attack" type="int" value="4" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="60" />
@@ -85,7 +79,6 @@
       <property name="Defence" type="int" value="0" />
       <property name="Health" type="int" value="0" />
       <property name="Attack" type="int" value="10" />
-      <property name="Attack" type="int" value="10" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="180" />
       <property name="MinLevel" type="int" value="0" />
@@ -97,7 +90,6 @@
       <property name="Name" type="string" value="Chain Mail" />
       <property name="Defence" type="int" value="12" />
       <property name="Health" type="int" value="0" />
-      <property name="Attack" type="int" value="0" />
       <property name="Attack" type="int" value="0" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="300" />
@@ -111,7 +103,6 @@
       <property name="Defence" type="int" value="0" />
       <property name="Health" type="int" value="0" />
       <property name="Attack" type="int" value="20" />
-      <property name="Attack" type="int" value="20" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="1500" />
       <property name="MinLevel" type="int" value="6" />
@@ -123,7 +114,6 @@
       <property name="Name" type="string" value="Large Shield" />
       <property name="Defence" type="int" value="10" />
       <property name="Health" type="int" value="0" />
-      <property name="Attack" type="int" value="0" />
       <property name="Attack" type="int" value="0" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="2000" />
@@ -137,7 +127,6 @@
       <property name="Defence" type="int" value="15" />
       <property name="Health" type="int" value="0" />
       <property name="Attack" type="int" value="5" />
-      <property name="Attack" type="int" value="5" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="2500" />
       <property name="MinLevel" type="int" value="6" />
@@ -149,7 +138,6 @@
       <property name="Name" type="string" value="Battle Axe" />
       <property name="Defence" type="int" value="0" />
       <property name="Health" type="int" value="0" />
-      <property name="Attack" type="int" value="22" />
       <property name="Attack" type="int" value="22" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="3000" />
@@ -163,7 +151,6 @@
       <property name="Defence" type="int" value="0" />
       <property name="Health" type="int" value="0" />
       <property name="Attack" type="int" value="15" />
-      <property name="Attack" type="int" value="15" />
       <property name="Agility" type="int" value="3" />
       <property name="Cost" type="int" value="3100" />
       <property name="MinLevel" type="int" value="6" />
@@ -175,7 +162,6 @@
       <property name="Name" type="string" value="Super Potion" />
       <property name="Defence" type="int" value="0" />
       <property name="Health" type="int" value="100" />
-      <property name="Attack" type="int" value="0" />
       <property name="Attack" type="int" value="0" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="100" />
@@ -189,7 +175,6 @@
       <property name="Defence" type="int" value="27" />
       <property name="Health" type="int" value="0" />
       <property name="Attack" type="int" value="-1" />
-      <property name="Attack" type="int" value="-1" />
       <property name="Agility" type="int" value="-2" />
       <property name="Cost" type="int" value="3500" />
       <property name="MinLevel" type="int" value="12" />
@@ -201,7 +186,6 @@
       <property name="Name" type="string" value="Full Plate" />
       <property name="Defence" type="int" value="24" />
       <property name="Health" type="int" value="0" />
-      <property name="Attack" type="int" value="0" />
       <property name="Attack" type="int" value="0" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="3000" />
@@ -215,7 +199,6 @@
       <property name="Defence" type="int" value="15" />
       <property name="Health" type="int" value="0" />
       <property name="Attack" type="int" value="0" />
-      <property name="Attack" type="int" value="0" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="10000" />
       <property name="MinLevel" type="int" value="12" />
@@ -227,7 +210,6 @@
       <property name="Name" type="string" value="Blizzard Sword" />
       <property name="Defence" type="int" value="0" />
       <property name="Health" type="int" value="0" />
-      <property name="Attack" type="int" value="40" />
       <property name="Attack" type="int" value="40" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="25000" />
@@ -241,7 +223,6 @@
       <property name="Defence" type="int" value="30" />
       <property name="Health" type="int" value="0" />
       <property name="Attack" type="int" value="1" />
-      <property name="Attack" type="int" value="1" />
       <property name="Agility" type="int" value="4" />
       <property name="Cost" type="int" value="30000" />
       <property name="MinLevel" type="int" value="12" />
@@ -253,7 +234,6 @@
       <property name="Name" type="string" value="Flame Shield" />
       <property name="Defence" type="int" value="19" />
       <property name="Health" type="int" value="0" />
-      <property name="Attack" type="int" value="3" />
       <property name="Attack" type="int" value="3" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="51000" />
@@ -267,7 +247,6 @@
       <property name="Defence" type="int" value="4" />
       <property name="Health" type="int" value="0" />
       <property name="Attack" type="int" value="50" />
-      <property name="Attack" type="int" value="50" />
       <property name="Agility" type="int" value="5" />
       <property name="Cost" type="int" value="55000" />
       <property name="MinLevel" type="int" value="12" />
@@ -279,7 +258,6 @@
       <property name="Name" type="string" value="Kings Armor" />
       <property name="Defence" type="int" value="44" />
       <property name="Health" type="int" value="0" />
-      <property name="Attack" type="int" value="8" />
       <property name="Attack" type="int" value="8" />
       <property name="Agility" type="int" value="3" />
       <property name="Cost" type="int" value="65000" />
@@ -293,7 +271,6 @@
       <property name="Defence" type="int" value="0" />
       <property name="Health" type="int" value="0" />
       <property name="Attack" type="int" value="1" />
-      <property name="Attack" type="int" value="1" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="5000" />
       <property name="MinLevel" type="int" value="18" />
@@ -306,7 +283,6 @@
       <property name="Defence" type="int" value="1" />
       <property name="Health" type="int" value="0" />
       <property name="Attack" type="int" value="0" />
-      <property name="Attack" type="int" value="0" />
       <property name="Agility" type="int" value="0" />
       <property name="Cost" type="int" value="5000" />
       <property name="MinLevel" type="int" value="18" />
@@ -318,7 +294,6 @@
       <property name="Name" type="string" value="Elixer Agility" />
       <property name="Defence" type="int" value="0" />
       <property name="Health" type="int" value="0" />
-      <property name="Attack" type="int" value="0" />
       <property name="Attack" type="int" value="0" />
       <property name="Agility" type="int" value="1" />
       <property name="Cost" type="int" value="5000" />

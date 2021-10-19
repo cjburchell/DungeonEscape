@@ -25,7 +25,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private List<Point> path;
         private const float MoveSpeed = 75;
         
-        public static Sprite Create(TmxObject tmxObject, TmxMap map, TalkWindow talkWindow, IGame gameState)
+        public static Sprite Create(TmxObject tmxObject, TmxMap map, TalkWindow talkWindow, IGame gameState, AstarGridGraph graph)
         {
             if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
             {
@@ -34,42 +34,21 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             return spriteType switch
             {
-                SpriteType.Monster => new Sprite(tmxObject, map, gameState),
-                SpriteType.NPC => new Character(tmxObject, map, talkWindow, gameState),
-                _ => new Sprite(tmxObject, map, gameState)
+                SpriteType.Monster => new Sprite(tmxObject, map, gameState, graph),
+                SpriteType.NPC => new Character(tmxObject, map, talkWindow, gameState, graph),
+                _ => new Sprite(tmxObject, map, gameState, graph)
             };
         }
         
-        protected Sprite(TmxObject tmxObject, TmxMap map, IGame gameState)
+        protected Sprite(TmxObject tmxObject, TmxMap map, IGame gameState, AstarGridGraph graph)
         {
+            this.graph = graph;
             this.tmxObject = tmxObject;
             this.map = map;
             this.gameState = gameState;
             this.mapTile = map.GetTilesetTile(tmxObject.Tile.Gid);
 
-            var wall = map.GetLayer<TmxLayer>("wall");
-            var water = map.GetLayer<TmxLayer>("water");
-
-            var itemObjects = map.GetObjectGroup("items");
-            var itemLayer = new TmxLayer();
-            itemLayer.Width = wall.Width;
-            itemLayer.Height = wall.Height;
-            itemLayer.Tiles = new TmxLayerTile[wall.Width*wall.Height];
-            itemLayer.Map = this.map;
-
-            foreach (var item in itemObjects.Objects)
-            {
-                if (!bool.Parse(item.Properties["Collideable"]) && item.Type != SpriteType.Warp.ToString())
-                {
-                    continue;
-                }
-
-                var x = (int) ((item.X + (int) (map.TileWidth / 2.0))/map.TileWidth);
-                var y = (int) ((item.Y - (int) (map.TileHeight / 2.0))/map.TileHeight);
-                itemLayer.SetTile(new TmxLayerTile(this.map, 1, x, y));
-            }
-            
-            this.graph = new AstarGridGraph(new[] {wall, water, itemLayer});
+           
         }
 
         private float elapsedTime;
@@ -138,7 +117,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                     elapsedTime = 0;
                     nextElapsedTime = Random.NextInt(5) + 1;
                     
-                    if (Random.NextInt(20) == 0)
+                    if (Random.Chance(0.05f))
                     {
                         return;
                     }

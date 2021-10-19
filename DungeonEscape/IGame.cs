@@ -1,4 +1,6 @@
-﻿using Nez.Tiled;
+﻿using System.Collections.Generic;
+using DungeonEscape.State;
+using Nez.Tiled;
 
 namespace DungeonEscape
 {
@@ -11,5 +13,7 @@ namespace DungeonEscape
         State.Player Player { get; }
         
         bool IsPaused { get; set; }
+        
+        List<Item> Items { get; }
     }
 }

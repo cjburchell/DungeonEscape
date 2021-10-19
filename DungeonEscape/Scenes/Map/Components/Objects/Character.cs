@@ -1,4 +1,5 @@
 ﻿using DungeonEscape.Scenes.Map.Components.UI;
+using Nez.AI.Pathfinding;
 using Nez.Tiled;
 
 namespace DungeonEscape.Scenes.Map.Components.Objects
@@ -8,7 +9,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly TalkWindow talkWindow;
         private string text;
 
-        public Character(TmxObject tmxObject, TmxMap map, TalkWindow talkWindow, IGame gameState) : base(tmxObject, map, gameState)
+        public Character(TmxObject tmxObject, TmxMap map, TalkWindow talkWindow, IGame gameState, AstarGridGraph graph) : base(tmxObject, map, gameState, graph)
         {
             this.talkWindow = talkWindow;
             this.text = tmxObject.Properties.ContainsKey("Text") ? tmxObject.Properties["Text"] : tmxObject.Name;

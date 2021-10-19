@@ -117,7 +117,7 @@ namespace ConvertMaps.Tiled
         [XmlArrayItem(ElementName="property", Type = typeof(TiledProperty))][XmlArray("properties")] public TiledProperty[] properties { get; set; }
 
         [XmlAttribute] public string image;
-        [XmlAttribute] public int opacity;
+        [XmlAttribute] public float opacity;
         [XmlAttribute] public string draworder;
     }
 

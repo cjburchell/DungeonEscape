@@ -80,10 +80,11 @@ namespace ConvertMaps
                 return;
             }
             
-            var tiles = OldFormat.LoadTiles(opts.InputDirectory);
-            var spells = OldFormat.LoadSpells(opts.InputDirectory, null);
-            var items = OldFormat.LoadItems(opts.InputDirectory, null);
-            var maps = OldFormat.LoadMaps(opts.InputDirectory, spells, tiles);
+            var tileIdGenerator = new IdGenerator();
+            var spells = OldFormat.LoadSpells(opts.InputDirectory);
+            var items = OldFormat.LoadItems(opts.InputDirectory);
+            var tiles = OldFormat.LoadTiles(opts.InputDirectory, tileIdGenerator);
+            var maps = OldFormat.LoadMaps(opts.InputDirectory, spells, tiles, tileIdGenerator);
 
             Directory.CreateDirectory(opts.OutputDirectory);
             if (opts.MapId == -1)

@@ -108,55 +108,55 @@
   <tile id="36">
     <image width="32" height="32" source="images/tiles/ice1.png" />
   </tile>
-  <tile id="68">
+  <tile id="37">
     <image width="32" height="32" source="images/sprites/shrin.png" />
   </tile>
-  <tile id="69">
+  <tile id="38">
     <image width="32" height="32" source="images/sprites/ship1.png" />
   </tile>
-  <tile id="70">
+  <tile id="39">
     <image width="32" height="32" source="images/sprites/tower.png" />
   </tile>
-  <tile id="71">
+  <tile id="40">
     <image width="32" height="32" source="images/sprites/town.png" />
   </tile>
-  <tile id="72">
+  <tile id="41">
     <image width="32" height="32" source="images/sprites/cave.png" />
   </tile>
-  <tile id="113">
+  <tile id="42">
     <image width="32" height="32" source="images/sprites/chest.png" />
   </tile>
-  <tile id="114">
+  <tile id="43">
     <image width="32" height="32" source="images/sprites/warp.png" />
   </tile>
-  <tile id="115">
+  <tile id="44">
     <image width="32" height="32" source="images/sprites/muchc.png" />
   </tile>
-  <tile id="116">
+  <tile id="45">
     <image width="32" height="32" source="images/sprites/healc.png" />
   </tile>
-  <tile id="117">
+  <tile id="46">
     <image width="32" height="32" source="images/sprites/wizc.png" />
   </tile>
-  <tile id="118">
+  <tile id="47">
     <image width="32" height="32" source="images/sprites/gard.png" />
   </tile>
-  <tile id="119">
+  <tile id="48">
     <image width="32" height="32" source="images/sprites/door.png" />
   </tile>
-  <tile id="120">
+  <tile id="49">
     <image width="32" height="32" source="images/sprites/stairdw.png" />
   </tile>
-  <tile id="121">
+  <tile id="50">
     <image width="32" height="32" source="images/sprites/shu.png" />
   </tile>
-  <tile id="124">
+  <tile id="51">
     <image width="32" height="32" source="images/sprites/stairup.png" />
   </tile>
-  <tile id="158">
+  <tile id="52">
     <image width="32" height="32" source="images/sprites/ochest.png" />
   </tile>
-  <tile id="168">
+  <tile id="53">
     <image width="96" height="96" source="images/sprites/dlav.png" />
   </tile>
 </tileset>

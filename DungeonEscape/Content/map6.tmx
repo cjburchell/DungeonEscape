@@ -11,19 +11,19 @@
     <data encoding="csv">14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,14,14,12,14,14,14,12,14,14,12,12,12,14,14,12,14,14,12,14,14,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,12,0,0,0,12,0,0,12,14,12,0,0,12,0,0,12,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,12,0,0,0,12,0,0,14,0,14,0,0,12,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,14,14,14,0,0,0,12,0,0,0,0,0,0,0,12,0,0,12,14,14,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,12,14,0,0,0,0,0,0,0,14,12,14,14,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,12,0,0,17,0,0,0,17,0,0,12,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,12,14,0,0,0,0,0,0,0,0,0,14,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,12,0,0,17,0,0,0,0,0,17,0,0,12,0,0,0,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,14,12,0,17,0,0,0,0,0,17,0,12,14,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,14,12,0,0,0,0,0,0,0,12,14,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,14,14,14,0,0,0,14,14,14,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,14,14,0,14,14,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,17,0,17,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,17,0,0,0,17,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,14,14,14,14,12,0,0,0,0,0,0,0,0,0,12,17,0,0,0,17,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,12,0,0,0,0,17,0,17,0,0,12,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,14,0,0,0,0,0,0,0,0,0,12,17,0,0,0,17,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,14,14,0,14,14,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,14,12,14,14,14,14,0,12,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,14,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,14,14,14,14,14,14,14,14,14,0,0,0,14,14,14,14,14,14,14,14,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0</data>
   </layer>
   <objectgroup id="4" name="items" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="0" name="Chest" type="Chest" x="832" y="256" rotation="0" width="32" height="32" gid="114" visible="true">
+    <object id="0" name="Chest" type="Chest" x="832" y="256" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Key Chest" type="Chest" x="864" y="256" rotation="0" width="32" height="32" gid="114" visible="true">
+    <object id="0" name="Key Chest" type="Chest" x="864" y="256" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Warp to 13" type="Warp" x="960" y="256" rotation="0" width="32" height="32" gid="115" visible="true">
+    <object id="0" name="Warp to 13" type="Warp" x="960" y="256" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -32,25 +32,25 @@
         <property name="WarpMapY" type="int" value="17" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="832" y="288" rotation="0" width="32" height="32" gid="114" visible="true">
+    <object id="0" name="Chest" type="Chest" x="832" y="288" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="864" y="288" rotation="0" width="32" height="32" gid="114" visible="true">
+    <object id="0" name="Chest" type="Chest" x="864" y="288" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="352" y="1024" rotation="0" width="32" height="32" gid="114" visible="true">
+    <object id="0" name="Chest" type="Chest" x="352" y="1024" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="352" y="1088" rotation="0" width="32" height="32" gid="114" visible="true">
+    <object id="0" name="Chest" type="Chest" x="352" y="1088" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -79,60 +79,60 @@
     </object>
   </objectgroup>
   <objectgroup id="5" name="sprites" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="0" name="store" type="NPC" x="384" y="1056" rotation="0" width="32" height="32" gid="116" visible="true">
+    <object id="0" name="store" type="NPC" x="384" y="1056" rotation="0" width="32" height="32" gid="45" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="0" name="heal" type="NPC" x="896" y="736" rotation="0" width="32" height="32" gid="117" visible="true">
+    <object id="0" name="heal" type="NPC" x="896" y="736" rotation="0" width="32" height="32" gid="46" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="0" name="save" type="NPC" x="672" y="288" rotation="0" width="32" height="32" gid="118" visible="true">
+    <object id="0" name="save" type="NPC" x="672" y="288" rotation="0" width="32" height="32" gid="47" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="640" y="576" rotation="0" width="32" height="32" gid="119" visible="true">
+    <object id="0" name="npc" type="NPC" x="640" y="576" rotation="0" width="32" height="32" gid="48" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="beware of the leviathan" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="608" y="1088" rotation="0" width="32" height="32" gid="119" visible="true">
+    <object id="0" name="npc" type="NPC" x="608" y="1088" rotation="0" width="32" height="32" gid="48" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="welcome to Isis" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="416" y="896" rotation="0" width="32" height="32" gid="117" visible="true">
+    <object id="0" name="npc" type="NPC" x="416" y="896" rotation="0" width="32" height="32" gid="46" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="dragons are very powerful" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="960" y="992" rotation="0" width="32" height="32" gid="118" visible="true">
+    <object id="0" name="npc" type="NPC" x="960" y="992" rotation="0" width="32" height="32" gid="47" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="the sea is very dangerus&#xA;do not veture there until&#xA;you are experencd" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="352" y="512" rotation="0" width="32" height="32" gid="116" visible="true">
+    <object id="0" name="npc" type="NPC" x="352" y="512" rotation="0" width="32" height="32" gid="45" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="run if you are unshure" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="736" y="672" rotation="0" width="32" height="32" gid="116" visible="true">
+    <object id="0" name="npc" type="NPC" x="736" y="672" rotation="0" width="32" height="32" gid="45" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />

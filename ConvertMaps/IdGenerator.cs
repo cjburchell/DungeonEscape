@@ -1,14 +1,14 @@
 ﻿namespace ConvertMaps
 {
-    public static class IdGenerator
+    public class IdGenerator
     {
-        private static int tileId = 1;
+        private int tileId = 1;
 
-        public static int New()
+        public int New()
         {
             return tileId++;
         }
 
-        public static int NextTileId => tileId;
+        public int NextTileId => tileId;
     }
 }

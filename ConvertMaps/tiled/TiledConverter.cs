@@ -6,6 +6,8 @@ namespace ConvertMaps.Tiled
 {
     public static class TiledConverter
     {
+        const int BiomeOffset = 900;
+        
         public static TiledMap ToTileMap(Map map)
         {
             const int offset = 1;
@@ -42,7 +44,7 @@ namespace ConvertMaps.Tiled
                         biome = waterTile.Biome;
                     }
 
-                    biomes.Add(biome == Biome.None? 0: (int) biome + 200);
+                    biomes.Add(biome == Biome.None? 0: (int) biome + BiomeOffset);
                 }
             }
 
@@ -210,7 +212,7 @@ namespace ConvertMaps.Tiled
             
             var tiledSet = new TiledTileset
             {
-                firstgid = 200,
+                firstgid = BiomeOffset,
                 tilewidth = 32,
                 tileheight = 32,
                 tilecount = tiles.Count,

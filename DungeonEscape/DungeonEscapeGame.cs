@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml.Linq;
 using DungeonEscape.Scenes;
+using DungeonEscape.Scenes.Map.Components.Objects;
 using DungeonEscape.State;
 using Microsoft.Xna.Framework;
 using Nez;
@@ -12,7 +13,7 @@ namespace DungeonEscape
 {
     public class DungeonEscapeGame : Core, IGame
     {
-        public State.Player Player { get; } = new State.Player();
+        public Player Player { get; } = new Player();
         public bool IsPaused { get; set; }
         public List<Item> Items { get; } = new List<Item>();
 

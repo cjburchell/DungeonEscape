@@ -7,7 +7,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
     {
         private readonly int mapId;
         private Point? warpMap;
-        public Warp(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile)
+        public Warp(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, IGame gameState) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState)
         {
             if (tmxObject.Properties.ContainsKey("WarpMap"))
             {
@@ -25,18 +25,18 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             }
         }
 
-        public override void OnHit(Player player)
+        public override void OnHit(State.Player player)
         {
             var point = this.warpMap;
             if (!point.HasValue)
             {
-                if (this.mapId == 0 && player.GameState.Player.OverWorldPos != Point.Zero)
+                if (this.mapId == 0 && player.OverWorldPos != Point.Zero)
                 {
-                    point = player.GameState.Player.OverWorldPos;
+                    point = player.OverWorldPos;
                 }
             }
             
-            player.GameState.IsPaused = true;
+            this.gameState.IsPaused = true;
             MapScene.SetMap(this.mapId, point);
         }
     }

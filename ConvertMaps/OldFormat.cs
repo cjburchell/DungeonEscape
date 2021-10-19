@@ -312,11 +312,21 @@ namespace ConvertMaps
                     case 8: // projectile 2
                         spriteType = SpriteType.Monster;
                         break;
-                    case 6: // end monster
                     case 1:
+                        spriteType = SpriteType.NPC_Heal;
+                        break;
                     case 2:
+                        spriteType = SpriteType.NPC_Store;
+                        break;
                     case 3:
+                        spriteType = SpriteType.NPC_Save;
+                        break;
                     case 4:
+                        spriteType = SpriteType.NPC_Key;
+                        break;
+                    case 6: // end monster
+                        spriteType = SpriteType.NPC_Monster;
+                        break;
                     case 5:
                         spriteType = SpriteType.NPC;
                         break;

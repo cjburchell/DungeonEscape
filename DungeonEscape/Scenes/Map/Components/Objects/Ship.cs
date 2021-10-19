@@ -1,16 +1,17 @@
-﻿using Nez.Tiled;
+﻿using DungeonEscape.State;
+using Nez.Tiled;
 
 namespace DungeonEscape.Scenes.Map.Components.Objects
 {
     public class Ship : Warp
     {
-        public Ship(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile)
+        public Ship(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, IGame gameState) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState)
         {
         }
 
         public override void OnHit(Player player)
         {
-            player.GameState.Player.HasShip = true;
+            player.HasShip = true;
             base.OnHit(player);
         }
     }

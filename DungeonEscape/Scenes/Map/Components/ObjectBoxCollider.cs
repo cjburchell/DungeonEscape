@@ -1,7 +1,6 @@
-﻿using DungeonEscape.Scenes.Map.Components.Objects;
+﻿using DungeonEscape.State;
 using Microsoft.Xna.Framework;
 using Nez;
-using Nez.Tiled;
 
 namespace DungeonEscape.Scenes.Map.Components
 {

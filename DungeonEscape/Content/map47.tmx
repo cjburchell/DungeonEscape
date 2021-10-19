@@ -22,7 +22,7 @@
     </object>
   </objectgroup>
   <objectgroup id="5" name="sprites" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="0" name="DesertLeviathan" type="NPC" x="768" y="576" rotation="0" width="96" height="96" gid="54" visible="true">
+    <object id="0" name="DesertLeviathan" type="NPC_Monster" x="768" y="576" rotation="0" width="96" height="96" gid="54" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />

@@ -16,8 +16,9 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly int gridTileWidth;
         private readonly TmxTilesetTile mapTile;
         private SpriteAnimator animator;
+        protected IGame gameState;
 
-        public static MapObject Create(TmxObject tmxObject,int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, TalkWindow talkWindow, IEnumerable<Item> items)
+        public static MapObject Create(TmxObject tmxObject,int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, TalkWindow talkWindow, IGame gameState)
         {
             if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
             {
@@ -26,16 +27,17 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             return spriteType switch
             {
-                SpriteType.Ship => new Ship(tmxObject, gridTileHeight, gridTileWidth, mapTile),
-                SpriteType.Warp => new Warp(tmxObject, gridTileHeight, gridTileWidth, mapTile),
-                SpriteType.Chest => new Chest(tmxObject, gridTileHeight, gridTileWidth, mapTile, talkWindow, items),
-                SpriteType.Door => new Door(tmxObject, gridTileHeight, gridTileWidth, mapTile, talkWindow),
-                _ => new MapObject(tmxObject, gridTileHeight, gridTileWidth, mapTile)
+                SpriteType.Ship => new Ship(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState),
+                SpriteType.Warp => new Warp(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState),
+                SpriteType.Chest => new Chest(tmxObject, gridTileHeight, gridTileWidth, mapTile, talkWindow, gameState),
+                SpriteType.Door => new Door(tmxObject, gridTileHeight, gridTileWidth, mapTile, talkWindow, gameState),
+                _ => new MapObject(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState)
             };
         }
 
-        protected MapObject(TmxObject tmxObject,int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile)
+        protected MapObject(TmxObject tmxObject,int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, IGame gameState)
         {
+            this.gameState = gameState;
             this.tmxObject = tmxObject;
             this.gridTileHeight = gridTileHeight;
             this.gridTileWidth = gridTileWidth;

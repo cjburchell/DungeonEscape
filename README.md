@@ -1,12 +1,7 @@
 # Games
 ## Todo
 #### Feature Par
-- Using Objects
-    * Doors
-    * Chests
-    * Ship
 - Sprites
-    - Talking to sprites
     - Stores
     - Healers
     - Save Points

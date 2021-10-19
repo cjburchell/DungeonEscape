@@ -5,8 +5,13 @@
         Ship,
         Door,
         Chest,
+        Warp,
         NPC,
         Monster,
-        Warp
+        NPC_Heal,
+        NPC_Store,
+        NPC_Save,
+        NPC_Key,
+        NPC_Monster
     }
 }

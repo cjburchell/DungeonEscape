@@ -81,7 +81,8 @@ namespace DungeonEscape.Scenes
             var canvas = this.CreateEntity("ui-canvas").AddComponent(new UICanvas());
             canvas.SetRenderLayer(999);
             canvas.AddComponent(new CommandMenu(canvas, this.gameState));
-            var talkWindow = canvas.AddComponent(new TalkWindow(canvas, this.gameState));
+            var talkWindow = canvas.AddComponent(new TalkWindow(canvas));
+            var questionWindow = canvas.AddComponent(new QuestionWindow(canvas));
             debugText = canvas.Stage.AddElement(new Label(""));
             debugText.SetFontScale(2).SetPosition(10, 20);
             
@@ -95,7 +96,7 @@ namespace DungeonEscape.Scenes
             foreach (var item in objects.Objects)
             {
                 var itemEntity = this.CreateEntity(item.Name);
-                itemEntity.AddComponent(MapObject.Create(item, map.TileHeight, map.TileWidth, map.GetTilesetTile(item.Tile.Gid), talkWindow, this.gameState.Items));
+                itemEntity.AddComponent(MapObject.Create(item, map.TileHeight, map.TileWidth, map.GetTilesetTile(item.Tile.Gid), talkWindow, this.gameState));
             }
 
             var graph = CreateGraph(map);
@@ -103,7 +104,7 @@ namespace DungeonEscape.Scenes
             foreach (var item in sprites.Objects)
             {
                 var spriteEntity = this.CreateEntity(item.Name);
-                spriteEntity.AddComponent(Sprite.Create(item, map, talkWindow, this.gameState, graph));
+                spriteEntity.AddComponent(Sprite.Create(item, map, talkWindow, questionWindow, this.gameState, graph));
             }
             
             var topLeft = new Vector2(0, 0);
@@ -126,7 +127,7 @@ namespace DungeonEscape.Scenes
             var playerEntity = this.CreateEntity("player", spawn);
 
             
-            playerEntity.AddComponent(new Player(this.gameState, map, this.debugText));
+            playerEntity.AddComponent(new PlayerComponent(this.gameState, map, this.debugText));
             
             this.Camera.Entity.AddComponent(new FollowCamera(playerEntity)).FollowLerp = 1;
         }

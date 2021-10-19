@@ -43,7 +43,7 @@
     </object>
   </objectgroup>
   <objectgroup id="5" name="sprites" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="0" name="heal" type="NPC" x="544" y="288" rotation="0" width="32" height="32" gid="46" visible="true">
+    <object id="0" name="heal" type="NPC_Heal" x="544" y="288" rotation="0" width="32" height="32" gid="46" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />

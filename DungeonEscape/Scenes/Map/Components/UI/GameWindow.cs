@@ -8,7 +8,6 @@ namespace DungeonEscape.Scenes.Map.Components
     {
         protected Window Window { get; private set; }
         private readonly UICanvas canvas;
-        private readonly IGame gameState;
         private readonly string title;
         private readonly Point position;
         private readonly int width;
@@ -26,10 +25,9 @@ namespace DungeonEscape.Scenes.Map.Components
         
         protected const int FontScale = 2;
         
-        protected GameWindow(UICanvas canvas, IGame gameState, string title, Point position, int width, int Height)
+        protected GameWindow(UICanvas canvas, string title, Point position, int width, int Height)
         {
             this.canvas = canvas;
-            this.gameState = gameState;
             this.title = title;
             this.position = position;
             this.width = width;
@@ -54,13 +52,13 @@ namespace DungeonEscape.Scenes.Map.Components
         protected virtual void HideWindow()
         {
             this.Window.SetVisible(false);
-            this.gameState.IsPaused = false;
         }
 
         protected virtual void ShowWindow()
         {
             this.Window.SetVisible(true);
-            this.gameState.IsPaused = true;
         }
+        
+        protected bool IsVisible => this.Window != null && this.Window.IsVisible();
     }
 }

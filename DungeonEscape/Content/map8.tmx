@@ -559,19 +559,19 @@
     </object>
   </objectgroup>
   <objectgroup id="5" name="sprites" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="0" name="store" type="NPC" x="1216" y="1056" rotation="0" width="32" height="32" gid="45" visible="true">
+    <object id="0" name="store" type="NPC_Store" x="1216" y="1056" rotation="0" width="32" height="32" gid="45" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="0" name="heal" type="NPC" x="320" y="288" rotation="0" width="32" height="32" gid="46" visible="true">
+    <object id="0" name="heal" type="NPC_Heal" x="320" y="288" rotation="0" width="32" height="32" gid="46" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="0" name="save" type="NPC" x="1152" y="544" rotation="0" width="32" height="32" gid="47" visible="true">
+    <object id="0" name="save" type="NPC_Save" x="1152" y="544" rotation="0" width="32" height="32" gid="47" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />

@@ -7,8 +7,11 @@ namespace DungeonEscape.Scenes.Map.Components.UI
 {
     public class CommandMenu: GameWindow, IUpdatable
     {
-        public CommandMenu(UICanvas canvas, IGame gameState) : base(canvas, gameState, "Command", new Point(30,30),100,150)
+        private readonly IGame gameState;
+
+        public CommandMenu(UICanvas canvas, IGame gameState) : base(canvas,"Command", new Point(30,30),100,150)
         {
+            this.gameState = gameState;
         }
         
         private VirtualButton showMenuInput;
@@ -77,6 +80,7 @@ namespace DungeonEscape.Scenes.Map.Components.UI
             this.spellButton.GamepadUpElement = null;
             this.itemButton.GamepadUpElement = null;
             this.equipButton.GamepadUpElement = null;
+            this.gameState.IsPaused = false;
         }
 
         protected override void ShowWindow()
@@ -91,6 +95,7 @@ namespace DungeonEscape.Scenes.Map.Components.UI
             this.spellButton.GamepadUpElement = this.statusButton;
             this.itemButton.GamepadUpElement = this.spellButton;
             this.equipButton.GamepadUpElement = this.itemButton;
+            this.gameState.IsPaused = true;
         }
 
         public override void OnRemovedFromEntity()

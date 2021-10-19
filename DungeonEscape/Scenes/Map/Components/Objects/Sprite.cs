@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
 using DungeonEscape.Scenes.Map.Components.UI;
+using DungeonEscape.State;
 using Microsoft.Xna.Framework;
 using Nez;
 using Nez.AI.Pathfinding;
@@ -15,17 +15,17 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
     {
         private readonly TmxObject tmxObject;
         private readonly TmxMap map;
-        private readonly IGame gameState;
+        protected readonly IGame gameState;
         private readonly TmxTilesetTile mapTile;
         private SpriteAnimator animator;
         private Mover mover;
         private bool canMove;
         private MoveState state = MoveState.Stopped;
-        private AstarGridGraph graph;
+        private readonly AstarGridGraph graph;
         private List<Point> path;
         private const float MoveSpeed = 75;
         
-        public static Sprite Create(TmxObject tmxObject, TmxMap map, TalkWindow talkWindow, IGame gameState, AstarGridGraph graph)
+        public static Sprite Create(TmxObject tmxObject, TmxMap map, TalkWindow talkWindow, QuestionWindow questionWindow, IGame gameState, AstarGridGraph graph)
         {
             if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
             {
@@ -34,7 +34,10 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             return spriteType switch
             {
-                SpriteType.Monster => new Sprite(tmxObject, map, gameState, graph),
+                SpriteType.NPC_Heal => new Healer(tmxObject, map, gameState, graph, questionWindow, talkWindow),
+                SpriteType.NPC_Store => new Store(tmxObject, map, gameState, graph, talkWindow),
+                SpriteType.NPC_Save => new Saver(tmxObject, map, gameState, graph, questionWindow, talkWindow),
+                SpriteType.NPC_Key => new KeyStore(tmxObject, map, gameState, graph, questionWindow, talkWindow),
                 SpriteType.NPC => new Character(tmxObject, map, talkWindow, gameState, graph),
                 _ => new Sprite(tmxObject, map, gameState, graph)
             };
@@ -57,8 +60,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
-            this.Entity.SetPosition(this.tmxObject.X + (int)(map.TileWidth/2.0), this.tmxObject.Y - (int)(map.TileHeight/2.0));
-            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(mapTile.Image.Texture, 32, 32);
+            this.Entity.SetPosition(this.tmxObject.X + (int)(this.map.TileWidth/2.0), this.tmxObject.Y - (int)(this.map.TileHeight/2.0));
+            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this.mapTile.Image.Texture, 32, 32);
             this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
             this.mover = this.Entity.AddComponent(new Mover());
             this.canMove = bool.Parse(this.tmxObject.Properties["CanMove"]);
@@ -111,51 +114,53 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             
             if (this.state == MoveState.Stopped)
             {
-                elapsedTime += Time.DeltaTime;
-                if (this.elapsedTime >= nextElapsedTime)
+                this.elapsedTime += Time.DeltaTime;
+                if (!(this.elapsedTime >= this.nextElapsedTime))
                 {
-                    elapsedTime = 0;
-                    nextElapsedTime = Random.NextInt(5) + 1;
-                    
-                    if (Random.Chance(0.05f))
-                    {
-                        return;
-                    }
-                    
-                    const int  MaxSpacesToMove = 2;
-                    var pos = this.Entity.Position;
-                    var mapGoTo = new Point(Random.NextInt(MaxSpacesToMove*2 + 1)-MaxSpacesToMove, Random.NextInt(MaxSpacesToMove*2 + 1)-MaxSpacesToMove);
-                    if (mapGoTo.X < 0)
-                    {
-                        mapGoTo.X = 0;
-                    }
-                    if (mapGoTo.Y < 0)
-                    {
-                        mapGoTo.Y = 0;
-                    }
-                    if (mapGoTo.X >= this.map.Width)
-                    {
-                        mapGoTo.X = this.map.Width-1;
-                    }
-                    if (mapGoTo.Y >= this.map.Height)
-                    {
-                        mapGoTo.X = this.map.Height-1;
-                    }
-                    
-                    var toPos = pos + MapScene.ToRealLocation(mapGoTo, this.map);
-                    this.path = this.graph.Search(
-                        MapScene.ToMapGrid(pos, this.map),
-                        MapScene.ToMapGrid(toPos, this.map));
+                    return;
+                }
 
-                    if (this.path == null)
-                    {
-                        this.state = MoveState.Stopped;
-                    }
-                    else
-                    {
-                        this.currentPathIndex = 0;
-                        this.state = MoveState.Moving;
-                    }
+                this.elapsedTime = 0;
+                this.nextElapsedTime = Random.NextInt(5) + 1;
+                    
+                if (Random.Chance(0.05f))
+                {
+                    return;
+                }
+                    
+                const int  MaxSpacesToMove = 2;
+                var pos = this.Entity.Position;
+                var mapGoTo = new Point(Random.NextInt(MaxSpacesToMove*2 + 1)-MaxSpacesToMove, Random.NextInt(MaxSpacesToMove*2 + 1)-MaxSpacesToMove);
+                if (mapGoTo.X < 0)
+                {
+                    mapGoTo.X = 0;
+                }
+                if (mapGoTo.Y < 0)
+                {
+                    mapGoTo.Y = 0;
+                }
+                if (mapGoTo.X >= this.map.Width)
+                {
+                    mapGoTo.X = this.map.Width-1;
+                }
+                if (mapGoTo.Y >= this.map.Height)
+                {
+                    mapGoTo.X = this.map.Height-1;
+                }
+                    
+                var toPos = pos + MapScene.ToRealLocation(mapGoTo, this.map);
+                this.path = this.graph.Search(
+                    MapScene.ToMapGrid(pos, this.map),
+                    MapScene.ToMapGrid(toPos, this.map));
+
+                if (this.path == null)
+                {
+                    this.state = MoveState.Stopped;
+                }
+                else
+                {
+                    this.currentPathIndex = 0;
+                    this.state = MoveState.Moving;
                 }
             }
             else if (this.state == MoveState.Moving)

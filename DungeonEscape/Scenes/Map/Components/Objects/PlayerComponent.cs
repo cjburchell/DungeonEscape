@@ -11,7 +11,7 @@ using Nez.UI;
 
 namespace DungeonEscape.Scenes.Map.Components.Objects
 {
-    public class Player : Component, IUpdatable, ITriggerListener
+    public class PlayerComponent : Component, IUpdatable, ITriggerListener
     {
         private readonly TmxMap map;
         private readonly Label debugText;
@@ -22,7 +22,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private VirtualIntegerAxis yAxisInput;
         public IGame GameState { get; }
 
-        public Player(IGame gameState, TmxMap map, Label debugText)
+        public PlayerComponent(IGame gameState, TmxMap map, Label debugText)
         {
             this.map = map;
             this.debugText = debugText;
@@ -245,7 +245,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             {
                 foreach (var overObject in this.currentlyOverObjects)
                 {
-                    if (overObject.OnAction(this))
+                    if (overObject.OnAction(this.GameState.Player))
                     {
                         break;
                     }
@@ -273,7 +273,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             Console.WriteLine("Over Object");
             this.currentlyOverObjects.Add(objCollider.Object);
             
-            objCollider.Object.OnHit(this);
+            objCollider.Object.OnHit(this.GameState.Player);
         }
 
         public void OnTriggerExit(Collider other, Collider local)
@@ -290,23 +290,6 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             Console.WriteLine("Removed Object");
             this.currentlyOverObjects.Remove(objCollider.Object);
-        }
-
-        public bool CanOpenDoor(int doorLevel)
-        {
-            var key = this.GameState.Player.Items.FirstOrDefault(item => item.Type == ItemType.Key);
-            if (key == null)
-            {
-                return false;
-            }
-
-            this.GameState.Player.Items.Remove(key);
-            return  true;
-        }
-
-        public bool CanOpenChest(int level)
-        {
-            return true;
         }
     }
 }    

@@ -16,7 +16,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
         private BoxCollider boxCollider;
 
-        protected SolidObject(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile)
+        protected SolidObject(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, IGame gameState) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState)
         {
             var offsetWidth = (int) (tmxObject.Width * (1.0f / 4.0f));
             var offsetHeight = (int) (tmxObject.Height * (1.0f / 4.0f));

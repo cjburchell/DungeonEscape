@@ -12,22 +12,25 @@ namespace DungeonEscape.State
                 this.Type = type;
             }
 
-            Name = tile.Properties["Name"];
-            Defence = int.Parse(tile.Properties["Defence"]);
-            Health = int.Parse(tile.Properties["Health"]);
-            Attack = int.Parse(tile.Properties["Attack"]);
-            Agility = int.Parse(tile.Properties["Agility"]);
+            this.Name = tile.Properties["Name"];
+            this.Defence = int.Parse(tile.Properties["Defence"]);
+            this.Health = int.Parse(tile.Properties["Health"]);
+            this.Attack = int.Parse(tile.Properties["Attack"]);
+            this.Agility = int.Parse(tile.Properties["Agility"]);
             this.Gold = int.Parse(tile.Properties["Cost"]);
-            MinLevel = int.Parse(tile.Properties["MinLevel"]);
+            this.MinLevel = int.Parse(tile.Properties["MinLevel"]);
         }
 
-        public Item(string image, string name, ItemType type, int gold)
+        public Item(string image, string name, ItemType type, int gold, int minLevel)
         {
+            this.ImageSource = image;
             this.Name = name;
             this.Gold = gold;
+            this.MinLevel = minLevel;
             this.Type = type;
         }
 
+        public string ImageSource { get; }
         public ItemType Type { get; } = ItemType.Unknown;
         public string Name { get; }
         public int Defence { get; }

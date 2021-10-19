@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using DungeonEscape.Scenes.Map.Components.UI;
 using DungeonEscape.State;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using Nez.Sprites;
 using Nez.Tiled;
+using Random = Nez.Random;
 
 namespace DungeonEscape.Scenes.Map.Components.Objects
 {
@@ -14,8 +14,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly TalkWindow talkWindow;
         private readonly int level;
         private SpriteAnimator openImage;
-        private string openImageName;
-        private Item item;
+        private readonly string openImageName;
+        private readonly Item item;
 
         private bool isOpen
         {
@@ -26,7 +26,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             set => this.tmxObject.Properties["IsOpen"] = value.ToString();
         }
 
-        public Chest(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, TalkWindow talkWindow, IEnumerable<Item> items) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile)
+        public Chest(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, TalkWindow talkWindow, IGame gameState) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState)
         {
             this.talkWindow = talkWindow;
             this.level = tmxObject.Properties.ContainsKey("ChestLevel") ? int.Parse(tmxObject.Properties["ChestLevel"]) : 0;
@@ -34,19 +34,19 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             if (tmxObject.Name == "Key Chest")
             {
-                this.item = new Item("", "Key", ItemType.Key, 1);
+                this.item = new Item("Content/images/items/key.png", "Key", ItemType.Key, 250, 0);
             }
             else
             {
                 if (Random.Chance(0.25f))
                 {
-                    var levelItems = items.Where(item => item.MinLevel <= this.level).ToArray();
+                    var levelItems = gameState.Items.Where(item => item.MinLevel <= this.level).ToArray();
                     var itemNumber = Random.NextInt(levelItems.Length);
                     this.item = levelItems[itemNumber];
                 }
                 else
                 {
-                    this.item = new Item("", "Gold", ItemType.Gold, Random.NextInt(100) + 20);
+                    this.item = new Item("", "Gold", ItemType.Gold, Random.NextInt(100) + 20, 0);
                 }
             }
            
@@ -66,35 +66,36 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
         public override bool OnAction(Player player)
         {
-            if (isOpen)
+            this.gameState.IsPaused = true;
+            void Done() => this.gameState.IsPaused = false;
+            if (this.isOpen)
             {
-                this.talkWindow.ShowText($"You found nothing");
+                this.talkWindow.ShowText("You found nothing", Done);
                 return false;
             }
-            
+
             if (!player.CanOpenChest(this.level))
             {
-                this.talkWindow.ShowText($"Unable to open chest");
+                this.talkWindow.ShowText("Unable to open chest", Done);
                 return false;
             }
-            
+
             this.isOpen = true;
             this.DisplayVisual(!this.isOpen);
             this.openImage.SetEnabled(this.isOpen);
+            
+            if (this.item.Type == ItemType.Gold)
+            {
+                this.talkWindow.ShowText($"You found {this.item.Gold} Gold", Done);
+                player.Gold += this.item.Gold;
+            }
+            else
+            {
+                this.talkWindow.ShowText($"You found a {this.item.Name}", Done);
+                player.Items.Add(this.item);
+            }
 
-
-                if (this.item.Type == ItemType.Gold)
-                {
-                    this.talkWindow.ShowText($"You found {this.item.Gold} Gold");
-                    player.GameState.Player.Gold += this.item.Gold;
-                }
-                else
-                {
-                    this.talkWindow.ShowText($"You found a {this.item.Name}");
-                    player.GameState.Player.Items.Add(this.item);
-                }
-
-                return true;
+            return true;
         }
     }
 }

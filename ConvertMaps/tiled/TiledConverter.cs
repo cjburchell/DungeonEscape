@@ -91,13 +91,17 @@ namespace ConvertMaps.Tiled
                     properties = properties.ToArray()
                 };
 
-                if (objSprite.Type == SpriteType.NPC || objSprite.Type == SpriteType.Monster)
+                switch (objSprite.Type)
                 {
-                    sprites.Add(obj);
-                }
-                else
-                {
-                    objects.Add(obj);
+                    case SpriteType.Ship:
+                    case SpriteType.Door:
+                    case SpriteType.Chest:
+                    case SpriteType.Warp:
+                        objects.Add(obj);
+                        break;
+                    default:
+                        sprites.Add(obj);
+                        break;
                 }
             }
 

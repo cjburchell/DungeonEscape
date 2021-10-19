@@ -1,4 +1,5 @@
 ﻿using DungeonEscape.Scenes.Map.Components.UI;
+using DungeonEscape.State;
 using Nez.Tiled;
 
 namespace DungeonEscape.Scenes.Map.Components.Objects
@@ -16,7 +17,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             set => this.tmxObject.Properties["IsOpen"] = value.ToString();
         }
 
-        public Door(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, TalkWindow talkWindow) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile)
+        public Door(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, TalkWindow talkWindow, IGame gameState) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState)
         {
             this.talkWindow = talkWindow;
             this.level = tmxObject.Properties.ContainsKey("DoorLevel") ? int.Parse(tmxObject.Properties["DoorLevel"]) : 0;
@@ -38,8 +39,9 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             if (!player.CanOpenDoor(this.level))
             {
-                
-                this.talkWindow.ShowText($"Unable to open chest");
+
+                this.gameState.IsPaused = true;
+                this.talkWindow.ShowText("Unable to open door", () => this.gameState.IsPaused = false);
                 return false;
             }
 

@@ -15,5 +15,7 @@ namespace DungeonEscape
         bool IsPaused { get; set; }
         
         List<Item> Items { get; }
+        
+        List<Spell> Spells { get; }
     }
 }

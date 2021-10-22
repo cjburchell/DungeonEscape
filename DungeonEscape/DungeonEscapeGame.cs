@@ -15,6 +15,8 @@ namespace DungeonEscape
         public Party Party { get; } = new Party();
         public bool IsPaused { get; set; }
         public List<Item> Items { get; } = new List<Item>();
+        
+        public List<Spell> Spells { get; } = new List<Spell>();
 
         public int CurrentMapId { get; set; }
 
@@ -34,6 +36,12 @@ namespace DungeonEscape
             {
                 this.Items.Add(new Item(tile));
             }
+            
+            var spellTileset = LoadTileSet($"Content/spells.tsx");
+            foreach (var (_, tile) in spellTileset.Tiles)
+            {
+                this.Spells.Add(new Spell(tile));
+            }
 
             DebugRenderEnabled = false;
             Window.AllowUserResizing = true;
@@ -47,8 +55,13 @@ namespace DungeonEscape
             }));
         }
 
-        static TmxTileset LoadTileSet(string path)
+        public static TmxTileset LoadTileSet(string path)
         {
+            if (!File.Exists(path))
+            {
+                return null;
+            }
+            
             using var stream = TitleContainer.OpenStream(path);
             var xDocTileset = XDocument.Load(stream);
 

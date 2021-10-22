@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using DungeonEscape.State;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.Sprites;
 using Nez.Tiled;
 using Nez.UI;
+using Random = Nez.Random;
 
 namespace DungeonEscape.Scenes.Map.Components.Objects
 {
@@ -13,17 +16,19 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
     {
         private readonly TmxMap map;
         private readonly Label debugText;
+        private readonly List<Monster> randomMonsters;
         private const float MoveSpeed = 150;
         private SpriteAnimator animator;
         private SpriteAnimator shipAnimator;
         private VirtualIntegerAxis xAxisInput;
         private VirtualIntegerAxis yAxisInput;
-        public IGame GameState { get; }
+        private IGame GameState { get; }
 
-        public PlayerComponent(IGame gameState, TmxMap map, Label debugText)
+        public PlayerComponent(IGame gameState, TmxMap map, Label debugText, List<Monster> randomMonsters)
         {
             this.map = map;
             this.debugText = debugText;
+            this.randomMonsters = randomMonsters;
             this.GameState = gameState;
         }
 
@@ -34,6 +39,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         {
             this.mover = this.Entity.AddComponent(new Mover());
             {
+                // ReSharper disable once StringLiteralTypo
                 var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/playeranimation.png");
                 var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, 32, 32);
                 this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
@@ -113,7 +119,9 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.actionButton.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Space));
             this.actionButton.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.A));
 
-            this.UpdatePlayerIcon();
+            var overWater = this.IsOverWater();
+            this.shipAnimator.SetEnabled(overWater);
+            this.animator.SetEnabled(!overWater);
         }
 
         public override void OnRemovedFromEntity()
@@ -123,21 +131,31 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.actionButton.Deregister();
         }
 
-        private void UpdatePlayerIcon()
+        private bool IsOverWater()
         {
             var (x, y) = MapScene.ToMapGrid(this.Entity.Position, this.map);
             var tile = this.map.GetLayer<TmxLayer>("water").GetTile(x, y);
-            this.shipAnimator.SetEnabled(tile != null && tile.Gid != 0);
-            this.animator.SetEnabled(tile == null || tile.Gid == 0);
+            return tile != null && tile.Gid != 0;
         }
 
-        private void UpdateMovement()
+
+
+        private bool UpdateMovement()
         {
-            this.UpdatePlayerIcon();
+            var overWater = this.IsOverWater();
+            this.shipAnimator.SetEnabled(overWater);
+            this.animator.SetEnabled(!overWater);
             // handle movement and animations    
             var moveDir = new Vector2(this.xAxisInput.Value, this.yAxisInput.Value);
+            
+            if (moveDir == Vector2.Zero)
+            {
+                this.shipAnimator.Pause();
+                this.animator.Pause();
+                return false;
+            }
+            
             var animation = "WalkDown";
-
             if (moveDir.X < 0)
             {
                 animation = "WalkLeft";
@@ -155,70 +173,66 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             {
                 animation = "WalkDown";
             }
+            
+            var movement = moveDir * (overWater?MoveSpeed*1.5f:MoveSpeed) * Time.DeltaTime;
+            var newPoint = movement + this.Entity.Position;
 
-            if (moveDir != Vector2.Zero)
+            var minX = this.map.TileWidth / 2.0f;
+            var maxX = this.map.Width * this.map.TileWidth - this.map.TileWidth/2.0f;
+                
+            if (newPoint.X < minX)
             {
-                var movement = moveDir * MoveSpeed * Time.DeltaTime;
-                var newPoint = movement + this.Entity.Position;
+                newPoint.X = this.GameState.CurrentMapId != 0 ? minX : maxX;
+            }
+            else if (newPoint.X > maxX)
+            {
+                newPoint.X = this.GameState.CurrentMapId != 0 ? maxX : minX;
+            }
 
-                var minX = this.map.TileWidth / 2.0f;
-                var maxX = this.map.Width * this.map.TileWidth - this.map.TileWidth/2.0f;
+            var minY = this.map.TileHeight / 2.0f;
+            var maxY = this.map.Height * this.map.TileHeight - this.map.TileHeight/2.0f;
                 
-                if (newPoint.X < minX)
-                {
-                    newPoint.X = this.GameState.CurrentMapId != 0 ? minX : maxX;
-                }
-                else if (newPoint.X > maxX)
-                {
-                    newPoint.X = this.GameState.CurrentMapId != 0 ? maxX : minX;
-                }
+            if (newPoint.Y < minY)
+            {
+                newPoint.Y = this.GameState.CurrentMapId != 0 ? minY : maxY;
+            }
+            else if (newPoint.Y > maxY)
+            {
+                newPoint.Y = this.GameState.CurrentMapId != 0 ? maxY : minY;
+            }
 
-                var minY = this.map.TileHeight / 2.0f;
-                var maxY = this.map.Height * this.map.TileHeight - this.map.TileHeight/2.0f;
-                
-                if (newPoint.Y < minY)
-                {
-                    newPoint.Y = this.GameState.CurrentMapId != 0 ? minY : maxY;
-                }
-                else if (newPoint.Y > maxY)
-                {
-                    newPoint.Y = this.GameState.CurrentMapId != 0 ? maxY : minY;
-                }
+            movement = newPoint - this.Entity.Position;
 
-                movement = newPoint - this.Entity.Position;
+            if (this.GameState.CurrentMapId == 0)
+            {
+                this.GameState.Party.OverWorldPos = MapScene.ToMapGrid(this.Entity.Position, this.map);
+            }
 
-
-                if (this.GameState.CurrentMapId == 0)
-                {
-                    this.GameState.Party.OverWorldPos = MapScene.ToMapGrid(this.Entity.Position, this.map);
-                }
-
-                if (!this.animator.IsAnimationActive(animation))
-                {
-                    this.animator.Play(animation);
-                }
-                else
-                {
-                    this.animator.UnPause();
-                }
-
-                if (!this.shipAnimator.IsAnimationActive(animation))
-                {
-                    this.shipAnimator.Play(animation);
-                }
-                else
-                {
-                    this.shipAnimator.UnPause();
-                }
-
-                this.mover.CalculateMovement(ref movement, out _);
-                this.mover.ApplyMovement(movement);
+            if (!this.animator.IsAnimationActive(animation))
+            {
+                this.animator.Play(animation);
             }
             else
             {
-                this.shipAnimator.Pause();
-                this.animator.Pause();
+                this.animator.UnPause();
             }
+
+            if (!this.shipAnimator.IsAnimationActive(animation))
+            {
+                this.shipAnimator.Play(animation);
+            }
+            else
+            {
+                this.shipAnimator.UnPause();
+            }
+
+            if (this.mover.CalculateMovement(ref movement, out _))
+            {
+                return false;
+            }
+
+            this.mover.ApplyMovement(movement);
+            return true;
         }
 
         void IUpdatable.Update()
@@ -228,8 +242,13 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 return;
             }
 
-            this.debugText.SetText($"G: {MapScene.ToMapGrid(this.Entity.Position, this.map)}, R: {this.Entity.Position}");
-
+            if (this.debugText.IsVisible())
+            {
+                var currentBiome = this.GetCurrentBiome();
+                this.debugText.SetText(
+                    $"B: {currentBiome}, G: {MapScene.ToMapGrid(this.Entity.Position, this.map)}, R: {this.Entity.Position}");
+            }
+            
             if (this.actionButton.IsPressed)
             {
                 foreach (var overObject in this.currentlyOverObjects)
@@ -241,9 +260,75 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 }
             }
 
-            this.UpdateMovement();
+            if (this.GameState.IsPaused)
+            {
+                return;
+            }
+
+            if (!this.UpdateMovement())
+            {
+                return;
+            }
+
+            if (this.GameState.IsPaused)
+            {
+                return;
+            }
+
+            if (this.CheckForMonsterEncounter())
+            {
+                this.DoMonsterEncounter();
+            }
         }
-        
+
+        private void DoMonsterEncounter()
+        {
+            var currentBiome = this.GetCurrentBiome();
+            var availableMonsters = new List<Monster>();
+            foreach (var monster in this.randomMonsters.Where(item =>
+                item.Biome == currentBiome || item.Biome == Biome.All))
+            {
+                for (var i = 0; i < monster.Probability; i++)
+                {
+                    availableMonsters.Add(monster);
+                }
+            }
+
+            var maxMonsters = this.GameState.Party.Members[0].Level / 4 + 1;
+            if (maxMonsters > 7)
+            {
+                maxMonsters = 7;
+            }
+            
+            var numberOfMonsters = Random.NextInt(maxMonsters) + 1;
+            var monsters = new List<Monster>();
+            for (var i = 0; i < numberOfMonsters; i++)
+            {
+                var monsterNub = Random.NextInt(availableMonsters.Count);
+                monsters.Add(availableMonsters[monsterNub]);
+            }
+            
+            Console.WriteLine($"Fight {monsters.Count}");
+        }
+
+        private Biome GetCurrentBiome()
+        {
+            if (this.GameState.CurrentMapId != 0)
+            {
+                return Biome.None;
+            }
+
+            var (x, y) = MapScene.ToMapGrid(this.Entity.Position, this.map);
+            var tile = this.map.GetLayer<TmxLayer>("biomes").GetTile(x, y);
+            return (Biome) (tile.Gid - 900);
+        }
+
+        private bool CheckForMonsterEncounter()
+        {
+            var currentBiome = this.GetCurrentBiome();
+            return this.randomMonsters.Count(item => item.Biome == currentBiome || item.Biome == Biome.All) != 0 && Random.Chance(1.0f / 64.0f);
+        }
+
         private readonly List<ICollidable> currentlyOverObjects = new List<ICollidable>();
 
 

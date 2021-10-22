@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using DungeonEscape.Scenes.Map.Components;
 using DungeonEscape.Scenes.Map.Components.Objects;
 using DungeonEscape.Scenes.Map.Components.UI;
+using DungeonEscape.State;
 using Microsoft.Xna.Framework;
 using Nez;
 using Nez.AI.Pathfinding;
@@ -19,6 +21,7 @@ namespace DungeonEscape.Scenes
         private readonly Point? start;
         private readonly IGame gameState;
         private Label debugText;
+        private readonly List<Monster> randomMonsters = new List<Monster>();
 
         private MapScene(IGame game, int mapId, Point? start = null)
         {
@@ -34,7 +37,8 @@ namespace DungeonEscape.Scenes
 
         public static Vector2 ToRealLocation(Point point, TmxMap map)
         {
-            return new Vector2(point.X * map.TileWidth + map.TileWidth/2, point.Y * map.TileHeight + map.TileHeight/2);
+            return new Vector2(point.X * map.TileWidth + map.TileWidth / 2,
+                point.Y * map.TileHeight + map.TileHeight / 2);
         }
 
         private static AstarGridGraph CreateGraph(TmxMap map)
@@ -58,38 +62,50 @@ namespace DungeonEscape.Scenes
                     continue;
                 }
 
-                var x = (int) ((item.X + (int) (map.TileWidth / 2.0))/map.TileWidth);
-                var y = (int) ((item.Y - (int) (map.TileHeight / 2.0))/map.TileHeight);
+                var x = (int) ((item.X + (int) (map.TileWidth / 2.0)) / map.TileWidth);
+                var y = (int) ((item.Y - (int) (map.TileHeight / 2.0)) / map.TileHeight);
                 itemLayer.SetTile(new TmxLayerTile(map, 1, x, y));
             }
-            
+
             return new AstarGridGraph(new[] {wall, water, itemLayer});
         }
 
         public override void Initialize()
         {
             base.Initialize();
-            
+
             Console.WriteLine($"Loading Map {this.mapId}");
             var map = this.gameState.GetMap(this.mapId);
-            this.SetDesignResolution(ScreenWidth * map.TileWidth, ScreenHeight * map.TileHeight, SceneResolutionPolicy.ShowAll);
+            this.SetDesignResolution(ScreenWidth * map.TileWidth, ScreenHeight * map.TileHeight,
+                SceneResolutionPolicy.ShowAll);
+
+
+            var randomMonsterTileSet = DungeonEscapeGame.LoadTileSet($"Content/monsters{this.mapId}.tsx");
+            if (randomMonsterTileSet != null)
+            {
+                foreach (var (_, tile) in randomMonsterTileSet.Tiles)
+                {
+                    this.randomMonsters.Add(new Monster(tile, this.gameState.Spells));
+                }
+            }
 
             this.gameState.CurrentMapId = this.mapId;
-            
+
             this.AddRenderer(new ScreenSpaceRenderer(100, ScreenSpaceRenderLayer));
-            
+
             var canvas = this.CreateEntity("ui-canvas").AddComponent(new UICanvas());
             canvas.SetRenderLayer(999);
             var statusWindow = canvas.AddComponent(new StatusWindow(canvas, this.gameState));
             canvas.AddComponent(new CommandMenu(canvas, this.gameState, statusWindow));
             var talkWindow = canvas.AddComponent(new TalkWindow(canvas));
             var questionWindow = canvas.AddComponent(new QuestionWindow(canvas));
-            
-            debugText = canvas.Stage.AddElement(new Label(""));
-            debugText.SetFontScale(2).SetPosition(10, 20);
-            
+
+            this.debugText = canvas.Stage.AddElement(new Label(""));
+            this.debugText.SetFontScale(2).SetPosition(10, 20);
+
             var tiledEntity = this.CreateEntity("map");
-            var tiledMapRenderer =  tiledEntity.AddComponent(new TiledMapRenderer(map, this.gameState.Party.HasShip && this.mapId == 0? new []{"wall"}: new[] {"wall", "water"}));
+            var tiledMapRenderer = tiledEntity.AddComponent(new TiledMapRenderer(map,
+                this.gameState.Party.HasShip && this.mapId == 0 ? new[] {"wall"} : new[] {"wall", "water"}));
             tiledMapRenderer.RenderLayer = 50;
             tiledMapRenderer.SetLayersToRender("wall", "water", "floor");
             map.GetObjectGroup("objects").Visible = false;
@@ -98,7 +114,8 @@ namespace DungeonEscape.Scenes
             foreach (var item in objects.Objects)
             {
                 var itemEntity = this.CreateEntity(item.Name);
-                itemEntity.AddComponent(MapObject.Create(item, map.TileHeight, map.TileWidth, map.GetTilesetTile(item.Tile.Gid), talkWindow, this.gameState));
+                itemEntity.AddComponent(MapObject.Create(item, map.TileHeight, map.TileWidth,
+                    map.GetTilesetTile(item.Tile.Gid), talkWindow, this.gameState));
             }
 
             var graph = CreateGraph(map);
@@ -108,12 +125,12 @@ namespace DungeonEscape.Scenes
                 var spriteEntity = this.CreateEntity(item.Name);
                 spriteEntity.AddComponent(Sprite.Create(item, map, talkWindow, questionWindow, this.gameState, graph));
             }
-            
+
             var topLeft = new Vector2(0, 0);
             var bottomRight = new Vector2(map.TileWidth * (map.Width),
                 map.TileWidth * (map.Height));
             tiledEntity.AddComponent(new CameraBounds(topLeft, bottomRight));
-            
+
             var spawn = new Vector2();
             if (this.start == null)
             {
@@ -125,15 +142,14 @@ namespace DungeonEscape.Scenes
             {
                 spawn = ToRealLocation(this.start.Value, map);
             }
-            
+
             var playerEntity = this.CreateEntity("player", spawn);
 
-            
-            playerEntity.AddComponent(new PlayerComponent(this.gameState, map, this.debugText));
-            
+
+            playerEntity.AddComponent(new PlayerComponent(this.gameState, map, this.debugText, this.randomMonsters));
+
             this.Camera.Entity.AddComponent(new FollowCamera(playerEntity, FollowCamera.CameraStyle.CameraWindow));
         }
-
         
         [Nez.Console.Command("map", "switches to map")]
         public static void SetMap(int mapId = 0, Point? point = null)
@@ -142,7 +158,7 @@ namespace DungeonEscape.Scenes
             {
                 return;
             }
-            
+
             game.IsPaused = true;
             var map = new MapScene(game, mapId, point);
             var transition = new FadeTransition(() =>
@@ -150,10 +166,8 @@ namespace DungeonEscape.Scenes
                 map.Initialize();
                 return map;
             });
-            transition.OnTransitionCompleted += () => {
-                game.IsPaused = false;
-            };
-            
+            transition.OnTransitionCompleted += () => { game.IsPaused = false; };
+
             Core.StartSceneTransition(transition);
         }
     }

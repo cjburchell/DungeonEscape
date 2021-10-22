@@ -14,6 +14,7 @@ namespace ConvertMaps
             var maps = new List<Map>();
             var inputMapPath = Path.Combine(inputDirectory, "maps");
             var randomMonsterIdGenerator = new IdGenerator();
+            var randomMonsterTileIdGenerator = new IdGenerator();
 
             for (var i = 0; i < 100; i++)
             {
@@ -30,16 +31,16 @@ namespace ConvertMaps
 
                 if (i == 0)
                 {
-                    LoadSprites(1, map, inputMapPath, spells, tiles, Biome.Grassland, randomMonsterIdGenerator, tileIdGenerator);
-                    LoadSprites(2, map, inputMapPath, spells, tiles, Biome.Water, randomMonsterIdGenerator, tileIdGenerator);
-                    LoadSprites(3, map, inputMapPath, spells, tiles, Biome.Desert, randomMonsterIdGenerator, tileIdGenerator);
-                    LoadSprites(4, map, inputMapPath, spells, tiles, Biome.Hills, randomMonsterIdGenerator, tileIdGenerator);
-                    LoadSprites(5, map, inputMapPath, spells, tiles, Biome.Forest, randomMonsterIdGenerator, tileIdGenerator);
-                    LoadSprites(4, map, inputMapPath, spells, tiles, Biome.Swamp,randomMonsterIdGenerator, tileIdGenerator);
+                    LoadSprites(1, map, inputMapPath, spells, tiles, Biome.Grassland, randomMonsterIdGenerator, tileIdGenerator, randomMonsterTileIdGenerator);
+                    LoadSprites(2, map, inputMapPath, spells, tiles, Biome.Water, randomMonsterIdGenerator, tileIdGenerator, randomMonsterTileIdGenerator);
+                    LoadSprites(3, map, inputMapPath, spells, tiles, Biome.Desert, randomMonsterIdGenerator, tileIdGenerator, randomMonsterTileIdGenerator);
+                    LoadSprites(4, map, inputMapPath, spells, tiles, Biome.Hills, randomMonsterIdGenerator, tileIdGenerator, randomMonsterTileIdGenerator);
+                    LoadSprites(5, map, inputMapPath, spells, tiles, Biome.Forest, randomMonsterIdGenerator, tileIdGenerator, randomMonsterTileIdGenerator);
+                    LoadSprites(4, map, inputMapPath, spells, tiles, Biome.Swamp,randomMonsterIdGenerator, tileIdGenerator, randomMonsterTileIdGenerator);
                 }
                 else
                 {
-                    LoadSprites(i, map, inputMapPath, spells, tiles, Biome.All, randomMonsterIdGenerator, tileIdGenerator);
+                    LoadSprites(i, map, inputMapPath, spells, tiles, Biome.All, randomMonsterIdGenerator, tileIdGenerator, randomMonsterTileIdGenerator);
                 }
 
                 maps.Add(map);
@@ -284,7 +285,7 @@ namespace ConvertMaps
         }
 
         private static void LoadSprites(int id, Map map, string directory, IReadOnlyCollection<Spell> spells,
-            ICollection<TileInfo> tiles, Biome biome, IdGenerator randomMonsterIdGenerator, IdGenerator tileIdGenerator)
+            ICollection<TileInfo> tiles, Biome biome, IdGenerator randomMonsterIdGenerator, IdGenerator tileIdGenerator, IdGenerator randomMonsterTileIdGenerator)
         {
             var spriteFileName = Path.Combine(directory, $"monstset{id}.dat");
             if (!File.Exists(spriteFileName))
@@ -342,9 +343,9 @@ namespace ConvertMaps
 
                 if (spriteType == SpriteType.Monster)
                 {
-                    var spriteInfo = GetSprite(map.RandomMonstersTileInfo, null, image, randomMonsterIdGenerator, size * 32, "images/monsters/");
+                    var spriteInfo = GetSprite(map.RandomMonstersTileInfo, null, image, randomMonsterTileIdGenerator, size * 32, "images/monsters/");
                     var monster = map.RandomMonsters.FirstOrDefault(item =>
-                        item.Id == spriteInfo.Id && item.Name == name && item.Biome == biome);
+                        item.TileId == spriteInfo.Id && item.Name == name && item.Biome == biome);
                     if (monster == null)
                     {
                         List<SpriteSpell> spriteSpells = null;
@@ -374,16 +375,19 @@ namespace ConvertMaps
 
                         monster = new Monster
                         {
-                            Id = spriteInfo.Id,
+                            Id = randomMonsterIdGenerator.New(),
+                            TileId = spriteInfo.Id,
                             Name = name,
                             Chance = 1,
                             Biome = biome,
-                            Heath = int.Parse(lineItems[0]),
-                            HeathConst = int.Parse(lineItems[1]),
+                            Health = int.Parse(lineItems[0]),
+                            HealthConst = int.Parse(lineItems[1]),
                             Attack = int.Parse(lineItems[2]),
                             XP = int.Parse(lineItems[3]),
                             Gold = int.Parse(lineItems[6]),
-                            Spells = spriteSpells
+                            Spells = spriteSpells,
+                            Defence = 5,
+                            Agility= 5,
                         };
                         map.RandomMonsters.Add(monster);
                     }
@@ -433,7 +437,7 @@ namespace ConvertMaps
             {
                 gameTileInfo = new TileInfo
                 {
-                    Id = idGenerator.New(),
+                    Id = idGenerator?.New() ?? 0,
                     Image = imagePath,
                     size = size
                 };

@@ -31,6 +31,7 @@ namespace DungeonEscape.Scenes.Map.Components.UI
             this.statusButton.GetLabel().SetFontScale(FontScale);
             this.statusButton.OnClicked += _ =>
             {
+                // TODO: Show individual status window
                 this.statusWindow.Show(() =>
                 {
                     this.HideWindow();
@@ -40,6 +41,7 @@ namespace DungeonEscape.Scenes.Map.Components.UI
             this.spellButton.GetLabel().SetFontScale(FontScale);
             this.spellButton.OnClicked += _ =>
             {
+                // TODO: Show Spell window
                 this.HideWindow();
             };
             
@@ -47,12 +49,14 @@ namespace DungeonEscape.Scenes.Map.Components.UI
             this.itemButton.GetLabel().SetFontScale(FontScale);
             this.itemButton.OnClicked += _ =>
             {
+                // TODO: Show Items Window
                 this.HideWindow();
             };
             this.equipButton = new TextButton("Equip", Skin);
             this.equipButton.GetLabel().SetFontScale(FontScale);
             this.equipButton.OnClicked += _ =>
             {
+                // TODO: Show Equip Window
                 this.HideWindow();
             };
 

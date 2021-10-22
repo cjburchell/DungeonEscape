@@ -255,20 +255,20 @@ namespace ConvertMaps.Tiled
             
             foreach (var monster in monsterList)
             {
-                var mapTile = tileInfos.FirstOrDefault(item => item.Id == monster.Id);
+                var mapTile = tileInfos.FirstOrDefault(item => item.Id == monster.TileId);
                 if (mapTile != null)
                 {
-                    var totalMonsters = monsterList.Where(item => item.Biome == monster.Biome).Sum(item => item.Chance);
-                    
                     var properties = new List<TiledProperty>
                     {
                         new TiledProperty {name = "Biome", type = "string", value = monster.Biome.ToString()},
-                        new TiledProperty {name = "Heath", type = "int", value = monster.Heath.ToString()},
-                        new TiledProperty {name = "HeathConst", type = "int", value = monster.HeathConst.ToString()},
+                        new TiledProperty {name = "Health", type = "int", value = monster.Health.ToString()},
+                        new TiledProperty {name = "HealthConst", type = "int", value = monster.HealthConst.ToString()},
                         new TiledProperty {name = "Attack", type = "int", value = monster.Attack.ToString()},
                         new TiledProperty {name = "XP", type = "int", value = monster.XP.ToString()},
                         new TiledProperty {name = "Gold", type = "int", value = monster.Gold.ToString()},
-                        new TiledProperty {name = "Heath", type = "int", value = monster.Heath.ToString()}
+                        new TiledProperty {name = "Agility", type = "int", value = monster.Agility.ToString()},
+                        new TiledProperty {name = "Defence", type = "int", value = monster.Defence.ToString()},
+                        new TiledProperty {name = "Chance", type = "int", value = monster.Chance.ToString()}
                     };
 
                     if (monster.Spells != null)
@@ -280,11 +280,10 @@ namespace ConvertMaps.Tiled
                     var tile = new TiledTile
                     {
                         type = monster.Name,
-                        id = mapTile.Id, 
+                        id = monster.Id, 
                         image = mapTile.Image, 
                         imageheight = mapTile.size,
                         imagewidth = mapTile.size,
-                        probability =  monster.Chance/(double)totalMonsters,
                         properties = properties.ToArray(),
                         imageObj = new TiledImage {source = mapTile.Image, height = mapTile.size, width = mapTile.size}
                     };

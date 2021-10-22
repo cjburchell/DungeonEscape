@@ -5,8 +5,11 @@ namespace DungeonEscape.State
 {
     public class Item
     {
+        private readonly TmxTilesetTile tile;
+
         public Item(TmxTilesetTile tile)
         {
+            this.tile = tile;
             if (Enum.TryParse(tile.Type, out ItemType type))
             {
                 this.Type = type;

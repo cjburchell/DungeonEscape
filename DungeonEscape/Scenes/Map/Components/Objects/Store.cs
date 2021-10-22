@@ -17,6 +17,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         public override bool OnAction(Party party)
         {
             this.gameState.IsPaused = true;
+            // TODO: Add Store Window
             this.talkWindow.Show("Sorry, I have nothing for sale right now.", () => { this.gameState.IsPaused = false;});
             return true;
         }

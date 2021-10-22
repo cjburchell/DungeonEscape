@@ -9,10 +9,10 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         {
         }
 
-        public override void OnHit(Player player)
+        public override void OnHit(Party party)
         {
-            player.HasShip = true;
-            base.OnHit(player);
+            party.HasShip = true;
+            base.OnHit(party);
         }
     }
 }

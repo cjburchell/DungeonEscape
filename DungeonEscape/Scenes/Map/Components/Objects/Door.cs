@@ -30,18 +30,18 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.SetEnableCollider(!this.isOpen);
         }
 
-        public override bool OnAction(Player player)
+        public override bool OnAction(Party party)
         {
             if (this.isOpen)
             {
                 return false;
             }
 
-            if (!player.CanOpenDoor(this.level))
+            if (!party.CanOpenDoor(this.level))
             {
 
                 this.gameState.IsPaused = true;
-                this.talkWindow.ShowText("Unable to open door", () => this.gameState.IsPaused = false);
+                this.talkWindow.Show("Unable to open door", () => this.gameState.IsPaused = false);
                 return false;
             }
 

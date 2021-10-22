@@ -10,7 +10,7 @@ namespace DungeonEscape
 
         int CurrentMapId { get; set; }
 
-        State.Player Player { get; }
+        Party Party { get; }
         
         bool IsPaused { get; set; }
         

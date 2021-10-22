@@ -576,10 +576,14 @@ namespace ConvertMaps
                     spriteTileId = GetSprite(mapTiles, tiles, "warp.bmp", idGenerator)?.Id ?? 0;
                     break;
                 case 'I':
-                case 'J':
-                case 'K':
-                case 'L':
                 case 'M':
+                case 'K':
+                    name = $"Castle {warp.MapId}";
+                    spriteTileId = GetSprite(mapTiles, tiles, "castle.bmp", idGenerator)?.Id ?? 0;
+                    warpBackground = ' ';
+                    break;
+                case 'J':
+                case 'L':
                 case 'N':
                 case 'O':
                     name = $"Town {warp.MapId}";

@@ -13,13 +13,21 @@ namespace DungeonEscape.Scenes.Map.Components
         private readonly int width;
         private readonly int height;
 
-        protected static readonly Skin skin = Skin.CreateDefaultSkin();
+        public static readonly Skin Skin = Skin.CreateDefaultSkin();
 
         static GameWindow()
         {
-            var windowStyle = skin.Get<WindowStyle>();
+            var windowStyle = Skin.Get<WindowStyle>();
             windowStyle.Background = new BorderPrimitiveDrawable(Color.Black, Color.White, 1);
-            skin.Add("default", TextButtonStyle.Create(Color.Black, Color.Aqua, Color.Gray));
+            var buttonStyle = new TextButtonStyle
+            {
+                Up = new BorderPrimitiveDrawable(Color.Black, Color.White, 1),
+                Down = new BorderPrimitiveDrawable(Color.LightGray, Color.White, 1),
+                Over = new BorderPrimitiveDrawable(Color.Gray, Color.White, 1),
+                Checked = new BorderPrimitiveDrawable(Color.Gray, Color.White, 1)
+            };
+
+            Skin.Add("default", buttonStyle);
         }
         
         
@@ -36,7 +44,7 @@ namespace DungeonEscape.Scenes.Map.Components
         
         public override void OnAddedToEntity()
         {
-            this.Window = this.canvas.Stage.AddElement(new Window(this.title, skin));
+            this.Window = this.canvas.Stage.AddElement(new Window(this.title, Skin));
             this.Window.SetPosition(this.position.X, this.position.Y);
             this.Window.SetWidth(this.width);
             this.Window.SetHeight(this.height);

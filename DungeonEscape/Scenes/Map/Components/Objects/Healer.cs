@@ -18,23 +18,27 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.cost = tmxObject.Properties.ContainsKey("Cost") ? int.Parse(tmxObject.Properties["Cost"]) : 25;
         }
         
-        public override bool OnAction(Player player)
+        public override bool OnAction(Party party)
         {
             this.gameState.IsPaused = true;
             this.questionWindow.Show($"Would you like to be healed\nFor {this.cost} gold?", accepted =>
             {
                 if (accepted)
                 {
-                    if (player.Gold >= this.cost)
+                    if (party.Gold >= this.cost)
                     {
-                        player.Gold -= this.cost;
-                        player.Health = player.MaxHealth;
-                        player.Magic = player.MaxMagic;
-                        this.talkWindow.ShowText("Thank you come again!", () => { this.gameState.IsPaused = false;});
+                        party.Gold -= this.cost;
+                        foreach (var partyMember in party.Members)
+                        {
+                            partyMember.Health = partyMember.MaxHealth;
+                            partyMember.Magic = partyMember.MaxMagic;
+                        }
+                        
+                        this.talkWindow.Show("Thank you come again!", () => { this.gameState.IsPaused = false;});
                     }
                     else
                     {
-                        this.talkWindow.ShowText($"You do not have {this.cost} gold", () => { this.gameState.IsPaused = false;});
+                        this.talkWindow.Show($"You do not have {this.cost} gold", () => { this.gameState.IsPaused = false;});
                     }
                 }
                 else

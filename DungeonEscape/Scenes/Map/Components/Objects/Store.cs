@@ -14,10 +14,10 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.talkWindow = talkWindow;
         }
         
-        public override bool OnAction(Player player)
+        public override bool OnAction(Party party)
         {
             this.gameState.IsPaused = true;
-            this.talkWindow.ShowText("Sorry, I have nothing for sale right now.", () => { this.gameState.IsPaused = false;});
+            this.talkWindow.Show("Sorry, I have nothing for sale right now.", () => { this.gameState.IsPaused = false;});
             return true;
         }
     }

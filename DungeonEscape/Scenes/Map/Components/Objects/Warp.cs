@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using DungeonEscape.State;
+using Microsoft.Xna.Framework;
 using Nez.Tiled;
 
 namespace DungeonEscape.Scenes.Map.Components.Objects
@@ -25,14 +26,14 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             }
         }
 
-        public override void OnHit(State.Player player)
+        public override void OnHit(Party party)
         {
             var point = this.warpMap;
             if (!point.HasValue)
             {
-                if (this.mapId == 0 && player.OverWorldPos != Point.Zero)
+                if (this.mapId == 0 && party.OverWorldPos != Point.Zero)
                 {
-                    point = player.OverWorldPos;
+                    point = party.OverWorldPos;
                 }
             }
             

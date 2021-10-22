@@ -3,8 +3,6 @@
 #### Feature Par
 - Sprites
     - Stores
-    - Healers
-    - Save Points
     - End Boss
 - UI
     - Status

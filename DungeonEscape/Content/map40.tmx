@@ -11,7 +11,7 @@
     <data encoding="csv">15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,12,14,14,14,14,14,14,14,14,12,14,14,12,15,15,15,15,15,15,15,15,15,15,15,12,12,0,0,0,12,0,0,0,0,12,0,0,12,12,15,15,15,15,15,15,15,15,15,15,12,12,0,0,0,12,0,0,12,14,14,0,0,12,14,12,15,15,15,15,15,15,15,15,15,12,14,12,0,0,12,0,0,12,0,0,0,0,14,0,12,15,15,15,15,15,15,15,15,15,12,0,14,14,14,14,0,0,14,0,0,0,0,0,0,12,15,15,15,15,15,15,15,15,15,12,0,0,0,0,0,0,0,0,0,0,12,14,14,14,12,15,15,15,15,15,15,15,15,15,12,0,12,0,0,0,12,12,12,12,0,12,0,0,0,12,15,15,15,15,15,15,15,15,15,12,14,14,14,14,14,14,14,14,12,0,12,0,0,0,12,15,15,15,15,15,15,15,15,15,12,0,0,0,0,0,0,0,0,12,0,12,0,0,0,12,15,15,15,15,15,15,15,15,15,12,0,0,0,0,0,0,0,0,14,0,12,14,14,14,12,15,15,15,15,15,15,15,15,15,12,14,14,12,0,0,0,12,0,0,0,12,0,0,0,12,15,15,15,15,15,15,15,15,15,12,0,0,12,12,0,0,12,0,0,0,12,0,0,0,12,15,15,15,15,15,15,15,15,15,12,0,0,12,12,0,0,12,0,14,14,14,14,14,0,12,15,15,15,15,15,15,15,15,15,12,0,0,12,14,14,14,14,0,0,0,0,0,0,0,12,15,15,15,15,15,15,15,15,15,12,0,0,14,0,0,0,0,0,0,0,0,0,0,12,14,15,15,15,15,15,15,15,15,15,14,12,0,0,0,0,0,0,0,0,0,0,0,12,14,15,15,15,15,15,15,15,15,15,15,15,14,14,14,14,14,14,14,14,14,14,14,14,14,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15</data>
   </layer>
   <objectgroup id="4" name="items" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="0" name="Stairs up to 41" type="Warp" x="128" y="128" rotation="0" width="32" height="32" gid="52" visible="true">
+    <object id="0" name="Stairs up to 41" type="Warp" x="128" y="128" rotation="0" width="32" height="32" gid="53" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -20,7 +20,7 @@
         <property name="WarpMapY" type="int" value="3" />
       </properties>
     </object>
-    <object id="0" name="Stairs down to 25" type="Warp" x="160" y="192" rotation="0" width="32" height="32" gid="50" visible="true">
+    <object id="0" name="Stairs down to 25" type="Warp" x="160" y="192" rotation="0" width="32" height="32" gid="51" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -29,7 +29,7 @@
         <property name="WarpMapY" type="int" value="14" />
       </properties>
     </object>
-    <object id="0" name="Stairs up to 41" type="Warp" x="512" y="192" rotation="0" width="32" height="32" gid="52" visible="true">
+    <object id="0" name="Stairs up to 41" type="Warp" x="512" y="192" rotation="0" width="32" height="32" gid="53" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -38,7 +38,7 @@
         <property name="WarpMapY" type="int" value="6" />
       </properties>
     </object>
-    <object id="0" name="Stairs down to 25" type="Warp" x="448" y="320" rotation="0" width="32" height="32" gid="50" visible="true">
+    <object id="0" name="Stairs down to 25" type="Warp" x="448" y="320" rotation="0" width="32" height="32" gid="51" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -47,7 +47,7 @@
         <property name="WarpMapY" type="int" value="18" />
       </properties>
     </object>
-    <object id="0" name="Stairs down to 25" type="Warp" x="128" y="448" rotation="0" width="32" height="32" gid="50" visible="true">
+    <object id="0" name="Stairs down to 25" type="Warp" x="128" y="448" rotation="0" width="32" height="32" gid="51" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -56,7 +56,7 @@
         <property name="WarpMapY" type="int" value="22" />
       </properties>
     </object>
-    <object id="0" name="Stairs up to 41" type="Warp" x="224" y="480" rotation="0" width="32" height="32" gid="52" visible="true">
+    <object id="0" name="Stairs up to 41" type="Warp" x="224" y="480" rotation="0" width="32" height="32" gid="53" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />

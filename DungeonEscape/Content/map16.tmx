@@ -424,7 +424,7 @@
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Stairs down to 47" type="Warp" x="640" y="640" rotation="0" width="32" height="32" gid="50" visible="true">
+    <object id="0" name="Stairs down to 47" type="Warp" x="640" y="640" rotation="0" width="32" height="32" gid="51" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -666,14 +666,14 @@
     </object>
   </objectgroup>
   <objectgroup id="5" name="sprites" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="0" name="npc" type="NPC" x="608" y="1152" rotation="0" width="32" height="32" gid="48" visible="true">
+    <object id="0" name="npc" type="NPC" x="608" y="1152" rotation="0" width="32" height="32" gid="49" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="beware of the leviathan" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="704" y="1152" rotation="0" width="32" height="32" gid="48" visible="true">
+    <object id="0" name="npc" type="NPC" x="704" y="1152" rotation="0" width="32" height="32" gid="49" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />

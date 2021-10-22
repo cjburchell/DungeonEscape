@@ -71,11 +71,11 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.animator.SetEnabled(display);
         }
 
-        public virtual void OnHit(Player player)
+        public virtual void OnHit(Party party)
         {
         }
 
-        public virtual bool OnAction(Player player)
+        public virtual bool OnAction(Party party)
         {
             return false;
         }

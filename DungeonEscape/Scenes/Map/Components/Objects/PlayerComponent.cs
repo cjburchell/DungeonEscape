@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using DungeonEscape.State;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Nez;
@@ -114,6 +112,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.actionButton = new VirtualButton();
             this.actionButton.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Space));
             this.actionButton.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.A));
+
+            this.UpdatePlayerIcon();
         }
 
         public override void OnRemovedFromEntity()
@@ -123,29 +123,18 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.actionButton.Deregister();
         }
 
+        private void UpdatePlayerIcon()
+        {
+            var (x, y) = MapScene.ToMapGrid(this.Entity.Position, this.map);
+            var tile = this.map.GetLayer<TmxLayer>("water").GetTile(x, y);
+            this.shipAnimator.SetEnabled(tile != null && tile.Gid != 0);
+            this.animator.SetEnabled(tile == null || tile.Gid == 0);
+        }
+
         private void UpdateMovement()
         {
-            var mapPoint = MapScene.ToMapGrid(this.Entity.Position, this.map);
-            var tile = this.map.GetLayer<TmxLayer>("water").GetTile(mapPoint.X, mapPoint.Y);
-            if (tile != null && tile.Gid != 0)
-            {
-                this.shipAnimator.SetEnabled(true);
-            }
-            else
-            {
-                this.shipAnimator.SetEnabled(false);
-            }
-            
-            if (tile != null && tile.Gid != 0)
-            {
-                this.animator.SetEnabled(false);
-            }
-            else
-            {
-                this.animator.SetEnabled(true);
-            }
-
-            // handle movement and animations
+            this.UpdatePlayerIcon();
+            // handle movement and animations    
             var moveDir = new Vector2(this.xAxisInput.Value, this.yAxisInput.Value);
             var animation = "WalkDown";
 
@@ -201,7 +190,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
                 if (this.GameState.CurrentMapId == 0)
                 {
-                    this.GameState.Player.OverWorldPos = MapScene.ToMapGrid(this.Entity.Position, this.map);
+                    this.GameState.Party.OverWorldPos = MapScene.ToMapGrid(this.Entity.Position, this.map);
                 }
 
                 if (!this.animator.IsAnimationActive(animation))
@@ -245,7 +234,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             {
                 foreach (var overObject in this.currentlyOverObjects)
                 {
-                    if (overObject.OnAction(this.GameState.Player))
+                    if (overObject.OnAction(this.GameState.Party))
                     {
                         break;
                     }
@@ -273,7 +262,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             Console.WriteLine("Over Object");
             this.currentlyOverObjects.Add(objCollider.Object);
             
-            objCollider.Object.OnHit(this.GameState.Player);
+            objCollider.Object.OnHit(this.GameState.Party);
         }
 
         public void OnTriggerExit(Collider other, Collider local)

@@ -6,8 +6,8 @@ namespace DungeonEscape.Scenes.Map.Components
 {
     public interface ICollidable
     {
-        void OnHit(Player player);
-        bool OnAction(Player player);
+        void OnHit(Party party);
+        bool OnAction(Party party);
     }
     
     public class ObjectBoxCollider : BoxCollider

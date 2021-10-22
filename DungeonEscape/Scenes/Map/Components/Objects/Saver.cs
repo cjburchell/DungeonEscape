@@ -1,4 +1,5 @@
-﻿using DungeonEscape.Scenes.Map.Components.UI;
+﻿using System.Linq;
+using DungeonEscape.Scenes.Map.Components.UI;
 using DungeonEscape.State;
 using Nez.AI.Pathfinding;
 using Nez.Tiled;
@@ -16,7 +17,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.talkWindow = talkWindow;
         }
         
-        public override bool OnAction(Player player)
+        public override bool OnAction(Party party)
         {
             this.gameState.IsPaused = true;
             this.questionWindow.Show($"Would you like me to record your deeds?", accepted =>
@@ -24,7 +25,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 if (accepted)
                 {
                     // TODO: Save the game
-                    this.talkWindow.ShowText($"It has been recorded\nYou have {player.NextLevel} xp\nto the next level", () => { this.gameState.IsPaused = false;});
+                    this.talkWindow.Show($"It has been recorded\nYou have {party.Members.First().NextLevel} xp\nto the next level", () => { this.gameState.IsPaused = false;});
                 }
                 else
                 {

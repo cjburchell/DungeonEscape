@@ -206,7 +206,7 @@
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Door" type="Door" x="832" y="384" rotation="0" width="32" height="32" gid="49" visible="true">
+    <object id="0" name="Door" type="Door" x="832" y="384" rotation="0" width="32" height="32" gid="50" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
@@ -282,67 +282,67 @@
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="448" y="768" rotation="0" width="32" height="32" gid="43" visible="true">
+    <object id="0" name="Chest" type="Chest" x="448" y="768" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="480" y="768" rotation="0" width="32" height="32" gid="43" visible="true">
+    <object id="0" name="Chest" type="Chest" x="480" y="768" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="512" y="768" rotation="0" width="32" height="32" gid="43" visible="true">
+    <object id="0" name="Chest" type="Chest" x="512" y="768" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="448" y="800" rotation="0" width="32" height="32" gid="43" visible="true">
+    <object id="0" name="Chest" type="Chest" x="448" y="800" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="512" y="800" rotation="0" width="32" height="32" gid="43" visible="true">
+    <object id="0" name="Chest" type="Chest" x="512" y="800" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="448" y="832" rotation="0" width="32" height="32" gid="43" visible="true">
+    <object id="0" name="Chest" type="Chest" x="448" y="832" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="448" y="864" rotation="0" width="32" height="32" gid="43" visible="true">
+    <object id="0" name="Chest" type="Chest" x="448" y="864" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="512" y="864" rotation="0" width="32" height="32" gid="43" visible="true">
+    <object id="0" name="Chest" type="Chest" x="512" y="864" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="448" y="896" rotation="0" width="32" height="32" gid="43" visible="true">
+    <object id="0" name="Chest" type="Chest" x="448" y="896" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="480" y="896" rotation="0" width="32" height="32" gid="43" visible="true">
+    <object id="0" name="Chest" type="Chest" x="480" y="896" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="512" y="896" rotation="0" width="32" height="32" gid="43" visible="true">
+    <object id="0" name="Chest" type="Chest" x="512" y="896" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -371,26 +371,26 @@
     </object>
   </objectgroup>
   <objectgroup id="5" name="sprites" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="0" name="store" type="NPC_Store" x="544" y="832" rotation="0" width="32" height="32" gid="45" visible="true">
+    <object id="0" name="store" type="NPC_Store" x="544" y="832" rotation="0" width="32" height="32" gid="46" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="0" name="heal" type="NPC_Heal" x="544" y="640" rotation="0" width="32" height="32" gid="46" visible="true">
+    <object id="0" name="heal" type="NPC_Heal" x="544" y="640" rotation="0" width="32" height="32" gid="47" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="800" y="992" rotation="0" width="32" height="32" gid="48" visible="true">
+    <object id="0" name="npc" type="NPC" x="800" y="992" rotation="0" width="32" height="32" gid="49" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="welcome to coste" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="960" y="448" rotation="0" width="32" height="32" gid="47" visible="true">
+    <object id="0" name="npc" type="NPC" x="960" y="448" rotation="0" width="32" height="32" gid="48" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />

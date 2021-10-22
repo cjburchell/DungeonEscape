@@ -80,14 +80,16 @@ namespace DungeonEscape.Scenes
             
             var canvas = this.CreateEntity("ui-canvas").AddComponent(new UICanvas());
             canvas.SetRenderLayer(999);
-            canvas.AddComponent(new CommandMenu(canvas, this.gameState));
+            var statusWindow = canvas.AddComponent(new StatusWindow(canvas, this.gameState));
+            canvas.AddComponent(new CommandMenu(canvas, this.gameState, statusWindow));
             var talkWindow = canvas.AddComponent(new TalkWindow(canvas));
             var questionWindow = canvas.AddComponent(new QuestionWindow(canvas));
+            
             debugText = canvas.Stage.AddElement(new Label(""));
             debugText.SetFontScale(2).SetPosition(10, 20);
             
             var tiledEntity = this.CreateEntity("map");
-            var tiledMapRenderer =  tiledEntity.AddComponent(new TiledMapRenderer(map, this.gameState.Player.HasShip && this.mapId == 0? new []{"wall"}: new[] {"wall", "water"}));
+            var tiledMapRenderer =  tiledEntity.AddComponent(new TiledMapRenderer(map, this.gameState.Party.HasShip && this.mapId == 0? new []{"wall"}: new[] {"wall", "water"}));
             tiledMapRenderer.RenderLayer = 50;
             tiledMapRenderer.SetLayersToRender("wall", "water", "floor");
             map.GetObjectGroup("objects").Visible = false;
@@ -129,7 +131,7 @@ namespace DungeonEscape.Scenes
             
             playerEntity.AddComponent(new PlayerComponent(this.gameState, map, this.debugText));
             
-            this.Camera.Entity.AddComponent(new FollowCamera(playerEntity)).FollowLerp = 1;
+            this.Camera.Entity.AddComponent(new FollowCamera(playerEntity, FollowCamera.CameraStyle.CameraWindow));
         }
 
         
@@ -149,7 +151,6 @@ namespace DungeonEscape.Scenes
                 return map;
             });
             transition.OnTransitionCompleted += () => {
-                Console.WriteLine("FinishedTransition");
                 game.IsPaused = false;
             };
             

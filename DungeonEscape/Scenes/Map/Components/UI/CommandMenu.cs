@@ -8,10 +8,12 @@ namespace DungeonEscape.Scenes.Map.Components.UI
     public class CommandMenu: GameWindow, IUpdatable
     {
         private readonly IGame gameState;
+        private readonly StatusWindow statusWindow;
 
-        public CommandMenu(UICanvas canvas, IGame gameState) : base(canvas,"Command", new Point(30,30),100,150)
+        public CommandMenu(UICanvas canvas, IGame gameState, StatusWindow statusWindow) : base(canvas,"Command", new Point(30,30),100,150)
         {
             this.gameState = gameState;
+            this.statusWindow = statusWindow;
         }
         
         private VirtualButton showMenuInput;
@@ -25,26 +27,29 @@ namespace DungeonEscape.Scenes.Map.Components.UI
             base.OnAddedToEntity();
             var commandTable = this.Window.AddElement(new Table());
 
-            this.statusButton =new TextButton("Status", skin);
+            this.statusButton =new TextButton("Status", Skin);
             this.statusButton.GetLabel().SetFontScale(FontScale);
             this.statusButton.OnClicked += _ =>
             {
-                this.HideWindow();
+                this.statusWindow.Show(() =>
+                {
+                    this.HideWindow();
+                });
             };
-            this.spellButton =new TextButton("Spell",skin);
+            this.spellButton =new TextButton("Spell",Skin);
             this.spellButton.GetLabel().SetFontScale(FontScale);
             this.spellButton.OnClicked += _ =>
             {
                 this.HideWindow();
             };
             
-            this.itemButton = new TextButton("Item", skin);
+            this.itemButton = new TextButton("Item", Skin);
             this.itemButton.GetLabel().SetFontScale(FontScale);
             this.itemButton.OnClicked += _ =>
             {
                 this.HideWindow();
             };
-            this.equipButton = new TextButton("Equip", skin);
+            this.equipButton = new TextButton("Equip", Skin);
             this.equipButton.GetLabel().SetFontScale(FontScale);
             this.equipButton.OnClicked += _ =>
             {

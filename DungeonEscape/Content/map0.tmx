@@ -61,7 +61,7 @@
         <property name="WarpMap" type="int" value="24" />
       </properties>
     </object>
-    <object id="0" name="Town 6" type="Warp" x="928" y="768" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Castle 6" type="Warp" x="928" y="768" rotation="0" width="32" height="32" gid="41" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -89,14 +89,14 @@
         <property name="WarpMap" type="int" value="13" />
       </properties>
     </object>
-    <object id="0" name="Town 7" type="Warp" x="160" y="1312" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Town 7" type="Warp" x="160" y="1312" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="7" />
       </properties>
     </object>
-    <object id="0" name="Town 10" type="Warp" x="3296" y="2048" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Castle 10" type="Warp" x="3296" y="2048" rotation="0" width="32" height="32" gid="41" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -110,14 +110,14 @@
         <property name="WarpMap" type="int" value="16" />
       </properties>
     </object>
-    <object id="0" name="Town 8" type="Warp" x="1344" y="2560" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Castle 8" type="Warp" x="1344" y="2560" rotation="0" width="32" height="32" gid="41" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="8" />
       </properties>
     </object>
-    <object id="0" name="Town 9" type="Warp" x="2304" y="2656" rotation="0" width="32" height="32" gid="41" visible="true">
+    <object id="0" name="Town 9" type="Warp" x="2304" y="2656" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />

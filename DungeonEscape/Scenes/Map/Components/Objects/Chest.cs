@@ -64,19 +64,19 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.openImage.SetEnabled(this.isOpen);
         }
 
-        public override bool OnAction(Player player)
+        public override bool OnAction(Party party)
         {
             this.gameState.IsPaused = true;
             void Done() => this.gameState.IsPaused = false;
             if (this.isOpen)
             {
-                this.talkWindow.ShowText("You found nothing", Done);
+                this.talkWindow.Show("You found nothing", Done);
                 return false;
             }
 
-            if (!player.CanOpenChest(this.level))
+            if (!party.CanOpenChest(this.level))
             {
-                this.talkWindow.ShowText("Unable to open chest", Done);
+                this.talkWindow.Show("Unable to open chest", Done);
                 return false;
             }
 
@@ -86,13 +86,13 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             
             if (this.item.Type == ItemType.Gold)
             {
-                this.talkWindow.ShowText($"You found {this.item.Gold} Gold", Done);
-                player.Gold += this.item.Gold;
+                this.talkWindow.Show($"You found {this.item.Gold} Gold", Done);
+                party.Gold += this.item.Gold;
             }
             else
             {
-                this.talkWindow.ShowText($"You found a {this.item.Name}", Done);
-                player.Items.Add(this.item);
+                this.talkWindow.Show($"You found a {this.item.Name}", Done);
+                party.Items.Add(this.item);
             }
 
             return true;

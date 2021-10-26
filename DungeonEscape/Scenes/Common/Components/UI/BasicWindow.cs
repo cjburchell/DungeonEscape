@@ -1,21 +1,30 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.UI;
 
-namespace DungeonEscape.Scenes.Map.Components
+namespace DungeonEscape.Scenes.Common.Components.UI
 {
-    public abstract class GameWindow : Component
+    public abstract class BasicWindow : Component
     {
         protected Window Window { get; private set; }
-        private readonly UICanvas canvas;
+        protected readonly UICanvas canvas;
         private readonly string title;
         private readonly Point position;
         private readonly int width;
         private readonly int height;
 
         public static readonly Skin Skin = Skin.CreateDefaultSkin();
+        private static BasicWindow focusedWindow;
 
-        static GameWindow()
+        protected static BasicWindow FocusedWindow
+        {
+            set => focusedWindow = value;
+        }
+
+        public bool IsFocused => focusedWindow == this;
+        
+        static BasicWindow()
         {
             var windowStyle = Skin.Get<WindowStyle>();
             windowStyle.Background = new BorderPrimitiveDrawable(Color.Black, Color.White, 1);
@@ -24,22 +33,25 @@ namespace DungeonEscape.Scenes.Map.Components
                 Up = new BorderPrimitiveDrawable(Color.Black, Color.White, 1),
                 Down = new BorderPrimitiveDrawable(Color.LightGray, Color.White, 1),
                 Over = new BorderPrimitiveDrawable(Color.Gray, Color.White, 1),
-                Checked = new BorderPrimitiveDrawable(Color.Gray, Color.White, 1)
+                Checked = new BorderPrimitiveDrawable(Color.Gray, Color.White, 1),
+                FontScale = 2
             };
 
             Skin.Add("default", buttonStyle);
+
+            var labelStyle = Skin.Get<LabelStyle>();
+            labelStyle.FontScale = 2;
+            Skin.Add("default", labelStyle);
         }
-        
-        
-        protected const int FontScale = 2;
-        
-        protected GameWindow(UICanvas canvas, string title, Point position, int width, int Height)
+
+        protected BasicWindow(UICanvas canvas, WindowInput input, string title, Point position, int width, int height)
         {
             this.canvas = canvas;
             this.title = title;
             this.position = position;
             this.width = width;
-            this.height = Height;
+            this.height = height;
+            input.AddWindow(this);
         }
         
         public override void OnAddedToEntity()
@@ -50,14 +62,14 @@ namespace DungeonEscape.Scenes.Map.Components
             this.Window.SetHeight(this.height);
             this.Window.SetMovable(false);
             this.Window.SetResizable(false);
-            this.Window.GetTitleLabel().SetFontScale(FontScale);
+            this.Window.GetTitleLabel();
             this.Window.GetTitleLabel().SetVisible(false);
             this.Window.SetVisible(false);
             
             base.OnAddedToEntity();
         }
-        
-        protected virtual void HideWindow()
+
+        public virtual void HideWindow()
         {
             this.Window.SetVisible(false);
         }
@@ -65,8 +77,13 @@ namespace DungeonEscape.Scenes.Map.Components
         protected virtual void ShowWindow()
         {
             this.Window.SetVisible(true);
+            FocusedWindow = this;
         }
-        
-        protected bool IsVisible => this.Window != null && this.Window.IsVisible();
+
+        public bool IsVisible => this.Window != null && this.Window.IsVisible();
+
+        public virtual void DoAction()
+        {
+        }
     }
 }

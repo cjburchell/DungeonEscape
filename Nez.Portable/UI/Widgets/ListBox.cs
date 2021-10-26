@@ -2,6 +2,7 @@
 using Nez.BitmapFonts;
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
 
 
 namespace Nez.UI
@@ -227,7 +228,7 @@ namespace Nez.UI
 					}
 
 					var textPos = new Vector2(x + _textOffsetX, y + itemY + _textOffsetY);
-					batcher.DrawString(font, item.ToString(), textPos, fontColor);
+					batcher.DrawString(font, item.ToString(), textPos, fontColor, 0, Vector2.Zero, new Vector2(1,1), SpriteEffects.None, 0);
 				}
 				else if (itemY < _cullingArea.Value.Y)
 				{

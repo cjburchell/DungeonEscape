@@ -1,4 +1,4 @@
-﻿using DungeonEscape.Scenes.Map.Components.UI;
+﻿using DungeonEscape.Scenes.Common.Components.UI;
 using DungeonEscape.State;
 using Nez.AI.Pathfinding;
 using Nez.Tiled;

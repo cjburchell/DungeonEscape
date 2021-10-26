@@ -19,7 +19,7 @@ namespace Nez.UI
 		/// <summary>
 		/// the button on the gamepad that activates the focused control
 		/// </summary>
-		public Buttons GamepadActionButton = Buttons.A;
+		public Buttons? GamepadActionButton = Buttons.A;
 
 		/// <summary>
 		/// if true (default) keyboard arrow keys and the keyboardActionKey will emulate a gamepad
@@ -50,6 +50,8 @@ namespace Nez.UI
 
 		bool _isGamepadFocusEnabled;
 		IGamepadFocusable _gamepadFocusElement;
+
+		public IGamepadFocusable GamepadFocusElement => this._gamepadFocusElement;
 
 
 		public Stage()
@@ -440,12 +442,15 @@ namespace Nez.UI
 				return;
 			}
 
-			if (Input.GamePads[0].IsButtonPressed(this.GamepadActionButton) ||
-			    (this.KeyboardEmulatesGamepad && Input.IsKeyPressed(this.KeyboardActionKey)))
-				this._gamepadFocusElement.OnActionButtonPressed();
-			else if (Input.GamePads[0].IsButtonReleased(this.GamepadActionButton) ||
-			         (this.KeyboardEmulatesGamepad && Input.IsKeyReleased(this.KeyboardActionKey)))
-				this._gamepadFocusElement.OnActionButtonReleased();
+			if (this.GamepadActionButton.HasValue)
+			{
+				if (Input.GamePads[0].IsButtonPressed(this.GamepadActionButton.Value) ||
+				    (this.KeyboardEmulatesGamepad && Input.IsKeyPressed(this.KeyboardActionKey)))
+					this._gamepadFocusElement.OnActionButtonPressed();
+				else if (Input.GamePads[0].IsButtonReleased(this.GamepadActionButton.Value) ||
+				         (this.KeyboardEmulatesGamepad && Input.IsKeyReleased(this.KeyboardActionKey)))
+					this._gamepadFocusElement.OnActionButtonReleased();
+			}
 			
 			var direction = Direction.None;
 			if (Input.GamePads[0].DpadLeftPressed || Input.GamePads[0].IsLeftStickLeftPressed() ||

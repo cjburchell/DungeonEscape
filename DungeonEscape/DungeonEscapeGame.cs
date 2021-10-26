@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 using DungeonEscape.Scenes;
@@ -12,8 +13,33 @@ namespace DungeonEscape
 {
     public class DungeonEscapeGame : Core, IGame
     {
+        private bool isPaused;
+        private bool deferedPause;
         public Party Party { get; } = new Party();
-        public bool IsPaused { get; set; }
+
+        public void UpdatePauseState()
+        {
+            this.isPaused = this.deferedPause;
+        }
+        
+        public bool IsPaused
+        {
+            get => this.isPaused;
+            set
+            {
+                if (value)
+                {
+                    this.isPaused = value;
+                }
+                
+                this.deferedPause = value;
+                
+                Console.WriteLine($"Paused {value}");
+            }
+        }
+        
+        
+        
         public List<Item> Items { get; } = new List<Item>();
         
         public List<Spell> Spells { get; } = new List<Spell>();

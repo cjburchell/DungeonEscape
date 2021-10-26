@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using DungeonEscape.Scenes.Map.Components.UI;
+using DungeonEscape.Scenes.Common.Components.UI;
 using DungeonEscape.State;
 using Microsoft.Xna.Framework;
 using Nez;

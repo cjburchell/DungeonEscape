@@ -8,7 +8,9 @@ namespace DungeonEscape.State
     {
         public Party()
         {
-            this.Members.Add(new Hero {Name = "player 1"});
+            this.Members.Add(new Hero {Name = "Player 1"});
+            this.Members.Add(new Hero {Name = "Player 2"});
+            this.Members.Add(new Hero {Name = "Player 3"});
         }
         public Point OverWorldPos { get; set; } = Point.Zero;
         public bool HasShip { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DungeonEscape.Scenes.Common.Components.UI;
 using DungeonEscape.Scenes.Map.Components;
 using DungeonEscape.Scenes.Map.Components.Objects;
 using DungeonEscape.Scenes.Map.Components.UI;
@@ -95,11 +96,18 @@ namespace DungeonEscape.Scenes
 
             var canvas = this.CreateEntity("ui-canvas").AddComponent(new UICanvas());
             canvas.SetRenderLayer(999);
-            var statusWindow = canvas.AddComponent(new StatusWindow(canvas, this.gameState));
-            canvas.AddComponent(new CommandMenu(canvas, this.gameState, statusWindow));
-            var talkWindow = canvas.AddComponent(new TalkWindow(canvas));
-            var questionWindow = canvas.AddComponent(new QuestionWindow(canvas));
-
+            canvas.Stage.GamepadActionButton = null;
+            var input = canvas.AddComponent(new WindowInput());
+            canvas.AddComponent(new PartyStatusWindow(canvas, input));
+            var talkWindow = canvas.AddComponent(new TalkWindow(canvas, input));
+            var questionWindow = canvas.AddComponent(new QuestionWindow(canvas, input));
+            canvas.AddComponent(new SelectWindow<string>(canvas, input,"Select", new Point(150,30)));
+            canvas.AddComponent(new EquipWindow(canvas, input));
+            canvas.AddComponent(new SelectHeroWindow(canvas, input));
+            canvas.AddComponent(new SpellWindow(canvas,input));
+            canvas.AddComponent(new InventoryWindow(canvas, input));
+            canvas.AddComponent(new CommandMenu(canvas, input, this.gameState));
+            
             this.debugText = canvas.Stage.AddElement(new Label(""));
             this.debugText.SetFontScale(2).SetPosition(10, 20);
 
@@ -146,7 +154,7 @@ namespace DungeonEscape.Scenes
             var playerEntity = this.CreateEntity("player", spawn);
 
 
-            playerEntity.AddComponent(new PlayerComponent(this.gameState, map, this.debugText, this.randomMonsters));
+            playerEntity.AddComponent(new PlayerComponent(this.gameState, map, this.debugText, this.randomMonsters, talkWindow));
 
             this.Camera.Entity.AddComponent(new FollowCamera(playerEntity, FollowCamera.CameraStyle.CameraWindow));
         }

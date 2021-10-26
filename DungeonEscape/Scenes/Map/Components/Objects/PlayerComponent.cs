@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DungeonEscape.Scenes.Common.Components.UI;
 using DungeonEscape.State;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -17,6 +18,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly TmxMap map;
         private readonly Label debugText;
         private readonly List<Monster> randomMonsters;
+        private readonly TalkWindow talkWindow;
         private const float MoveSpeed = 150;
         private SpriteAnimator animator;
         private SpriteAnimator shipAnimator;
@@ -24,11 +26,12 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private VirtualIntegerAxis yAxisInput;
         private IGame GameState { get; }
 
-        public PlayerComponent(IGame gameState, TmxMap map, Label debugText, List<Monster> randomMonsters)
+        public PlayerComponent(IGame gameState, TmxMap map, Label debugText, List<Monster> randomMonsters, TalkWindow talkWindow)
         {
             this.map = map;
             this.debugText = debugText;
             this.randomMonsters = randomMonsters;
+            this.talkWindow = talkWindow;
             this.GameState = gameState;
         }
 
@@ -239,6 +242,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         {
             if (this.GameState.IsPaused)
             {
+                this.GameState.UpdatePauseState();
                 return;
             }
 
@@ -249,7 +253,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                     $"B: {currentBiome}, G: {MapScene.ToMapGrid(this.Entity.Position, this.map)}, R: {this.Entity.Position}");
             }
             
-            if (this.actionButton.IsPressed)
+            if (this.actionButton.IsReleased)
             {
                 foreach (var overObject in this.currentlyOverObjects)
                 {
@@ -307,8 +311,32 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 var monsterNub = Random.NextInt(availableMonsters.Count);
                 monsters.Add(availableMonsters[monsterNub]);
             }
+
+            var xp = monsters.Sum(monster => monster.XP)/this.GameState.Party.Members.Count;
+            if (xp == 0)
+            {
+                xp = 1;
+            }
             
-            Console.WriteLine($"Fight {monsters.Count}");
+            Console.WriteLine($"Fight {monsters.Count}, {xp}XP");
+            string levelUpMessage = null;
+            foreach (var member in this.GameState.Party.Members)
+            {
+                if (member.Health > 0)
+                {
+                    member.XP += xp;
+                    while (member.CheckLevelUp(this.GameState.Spells, out var message))
+                    {
+                        levelUpMessage += message;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(levelUpMessage))
+            {
+                this.GameState.IsPaused = true;
+                this.talkWindow.Show(levelUpMessage, () => this.GameState.IsPaused=false);
+            }
         }
 
         private Biome GetCurrentBiome()
@@ -319,8 +347,14 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             }
 
             var (x, y) = MapScene.ToMapGrid(this.Entity.Position, this.map);
-            var tile = this.map.GetLayer<TmxLayer>("biomes").GetTile(x, y);
-            return (Biome) (tile.Gid - 900);
+            var tile = this.map.GetLayer<TmxLayer>("biomes")?.GetTile(x, y);
+            if (tile != null)
+            {
+                return (Biome) (tile.Gid - 900);
+            }
+
+            return Biome.None;
+
         }
 
         private bool CheckForMonsterEncounter()

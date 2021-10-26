@@ -2,7 +2,7 @@
 using Nez;
 using Nez.UI;
 
-namespace DungeonEscape.Scenes.Map.Components
+namespace DungeonEscape.Scenes.Common.Components
 {
     public class BorderPrimitiveDrawable : PrimitiveDrawable
     {

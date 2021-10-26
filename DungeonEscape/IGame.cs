@@ -13,7 +13,9 @@ namespace DungeonEscape
         Party Party { get; }
         
         bool IsPaused { get; set; }
-        
+
+        public void UpdatePauseState();
+
         List<Item> Items { get; }
         
         List<Spell> Spells { get; }

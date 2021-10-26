@@ -7,6 +7,11 @@ namespace DungeonEscape.State
     {
         private readonly TmxTilesetTile tile;
 
+        public override string ToString()
+        {
+            return this.Name;
+        }
+
         public Item(TmxTilesetTile tile)
         {
             this.tile = tile;

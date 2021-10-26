@@ -1,7 +1,15 @@
-﻿namespace DungeonEscape.Scenes.Map.Components.UI
+﻿using DungeonEscape.Scenes.Common.Components.UI;
+using DungeonEscape.State;
+using Microsoft.Xna.Framework;
+using Nez;
+using Nez.UI;
+
+namespace DungeonEscape.Scenes.Map.Components.UI
 {
-    public class InventoryWindow
+    public class InventoryWindow : SelectWindow<Item>
     {
-        
+        public InventoryWindow(UICanvas canvas, WindowInput input) : base(canvas, input, "Inventory", new Point(150, 30))
+        {
+        }
     }
 }

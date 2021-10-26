@@ -28,16 +28,23 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             {
                 if (accepted)
                 {
-                    if (party.Gold >= this.key.Gold)
+                    if (party.Gold < this.key.Gold)
                     {
-                        party.Gold -= this.key.Gold;
-                        party.Items.Add(this.key);
-                        this.talkWindow.Show("Thank you come again!", () => { this.gameState.IsPaused = false;});
+                        this.talkWindow.Show($"You do not have {this.key.Gold} gold",
+                            () => { this.gameState.IsPaused = false; });
+                        return;
                     }
-                    else
+
+                    if (party.Items.Count >= Party.MaxItems)
                     {
-                        this.talkWindow.Show($"You do not have {this.key.Gold} gold", () => { this.gameState.IsPaused = false;});
+                        this.talkWindow.Show($"You do not have space in your inventory for the key",
+                            () => { this.gameState.IsPaused = false; });
+                        return;
                     }
+
+                    party.Gold -= this.key.Gold;
+                    party.Items.Add(new ItemInstance(this.key));
+                    this.talkWindow.Show("Thank you come again!", () => { this.gameState.IsPaused = false; });
                 }
                 else
                 {

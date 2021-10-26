@@ -102,7 +102,6 @@ namespace DungeonEscape.Scenes
             var talkWindow = canvas.AddComponent(new TalkWindow(canvas, input));
             var questionWindow = canvas.AddComponent(new QuestionWindow(canvas, input));
             canvas.AddComponent(new SelectWindow<string>(canvas, input,"Select", new Point(150,30)));
-            canvas.AddComponent(new EquipWindow(canvas, input));
             canvas.AddComponent(new SelectHeroWindow(canvas, input));
             canvas.AddComponent(new SpellWindow(canvas,input));
             canvas.AddComponent(new InventoryWindow(canvas, input));

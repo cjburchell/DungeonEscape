@@ -79,10 +79,6 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 this.talkWindow.Show("Unable to open chest", Done);
                 return false;
             }
-
-            this.isOpen = true;
-            this.DisplayVisual(!this.isOpen);
-            this.openImage.SetEnabled(this.isOpen);
             
             if (this.item.Type == ItemType.Gold)
             {
@@ -91,9 +87,19 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             }
             else
             {
+                if (party.Items.Count >= Party.MaxItems)
+                {
+                    this.talkWindow.Show($"You do not have enough space in your inventory for {this.item.Name}", Done);
+                    return false;
+                }
+                
                 this.talkWindow.Show($"You found a {this.item.Name}", Done);
-                party.Items.Add(this.item);
+                party.Items.Add(new ItemInstance(this.item));
             }
+            
+            this.isOpen = true;
+            this.DisplayVisual(!this.isOpen);
+            this.openImage.SetEnabled(this.isOpen);
 
             return true;
         }

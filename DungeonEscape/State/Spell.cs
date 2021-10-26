@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using DungeonEscape.Scenes;
 using Nez.Tiled;
+using Random = Nez.Random;
 
 namespace DungeonEscape.State
 {
@@ -12,12 +14,55 @@ namespace DungeonEscape.State
         Fireball = 2,
         Lighting =  3,
         Return = 4,
+        Antidote = 5,
+        Revive = 6,
+        Open = 7
     }
 
     public class Spell
     {
-        private static readonly List<SpellType> encounterSpells = new List<SpellType> {SpellType.Heal, SpellType.Fireball, SpellType.Lighting};
-        private static readonly List<SpellType> nonEncounterSpells = new List<SpellType> {SpellType.Heal, SpellType.Outside, SpellType.Return};
+        
+        public static string CastHeal(Hero target, Hero caster, Spell spell)
+        {
+            caster.Magic -= spell.Cost;
+            var oldHeath = target.Health;
+            if (spell.Power >= 3)
+            {
+                target.Health = target.MaxHealth;
+            }
+            else
+            {
+                target.Health+= Random.NextInt(40)+5;
+                if(target.MaxHealth < target.Health)
+                {
+                    target.Health = target.MaxHealth;
+                }
+            }
+
+            return $"{caster.Name} casts {spell.Name} on {caster.Name} who gains {target.Health - oldHeath} health";
+        }
+        
+        public static string CastRevive(Hero target, Hero caster, Spell spell)
+        {
+            caster.Magic -= spell.Cost;
+            target.Health = 1;
+            return $"{caster.Name} casts {spell.Name} on {caster.Name}";
+        }
+
+        public static string CastOutside(Hero caster, Spell spell, IGame gameState)
+        {
+            if (gameState.CurrentMapId == 0)
+            {
+                return $"{caster.Name} casts {spell.Name} but you are already outside";
+            }
+
+            caster.Magic -= spell.Cost;
+            MapScene.SetMap();
+            return null;
+        }
+        
+        private static readonly List<SpellType> encounterSpells = new List<SpellType> {SpellType.Heal, SpellType.Fireball, SpellType.Lighting, SpellType.Antidote, SpellType.Revive };
+        private static readonly List<SpellType> nonEncounterSpells = new List<SpellType> {SpellType.Heal, SpellType.Outside, SpellType.Return, SpellType.Antidote, SpellType.Revive, SpellType.Open};
         
         public override string ToString()
         {

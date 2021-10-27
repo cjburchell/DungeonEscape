@@ -11,7 +11,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 {
     public class Chest : MapObject
     {
-        private readonly TalkWindow talkWindow;
+        private readonly UISystem ui;
         private readonly int level;
         private SpriteAnimator openImage;
         private readonly string openImageName;
@@ -26,9 +26,9 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             set => this.tmxObject.Properties["IsOpen"] = value.ToString();
         }
 
-        public Chest(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, TalkWindow talkWindow, IGame gameState) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState)
+        public Chest(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, UISystem ui, IGame gameState) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState)
         {
-            this.talkWindow = talkWindow;
+            this.ui = ui;
             this.level = tmxObject.Properties.ContainsKey("ChestLevel") ? int.Parse(tmxObject.Properties["ChestLevel"]) : 0;
             this.openImageName = tmxObject.Properties.ContainsKey("OpenImage") ? tmxObject.Properties["OpenImage"] : "ochest.png";
 
@@ -67,34 +67,45 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         public override bool OnAction(Party party)
         {
             this.gameState.IsPaused = true;
-            void Done() => this.gameState.IsPaused = false;
+            void Done()
+            {
+                this.gameState.IsPaused = false;
+            }
+
             if (this.isOpen)
             {
-                this.talkWindow.Show("You found nothing", Done);
+                var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                talkWindow.Show("You found nothing", Done);
                 return false;
             }
 
             if (!party.CanOpenChest(this.level))
             {
-                this.talkWindow.Show("Unable to open chest", Done);
+                var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                talkWindow.Show("Unable to open chest", Done);
                 return false;
             }
             
             if (this.item.Type == ItemType.Gold)
             {
-                this.talkWindow.Show($"You found {this.item.Gold} Gold", Done);
+                var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                talkWindow.Show($"You found {this.item.Gold} Gold", Done);
                 party.Gold += this.item.Gold;
             }
             else
             {
                 if (party.Items.Count >= Party.MaxItems)
                 {
-                    this.talkWindow.Show($"You do not have enough space in your inventory for {this.item.Name}", Done);
+                    var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                    talkWindow.Show($"You do not have enough space in your inventory for {this.item.Name}", Done);
                     return false;
                 }
-                
-                this.talkWindow.Show($"You found a {this.item.Name}", Done);
-                party.Items.Add(new ItemInstance(this.item));
+                else
+                {
+                    var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                    talkWindow.Show($"You found a {this.item.Name}", Done);
+                    party.Items.Add(new ItemInstance(this.item));
+                }
             }
             
             this.isOpen = true;

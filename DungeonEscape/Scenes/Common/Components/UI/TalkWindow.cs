@@ -6,7 +6,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 {
     public class TalkWindow : TextWindow
     {
-        public TalkWindow(UICanvas canvas, WindowInput input) : base(canvas, input, new Point(20, 20))
+        public TalkWindow(UISystem ui) : base(ui, new Point(20, 20))
         {
         }
 

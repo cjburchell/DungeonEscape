@@ -15,7 +15,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         private Action<string> done;
         private int textIndex;
 
-        public TextWindow(UICanvas canvas, WindowInput input, Point position, int width = 472, int height = 150) : base(canvas, input, "", position, width, height)
+        public TextWindow(UISystem ui, Point position, int width = 472, int height = 150) : base(ui, "", position, width, height)
         {
         }
         
@@ -23,12 +23,13 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         private Button lastButton;
         private Table buttonTable;
         private ScrollPane scrollPane;
+        private IEnumerable<string> buttonsText;
 
         private void AddButton(Button button)
         {
             button.OnClicked += _ =>
             {
-                this.HideWindow(button);
+                this.CloseWindow(button);
             };
 
             button.ShouldUseExplicitFocusableControl = true;
@@ -59,18 +60,43 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             // layout
             this.buttonTable.SetFillParent(true);
             this.Window.GetStage().SetGamepadFocusElement(null);
+            
+            this.textIndex = 0;
+            this.textLabel.SetText("");
+            this.buttonTable.ClearChildren();
+            this.buttonTable.Top().PadLeft(10).PadTop(10).PadRight(10);
+            var buttonTexts = buttonsText.ToList();
+            this.textLabel.FillParent = true;
+            this.textLabel.SetAlignment(Align.TopLeft);
+            this.textLabel.SetWrap(false);
+            this.buttonTable.Add(this.scrollPane).Height(105).Width(452).SetColspan(buttonTexts.Count);
+            this.buttonTable.Row().SetPadTop(0);
+            this.firstButton = null;
+            this.lastButton = null;
+            foreach (var buttonText in buttonTexts)
+            {
+                var buttonControl = new TextButton(buttonText, Skin) {UserData = buttonText};
+                this.AddButton(buttonControl);
+                this.buttonTable.Add(buttonControl).Height(30).Width(80);
+                buttonControl.SetVisible(false);
+            }
+            
+            this.buttonTable.Validate();
+
+            this.Window.GetStage().SetGamepadFocusElement(null);
+            this.ShowWindow();
         }
 
-        private void HideWindow(Element result)
+        private void CloseWindow(Element result)
         {
-            base.HideWindow();
+            base.CloseWindow();
             this.Window.GetStage().SetGamepadFocusElement(null);
             this.done?.Invoke(result?.UserData as string);
         }
         
-        public override void HideWindow()
+        public override void CloseWindow()
         {
-            this.HideWindow(null);
+            this.CloseWindow(null);
         }
 
         public override void DoAction()
@@ -82,7 +108,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             }
             else
             {
-                this.HideWindow(this.canvas.Stage.GamepadFocusElement as Element);
+                this.CloseWindow(this.ui.Canvas.Stage.GamepadFocusElement as Element);
             }
         }
 
@@ -120,32 +146,9 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 
         protected void Show(string text, Action<string> doneAction, IEnumerable<string> buttonsText)
         {
-            this.textIndex = 0;
             this.done = doneAction;
             this.textToShow = text ?? "";
-            this.textLabel.SetText("");
-            this.buttonTable.ClearChildren();
-            this.buttonTable.Top().PadLeft(10).PadTop(10).PadRight(10);
-            var buttonTexts = buttonsText.ToList();
-            this.textLabel.FillParent = true;
-            this.textLabel.SetAlignment(Align.TopLeft);
-            this.textLabel.SetWrap(false);
-            this.buttonTable.Add(this.scrollPane).Height(105).Width(452).SetColspan(buttonTexts.Count);
-            this.buttonTable.Row().SetPadTop(0);
-            this.firstButton = null;
-            this.lastButton = null;
-            foreach (var buttonText in buttonTexts)
-            {
-                var buttonControl = new TextButton(buttonText, Skin) {UserData = buttonText};
-                this.AddButton(buttonControl);
-                this.buttonTable.Add(buttonControl).Height(30).Width(80);
-                buttonControl.SetVisible(false);
-            }
-            
-            this.buttonTable.Validate();
-
-            this.Window.GetStage().SetGamepadFocusElement(null);
-            this.ShowWindow();
+            this.buttonsText = buttonsText;
         }
     }
 }

@@ -18,6 +18,7 @@ namespace DungeonEscape.State
         public ItemType Type => this.item.Type;
         public string Name => this.item.Name;
         public Hero EquippedTo { get; set; }
+        public int Gold => this.item.Gold;
 
         public bool IsEquipped = true;
 

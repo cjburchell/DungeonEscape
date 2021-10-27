@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using Nez;
 using Nez.UI;
 
@@ -8,7 +7,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
     public abstract class BasicWindow : Component
     {
         protected Window Window { get; private set; }
-        protected readonly UICanvas canvas;
+        protected readonly UISystem ui;
         private readonly string title;
         private readonly Point position;
         private readonly int width;
@@ -44,19 +43,20 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             Skin.Add("default", labelStyle);
         }
 
-        protected BasicWindow(UICanvas canvas, WindowInput input, string title, Point position, int width, int height)
+        protected BasicWindow(UISystem ui, string title, Point position, int width, int height)
         {
-            this.canvas = canvas;
+            this.ui = ui;
             this.title = title;
             this.position = position;
             this.width = width;
             this.height = height;
-            input.AddWindow(this);
+            ui.Input.AddWindow(this);
+            this.Window = new Window(this.title, Skin);
         }
-        
+
         public override void OnAddedToEntity()
         {
-            this.Window = this.canvas.Stage.AddElement(new Window(this.title, Skin));
+            this.ui.Canvas.Stage.AddElement(this.Window);
             this.Window.SetPosition(this.position.X, this.position.Y);
             this.Window.SetWidth(this.width);
             this.Window.SetHeight(this.height);
@@ -64,17 +64,17 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             this.Window.SetResizable(false);
             this.Window.GetTitleLabel();
             this.Window.GetTitleLabel().SetVisible(false);
-            this.Window.SetVisible(false);
-            
+
             base.OnAddedToEntity();
         }
 
-        public virtual void HideWindow()
+        public virtual void CloseWindow()
         {
             this.Window.SetVisible(false);
+            this.ui.Input.RemoveWindow(this);
         }
 
-        protected virtual void ShowWindow()
+        protected void ShowWindow()
         {
             this.Window.SetVisible(true);
             FocusedWindow = this;

@@ -18,7 +18,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly TmxMap map;
         private readonly Label debugText;
         private readonly List<Monster> randomMonsters;
-        private readonly TalkWindow talkWindow;
+        private readonly UISystem ui;
         private const float MoveSpeed = 150;
         private SpriteAnimator animator;
         private SpriteAnimator shipAnimator;
@@ -26,12 +26,12 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private VirtualIntegerAxis yAxisInput;
         private IGame GameState { get; }
 
-        public PlayerComponent(IGame gameState, TmxMap map, Label debugText, List<Monster> randomMonsters, TalkWindow talkWindow)
+        public PlayerComponent(IGame gameState, TmxMap map, Label debugText, List<Monster> randomMonsters, UISystem ui)
         {
             this.map = map;
             this.debugText = debugText;
             this.randomMonsters = randomMonsters;
-            this.talkWindow = talkWindow;
+            this.ui = ui;
             this.GameState = gameState;
         }
 
@@ -335,7 +335,11 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             if (!string.IsNullOrEmpty(levelUpMessage))
             {
                 this.GameState.IsPaused = true;
-                this.talkWindow.Show(levelUpMessage, () => this.GameState.IsPaused=false);
+                var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                talkWindow.Show(levelUpMessage, () =>
+                {
+                    this.GameState.IsPaused = false;
+                });
             }
         }
 

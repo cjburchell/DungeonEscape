@@ -34,6 +34,11 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         {
             this.windows.Add(window);
         }
+        
+        public void RemoveWindow(BasicWindow window)
+        {
+            this.windows.Remove(window);
+        }
 
         public void Update()
         {
@@ -41,7 +46,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             {
                 foreach (var window in this.windows.Where(window => window.IsVisible && window.IsFocused))
                 {
-                    window.HideWindow();
+                    window.CloseWindow();
                     return;
                 }
             }

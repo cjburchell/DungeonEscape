@@ -4,9 +4,11 @@ using Nez.Tiled;
 
 namespace DungeonEscape.Scenes.Map.Components.Objects
 {
+    using Nez;
+
     public class Door: SolidObject
     {
-        private readonly TalkWindow talkWindow;
+        private readonly UISystem ui;
         private readonly int level;
         private bool isOpen
         {
@@ -17,9 +19,9 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             set => this.tmxObject.Properties["IsOpen"] = value.ToString();
         }
 
-        public Door(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, TalkWindow talkWindow, IGame gameState) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState)
+        public Door(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, UISystem ui, IGame gameState) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState)
         {
-            this.talkWindow = talkWindow;
+            this.ui = ui;
             this.level = tmxObject.Properties.ContainsKey("DoorLevel") ? int.Parse(tmxObject.Properties["DoorLevel"]) : 0;
         }
 
@@ -41,7 +43,11 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             {
 
                 this.gameState.IsPaused = true;
-                this.talkWindow.Show("Unable to open door", () => this.gameState.IsPaused = false);
+                var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                talkWindow.Show("Unable to open door", () =>
+                {
+                    this.gameState.IsPaused = false;
+                });
                 return false;
             }
 

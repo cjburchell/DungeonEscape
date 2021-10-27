@@ -2,18 +2,20 @@
 using DungeonEscape.Scenes.Common.Components.UI;
 using DungeonEscape.State;
 using Microsoft.Xna.Framework;
-using Nez;
 using Nez.UI;
 
 namespace DungeonEscape.Scenes.Map.Components.UI
 {
+    using Nez;
+
     public class HeroStatusWindow: BasicWindow
     {
         private TextButton closeButton;
         private Action done;
         private Table statusTable;
+        private Hero hero;
 
-        public HeroStatusWindow(UICanvas canvas, WindowInput input) : base(canvas, input, "Status",
+        public HeroStatusWindow(UISystem ui) : base(ui, "Status",
             new Point(150, 30), 300, 150)
         {
         }
@@ -24,9 +26,9 @@ namespace DungeonEscape.Scenes.Map.Components.UI
             var table = this.Window.AddElement(new Table());
             this.statusTable = new Table();
             this.closeButton = new TextButton("Close", Skin);
-            this.closeButton.GetLabel();
+            this.closeButton.GetLabel();    
             this.closeButton.ShouldUseExplicitFocusableControl = true;
-            this.closeButton.OnClicked += _ => { this.HideWindow(); };
+            this.closeButton.OnClicked += _ => { this.CloseWindow(); };
 
             // layout
             table.SetFillParent(true);
@@ -34,9 +36,13 @@ namespace DungeonEscape.Scenes.Map.Components.UI
             table.Add(this.statusTable).Expand().Top().Left().SetPadLeft(10);
             table.Row();
             table.Add(this.closeButton).Height(30).Width(80).SetColspan(4).Center().Bottom().SetPadBottom(2);
+            
+            this.ShowWindow();
+            this.UpdateStatus();
+            this.Window.GetStage().SetGamepadFocusElement(this.closeButton);
         }
 
-        void UpdateStatus(Hero hero)
+        void UpdateStatus()
         {
             this.statusTable.ClearChildren();
             this.statusTable.DebugAll();
@@ -74,27 +80,27 @@ namespace DungeonEscape.Scenes.Map.Components.UI
             this.statusTable.Add(new Label($"{hero.NextLevel - hero.XP}XP", Skin).SetAlignment(Align.TopLeft));
             
             this.statusTable.Validate();
+            
+            
         }
 
-        public override void HideWindow()
+        public override void CloseWindow()
         {
-            base.HideWindow();
+            base.CloseWindow();
             this.Window.GetStage().SetGamepadFocusElement(null);
             this.done?.Invoke();
+            this.ui.Canvas.RemoveComponent(this);
         }
 
         public override void DoAction()
         {
-            this.HideWindow();
+            this.CloseWindow();
         }
         
         public void Show(Hero hero, Action doneAction)
         {
-            FocusedWindow = this;
             this.done = doneAction;
-            this.UpdateStatus(hero);
-            this.ShowWindow();
-            this.Window.GetStage().SetGamepadFocusElement(this.closeButton);
+            this.hero = hero;
         }
     }
 }

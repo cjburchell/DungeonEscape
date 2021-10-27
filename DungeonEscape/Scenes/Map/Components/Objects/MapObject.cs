@@ -17,7 +17,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private SpriteAnimator animator;
         protected IGame gameState;
 
-        public static MapObject Create(TmxObject tmxObject,int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, TalkWindow talkWindow, IGame gameState)
+        public static MapObject Create(TmxObject tmxObject,int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, UISystem ui, IGame gameState)
         {
             if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
             {
@@ -28,8 +28,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             {
                 SpriteType.Ship => new Ship(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState),
                 SpriteType.Warp => new Warp(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState),
-                SpriteType.Chest => new Chest(tmxObject, gridTileHeight, gridTileWidth, mapTile, talkWindow, gameState),
-                SpriteType.Door => new Door(tmxObject, gridTileHeight, gridTileWidth, mapTile, talkWindow, gameState),
+                SpriteType.Chest => new Chest(tmxObject, gridTileHeight, gridTileWidth, mapTile, ui, gameState),
+                SpriteType.Door => new Door(tmxObject, gridTileHeight, gridTileWidth, mapTile, ui, gameState),
                 _ => new MapObject(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState)
             };
         }

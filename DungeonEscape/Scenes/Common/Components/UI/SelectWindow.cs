@@ -12,58 +12,44 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         private Action<T> done;
         private ButtonList list;
         private ScrollPane scrollPane;
+        private IEnumerable<T> items;
 
-        public SelectWindow(UICanvas canvas, WindowInput input, string title, Point position, int width = 180,
-            int height = 150) : base(canvas, input, title, position, width, height)
+
+        public SelectWindow(UISystem ui, string title, Point position, int width = 180,
+            int height = 150) : base(ui, title, position, width, height)
         {
+            this.list = new ButtonList();
+            this.scrollPane = new ScrollPane(this.list, Skin) {FillParent = true};
         }
 
-        public override void HideWindow()
+        public override void CloseWindow()
         {
-            this.HideWindow(null);
+            this.CloseWindow(null);
         }
 
-        private void HideWindow(T selected)
+        private void CloseWindow(T result)
         {
-            base.HideWindow();
+            base.CloseWindow();
             this.Window.GetStage().SetGamepadFocusElement(null);
-            this.done?.Invoke(selected);
+            this.done?.Invoke(result);
+            this.ui.Canvas.RemoveComponent(this);
         }
         
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
-            
-            this.list = new ButtonList();
-            this.scrollPane = new ScrollPane(this.list, Skin);
-            this.scrollPane.FillParent = true;
             this.Window.AddElement(this.scrollPane);
             this.list.OnClicked += button =>
             {
-                this.HideWindow(button?.UserData as T);
+                this.CloseWindow(button?.UserData as T);
             };
-        }
-
-        public override void DoAction()
-        {
-            this.HideWindow(this.list.GetSelected().UserData as T);
-        }
-
-        protected virtual Button CreateButton(T item)
-        {
-            return new TextButton(item.ToString(), Skin);
-        }
-
-        public void Show(IEnumerable<T> items, Action<T> doneAction)
-        {
-            this.done = doneAction;
-            this.list.ClearChildren();
+            
             this.list.SetFillParent(true);
             const int margin = 10;
             this.list.Top().PadLeft(margin).PadTop(margin).PadRight(margin);
             const int itemHeight = 30;
             var itemWidth = this.Window.GetWidth();
-            var itemList = items.ToList();
+            var itemList = this.items.ToList();
             foreach (var item in itemList)
             {
                 var button = this.CreateButton(item);
@@ -74,6 +60,22 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count * itemHeight, 400));
             this.scrollPane.Validate();
             this.ShowWindow();
+        }
+
+        public override void DoAction()
+        {
+            this.CloseWindow(this.list.GetSelected().UserData as T);
+        }
+
+        protected virtual Button CreateButton(T item)
+        {
+            return new TextButton(item.ToString(), Skin);
+        }
+
+        public void Show(IEnumerable<T> items, Action<T> doneAction)
+        {
+            this.done = doneAction;
+            this.items = items;
         }
     }
 }

@@ -11,6 +11,8 @@ using Random = Nez.Random;
 
 namespace DungeonEscape.Scenes.Map.Components.Objects
 {
+    using UI;
+
     public class Sprite : Component, IUpdatable, ICollidable
     {
         private readonly TmxObject tmxObject;
@@ -25,7 +27,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private List<Point> path;
         private const float MoveSpeed = 75;
         
-        public static Sprite Create(TmxObject tmxObject, TmxMap map, TalkWindow talkWindow, QuestionWindow questionWindow, IGame gameState, AstarGridGraph graph)
+        public static Sprite Create(TmxObject tmxObject, TmxMap map, UISystem ui, IGame gameState, AstarGridGraph graph)
         {
             if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
             {
@@ -34,11 +36,11 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             return spriteType switch
             {
-                SpriteType.NPC_Heal => new Healer(tmxObject, map, gameState, graph, questionWindow, talkWindow),
-                SpriteType.NPC_Store => new Store(tmxObject, map, gameState, graph, talkWindow),
-                SpriteType.NPC_Save => new Saver(tmxObject, map, gameState, graph, questionWindow, talkWindow),
-                SpriteType.NPC_Key => new KeyStore(tmxObject, map, gameState, graph, questionWindow, talkWindow),
-                SpriteType.NPC => new Character(tmxObject, map, talkWindow, gameState, graph),
+                SpriteType.NPC_Heal => new Healer(tmxObject, map, gameState, graph, ui),
+                SpriteType.NPC_Store => new Store(tmxObject, map, gameState, graph, ui),
+                SpriteType.NPC_Save => new Saver(tmxObject, map, gameState, graph, ui),
+                SpriteType.NPC_Key => new KeyStore(tmxObject, map, gameState, graph, ui),
+                SpriteType.NPC => new Character(tmxObject, map, ui, gameState, graph),
                 _ => new Sprite(tmxObject, map, gameState, graph)
             };
         }

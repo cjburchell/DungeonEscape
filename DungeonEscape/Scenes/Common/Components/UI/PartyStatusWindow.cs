@@ -1,19 +1,22 @@
 ﻿using System;
 using DungeonEscape.State;
 using Microsoft.Xna.Framework;
-using Nez;
 using Nez.UI;
 
 namespace DungeonEscape.Scenes.Common.Components.UI
 {
+    using Nez;
+
     public class PartyStatusWindow: BasicWindow
     {
         private TextButton closeButton;
         private Action done;
         private Label goldLabel;
         private Table statusTable;
+        private Party party;
+        private bool showClose;
 
-        public PartyStatusWindow(UICanvas canvas, WindowInput input) : base(canvas, input, "Status",
+        public PartyStatusWindow(UISystem ui) : base(ui, "Status",
             new Point(150, 30), 300, 150)
         {
         }
@@ -21,29 +24,32 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
-            var table = this.Window.AddElement(new Table());
             this.statusTable = new Table();
             this.closeButton = new TextButton("Close", Skin);
-            this.closeButton.GetLabel();
             this.closeButton.ShouldUseExplicitFocusableControl = true;
-            this.closeButton.OnClicked += _ => { this.HideWindow(); };
-
+            this.closeButton.OnClicked += _ => { this.CloseWindow(); };
+            this.goldLabel = new Label($"Gold: 0", Skin);
+            
+            var table = this.Window.AddElement(new Table());
             // layout
             table.SetFillParent(true);
             table.Row();
             table.Add(this.statusTable).Expand().Top().Left().SetPadLeft(10);
-            this.goldLabel = new Label($"Gold: 0", Skin);
+            
             table.Row();
             table.Add(this.goldLabel).Left();
             table.Row();
             table.Add(this.closeButton).Height(30).Width(80).SetColspan(4).Center().Bottom().SetPadBottom(2);
+            
+            this.UpdateStatus(this.party);
+            this.closeButton.SetVisible(this.showClose);
+            this.ShowWindow();
+            this.Window.GetStage().SetGamepadFocusElement(this.closeButton);
         }
 
         void UpdateStatus(Party party)
         {
             this.goldLabel.SetText($"Gold: {party.Gold}");
-            this.statusTable.ClearChildren();
-            this.statusTable.DebugAll();
             this.statusTable.Row();
             this.statusTable.Add(new Label("Name", Skin).SetAlignment(Align.Center)).Width(115);
             this.statusTable.Add(new Label("Level", Skin).SetAlignment(Align.Center)).Width(75);
@@ -68,26 +74,24 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             this.statusTable.Validate();
         }
 
-        public override void HideWindow()
+        public override void CloseWindow()
         {
-            base.HideWindow();
+            base.CloseWindow();
             this.Window.GetStage().SetGamepadFocusElement(null);
             this.done?.Invoke();
+            this.ui.Canvas.RemoveComponent(this);
         }
 
         public override void DoAction()
         {
-            this.HideWindow();
+            this.CloseWindow();
         }
 
         public void Show(Party party, Action doneAction, bool showClose = true)
         {
-            FocusedWindow = this;
-            this.done = doneAction;
-            this.UpdateStatus(party);
-            this.closeButton.SetVisible(showClose);
-            this.ShowWindow();
-            this.Window.GetStage().SetGamepadFocusElement(this.closeButton);
+            this.done = doneAction; ;
+            this.party = party;
+            this.showClose = showClose;
         }
     }
 }

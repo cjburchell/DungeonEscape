@@ -368,7 +368,15 @@ namespace DungeonEscape.Scenes
                     var menuItems = new List<string>();
                     if (this.gameState.Party.Members.Count(hero => hero.CanUseItem(item)) != 0)
                     {
-                        menuItems.Add("Use");
+                        if (item.IsEquippable)
+                        {
+                            menuItems.Add("Equip");
+                        }
+                        else
+                        {
+                            menuItems.Add("Use");
+                        }
+                        
                     }
                     menuItems.Add("Drop");
                     
@@ -377,6 +385,7 @@ namespace DungeonEscape.Scenes
                     {
                         switch (action)
                         {
+                            case "Equip":
                             case "Use":
                                 var selectHero = this.ui.Canvas.AddComponent(new SelectHeroWindow(this.ui));
                                 selectHero.Show(this.gameState.Party.Members.Where(hero => hero.CanUseItem(item)),

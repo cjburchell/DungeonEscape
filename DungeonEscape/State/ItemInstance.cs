@@ -22,6 +22,9 @@
 
         public bool IsEquipped;
 
+        public bool IsEquippable =>
+            this.Type == ItemType.Armor || this.Type == ItemType.Shield || this.Type == ItemType.Weapon;
+
         public void Unequip()
         {
             switch (this.Type)

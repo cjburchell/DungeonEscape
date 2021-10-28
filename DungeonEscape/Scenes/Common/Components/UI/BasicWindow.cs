@@ -4,6 +4,8 @@ using Nez.UI;
 
 namespace DungeonEscape.Scenes.Common.Components.UI
 {
+    using System;
+
     public abstract class BasicWindow : Component
     {
         protected Window Window { get; private set; }
@@ -15,6 +17,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 
         public static readonly Skin Skin = Skin.CreateDefaultSkin();
         private static BasicWindow focusedWindow;
+        protected string id;
 
         protected static BasicWindow FocusedWindow
         {
@@ -37,6 +40,16 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             };
 
             Skin.Add("default", buttonStyle);
+            
+            var noBorderStyle = new TextButtonStyle
+            {
+                Up = new BorderPrimitiveDrawable(Color.Black, Color.White, 0),
+                Down = new BorderPrimitiveDrawable(Color.LightGray, Color.White, 0),
+                Over = new BorderPrimitiveDrawable(Color.Gray, Color.White, 0),
+                Checked = new BorderPrimitiveDrawable(Color.Gray, Color.White, 0),
+                FontScale = 2
+            };
+            Skin.Add("no_border", noBorderStyle);
 
             var labelStyle = Skin.Get<LabelStyle>();
             labelStyle.FontScale = 2;
@@ -45,6 +58,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 
         protected BasicWindow(UISystem ui, string title, Point position, int width, int height)
         {
+            this.id = Guid.NewGuid().ToString();
             this.ui = ui;
             this.title = title;
             this.position = position;
@@ -56,6 +70,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 
         public override void OnAddedToEntity()
         {
+            Console.WriteLine($"{this.id} {this.title} OnAddedToEntity");
             this.ui.Canvas.Stage.AddElement(this.Window);
             this.Window.SetPosition(this.position.X, this.position.Y);
             this.Window.SetWidth(this.width);
@@ -72,6 +87,10 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         {
             this.Window.SetVisible(false);
             this.ui.Input.RemoveWindow(this);
+            this.ui.Canvas.RemoveComponent(this);
+            this.Window.GetStage().SetGamepadFocusElement(null);
+            
+            Console.WriteLine($"{this.id} {this.title} Close");
         }
 
         protected void ShowWindow()

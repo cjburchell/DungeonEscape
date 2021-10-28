@@ -6,7 +6,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 {
     public class QuestionWindow : TextWindow
     {
-        public QuestionWindow(UISystem ui) : base(ui,new Point(20, 20))
+        public QuestionWindow(UISystem ui) : base(ui,"Question",new Point(20, 20))
         {
         }
         

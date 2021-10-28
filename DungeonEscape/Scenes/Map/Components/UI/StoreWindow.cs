@@ -12,7 +12,7 @@
 
     public class StoreWindow : TextWindow    
     {
-        public StoreWindow(UISystem ui) : base(ui, new Point(20, 20))
+        public StoreWindow(UISystem ui) : base(ui, "Store",new Point(20, 20))
         {
         }
 

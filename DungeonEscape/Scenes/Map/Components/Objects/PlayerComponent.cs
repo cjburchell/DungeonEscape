@@ -382,7 +382,6 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 return;
             }
             
-            Console.WriteLine("Over Object");
             this.currentlyOverObjects.Add(objCollider.Object);
             
             objCollider.Object.OnHit(this.GameState.Party);
@@ -399,8 +398,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             {
                 return;
             }
-
-            Console.WriteLine("Removed Object");
+            
             this.currentlyOverObjects.Remove(objCollider.Object);
         }
     }

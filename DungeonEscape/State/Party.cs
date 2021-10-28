@@ -20,7 +20,7 @@ namespace DungeonEscape.State
         public Hero EquippedTo { get; set; }
         public int Gold => this.item.Gold;
 
-        public bool IsEquipped = true;
+        public bool IsEquipped;
 
         public void Unequip()
         {

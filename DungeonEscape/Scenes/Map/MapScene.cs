@@ -359,14 +359,19 @@ namespace DungeonEscape.Scenes
                 var inventoryWindow = this.ui.Canvas.AddComponent(new InventoryWindow(this.ui));
                 inventoryWindow.Show(this.gameState.Party.Items, item =>
                 {
+                    if (item == null)
+                    {
+                        done();
+                        return;
+                    }
+                    
                     var menuItems = new List<string>();
                     if (this.gameState.Party.Members.Count(hero => hero.CanUseItem(item)) != 0)
                     {
                         menuItems.Add("Use");
                     }
-
-
                     menuItems.Add("Drop");
+                    
                     var selectWindow = this.ui.Canvas.AddComponent(new SelectWindow<string>(this.ui, "Select", new Point(150, 30)));
                     selectWindow.Show(menuItems, action =>
                     {

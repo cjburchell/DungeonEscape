@@ -30,9 +30,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         private void CloseWindow(T result)
         {
             base.CloseWindow();
-            this.Window.GetStage().SetGamepadFocusElement(null);
             this.done?.Invoke(result);
-            this.ui.Canvas.RemoveComponent(this);
         }
         
         public override void OnAddedToEntity()
@@ -69,7 +67,9 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 
         protected virtual Button CreateButton(T item)
         {
-            return new TextButton(item.ToString(), Skin);
+            var  button = new TextButton(item.ToString(), Skin, "no_border");
+            button.GetLabel().SetAlignment(Align.Left);
+            return button;
         }
 
         public void Show(IEnumerable<T> items, Action<T> doneAction)

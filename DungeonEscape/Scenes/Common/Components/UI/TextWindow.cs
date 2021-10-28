@@ -15,7 +15,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         private Action<string> done;
         private int textIndex;
 
-        public TextWindow(UISystem ui, Point position, int width = 472, int height = 150) : base(ui, "", position, width, height)
+        public TextWindow(UISystem ui,string title, Point position, int width = 472, int height = 150) : base(ui, title, position, width, height)
         {
         }
         
@@ -90,7 +90,6 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         private void CloseWindow(Element result)
         {
             base.CloseWindow();
-            this.Window.GetStage().SetGamepadFocusElement(null);
             this.done?.Invoke(result?.UserData as string);
         }
         

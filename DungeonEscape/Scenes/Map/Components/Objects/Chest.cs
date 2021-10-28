@@ -76,14 +76,14 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             {
                 var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
                 talkWindow.Show("You found nothing", Done);
-                return false;
+                return true;
             }
 
             if (!party.CanOpenChest(this.level))
             {
                 var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
                 talkWindow.Show("Unable to open chest", Done);
-                return false;
+                return true;
             }
             
             if (this.item.Type == ItemType.Gold)
@@ -98,7 +98,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 {
                     var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
                     talkWindow.Show($"You do not have enough space in your inventory for {this.item.Name}", Done);
-                    return false;
+                    return true;
                 }
                 else
                 {

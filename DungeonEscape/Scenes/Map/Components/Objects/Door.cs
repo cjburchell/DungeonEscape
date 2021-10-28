@@ -48,7 +48,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 {
                     this.gameState.IsPaused = false;
                 });
-                return false;
+                return true;
             }
 
             this.SetEnableCollider(false);

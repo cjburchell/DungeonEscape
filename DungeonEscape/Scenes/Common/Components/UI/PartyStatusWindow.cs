@@ -5,8 +5,6 @@ using Nez.UI;
 
 namespace DungeonEscape.Scenes.Common.Components.UI
 {
-    using Nez;
-
     public class PartyStatusWindow: BasicWindow
     {
         private TextButton closeButton;
@@ -14,7 +12,6 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         private Label goldLabel;
         private Table statusTable;
         private Party party;
-        private bool showClose;
 
         public PartyStatusWindow(UISystem ui) : base(ui, "Status",
             new Point(150, 30), 300, 150)
@@ -25,10 +22,9 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         {
             base.OnAddedToEntity();
             this.statusTable = new Table();
-            this.closeButton = new TextButton("Close", Skin);
-            this.closeButton.ShouldUseExplicitFocusableControl = true;
+            this.closeButton = new TextButton("Close", Skin) {ShouldUseExplicitFocusableControl = true};
             this.closeButton.OnClicked += _ => { this.CloseWindow(); };
-            this.goldLabel = new Label($"Gold: 0", Skin);
+            this.goldLabel = new Label($"Gold: 0", Skin).SetAlignment(Align.Left);
             
             var table = this.Window.AddElement(new Table());
             // layout
@@ -37,38 +33,37 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             table.Add(this.statusTable).Expand().Top().Left().SetPadLeft(10);
             
             table.Row();
-            table.Add(this.goldLabel).Left();
+            table.Add(this.goldLabel).SetPadLeft(5).SetPadTop(5).Width(200).Left();
             table.Row();
             table.Add(this.closeButton).Height(30).Width(80).SetColspan(4).Center().Bottom().SetPadBottom(2);
             
-            this.UpdateStatus(this.party);
-            this.closeButton.SetVisible(this.showClose);
+            this.UpdateStatus();
             this.ShowWindow();
             this.Window.GetStage().SetGamepadFocusElement(this.closeButton);
         }
 
-        void UpdateStatus(Party party)
+        void UpdateStatus()
         {
-            this.goldLabel.SetText($"Gold: {party.Gold}");
+            this.goldLabel.SetText($"Gold: {this.party.Gold}");
             this.statusTable.Row();
-            this.statusTable.Add(new Label("Name", Skin).SetAlignment(Align.Center)).Width(115);
+            this.statusTable.Add(new Label("Name", Skin).SetAlignment(Align.Left)).Width(115);
             this.statusTable.Add(new Label("Level", Skin).SetAlignment(Align.Center)).Width(75);
             this.statusTable.Add(new Label("HP", Skin).SetAlignment(Align.Center)).Width(50);
             this.statusTable.Add(new Label("MP", Skin).SetAlignment(Align.Center)).Width(50);
             
-            foreach (var partyMember in party.Members)
+            foreach (var partyMember in this.party.Members)
             {
                 this.statusTable.Row().SetPadTop(5);
                 
-                var nameLabel = new Label(partyMember.Name, Skin);
-                var levelLabel = new Label($"{partyMember.Level}", Skin);
-                var healthLabel = new Label($"{partyMember.Health}", Skin);
-                var magicLabel = new Label($"{partyMember.Magic}", Skin);
+                var nameLabel = new Label(partyMember.Name, Skin).SetAlignment(Align.Left);
+                var levelLabel = new Label($"{partyMember.Level}", Skin).SetAlignment(Align.Center);
+                var healthLabel = new Label($"{partyMember.Health}", Skin).SetAlignment(Align.Center);
+                var magicLabel = new Label($"{partyMember.Magic}", Skin).SetAlignment(Align.Center);
                 
-                this.statusTable.Add(nameLabel);
-                this.statusTable.Add(levelLabel);
-                this.statusTable.Add(healthLabel);
-                this.statusTable.Add(magicLabel);
+                this.statusTable.Add(nameLabel).Width(115);
+                this.statusTable.Add(levelLabel).Width(75);
+                this.statusTable.Add(healthLabel).Width(50);
+                this.statusTable.Add(magicLabel).Width(50);
             }
             
             this.statusTable.Validate();
@@ -77,9 +72,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         public override void CloseWindow()
         {
             base.CloseWindow();
-            this.Window.GetStage().SetGamepadFocusElement(null);
             this.done?.Invoke();
-            this.ui.Canvas.RemoveComponent(this);
         }
 
         public override void DoAction()
@@ -87,11 +80,10 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             this.CloseWindow();
         }
 
-        public void Show(Party party, Action doneAction, bool showClose = true)
+        public void Show(Party partyToShow, Action doneAction)
         {
             this.done = doneAction; ;
-            this.party = party;
-            this.showClose = showClose;
+            this.party = partyToShow;
         }
     }
 }

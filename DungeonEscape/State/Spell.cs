@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using DungeonEscape.Scenes;
 using Nez.Tiled;
 using Random = Nez.Random;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DungeonEscape.State
 {
+
 
     public enum SpellType
     {
@@ -21,7 +23,6 @@ namespace DungeonEscape.State
 
     public class Spell
     {
-        
         public static string CastHeal(Hero target, Hero caster, Spell spell)
         {
             caster.Magic -= spell.Cost;
@@ -96,5 +97,6 @@ namespace DungeonEscape.State
         public SpellType Type { get; }
 
         public string Name { get; }
+        public Texture2D Image => this.tile.Image.Texture;
     }
 }

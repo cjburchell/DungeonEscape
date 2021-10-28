@@ -7,7 +7,7 @@
 
     public class SellPartyItemsWindow : SelectWindow<ItemInstance>
     {
-        public SellPartyItemsWindow(UISystem ui) : base(ui, "Sell", new Point(150, 30))
+        public SellPartyItemsWindow(UISystem ui) : base(ui, "Sell", new Point(30, 30), 250)
         {
         }
 
@@ -24,7 +24,7 @@
             table.Add(itemName).Width(100);
             table.Add(cost).Width(30);
 
-            var button = new Button(Skin);
+            var button = new Button(Skin, "no_border");
             button.Add(table);
             return button;
         }

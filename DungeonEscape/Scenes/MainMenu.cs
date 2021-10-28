@@ -25,14 +25,12 @@ namespace DungeonEscape.Scenes
             this.table.Top().PadLeft(10).PadTop(50);
             this.table.Add(new Label("Dungeon Escape").SetFontScale(6));
             this.table.Row().SetPadTop(20);
-            var playButton = this.table.Add(new TextButton("Start New Game", BasicWindow.Skin)).SetMinHeight(32).SetMinWidth(200)
-                .GetElement<TextButton>();
+            var playButton = this.table.Add(new TextButton("Start New Game", BasicWindow.Skin)).SetMinHeight(32).SetMinWidth(200).GetElement<TextButton>();
             playButton.GetLabel().SetFontScale(2);
             playButton.OnClicked += butt => MapScene.SetMap();
             playButton.ShouldUseExplicitFocusableControl = true;
             this.table.Row().SetPadTop(20);
-            var loadButton = this.table.Add(new TextButton("Continue Game", BasicWindow.Skin)).SetMinHeight(32).SetMinWidth(200)
-                .GetElement<TextButton>();
+            var loadButton = this.table.Add(new TextButton("Continue Game", BasicWindow.Skin)).SetMinHeight(32).SetMinWidth(200).GetElement<TextButton>();
             loadButton.GetLabel().SetFontScale(2);
             loadButton.SetDisabled(true);
             loadButton.ShouldUseExplicitFocusableControl = true;

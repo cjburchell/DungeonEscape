@@ -7,7 +7,7 @@
 
     public class BuyItemsWindow : SelectWindow<Item>
     {
-        public BuyItemsWindow(UISystem ui) : base(ui, "Buy", new Point(150, 30), 210)
+        public BuyItemsWindow(UISystem ui) : base(ui, "Buy", new Point(30, 30), 250)
         {
         }
 
@@ -21,7 +21,7 @@
             table.Add(itemName).Width(100);
             table.Add(cost).Width(30);
 
-            var button = new Button(Skin);
+            var button = new Button(Skin, "no_border");
             button.Add(table);
             return button;
         }

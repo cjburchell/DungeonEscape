@@ -8,7 +8,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 
     public abstract class BasicWindow : Component
     {
-        protected Window Window { get; private set; }
+        protected Window Window { get; }
         protected readonly UISystem ui;
         private readonly string title;
         private readonly Point position;
@@ -17,12 +17,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 
         public static readonly Skin Skin = Skin.CreateDefaultSkin();
         private static BasicWindow focusedWindow;
-        protected string id;
-
-        protected static BasicWindow FocusedWindow
-        {
-            set => focusedWindow = value;
-        }
+        private readonly string id;
 
         public bool IsFocused => focusedWindow == this;
         
@@ -30,7 +25,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         {
             var windowStyle = Skin.Get<WindowStyle>();
             windowStyle.Background = new BorderPrimitiveDrawable(Color.Black, Color.White, 1);
-            var buttonStyle = new TextButtonStyle
+            var textButtonStyle = new TextButtonStyle
             {
                 Up = new BorderPrimitiveDrawable(Color.Black, Color.White, 1),
                 Down = new BorderPrimitiveDrawable(Color.LightGray, Color.White, 1),
@@ -39,17 +34,36 @@ namespace DungeonEscape.Scenes.Common.Components.UI
                 FontScale = 2
             };
 
-            Skin.Add("default", buttonStyle);
+            Skin.Add("default", textButtonStyle);
             
-            var noBorderStyle = new TextButtonStyle
+            var textButtonNoBorderStyle = new TextButtonStyle
             {
-                Up = new BorderPrimitiveDrawable(Color.Black, Color.White, 0),
-                Down = new BorderPrimitiveDrawable(Color.LightGray, Color.White, 0),
-                Over = new BorderPrimitiveDrawable(Color.Gray, Color.White, 0),
-                Checked = new BorderPrimitiveDrawable(Color.Gray, Color.White, 0),
+                Up = new BorderPrimitiveDrawable(Color.Black, Color.White),
+                Down = new BorderPrimitiveDrawable(Color.LightGray, Color.White),
+                Over = new BorderPrimitiveDrawable(Color.Gray, Color.White),
+                Checked = new BorderPrimitiveDrawable(Color.Gray, Color.White),
                 FontScale = 2
             };
-            Skin.Add("no_border", noBorderStyle);
+            Skin.Add("no_border", textButtonNoBorderStyle);
+            
+            
+            var buttonStyle = new ButtonStyle
+            {
+                Up = new BorderPrimitiveDrawable(Color.Black, Color.White, 1),
+                Down = new BorderPrimitiveDrawable(Color.LightGray, Color.White, 1),
+                Over = new BorderPrimitiveDrawable(Color.Gray, Color.White, 1),
+                Checked = new BorderPrimitiveDrawable(Color.Gray, Color.White, 1),
+            };
+            Skin.Add("default", buttonStyle);
+            
+            var buttonNoBorderStyle = new ButtonStyle
+            {
+                Up = new BorderPrimitiveDrawable(Color.Black, Color.White),
+                Down = new BorderPrimitiveDrawable(Color.LightGray, Color.White),
+                Over = new BorderPrimitiveDrawable(Color.Gray, Color.White),
+                Checked = new BorderPrimitiveDrawable(Color.Gray, Color.White),
+            };
+            Skin.Add("no_border", buttonNoBorderStyle);
 
             var labelStyle = Skin.Get<LabelStyle>();
             labelStyle.FontScale = 2;
@@ -96,7 +110,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         protected void ShowWindow()
         {
             this.Window.SetVisible(true);
-            FocusedWindow = this;
+            focusedWindow = this;
         }
 
         public bool IsVisible => this.Window != null && this.Window.IsVisible();

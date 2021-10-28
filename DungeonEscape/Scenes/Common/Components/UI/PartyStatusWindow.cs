@@ -14,7 +14,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         private Party party;
 
         public PartyStatusWindow(UISystem ui) : base(ui, "Status",
-            new Point(150, 30), 300, 150)
+            new Point(30, 30), 300, 150)
         {
         }
 

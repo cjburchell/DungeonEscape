@@ -339,6 +339,7 @@ namespace DungeonEscape.Scenes
                         if (spell == null)
                         {
                             done();
+                            return;
                         }
                         
                         this.CastSpell(hero, spell, done);
@@ -380,7 +381,7 @@ namespace DungeonEscape.Scenes
                     }
                     menuItems.Add("Drop");
                     
-                    var selectWindow = this.ui.Canvas.AddComponent(new SelectWindow<string>(this.ui, "Select", new Point(150, 30)));
+                    var selectWindow = this.ui.Canvas.AddComponent(new SelectWindow<string>(this.ui, "Select", new Point(30, 30)));
                     selectWindow.Show(menuItems, action =>
                     {
                         switch (action)

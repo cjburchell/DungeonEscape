@@ -8,7 +8,7 @@ namespace DungeonEscape.Scenes.Map.Components.UI
     
     public class SelectHeroWindow : SelectWindow<Hero>
     {
-        public SelectHeroWindow(UISystem ui) : base(ui, "Select Hero", new Point(150, 30))
+        public SelectHeroWindow(UISystem ui) : base(ui, "Select Hero", new Point(30, 30), 250)
         {
         }
     }

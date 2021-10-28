@@ -8,7 +8,7 @@ namespace DungeonEscape.Scenes.Map.Components.UI
 {
     public class InventoryWindow : SelectWindow<ItemInstance>
     {
-        public InventoryWindow(UISystem ui) : base(ui, "Inventory", new Point(150, 30))
+        public InventoryWindow(UISystem ui) : base(ui, "Inventory", new Point(30, 30), 250)
         {
         }
         
@@ -23,7 +23,7 @@ namespace DungeonEscape.Scenes.Map.Components.UI
             table.Add(equip).Width(32);
             table.Add(itemName).Width(100);
 
-            var button = new Button(Skin);
+            var button = new Button(Skin, "no_border");
             button.Add(table);
             return button;
         }

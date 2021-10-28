@@ -1,12 +1,12 @@
 ﻿using System;
 using Nez.Tiled;
+using Microsoft.Xna.Framework.Graphics;
+using Nez;
 
 namespace DungeonEscape.State
 {
     public class Item
     {
-        private readonly TmxTilesetTile tile;
-
         public override string ToString()
         {
             return this.Name;
@@ -14,7 +14,6 @@ namespace DungeonEscape.State
 
         public Item(TmxTilesetTile tile)
         {
-            this.tile = tile;
             if (Enum.TryParse(tile.Type, out ItemType type))
             {
                 this.Type = type;
@@ -27,17 +26,25 @@ namespace DungeonEscape.State
             this.Agility = int.Parse(tile.Properties["Agility"]);
             this.Gold = int.Parse(tile.Properties["Cost"]);
             this.MinLevel = int.Parse(tile.Properties["MinLevel"]);
+            this.ImageSource = tile.Image.Source;
+            this.Image = tile.Image.Texture;
         }
 
         public Item(string image, string name, ItemType type, int gold, int minLevel)
         {
-            this.ImageSource = image;
+            if (!string.IsNullOrEmpty(image))
+            {
+                this.ImageSource = image;
+                this.Image = Texture2D.FromFile(Core.GraphicsDevice,this.ImageSource);
+            }
             this.Name = name;
             this.Gold = gold;
             this.MinLevel = minLevel;
             this.Type = type;
         }
 
+
+        public Texture2D Image { get; }
         public string ImageSource { get; }
         public ItemType Type { get; } = ItemType.Unknown;
         public string Name { get; }

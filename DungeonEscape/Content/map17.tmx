@@ -11,7 +11,7 @@
     <data encoding="csv">18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,30,30,30,30,30,30,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,0,0,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,0,0,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,0,0,6,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,6,0,3,0,7,30,30,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,3,0,3,0,0,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,3,0,7,29,6,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,5,0,3,0,0,0,7,6,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,3,0,0,0,0,3,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,3,29,6,0,0,3,0,7,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,31,32,0,3,0,0,3,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,3,0,0,3,0,0,7,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,7,35,0,3,0,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,0,0,7,29,29,29,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,0,0,0,0,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,31,31,31,5,0,0,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,0,0,7,30,30,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,0,0,0,0,0,7,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,29,29,35,0,0,0,0,0,7,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,0,0,0,0,0,0,0,3,30,30,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,0,0,0,0,0,0,0,3,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,0,6,0,19,29,6,0,3,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,5,0,0,3,0,0,0,3,0,3,0,0,7,30,30,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,3,0,0,0,3,0,3,0,0,0,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,3,0,0,19,36,29,3,0,0,0,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,3,0,0,0,3,0,7,6,0,0,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,5,0,3,0,0,0,3,0,0,3,0,0,0,0,26,18,18,32,30,30,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,31,18,5,0,0,7,35,0,7,29,29,35,0,26,18,18,32,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,0,0,0,0,0,0,0,0,7,30,30,30,35,0,7,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,19,29,6,0,0,0,0,0,0,0,0,0,0,0,0,0,7,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,0,7,29,6,0,0,0,0,0,0,0,0,0,0,0,0,7,30,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,32,0,0,0,0,0,7,29,29,6,0,0,0,0,0,0,0,0,0,0,0,3,30,30,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,5,0,0,0,0,0,0,0,7,29,29,29,6,14,14,12,0,0,0,0,12,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,31,31,5,0,0,0,0,0,0,0,0,3,0,0,14,14,0,14,14,14,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,5,0,0,0,0,0,4,31,32,0,0,0,0,0,0,0,0,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,31,31,31,31,31,18,18,18,5,0,0,0,0,0,0,0,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,31,31,5,0,0,0,0,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,31,31,31,5,0,0,26,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,31,31,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18</data>
   </layer>
   <objectgroup id="4" name="items" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="0" name="Stairs down to 18" type="Warp" x="224" y="160" rotation="0" width="32" height="32" gid="51" visible="true">
+    <object id="1" name="Stairs down to 18" type="Warp" x="224" y="160" rotation="0" width="32" height="32" gid="51" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -20,103 +20,103 @@
         <property name="WarpMapY" type="int" value="3" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="480" y="288" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="2" name="Chest" type="Chest" x="480" y="288" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="256" y="416" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="3" name="Chest" type="Chest" x="256" y="416" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="320" y="448" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="4" name="Chest" type="Chest" x="320" y="448" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="544" y="512" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="5" name="Chest" type="Chest" x="544" y="512" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="640" y="672" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="6" name="Chest" type="Chest" x="640" y="672" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="768" y="768" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="7" name="Chest" type="Chest" x="768" y="768" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="800" y="768" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="8" name="Chest" type="Chest" x="800" y="768" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="704" y="864" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="9" name="Chest" type="Chest" x="704" y="864" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="896" y="864" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="10" name="Chest" type="Chest" x="896" y="864" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="480" y="928" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="11" name="Chest" type="Chest" x="480" y="928" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="704" y="928" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="12" name="Chest" type="Chest" x="704" y="928" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="512" y="960" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="13" name="Chest" type="Chest" x="512" y="960" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="1088" y="1024" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="14" name="Chest" type="Chest" x="1088" y="1024" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="960" y="1184" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="15" name="Chest" type="Chest" x="960" y="1184" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Door" type="Door" x="1152" y="1184" rotation="0" width="32" height="32" gid="50" visible="true">
+    <object id="16" name="Door" type="Door" x="1152" y="1184" rotation="0" width="32" height="32" gid="50" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="0" name="Chest" type="Chest" x="768" y="1216" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="17" name="Chest" type="Chest" x="768" y="1216" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Stairs up to 0" type="Warp" x="1280" y="1312" rotation="0" width="32" height="32" gid="53" visible="true">
+    <object id="18" name="Stairs up to 0" type="Warp" x="1280" y="1312" rotation="0" width="32" height="32" gid="53" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />

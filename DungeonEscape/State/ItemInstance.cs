@@ -1,79 +1,116 @@
-﻿namespace DungeonEscape.State
+﻿using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
+
+namespace DungeonEscape.State
 {
-    using Microsoft.Xna.Framework.Graphics;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class ItemInstance
     {
-        private readonly Item item;
+        private Item item;
 
         public ItemInstance(Item item)
         {
+            this.Id = Guid.NewGuid().ToString();
             this.item = item;
+            this.ItemId = item.Id;
         }
 
+        public ItemInstance()
+        {
+        }
+
+        public void UpdateItem(IEnumerable<Item> items)
+        {
+            this.item = items.FirstOrDefault(i => i.Id == this.ItemId);
+        }
+        
+        public string Id { get; set; }
+        public int ItemId { get; set; }
+        public string EquippedTo { get; set; }
+        public bool IsEquipped { get; set; }
+
+        [JsonIgnore]
         public Texture2D Image => this.item.Image;
 
+        [JsonIgnore]
         public int MinLevel => this.item.MinLevel;
         
+        [JsonIgnore]
         public ItemType Type => this.item.Type;
+        
+        [JsonIgnore]
         public string Name => this.item.Name;
-        public Hero EquippedTo { get; set; }
+
+        [JsonIgnore]
         public int Gold => this.item.Gold;
-
-        public bool IsEquipped;
-
+        
+        [JsonIgnore]
         public bool IsEquippable =>
             this.Type == ItemType.Armor || this.Type == ItemType.Shield || this.Type == ItemType.Weapon;
 
-        public void Unequip()
+        public void Unequip(IEnumerable<Hero> heroes)
         {
-            switch (this.Type)
+            if (this.IsEquipped && !string.IsNullOrEmpty(this.EquippedTo))
             {
-                case ItemType.Weapon:
-                    this.EquippedTo.Weapon = null;
-                    break;
-                case ItemType.Armor:
-                    this.EquippedTo.Armor = null;
-                    break;
-                case ItemType.Shield:
-                    this.EquippedTo.Shield = null;
-                    break;
+                var equippedHero = heroes.FirstOrDefault(hero => hero.Id == this.EquippedTo);
+                if (equippedHero != null)
+                {
+                    switch (this.Type)
+                    {
+                        case ItemType.Weapon:
+                            equippedHero.WeaponId = null;
+                            break;
+                        case ItemType.Armor:
+                            equippedHero.ArmorId = null;
+                            break;
+                        case ItemType.Shield:
+                            equippedHero.ShieldId = null;
+                            break;
+                    }
+
+                    equippedHero.Agility -= this.item.Agility;
+                    equippedHero.Attack -= this.item.Attack;
+                    equippedHero.Defence -= this.item.Defence;
+                    equippedHero.MaxHealth -= this.item.Health;
+
+                    if (equippedHero.Health > equippedHero.MaxHealth)
+                    {
+                        equippedHero.Health = equippedHero.MaxHealth;
+                    }
+                }
             }
-
-            this.EquippedTo.Agility -= this.item.Agility;
-            this.EquippedTo.Attack -= this.item.Attack;
-            this.EquippedTo.Defence -= this.item.Defence;
-            this.EquippedTo.MaxHealth -= this.item.Health;
-
-            if (this.EquippedTo.Health > this.EquippedTo.MaxHealth)
-            {
-                this.EquippedTo.Health = this.EquippedTo.MaxHealth;
-            }
-
+            
             this.EquippedTo = null;
             this.IsEquipped = false;
         }
 
-        public void Equip(Hero hero)
+        public void Equip(Hero hero, IEnumerable<ItemInstance> items, IEnumerable<Hero> heroes)
         {
+            ItemInstance oldItem;
             switch (this.Type)
             {
                 case ItemType.Weapon:
-                    hero.Weapon?.Unequip();
-                    hero.Weapon = this;
+                    oldItem = items.FirstOrDefault(i => i.Id == hero.WeaponId);
+                    oldItem?.Unequip(heroes);
+                    hero.WeaponId = this.Id;
                     break;
                 case ItemType.Armor:
-                    hero.Armor?.Unequip();;
-                    hero.Armor = this;
+                    oldItem = items.FirstOrDefault(i => i.Id == hero.ArmorId);
+                    oldItem?.Unequip(heroes);
+                    hero.ArmorId = this.Id;
                     break;
                 case ItemType.Shield:
-                    hero.Shield?.Unequip();;
-                    hero.Shield = this;
+                    oldItem = items.FirstOrDefault(i => i.Id == hero.ShieldId);
+                    oldItem?.Unequip(heroes);
+                    hero.ShieldId = this.Id;
                     break;
             }
             
             this.IsEquipped = true;
-            this.EquippedTo = hero;
+            this.EquippedTo = hero.Id;
             hero.Agility += this.item.Agility;
             hero.Attack += this.item.Attack;
             hero.Defence += this.item.Defence;

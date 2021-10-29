@@ -8,16 +8,22 @@ namespace DungeonEscape
     {
         TmxMap GetMap(int mapId);
 
-        int CurrentMapId { get; set; }
+        void Save();
 
-        Party Party { get; }
-        
+        Party Party { get; set; }
+
         bool IsPaused { get; set; }
-
+    
         public void UpdatePauseState();
 
         List<Item> Items { get; }
-        
+            
         List<Spell> Spells { get; }
+        
+        List<MapState> MapStates { get; }
+
+        IEnumerable<GameSave> GameSaves { get; }
+        IEnumerable<Spell> GetSpellList(IEnumerable<int> spells);
+        void LoadGame(GameSave saveGame);
     }
 }

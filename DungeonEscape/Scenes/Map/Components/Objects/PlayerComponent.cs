@@ -141,8 +141,6 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             return tile != null && tile.Gid != 0;
         }
 
-
-
         private bool UpdateMovement()
         {
             var overWater = this.IsOverWater();
@@ -185,11 +183,11 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 
             if (newPoint.X < minX)
             {
-                newPoint.X = this.GameState.CurrentMapId != 0 ? minX : maxX;
+                newPoint.X = this.GameState.Party.CurrentMapId != 0 ? minX : maxX;
             }
             else if (newPoint.X > maxX)
             {
-                newPoint.X = this.GameState.CurrentMapId != 0 ? maxX : minX;
+                newPoint.X = this.GameState.Party.CurrentMapId != 0 ? maxX : minX;
             }
 
             var minY = this.map.TileHeight / 2.0f;
@@ -197,18 +195,19 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 
             if (newPoint.Y < minY)
             {
-                newPoint.Y = this.GameState.CurrentMapId != 0 ? minY : maxY;
+                newPoint.Y = this.GameState.Party.CurrentMapId != 0 ? minY : maxY;
             }
             else if (newPoint.Y > maxY)
             {
-                newPoint.Y = this.GameState.CurrentMapId != 0 ? maxY : minY;
+                newPoint.Y = this.GameState.Party.CurrentMapId != 0 ? maxY : minY;
             }
 
             movement = newPoint - this.Entity.Position;
 
-            if (this.GameState.CurrentMapId == 0)
+            this.GameState.Party.CurrentPosition = MapScene.ToMapGrid(this.Entity.Position, this.map);
+            if (this.GameState.Party.CurrentMapId == 0)
             {
-                this.GameState.Party.OverWorldPos = MapScene.ToMapGrid(this.Entity.Position, this.map);
+                this.GameState.Party.OverWorldPosition = this.GameState.Party.CurrentPosition;
             }
 
             if (!this.animator.IsAnimationActive(animation))
@@ -345,7 +344,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
         private Biome GetCurrentBiome()
         {
-            if (this.GameState.CurrentMapId != 0)
+            if (this.GameState.Party.CurrentMapId != 0)
             {
                 return Biome.None;
             }

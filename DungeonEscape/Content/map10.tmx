@@ -11,65 +11,65 @@
     <data encoding="csv">0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,14,14,14,14,14,14,14,14,14,14,14,14,12,0,12,14,14,14,14,14,14,14,14,14,14,14,14,14,12,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,12,0,0,12,14,0,14,14,14,14,12,0,0,12,0,12,0,0,12,14,14,14,14,14,14,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,14,12,0,14,14,12,12,14,14,14,14,0,14,14,14,14,12,14,14,14,14,14,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,12,12,0,0,0,12,14,14,14,12,14,0,14,12,14,14,14,0,0,0,0,0,14,0,0,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,14,14,14,14,0,12,0,0,0,12,0,0,0,12,0,0,0,0,0,0,0,0,12,0,12,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,12,0,12,0,0,0,14,0,0,0,12,0,0,0,0,0,0,0,0,12,0,12,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,12,0,12,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,12,0,12,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,14,0,14,12,0,12,0,0,0,12,0,0,0,14,0,0,0,0,0,0,0,0,12,0,12,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,12,0,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,12,0,12,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,12,0,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,12,0,12,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,12,0,14,14,14,14,14,0,0,0,12,0,0,0,0,0,0,0,0,12,0,12,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,12,0,0,0,0,0,0,0,0,0,14,14,12,0,0,0,0,0,0,12,0,12,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,12,0,12,0,12,0,0,0,0,0,0,0,0,0,0,14,14,14,14,0,14,14,0,0,0,0,0,0,0,0,0,0,0,14,14,14,14,14,14,14,14,0,14,14,14,0,0,0,0,0,0,0,0,0,0,14,14,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,14,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,14,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,14,12,0,0,0,0,0,0,0,0,0,0,12,0,12,14,0,14,12,0,0,0,0,0,0,0,0,0,0,9,10,10,10,0,10,10,10,9,0,12,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,9,0,0,0,0,0,0,0,9,0,12,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,10,9,0,0,0,0,0,9,10,0,12,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,12,0,12,14,14,14,12,0,0,0,0,0,10,9,0,0,0,9,10,0,0,12,0,12,0,0,0,0,0,0,0,0,0,0,12,0,14,14,12,0,12,0,12,0,0,0,12,0,0,0,0,0,0,10,9,0,9,10,0,0,0,12,0,12,0,0,0,0,0,0,0,0,0,0,12,0,0,0,12,14,14,0,12,0,0,0,14,0,0,0,0,0,0,0,10,9,10,0,0,12,14,14,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,0,14,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,0,14,0,0,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,0,14,0,0,0,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,14,0,12,0,12,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,0,0,14,14,14,14,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,0,0,0,0,0,0,0,12,0,14,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,14,0,12,0,0,0,0,0,0,0,0,0,0,12,0,0,14,14,14,14,14,14,14,14,14,14,12,0,12,14,14,14,14,14,14,14,14,14,14,14,0,0,12,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,14,14,14,14,14,14,14,14,14,14,14,14,14,14,0,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,0,0,0,0,0,0,0,0,0,0,14,14,14,14,14,14,14,14,14,14,14,14,14,14,0,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0</data>
   </layer>
   <objectgroup id="4" name="items" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="0" name="Exit 0" type="Warp" x="640" y="160" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="1" name="Exit 0" type="Warp" x="640" y="160" rotation="0" width="32" height="32" gid="2" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Key Chest" type="Chest" x="288" y="352" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="2" name="Key Chest" type="Chest" x="288" y="352" rotation="0" width="32" height="32" gid="44" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="0" name="Stairs down to 0" type="Warp" x="320" y="352" rotation="0" width="32" height="32" gid="51" visible="true">
-      <properties>
-        <property name="CanMove" type="bool" value="False" />
-        <property name="Collideable" type="bool" value="False" />
-        <property name="WarpMap" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="0" name="Key Chest" type="Chest" x="352" y="352" rotation="0" width="32" height="32" gid="44" visible="true">
-      <properties>
-        <property name="CanMove" type="bool" value="False" />
-        <property name="Collideable" type="bool" value="False" />
-      </properties>
-    </object>
-    <object id="0" name="Key Chest" type="Chest" x="288" y="384" rotation="0" width="32" height="32" gid="44" visible="true">
-      <properties>
-        <property name="CanMove" type="bool" value="False" />
-        <property name="Collideable" type="bool" value="False" />
-      </properties>
-    </object>
-    <object id="0" name="Key Chest" type="Chest" x="352" y="384" rotation="0" width="32" height="32" gid="44" visible="true">
-      <properties>
-        <property name="CanMove" type="bool" value="False" />
-        <property name="Collideable" type="bool" value="False" />
-      </properties>
-    </object>
-    <object id="0" name="Exit 0" type="Warp" x="160" y="672" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="3" name="Stairs down to 0" type="Warp" x="320" y="352" rotation="0" width="32" height="32" gid="51" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="1152" y="672" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="4" name="Key Chest" type="Chest" x="352" y="352" rotation="0" width="32" height="32" gid="44" visible="true">
+      <properties>
+        <property name="CanMove" type="bool" value="False" />
+        <property name="Collideable" type="bool" value="False" />
+      </properties>
+    </object>
+    <object id="5" name="Key Chest" type="Chest" x="288" y="384" rotation="0" width="32" height="32" gid="44" visible="true">
+      <properties>
+        <property name="CanMove" type="bool" value="False" />
+        <property name="Collideable" type="bool" value="False" />
+      </properties>
+    </object>
+    <object id="6" name="Key Chest" type="Chest" x="352" y="384" rotation="0" width="32" height="32" gid="44" visible="true">
+      <properties>
+        <property name="CanMove" type="bool" value="False" />
+        <property name="Collideable" type="bool" value="False" />
+      </properties>
+    </object>
+    <object id="7" name="Exit 0" type="Warp" x="160" y="672" rotation="0" width="32" height="32" gid="2" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="0" name="Door" type="Door" x="320" y="736" rotation="0" width="32" height="32" gid="50" visible="true">
+    <object id="8" name="Exit 0" type="Warp" x="1152" y="672" rotation="0" width="32" height="32" gid="2" visible="true">
+      <properties>
+        <property name="CanMove" type="bool" value="False" />
+        <property name="Collideable" type="bool" value="False" />
+        <property name="WarpMap" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="9" name="Door" type="Door" x="320" y="736" rotation="0" width="32" height="32" gid="50" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="0" name="Exit 0" type="Warp" x="640" y="1184" rotation="0" width="32" height="32" gid="2" visible="true">
+    <object id="10" name="Exit 0" type="Warp" x="640" y="1184" rotation="0" width="32" height="32" gid="2" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -78,80 +78,80 @@
     </object>
   </objectgroup>
   <objectgroup id="5" name="sprites" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="0" name="key" type="NPC_Key" x="320" y="800" rotation="0" width="32" height="32" gid="46" visible="true">
+    <object id="11" name="key" type="NPC_Key" x="320" y="800" rotation="0" width="32" height="32" gid="46" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="0" name="store" type="NPC_Store" x="320" y="416" rotation="0" width="32" height="32" gid="46" visible="true">
+    <object id="12" name="store" type="NPC_Store" x="320" y="416" rotation="0" width="32" height="32" gid="46" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="0" name="heal" type="NPC_Heal" x="480" y="384" rotation="0" width="32" height="32" gid="47" visible="true">
+    <object id="13" name="heal" type="NPC_Heal" x="480" y="384" rotation="0" width="32" height="32" gid="47" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="0" name="save" type="NPC_Save" x="896" y="352" rotation="0" width="32" height="32" gid="48" visible="true">
+    <object id="14" name="save" type="NPC_Save" x="896" y="352" rotation="0" width="32" height="32" gid="48" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="832" y="800" rotation="0" width="32" height="32" gid="48" visible="true">
+    <object id="15" name="npc" type="NPC" x="832" y="800" rotation="0" width="32" height="32" gid="48" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="There is a key in&#xA;the tower to the&#xA;north" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="704" y="192" rotation="0" width="32" height="32" gid="49" visible="true">
+    <object id="16" name="npc" type="NPC" x="704" y="192" rotation="0" width="32" height="32" gid="49" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="the strange old man&#xA;knows the way" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="576" y="192" rotation="0" width="32" height="32" gid="49" visible="true">
+    <object id="17" name="npc" type="NPC" x="576" y="192" rotation="0" width="32" height="32" gid="49" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="You are not suppose&#xA;to be on the wall" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="224" y="192" rotation="0" width="32" height="32" gid="49" visible="true">
+    <object id="18" name="npc" type="NPC" x="224" y="192" rotation="0" width="32" height="32" gid="49" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="The View Is Great&#xA;you can almost see&#xA;the southern desert" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="224" y="1088" rotation="0" width="32" height="32" gid="49" visible="true">
+    <object id="19" name="npc" type="NPC" x="224" y="1088" rotation="0" width="32" height="32" gid="49" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="this is the walled city" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="1088" y="1088" rotation="0" width="32" height="32" gid="49" visible="true">
+    <object id="20" name="npc" type="NPC" x="1088" y="1088" rotation="0" width="32" height="32" gid="49" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="garding the wall is fun" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="1088" y="192" rotation="0" width="32" height="32" gid="49" visible="true">
+    <object id="21" name="npc" type="NPC" x="1088" y="192" rotation="0" width="32" height="32" gid="49" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="do not under estmate the&#xA;power of dragons" />
       </properties>
     </object>
-    <object id="0" name="npc" type="NPC" x="512" y="896" rotation="0" width="32" height="32" gid="46" visible="true">
+    <object id="22" name="npc" type="NPC" x="512" y="896" rotation="0" width="32" height="32" gid="46" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />

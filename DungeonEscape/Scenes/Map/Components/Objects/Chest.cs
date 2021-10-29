@@ -19,15 +19,18 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
         private bool isOpen
         {
-            get =>
-                this.tmxObject.Properties.ContainsKey("IsOpen") &&
-                bool.Parse(this.tmxObject.Properties["IsOpen"]);
-
-            set => this.tmxObject.Properties["IsOpen"] = value.ToString();
+            get => this.state.IsOpen != null && this.state.IsOpen.Value;
+            set => this.state.IsOpen = value;
         }
 
-        public Chest(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, UISystem ui, IGame gameState) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState)
+        public Chest(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, UISystem ui, IGame gameState) : base(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, gameState)
         {
+            if (!this.state.IsOpen.HasValue)
+            {
+                this.state.IsOpen = this.tmxObject.Properties.ContainsKey("IsOpen") &&
+                                    bool.Parse(this.tmxObject.Properties["IsOpen"]);
+            }
+            
             this.ui = ui;
             this.level = tmxObject.Properties.ContainsKey("ChestLevel") ? int.Parse(tmxObject.Properties["ChestLevel"]) : 0;
             this.openImageName = tmxObject.Properties.ContainsKey("OpenImage") ? tmxObject.Properties["OpenImage"] : "ochest.png";

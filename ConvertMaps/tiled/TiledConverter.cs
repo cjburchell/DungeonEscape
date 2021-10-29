@@ -50,6 +50,7 @@ namespace ConvertMaps.Tiled
 
             var objects = new List<TiledObject>();
             var sprites = new List<TiledObject>();
+            var tileId = new IdGenerator();
             foreach (var objSprite in map.Sprites)
             {
                 var size = map.TileInfo.Where(item => item.Id == objSprite.Id).Select(item => (float) item.size)
@@ -80,6 +81,7 @@ namespace ConvertMaps.Tiled
 
                 var obj = new TiledObject
                 {
+                    id = tileId.New(),
                     gid = objSprite.Id + offset,
                     name = objSprite.Name,
                     x = objSprite.StartPosition.X * 32,

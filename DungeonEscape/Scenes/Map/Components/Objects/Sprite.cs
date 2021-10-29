@@ -11,8 +11,6 @@ using Random = Nez.Random;
 
 namespace DungeonEscape.Scenes.Map.Components.Objects
 {
-    using UI;
-
     public class Sprite : Component, IUpdatable, ICollidable
     {
         private readonly TmxObject tmxObject;
@@ -26,8 +24,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly AstarGridGraph graph;
         private List<Point> path;
         private const float MoveSpeed = 75;
-        
-        public static Sprite Create(TmxObject tmxObject, TmxMap map, UISystem ui, IGame gameState, AstarGridGraph graph)
+
+        public static Sprite Create(TmxObject tmxObject, SpriteState state, TmxMap map, UISystem ui, IGame gameState, AstarGridGraph graph)
         {
             if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
             {
@@ -36,16 +34,16 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             return spriteType switch
             {
-                SpriteType.NPC_Heal => new Healer(tmxObject, map, gameState, graph, ui),
-                SpriteType.NPC_Store => new Store(tmxObject, map, gameState, graph, ui),
-                SpriteType.NPC_Save => new Saver(tmxObject, map, gameState, graph, ui),
-                SpriteType.NPC_Key => new KeyStore(tmxObject, map, gameState, graph, ui),
-                SpriteType.NPC => new Character(tmxObject, map, ui, gameState, graph),
-                _ => new Sprite(tmxObject, map, gameState, graph)
+                SpriteType.NPC_Heal => new Healer(tmxObject, state, map, gameState, graph, ui),
+                SpriteType.NPC_Store => new Store(tmxObject, state, map, gameState, graph, ui),
+                SpriteType.NPC_Save => new Saver(tmxObject, state, map, gameState, graph, ui),
+                SpriteType.NPC_Key => new KeyStore(tmxObject, state, map, gameState, graph, ui),
+                SpriteType.NPC => new Character(tmxObject, state, map, ui, gameState, graph),
+                _ => new Sprite(tmxObject, state, map, gameState, graph)
             };
         }
         
-        protected Sprite(TmxObject tmxObject, TmxMap map, IGame gameState, AstarGridGraph graph)
+        protected Sprite(TmxObject tmxObject, SpriteState state, TmxMap map, IGame gameState, AstarGridGraph graph)
         {
             this.graph = graph;
             this.tmxObject = tmxObject;

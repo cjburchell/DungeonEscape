@@ -27,6 +27,7 @@ namespace DungeonEscape.Scenes
         private Label debugText;
         private readonly List<Monster> randomMonsters = new List<Monster>();
         private VirtualButton showCommandWindowInput;
+        private VirtualButton showExitWindowInput;
         private UISystem ui;
 
         private MapScene(IGame game, int mapId, Point? start = null)
@@ -83,7 +84,7 @@ namespace DungeonEscape.Scenes
             Console.WriteLine($"Loading Map {this.mapId}");
             var map = this.gameState.GetMap(this.mapId);
             this.SetDesignResolution(ScreenWidth * map.TileWidth, ScreenHeight * map.TileHeight,
-                SceneResolutionPolicy.ShowAll);
+                SceneResolutionPolicy.ShowAllPixelPerfect);
 
 
             var randomMonsterTileSet = DungeonEscapeGame.LoadTileSet($"Content/monsters{this.mapId}.tsx");
@@ -95,12 +96,12 @@ namespace DungeonEscape.Scenes
                 }
             }
 
-            this.gameState.CurrentMapId = this.mapId;
+            this.gameState.Party.CurrentMapId = this.mapId;
 
             this.AddRenderer(new ScreenSpaceRenderer(100, ScreenSpaceRenderLayer));
             this.ui = new UISystem(this.CreateEntity("ui-canvas").AddComponent(new UICanvas()));
-            this.debugText = ui.Canvas.Stage.AddElement(new Label(""));
-            this.debugText.SetFontScale(2).SetPosition(10, 20);
+            this.debugText = this.ui.Canvas.Stage.AddElement(new Label("", BasicWindow.Skin));
+            this.debugText.SetPosition(10, 20);
 
             var tiledEntity = this.CreateEntity("map");
             var tiledMapRenderer = tiledEntity.AddComponent(new TiledMapRenderer(map,
@@ -109,11 +110,24 @@ namespace DungeonEscape.Scenes
             tiledMapRenderer.SetLayersToRender("wall", "water", "floor");
             map.GetObjectGroup("objects").Visible = false;
 
+            var mapState = this.gameState.MapStates.FirstOrDefault(item => item.Id == this.mapId);
+            if (mapState == null)
+            {
+                mapState = new MapState {Id = this.mapId};
+                this.gameState.MapStates.Add(mapState);
+            }
+
             var objects = map.GetObjectGroup("items");
             foreach (var item in objects.Objects)
             {
+                var state = mapState.Objects.FirstOrDefault(i => item.Id == i.Id);
+                if (state == null)
+                {
+                    state = new ObjectState {Id = item.Id};
+                    mapState.Objects.Add(state);
+                }
                 var itemEntity = this.CreateEntity(item.Name);
-                itemEntity.AddComponent(MapObject.Create(item, map.TileHeight, map.TileWidth,
+                itemEntity.AddComponent(MapObject.Create(item, state, map.TileHeight, map.TileWidth,
                     map.GetTilesetTile(item.Tile.Gid), ui, this.gameState));
             }
 
@@ -121,8 +135,14 @@ namespace DungeonEscape.Scenes
             var sprites = map.GetObjectGroup("sprites");
             foreach (var item in sprites.Objects)
             {
+                var state = mapState.Sprites.FirstOrDefault(i => item.Id == i.Id);
+                if (state == null)
+                {
+                    state = new SpriteState {Id = item.Id};
+                    mapState.Sprites.Add(state);
+                }
                 var spriteEntity = this.CreateEntity(item.Name);
-                spriteEntity.AddComponent(Sprite.Create(item, map, ui, this.gameState, graph));
+                spriteEntity.AddComponent(Sprite.Create(item, state, map, ui, this.gameState, graph));
             }
 
             var topLeft = new Vector2(0, 0);
@@ -152,18 +172,24 @@ namespace DungeonEscape.Scenes
             this.showCommandWindowInput = new VirtualButton();
             this.showCommandWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.E));
             this.showCommandWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.X));
+            
+            this.showExitWindowInput = new VirtualButton();
+            this.showExitWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Escape));
+            this.showExitWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.Y));
+        }
+
+        [Nez.Console.Command("map", "switches to map")]
+        public static void SetMap(int? mapId = null, Point? point = null)
+        {
+            var game = Core.Instance as IGame;
+            SetMap(game, mapId, point);
         }
         
-        [Nez.Console.Command("map", "switches to map")]
-        public static void SetMap(int mapId = 0, Point? point = null)
+        public static void SetMap(IGame game, int? mapId = null, Point? point = null)
         {
-            if (!(Core.Instance is IGame game))
-            {
-                return;
-            }
-
+            mapId ??= 0;
             game.IsPaused = true;
-            var map = new MapScene(game, mapId, point);
+            var map = new MapScene(game, mapId.Value, point);
             var transition = new FadeTransition(() =>
             {
                 map.Initialize();
@@ -176,8 +202,14 @@ namespace DungeonEscape.Scenes
 
         public override void Update()
         {
-            base.Update();
-            if (!this.gameState.IsPaused && this.showCommandWindowInput.IsReleased)
+            this.ui.Input.HandledHide = false;
+            if (this.gameState.IsPaused)
+            {
+                base.Update();
+                return;
+            }
+            
+            if (this.showCommandWindowInput.IsReleased)
             {
                 var menuItems = new List<string> {"Status", "Stats"};
                 if (this.gameState.Party.Members.Count(member => member.Spells.Count != 0) != 0)
@@ -219,6 +251,42 @@ namespace DungeonEscape.Scenes
                     }   
                 });
             }
+            else if(this.showExitWindowInput.IsReleased)
+            {
+                this.ui.Input.HandledHide = true;
+                this.gameState.IsPaused = true;
+                var commandMenu = this.ui.Canvas.AddComponent(new SelectWindow<string>(this.ui, "menu", new Point(30,30), 200));
+                commandMenu.Show(new []{"Main Menu", "Load Quest", "Quit"}, result =>
+                {
+                    switch (result)
+                    {
+                        case "Main Menu":
+                            Core.StartSceneTransition(new FadeTransition(() =>
+                            {
+                                var splash = new MainMenu();
+                                splash.Initialize();
+                                return splash;
+                            }));
+                            break;
+                        case "Load Quest":
+                            Core.StartSceneTransition(new FadeTransition(() =>
+                            {
+                                var splash = new ContinueQuestScene();
+                                splash.Initialize();
+                                return splash;
+                            }));
+                            break;
+                        case "Quit":
+                            Core.Exit();
+                            break;
+                        default:
+                            this.gameState.IsPaused = false;
+                            break;
+                    }
+                });
+            }
+            
+            base.Update();
         }
 
         private void ShowStatus(Action done)
@@ -285,9 +353,47 @@ namespace DungeonEscape.Scenes
                     });
                 }
             }
+            if (spell.Type == SpellType.Revive)
+            {
+                if (this.gameState.Party.Members.Count == 1)
+                {
+                    var result = Spell.CastRevive(this.gameState.Party.Members.First(), caster, spell);
+                    var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                    talkWindow.Show(result, done);
+                }
+                else
+                {
+                    var selectWindow = this.ui.Canvas.AddComponent(new SelectHeroWindow(this.ui));
+                    selectWindow.Show(this.gameState.Party.Members.Where(item => item.Spells.Count != 0), hero =>
+                    {
+                        if (hero == null)
+                        {
+                            done();
+                        }
+                        else
+                        {
+                            var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                            talkWindow.Show(Spell.CastHeal(hero, caster, spell), done);
+                        }
+                    });
+                }
+            }
             else if (spell.Type == SpellType.Outside)
             {
                 var result = Spell.CastOutside(caster, spell, this.gameState);
+                if (string.IsNullOrEmpty(result))
+                {
+                    done();
+                }
+                else
+                {
+                    var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                    talkWindow.Show(result, done);
+                }
+            }
+            else if (spell.Type == SpellType.Return)
+            {
+                var result = Spell.CastReturn(caster, spell, this.gameState);
                 if (string.IsNullOrEmpty(result))
                 {
                     done();
@@ -310,7 +416,7 @@ namespace DungeonEscape.Scenes
             if (this.gameState.Party.Members.Count == 1)
             {
                 var spellWindow = this.ui.Canvas.AddComponent(new SpellWindow(this.ui));
-                spellWindow.Show(this.gameState.Party.Members.First().Spells.Where(item => item.IsNonEncounterSpell), spell=>
+                spellWindow.Show(this.gameState.GetSpellList(this.gameState.Party.Members.First().Spells).Where(item => item.IsNonEncounterSpell), spell=>
                 {
                     if (spell == null)
                     {
@@ -334,7 +440,7 @@ namespace DungeonEscape.Scenes
                     }
                     
                     var spellWindow = this.ui.Canvas.AddComponent(new SpellWindow(this.ui));
-                    spellWindow.Show(hero.Spells.Where(item => item.IsNonEncounterSpell), spell =>
+                    spellWindow.Show(this.gameState.GetSpellList(hero.Spells).Where(item => item.IsNonEncounterSpell), spell =>
                     {
                         if (spell == null)
                         {
@@ -408,7 +514,7 @@ namespace DungeonEscape.Scenes
                             {
                                 if (item.IsEquipped)
                                 {
-                                    item.Unequip();
+                                    item.Unequip(this.gameState.Party.Members);
                                 }
 
                                 this.gameState.Party.Items.Remove(item);
@@ -436,7 +542,7 @@ namespace DungeonEscape.Scenes
                 case ItemType.Armor:
                 case ItemType.Weapon:
                 case ItemType.Shield:
-                    item.Equip(hero);
+                    item.Equip(hero, party.Items, party.Members);
                     return  $"{hero.Name} equipped {item.Name}";
                 default:
                     return $"{hero.Name} is unable to use {item.Name}";

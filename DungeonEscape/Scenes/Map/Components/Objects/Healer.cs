@@ -11,7 +11,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly UISystem ui;
         private readonly int cost;
 
-        public Healer(TmxObject tmxObject, TmxMap map, IGame gameState, AstarGridGraph graph, UISystem ui) : base(tmxObject, map, gameState, graph)
+        public Healer(TmxObject tmxObject, SpriteState state, TmxMap map, IGame gameState, AstarGridGraph graph, UISystem ui) : base(tmxObject, state, map, gameState, graph)
         {
             this.ui = ui;
             this.cost = tmxObject.Properties.ContainsKey("Cost") ? int.Parse(tmxObject.Properties["Cost"]) : 25;

@@ -5,7 +5,7 @@
     <properties>
       <property name="Name" type="string" value="Heal" />
       <property name="Power" type="int" value="1" />
-      <property name="Cost" type="int" value="5" />
+      <property name="Cost" type="int" value="3" />
       <property name="MinLevel" type="int" value="2" />
     </properties>
   </tile>
@@ -14,8 +14,8 @@
     <properties>
       <property name="Name" type="string" value="Outside" />
       <property name="Power" type="int" value="1" />
-      <property name="Cost" type="int" value="10" />
-      <property name="MinLevel" type="int" value="4" />
+      <property name="Cost" type="int" value="6" />
+      <property name="MinLevel" type="int" value="12" />
     </properties>
   </tile>
   <tile id="3" type="Fireball">
@@ -52,6 +52,24 @@
       <property name="Power" type="int" value="2" />
       <property name="Cost" type="int" value="30" />
       <property name="MinLevel" type="int" value="12" />
+    </properties>
+  </tile>
+  <tile id="7" type="Return">
+    <image width="32" height="32" source="images/items/return.png" />
+    <properties>
+      <property name="Name" type="string" value="Return" />
+      <property name="Power" type="int" value="1" />
+      <property name="Cost" type="int" value="6" />
+      <property name="MinLevel" type="int" value="12" />
+    </properties>
+  </tile>
+  <tile id="8" type="Revive">
+    <image width="32" height="32" source="images/items/revive.png" />
+    <properties>
+      <property name="Name" type="string" value="Revive" />
+      <property name="Power" type="int" value="1" />
+      <property name="Cost" type="int" value="15" />
+      <property name="MinLevel" type="int" value="25" />
     </properties>
   </tile>
 </tileset>

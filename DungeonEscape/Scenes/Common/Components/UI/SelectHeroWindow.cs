@@ -1,9 +1,7 @@
-﻿using DungeonEscape.Scenes.Common.Components.UI;
-using DungeonEscape.State;
+﻿using DungeonEscape.State;
 using Microsoft.Xna.Framework;
-using Nez;
 
-namespace DungeonEscape.Scenes.Map.Components.UI
+namespace DungeonEscape.Scenes.Common.Components.UI
 {
     
     public class SelectHeroWindow : SelectWindow<Hero>

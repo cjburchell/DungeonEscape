@@ -10,6 +10,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         private VirtualButton hideWindowInput = new VirtualButton();
         private VirtualButton actionWindowInput = new VirtualButton();
         private readonly List<BasicWindow> windows = new List<BasicWindow>();
+        public bool HandledHide = false;
 
         public override void OnAddedToEntity()
         {
@@ -42,7 +43,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 
         public void Update()
         {
-            if (this.hideWindowInput.IsReleased)
+            if (this.hideWindowInput.IsReleased && !this.HandledHide)
             {
                 foreach (var window in this.windows.Where(window => window.IsVisible && window.IsFocused))
                 {

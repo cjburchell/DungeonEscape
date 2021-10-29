@@ -20,9 +20,9 @@
             var itemName = new Label(item.Name, Skin).SetAlignment(Align.Left);
             var cost = new Label($"{item.Gold * 3 / 4}", Skin).SetAlignment(Align.Right);
             table.Add(image).Width(32);
-            table.Add(equip).Width(32);
+            table.Add(equip).Width(ButtonHeight);
             table.Add(itemName).Width(100);
-            table.Add(cost).Width(30);
+            table.Add(cost).Width(32);
 
             var button = new Button(Skin, "no_border");
             button.Add(table);

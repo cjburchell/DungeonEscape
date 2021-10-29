@@ -12,8 +12,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly UISystem ui;
         private readonly Item key;
 
-        public KeyStore(TmxObject tmxObject, TmxMap map, IGame gameState, AstarGridGraph graph, UISystem ui) : base(
-            tmxObject, map, gameState, graph)
+        public KeyStore(TmxObject tmxObject, SpriteState state, TmxMap map, IGame gameState, AstarGridGraph graph, UISystem ui) : base(
+            tmxObject, state, map, gameState, graph)
         {
             this.ui = ui;
             var cost = tmxObject.Properties.ContainsKey("Cost") ? int.Parse(tmxObject.Properties["Cost"]) : 250;

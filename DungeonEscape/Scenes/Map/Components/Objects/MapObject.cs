@@ -11,13 +11,14 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
     public class MapObject: Component, ICollidable
     {
         protected readonly TmxObject tmxObject;
+        protected readonly ObjectState state;
         private readonly int gridTileHeight;
         private readonly int gridTileWidth;
         private readonly TmxTilesetTile mapTile;
         private SpriteAnimator animator;
         protected IGame gameState;
 
-        public static MapObject Create(TmxObject tmxObject,int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, UISystem ui, IGame gameState)
+        public static MapObject Create(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, UISystem ui, IGame gameState)
         {
             if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
             {
@@ -26,18 +27,19 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             return spriteType switch
             {
-                SpriteType.Ship => new Ship(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState),
-                SpriteType.Warp => new Warp(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState),
-                SpriteType.Chest => new Chest(tmxObject, gridTileHeight, gridTileWidth, mapTile, ui, gameState),
-                SpriteType.Door => new Door(tmxObject, gridTileHeight, gridTileWidth, mapTile, ui, gameState),
-                _ => new MapObject(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState)
+                SpriteType.Ship => new Ship(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, gameState),
+                SpriteType.Warp => new Warp(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, gameState),
+                SpriteType.Chest => new Chest(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, ui, gameState),
+                SpriteType.Door => new Door(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, ui, gameState),
+                _ => new MapObject(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, gameState)
             };
         }
 
-        protected MapObject(TmxObject tmxObject,int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, IGame gameState)
+        protected MapObject(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, IGame gameState)
         {
             this.gameState = gameState;
             this.tmxObject = tmxObject;
+            this.state = state;
             this.gridTileHeight = gridTileHeight;
             this.gridTileWidth = gridTileWidth;
             this.mapTile = mapTile;

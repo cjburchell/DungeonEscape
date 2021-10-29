@@ -10,17 +10,21 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
     {
         private readonly UISystem ui;
         private readonly int level;
+
         private bool isOpen
         {
-            get =>
-                this.tmxObject.Properties.ContainsKey("IsOpen") &&
-                bool.Parse(this.tmxObject.Properties["IsOpen"]);
-
-            set => this.tmxObject.Properties["IsOpen"] = value.ToString();
+            get => this.state.IsOpen != null && this.state.IsOpen.Value;
+            set => this.state.IsOpen = value;
         }
 
-        public Door(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, UISystem ui, IGame gameState) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState)
+        public Door(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, UISystem ui, IGame gameState) : base(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, gameState)
         {
+            if (!this.state.IsOpen.HasValue)
+            {
+                this.state.IsOpen = this.tmxObject.Properties.ContainsKey("IsOpen") &&
+                                    bool.Parse(this.tmxObject.Properties["IsOpen"]);
+            }
+            
             this.ui = ui;
             this.level = tmxObject.Properties.ContainsKey("DoorLevel") ? int.Parse(tmxObject.Properties["DoorLevel"]) : 0;
         }

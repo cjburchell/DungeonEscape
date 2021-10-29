@@ -757,16 +757,39 @@ namespace Nez.UI
 			// first, we check to see if the IGamepadFocusable has hard-wired control.
 			if (relativeToFocusable.ShouldUseExplicitFocusableControl)
 			{
-				switch (direction)
+				var element = relativeToFocusable;
+				while (true)
 				{
-					case Direction.Up:
-						return relativeToFocusable.GamepadUpElement;
-					case Direction.Down:
-						return relativeToFocusable.GamepadDownElement;
-					case Direction.Left:
-						return relativeToFocusable.GamepadLeftElement;
-					case Direction.Right:
-						return relativeToFocusable.GamepadRightElement;
+					switch (direction)
+					{
+						case Direction.Up:
+							element = element.GamepadUpElement;
+							break;
+						case Direction.Down:
+							element = element.GamepadDownElement;
+							break;
+						case Direction.Left:
+							element = element.GamepadLeftElement;
+							break;
+						case Direction.Right:
+							element = element.GamepadRightElement;
+							break;
+					}
+
+					if (element == null)
+					{
+						return null;
+					}
+
+					if (!element.GetDisabled())
+					{
+						return element;
+					}
+
+					if (element == relativeToFocusable)
+					{
+						return null;
+					}
 				}
 			}
 

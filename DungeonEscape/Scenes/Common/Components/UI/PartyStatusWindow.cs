@@ -35,7 +35,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             table.Row();
             table.Add(this.goldLabel).SetPadLeft(5).SetPadTop(5).Width(200).Left();
             table.Row();
-            table.Add(this.closeButton).Height(30).Width(80).SetColspan(4).Center().Bottom().SetPadBottom(2);
+            table.Add(this.closeButton).Height(ButtonHeight).Width(ButtonWidth).SetColspan(4).Center().Bottom().SetPadBottom(2);
             
             this.UpdateStatus();
             this.ShowWindow();

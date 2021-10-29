@@ -19,6 +19,7 @@ namespace DungeonEscape.State
                 this.Type = type;
             }
 
+            this.Id = tile.Id;
             this.Name = tile.Properties["Name"];
             this.Defence = int.Parse(tile.Properties["Defence"]);
             this.Health = int.Parse(tile.Properties["Health"]);
@@ -29,6 +30,8 @@ namespace DungeonEscape.State
             this.ImageSource = tile.Image.Source;
             this.Image = tile.Image.Texture;
         }
+
+        public int Id { get; }
 
         public Item(string image, string name, ItemType type, int gold, int minLevel)
         {

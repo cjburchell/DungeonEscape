@@ -33,7 +33,7 @@ namespace DungeonEscape.Scenes.Map.Components.UI
             table.Row();
             table.Add(this.statusTable).Expand().Top().Left().SetPadLeft(10);
             table.Row();
-            table.Add(this.closeButton).Height(30).Width(80).SetColspan(4).Center().Bottom().SetPadBottom(2);
+            table.Add(this.closeButton).Height(ButtonHeight).Width(ButtonWidth).SetColspan(4).Center().Bottom().SetPadBottom(2);
             
             this.ShowWindow();
             this.UpdateStatus();

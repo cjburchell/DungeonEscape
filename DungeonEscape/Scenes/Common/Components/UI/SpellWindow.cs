@@ -1,11 +1,10 @@
-﻿using DungeonEscape.Scenes.Common.Components.UI;
-using DungeonEscape.State;
+﻿using DungeonEscape.State;
 using Microsoft.Xna.Framework;
-using Nez;
+using Nez.UI;
 
-namespace DungeonEscape.Scenes.Map.Components.UI
+namespace DungeonEscape.Scenes.Common.Components.UI
 {
-    using Nez.UI;
+
 
     public class SpellWindow : SelectWindow<Spell>
     {

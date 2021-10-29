@@ -4,20 +4,24 @@ using Nez.Tiled;
 
 namespace DungeonEscape.Scenes.Map.Components.Objects
 {
+    using State;
+
     public class SolidObject : MapObject
     {
         private readonly Rectangle collideRect;
 
         protected bool Collideable
         {
-            get => bool.Parse(this.tmxObject.Properties["Collideable"]);
-            set => this.tmxObject.Properties["Collideable"] = value.ToString();
+            get => this.state.Collideable != null && this.state.Collideable.Value;
+            set => this.state.Collideable = value;
         }
 
         private BoxCollider boxCollider;
 
-        protected SolidObject(TmxObject tmxObject, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, IGame gameState) : base(tmxObject, gridTileHeight, gridTileWidth, mapTile, gameState)
+        protected SolidObject(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, IGame gameState) : base(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, gameState)
         {
+            state.Collideable ??= bool.Parse(this.tmxObject.Properties["Collideable"]);
+            
             var offsetWidth = (int) (tmxObject.Width * (1.0f / 4.0f));
             var offsetHeight = (int) (tmxObject.Height * (1.0f / 4.0f));
             this.collideRect = new Rectangle

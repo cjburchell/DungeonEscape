@@ -77,7 +77,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             {
                 var buttonControl = new TextButton(buttonText, Skin) {UserData = buttonText};
                 this.AddButton(buttonControl);
-                this.buttonTable.Add(buttonControl).Height(30).Width(80);
+                this.buttonTable.Add(buttonControl).Height(ButtonHeight).Width(ButtonWidth);
                 buttonControl.SetVisible(false);
             }
             

@@ -119,6 +119,11 @@ namespace Nez.UI
 		public IGamepadFocusable GamepadRightElement { get; set; }
 
 
+		public bool GetDisabled()
+		{
+			return false;
+		}
+
 		public void EnableExplicitFocusableControl(IGamepadFocusable upEle, IGamepadFocusable downEle,
 												   IGamepadFocusable leftEle, IGamepadFocusable rightEle)
 		{

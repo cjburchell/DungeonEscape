@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Nez;
 using Nez.UI;
 
 namespace DungeonEscape.Scenes.Common.Components.UI
@@ -45,17 +44,16 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             this.list.SetFillParent(true);
             const int margin = 10;
             this.list.Top().PadLeft(margin).PadTop(margin).PadRight(margin);
-            const int itemHeight = 30;
             var itemWidth = this.Window.GetWidth();
             var itemList = this.items.ToList();
             foreach (var item in itemList)
             {
                 var button = this.CreateButton(item);
                 button.UserData = item;
-                this.list.Add(button).Width(itemWidth - margin * 2).Height(itemHeight);
+                this.list.Add(button).Width(itemWidth - margin * 2).Height(ButtonHeight);
             }
 
-            this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count * itemHeight, 400));
+            this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count * ButtonHeight, 400));
             this.scrollPane.Validate();
             this.ShowWindow();
         }

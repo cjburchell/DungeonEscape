@@ -16,3 +16,5 @@ DungeonEscape/data/de.tiled-session
 *.tiled-session
 
 DungeonEscape/imgui.ini
+
+DungeonEscape/save.json

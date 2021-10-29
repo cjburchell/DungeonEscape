@@ -9,6 +9,13 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 		private Button firstButton;
 		private Button lastButton;
 
+
+		public ButtonList(Button firstButton = null, Button lastButton = null)
+		{
+			this.firstButton = firstButton;
+			this.lastButton = lastButton;
+		}
+
 		public override void ClearChildren()
 		{
 			base.ClearChildren();
@@ -16,14 +23,14 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 			this.lastButton = null;
 		}
 
-		public Cell Add(Button button)
+		public Cell Add(Button button, int topPadding = 0)
 		{
 			button.OnClicked += _ =>
 			{
 				this.OnClicked?.Invoke(button);
 			};
 
-			this.Row().SetPadTop(0);
+			this.Row().SetPadTop(topPadding);
 			var cell = base.Add(button);
 			
 			button.ShouldUseExplicitFocusableControl = true;

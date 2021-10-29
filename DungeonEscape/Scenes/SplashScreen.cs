@@ -11,7 +11,7 @@ namespace DungeonEscape.Scenes
         
         public override void Initialize()
         {
-            this.SetDesignResolution(640, 480, SceneResolutionPolicy.ShowAll);
+            this.SetDesignResolution(640, 480, SceneResolutionPolicy.ShowAllPixelPerfect);
             var texture = this.Content.LoadTexture("Content/images/ui/splash.png");
             var splash = this.CreateEntity("splash");
             var renderer = new SpriteRenderer(new Sprite(texture)) {Origin = Vector2.Zero};

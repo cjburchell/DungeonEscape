@@ -14,6 +14,8 @@
 		IGamepadFocusable GamepadLeftElement { get; set; }
 		IGamepadFocusable GamepadRightElement { get; set; }
 
+		bool GetDisabled();
+
 
 		/// <summary>
 		/// enables shouldUseExplicitFocusableControl and sets the elements corresponding to each direction

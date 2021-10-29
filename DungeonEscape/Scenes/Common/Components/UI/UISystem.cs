@@ -1,6 +1,5 @@
-﻿namespace DungeonEscape.Scenes
+﻿namespace DungeonEscape.Scenes.Common.Components.UI
 {
-    using Common.Components.UI;
     using Nez;
 
     public class UISystem

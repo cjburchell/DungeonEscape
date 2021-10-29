@@ -1,10 +1,8 @@
-﻿using DungeonEscape.Scenes.Common.Components.UI;
-using DungeonEscape.State;
+﻿using DungeonEscape.State;
 using Microsoft.Xna.Framework;
-using Nez;
 using Nez.UI;
 
-namespace DungeonEscape.Scenes.Map.Components.UI
+namespace DungeonEscape.Scenes.Common.Components.UI
 {
     public class InventoryWindow : SelectWindow<ItemInstance>
     {
@@ -20,7 +18,7 @@ namespace DungeonEscape.Scenes.Map.Components.UI
             var equip = new Label(equipSymbol, Skin).SetAlignment(Align.Left);
             var itemName = new Label(item.Name, Skin).SetAlignment(Align.Left);
             table.Add(image).Width(32);
-            table.Add(equip).Width(32);
+            table.Add(equip).Width(ButtonHeight);
             table.Add(itemName).Width(100);
 
             var button = new Button(Skin, "no_border");

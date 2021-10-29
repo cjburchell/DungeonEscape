@@ -12,7 +12,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly UISystem ui;
         private readonly string text;
 
-        public Character(TmxObject tmxObject, TmxMap map, UISystem ui, IGame gameState, AstarGridGraph graph) : base(tmxObject, map, gameState, graph)
+        public Character(TmxObject tmxObject, SpriteState state, TmxMap map, UISystem ui, IGame gameState, AstarGridGraph graph) : base(tmxObject, state, map, gameState, graph)
         {
             this.ui = ui;
             this.text = tmxObject.Properties.ContainsKey("Text") ? tmxObject.Properties["Text"] : tmxObject.Name;

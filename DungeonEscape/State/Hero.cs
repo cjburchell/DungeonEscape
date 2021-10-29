@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Nez;
 
 namespace DungeonEscape.State
 {
+    using System;
+    using Newtonsoft.Json;
+    using Random = Nez.Random;
+
     public class Hero
     {
         public override string ToString()
@@ -11,30 +14,47 @@ namespace DungeonEscape.State
             return this.Name;
         }
 
-        public string Name { get; set; } = "Test";
+        public string Name { get; set; }
         public int XP { get; set; }
         public int Health { get; set; }
-        public int MaxHealth { get; set; } = Random.NextInt(5) + 40;
+        public int MaxHealth { get; set; }
         public int Magic { get; set; }
-        public int MaxMagic { get; set; } = 5;
-        public int Attack { get; set; } = Random.NextInt(5) + 5;
-        public int Defence { get; set; } = Random.NextInt(5) + 1;
-        public int Agility { get; set; } = Random.NextInt(5) + 1;
-        public int NextLevel { get; set; } = 100;
-        public int Level { get; set; } = 1;
-        public List<Spell> Spells { get; private set; } = new List<Spell>();
+        public int MaxMagic { get; set; }
+        public int Attack { get; set; }
+        public int Defence { get; set; }
+        public int Agility { get; set; }
+        public int NextLevel { get; set; }
+        public int Level { get; set; }
+        public List<int> Spells { get; private set; } = new List<int>();
+        
+        [JsonIgnore]
         public bool IsDead => this.Health <= 0;
-        public ItemInstance Weapon { get; set; }
-        public ItemInstance Armor { get; set; }
-        public ItemInstance Shield { get; set; }
+        
+        public string WeaponId { get; set; }
+        public string ArmorId { get; set; }
+        public string ShieldId { get; set; }
+        public string Id { get; set; }
 
         public Hero()
         {
+            this.Id = Guid.NewGuid().ToString();
+            this.RollStats();
             this.Health = this.MaxHealth;
             this.Magic = this.MaxMagic;
         }
 
-        public bool CheckLevelUp(List<Spell> availableSpells, out string levelUpMessage)
+        private void RollStats()
+        {
+            Level = 1;
+            NextLevel = 100;
+            MaxHealth = Random.NextInt(5) + 40;
+            Attack = Random.NextInt(5) + 5;
+            Defence = Random.NextInt(5) + 1;
+            MaxMagic = 5;
+            Agility = Random.NextInt(5) + 1;
+        }
+
+        public bool CheckLevelUp(IEnumerable<Spell> availableSpells, out string levelUpMessage)
         {
             if (this.XP < this.NextLevel)
             {
@@ -56,7 +76,7 @@ namespace DungeonEscape.State
 
             foreach (var spell in availableSpells.Where(spell => spell.MinLevel <= this.Level && spell.MinLevel > oldLevel))
             {
-                this.Spells.Add(spell);
+                this.Spells.Add(spell.Id);
                 levelUpMessage += $"   Has learned the {spell.Name} Spell\n";
             }
 

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DungeonEscape.State
 {
+    using System.Runtime.CompilerServices;
 
 
     public enum SpellType
@@ -52,13 +53,30 @@ namespace DungeonEscape.State
 
         public static string CastOutside(Hero caster, Spell spell, IGame gameState)
         {
-            if (gameState.CurrentMapId == 0)
+            if (gameState.Party.CurrentMapId == 0)
             {
                 return $"{caster.Name} casts {spell.Name} but you are already outside";
             }
 
             caster.Magic -= spell.Cost;
-            MapScene.SetMap();
+            MapScene.SetMap(gameState);
+            return null;
+        }
+        
+        public static string CastReturn(Hero caster, Spell spell, IGame gameState)
+        {
+            if (gameState.Party.CurrentMapId != 0)
+            {
+                return $"{caster.Name} casts {spell.Name} but you are not outside";
+            }
+            
+            if (!gameState.Party.SavedMapId.HasValue)
+            {
+                return $"{caster.Name} casts {spell.Name} but you have never saved your game";
+            }
+
+            caster.Magic -= spell.Cost;
+            MapScene.SetMap(gameState, gameState.Party.SavedMapId, gameState.Party.SavedPoint);
             return null;
         }
         

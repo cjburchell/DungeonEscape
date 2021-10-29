@@ -17,8 +17,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly UISystem ui;
         private readonly List<Item> items;
 
-        public Store(TmxObject tmxObject, TmxMap map, IGame gameState, AstarGridGraph graph, UISystem ui) : base(
-            tmxObject, map, gameState, graph)
+        public Store(TmxObject tmxObject, SpriteState state, TmxMap map, IGame gameState, AstarGridGraph graph, UISystem ui) : base(
+            tmxObject, state, map, gameState, graph)
         {
             this.ui = ui;
             var level = this.gameState.Party.Members.Max(item => item.Level);
@@ -33,7 +33,6 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 tempItems.Remove(item);
                 availableItems = tempItems.ToArray();
             }
-
         }
 
         public override bool OnAction(Party party)
@@ -123,7 +122,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                                 this.gameState.Party.Gold += item.Gold * 3 / 4;
                                 if (item.IsEquipped)
                                 {
-                                    item.Unequip();
+                                    item.Unequip(this.gameState.Party.Members);
                                 }
 
                                 this.gameState.Party.Items.Remove(item);

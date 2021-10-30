@@ -38,7 +38,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             }
             
             this.gameState.IsPaused = true;
-            MapScene.SetMap(this.gameState, this.mapId, point);
+            this.gameState.SetMap(this.mapId, point);
         }
     }
 }

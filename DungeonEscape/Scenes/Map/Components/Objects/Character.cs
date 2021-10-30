@@ -21,7 +21,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         public override bool OnAction(Party party)
         {
             this.gameState.IsPaused = true;
-            var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui, "Talk Npc"));
+            var talkWindow = new TalkWindow(this.ui, "Talk Npc");
             talkWindow.Show(this.text, () =>
             {
                 this.gameState.IsPaused = false;

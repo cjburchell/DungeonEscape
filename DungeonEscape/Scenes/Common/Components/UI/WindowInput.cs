@@ -7,8 +7,8 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 {
     public class WindowInput : Component, IUpdatable
     {
-        private VirtualButton hideWindowInput = new VirtualButton();
-        private VirtualButton actionWindowInput = new VirtualButton();
+        private readonly VirtualButton hideWindowInput = new VirtualButton();
+        private readonly VirtualButton actionWindowInput = new VirtualButton();
         private readonly List<BasicWindow> windows = new List<BasicWindow>();
         public bool HandledHide = false;
 

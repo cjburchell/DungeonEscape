@@ -59,7 +59,7 @@ namespace DungeonEscape.State
             }
 
             caster.Magic -= spell.Cost;
-            MapScene.SetMap(gameState);
+            gameState.SetMap();
             return null;
         }
         
@@ -76,7 +76,7 @@ namespace DungeonEscape.State
             }
 
             caster.Magic -= spell.Cost;
-            MapScene.SetMap(gameState, gameState.Party.SavedMapId, gameState.Party.SavedPoint);
+            gameState.SetMap(gameState.Party.SavedMapId, gameState.Party.SavedPoint);
             return null;
         }
         

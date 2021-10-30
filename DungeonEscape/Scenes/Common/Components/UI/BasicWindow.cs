@@ -8,22 +8,26 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 
     public abstract class BasicWindow : Component
     {
-        protected Window Window { get; }
+        protected Window Window { get; private set; }
         protected readonly UISystem ui;
-        private readonly string title;
+        protected readonly string title;
         private readonly Point position;
         private readonly int width;
         private readonly int height;
+        private readonly bool focasable;
 
         public static readonly Skin Skin = Skin.CreateDefaultSkin();
         private static BasicWindow focusedWindow;
-        private readonly string id;
+        protected readonly string id;
 
         public const int ButtonHeight = 30;
         public const int ButtonWidth = 80;
-        public const int FontScale = 2;
+        private const int FontScale = 2;
 
         public bool IsFocused => focusedWindow == this;
+
+        private bool hasBeenAdded;
+        private bool isVisible;
         
         static BasicWindow()
         {
@@ -77,7 +81,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             textFieldStyle.Background =new BorderPrimitiveDrawable(Color.Black, Color.White, 1);
         }
 
-        protected BasicWindow(UISystem ui, string title, Point position, int width, int height)
+        protected BasicWindow(UISystem ui, string title, Point position, int width, int height, bool focasable = true)
         {
             this.id = Guid.NewGuid().ToString();
             this.ui = ui;
@@ -85,39 +89,62 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             this.position = position;
             this.width = width;
             this.height = height;
-            ui.Input.AddWindow(this);
-            this.Window = new Window(this.title, Skin);
+            this.focasable = focasable;
+            ui.Input?.AddWindow(this);
         }
 
         public override void OnAddedToEntity()
         {
-            Console.WriteLine($"{this.id} {this.title} OnAddedToEntity");
+            this.Window = new Window(this.title, Skin);
             this.ui.Canvas.Stage.AddElement(this.Window);
             this.Window.SetPosition(this.position.X, this.position.Y);
             this.Window.SetWidth(this.width);
             this.Window.SetHeight(this.height);
             this.Window.SetMovable(false);
             this.Window.SetResizable(false);
-            this.Window.GetTitleLabel();
             this.Window.GetTitleLabel().SetVisible(false);
+            this.Window.GetTitleLabel().SetText(this.title);
 
             base.OnAddedToEntity();
+            this.Window.SetVisible(this.isVisible);
         }
 
-        public virtual void CloseWindow()
+        public virtual void CloseWindow(bool remove = true)
         {
-            this.Window.SetVisible(false);
-            this.ui.Input.RemoveWindow(this);
-            this.ui.Canvas.RemoveComponent(this);
-            this.Window.GetStage().SetGamepadFocusElement(null);
+            this.Window?.SetVisible(false);
+            this.isVisible = false;
             
-            Console.WriteLine($"{this.id} {this.title} Close");
+            if (this.focasable)
+            {
+                this.ui.Input?.RemoveWindow(this);
+                this.ui.Canvas.Stage.SetGamepadFocusElement(null);
+            }
+            
+            if (remove)
+            {
+                if (this.hasBeenAdded)
+                {
+                    this.ui.Canvas.RemoveComponent(this);
+                }
+
+                this.hasBeenAdded = false;
+            }
         }
 
-        protected void ShowWindow()
+        public void ShowWindow()
         {
-            this.Window.SetVisible(true);
-            focusedWindow = this;
+            if (!this.hasBeenAdded)
+            {
+                this.ui.Canvas.AddComponent(this);
+            }
+            
+            this.hasBeenAdded = true;
+            this.isVisible = true;
+            this.Window?.SetVisible(true);
+            if (this.focasable)
+            {
+                focusedWindow = this;
+            }
         }
 
         public bool IsVisible => this.Window != null && this.Window.IsVisible();

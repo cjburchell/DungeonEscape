@@ -5,6 +5,8 @@ using Nez.Tiled;
 
 namespace DungeonEscape.State
 {
+    using Microsoft.Xna.Framework.Graphics;
+
     public enum Biome
     {
         None = 0,
@@ -46,6 +48,8 @@ namespace DungeonEscape.State
                 }
             }
         }
+
+        public Texture2D Image => this.tile.Image.Texture;
 
         public double Probability { get; }
         public List<Spell> Spells { get; } = new List<Spell>();

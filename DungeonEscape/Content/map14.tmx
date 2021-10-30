@@ -165,19 +165,19 @@
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="23" name="Chest" type="Chest" x="288" y="416" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="23" name="Chest" type="Chest" x="288" y="416" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="24" name="Chest" type="Chest" x="320" y="416" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="24" name="Chest" type="Chest" x="320" y="416" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="25" name="Chest" type="Chest" x="352" y="416" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="25" name="Chest" type="Chest" x="352" y="416" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -197,19 +197,19 @@
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="28" name="Chest" type="Chest" x="288" y="448" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="28" name="Chest" type="Chest" x="288" y="448" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="29" name="Chest" type="Chest" x="320" y="448" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="29" name="Chest" type="Chest" x="320" y="448" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="30" name="Chest" type="Chest" x="352" y="448" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="30" name="Chest" type="Chest" x="352" y="448" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -229,19 +229,19 @@
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="33" name="Chest" type="Chest" x="288" y="480" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="33" name="Chest" type="Chest" x="288" y="480" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="34" name="Chest" type="Chest" x="320" y="480" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="34" name="Chest" type="Chest" x="320" y="480" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="35" name="Chest" type="Chest" x="352" y="480" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="35" name="Chest" type="Chest" x="352" y="480" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -382,14 +382,14 @@
     </object>
   </objectgroup>
   <objectgroup id="5" name="sprites" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="55" name="npc" type="NPC" x="256" y="320" rotation="0" width="32" height="32" gid="47" visible="true">
+    <object id="55" name="npc" type="NPC" x="256" y="320" rotation="0" width="32" height="32" gid="46" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="you must find a ship&#xA;and get to the forest contnent" />
       </properties>
     </object>
-    <object id="56" name="npc" type="NPC" x="320" y="384" rotation="0" width="32" height="32" gid="47" visible="true">
+    <object id="56" name="npc" type="NPC" x="320" y="384" rotation="0" width="32" height="32" gid="46" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />

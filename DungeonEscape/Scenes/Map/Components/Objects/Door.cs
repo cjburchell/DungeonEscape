@@ -47,7 +47,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             {
 
                 this.gameState.IsPaused = true;
-                var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                var talkWindow = new TalkWindow(this.ui);
                 talkWindow.Show("Unable to open door", () =>
                 {
                     this.gameState.IsPaused = false;

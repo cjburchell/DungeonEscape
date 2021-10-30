@@ -74,9 +74,9 @@ namespace DungeonEscape.Scenes.Map.Components.UI
             this.statusTable.Validate();
         }
 
-        public override void CloseWindow()
+        public override void CloseWindow(bool remove = true)
         {
-            base.CloseWindow();
+            base.CloseWindow(remove);
             this.done?.Invoke();
         }
 
@@ -89,6 +89,7 @@ namespace DungeonEscape.Scenes.Map.Components.UI
         {
             this.done = doneAction;
             this.hero = heroToShow;
+            this.ShowWindow();
         }
     }
 }

@@ -122,6 +122,12 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.actionButton.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Space));
             this.actionButton.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.A));
 
+            this.statusWindow =
+                new PartyStatusWindow(this.GameState.Party, this.ui.Canvas);
+            
+            this.goldWindow =
+                new GoldWindow(this.GameState.Party, this.ui.Canvas);
+
             var overWater = this.IsOverWater();
             this.shipAnimator.SetEnabled(overWater);
             this.animator.SetEnabled(!overWater);
@@ -242,6 +248,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             if (this.GameState.IsPaused)
             {
                 this.GameState.UpdatePauseState();
+                this.statusWindow.CloseWindow(false);
+                this.goldWindow.CloseWindow(false);
                 return;
             }
 
@@ -265,13 +273,20 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             if (this.GameState.IsPaused)
             {
+                this.statusWindow.CloseWindow(false);
+                this.goldWindow.CloseWindow(false);
                 return;
             }
 
             if (!this.UpdateMovement())
             {
+                this.statusWindow.ShowWindow();
+                this.goldWindow.ShowWindow();
                 return;
             }
+
+            this.statusWindow.CloseWindow(false);
+            this.goldWindow.CloseWindow(false);
 
             if (this.GameState.IsPaused)
             {
@@ -310,36 +325,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 var monsterNub = Random.NextInt(availableMonsters.Count);
                 monsters.Add(availableMonsters[monsterNub]);
             }
-
-            var xp = monsters.Sum(monster => monster.XP)/this.GameState.Party.Members.Count;
-            if (xp == 0)
-            {
-                xp = 1;
-            }
             
-            Console.WriteLine($"Fight {monsters.Count}, {xp}XP");
-            string levelUpMessage = null;
-            foreach (var member in this.GameState.Party.Members)
-            {
-                if (member.Health > 0)
-                {
-                    member.XP += xp;
-                    while (member.CheckLevelUp(this.GameState.Spells, out var message))
-                    {
-                        levelUpMessage += message;
-                    }
-                }
-            }
-
-            if (!string.IsNullOrEmpty(levelUpMessage))
-            {
-                this.GameState.IsPaused = true;
-                var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
-                talkWindow.Show(levelUpMessage, () =>
-                {
-                    this.GameState.IsPaused = false;
-                });
-            }
+            this.GameState.StartFight(monsters);
         }
 
         private Biome GetCurrentBiome()
@@ -367,6 +354,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         }
 
         private readonly List<ICollidable> currentlyOverObjects = new List<ICollidable>();
+        private PartyStatusWindow statusWindow;
+        private GoldWindow goldWindow;
 
 
         public void OnTriggerEnter(Collider other, Collider local)

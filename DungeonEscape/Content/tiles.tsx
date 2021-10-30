@@ -112,37 +112,37 @@
     <image width="32" height="32" source="images/sprites/shrin.png" />
   </tile>
   <tile id="38">
-    <image width="32" height="32" source="images/sprites/ship1.png" />
-  </tile>
-  <tile id="39">
     <image width="32" height="32" source="images/sprites/tower.png" />
   </tile>
-  <tile id="40">
+  <tile id="39">
     <image width="32" height="32" source="images/sprites/castle.png" />
   </tile>
-  <tile id="41">
+  <tile id="40">
     <image width="32" height="32" source="images/sprites/cave.png" />
   </tile>
-  <tile id="42">
+  <tile id="41">
     <image width="32" height="32" source="images/sprites/town.png" />
   </tile>
-  <tile id="43">
+  <tile id="42">
     <image width="32" height="32" source="images/sprites/chest.png" />
   </tile>
-  <tile id="44">
+  <tile id="43">
     <image width="32" height="32" source="images/sprites/warp.png" />
   </tile>
-  <tile id="45">
+  <tile id="44">
     <image width="32" height="32" source="images/sprites/muchc.png" />
   </tile>
-  <tile id="46">
+  <tile id="45">
     <image width="32" height="32" source="images/sprites/healc.png" />
   </tile>
-  <tile id="47">
+  <tile id="46">
     <image width="32" height="32" source="images/sprites/wizc.png" />
   </tile>
-  <tile id="48">
+  <tile id="47">
     <image width="32" height="32" source="images/sprites/gard.png" />
+  </tile>
+  <tile id="48">
+    <image width="32" height="32" source="images/sprites/ship1.png" />
   </tile>
   <tile id="49">
     <image width="32" height="32" source="images/sprites/door.png" />

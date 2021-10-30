@@ -38,14 +38,16 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         public override bool OnAction(Party party)
         {
             this.gameState.IsPaused = true;
-
+            
+            var goldWindow = new GoldWindow(party, this.ui.Canvas);
+            goldWindow.ShowWindow();
             void Done()
             {
+                goldWindow.CloseWindow();
                 this.gameState.IsPaused = false;
-                Console.WriteLine("Done Store");
             }
 
-            var storeWindow = this.ui.Canvas.AddComponent(new StoreWindow(this.ui));
+            var storeWindow = new StoreWindow(this.ui);
             storeWindow.Show(action =>
             {
                 if (!action.HasValue)
@@ -54,10 +56,9 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                     return;
                 }
                 
-                Console.WriteLine($"Store: {action}");
                 if (action is StoreAction.Buy)
                 {
-                    var sellitems = this.ui.Canvas.AddComponent(new BuyItemsWindow(this.ui));
+                    var sellitems = new BuyItemsWindow(this.ui);
                     sellitems.Show(this.items, item =>
                     {
                         if (item == null)
@@ -65,18 +66,17 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                             Done();
                             return;
                         }
-
-                        Console.WriteLine($"Selected: {item.Name}");
+                        
                         if (this.gameState.Party.Items.Count >= Party.MaxItems)
                         {
-                            var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui, "No Space"));
+                            var talkWindow = new TalkWindow(this.ui, "No Space");
                             talkWindow.Show($"You do not have enough space in your inventory for {item.Name}", Done);
                         }
                         else
                         {
                             if (this.gameState.Party.Gold >= item.Gold)
                             {
-                                var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui, "Got Item"));
+                                var talkWindow = new TalkWindow(this.ui, "Got Item");
                                 talkWindow.Show($"You got the {item.Name}", Done);
                                 this.gameState.Party.Items.Add(new ItemInstance(item));
                                 this.gameState.Party.Gold -= item.Gold;
@@ -84,7 +84,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                             }
                             else
                             {
-                                var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui, "No Gold"));
+                                var talkWindow = new TalkWindow(this.ui, "No Gold");
                                 talkWindow.Show($"You do not have enough gold for the {item.Name}", Done);
                             }
                         }
@@ -94,12 +94,12 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 {
                     if (this.gameState.Party.Items.Count == 0)
                     {
-                        var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui, "No Items"));
+                        var talkWindow = new TalkWindow(this.ui, "No Items");
                         talkWindow.Show("You do not have any items that I would like to buy.", Done);
                         return;
                     }
 
-                    var inventoryWindow = this.ui.Canvas.AddComponent(new SellPartyItemsWindow(this.ui));
+                    var inventoryWindow = new SellPartyItemsWindow(this.ui);
                     inventoryWindow.Show(this.gameState.Party.Items, item =>
                     {
                         if (item == null)
@@ -108,7 +108,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                             return;
                         }
 
-                        var questionWindow = this.ui.Canvas.AddComponent(new QuestionWindow(this.ui));
+                        var questionWindow = new QuestionWindow(this.ui);
                         questionWindow.Show(
                             $"You can sell the {item.Name} to me for {(item.Gold * 3) / 4} gold",
                             result =>

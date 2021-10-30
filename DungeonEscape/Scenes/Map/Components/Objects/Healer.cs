@@ -20,13 +20,16 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         public override bool OnAction(Party party)
         {
             this.gameState.IsPaused = true;
-            var questionWindow = this.ui.Canvas.AddComponent(new QuestionWindow(this.ui));
+            var questionWindow = new QuestionWindow(this.ui);
+            var goldWindow = new GoldWindow(party, this.ui.Canvas);
+            goldWindow.ShowWindow();
             questionWindow.Show($"Would you like to be healed\nFor {this.cost} gold?", accepted =>
             {
                 if (accepted)
                 {
                     void Done()
                     {
+                        goldWindow.CloseWindow();
                         this.gameState.IsPaused = false;
                     }
 
@@ -39,12 +42,12 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                             partyMember.Magic = partyMember.MaxMagic;
                         }
                         
-                        var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                        var talkWindow = new TalkWindow(this.ui);
                         talkWindow.Show("Thank you come again!", Done);
                     }
                     else
                     {
-                        var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                        var talkWindow = new TalkWindow(this.ui);
                         talkWindow.Show($"You do not have {this.cost} gold", Done);
                     }
                 }

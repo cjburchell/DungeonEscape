@@ -14,8 +14,8 @@ namespace DungeonEscape.Scenes
             base.Initialize();
             
             this.ClearColor = Color.Black;
-            this.SetDesignResolution(MapScene.ScreenWidth * 32, MapScene.ScreenWidth * 32,
-                SceneResolutionPolicy.ShowAllPixelPerfect);
+            this.SetDesignResolution(MapScene.ScreenWidth * 32, MapScene.ScreenHeight * 32,
+                MapScene.SceneResolution);
 
             this.AddRenderer(new DefaultRenderer());
             var canvas = this.CreateEntity("ui-canvas").AddComponent(new UICanvas());

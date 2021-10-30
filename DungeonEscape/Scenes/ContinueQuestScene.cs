@@ -36,8 +36,8 @@ namespace DungeonEscape.Scenes
             base.Initialize();
             
             this.ClearColor = Color.Black;
-            this.SetDesignResolution(MapScene.ScreenWidth * 32, MapScene.ScreenWidth * 32,
-                SceneResolutionPolicy.ShowAllPixelPerfect);
+            this.SetDesignResolution(MapScene.ScreenWidth * 32, MapScene.ScreenHeight * 32,
+                MapScene.SceneResolution);
 
             this.AddRenderer(new DefaultRenderer());
             var canvas = this.CreateEntity("ui-canvas").AddComponent(new UICanvas());
@@ -73,12 +73,19 @@ namespace DungeonEscape.Scenes
             table.Add(backButton).SetPadTop(5).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).GetElement<TextButton>();
             backButton.OnClicked += _ =>
             {
-                Core.StartSceneTransition(new TransformTransition(() =>
+                if (game.InGame)
                 {
-                    var scene = new MainMenu();
-                    scene.Initialize();
-                    return scene;
-                }, TransformTransition.TransformTransitionType.SlideRight){Duration = 0.25f});
+                    game.ResumeGame();
+                }
+                else
+                {
+                    Core.StartSceneTransition(new TransformTransition(() =>
+                    {
+                        var scene = new MainMenu();
+                        scene.Initialize();
+                        return scene;
+                    }, TransformTransition.TransformTransitionType.SlideRight){Duration = 0.25f});
+                }
             };
         }
     }

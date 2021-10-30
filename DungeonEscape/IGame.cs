@@ -4,6 +4,8 @@ using Nez.Tiled;
 
 namespace DungeonEscape
 {
+    using Microsoft.Xna.Framework;
+
     public interface IGame
     {
         TmxMap GetMap(int mapId);
@@ -23,7 +25,15 @@ namespace DungeonEscape
         List<MapState> MapStates { get; }
 
         IEnumerable<GameSave> GameSaves { get; }
+        bool InGame { get; set; }    
+        
         IEnumerable<Spell> GetSpellList(IEnumerable<int> spells);
         void LoadGame(GameSave saveGame);
+        void ResumeGame();
+        void ShowMainMenu();
+        void SetMap(int? mapId = null, Point? point = null);
+        void ShowLoadQuest();
+
+        void StartFight(List<Monster> monsters);
     }
 }

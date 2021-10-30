@@ -24,6 +24,10 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly AstarGridGraph graph;
         private List<Point> path;
         private const float MoveSpeed = 75;
+        private int currentPathIndex;
+        protected readonly SpriteState spriteState;
+        private float elapsedTime;
+        private float nextElapsedTime = Random.NextInt(5) + 1;
 
         public static Sprite Create(TmxObject tmxObject, SpriteState state, TmxMap map, UISystem ui, IGame gameState, AstarGridGraph graph)
         {
@@ -45,6 +49,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         
         protected Sprite(TmxObject tmxObject, SpriteState state, TmxMap map, IGame gameState, AstarGridGraph graph)
         {
+            this.spriteState = state;
             this.graph = graph;
             this.tmxObject = tmxObject;
             this.map = map;
@@ -53,9 +58,6 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
            
         }
-
-        private float elapsedTime;
-        private float nextElapsedTime = Random.NextInt(5) + 1;
 
         public override void OnAddedToEntity()
         {
@@ -97,8 +99,6 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         {
             this.animator.SetEnabled(display);
         }
-        
-        private int currentPathIndex;
 
         void IUpdatable.Update()
         {
@@ -184,7 +184,6 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                     
                     var p2 = MapScene.ToRealLocation(this.path[this.currentPathIndex], this.map);
                     var angle = (float)Math.Atan2(p2.Y - p1.Y, p2.X - p1.X);
-                    //Console.WriteLine($"Moving Sprite {this.tmxObject.Name} from: {mapPoint} to: {this.path[this.currentPathIndex]} angle:{MathHelper.ToDegrees(angle)}");
                     var vector = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
                     var movement = vector * MoveSpeed * Time.DeltaTime;
                     this.mover.CalculateMovement(ref movement, out _);

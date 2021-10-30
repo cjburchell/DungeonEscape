@@ -29,7 +29,7 @@
         <property name="WarpMapY" type="int" value="4" />
       </properties>
     </object>
-    <object id="3" name="Chest" type="Chest" x="672" y="288" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="3" name="Chest" type="Chest" x="672" y="288" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />

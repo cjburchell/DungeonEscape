@@ -20,25 +20,25 @@
         <property name="WarpMapY" type="int" value="7" />
       </properties>
     </object>
-    <object id="2" name="Chest" type="Chest" x="384" y="320" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="2" name="Chest" type="Chest" x="384" y="320" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="3" name="Chest" type="Chest" x="384" y="352" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="3" name="Chest" type="Chest" x="384" y="352" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="4" name="Chest" type="Chest" x="384" y="384" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="4" name="Chest" type="Chest" x="384" y="384" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
       </properties>
     </object>
-    <object id="5" name="Key Chest" type="Chest" x="736" y="416" rotation="0" width="32" height="32" gid="44" visible="true">
+    <object id="5" name="Key Chest" type="Chest" x="736" y="416" rotation="0" width="32" height="32" gid="43" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />

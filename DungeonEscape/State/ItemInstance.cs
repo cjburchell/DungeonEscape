@@ -18,6 +18,7 @@ namespace DungeonEscape.State
             this.ItemId = item.Id;
         }
 
+        // ReSharper disable once UnusedMember.Global
         public ItemInstance()
         {
         }

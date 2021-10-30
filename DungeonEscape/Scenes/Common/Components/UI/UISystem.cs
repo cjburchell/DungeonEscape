@@ -4,12 +4,13 @@
 
     public class UISystem
     {
-        public UISystem(UICanvas canvas)
+        public UISystem(UICanvas canvas, bool noInput = false)
         {
             this.Canvas = canvas;
-            this.Input = canvas.AddComponent(new WindowInput());
-            canvas.SetRenderLayer(999);
-            canvas.Stage.GamepadActionButton = null;
+            if (!noInput)
+            {
+                this.Input = canvas.AddComponent(new WindowInput());
+            }
         }
 
         public UICanvas Canvas { get;  }

@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 namespace DungeonEscape
 {
     using System.Linq;
+    using Scenes.Fight;
 
     public class DungeonEscapeGame : Core, IGame
     {
@@ -46,18 +47,18 @@ namespace DungeonEscape
             {
                 if (value)
                 {
-                    this.isPaused = value;
+                    this.isPaused = true;
                 }
                 
                 this.deferredPause = value;
-                
-                Console.WriteLine($"Paused {value}");
             }
         }
         
         private GameSave[] saveSlots;
 
         public IEnumerable<GameSave> GameSaves => this.saveSlots;
+        public bool InGame { get; set; }
+
         public IEnumerable<Spell> GetSpellList(IEnumerable<int> spells)
         {
             return spells.Select(spellId => this.Spells.FirstOrDefault(item => item.Id == spellId)).Where(spell => spell != null);
@@ -72,7 +73,59 @@ namespace DungeonEscape
                 partyItem.UpdateItem(this.Items);
             }
 
-            MapScene.SetMap(this, this.Party.SavedMapId, this.Party.SavedPoint);
+            this.InGame = true;
+            this.SetMap(this.Party.SavedMapId, this.Party.SavedPoint);
+        }
+
+        public void ResumeGame()
+        {
+            this.SetMap(this.Party.CurrentMapId, this.Party.CurrentPosition);
+        }
+
+        public void ShowMainMenu()
+        {
+            StartSceneTransition(new FadeTransition(() =>
+            {
+                this.InGame = false;
+                var splash = new MainMenu();
+                splash.Initialize();
+                return splash;
+            }));
+        }
+
+        public void SetMap(int? mapId, Point? point)
+        {
+            mapId ??= 0;
+            this.IsPaused = true;
+            var map = new MapScene(this, mapId.Value, point);
+            var transition = new FadeTransition(() =>
+            {
+                map.Initialize();
+                return map;
+            });
+            transition.OnTransitionCompleted += () => { this.IsPaused = false; };
+
+            StartSceneTransition(transition);
+        }
+
+        public void ShowLoadQuest()
+        {
+            StartSceneTransition(new FadeTransition(() =>
+            {
+                var splash = new ContinueQuestScene();
+                splash.Initialize();
+                return splash;
+            }));
+        }
+
+        public void StartFight(List<Monster> monsters)
+        {
+            StartSceneTransition(new FadeTransition(() =>
+            {
+                var splash = new FightScene(this, monsters);
+                splash.Initialize();
+                return splash;
+            }));
         }
 
         public List<Item> Items { get; } = new List<Item>();
@@ -90,10 +143,10 @@ namespace DungeonEscape
             ExitOnEscapeKeypress = false;
             PauseOnFocusLost = false;
 
-            this.saveSlots = LoadSaveGames(saveFile);
+            this.saveSlots = this.LoadSaveGames(saveFile);
             
-            var tileset = LoadTileSet($"Content/items.tsx");
-            foreach (var (_, tile) in tileset.Tiles)
+            var tileSet = LoadTileSet($"Content/items.tsx");
+            foreach (var (_, tile) in tileSet.Tiles)
             {
                 this.Items.Add(new Item(tile));
             }
@@ -140,10 +193,10 @@ namespace DungeonEscape
             }
             
             using var stream = TitleContainer.OpenStream(path);
-            var xDocTileset = XDocument.Load(stream);
+            var xDocTileSet = XDocument.Load(stream);
 
             var tsxDir = Path.GetDirectoryName(path);
-            var tileSet = new TmxTileset().LoadTmxTileset(null, xDocTileset.Element("tileset"), 0, tsxDir);
+            var tileSet = new TmxTileset().LoadTmxTileset(null, xDocTileSet.Element("tileset"), 0, tsxDir);
             tileSet.TmxDirectory = tsxDir;
 
             return tileSet;

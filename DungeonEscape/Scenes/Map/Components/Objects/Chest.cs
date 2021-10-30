@@ -77,21 +77,21 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             if (this.isOpen)
             {
-                var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                var talkWindow =new TalkWindow(this.ui);
                 talkWindow.Show("You found nothing", Done);
                 return true;
             }
 
             if (!party.CanOpenChest(this.level))
             {
-                var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                var talkWindow = new TalkWindow(this.ui);
                 talkWindow.Show("Unable to open chest", Done);
                 return true;
             }
             
             if (this.item.Type == ItemType.Gold)
             {
-                var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                var talkWindow = new TalkWindow(this.ui);
                 talkWindow.Show($"You found {this.item.Gold} Gold", Done);
                 party.Gold += this.item.Gold;
             }
@@ -99,13 +99,13 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             {
                 if (party.Items.Count >= Party.MaxItems)
                 {
-                    var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                    var talkWindow = new TalkWindow(this.ui);
                     talkWindow.Show($"You do not have enough space in your inventory for {this.item.Name}", Done);
                     return true;
                 }
                 else
                 {
-                    var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                    var talkWindow = new TalkWindow(this.ui);
                     talkWindow.Show($"You found a {this.item.Name}", Done);
                     party.Items.Add(new ItemInstance(this.item));
                 }

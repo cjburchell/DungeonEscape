@@ -23,12 +23,12 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         public override bool OnAction(Party party)
         {
             this.gameState.IsPaused = true;
-            var questionWindow = this.ui.Canvas.AddComponent(new QuestionWindow(this.ui));
+            var questionWindow = new QuestionWindow(this.ui);
             questionWindow.Show("Would you like me to record your deeds?", accepted =>
             {
                 if (accepted)
                 {
-                    var saveWindow = this.ui.Canvas.AddComponent(new SaveWindow(this.ui));
+                    var saveWindow = new SaveWindow(this.ui);
                     saveWindow.Show(this.gameState.GameSaves, save =>
                         {
                             if (save == null)
@@ -43,7 +43,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                             save.MapStates = this.gameState.MapStates;
                             save.Time = DateTime.Now;
                             this.gameState.Save();
-                            var talkWindow = this.ui.Canvas.AddComponent(new TalkWindow(this.ui));
+                            var talkWindow = new TalkWindow(this.ui);
                             talkWindow.Show($"It has been recorded\nYou have {party.Members.First().NextLevel} xp\nto the next level",
                                 () =>
                                 {

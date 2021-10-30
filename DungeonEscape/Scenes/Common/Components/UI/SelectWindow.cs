@@ -21,14 +21,14 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             this.scrollPane = new ScrollPane(this.list, Skin) {FillParent = true};
         }
 
-        public override void CloseWindow()
+        public override void CloseWindow(bool remove = true)
         {
-            this.CloseWindow(null);
+            this.CloseWindow(null, remove);
         }
 
-        private void CloseWindow(T result)
+        private void CloseWindow(T result, bool remove = true)
         {
-            base.CloseWindow();
+            base.CloseWindow(remove);
             this.done?.Invoke(result);
         }
         
@@ -55,7 +55,6 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 
             this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count * ButtonHeight, 400));
             this.scrollPane.Validate();
-            this.ShowWindow();
         }
 
         public override void DoAction()
@@ -74,6 +73,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         {
             this.done = doneAction;
             this.items = items;
+            this.ShowWindow();
         }
     }
 }

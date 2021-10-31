@@ -8,7 +8,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 
     public class SpellWindow : SelectWindow<Spell>
     {
-        public SpellWindow(UISystem ui) : base(ui, "Spells", new Point(30, 30), 250)
+        public SpellWindow(UISystem ui) : base(ui, "Spells", new Point(20, 20), 250)
         {
         }
         

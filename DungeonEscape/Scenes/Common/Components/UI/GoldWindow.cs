@@ -10,7 +10,13 @@
         private readonly Party party;
         private Label goldLabel;
 
-        public GoldWindow(Party party, UICanvas canvas) : base(new UISystem(canvas, true), "Gold", new Point((MapScene.ScreenWidth * 32) - 155, (MapScene.ScreenHeight * 32) - 55), 150, 50, false)
+        public GoldWindow(Party party, UICanvas canvas) : this(party, canvas,
+            new Point((MapScene.ScreenWidth) - 155, (MapScene.ScreenHeight) - 55))
+        {
+        }
+
+        public GoldWindow(Party party, UICanvas canvas, Point position) : base(new UISystem(canvas, true), "Gold",
+            position, 150, 50, false)
         {
             this.party = party;
         }

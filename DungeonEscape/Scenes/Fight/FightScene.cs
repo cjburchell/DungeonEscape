@@ -25,7 +25,7 @@
             base.Initialize();
 
             this.ClearColor = Color.Black;
-            this.SetDesignResolution(MapScene.ScreenWidth * 32, MapScene.ScreenHeight * 32,
+            this.SetDesignResolution(MapScene.ScreenWidth, MapScene.ScreenHeight,
                 MapScene.SceneResolution);
 
             this.AddRenderer(new DefaultRenderer());
@@ -51,7 +51,7 @@
         {
             if (this.game.Party.Members.Count(member => !member.IsDead) == 0)
             {
-                var talkWindow = new TalkWindow(this.ui, "End Fight", new Point(10, ((MapScene.ScreenHeight * 32) / 3) * 2), MapScene.ScreenWidth * 32 - 20, ((MapScene.ScreenHeight * 32) / 3) - 10);
+                var talkWindow = new TalkWindow(this.ui, "End Fight");
                 talkWindow.Show("Everyone has died!", this.game.ShowMainMenu);
             }
             else
@@ -76,7 +76,7 @@
                         }
                 }
 
-                var talkWindow = new TalkWindow(this.ui, "End Fight", new Point(10, ((MapScene.ScreenHeight * 32) / 3) * 2), MapScene.ScreenWidth * 32 - 20, ((MapScene.ScreenHeight * 32) / 3) - 10);
+                var talkWindow = new TalkWindow(this.ui, "End Fight");
                 talkWindow.Show(levelUpMessage, this.game.ResumeGame);
             }
         }

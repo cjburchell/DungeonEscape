@@ -5,8 +5,8 @@
         public override void Initialize()
         {
             base.Initialize();
-            this.SetDesignResolution(MapScene.ScreenWidth * 32, MapScene.ScreenHeight * 32, MapScene.SceneResolution);
-            Nez.Screen.SetSize(MapScene.ScreenWidth * 32, MapScene.ScreenHeight * 32);
+            this.SetDesignResolution(MapScene.ScreenWidth , MapScene.ScreenHeight, MapScene.SceneResolution);
+            Nez.Screen.SetSize(MapScene.ScreenWidth, MapScene.ScreenHeight);
         }
     }
 }

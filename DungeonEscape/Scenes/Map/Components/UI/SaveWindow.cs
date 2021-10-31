@@ -7,7 +7,7 @@ namespace DungeonEscape.Scenes.Map.Components.UI
 {
     public class SaveWindow: SelectWindow<GameSave>
     {
-        public SaveWindow(UISystem ui) : base(ui, "Save", new Point(30, 30), 300)
+        public SaveWindow(UISystem ui) : base(ui, "Save", new Point(20, 20), 300)
         {
         }
         

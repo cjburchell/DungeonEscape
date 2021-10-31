@@ -8,6 +8,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
     using System.Collections.Generic;
     using System.Linq;
     using Common.Components.UI;
+    using Microsoft.Xna.Framework;
     using Nez;
     using UI;
     using Random = Nez.Random;
@@ -39,7 +40,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         {
             this.gameState.IsPaused = true;
             
-            var goldWindow = new GoldWindow(party, this.ui.Canvas);
+            var goldWindow = new GoldWindow(party, this.ui.Canvas, new Point((MapScene.ScreenWidth) - 155, MapScene.ScreenHeight / 3 * 2 - 55));
             goldWindow.ShowWindow();
             void Done()
             {

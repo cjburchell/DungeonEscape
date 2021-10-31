@@ -159,7 +159,7 @@ namespace DungeonEscape
 
             DebugRenderEnabled = false;
             Window.AllowUserResizing = true;
-            Screen.SetSize(MapScene.ScreenWidth * 32, MapScene.ScreenHeight * 32);
+            Screen.SetSize(MapScene.ScreenWidth, MapScene.ScreenHeight);
             Scene = new EmptyScene();
             StartSceneTransition(new FadeTransition(() =>
             {

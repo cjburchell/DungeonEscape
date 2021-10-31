@@ -14,7 +14,7 @@ namespace DungeonEscape.Scenes.Map.Components.UI
         private Hero hero;
 
         public HeroStatusWindow(UISystem ui) : base(ui, "Hero Status",
-            new Point(30, 30), 220, 250)
+            new Point(20, 20), 220, 250)
         {
         }
 

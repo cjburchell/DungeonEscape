@@ -5,6 +5,7 @@ using Nez.Tiled;
 
 namespace DungeonEscape.Scenes.Map.Components.Objects
 {
+    using Microsoft.Xna.Framework;
     using Nez;
 
     public class KeyStore : Sprite
@@ -25,7 +26,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         {
             this.gameState.IsPaused = true;
             var questionWindow = new QuestionWindow(this.ui);
-            var goldWindow = new GoldWindow(party, this.ui.Canvas);
+            var goldWindow = new GoldWindow(party, this.ui.Canvas, new Point((MapScene.ScreenWidth) - 155, MapScene.ScreenHeight / 3 * 2 - 55));
             goldWindow.ShowWindow();
             questionWindow.Show($"Would you like to buy a key\nFor {this.key.Gold} gold?", accepted =>
             {

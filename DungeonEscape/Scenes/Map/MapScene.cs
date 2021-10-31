@@ -19,9 +19,14 @@ namespace DungeonEscape.Scenes
     public class MapScene : Nez.Scene
     {
         private const int ScreenSpaceRenderLayer = 999;
-        public const int ScreenWidth = 16;
-        public const int ScreenHeight = 15;
-        public const SceneResolutionPolicy SceneResolution = SceneResolutionPolicy.ShowAllPixelPerfect;
+        
+        public const int DefaultTileSize = 32;
+        public const int ScreenTileWidth = 16;
+        public const int ScreenTileHeight = 15;
+        public const int ScreenWidth = ScreenTileWidth * DefaultTileSize;
+        public const int ScreenHeight = ScreenTileHeight * DefaultTileSize;
+        public const SceneResolutionPolicy SceneResolution = SceneResolutionPolicy.ShowAll;
+        
         private readonly int mapId;
         private readonly Point? start;
         private readonly IGame gameState;
@@ -83,7 +88,7 @@ namespace DungeonEscape.Scenes
             base.Initialize();
             
             var map = this.gameState.GetMap(this.mapId);
-            this.SetDesignResolution(ScreenWidth * map.TileWidth, ScreenHeight * map.TileHeight,
+            this.SetDesignResolution(ScreenTileWidth * map.TileWidth, ScreenTileHeight * map.TileHeight,
                 SceneResolution);
 
 
@@ -241,7 +246,7 @@ namespace DungeonEscape.Scenes
             {
                 this.ui.Input.HandledHide = true;
                 this.gameState.IsPaused = true;
-                var commandMenu = new SelectWindow<string>(this.ui, "menu", new Point(30,30), 200);
+                var commandMenu = new SelectWindow<string>(this.ui, "menu", new Point(20,20), 200);
                 commandMenu.Show(new []{"Main Menu", "Load Quest", "Quit"}, result =>
                 {
                     switch (result)
@@ -290,7 +295,6 @@ namespace DungeonEscape.Scenes
 
         private void CastSpell(Hero caster, Spell spell, Action done)
         {
-            
             if (caster.Magic < spell.Cost)
             {
                 var talkWindow = new TalkWindow(this.ui);
@@ -298,15 +302,16 @@ namespace DungeonEscape.Scenes
                 return;
             }
 
-            if (spell.Type == SpellType.Heal)
+            switch (spell.Type)
             {
-                if (this.gameState.Party.Members.Count == 1)
+                case SpellType.Heal when this.gameState.Party.Members.Count == 1:
                 {
                     var result = Spell.CastHeal(this.gameState.Party.Members.First(), caster, spell);
                     var talkWindow = new TalkWindow(this.ui);
                     talkWindow.Show(result, done);
+                    break;
                 }
-                else
+                case SpellType.Heal:
                 {
                     var selectWindow = new SelectHeroWindow(this.ui);
                     selectWindow.Show(this.gameState.Party.Members.Where(item => item.Spells.Count != 0), hero =>
@@ -321,17 +326,16 @@ namespace DungeonEscape.Scenes
                             talkWindow.Show(Spell.CastHeal(hero, caster, spell), done);
                         }
                     });
+                    break;
                 }
-            }
-            if (spell.Type == SpellType.Revive)
-            {
-                if (this.gameState.Party.Members.Count == 1)
+                case SpellType.Revive when this.gameState.Party.Members.Count == 1:
                 {
                     var result = Spell.CastRevive(this.gameState.Party.Members.First(), caster, spell);
                     var talkWindow = new TalkWindow(this.ui);
                     talkWindow.Show(result, done);
+                    break;
                 }
-                else
+                case SpellType.Revive:
                 {
                     var selectWindow = new SelectHeroWindow(this.ui);
                     selectWindow.Show(this.gameState.Party.Members.Where(item => item.Spells.Count != 0), hero =>
@@ -346,41 +350,47 @@ namespace DungeonEscape.Scenes
                             talkWindow.Show(Spell.CastHeal(hero, caster, spell), done);
                         }
                     });
+                    break;
                 }
-            }
-            else if (spell.Type == SpellType.Outside)
-            {
-                var result = Spell.CastOutside(caster, spell, this.gameState);
-                if (string.IsNullOrEmpty(result))
+                case SpellType.Outside:
                 {
-                    done();
+                    var result = Spell.CastOutside(caster, spell, this.gameState);
+                    if (string.IsNullOrEmpty(result))
+                    {
+                        done();
+                    }
+                    else
+                    {
+                        var talkWindow = new TalkWindow(this.ui);
+                        talkWindow.Show(result, done);
+                    }
+
+                    break;
                 }
-                else
+                case SpellType.Return:
+                {
+                    var result = Spell.CastReturn(caster, spell, this.gameState);
+                    if (string.IsNullOrEmpty(result))
+                    {
+                        done();
+                    }
+                    else
+                    {
+                        var talkWindow = new TalkWindow(this.ui);
+                        talkWindow.Show(result, done);
+                    }
+
+                    break;
+                }
+                default:
                 {
                     var talkWindow = new TalkWindow(this.ui);
-                    talkWindow.Show(result, done);
+                    talkWindow.Show($"{caster.Name} casts {spell.Name} but it did not work", done);
+                    break;
                 }
-            }
-            else if (spell.Type == SpellType.Return)
-            {
-                var result = Spell.CastReturn(caster, spell, this.gameState);
-                if (string.IsNullOrEmpty(result))
-                {
-                    done();
-                }
-                else
-                {
-                    var talkWindow = new TalkWindow(this.ui);
-                    talkWindow.Show(result, done);
-                }
-            }
-            else
-            {
-                var talkWindow = new TalkWindow(this.ui);
-                talkWindow.Show($"{caster.Name} casts {spell.Name} but it did not work", done);
             }
         }
-        
+
         private void ShowSpell(Action done)
         {
             if (this.gameState.Party.Members.Count == 1)
@@ -449,28 +459,50 @@ namespace DungeonEscape.Scenes
                     }
                     menuItems.Add("Drop");
                     
-                    var selectWindow = new SelectWindow<string>(this.ui, "Select", new Point(30, 30));
+                    var selectWindow = new SelectWindow<string>(this.ui, "Select", new Point(20, 20));
                     selectWindow.Show(menuItems, action =>
                     {
                         switch (action)
                         {
                             case "Equip":
                             case "Use":
-                                var selectHero = new SelectHeroWindow(this.ui);
-                                selectHero.Show(this.gameState.Party.Members.Where(hero => hero.CanUseItem(item)),
-                                    hero =>
+                                if (this.gameState.Party.Members.Count == 1)
+                                {
+                                    var result = this.UseItem(this.gameState.Party.Members.First(), item, this.gameState.Party);
+                                    if (string.IsNullOrEmpty(result))
                                     {
-                                        var result = this.UseItem(hero, item, this.gameState.Party);
-                                        if (string.IsNullOrEmpty(result))
+                                        done();
+                                    }
+                                    else
+                                    {
+                                        var talkWindow = new TalkWindow(this.ui);
+                                        talkWindow.Show(result, done);
+                                    }
+                                }
+                                else
+                                {
+                                    var selectHero = new SelectHeroWindow(this.ui);
+                                    selectHero.Show(this.gameState.Party.Members.Where(hero => hero.CanUseItem(item)),
+                                        hero =>
                                         {
-                                            done();
-                                        }
-                                        else
-                                        {
-                                            var talkWindow = new TalkWindow(this.ui);
-                                            talkWindow.Show(result, done);
-                                        }
-                                    });
+                                            if (hero == null)
+                                            {
+                                                done();
+                                                return;
+                                            }
+                                        
+                                            var result = this.UseItem(hero, item, this.gameState.Party);
+                                            if (string.IsNullOrEmpty(result))
+                                            {
+                                                done();
+                                            }
+                                            else
+                                            {
+                                                var talkWindow = new TalkWindow(this.ui);
+                                                talkWindow.Show(result, done);
+                                            }
+                                        });
+                                }
                                 break;
                             case "Drop":
                             {

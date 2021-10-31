@@ -6,7 +6,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 {
     public class InventoryWindow : SelectWindow<ItemInstance>
     {
-        public InventoryWindow(UISystem ui) : base(ui, "Inventory", new Point(30, 30), 250)
+        public InventoryWindow(UISystem ui) : base(ui, "Inventory", new Point(20, 20), 250)
         {
         }
         

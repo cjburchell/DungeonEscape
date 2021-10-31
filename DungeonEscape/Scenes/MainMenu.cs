@@ -13,7 +13,7 @@ namespace DungeonEscape.Scenes
         public override void Initialize()
         {
             this.ClearColor = Color.Black;
-            this.SetDesignResolution(MapScene.ScreenWidth * 32, MapScene.ScreenHeight * 32,
+            this.SetDesignResolution(MapScene.ScreenWidth, MapScene.ScreenHeight,
                 MapScene.SceneResolution);
 
             this.AddRenderer(new DefaultRenderer());

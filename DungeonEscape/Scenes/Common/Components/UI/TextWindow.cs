@@ -15,7 +15,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         private Action<string> done;
         private int textIndex;
 
-        protected TextWindow(UISystem ui,string title, Point position, int width = 472, int height = 150) : base(ui, title, position, width, height)
+        protected TextWindow(UISystem ui,string title, Point position, int width = MapScene.ScreenWidth - 20, int height = (MapScene.ScreenHeight) / 3 - 10) : base(ui, title, position, width, height)
         {
         }
         
@@ -75,6 +75,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
                 {
                     UserData = buttonText,
                 };
+                buttonControl.UserData = text;
                 this.AddButton(buttonControl);
                 this.buttonTable.Add(buttonControl).Height(ButtonHeight).Width(ButtonWidth).SetPadRight(3).SetPadLeft(3);
             }

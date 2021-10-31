@@ -72,7 +72,7 @@
     </properties>
   </tile>
   <tile id="111" type="Draco">
-    <image width="32" height="32" source="images/monsters/defalt.png" />
+    <image width="32" height="32" source="images/monsters/draco.png" />
     <properties>
       <property name="Biome" type="string" value="All" />
       <property name="Health" type="int" value="4" />

@@ -15,7 +15,7 @@
 2    0    9    5      gob.bmp     Goblin          5    1 0 0 1 0
 4    2    11   125    draco.bmp   Draco           50   1 0 0 1 0
 5    0    12   125    ant.bmp     GiantAnt        50   1 0 0 1 0
-3    2    13   50     defalt.bmp  MountainLion    35   1 0 0 1 0
-5    0    25   175    defalt.bmp  Lion            70   1 0 0 1 0
+3    2    13   50     mountainlion.bmp  MountainLion    35   1 0 0 1 0
+5    0    25   175    lion.bmp  Lion            70   1 0 0 1 0
 10   100  100  2300   dblue.bmp   BlueDragon      2000 3 0 0 1 8
 60   0    300  35750  dlav.bmp    DesertLeviathan 3000 3 0 0 1 0

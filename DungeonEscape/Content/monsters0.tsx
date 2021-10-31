@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Monsters 0" tilewidth="96" tileheight="96" tilecount="40" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
+<tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Monsters 0" tilewidth="96" tileheight="96" tilecount="46" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
   <tile id="1" type="GiantCentipede">
     <image width="64" height="64" source="images/monsters/peed.png" />
     <properties>
@@ -128,7 +128,7 @@
     </properties>
   </tile>
   <tile id="10" type="Panther">
-    <image width="32" height="32" source="images/monsters/defalt.png" />
+    <image width="32" height="32" source="images/monsters/panther.png" />
     <properties>
       <property name="Biome" type="string" value="Grassland" />
       <property name="Health" type="int" value="4" />
@@ -228,7 +228,7 @@
     </properties>
   </tile>
   <tile id="17" type="SeaSerpent">
-    <image width="32" height="32" source="images/monsters/defalt.png" />
+    <image width="32" height="32" source="images/monsters/seaserpent.png" />
     <properties>
       <property name="Biome" type="string" value="Water" />
       <property name="Health" type="int" value="6" />
@@ -284,7 +284,7 @@
     </properties>
   </tile>
   <tile id="21" type="SeaDragon">
-    <image width="32" height="32" source="images/monsters/defalt.png" />
+    <image width="32" height="32" source="images/monsters/seadragon.png" />
     <properties>
       <property name="Biome" type="string" value="Water" />
       <property name="Health" type="int" value="8" />
@@ -483,7 +483,7 @@
     </properties>
   </tile>
   <tile id="35" type="MountainLion">
-    <image width="32" height="32" source="images/monsters/defalt.png" />
+    <image width="32" height="32" source="images/monsters/mountainlion.png" />
     <properties>
       <property name="Biome" type="string" value="Desert" />
       <property name="Health" type="int" value="3" />
@@ -497,7 +497,7 @@
     </properties>
   </tile>
   <tile id="36" type="Lion">
-    <image width="32" height="32" source="images/monsters/defalt.png" />
+    <image width="32" height="32" source="images/monsters/lion.png" />
     <properties>
       <property name="Biome" type="string" value="Desert" />
       <property name="Health" type="int" value="5" />
@@ -667,7 +667,7 @@
     </properties>
   </tile>
   <tile id="48" type="Panther">
-    <image width="32" height="32" source="images/monsters/defalt.png" />
+    <image width="32" height="32" source="images/monsters/panther.png" />
     <properties>
       <property name="Biome" type="string" value="Hills" />
       <property name="Health" type="int" value="4" />
@@ -850,7 +850,7 @@
     </properties>
   </tile>
   <tile id="61" type="OwlBear">
-    <image width="32" height="32" source="images/monsters/defalt.png" />
+    <image width="32" height="32" source="images/monsters/owl.png" />
     <properties>
       <property name="Biome" type="string" value="Forest" />
       <property name="Health" type="int" value="5" />
@@ -864,7 +864,7 @@
     </properties>
   </tile>
   <tile id="62" type="Lion">
-    <image width="32" height="32" source="images/monsters/defalt.png" />
+    <image width="32" height="32" source="images/monsters/lion.png" />
     <properties>
       <property name="Biome" type="string" value="Forest" />
       <property name="Health" type="int" value="5" />
@@ -892,7 +892,7 @@
     </properties>
   </tile>
   <tile id="64" type="Tiger">
-    <image width="32" height="32" source="images/monsters/defalt.png" />
+    <image width="32" height="32" source="images/monsters/tiger.png" />
     <properties>
       <property name="Biome" type="string" value="Forest" />
       <property name="Health" type="int" value="6" />
@@ -1048,7 +1048,7 @@
     </properties>
   </tile>
   <tile id="75" type="Panther">
-    <image width="32" height="32" source="images/monsters/defalt.png" />
+    <image width="32" height="32" source="images/monsters/panther.png" />
     <properties>
       <property name="Biome" type="string" value="Swamp" />
       <property name="Health" type="int" value="4" />

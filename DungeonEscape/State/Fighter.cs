@@ -10,5 +10,7 @@
         int Agility { get; }
         bool IsDead { get; }
         int Level { get; }
+        int MaxHealth { get; }
+        bool RanAway { get; }
     }
 }

@@ -1,34 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
-using DungeonEscape.Scenes;
 using Nez.Tiled;
 using Random = Nez.Random;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DungeonEscape.State
 {
-    using System.Runtime.CompilerServices;
-
-
     public enum SpellType
     {
-        Heal = 0,
-        Outside = 1,
-        Fireball = 2,
-        Lighting =  3,
-        Return = 4,
-        Antidote = 5,
-        Revive = 6,
-        Open = 7
+        Heal,
+        Outside,
+        Fireball,
+        Lighting,
+        Return,
+        Revive
     }
 
     public class Spell
     {
-        public static string CastHeal(Hero target, Hero caster, Spell spell)
+        public string Cast(Fighter target, Fighter caster, IGame game)
         {
-            caster.Magic -= spell.Cost;
+            if (caster.Magic < this.Cost)
+            {
+                return $"{caster.Name}: I do not have enough magic to cast {this.Name}.";
+            }
+            
+            switch (this.Type)
+            {
+                case SpellType.Heal:
+                    return this.CastHeal(target, caster);
+                case SpellType.Outside:
+                    return this.CastOutside(caster as Hero, game);
+                case SpellType.Fireball:
+                    return this.CastFireball(target, caster);
+                case SpellType.Lighting:
+                    return this.CastFireball(target, caster);
+                case SpellType.Return:
+                    return this.CastReturn(caster as Hero, game);
+                case SpellType.Revive:
+                    return this.CastRevive(target, caster);
+                default:
+                    return $"{caster.Name} casts {this.Name} but it did not work";
+            }
+        }
+
+        private string CastFireball(Fighter target, Fighter caster)
+        {
+            // TODO: Cast Fireball/Lighting
+            return $"{caster.Name} casts {this.Name} but it did not work";
+        }
+
+        private string CastHeal(Fighter target, Fighter caster)
+        {
+            caster.Magic -= this.Cost;
             var oldHeath = target.Health;
-            if (spell.Power >= 3)
+            if (this.Power >= 3)
             {
                 target.Health = target.MaxHealth;
             }
@@ -41,47 +67,47 @@ namespace DungeonEscape.State
                 }
             }
 
-            return $"{caster.Name} casts {spell.Name} on {caster.Name} who gains {target.Health - oldHeath} health";
+            return $"{caster.Name} casts {this.Name} on {caster.Name} who gains {target.Health - oldHeath} health";
         }
         
-        public static string CastRevive(Hero target, Hero caster, Spell spell)
+        public string CastRevive(Fighter target, Fighter caster)
         {
-            caster.Magic -= spell.Cost;
+            caster.Magic -= this.Cost;
             target.Health = 1;
-            return $"{caster.Name} casts {spell.Name} on {caster.Name}";
+            return $"{caster.Name} casts {this.Name} on {caster.Name}";
         }
 
-        public static string CastOutside(Hero caster, Spell spell, IGame gameState)
+        public string CastOutside(Hero caster, IGame gameState)
         {
             if (gameState.Party.CurrentMapId == 0)
             {
-                return $"{caster.Name} casts {spell.Name} but you are already outside";
+                return $"{caster.Name} casts {this.Name} but you are already outside";
             }
 
-            caster.Magic -= spell.Cost;
+            caster.Magic -= this.Cost;
             gameState.SetMap();
             return null;
         }
         
-        public static string CastReturn(Hero caster, Spell spell, IGame gameState)
+        public string CastReturn(Hero caster, IGame gameState)
         {
             if (gameState.Party.CurrentMapId != 0)
             {
-                return $"{caster.Name} casts {spell.Name} but you are not outside";
+                return $"{caster.Name} casts {this.Name} but you are not outside";
             }
             
             if (!gameState.Party.SavedMapId.HasValue)
             {
-                return $"{caster.Name} casts {spell.Name} but you have never saved your game";
+                return $"{caster.Name} casts {this.Name} but you have never saved your game";
             }
 
-            caster.Magic -= spell.Cost;
+            caster.Magic -= this.Cost;
             gameState.SetMap(gameState.Party.SavedMapId, gameState.Party.SavedPoint);
             return null;
         }
         
-        private static readonly List<SpellType> encounterSpells = new List<SpellType> {SpellType.Heal, SpellType.Fireball, SpellType.Lighting, SpellType.Antidote, SpellType.Revive };
-        private static readonly List<SpellType> nonEncounterSpells = new List<SpellType> {SpellType.Heal, SpellType.Outside, SpellType.Return, SpellType.Antidote, SpellType.Revive, SpellType.Open};
+        private static readonly List<SpellType> encounterSpells = new List<SpellType> {SpellType.Heal, SpellType.Fireball, SpellType.Lighting, SpellType.Revive };
+        private static readonly List<SpellType> nonEncounterSpells = new List<SpellType> {SpellType.Heal, SpellType.Outside, SpellType.Return, SpellType.Revive };
         
         public override string ToString()
         {
@@ -89,7 +115,7 @@ namespace DungeonEscape.State
         }
         
 
-        private TmxTilesetTile tile;
+        private readonly TmxTilesetTile tile;
         public int Id => this.tile.Id;
         
         public Spell(TmxTilesetTile tile)

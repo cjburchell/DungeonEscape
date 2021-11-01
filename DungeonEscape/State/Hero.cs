@@ -18,6 +18,7 @@ namespace DungeonEscape.State
         public int XP { get; set; }
         public int Health { get; set; }
         public int MaxHealth { get; set; }
+        public bool RanAway => false;
         public int Magic { get; set; }
         public int MaxMagic { get; set; }
         public int Attack { get; set; }

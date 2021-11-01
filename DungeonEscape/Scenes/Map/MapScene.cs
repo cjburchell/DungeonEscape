@@ -295,18 +295,11 @@ namespace DungeonEscape.Scenes
 
         private void CastSpell(Hero caster, Spell spell, Action done)
         {
-            if (caster.Magic < spell.Cost)
-            {
-                var talkWindow = new TalkWindow(this.ui);
-                talkWindow.Show($"{caster.Name}: I do not have enough magic to cast {spell.Name}.", done);
-                return;
-            }
-
             switch (spell.Type)
             {
                 case SpellType.Heal when this.gameState.Party.Members.Count == 1:
                 {
-                    var result = Spell.CastHeal(this.gameState.Party.Members.First(), caster, spell);
+                    var result = spell.Cast(this.gameState.Party.Members.First(), caster, this.gameState);
                     var talkWindow = new TalkWindow(this.ui);
                     talkWindow.Show(result, done);
                     break;
@@ -314,78 +307,50 @@ namespace DungeonEscape.Scenes
                 case SpellType.Heal:
                 {
                     var selectWindow = new SelectHeroWindow(this.ui);
-                    selectWindow.Show(this.gameState.Party.Members.Where(item => item.Spells.Count != 0), hero =>
+                    selectWindow.Show(this.gameState.Party.Members.Where(item => !item.IsDead), target =>
                     {
-                        if (hero == null)
+                        if (target == null)
                         {
                             done();
                         }
                         else
                         {
                             var talkWindow = new TalkWindow(this.ui);
-                            talkWindow.Show(Spell.CastHeal(hero, caster, spell), done);
+                            talkWindow.Show(spell.Cast(target, caster, this.gameState), done);
                         }
                     });
-                    break;
-                }
-                case SpellType.Revive when this.gameState.Party.Members.Count == 1:
-                {
-                    var result = Spell.CastRevive(this.gameState.Party.Members.First(), caster, spell);
-                    var talkWindow = new TalkWindow(this.ui);
-                    talkWindow.Show(result, done);
                     break;
                 }
                 case SpellType.Revive:
                 {
                     var selectWindow = new SelectHeroWindow(this.ui);
-                    selectWindow.Show(this.gameState.Party.Members.Where(item => item.Spells.Count != 0), hero =>
+                    selectWindow.Show(this.gameState.Party.Members.Where(item => item.IsDead), target =>
                     {
-                        if (hero == null)
+                        if (target == null)
                         {
                             done();
                         }
                         else
                         {
                             var talkWindow = new TalkWindow(this.ui);
-                            talkWindow.Show(Spell.CastHeal(hero, caster, spell), done);
+                            talkWindow.Show(spell.Cast(target, caster, this.gameState), done);
                         }
                     });
                     break;
                 }
-                case SpellType.Outside:
-                {
-                    var result = Spell.CastOutside(caster, spell, this.gameState);
-                    if (string.IsNullOrEmpty(result))
-                    {
-                        done();
-                    }
-                    else
-                    {
-                        var talkWindow = new TalkWindow(this.ui);
-                        talkWindow.Show(result, done);
-                    }
-
-                    break;
-                }
-                case SpellType.Return:
-                {
-                    var result = Spell.CastReturn(caster, spell, this.gameState);
-                    if (string.IsNullOrEmpty(result))
-                    {
-                        done();
-                    }
-                    else
-                    {
-                        var talkWindow = new TalkWindow(this.ui);
-                        talkWindow.Show(result, done);
-                    }
-
-                    break;
-                }
                 default:
                 {
-                    var talkWindow = new TalkWindow(this.ui);
-                    talkWindow.Show($"{caster.Name} casts {spell.Name} but it did not work", done);
+                    var result = spell.Cast(caster, caster, this.gameState);
+                    if (string.IsNullOrEmpty(result))
+                    {
+                        done();
+                    }
+                    else
+                    {
+                        var talkWindow = new TalkWindow(this.ui);
+                        talkWindow.Show(result, done);
+                    }
+
                     break;
                 }
             }

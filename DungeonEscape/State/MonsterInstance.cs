@@ -17,6 +17,7 @@
             }
 
             this.Health += info.HealthConst;
+            this.MaxHealth = this.Health;
         }
 
         public Image Image { get; set; }
@@ -29,5 +30,7 @@
         public int Agility => this.Info.Agility;      
         public bool IsDead => this.Health <= 0;
         public int Level => this.Info.MinLevel;
+        public int MaxHealth { get; }
+        public bool RanAway { get; set; }
     }
 }

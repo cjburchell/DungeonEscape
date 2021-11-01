@@ -28,6 +28,8 @@ namespace DungeonEscape
         bool InGame { get; set; }    
         
         IEnumerable<Spell> GetSpellList(IEnumerable<int> spells);
+        void ReloadSaveGames();
+        
         void LoadGame(GameSave saveGame);
         void ResumeGame();
         void ShowMainMenu();

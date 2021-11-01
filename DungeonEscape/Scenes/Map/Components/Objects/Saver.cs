@@ -28,6 +28,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             {
                 if (accepted)
                 {
+                    this.gameState.ReloadSaveGames();
                     var saveWindow = new SaveWindow(this.ui);
                     saveWindow.Show(this.gameState.GameSaves, save =>
                         {

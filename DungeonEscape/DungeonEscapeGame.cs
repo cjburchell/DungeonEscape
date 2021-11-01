@@ -143,8 +143,8 @@ namespace DungeonEscape
             ExitOnEscapeKeypress = false;
             PauseOnFocusLost = false;
 
-            this.saveSlots = this.LoadSaveGames(saveFile);
-            
+            this.ReloadSaveGames();
+
             var tileSet = LoadTileSet($"Content/items.tsx");
             foreach (var (_, tile) in tileSet.Tiles)
             {
@@ -168,7 +168,12 @@ namespace DungeonEscape
                 return splash;
             }));
         }
-        
+
+        public void ReloadSaveGames()
+        {
+            this.saveSlots = this.LoadSaveGames(saveFile);
+        }
+
         private GameSave[] LoadSaveGames(string fileName)
         {
             var saves = new List<GameSave>();

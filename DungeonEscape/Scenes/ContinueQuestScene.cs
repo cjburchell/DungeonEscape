@@ -62,6 +62,7 @@ namespace DungeonEscape.Scenes
                 game.LoadGame(button?.UserData as GameSave);
             };
 
+            game.ReloadSaveGames();
             foreach (var save in game.GameSaves)
             {
                 var button = this.CreateButton(save);

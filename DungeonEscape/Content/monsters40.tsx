@@ -13,6 +13,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="100" type="SandSpider">
@@ -28,6 +29,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="101" type="TigerBeetle">
@@ -43,6 +45,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="102" type="Hobgoblin">
@@ -58,6 +61,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="103" type="BlackWidow">
@@ -73,6 +77,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="104" type="Draco">
@@ -88,6 +93,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="105" type="RobberFly">
@@ -103,6 +109,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
       <property name="Spell0" type="int" value="5" />
     </properties>
   </tile>

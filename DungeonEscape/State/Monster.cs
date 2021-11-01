@@ -37,6 +37,9 @@ namespace DungeonEscape.State
             this.Agility = int.Parse(tile.Properties["Agility"]);
             this.Probability = int.Parse(tile.Properties["Chance"]);
             this.MinLevel = int.Parse(tile.Properties["MinLevel"]);
+            this.Magic = int.Parse(tile.Properties["Magic"]);
+            
+            
 
             for (int i = 0; i < 10; i++)
             {
@@ -49,6 +52,8 @@ namespace DungeonEscape.State
                 }
             }
         }
+
+        public int Magic { get; set; }
 
         public int MinLevel { get; }
 

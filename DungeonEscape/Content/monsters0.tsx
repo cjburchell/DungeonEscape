@@ -13,6 +13,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="2" type="Bandit">
@@ -28,6 +29,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="3" type="GiantBee">
@@ -43,6 +45,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="4" type="TigerBeetle">
@@ -58,6 +61,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="5" type="Boar">
@@ -73,6 +77,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="6" type="EvilDwarf">
@@ -88,6 +93,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="7" type="RobberFly">
@@ -103,6 +109,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
       <property name="Spell0" type="int" value="5" />
     </properties>
   </tile>
@@ -119,6 +126,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="9" type="GiantAnt">
@@ -134,6 +142,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="10" type="Panther">
@@ -149,6 +158,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="11" type="SlimeTI">
@@ -164,6 +174,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="12" type="BlueDragon">
@@ -179,6 +190,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
       <property name="Spell0" type="int" value="6" />
     </properties>
   </tile>
@@ -195,6 +207,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="4" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="14" type="WaterWeird">
@@ -210,6 +223,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="4" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="15" type="ElectricEel">
@@ -225,6 +239,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="4" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
       <property name="Spell0" type="int" value="5" />
     </properties>
   </tile>
@@ -241,6 +256,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="17" type="SeaSerpent">
@@ -256,6 +272,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="18" type="GiantOctopus">
@@ -271,6 +288,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="19" type="Man-O-War">
@@ -286,6 +304,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="20" type="GiantSquid">
@@ -301,6 +320,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="21" type="SeaDragon">
@@ -316,6 +336,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
       <property name="Spell0" type="int" value="6" />
     </properties>
   </tile>
@@ -332,6 +353,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="23" type="Leviathan">
@@ -347,6 +369,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="24" type="Gecko">
@@ -362,6 +385,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="25" type="Cobra">
@@ -377,6 +401,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="26" type="Rattler">
@@ -392,6 +417,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="27" type="DesertGost">
@@ -407,6 +433,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="28" type="RobberFly">
@@ -422,6 +449,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
       <property name="Spell0" type="int" value="5" />
     </properties>
   </tile>
@@ -438,6 +466,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="30" type="SandSpider">
@@ -453,6 +482,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="31" type="PiranhaBird">
@@ -468,6 +498,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
       <property name="Spell0" type="int" value="6" />
     </properties>
   </tile>
@@ -484,6 +515,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="3" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="33" type="Draco">
@@ -499,6 +531,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="34" type="GiantAnt">
@@ -514,6 +547,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="35" type="MountainLion">
@@ -529,6 +563,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="36" type="Lion">
@@ -544,6 +579,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="37" type="BlueDragon">
@@ -559,6 +595,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
       <property name="Spell0" type="int" value="5" />
     </properties>
   </tile>
@@ -575,6 +612,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="39" type="GiantCentipede">
@@ -590,6 +628,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="40" type="Bandit">
@@ -605,6 +644,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="41" type="GiantBee">
@@ -620,6 +660,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="42" type="TigerBeetle">
@@ -635,6 +676,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="43" type="Boar">
@@ -650,6 +692,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="44" type="EvilDwarf">
@@ -665,6 +708,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="45" type="RobberFly">
@@ -680,6 +724,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
       <property name="Spell0" type="int" value="5" />
     </properties>
   </tile>
@@ -696,6 +741,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="47" type="GiantAnt">
@@ -711,6 +757,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="48" type="Panther">
@@ -726,6 +773,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="49" type="SlimeTI">
@@ -741,6 +789,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="50" type="BlueDragon">
@@ -756,6 +805,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
       <property name="Spell0" type="int" value="6" />
     </properties>
   </tile>
@@ -772,6 +822,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="52" type="Baboon">
@@ -787,6 +838,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="53" type="Bandit">
@@ -802,6 +854,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="54" type="BlackBear">
@@ -817,6 +870,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="55" type="Boar">
@@ -832,6 +886,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="56" type="Goblin">
@@ -847,6 +902,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="3" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="57" type="Hobgoblin">
@@ -862,6 +918,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="58" type="Shrew">
@@ -877,6 +934,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="59" type="BlackWidow">
@@ -892,6 +950,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="60" type="Wolf">
@@ -907,6 +966,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="61" type="OwlBear">
@@ -922,6 +982,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="62" type="Lion">
@@ -937,6 +998,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="63" type="Griz_Bear">
@@ -952,6 +1014,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="64" type="Tiger">
@@ -967,6 +1030,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="65" type="GreenDragon">
@@ -982,6 +1046,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
       <property name="Spell0" type="int" value="6" />
     </properties>
   </tile>
@@ -998,6 +1063,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="67" type="Bandit">
@@ -1013,6 +1079,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="68" type="GiantBee">
@@ -1028,6 +1095,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="69" type="TigerBeetle">
@@ -1043,6 +1111,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="70" type="Boar">
@@ -1058,6 +1127,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="71" type="EvilDwarf">
@@ -1073,6 +1143,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="72" type="RobberFly">
@@ -1088,6 +1159,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
       <property name="Spell0" type="int" value="5" />
     </properties>
   </tile>
@@ -1104,6 +1176,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="74" type="GiantAnt">
@@ -1119,6 +1192,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="75" type="Panther">
@@ -1134,6 +1208,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="76" type="SlimeTI">
@@ -1149,6 +1224,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="77" type="BlueDragon">
@@ -1164,6 +1240,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
       <property name="Spell0" type="int" value="6" />
     </properties>
   </tile>

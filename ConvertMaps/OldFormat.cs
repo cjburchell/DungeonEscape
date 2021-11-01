@@ -388,6 +388,8 @@ namespace ConvertMaps
                             Spells = spriteSpells,
                             Defence = 5,
                             Agility= 5,
+                            Magic = 5,
+                            MinLevel = 1,
                         };
                         map.RandomMonsters.Add(monster);
                     }

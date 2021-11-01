@@ -13,6 +13,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="87" type="Slime">
@@ -28,6 +29,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="4" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="88" type="Goblin">
@@ -43,6 +45,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
   <tile id="89" type="Shrew">
@@ -58,6 +61,7 @@
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="4" />
       <property name="MinLevel" type="int" value="1" />
+      <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
 </tileset>

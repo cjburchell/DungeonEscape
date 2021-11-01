@@ -24,5 +24,7 @@ namespace GameFile
 
         public int Agility { get; set; }
         public int TileId { get; set; }
+        public int MinLevel { get; set; }
+        public int Magic { get; set; }
     }
 }

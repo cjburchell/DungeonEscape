@@ -18,7 +18,16 @@
 
             this.Health += info.HealthConst;
             this.MaxHealth = this.Health;
+            
+            for (var i = 0; i < info.Magic; i++)
+            {
+                this.Magic+=Random.NextInt(8)+1;
+            }
+
+            this.MaxMagic = this.Magic;
         }
+
+        public int MaxMagic { get; set; }
 
         public Image Image { get; set; }
         

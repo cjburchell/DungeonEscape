@@ -12,6 +12,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="3" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
   <tile id="121" type="Hobgoblin">
@@ -26,6 +27,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="2" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
 </tileset>

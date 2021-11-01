@@ -7,7 +7,7 @@ namespace DungeonEscape.State
     using Newtonsoft.Json;
     using Random = Nez.Random;
 
-    public class Hero
+    public class Hero : Fighter
     {
         public override string ToString()
         {

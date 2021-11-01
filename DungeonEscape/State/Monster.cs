@@ -36,6 +36,7 @@ namespace DungeonEscape.State
             this.Defence = int.Parse(tile.Properties["Defence"]);
             this.Agility = int.Parse(tile.Properties["Agility"]);
             this.Probability = int.Parse(tile.Properties["Chance"]);
+            this.MinLevel = int.Parse(tile.Properties["MinLevel"]);
 
             for (int i = 0; i < 10; i++)
             {
@@ -48,6 +49,8 @@ namespace DungeonEscape.State
                 }
             }
         }
+
+        public int MinLevel { get; }
 
         public Texture2D Image => this.tile.Image.Texture;
 

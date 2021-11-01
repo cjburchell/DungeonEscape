@@ -12,6 +12,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
   <tile id="107" type="SandSpider">
@@ -26,6 +27,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
   <tile id="108" type="BlueDragon">
@@ -40,6 +42,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
       <property name="Spell0" type="int" value="5" />
     </properties>
   </tile>
@@ -55,6 +58,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
   <tile id="110" type="BlackWidow">
@@ -69,6 +73,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
   <tile id="111" type="Draco">
@@ -83,6 +88,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
   <tile id="112" type="RobberFly">
@@ -97,6 +103,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
       <property name="Spell0" type="int" value="5" />
     </properties>
   </tile>

@@ -270,7 +270,8 @@ namespace ConvertMaps.Tiled
                         new TiledProperty {name = "Gold", type = "int", value = monster.Gold.ToString()},
                         new TiledProperty {name = "Agility", type = "int", value = monster.Agility.ToString()},
                         new TiledProperty {name = "Defence", type = "int", value = monster.Defence.ToString()},
-                        new TiledProperty {name = "Chance", type = "int", value = monster.Chance.ToString()}
+                        new TiledProperty {name = "Chance", type = "int", value = monster.Chance.ToString()},
+                        new TiledProperty {name = "MinLevel", type = "int", value = 1.ToString()}
                     };
 
                     if (monster.Spells != null)

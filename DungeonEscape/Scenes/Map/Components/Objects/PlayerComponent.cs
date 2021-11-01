@@ -304,7 +304,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             var currentBiome = this.GetCurrentBiome();
             var availableMonsters = new List<Monster>();
             foreach (var monster in this.randomMonsters.Where(item =>
-                item.Biome == currentBiome || item.Biome == Biome.All))
+                item.Biome == currentBiome || item.Biome == Biome.All && item.MinLevel >= this.GameState.Party.Members.First().Level))
             {
                 for (var i = 0; i < monster.Probability; i++)
                 {
@@ -312,10 +312,12 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 }
             }
 
-            var maxMonsters = this.GameState.Party.Members[0].Level / 4 + 1;
-            if (maxMonsters > 7)
+
+            const int MaxMonstersToFight = 10;
+            var maxMonsters = this.GameState.Party.Members.First().Level / 4 + this.GameState.Party.Members.Count;
+            if (maxMonsters > MaxMonstersToFight)
             {
-                maxMonsters = 7;
+                maxMonsters = MaxMonstersToFight;
             }
             
             var numberOfMonsters = Random.NextInt(maxMonsters) + 1;

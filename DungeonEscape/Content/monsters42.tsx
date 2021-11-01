@@ -12,6 +12,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
       <property name="Spell0" type="int" value="6" />
     </properties>
   </tile>

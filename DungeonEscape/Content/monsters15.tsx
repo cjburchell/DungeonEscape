@@ -12,6 +12,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
   <tile id="79" type="SlimeTI">
@@ -26,6 +27,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
 </tileset>

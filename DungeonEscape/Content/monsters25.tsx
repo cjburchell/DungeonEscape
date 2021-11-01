@@ -12,6 +12,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
   <tile id="93" type="SandSpider">
@@ -26,6 +27,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
   <tile id="94" type="TigerBeetle">
@@ -40,6 +42,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
   <tile id="95" type="Hobgoblin">
@@ -54,6 +57,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
   <tile id="96" type="BlackWidow">
@@ -68,6 +72,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
   <tile id="97" type="Draco">
@@ -82,6 +87,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
   <tile id="98" type="Griz_Bear">
@@ -96,6 +102,7 @@
       <property name="Agility" type="int" value="5" />
       <property name="Defence" type="int" value="5" />
       <property name="Chance" type="int" value="1" />
+      <property name="MinLevel" type="int" value="1" />
     </properties>
   </tile>
 </tileset>

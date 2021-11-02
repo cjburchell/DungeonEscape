@@ -295,65 +295,43 @@ namespace DungeonEscape.Scenes
 
         private void CastSpell(Hero caster, Spell spell, Action done)
         {
-            switch (spell.Type)
+            if (spell.Targets == Target.Group)
             {
-                case SpellType.Heal when this.gameState.Party.Members.Count == 1:
+                var result = spell.Cast(this.gameState.Party.Members, caster, this.gameState);
+                if (string.IsNullOrEmpty(result))
                 {
-                    var result = spell.Cast(this.gameState.Party.Members.First(), caster, this.gameState);
-                    var talkWindow = new TalkWindow(this.ui);
-                    talkWindow.Show(result, done);
-                    break;
+                    done();
+                    return;
                 }
-                case SpellType.Heal:
-                {
-                    var selectWindow = new SelectHeroWindow(this.ui);
-                    selectWindow.Show(this.gameState.Party.Members.Where(item => !item.IsDead), target =>
-                    {
-                        if (target == null)
-                        {
-                            done();
-                        }
-                        else
-                        {
-                            var talkWindow = new TalkWindow(this.ui);
-                            talkWindow.Show(spell.Cast(target, caster, this.gameState), done);
-                        }
-                    });
-                    break;
-                }
-                case SpellType.Revive:
-                {
-                    var selectWindow = new SelectHeroWindow(this.ui);
-                    selectWindow.Show(this.gameState.Party.Members.Where(item => item.IsDead), target =>
-                    {
-                        if (target == null)
-                        {
-                            done();
-                        }
-                        else
-                        {
-                            var talkWindow = new TalkWindow(this.ui);
-                            talkWindow.Show(spell.Cast(target, caster, this.gameState), done);
-                        }
-                    });
-                    break;
-                }
-                default:
-                {
-                    var result = spell.Cast(caster, caster, this.gameState);
-                    if (string.IsNullOrEmpty(result))
-                    {
-                        done();
-                    }
-                    else
-                    {
-                        var talkWindow = new TalkWindow(this.ui);
-                        talkWindow.Show(result, done);
-                    }
 
-                    break;
-                }
+                var talkWindow = new TalkWindow(this.ui);
+                talkWindow.Show(result, done);
+                return;
             }
+
+            Func<Hero,bool> filter = hero => !hero.IsDead;
+            if (spell.Type == SpellType.Revive)
+            {
+                filter = hero => hero.IsDead;
+            }
+                
+            if(this.gameState.Party.Members.Count(filter) == 1 && spell.Type != SpellType.Revive)
+            {
+                var result = spell.Cast(this.gameState.Party.Members.Where(filter), caster, this.gameState);
+                new TalkWindow(this.ui).Show(result, done);
+                return;
+            }
+                
+            new SelectHeroWindow(this.ui).Show(this.gameState.Party.Members.Where(filter), target =>
+            {
+                if (target == null)
+                {
+                    done();
+                    return;
+                }
+
+                new TalkWindow(this.ui).Show(spell.Cast(new[] {target}, caster, this.gameState), done);
+            });
         }
 
         private void ShowSpell(Action done)

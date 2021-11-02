@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using DungeonEscape.Scenes.Common.Components.UI;
 using DungeonEscape.State;
@@ -17,7 +16,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
     {
         private readonly TmxMap map;
         private readonly Label debugText;
-        private readonly List<Monster> randomMonsters;
+        private readonly List<RandomMonster> randomMonsters;
         private readonly UISystem ui;
         private const float MoveSpeed = 150;
         private SpriteAnimator animator;
@@ -26,7 +25,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private VirtualIntegerAxis yAxisInput;
         private IGame GameState { get; }
 
-        public PlayerComponent(IGame gameState, TmxMap map, Label debugText, List<Monster> randomMonsters, UISystem ui)
+        public PlayerComponent(IGame gameState, TmxMap map, Label debugText, List<RandomMonster> randomMonsters, UISystem ui)
         {
             this.map = map;
             this.debugText = debugText;
@@ -304,15 +303,19 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             var currentBiome = this.GetCurrentBiome();
             var availableMonsters = new List<Monster>();
             foreach (var monster in this.randomMonsters.Where(item =>
-                item.Biome == currentBiome || item.Biome == Biome.All && item.MinLevel >= this.GameState.Party.Members.First().Level))
+                item.Biome == currentBiome || item.Biome == Biome.All && item.Data.MinLevel >= this.GameState.Party.Members.First().Level))
             {
                 for (var i = 0; i < monster.Probability; i++)
                 {
-                    availableMonsters.Add(monster);
+                    availableMonsters.Add(monster.Data);
                 }
             }
 
-
+            if (availableMonsters.Count == 0)
+            {
+                return;
+            }
+            
             const int MaxMonstersToFight = 10;
             var maxMonsters = this.GameState.Party.Members.First().Level / 4 + this.GameState.Party.Members.Count;
             if (maxMonsters > MaxMonstersToFight)

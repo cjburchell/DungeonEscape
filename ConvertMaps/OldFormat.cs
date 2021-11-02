@@ -9,13 +9,10 @@ namespace ConvertMaps
 {
     public static class OldFormat
     {
-        public static IEnumerable<Map> LoadMaps(string inputDirectory, List<Spell> spells, List<TileInfo> tiles, IdGenerator tileIdGenerator)
+        public static IEnumerable<Map> LoadMaps(string inputDirectory, List<Spell> spells, List<TileInfo> tiles, List<Monster> monsters, IdGenerator tileIdGenerator, IdGenerator randomMonsterIdGenerator)
         {
             var maps = new List<Map>();
             var inputMapPath = Path.Combine(inputDirectory, "maps");
-            var randomMonsterIdGenerator = new IdGenerator();
-            var randomMonsterTileIdGenerator = new IdGenerator();
-
             for (var i = 0; i < 100; i++)
             {
                 if (i == 1 || i == 2 || i == 3 || i == 4 || i == 5)
@@ -31,16 +28,16 @@ namespace ConvertMaps
 
                 if (i == 0)
                 {
-                    LoadSprites(1, map, inputMapPath, spells, tiles, Biome.Grassland, randomMonsterIdGenerator, tileIdGenerator, randomMonsterTileIdGenerator);
-                    LoadSprites(2, map, inputMapPath, spells, tiles, Biome.Water, randomMonsterIdGenerator, tileIdGenerator, randomMonsterTileIdGenerator);
-                    LoadSprites(3, map, inputMapPath, spells, tiles, Biome.Desert, randomMonsterIdGenerator, tileIdGenerator, randomMonsterTileIdGenerator);
-                    LoadSprites(4, map, inputMapPath, spells, tiles, Biome.Hills, randomMonsterIdGenerator, tileIdGenerator, randomMonsterTileIdGenerator);
-                    LoadSprites(5, map, inputMapPath, spells, tiles, Biome.Forest, randomMonsterIdGenerator, tileIdGenerator, randomMonsterTileIdGenerator);
-                    LoadSprites(4, map, inputMapPath, spells, tiles, Biome.Swamp,randomMonsterIdGenerator, tileIdGenerator, randomMonsterTileIdGenerator);
+                    LoadSprites(1, map, inputMapPath, spells, tiles, monsters, Biome.Grassland, randomMonsterIdGenerator, tileIdGenerator);
+                    LoadSprites(2, map, inputMapPath, spells, tiles, monsters, Biome.Water, randomMonsterIdGenerator, tileIdGenerator);
+                    LoadSprites(3, map, inputMapPath, spells, tiles, monsters, Biome.Desert, randomMonsterIdGenerator, tileIdGenerator);
+                    LoadSprites(4, map, inputMapPath, spells, tiles, monsters, Biome.Hills, randomMonsterIdGenerator, tileIdGenerator);
+                    LoadSprites(5, map, inputMapPath, spells, tiles, monsters, Biome.Forest, randomMonsterIdGenerator, tileIdGenerator);
+                    LoadSprites(4, map, inputMapPath, spells, tiles, monsters, Biome.Swamp,randomMonsterIdGenerator, tileIdGenerator);
                 }
                 else
                 {
-                    LoadSprites(i, map, inputMapPath, spells, tiles, Biome.All, randomMonsterIdGenerator, tileIdGenerator, randomMonsterTileIdGenerator);
+                    LoadSprites(i, map, inputMapPath, spells, tiles, monsters, Biome.All, randomMonsterIdGenerator, tileIdGenerator);
                 }
 
                 maps.Add(map);
@@ -285,7 +282,7 @@ namespace ConvertMaps
         }
 
         private static void LoadSprites(int id, Map map, string directory, IReadOnlyCollection<Spell> spells,
-            ICollection<TileInfo> tiles, Biome biome, IdGenerator randomMonsterIdGenerator, IdGenerator tileIdGenerator, IdGenerator randomMonsterTileIdGenerator)
+            ICollection<TileInfo> tiles, List<Monster> monsters, Biome biome, IdGenerator randomMonsterIdGenerator, IdGenerator tileIdGenerator)
         {
             var spriteFileName = Path.Combine(directory, $"monstset{id}.dat");
             if (!File.Exists(spriteFileName))
@@ -343,59 +340,64 @@ namespace ConvertMaps
 
                 if (spriteType == SpriteType.Monster)
                 {
-                    var spriteInfo = GetSprite(map.RandomMonstersTileInfo, null, image, randomMonsterTileIdGenerator, size * 32, "images/monsters/");
-                    var monster = map.RandomMonsters.FirstOrDefault(item =>
-                        item.TileId == spriteInfo.Id && item.Name == name && item.Biome == biome);
+                    var monsterInfo = GetMonster(monsters, image, name, randomMonsterIdGenerator, size * 32, "images/monsters/",
+                        info =>
+                        {
+                            List<SpriteSpell> spriteSpells = null;
+                            switch (npcType)
+                            {
+                                case 7:
+                                {
+                                    var spell = spells.FirstOrDefault(item => item.Name == "LitBlast");
+                                    if (spell != null)
+                                    {
+                                        spriteSpells = new List<SpriteSpell> {new SpriteSpell {Id = spell.Info.Id}};
+                                    }
+
+                                    break;
+                                }
+                                case 8:
+                                {
+                                    var spell = spells.FirstOrDefault(item => item.Name == "FireBlast");
+                                    if (spell != null)
+                                    {
+                                        spriteSpells = new List<SpriteSpell> {new SpriteSpell {Id = spell.Info.Id}};
+                                    }
+
+                                    break;
+                                }
+                            }
+
+                            var monsterInfo = new Monster
+                            {
+                                Info = info,
+                                Name = name,
+                                Health = int.Parse(lineItems[0]),
+                                HealthConst = int.Parse(lineItems[1]),
+                                Attack = int.Parse(lineItems[2]),
+                                XP = int.Parse(lineItems[3]),
+                                Gold = int.Parse(lineItems[6]),
+                                Spells = spriteSpells,
+                                Defence = 5,
+                                Agility= 5,
+                                Magic = 5,
+                                MinLevel = 1,
+                            };
+                            return monsterInfo;
+                        });
+                    var monster = map.RandomMonsters.FirstOrDefault(item => item.Id == monsterInfo.Info.Id && item.Biome == biome);
                     if (monster == null)
                     {
-                        List<SpriteSpell> spriteSpells = null;
-                        switch (npcType)
+                        map.RandomMonsters.Add(new MapMonster()
                         {
-                            case 7:
-                            {
-                                var spell = spells.FirstOrDefault(item => item.Name == "LitBlast");
-                                if (spell != null)
-                                {
-                                    spriteSpells = new List<SpriteSpell> {new SpriteSpell {Id = spell.Info.Id}};
-                                }
-
-                                break;
-                            }
-                            case 8:
-                            {
-                                var spell = spells.FirstOrDefault(item => item.Name == "FireBlast");
-                                if (spell != null)
-                                {
-                                    spriteSpells = new List<SpriteSpell> {new SpriteSpell {Id = spell.Info.Id}};
-                                }
-
-                                break;
-                            }
-                        }
-
-                        monster = new Monster
-                        {
-                            Id = randomMonsterIdGenerator.New(),
-                            TileId = spriteInfo.Id,
-                            Name = name,
-                            Chance = 1,
-                            Biome = biome,
-                            Health = int.Parse(lineItems[0]),
-                            HealthConst = int.Parse(lineItems[1]),
-                            Attack = int.Parse(lineItems[2]),
-                            XP = int.Parse(lineItems[3]),
-                            Gold = int.Parse(lineItems[6]),
-                            Spells = spriteSpells,
-                            Defence = 5,
-                            Agility= 5,
-                            Magic = 5,
-                            MinLevel = 1,
-                        };
-                        map.RandomMonsters.Add(monster);
+                            Id= monsterInfo.Info.Id,
+                            Probability = 1,
+                            Biome =  biome
+                        });
                     }
                     else
                     {
-                        monster.Chance++;
+                        monster.Probability++;
                     }
                 }
                 else
@@ -421,6 +423,27 @@ namespace ConvertMaps
                     }
                 }
             }
+        }
+        
+        private static Monster GetMonster(ICollection<Monster> monsters, string image, string name, IdGenerator idGenerator,
+            int size, string path, Func<TileInfo, Monster> create)
+        {
+            var imagePath = $"{path}{Path.GetFileNameWithoutExtension(image)}.png";
+            var monster = monsters.FirstOrDefault(item => item.Info.Image == imagePath && item.Name == name);
+            if (monster == null)
+            {
+                var tileInfo = new TileInfo
+                {
+                    Id = idGenerator?.New() ?? 0,
+                    Image = imagePath,
+                    size = size,
+                };
+
+                monster = create(tileInfo);
+                monsters.Add(monster);
+            }
+
+            return monster;
         }
 
         private static TileInfo GetSprite(ICollection<TileInfo> mapTiles, ICollection<TileInfo> tiles, string image, IdGenerator idGenerator,

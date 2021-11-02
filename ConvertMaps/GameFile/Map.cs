@@ -17,7 +17,6 @@ namespace GameFile
         
         public List<TileInfo> TileInfo = new List<TileInfo>();
         public List<Sprite> Sprites = new List<Sprite>();
-        public List<Monster> RandomMonsters = new List<Monster>();
-        public List<TileInfo> RandomMonstersTileInfo = new List<TileInfo>();
+        public List<MapMonster> RandomMonsters = new List<MapMonster>();
     }
 }

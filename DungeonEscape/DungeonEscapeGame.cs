@@ -21,25 +21,14 @@ namespace DungeonEscape
         private const int maxSaveSlots = 5;
         private bool isPaused;
         private bool deferredPause;
-        public void Save()
-        {
-            File.WriteAllText(saveFile,
-                JsonConvert.SerializeObject(this.saveSlots, Formatting.Indented,
-                    new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Ignore
-                    }));
-        }
-
+        
         public Party Party { get; set; }
-        
         public List<MapState> MapStates { get; private set; } = new List<MapState>();
-
-        public void UpdatePauseState()
-        {
-            this.isPaused = this.deferredPause;
-        }
-        
+        public List<Monster> Monsters { get; } = new List<Monster>();
+        public List<Item> Items { get; } = new List<Item>();
+        public List<Spell> Spells { get; } = new List<Spell>();
+        public IEnumerable<GameSave> GameSaves => this.saveSlots;
+        public bool InGame { get; set; }
         public bool IsPaused
         {
             get => this.isPaused;
@@ -55,10 +44,22 @@ namespace DungeonEscape
         }
         
         private GameSave[] saveSlots;
+        
+        public void Save()
+        {
+            File.WriteAllText(saveFile,
+                JsonConvert.SerializeObject(this.saveSlots, Formatting.Indented,
+                    new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    }));
+        }
 
-        public IEnumerable<GameSave> GameSaves => this.saveSlots;
-        public bool InGame { get; set; }
-
+        public void UpdatePauseState()
+        {
+            this.isPaused = this.deferredPause;
+        }
+        
         public IEnumerable<Spell> GetSpellList(IEnumerable<int> spells)
         {
             return spells.Select(spellId => this.Spells.FirstOrDefault(item => item.Id == spellId)).Where(spell => spell != null);
@@ -118,7 +119,7 @@ namespace DungeonEscape
             }));
         }
 
-        public void StartFight(List<Monster> monsters)
+        public void StartFight(IEnumerable<Monster> monsters)
         {
             StartSceneTransition(new FadeTransition(() =>
             {
@@ -127,10 +128,6 @@ namespace DungeonEscape
                 return splash;
             }));
         }
-
-        public List<Item> Items { get; } = new List<Item>();
-        
-        public List<Spell> Spells { get; } = new List<Spell>();
 
         protected override void Initialize()
         {
@@ -155,6 +152,12 @@ namespace DungeonEscape
             foreach (var (_, tile) in spellTileset.Tiles)
             {
                 this.Spells.Add(new Spell(tile));
+            }
+            
+            var monsterTileset = LoadTileSet($"Content/allmonsters.tsx");
+            foreach (var (_, tile) in monsterTileset.Tiles)
+            {
+                this.Monsters.Add(new Monster(tile, this.Spells));
             }
 
             DebugRenderEnabled = false;

@@ -249,20 +249,17 @@ namespace ConvertMaps.Tiled
             return tiledSet;
         }
         
-        public static TiledTileset ToMonsterTileSet(IEnumerable<TileInfo> mapTileInfo, IEnumerable<Monster> monsters, string name)
+        public static TiledTileset ToMonsterTileSet(IEnumerable<Monster> monsters, string name)
         {
-            var tileInfos = mapTileInfo as TileInfo[] ?? mapTileInfo.ToArray();
             var tiles = new List<TiledTile>();
             var monsterList = monsters.ToList();
             
             foreach (var monster in monsterList)
             {
-                var mapTile = tileInfos.FirstOrDefault(item => item.Id == monster.TileId);
-                if (mapTile != null)
+                if (monster.Info != null)
                 {
                     var properties = new List<TiledProperty>
                     {
-                        new TiledProperty {name = "Biome", type = "string", value = monster.Biome.ToString()},
                         new TiledProperty {name = "Health", type = "int", value = monster.Health.ToString()},
                         new TiledProperty {name = "HealthConst", type = "int", value = monster.HealthConst.ToString()},
                         new TiledProperty {name = "Attack", type = "int", value = monster.Attack.ToString()},
@@ -270,7 +267,6 @@ namespace ConvertMaps.Tiled
                         new TiledProperty {name = "Gold", type = "int", value = monster.Gold.ToString()},
                         new TiledProperty {name = "Agility", type = "int", value = monster.Agility.ToString()},
                         new TiledProperty {name = "Defence", type = "int", value = monster.Defence.ToString()},
-                        new TiledProperty {name = "Chance", type = "int", value = monster.Chance.ToString()},
                         new TiledProperty {name = "MinLevel", type = "int", value = monster.MinLevel.ToString()},
                         new TiledProperty {name = "Magic", type = "int", value = monster.Magic.ToString()}
                     };
@@ -284,12 +280,12 @@ namespace ConvertMaps.Tiled
                     var tile = new TiledTile
                     {
                         type = monster.Name,
-                        id = monster.Id, 
-                        image = mapTile.Image, 
-                        imageheight = mapTile.size,
-                        imagewidth = mapTile.size,
+                        id = monster.Info.Id, 
+                        image = monster.Info.Image, 
+                        imageheight = monster.Info.size,
+                        imagewidth = monster.Info.size,
                         properties = properties.ToArray(),
-                        imageObj = new TiledImage {source = mapTile.Image, height = mapTile.size, width = mapTile.size}
+                        imageObj = new TiledImage {source = monster.Info.Image, height = monster.Info.size, width = monster.Info.size}
                     };
 
                     tiles.Add(tile);
@@ -300,9 +296,9 @@ namespace ConvertMaps.Tiled
             var tiledSet = new TiledTileset
             {
                 firstgid = 1,
-                tilewidth = tileInfos.Max(item=> item.size),
-                tileheight = tileInfos.Max(item=> item.size),
-                tilecount = tileInfos.Length,
+                tilewidth = monsterList.Max(item=> item.Info.size),
+                tileheight = monsterList.Max(item=> item.Info.size),
+                tilecount = monsterList.Count,
                 name = name,
                 transparentcolor = "#FF00FF",
                 tiles = tiles.ToArray()

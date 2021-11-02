@@ -7,18 +7,6 @@ namespace DungeonEscape.State
 {
     using Microsoft.Xna.Framework.Graphics;
 
-    public enum Biome
-    {
-        None = 0,
-        Grassland = 1,
-        Forest = 2,
-        Water =3 ,
-        Hills = 4,
-        Desert = 5,
-        Swamp = 6,
-        All = 7,
-    }
-    
     public class Monster
     {
         private readonly TmxTilesetTile tile;
@@ -27,7 +15,6 @@ namespace DungeonEscape.State
         {
             this.tile = tile;
             this.Name = StringUtils.AddSpacesToSentence(tile.Type);
-            this.Biome = Enum.Parse<Biome>(tile.Properties["Biome"]);
             this.Health = int.Parse(tile.Properties["Health"]);
             this.Attack = int.Parse(tile.Properties["Attack"]);
             this.HealthConst = int.Parse(tile.Properties["HealthConst"]);
@@ -35,11 +22,8 @@ namespace DungeonEscape.State
             this.XP = int.Parse(tile.Properties["XP"]);
             this.Defence = int.Parse(tile.Properties["Defence"]);
             this.Agility = int.Parse(tile.Properties["Agility"]);
-            this.Probability = int.Parse(tile.Properties["Chance"]);
             this.MinLevel = int.Parse(tile.Properties["MinLevel"]);
             this.Magic = int.Parse(tile.Properties["Magic"]);
-            
-            
 
             for (int i = 0; i < 10; i++)
             {
@@ -53,13 +37,14 @@ namespace DungeonEscape.State
             }
         }
 
-        public int Magic { get; set; }
+        public int Id => this.tile.Id;
+
+        public int Magic { get;  }
 
         public int MinLevel { get; }
 
         public Texture2D Image => this.tile.Image.Texture;
-
-        public double Probability { get; }
+        
         public List<Spell> Spells { get; } = new List<Spell>();
 
         public int Agility { get; }
@@ -69,9 +54,7 @@ namespace DungeonEscape.State
         public int XP { get; }
 
         public int HealthConst { get; }
-
-        public Biome Biome { get; }
-
+        
         public int Gold { get;  }
 
         public int Health { get;  }

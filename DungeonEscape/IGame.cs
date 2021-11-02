@@ -23,6 +23,8 @@ namespace DungeonEscape
         List<Spell> Spells { get; }
         
         List<MapState> MapStates { get; }
+        
+        List<Monster> Monsters { get; }
 
         IEnumerable<GameSave> GameSaves { get; }
         bool InGame { get; set; }    
@@ -36,6 +38,6 @@ namespace DungeonEscape
         void SetMap(int? mapId = null, Point? point = null);
         void ShowLoadQuest();
 
-        void StartFight(List<Monster> monsters);
+        void StartFight(IEnumerable<Monster> monsters);
     }
 }

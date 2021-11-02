@@ -1,0 +1,37 @@
+[
+  {
+    "Id": 9,
+    "Probability": 1,
+    "Biome": "All"
+  },
+  {
+    "Id": 29,
+    "Probability": 1,
+    "Biome": "All"
+  },
+  {
+    "Id": 4,
+    "Probability": 1,
+    "Biome": "All"
+  },
+  {
+    "Id": 39,
+    "Probability": 1,
+    "Biome": "All"
+  },
+  {
+    "Id": 41,
+    "Probability": 1,
+    "Biome": "All"
+  },
+  {
+    "Id": 32,
+    "Probability": 1,
+    "Biome": "All"
+  },
+  {
+    "Id": 44,
+    "Probability": 1,
+    "Biome": "All"
+  }
+]

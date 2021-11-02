@@ -12,9 +12,11 @@ using Nez.UI;
 
 namespace DungeonEscape.Scenes
 {
+    using System.IO;
     using System.Linq;
     using Common.Components.UI;
     using Microsoft.Xna.Framework.Input;
+    using Newtonsoft.Json;
 
     public class MapScene : Nez.Scene
     {
@@ -31,7 +33,7 @@ namespace DungeonEscape.Scenes
         private readonly Point? start;
         private readonly IGame gameState;
         private Label debugText;
-        private readonly List<Monster> randomMonsters = new List<Monster>();
+        private List<RandomMonster> randomMonsters = new List<RandomMonster>();
         private VirtualButton showCommandWindowInput;
         private VirtualButton showExitWindowInput;
         private UISystem ui;
@@ -92,14 +94,7 @@ namespace DungeonEscape.Scenes
                 SceneResolution);
 
 
-            var randomMonsterTileSet = DungeonEscapeGame.LoadTileSet($"Content/monsters{this.mapId}.tsx");
-            if (randomMonsterTileSet != null)
-            {
-                foreach (var (_, tile) in randomMonsterTileSet.Tiles)
-                {
-                    this.randomMonsters.Add(new Monster(tile, this.gameState.Spells));
-                }
-            }
+            this.randomMonsters = LoadRandomMonsters();
 
             this.gameState.Party.CurrentMapId = this.mapId;
 
@@ -184,6 +179,34 @@ namespace DungeonEscape.Scenes
             this.showExitWindowInput = new VirtualButton();
             this.showExitWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Escape));
             this.showExitWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.Y));
+        }
+
+        private List<RandomMonster> LoadRandomMonsters()
+        {
+            var fileName = $"Content/monsters{this.mapId}.json";
+            if (!File.Exists(fileName))
+            {
+                return new List<RandomMonster>();
+            }
+
+            var random = JsonConvert.DeserializeObject<List<RandomMonster>>(File.ReadAllText(fileName));
+            if (random == null)
+            {
+                return new List<RandomMonster>();
+            }
+
+            var list = new List<RandomMonster>();
+            foreach (var monster in random)
+            {
+                monster.Data = this.gameState.Monsters.FirstOrDefault(Item => Item.Id == monster.Id);
+                if (monster.Data != null)
+                {
+                    list.Add(monster);
+                }
+            }
+
+            return list;
+
         }
 
         [Nez.Console.Command("map", "switches to map")]

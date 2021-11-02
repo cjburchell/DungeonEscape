@@ -5,6 +5,11 @@
 
     public class MonsterInstance : Fighter
     {
+        public override string ToString()
+        {
+            return this.Name;
+        }
+        
         public Monster Info { get; }
 
         public MonsterInstance(Monster info)

@@ -85,20 +85,12 @@
             var monsterName = this.monsters.Count == 1 ?$"a {this.monsters.First().Name}"  : $"{this.monsters.Count} enemies";
             var message =$"You have encountered {monsterName}!";
             
-            var talkWindow = new TalkWindow(this.ui, "Start Fight");
-            talkWindow.Show(message, ()=> this.state = EncounterRoundState.StartRound);
+            new FightTalkWindow(this.ui, "Start Fight").Show(message, ()=> this.state = EncounterRoundState.StartRound);
         }
 
         public override void Update()
         {
             base.Update();
-            
-            // Each Party member chooises there action
-            // Each Monster chooses there action
-            // Choose who goes first
-            // in the order of actions do the combat
-            // end the encouter if eather oll monsters are dead or party members
-            
             switch (this.state)
             {
                 case EncounterRoundState.Begin:
@@ -185,7 +177,23 @@
         {
             var selectAction =
                 new SelectWindow<string>(this.ui, "Select Action", new Point(10, (MapScene.ScreenHeight) / 3 * 2));
-            selectAction.Show(new[] {"Fight", "Spell", "Item", "Run"}, selection =>
+            
+            var options = new List<string> {"Fight"};
+            var availableSpells = this.game.GetSpellList(hero.Spells).Where(item => item.IsEncounterSpell && item.Cost <= hero.Magic).ToList();
+            if (availableSpells.Count != 0)
+            {
+                options.Add("Spell");
+            }
+            
+            var availableItems = this.game.Party.Items.Where(item => item.Type == ItemType.OneUse).ToList();
+            if (availableItems.Count != 0)
+            {
+                options.Add("Item");
+            }
+            
+            options.Add("Run");
+            
+            selectAction.Show(options, selection =>
             {
                 if (selection == null)
                 {
@@ -198,7 +206,7 @@
                     case "Fight":
                     {
                         var selectTarget = new SelectWindow<MonsterInstance>(this.ui, "SelectMonster",
-                            new Point(10, (MapScene.ScreenHeight) / 3 * 2));
+                            new Point(10, (MapScene.ScreenHeight) / 3 * 2), 250);
                         selectTarget.Show(this.monsters.Where(item => !item.IsDead), monster =>
                         {
                             if (monster == null)
@@ -221,9 +229,7 @@
                     case "Spell":
                     {
                         var selectItem = new SpellWindow(this.ui, new Point(10, (MapScene.ScreenHeight) / 3 * 2));
-                        selectItem.Show(
-                            this.game.GetSpellList(hero.Spells)
-                                .Where(item => item.IsEncounterSpell && item.Cost <= hero.Magic), spell =>
+                        selectItem.Show(availableSpells, spell =>
                             {
                                 if (spell == null)
                                 {
@@ -243,7 +249,7 @@
                                     if (spell.Targets == Target.Single)
                                     {
                                         var selectTarget = new SelectWindow<MonsterInstance>(this.ui, "SelectMonster",
-                                            new Point(10, (MapScene.ScreenHeight) / 3 * 2));
+                                            new Point(10, (MapScene.ScreenHeight) / 3 * 2), 250);
                                         selectTarget.Show(this.monsters.Where(item => !item.IsDead), monster =>
                                         {
                                             if (monster == null)
@@ -297,7 +303,7 @@
                     case "Item":
                     {
                         var selectItem = new InventoryWindow(this.ui, new Point(10, (MapScene.ScreenHeight) / 3 * 2));
-                        selectItem.Show(this.game.Party.Items.Where(item => item.Type == ItemType.OneUse), item =>
+                        selectItem.Show(availableItems, item =>
                         {
                             if (item == null)
                             {
@@ -446,7 +452,7 @@
                             {
                                 case Hero _:
                                     this.state = EncounterRoundState.EndEncounter;
-                                    new TalkWindow(this.ui, "Fight").Show(message, this.game.ResumeGame);
+                                    new FightTalkWindow(this.ui, "Fight").Show(message, this.game.ResumeGame);
                                     return;
                                 case MonsterInstance monster:
                                     monster.RanAway = true;
@@ -504,7 +510,7 @@
                             }
                             else
                             {
-                                message = $"{action.Source.Name} Item {action.Item.Name}";
+                                message = $"{action.Source.Name} Uses {action.Item.Name}";
                                 this.UseItem(target as Hero, action.Item, this.game.Party);
                             }
                         }
@@ -525,7 +531,7 @@
 
                 }
                 
-                new TalkWindow(this.ui, "Fight").Show(message, ()=>
+                new FightTalkWindow(this.ui, "Fight").Show(message, ()=>
                 {
                     this.state = EncounterRoundState.StartDoingActions;
                 });
@@ -555,9 +561,9 @@
         
         private void EndEncounter()
         {
+            var talkWindow = new FightTalkWindow(this.ui, "End Fight");
             if (this.game.Party.Members.Count(CanBeAttacked) == 0)
             {
-                var talkWindow = new TalkWindow(this.ui, "End Fight");
                 talkWindow.Show("Everyone has died!", this.game.ShowMainMenu);
             }
             else
@@ -581,8 +587,7 @@
                             levelUpMessage += message;
                         }
                 }
-
-                var talkWindow = new TalkWindow(this.ui, "End Fight");
+                
                 talkWindow.Show(levelUpMessage, this.game.ResumeGame);
             }
         }

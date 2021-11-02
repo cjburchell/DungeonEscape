@@ -18,4 +18,20 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             base.Show(text, _ => doneAction.Invoke(), new []{"Close"} );
         }
     }
+    
+    public class FightTalkWindow : TalkWindow
+    {
+        public void Show(string text, Action doneAction)
+        {
+            base.Show(text, _ => doneAction.Invoke(), new []{"OK"} );
+        }
+
+        public FightTalkWindow(UISystem ui, string title = "Talk") : base(ui, title)
+        {
+        }
+
+        public FightTalkWindow(UISystem ui, string title, Point position, int width = 492, int height = 150) : base(ui, title, position, width, height)
+        {
+        }
+    }
 }

@@ -70,23 +70,20 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                         
                         if (this.gameState.Party.Items.Count >= Party.MaxItems)
                         {
-                            var talkWindow = new TalkWindow(this.ui, "No Space");
-                            talkWindow.Show($"You do not have enough space in your inventory for {item.Name}", Done);
+                            new TalkWindow(this.ui).Show($"You do not have enough space in your inventory for {item.Name}", Done);
                         }
                         else
                         {
                             if (this.gameState.Party.Gold >= item.Gold)
                             {
-                                var talkWindow = new TalkWindow(this.ui, "Got Item");
-                                talkWindow.Show($"You got the {item.Name}", Done);
+                                new TalkWindow(this.ui).Show($"You got the {item.Name}", Done);
                                 this.gameState.Party.Items.Add(new ItemInstance(item));
                                 this.gameState.Party.Gold -= item.Gold;
                                 this.items.Remove(item);
                             }
                             else
                             {
-                                var talkWindow = new TalkWindow(this.ui, "No Gold");
-                                talkWindow.Show($"You do not have enough gold for the {item.Name}", Done);
+                                new TalkWindow(this.ui).Show($"You do not have enough gold for the {item.Name}", Done);
                             }
                         }
                     });
@@ -95,8 +92,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 {
                     if (this.gameState.Party.Items.Count == 0)
                     {
-                        var talkWindow = new TalkWindow(this.ui, "No Items");
-                        talkWindow.Show("You do not have any items that I would like to buy.", Done);
+                        new TalkWindow(this.ui).Show("You do not have any items that I would like to buy.", Done);
                         return;
                     }
 

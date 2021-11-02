@@ -59,7 +59,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 
         public override void DoAction()
         {
-            this.CloseWindow(this.list.GetSelected().UserData as T);
+            this.CloseWindow(this.list.GetSelected()?.UserData as T);
         }
 
         protected virtual Button CreateButton(T item)

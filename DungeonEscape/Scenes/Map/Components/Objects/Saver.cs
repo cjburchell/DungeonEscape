@@ -44,8 +44,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                             save.MapStates = this.gameState.MapStates;
                             save.Time = DateTime.Now;
                             this.gameState.Save();
-                            var talkWindow = new TalkWindow(this.ui);
-                            talkWindow.Show($"It has been recorded\nYou have {party.Members.First().NextLevel} xp\nto the next level",
+                            new TalkWindow(this.ui).Show($"It has been recorded\nYou have {party.Members.First().NextLevel} xp\nto the next level",
                                 () =>
                                 {
                                     this.gameState.IsPaused = false;

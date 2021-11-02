@@ -303,9 +303,8 @@ namespace DungeonEscape.Scenes
                     done();
                     return;
                 }
-
-                var talkWindow = new TalkWindow(this.ui);
-                talkWindow.Show(result, done);
+                
+                new TalkWindow(this.ui).Show(result, done);
                 return;
             }
 
@@ -381,8 +380,7 @@ namespace DungeonEscape.Scenes
         {
             if (this.gameState.Party.Items.Count == 0)
             {
-                var talkWindow = new TalkWindow(this.ui);
-                talkWindow.Show("The party has no items", done);
+                new TalkWindow(this.ui).Show("The party has no items", done);
             }
             else
             {
@@ -418,8 +416,7 @@ namespace DungeonEscape.Scenes
                                     }
                                     else
                                     {
-                                        var talkWindow = new TalkWindow(this.ui);
-                                        talkWindow.Show(result, done);
+                                        new TalkWindow(this.ui).Show(result, done);
                                     }
                                 }
                                 else
@@ -441,8 +438,7 @@ namespace DungeonEscape.Scenes
                                             }
                                             else
                                             {
-                                                var talkWindow = new TalkWindow(this.ui);
-                                                talkWindow.Show(result, done);
+                                                new TalkWindow(this.ui).Show(result, done);
                                             }
                                         });
                                 }
@@ -455,8 +451,7 @@ namespace DungeonEscape.Scenes
                                 }
 
                                 this.gameState.Party.Items.Remove(item);
-                                var talkWindow = new TalkWindow(this.ui);
-                                talkWindow.Show($"You dropped {item.Name}", done);
+                                new TalkWindow(this.ui).Show($"You dropped {item.Name}", done);
                                 break;
                             }
                             default:

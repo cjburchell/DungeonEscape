@@ -42,13 +42,11 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                             partyMember.Magic = partyMember.MaxMagic;
                         }
                         
-                        var talkWindow = new TalkWindow(this.ui);
-                        talkWindow.Show("Thank you come again!", Done);
+                        new TalkWindow(this.ui).Show("Thank you come again!", Done);
                     }
                     else
                     {
-                        var talkWindow = new TalkWindow(this.ui);
-                        talkWindow.Show($"You do not have {this.cost} gold", Done);
+                        new TalkWindow(this.ui).Show($"You do not have {this.cost} gold", Done);
                     }
                 }
                 else

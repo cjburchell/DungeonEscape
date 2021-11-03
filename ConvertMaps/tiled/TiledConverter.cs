@@ -274,7 +274,7 @@ namespace ConvertMaps.Tiled
                     if (monster.Spells != null)
                     {
                         var spell = 0;
-                        properties.AddRange(monster.Spells.Select(monsterSpell => new TiledProperty {name = $"Spell{spell++}", type = "int", value = monsterSpell.Id.ToString()}));
+                        properties.AddRange(monster.Spells.Select(monsterSpell => new TiledProperty {name = $"Spell{spell++}", type = "int", value = monsterSpell.ToString()}));
                     }
                     
                     var tile = new TiledTile

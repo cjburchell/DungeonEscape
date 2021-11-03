@@ -15,38 +15,39 @@ namespace ConvertMaps
         {
             [Option('o', "output", Required = true, HelpText = "Directory to save game data")]
             public string OutputDirectory { get; set; }
+
             [Option('i', "input", Required = true, HelpText = "Directory to be processed.")]
             public string InputDirectory { get; set; }
 
             [Option('m', "map", Required = false, HelpText = "Map to convert", Default = -1)]
             public int MapId { get; set; }
-            
+
             [Option('c', "clear", Required = false, HelpText = "Clear directory", Default = false)]
             public bool Clear { get; set; }
-            
+
             [Option('s', "spells", Required = false, HelpText = "Output spells", Default = false)]
             public bool Spells { get; set; }
-            
+
             [Option('w', "items", Required = false, HelpText = "Output itmes", Default = false)]
             public bool Items { get; set; }
-            
+
             [Option('r', "monsters", Required = false, HelpText = "Output monsters", Default = false)]
             public bool Monsters { get; set; }
         }
-        
+
 
         public static void Main(string[] args)
         {
-           var parser = new Parser(settings =>
-           {
-               settings.HelpWriter = Console.Error;
-               settings.CaseInsensitiveEnumValues = true;
-           });
-           parser.ParseArguments<Options>(args)
+            var parser = new Parser(settings =>
+            {
+                settings.HelpWriter = Console.Error;
+                settings.CaseInsensitiveEnumValues = true;
+            });
+            parser.ParseArguments<Options>(args)
                 .WithParsed(RunOptions);
         }
-        
-        private static void CleanUp(string directory, bool items, bool spells,bool monsters)
+
+        private static void CleanUp(string directory, bool items, bool spells, bool monsters)
         {
             if (!Directory.Exists(directory))
             {
@@ -56,28 +57,32 @@ namespace ConvertMaps
             var di = new DirectoryInfo(directory);
             foreach (var file in di.GetFiles())
             {
-                if ((file.Name.EndsWith(".json") || file.Name.EndsWith(".tsx") || file.Name.EndsWith(".tmx")) && (file.Name.StartsWith("map") || file.Name.StartsWith("monster")))
+                if ((file.Name.EndsWith(".json") || file.Name.EndsWith(".tsx") || file.Name.EndsWith(".tmx")) &&
+                    (file.Name.StartsWith("map") || file.Name.StartsWith("monster")))
                 {
                     file.Delete();
-                } 
+                }
             }
 
             if (spells)
             {
                 File.Delete(Path.Combine(directory, "spells.tsx"));
+                File.Delete(Path.Combine(directory, "spells.json"));
             }
 
             if (items)
             {
                 File.Delete(Path.Combine(directory, "items.tsx"));
+                File.Delete(Path.Combine(directory, "items.json"));
             }
-            
+
             if (monsters)
             {
                 File.Delete(Path.Combine(directory, "allmonsters.tsx"));
+                File.Delete(Path.Combine(directory, "allmonsters.json"));
             }
         }
-        
+
         private static void RunOptions(Options opts)
         {
             if (opts.Clear)
@@ -89,11 +94,12 @@ namespace ConvertMaps
             var spells = OldFormat.LoadSpells(opts.InputDirectory);
             var items = OldFormat.LoadItems(opts.InputDirectory);
             var tiles = OldFormat.LoadTiles(opts.InputDirectory, tileIdGenerator);
-            
+
             var monsterIdGenerator = new IdGenerator();
             var monsters = new List<Monster>();
-            
-            var maps = OldFormat.LoadMaps(opts.InputDirectory, spells, tiles, monsters, tileIdGenerator, monsterIdGenerator);
+
+            var maps = OldFormat.LoadMaps(opts.InputDirectory, spells, tiles, monsters, tileIdGenerator,
+                monsterIdGenerator);
 
             Directory.CreateDirectory(opts.OutputDirectory);
             if (opts.MapId == -1)
@@ -107,7 +113,7 @@ namespace ConvertMaps
                 {
                     WriteItems(items, opts.OutputDirectory);
                 }
-                
+
                 if (opts.Monsters)
                 {
                     WriteMonsters(monsters, opts.OutputDirectory);
@@ -132,6 +138,16 @@ namespace ConvertMaps
             using var reader =
                 new StreamWriter(filename, false);
             serializer.Serialize(reader, monsterTileset);
+
+
+            Console.WriteLine(
+                $"writing {Path.Combine(outputDirectory, $"allmonsters.json")}");
+            File.WriteAllText(Path.Combine(outputDirectory, $"allmonsters.json"),
+                JsonConvert.SerializeObject(monsters, Formatting.Indented,
+                    new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    }));
         }
 
         private static void WriteRandomMonsters(Map map, string outputDirectory)
@@ -180,16 +196,35 @@ namespace ConvertMaps
                 new StreamWriter(Path.Combine(outputDirectory, $"items.tsx"), false);
             serializer.Serialize(reader, itemTileSet);
 
+            Console.WriteLine(
+                $"writing {Path.Combine(outputDirectory, $"items.json")}");
+            File.WriteAllText(Path.Combine(outputDirectory, $"items.json"),
+                JsonConvert.SerializeObject(items, Formatting.Indented,
+                    new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    }));
+
         }
 
         private static void WriteSpells(IReadOnlyCollection<Spell> spells, string outputDirectory)
         {
             var itemTileSet = TiledConverter.ToSpellTileset(spells);
             Console.WriteLine($"writing {Path.Combine(outputDirectory, $"spells.tsx")}");
-                var serializer = new XmlSerializer(typeof(TiledTileset));
-                using var reader =
-                    new StreamWriter(Path.Combine(outputDirectory, $"spells.tsx"), false);
-                serializer.Serialize(reader, itemTileSet);
-            }
+            var serializer = new XmlSerializer(typeof(TiledTileset));
+            using var reader =
+                new StreamWriter(Path.Combine(outputDirectory, $"spells.tsx"), false);
+            serializer.Serialize(reader, itemTileSet);
+            
+            Console.WriteLine(
+                $"writing {Path.Combine(outputDirectory, $"spells.json")}");
+            File.WriteAllText(Path.Combine(outputDirectory, $"spells.json"),
+                JsonConvert.SerializeObject(spells, Formatting.Indented,
+                    new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    }));
+        }
+
     }
 }

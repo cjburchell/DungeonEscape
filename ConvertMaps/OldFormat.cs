@@ -143,7 +143,7 @@ namespace ConvertMaps
                 var spell = new Spell
                 {
                     Info = info,
-                    Name = lineItems[0],
+                    Name = StringUtils.AddSpacesToSentence(lineItems[0]),
                     Type = (SpellType) int.Parse(lineItems[1]),
                     Power = int.Parse(lineItems[2]),
                     Cost = int.Parse(lineItems[3]),
@@ -337,31 +337,32 @@ namespace ConvertMaps
                     name = "npc";
                 }
 
+                name = StringUtils.AddSpacesToSentence(name);
 
                 if (spriteType == SpriteType.Monster)
                 {
                     var monsterInfo = GetMonster(monsters, image, name, randomMonsterIdGenerator, size * 32, "images/monsters/",
                         info =>
                         {
-                            List<SpriteSpell> spriteSpells = null;
+                            List<int> spriteSpells = null;
                             switch (npcType)
                             {
                                 case 7:
                                 {
-                                    var spell = spells.FirstOrDefault(item => item.Name == "LitBlast");
+                                    var spell = spells.FirstOrDefault(item => item.Name == "Lit Blast");
                                     if (spell != null)
                                     {
-                                        spriteSpells = new List<SpriteSpell> {new SpriteSpell {Id = spell.Info.Id}};
+                                        spriteSpells = new List<int> {spell.Info.Id};
                                     }
 
                                     break;
                                 }
                                 case 8:
                                 {
-                                    var spell = spells.FirstOrDefault(item => item.Name == "FireBlast");
+                                    var spell = spells.FirstOrDefault(item => item.Name == "Fire Blast");
                                     if (spell != null)
                                     {
-                                        spriteSpells = new List<SpriteSpell> {new SpriteSpell {Id = spell.Info.Id}};
+                                        spriteSpells = new List<int> {spell.Info.Id};
                                     }
 
                                     break;

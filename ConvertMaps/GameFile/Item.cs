@@ -14,7 +14,11 @@ namespace GameFile
         public int Attack { get; set; }
         public int Agility { get; set; }
         public int Cost { get; set; }
+        
+        [JsonIgnore]
         public TileInfo Info { get; set; }
+
+        public int Id => this.Info.Id;
         public int MinLevel { get; set; }
     }
 }

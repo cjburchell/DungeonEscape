@@ -14,7 +14,11 @@ namespace GameFile
     public class Spell
     {
         public string Name { get; set; }
+        
+        [JsonIgnore]
         public TileInfo Info { get; set; }
+
+        public int Id => this.Info.Id;
         
         [JsonConverter(typeof(StringEnumConverter))]
         public SpellType Type { get; set; }

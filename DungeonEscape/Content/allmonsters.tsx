@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="allmonsters" tilewidth="96" tileheight="96" tilecount="47" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
-  <tile id="1" type="GiantCentipede">
+  <tile id="1" type="Giant Centipede">
     <image width="64" height="64" source="images/monsters/peed.png" />
     <properties>
       <property name="Health" type="int" value="1" />
@@ -28,7 +28,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="3" type="GiantBee">
+  <tile id="3" type="Giant Bee">
     <image width="32" height="32" source="images/monsters/bee.png" />
     <properties>
       <property name="Health" type="int" value="1" />
@@ -42,7 +42,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="4" type="TigerBeetle">
+  <tile id="4" type="Tiger Beetle">
     <image width="32" height="32" source="images/monsters/beet.png" />
     <properties>
       <property name="Health" type="int" value="2" />
@@ -70,7 +70,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="6" type="EvilDwarf">
+  <tile id="6" type="Evil Dwarf">
     <image width="32" height="32" source="images/monsters/elf.png" />
     <properties>
       <property name="Health" type="int" value="1" />
@@ -84,7 +84,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="7" type="RobberFly">
+  <tile id="7" type="Robber Fly">
     <image width="32" height="32" source="images/monsters/fly.png" />
     <properties>
       <property name="Health" type="int" value="2" />
@@ -113,7 +113,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="9" type="GiantAnt">
+  <tile id="9" type="Giant Ant">
     <image width="32" height="32" source="images/monsters/ant.png" />
     <properties>
       <property name="Health" type="int" value="5" />
@@ -141,7 +141,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="11" type="SlimeTI">
+  <tile id="11" type="Metal Slime">
     <image width="32" height="32" source="images/monsters/slimeti.png" />
     <properties>
       <property name="Health" type="int" value="20" />
@@ -155,7 +155,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="12" type="BlueDragon">
+  <tile id="12" type="Blue Dragon">
     <image width="96" height="96" source="images/monsters/dblue.png" />
     <properties>
       <property name="Health" type="int" value="10" />
@@ -170,7 +170,7 @@
       <property name="Spell0" type="int" value="6" />
     </properties>
   </tile>
-  <tile id="13" type="SeaSnake">
+  <tile id="13" type="Sea Snake">
     <image width="32" height="32" source="images/monsters/ssnake.png" />
     <properties>
       <property name="Health" type="int" value="3" />
@@ -184,7 +184,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="14" type="WaterWeird">
+  <tile id="14" type="Water Weird">
     <image width="64" height="64" source="images/monsters/weard.png" />
     <properties>
       <property name="Health" type="int" value="3" />
@@ -198,7 +198,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="15" type="ElectricEel">
+  <tile id="15" type="Electric Eel">
     <image width="32" height="32" source="images/monsters/eeal.png" />
     <properties>
       <property name="Health" type="int" value="2" />
@@ -227,7 +227,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="17" type="SeaSerpent">
+  <tile id="17" type="Sea Serpent">
     <image width="32" height="32" source="images/monsters/seaserpent.png" />
     <properties>
       <property name="Health" type="int" value="6" />
@@ -241,7 +241,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="18" type="GiantOctopus">
+  <tile id="18" type="Giant Octopus">
     <image width="64" height="64" source="images/monsters/oct.png" />
     <properties>
       <property name="Health" type="int" value="8" />
@@ -255,7 +255,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="19" type="Man-O-War">
+  <tile id="19" type="Jellyfish">
     <image width="64" height="64" source="images/monsters/man.png" />
     <properties>
       <property name="Health" type="int" value="4" />
@@ -269,7 +269,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="20" type="GiantSquid">
+  <tile id="20" type="Giant Squid">
     <image width="96" height="96" source="images/monsters/Squid.png" />
     <properties>
       <property name="Health" type="int" value="6" />
@@ -283,7 +283,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="21" type="SeaDragon">
+  <tile id="21" type="Sea Dragon">
     <image width="32" height="32" source="images/monsters/seadragon.png" />
     <properties>
       <property name="Health" type="int" value="8" />
@@ -368,7 +368,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="27" type="DesertGost">
+  <tile id="27" type="Desert Gost">
     <image width="32" height="32" source="images/monsters/sgost.png" />
     <properties>
       <property name="Health" type="int" value="4" />
@@ -396,7 +396,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="29" type="SandSpider">
+  <tile id="29" type="Sand Spider">
     <image width="32" height="32" source="images/monsters/sands.png" />
     <properties>
       <property name="Health" type="int" value="2" />
@@ -410,7 +410,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="30" type="PiranhaBird">
+  <tile id="30" type="Piranha Bird">
     <image width="32" height="32" source="images/monsters/bird.png" />
     <properties>
       <property name="Health" type="int" value="1" />
@@ -453,7 +453,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="33" type="MountainLion">
+  <tile id="33" type="Mountain Lion">
     <image width="32" height="32" source="images/monsters/mountainlion.png" />
     <properties>
       <property name="Health" type="int" value="3" />
@@ -481,7 +481,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="35" type="DesertLeviathan">
+  <tile id="35" type="Desert Leviathan">
     <image width="96" height="96" source="images/monsters/dlav.png" />
     <properties>
       <property name="Health" type="int" value="60" />
@@ -495,7 +495,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="36" type="ApeWhite">
+  <tile id="36" type="White Ape">
     <image width="64" height="64" source="images/monsters/ape.png" />
     <properties>
       <property name="Health" type="int" value="4" />
@@ -523,7 +523,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="38" type="BlackBear">
+  <tile id="38" type="Black Bear">
     <image width="64" height="64" source="images/monsters/bbare.png" />
     <properties>
       <property name="Health" type="int" value="4" />
@@ -565,7 +565,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="41" type="BlackWidow">
+  <tile id="41" type="Black Widow">
     <image width="32" height="32" source="images/monsters/wido.png" />
     <properties>
       <property name="Health" type="int" value="3" />
@@ -593,7 +593,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="43" type="OwlBear">
+  <tile id="43" type="Owl Bear">
     <image width="32" height="32" source="images/monsters/owl.png" />
     <properties>
       <property name="Health" type="int" value="5" />
@@ -607,7 +607,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="44" type="Griz_Bear">
+  <tile id="44" type="Grizzly Bear">
     <image width="64" height="64" source="images/monsters/gris.png" />
     <properties>
       <property name="Health" type="int" value="5" />
@@ -635,7 +635,7 @@
       <property name="Magic" type="int" value="5" />
     </properties>
   </tile>
-  <tile id="46" type="GreenDragon">
+  <tile id="46" type="Green Dragon">
     <image width="96" height="96" source="images/monsters/dGreen.png" />
     <properties>
       <property name="Health" type="int" value="100" />
@@ -650,7 +650,7 @@
       <property name="Spell0" type="int" value="6" />
     </properties>
   </tile>
-  <tile id="47" type="Polar_Bear">
+  <tile id="47" type="Polar_ Bear">
     <image width="64" height="64" source="images/monsters/polerb.png" />
     <properties>
       <property name="Health" type="int" value="8" />

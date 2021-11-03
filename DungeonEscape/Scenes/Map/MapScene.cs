@@ -23,8 +23,8 @@ namespace DungeonEscape.Scenes
         private const int ScreenSpaceRenderLayer = 999;
         
         public const int DefaultTileSize = 32;
-        public const int ScreenTileWidth = 16;
-        public const int ScreenTileHeight = 15;
+        public const int ScreenTileWidth = 32;
+        public const int ScreenTileHeight = 18;
         public const int ScreenWidth = ScreenTileWidth * DefaultTileSize;
         public const int ScreenHeight = ScreenTileHeight * DefaultTileSize;
         public const SceneResolutionPolicy SceneResolution = SceneResolutionPolicy.ShowAll;

@@ -212,6 +212,18 @@ namespace ConvertMaps
                     $"Warning: Map {id} Mismatched {v} line size Expected: h:{map.Height} w:{map.Width} Actual: h:{lines.Count - line} w:{lines[line].Length} ");
             }
 
+            if (map.Height < 18)
+            {
+                Console.WriteLine(
+                    $"Warning: Map {id} Height {map.Height} is too small it should be larger than 17");
+            }
+            
+            if (map.Width < 32)
+            {
+                Console.WriteLine(
+                    $"Warning: Map {id} Width {map.Width} is too small it should be larger than 32");
+            }
+
             for (; line < lines.Count; line++)
             {
                 var lineString = lines[line];

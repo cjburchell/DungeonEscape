@@ -578,7 +578,7 @@
                 this.game.Party.Gold += gold;
 
                 var monsterName = this.monsters.Count == 1 ?$"the {this.monsters.First().Name}"  : "all the enemies";
-                var levelUpMessage =$"You have defeated {monsterName}, Each party member has gained {xp}XP\nand got {gold} gold!";
+                var levelUpMessage =$"You have defeated {monsterName},\nEach party member has gained {xp}XP\nand the party got {gold} gold\n";
                 foreach (var member in this.game.Party.Members.Where(member => !member.IsDead))
                 {
                     member.XP += xp;

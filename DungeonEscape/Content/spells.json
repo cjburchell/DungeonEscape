@@ -3,48 +3,110 @@
     "Name": "Heal",
     "Id": 1,
     "Type": "Heal",
-    "Power": 1,
-    "Cost": 5,
-    "MinLevel": 2
+    "Targets": "Single",
+    "Cost": 3,
+    "MinLevel": 2,
+    "Health": 10,
+    "HealthConst": 40
   },
   {
     "Name": "Outside",
     "Id": 2,
     "Type": "Outside",
-    "Power": 1,
-    "Cost": 10,
-    "MinLevel": 4
-  },
-  {
-    "Name": "FireBall",
-    "Id": 3,
-    "Type": "Fireball",
-    "Power": 1,
-    "Cost": 10,
-    "MinLevel": 6
-  },
-  {
-    "Name": "LitBall",
-    "Id": 4,
-    "Type": "Lighting",
-    "Power": 1,
-    "Cost": 15,
-    "MinLevel": 8
-  },
-  {
-    "Name": "FireBlast",
-    "Id": 5,
-    "Type": "Fireball",
-    "Power": 2,
-    "Cost": 25,
-    "MinLevel": 10
-  },
-  {
-    "Name": "LitBlast",
-    "Id": 6,
-    "Type": "Lighting",
-    "Power": 2,
-    "Cost": 30,
+    "Targets": "Group",
+    "Cost": 6,
     "MinLevel": 12
+  },
+  {
+    "Name": "Fireball",
+    "Id": 3,
+    "Type": "Damage",
+    "Targets": "Single",
+    "Cost": 10,
+    "MinLevel": 6,
+    "Health": 10,
+    "HealthConst": 5
+  },
+  {
+    "Name": "Lightning",
+    "Id": 4,
+    "Type": "Damage",
+    "Targets": "Single",
+    "Cost": 15,
+    "MinLevel": 8,
+    "Health": 20,
+    "HealthConst": 5
+  },
+  {
+    "Name": "Fire Blast",
+    "Id": 5,
+    "Type": "Damage",
+    "Targets": "Group",
+    "Cost": 25,
+    "MinLevel": 10,
+    "Health": 10,
+    "HealthConst": 5
+  },
+  {
+    "Name": "Lightning Storm",
+    "Id": 6,
+    "Type": "Damage",
+    "Targets": "Group",
+    "Cost": 30,
+    "MinLevel": 12,
+    "Health": 20,
+    "HealthConst": 5
+  },
+  {
+    "Name": "Return",
+    "Id": 7,
+    "Type": "Return",
+    "Targets": "Group",
+    "Cost": 6,
+    "MinLevel": 12
+  },
+  {
+    "Name": "Revive",
+    "Id": 8,
+    "Type": "Revive",
+    "Targets": "Single",
+    "Cost": 25,
+    "MinLevel": 20,
+    "Health": 0,
+    "HealthConst": 1
+  },
+  {
+    "Name": "Vivify",
+    "Id": 9,
+    "Type": "Revive",
+    "Targets": "Single",
+    "Cost": 40,
+    "MinLevel": 27
+  },
+  {
+    "Name": "Heal All",
+    "Id": 10,
+    "Type": "Heal",
+    "Targets": "Single",
+    "Cost": 7,
+    "MinLevel": 30
+  },
+  {
+    "Name": "Heal Us",
+    "Id": 11,
+    "Type": "Heal",
+    "Targets": "Group",
+    "Cost": 18,
+    "MinLevel": 34,
+    "Health": 10,
+    "HealthConst": 40
+  },
+  {
+    "Name": "Heal Us All",
+    "Id": 12,
+    "Type": "Heal",
+    "Targets": "Group",
+    "Cost": 62,
+    "MinLevel": 38
   }
 ]

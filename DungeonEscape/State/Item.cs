@@ -12,26 +12,23 @@ namespace DungeonEscape.State
             return this.Name;
         }
 
-        public Item(TmxTilesetTile tile)
+        public Item()
+        {
+            
+        }
+
+        public void Setup(TmxTilesetTile tile)
         {
             if (Enum.TryParse(tile.Type, out ItemType type))
             {
                 this.Type = type;
             }
-
-            this.Id = tile.Id;
-            this.Name = tile.Properties["Name"];
-            this.Defence = int.Parse(tile.Properties["Defence"]);
-            this.Health = int.Parse(tile.Properties["Health"]);
-            this.Attack = int.Parse(tile.Properties["Attack"]);
-            this.Agility = int.Parse(tile.Properties["Agility"]);
-            this.Gold = int.Parse(tile.Properties["Cost"]);
-            this.MinLevel = int.Parse(tile.Properties["MinLevel"]);
+            
             this.ImageSource = tile.Image.Source;
             this.Image = tile.Image.Texture;
         }
 
-        public int Id { get; }
+        public int Id { get; set; }
 
         public Item(string image, string name, ItemType type, int gold, int minLevel)
         {
@@ -47,16 +44,16 @@ namespace DungeonEscape.State
         }
 
 
-        public Texture2D Image { get; }
-        public string ImageSource { get; }
-        public ItemType Type { get; } = ItemType.Unknown;
-        public string Name { get; }
-        public int Defence { get; }
-        public int Health { get; }
-        public int Attack { get; }
-        public int Agility { get; }
-        public int Gold { get; }
-        public int MinLevel { get; }
+        public Texture2D Image { get; set; }
+        public string ImageSource { get; set; }
+        public ItemType Type { get; set; } = ItemType.Unknown;
+        public string Name { get; set; }
+        public int Defence { get; set; }
+        public int Health { get; set; }
+        public int Attack { get; set; }
+        public int Agility { get; set; }
+        public int Gold { get; set; }
+        public int MinLevel { get; set; }
     }
 
 }

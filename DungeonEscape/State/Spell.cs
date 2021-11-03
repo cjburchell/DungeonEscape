@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Nez.Tiled;
 using Random = Nez.Random;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,6 +6,8 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DungeonEscape.State
 {
     using System.Linq;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
 
     public enum SpellType
     {
@@ -148,48 +149,50 @@ namespace DungeonEscape.State
         {
             return this.Name;
         }
+        
+        public int Id { get; set; }
 
-
-        private readonly TmxTilesetTile tile;
-        public int Id => this.tile.Id;
-
-        public Spell(TmxTilesetTile tile)
+        public Spell()
         {
-            this.tile = tile;
-            this.Name = StringUtils.AddSpacesToSentence(tile.Properties["Name"]);
-            this.Type = Enum.Parse<SpellType>(this.tile.Type);
-            this.MinLevel = int.Parse(tile.Properties["MinLevel"]);
-            this.Cost = int.Parse(tile.Properties["Cost"]);
-            this.Targets = Enum.Parse<Target>(tile.Properties["Targets"]);
-            if (tile.Properties.ContainsKey("Health"))
-            {
-                this.Health = int.Parse(tile.Properties["Health"]);
-            }
-            if (tile.Properties.ContainsKey("HealthConst"))
-            {
-                this.HealthConst = int.Parse(tile.Properties["HealthConst"]);
-            }
+            
         }
 
+        public void Setup(TmxTilesetTile tile)
+        {
+            this.Image = tile.Image.Texture;
+        }
+
+        public Spell(TmxTilesetTile tile) : this()
+        {
+            this.Setup(tile);
+        }
+
+        [JsonIgnore]
         public bool IsNonEncounterSpell => nonEncounterSpells.Contains(this.Type);
 
+        [JsonIgnore]
         public bool IsEncounterSpell => encounterSpells.Contains(this.Type);
 
+        [JsonIgnore]
         public bool IsAttackSpell => attackSpells.Contains(this.Type);
 
-        public Target Targets { get; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public Target Targets { get; set; }
 
-        public int Cost { get; }
+        public int Cost { get; set; }
 
-        public int MinLevel { get; }
+        public int MinLevel { get; set; }
 
-        public SpellType Type { get; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public SpellType Type { get; set; }
 
-        public int Health { get; }
+        public int Health { get; set; }
 
-        public int HealthConst { get; }
+        public int HealthConst { get; set; }
 
-        public string Name { get; }
-        public Texture2D Image => this.tile.Image.Texture;
+        public string Name { get; set; }
+        
+        [JsonIgnore]
+        public Texture2D Image { get; private set; }
     }
 }

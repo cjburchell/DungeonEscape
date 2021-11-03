@@ -143,22 +143,42 @@ namespace DungeonEscape
             this.ReloadSaveGames();
 
             var tileSet = LoadTileSet($"Content/items.tsx");
-            foreach (var (_, tile) in tileSet.Tiles)
+            var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/items.json"));
+            if (items != null)
             {
-                this.Items.Add(new Item(tile));
+                foreach (var item in items)
+                {
+                    var tile = tileSet.Tiles.FirstOrDefault(i => i.Value.Id == item.Id).Value;
+                    item.Setup(tile);
+                    this.Items.Add(item);
+                }
             }
+            
             
             var spellTileset = LoadTileSet($"Content/spells.tsx");
-            foreach (var (_, tile) in spellTileset.Tiles)
+            var spells = JsonConvert.DeserializeObject<List<Spell>>(File.ReadAllText("Content/spells.json"));
+            if (spells != null)
             {
-                this.Spells.Add(new Spell(tile));
+                foreach (var spell in spells)
+                {
+                    var tile = spellTileset.Tiles.FirstOrDefault(i => i.Value.Id == spell.Id).Value;
+                    spell.Setup(tile);
+                    this.Spells.Add(spell);
+                }
             }
             
-            var monsterTileset = LoadTileSet($"Content/allmonsters.tsx");
-            foreach (var (_, tile) in monsterTileset.Tiles)
+            var monsterTileSet = LoadTileSet($"Content/allmonsters.tsx");
+            var monsters = JsonConvert.DeserializeObject<List<Monster>>(File.ReadAllText("Content/allmonsters.json"));
+            if (monsters != null)
             {
-                this.Monsters.Add(new Monster(tile, this.Spells));
+                foreach (var monster in monsters)
+                {
+                    var tile = monsterTileSet.Tiles.FirstOrDefault(item => item.Value.Id == monster.Id).Value;
+                    monster.Setup(tile, this.Spells);
+                    this.Monsters.Add(monster);
+                }
             }
+            
 
             DebugRenderEnabled = false;
             Window.AllowUserResizing = true;

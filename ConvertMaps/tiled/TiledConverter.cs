@@ -258,25 +258,6 @@ namespace ConvertMaps.Tiled
             {
                 if (monster.Info != null)
                 {
-                    var properties = new List<TiledProperty>
-                    {
-                        new TiledProperty {name = "Health", type = "int", value = monster.Health.ToString()},
-                        new TiledProperty {name = "HealthConst", type = "int", value = monster.HealthConst.ToString()},
-                        new TiledProperty {name = "Attack", type = "int", value = monster.Attack.ToString()},
-                        new TiledProperty {name = "XP", type = "int", value = monster.XP.ToString()},
-                        new TiledProperty {name = "Gold", type = "int", value = monster.Gold.ToString()},
-                        new TiledProperty {name = "Agility", type = "int", value = monster.Agility.ToString()},
-                        new TiledProperty {name = "Defence", type = "int", value = monster.Defence.ToString()},
-                        new TiledProperty {name = "MinLevel", type = "int", value = monster.MinLevel.ToString()},
-                        new TiledProperty {name = "Magic", type = "int", value = monster.Magic.ToString()}
-                    };
-
-                    if (monster.Spells != null)
-                    {
-                        var spell = 0;
-                        properties.AddRange(monster.Spells.Select(monsterSpell => new TiledProperty {name = $"Spell{spell++}", type = "int", value = monsterSpell.ToString()}));
-                    }
-                    
                     var tile = new TiledTile
                     {
                         type = monster.Name,
@@ -284,7 +265,6 @@ namespace ConvertMaps.Tiled
                         image = monster.Info.Image, 
                         imageheight = monster.Info.size,
                         imagewidth = monster.Info.size,
-                        properties = properties.ToArray(),
                         imageObj = new TiledImage {source = monster.Info.Image, height = monster.Info.size, width = monster.Info.size}
                     };
 
@@ -313,23 +293,13 @@ namespace ConvertMaps.Tiled
             foreach (var spell in spells)
             {
                 var size = spell.Info.size;
-                
-                var properties = new List<TiledProperty>
-                {
-                    new TiledProperty {name = "Name", type = "string", value = spell.Name},
-                    new TiledProperty {name = "Power", type = "int", value = spell.Power.ToString()},
-                    new TiledProperty {name = "Cost", type = "int", value = spell.Cost.ToString()},
-                    new TiledProperty {name = "MinLevel", type = "int", value = spell.MinLevel.ToString()}
-                };
-                
                 var tile = new TiledTile
                 {
-                    type = spell.Type.ToString(),
+                    type = spell.Name,
                     id = spell.Info.Id,
                     image = spell.Info.Image, 
                     imageheight = size,
                     imagewidth = size,
-                    properties = properties.ToArray(),
                     imageObj = new TiledImage {source = spell.Info.Image, height = size, width = size}
                 };
                 
@@ -355,26 +325,14 @@ namespace ConvertMaps.Tiled
             foreach (var item in items)
             {
                 var size = item.Info.size;
-                
-                var properties = new List<TiledProperty>
-                {
-                    new TiledProperty {name = "Name", type = "string", value = item.Name},
-                    new TiledProperty {name = "Defence", type = "int", value = item.Defence.ToString()},
-                    new TiledProperty {name = "Health", type = "int", value = item.Health.ToString()},
-                    new TiledProperty {name = "Attack", type = "int", value = item.Attack.ToString()},
-                    new TiledProperty {name = "Agility", type = "int", value = item.Agility.ToString()},
-                    new TiledProperty {name = "Cost", type = "int", value = item.Cost.ToString()},
-                    new TiledProperty {name = "MinLevel", type = "int", value = item.MinLevel.ToString()}
-                };
-                
+
                 var tile = new TiledTile
                 {
-                    type = item.Type.ToString(),
+                    type = item.Name,
                     id = item.Info.Id,
                     image = item.Info.Image, 
                     imageheight = size,
                     imagewidth = size,
-                    properties = properties.ToArray(),
                     imageObj = new TiledImage {source = item.Info.Image, height = size, width = size}
                 };
                 

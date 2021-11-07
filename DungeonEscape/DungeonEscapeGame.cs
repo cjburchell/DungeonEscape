@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 using DungeonEscape.Scenes;
 using DungeonEscape.State;
 using Microsoft.Xna.Framework;
 using Nez;
-using Nez.ImGuiTools;
 using Nez.Tiled;
 using Newtonsoft.Json;
 

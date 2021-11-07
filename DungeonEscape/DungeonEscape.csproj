@@ -900,7 +900,6 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Nez.ImGui\Nez.MG38.ImGui.csproj" />
       <ProjectReference Include="..\Nez.Portable\Nez.MG38.csproj" />
     </ItemGroup>
     <ItemGroup>

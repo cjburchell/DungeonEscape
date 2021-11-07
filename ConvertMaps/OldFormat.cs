@@ -9,6 +9,8 @@ namespace ConvertMaps
 {
     public static class OldFormat
     {
+        private const int GridSize = 32;
+        
         public static IEnumerable<Map> LoadMaps(string inputDirectory, List<Spell> spells, List<TileInfo> tiles, List<Monster> monsters, IdGenerator tileIdGenerator, IdGenerator randomMonsterIdGenerator)
         {
             var maps = new List<Map>();
@@ -77,7 +79,7 @@ namespace ConvertMaps
                         Image = imageFileName,
                         Id = idGenerator.New(),
                         OldIds = new List<int> {tile.OldId},
-                        size = 32
+                        size = GridSize
                     };
 
                     gameTiles.Add(gameTile);
@@ -103,7 +105,7 @@ namespace ConvertMaps
                 }
 
                 var lineItems = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                var info = GetSprite(null, null, lineItems[7], idGenerator,32, "images/items/");
+                var info = GetSprite(null, null, lineItems[7], idGenerator,GridSize, "images/items/");
                 var item = new Item
                 {
                     Info = info,
@@ -139,7 +141,7 @@ namespace ConvertMaps
                 }
 
                 var lineItems = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                var info = GetSprite(null, null, lineItems[4], idGenerator, 32, "images/items/");
+                var info = GetSprite(null, null, lineItems[4], idGenerator, GridSize, "images/items/");
                 var spell = new Spell
                 {
                     Info = info,
@@ -353,7 +355,7 @@ namespace ConvertMaps
 
                 if (spriteType == SpriteType.Monster)
                 {
-                    var monsterInfo = GetMonster(monsters, image, name, randomMonsterIdGenerator, size * 32, "images/monsters/",
+                    var monsterInfo = GetMonster(monsters, image, name, randomMonsterIdGenerator, size * GridSize, "images/monsters/",
                         info =>
                         {
                             List<int> spriteSpells = null;
@@ -417,7 +419,7 @@ namespace ConvertMaps
                 {
                     if (posX != 0 && posY != 0)
                     {
-                        var spriteInfo = GetSprite(map.TileInfo, tiles, image, tileIdGenerator, size * 32);
+                        var spriteInfo = GetSprite(map.TileInfo, tiles, image, tileIdGenerator, size * GridSize);
                         var sprite = new Sprite
                         {
                             Id = spriteInfo.Id,
@@ -460,7 +462,7 @@ namespace ConvertMaps
         }
 
         private static TileInfo GetSprite(ICollection<TileInfo> mapTiles, ICollection<TileInfo> tiles, string image, IdGenerator idGenerator,
-            int size = 32, string path="images/sprites/")
+            int size = GridSize, string path="images/sprites/")
         {
             var imagePath = $"{path}{Path.GetFileNameWithoutExtension(image)}.png";
 

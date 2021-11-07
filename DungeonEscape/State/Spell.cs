@@ -9,21 +9,6 @@ namespace DungeonEscape.State
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
 
-    public enum SpellType
-    {
-        Heal,
-        Outside,
-        Damage,
-        Return,
-        Revive
-    }
-
-    public enum Target
-    {
-        Single,
-        Group,
-    }
-
     public class Spell
     {
         public string Cast(IEnumerable<Fighter> targets, Fighter caster, IGame game)

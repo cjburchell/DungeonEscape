@@ -43,7 +43,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             {
                 // ReSharper disable once StringLiteralTypo
                 var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/playeranimation.png");
-                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, 32, 32);
+                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, MapScene.DefaultTileSize, MapScene.DefaultTileSize);
                 this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
                 this.animator.Speed = 0.5f;
                 this.animator.RenderLayer = 10;
@@ -74,7 +74,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             {
                 var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/ship.png");
-                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, 32, 32);
+                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, MapScene.DefaultTileSize, MapScene.DefaultTileSize);
                 this.shipAnimator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
                 this.shipAnimator.Speed = 0.5f;
                 this.shipAnimator.RenderLayer = 10;

@@ -63,7 +63,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         {
             base.OnAddedToEntity();
             this.Entity.SetPosition(this.tmxObject.X + (int)(this.map.TileWidth/2.0), this.tmxObject.Y - (int)(this.map.TileHeight/2.0));
-            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this.mapTile.Image.Texture, 32, 32);
+            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this.mapTile.Image.Texture, MapScene.DefaultTileSize, MapScene.DefaultTileSize);
             this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
             this.mover = this.Entity.AddComponent(new Mover());
             this.canMove = bool.Parse(this.tmxObject.Properties["CanMove"]);

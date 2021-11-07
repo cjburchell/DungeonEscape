@@ -132,13 +132,8 @@ namespace DungeonEscape
         protected override void Initialize()
         {
             base.Initialize();
-            
-            var imGui = new ImGuiManager();
-            RegisterGlobalManager(imGui);
-            imGui.SetEnabled(false);
-            
             ExitOnEscapeKeypress = false;
-            PauseOnFocusLost = false;
+            PauseOnFocusLost = true;
 
             this.ReloadSaveGames();
 

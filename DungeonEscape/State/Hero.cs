@@ -5,6 +5,7 @@ namespace DungeonEscape.State
 {
     using System;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
     using Random = Nez.Random;
 
     public class Hero : Fighter
@@ -13,6 +14,9 @@ namespace DungeonEscape.State
         {
             return this.Name;
         }
+        
+        [JsonConverter(typeof(StringEnumConverter))]
+        public Class Class { get; set; }
 
         public string Name { get; set; }
         public int XP { get; set; }
@@ -39,20 +43,19 @@ namespace DungeonEscape.State
         public Hero()
         {
             this.Id = Guid.NewGuid().ToString();
-            this.RollStats();
-            this.Health = this.MaxHealth;
-            this.Magic = this.MaxMagic;
         }
 
-        private void RollStats()
+        public void RollStats()
         {
-            Level = 1;
-            NextLevel = 100;
-            MaxHealth = Random.NextInt(5) + 40;
-            Attack = Random.NextInt(5) + 5;
-            Defence = Random.NextInt(5) + 1;
-            MaxMagic = 5;
-            Agility = Random.NextInt(5) + 1;
+            this.Level = 1;
+            this.NextLevel = 100;
+            this.MaxHealth = Random.NextInt(5) + 40;
+            this.Attack = Random.NextInt(5) + 5;
+            this.Defence = Random.NextInt(5) + 1;
+            this.MaxMagic = 5;
+            this.Agility = Random.NextInt(5) + 1;
+            this.Health = this.MaxHealth;
+            this.Magic = this.MaxMagic;
         }
 
         public bool CheckLevelUp(IEnumerable<Spell> availableSpells, out string levelUpMessage)

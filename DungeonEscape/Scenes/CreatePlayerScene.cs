@@ -34,10 +34,17 @@ namespace DungeonEscape.Scenes
                 {
                     return;
                 }
-                
+
                 var party = new Party();
-                party.Members.Add(new Hero {Name = textField.GetText()});
-         
+                var hero = new Hero
+                {
+                    Name = textField.GetText(),
+                    Class = Class.Hero
+                };
+                
+                hero.RollStats();
+                party.Members.Add(hero);
+
                 game.LoadGame(new GameSave {Party = party});
             };
             playButton.ShouldUseExplicitFocusableControl = true;

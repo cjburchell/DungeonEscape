@@ -60,7 +60,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             base.Initialize();
             this.DisplayVisual(!this.isOpen);
             var texture = Texture2D.FromFile(Core.GraphicsDevice, $"Content/images/sprites/{this.openImageName}");
-            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, 32, 32);
+            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, MapScene.DefaultTileSize, MapScene.DefaultTileSize);
             this.openImage = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
             this.openImage.RenderLayer = 15;
             this.openImage.LayerDepth = 15;

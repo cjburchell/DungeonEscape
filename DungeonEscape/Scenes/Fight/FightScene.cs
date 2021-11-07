@@ -179,7 +179,7 @@
                 new SelectWindow<string>(this.ui, "Select Action", new Point(10, (MapScene.ScreenHeight) / 3 * 2));
             
             var options = new List<string> {"Fight"};
-            var availableSpells = this.game.GetSpellList(hero.Spells).Where(item => item.IsEncounterSpell && item.Cost <= hero.Magic).ToList();
+            var availableSpells = hero.GetSpells(this.game.Spells).Where(item => item.IsEncounterSpell && item.Cost <= hero.Magic).ToList();
             if (availableSpells.Count != 0)
             {
                 options.Add("Spell");

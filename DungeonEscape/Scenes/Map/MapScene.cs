@@ -229,7 +229,7 @@ namespace DungeonEscape.Scenes
             if (this.showCommandWindowInput.IsReleased)
             {
                 var menuItems = new List<string> {"Status"};
-                if (this.gameState.Party.Members.Count(member => member.Spells.Count != 0) != 0)
+                if (this.gameState.Party.Members.Count(member => member.GetSpells(this.gameState.Spells).Count() != 0) != 0)
                 {
                     menuItems.Add("Spells");
                 }
@@ -361,7 +361,7 @@ namespace DungeonEscape.Scenes
             if (this.gameState.Party.Members.Count == 1)
             {
                 var spellWindow = new SpellWindow(this.ui);
-                spellWindow.Show(this.gameState.GetSpellList(this.gameState.Party.Members.First().Spells).Where(item => item.IsNonEncounterSpell), spell=>
+                spellWindow.Show(this.gameState.Party.Members.First().GetSpells(this.gameState.Spells).Where(item => item.IsNonEncounterSpell), spell=>
                 {
                     if (spell == null)
                     {
@@ -376,7 +376,7 @@ namespace DungeonEscape.Scenes
             else
             {
                 var selectWindow = new SelectHeroWindow(this.ui);
-                selectWindow.Show(this.gameState.Party.Members.Where(item => item.Spells.Count != 0), hero =>
+                selectWindow.Show(this.gameState.Party.Members.Where(item => item.GetSpells(this.gameState.Spells).Count() != 0), hero =>
                 {
                     if (hero == null)
                     {
@@ -385,7 +385,7 @@ namespace DungeonEscape.Scenes
                     }
                     
                     var spellWindow = new SpellWindow(this.ui);
-                    spellWindow.Show(this.gameState.GetSpellList(hero.Spells).Where(item => item.IsNonEncounterSpell), spell =>
+                    spellWindow.Show(hero.GetSpells(this.gameState.Spells).Where(item => item.IsNonEncounterSpell), spell =>
                     {
                         if (spell == null)
                         {

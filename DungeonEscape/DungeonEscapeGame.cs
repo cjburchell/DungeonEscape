@@ -58,11 +58,6 @@ namespace DungeonEscape
             this.isPaused = this.deferredPause;
         }
         
-        public IEnumerable<Spell> GetSpellList(IEnumerable<int> spells)
-        {
-            return spells.Select(spellId => this.Spells.FirstOrDefault(item => item.Id == spellId)).Where(spell => spell != null);
-        }
-
         public void LoadGame(GameSave saveGame)
         {
             this.Party = saveGame.Party;

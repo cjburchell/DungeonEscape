@@ -170,6 +170,9 @@ namespace DungeonEscape.State
 
         [JsonConverter(typeof(StringEnumConverter))]
         public SpellType Type { get; set; }
+        
+        [JsonProperty("Classes", ItemConverterType=typeof(StringEnumConverter))]
+        public List<Class> Classes { get; set; }
 
         public int Health { get; set; }
 

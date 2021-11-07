@@ -30,8 +30,12 @@ namespace DungeonEscape.State
         public int Agility { get; set; }
         public int NextLevel { get; set; }
         public int Level { get; set; }
-        public List<int> Spells { get; private set; } = new List<int>();
-        
+
+        public IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells)
+        {
+            return availableSpells.Where(spell => spell.MinLevel <= this.Level && spell.Classes.Contains(this.Class));
+        }
+
         [JsonIgnore]
         public bool IsDead => this.Health <= 0;
         
@@ -78,9 +82,8 @@ namespace DungeonEscape.State
             this.Defence += Random.NextInt(4) + 1;
             this.Agility += Random.NextInt(3) + 1;
 
-            foreach (var spell in availableSpells.Where(spell => spell.MinLevel <= this.Level && spell.MinLevel > oldLevel))
+            foreach (var spell in availableSpells.Where(spell => spell.MinLevel <= this.Level && spell.MinLevel > oldLevel && spell.Classes.Contains(this.Class)))
             {
-                this.Spells.Add(spell.Id);
                 levelUpMessage += $"   Has learned the {spell.Name} Spell\n";
             }
 

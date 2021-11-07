@@ -29,7 +29,6 @@ namespace DungeonEscape
         IEnumerable<GameSave> GameSaves { get; }
         bool InGame { get; set; }    
         
-        IEnumerable<Spell> GetSpellList(IEnumerable<int> spells);
         void ReloadSaveGames();
         
         void LoadGame(GameSave saveGame);

@@ -28,6 +28,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         protected readonly SpriteState spriteState;
         private float elapsedTime;
         private float nextElapsedTime = Random.NextInt(5) + 1;
+        private TmxTileset tilset;
+        private int baseId;
 
         public static Sprite Create(TmxObject tmxObject, SpriteState state, TmxMap map, UISystem ui, IGame gameState, AstarGridGraph graph)
         {
@@ -54,17 +56,43 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.tmxObject = tmxObject;
             this.map = map;
             this.gameState = gameState;
-            this.mapTile = map.GetTilesetTile(tmxObject.Tile.Gid);
-
-           
+            this.tilset = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
+            this.baseId = tmxObject.Tile.Gid - this.tilset.FirstGid;
         }
 
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
             this.Entity.SetPosition(this.tmxObject.X + (int)(this.map.TileWidth/2.0), this.tmxObject.Y - (int)(this.map.TileHeight/2.0));
-            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this.mapTile.Image.Texture, MapScene.DefaultTileSize, MapScene.DefaultTileSize);
-            this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
+            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this.tilset.Image.Texture, this.tilset.TileWidth, this.tilset.TileHeight,  this.tilset.Spacing);
+            this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[this.baseId]));
+            this.animator.Speed = 0.5f;
+            this.animator.RenderLayer = 10;
+            this.animator.AddAnimation("WalkDown", new[]
+            {
+                sprites[this.baseId + 0],
+                sprites[this.baseId + 1]
+            });
+
+            this.animator.AddAnimation("WalkUp", new[]
+            {
+                sprites[this.baseId + 6],
+                sprites[this.baseId + 7]
+            });
+
+            this.animator.AddAnimation("WalkRight", new[]
+            {
+                sprites[this.baseId + 2],
+                sprites[this.baseId + 3]
+            });
+
+            this.animator.AddAnimation("WalkLeft", new[]
+            {
+                sprites[this.baseId + 4],
+                sprites[this.baseId + 5]
+            });
+            
+            
             this.mover = this.Entity.AddComponent(new Mover());
             this.canMove = bool.Parse(this.tmxObject.Properties["CanMove"]);
             this.animator.RenderLayer = 15;
@@ -168,6 +196,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 if (this.path == null)
                 {
                     this.state = MoveState.Stopped;
+                    this.animator.Pause();
                 }
                 else
                 {
@@ -178,6 +207,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                         if (this.currentPathIndex >= this.path.Count)
                         {
                             this.state = MoveState.Stopped;
+                            this.animator.Pause();
                             return;
                         }
                     }
@@ -185,8 +215,42 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                     var p2 = MapScene.ToRealLocation(this.path[this.currentPathIndex], this.map);
                     var angle = (float)Math.Atan2(p2.Y - p1.Y, p2.X - p1.X);
                     var vector = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                    var animation = "WalkDown";
+                    if (vector.X < 0)
+                    {
+                        animation = "WalkLeft";
+                    }
+                    else if (vector.X > 0)
+                    {
+                        animation = "WalkRight";
+                    }
+
+                    if (vector.Y < 0)
+                    {
+                        animation = "WalkUp";
+                    }
+                    else if (vector.Y > 0)
+                    {
+                        animation = "WalkDown";
+                    }
+                    
+                    if (! this.animator.IsAnimationActive(animation))
+                    {
+                        this.animator.Play(animation);
+                    }
+                    else
+                    {
+                        this.animator.UnPause();
+                    }
+                    
                     var movement = vector * MoveSpeed * Time.DeltaTime;
-                    this.mover.CalculateMovement(ref movement, out _);
+                    if (this.mover.CalculateMovement(ref movement, out _))
+                    {
+                        this.state = MoveState.Stopped;
+                        this.animator.Pause();
+                        return;
+                    }
+                    
                     this.mover.ApplyMovement(movement);
                 }
             }

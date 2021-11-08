@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Tiles" tilewidth="96" tileheight="96" tilecount="54" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
+<tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Tiles" tilewidth="32" tileheight="32" tilecount="48" columns="0" spacing="0" margin="0" transparentcolor="#FF00FF" firstgid="1">
   <tile id="1">
     <image width="32" height="32" source="images/tiles/grass.png" />
   </tile>
@@ -130,36 +130,18 @@
     <image width="32" height="32" source="images/sprites/warp.png" />
   </tile>
   <tile id="44">
-    <image width="32" height="32" source="images/sprites/muchc.png" />
-  </tile>
-  <tile id="45">
-    <image width="32" height="32" source="images/sprites/healc.png" />
-  </tile>
-  <tile id="46">
-    <image width="32" height="32" source="images/sprites/wizc.png" />
-  </tile>
-  <tile id="47">
-    <image width="32" height="32" source="images/sprites/gard.png" />
-  </tile>
-  <tile id="48">
     <image width="32" height="32" source="images/sprites/ship1.png" />
   </tile>
-  <tile id="49">
+  <tile id="45">
     <image width="32" height="32" source="images/sprites/door.png" />
   </tile>
-  <tile id="50">
+  <tile id="46">
     <image width="32" height="32" source="images/sprites/stairdw.png" />
   </tile>
-  <tile id="51">
-    <image width="32" height="32" source="images/sprites/shu.png" />
-  </tile>
-  <tile id="52">
+  <tile id="47">
     <image width="32" height="32" source="images/sprites/stairup.png" />
   </tile>
-  <tile id="53">
+  <tile id="48">
     <image width="32" height="32" source="images/sprites/ochest.png" />
-  </tile>
-  <tile id="54">
-    <image width="96" height="96" source="images/sprites/dlav.png" />
   </tile>
 </tileset>

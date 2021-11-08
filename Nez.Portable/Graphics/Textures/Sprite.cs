@@ -129,15 +129,16 @@ namespace Nez.Textures
 		/// <param name="texture">Texture.</param>
 		/// <param name="cellWidth">Cell width.</param>
 		/// <param name="cellHeight">Cell height.</param>
+		/// <param name="cellSpacing">Cell spacing.</param>
 		/// <param name="cellOffset">the first cell to include while processing. 0 based indexing.</param>
 		/// <param name="maxCellsToInclude">Max cells to included.</param>
-		public static List<Sprite> SpritesFromAtlas(Texture2D texture, int cellWidth, int cellHeight,
+		public static List<Sprite> SpritesFromAtlas(Texture2D texture, int cellWidth, int cellHeight, int cellSpacing = 0,
 		                                                    int cellOffset = 0, int maxCellsToInclude = int.MaxValue)
 		{
 			var sprites = new List<Sprite>();
 
-			var cols = texture.Width / cellWidth;
-			var rows = texture.Height / cellHeight;
+			var cols = (texture.Width + cellSpacing) / (cellWidth + cellSpacing);
+			var rows = (texture.Height + cellSpacing) / (cellHeight + cellSpacing);
 			var i = 0;
 
 			for (var y = 0; y < rows; y++)
@@ -149,7 +150,7 @@ namespace Nez.Textures
 						continue;
 
 					sprites.Add(new Sprite(texture,
-						new Rectangle(x * cellWidth, y * cellHeight, cellWidth, cellHeight)));
+						new Rectangle(x * (cellWidth+cellSpacing), y * (cellHeight+cellSpacing), cellWidth, cellHeight)));
 
 					// once we hit the max number of cells to include bail out. were done.
 					if (sprites.Count == maxCellsToInclude)

@@ -17,6 +17,9 @@ namespace DungeonEscape.State
         
         [JsonConverter(typeof(StringEnumConverter))]
         public Class Class { get; set; }
+        
+        [JsonConverter(typeof(StringEnumConverter))]
+        public Gender Gender { get; set; }
 
         public string Name { get; set; }
         public int XP { get; set; }
@@ -49,20 +52,25 @@ namespace DungeonEscape.State
             this.Id = Guid.NewGuid().ToString();
         }
 
-        public void RollStats()
+        public void RollStats(List<ClassStats> clasLevels)
         {
             this.Level = 1;
-            this.NextLevel = 100;
-            this.MaxHealth = Random.NextInt(5) + 40;
-            this.Attack = Random.NextInt(5) + 5;
-            this.Defence = Random.NextInt(5) + 1;
-            this.MaxMagic = 5;
-            this.Agility = Random.NextInt(5) + 1;
+            var classStats = clasLevels.First(stats => stats.Class == this.Class);
+            this.NextLevel = classStats.FirstLevel;
+            
+            // Roll starting stats
+            
+            this.MaxHealth = classStats.Stats.First( item=> item.Type == StatType.Health).RollStartValue();
+            this.Attack = classStats.Stats.First( item=> item.Type == StatType.Attack).RollStartValue();
+            this.Defence = classStats.Stats.First(item => item.Type == StatType.Defence).RollStartValue();
+            this.MaxMagic = classStats.Stats.First( item=> item.Type == StatType.Magic).RollStartValue();
+            this.Agility = classStats.Stats.First( item=> item.Type == StatType.Agility).RollStartValue();
+
             this.Health = this.MaxHealth;
             this.Magic = this.MaxMagic;
         }
 
-        public bool CheckLevelUp(IEnumerable<Spell> availableSpells, out string levelUpMessage)
+        public bool CheckLevelUp(List<ClassStats> clasLevels, IEnumerable<Spell> availableSpells, out string levelUpMessage)
         {
             if (this.XP < this.NextLevel)
             {
@@ -72,15 +80,17 @@ namespace DungeonEscape.State
 
             var oldLevel = this.Level;
             ++this.Level;
-            this.NextLevel = (this.NextLevel * 3) + Random.NextInt(this.NextLevel / 20);
+            var classStats = clasLevels.First(stats => stats.Class == this.Class);
+            this.NextLevel = (this.NextLevel * classStats.NextLevelFactor) + Random.NextInt(this.NextLevel / classStats.NextLevelRandomPercent);
             
             levelUpMessage = $"{this.Name} has advanced to level {this.Level}\n";
-                    
-            this.Attack += Random.NextInt(7) + 1;
-            this.MaxMagic += Random.NextInt(6) + 5;
-            this.MaxHealth += Random.NextInt(7) + 1;
-            this.Defence += Random.NextInt(4) + 1;
-            this.Agility += Random.NextInt(3) + 1;
+            
+           
+            this.MaxHealth += classStats.Stats.First( item=> item.Type == StatType.Health).RollNextValue();
+            this.Attack += classStats.Stats.First( item=> item.Type == StatType.Attack).RollNextValue();
+            this.Defence += classStats.Stats.First(item => item.Type == StatType.Defence).RollNextValue();
+            this.MaxMagic += classStats.Stats.First( item=> item.Type == StatType.Magic).RollNextValue();
+            this.Agility = classStats.Stats.First( item=> item.Type == StatType.Agility).RollNextValue();
 
             foreach (var spell in availableSpells.Where(spell => spell.MinLevel <= this.Level && spell.MinLevel > oldLevel && spell.Classes.Contains(this.Class)))
             {

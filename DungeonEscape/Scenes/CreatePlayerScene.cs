@@ -42,7 +42,7 @@ namespace DungeonEscape.Scenes
                     Class = Class.Hero
                 };
                 
-                hero.RollStats();
+                hero.RollStats(game.ClassLevelStats);
                 party.Members.Add(hero);
 
                 game.LoadGame(new GameSave {Party = party});

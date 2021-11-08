@@ -19,7 +19,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly List<RandomMonster> randomMonsters;
         private readonly UISystem ui;
         private const float MoveSpeed = 150;
-        private SpriteAnimator animator;
+        private readonly List<SpriteAnimator> partyAnimations = new List<SpriteAnimator>();
         private SpriteAnimator shipAnimator;
         private VirtualIntegerAxis xAxisInput;
         private VirtualIntegerAxis yAxisInput;
@@ -41,35 +41,43 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         {
             this.mover = this.Entity.AddComponent(new Mover());
             {
-                // ReSharper disable once StringLiteralTypo
-                var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/playeranimation.png");
-                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, MapScene.DefaultTileSize, MapScene.DefaultTileSize);
-                this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
-                this.animator.Speed = 0.5f;
-                this.animator.RenderLayer = 10;
-                this.animator.AddAnimation("WalkDown", new[]
-                {
-                    sprites[0],
-                    sprites[1]
-                });
+                var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
+                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, MapScene.DefaultTileSize, 48);
 
-                this.animator.AddAnimation("WalkUp", new[]
+                foreach (var hero in this.GameState.Party.Members)
                 {
-                    sprites[2],
-                    sprites[3]
-                });
+                    var animationBaseIndex = (int) hero.Class * 16 + (int) hero.Gender * 8;
+                    var animator = this.Entity.AddComponent(new SpriteAnimator(sprites[animationBaseIndex + 4]));
+                    animator.Speed = 0.5f;
+                    animator.RenderLayer = 10;
+                    
+                    animator.AddAnimation("WalkDown", new[]
+                    {
+                        sprites[animationBaseIndex + 4],
+                        sprites[animationBaseIndex + 5]
+                    });
 
-                this.animator.AddAnimation("WalkRight", new[]
-                {
-                    sprites[4],
-                    sprites[5]
-                });
+                    animator.AddAnimation("WalkUp", new[]
+                    {
+                        sprites[animationBaseIndex + 0],
+                        sprites[animationBaseIndex + 1]
+                    });
 
-                this.animator.AddAnimation("WalkLeft", new[]
-                {
-                    sprites[6],
-                    sprites[7]
-                });
+                    animator.AddAnimation("WalkRight", new[]
+                    {
+                        sprites[animationBaseIndex + 2],
+                        sprites[animationBaseIndex + 3]
+                    });
+
+                    animator.AddAnimation("WalkLeft", new[]
+                    {
+                        sprites[animationBaseIndex + 6],
+                        sprites[animationBaseIndex + 7]
+                    });
+                    
+                    this.partyAnimations.Add(animator);
+                    animator.SetEnabled(false);
+                }
             }
 
             {
@@ -129,7 +137,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             var overWater = this.IsOverWater();
             this.shipAnimator.SetEnabled(overWater);
-            this.animator.SetEnabled(!overWater);
+            this.partyAnimations.First().SetEnabled(!overWater);
         }
 
         public override void OnRemovedFromEntity()
@@ -150,14 +158,14 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         {
             var overWater = this.IsOverWater();
             this.shipAnimator.SetEnabled(overWater);
-            this.animator.SetEnabled(!overWater);
+            this.partyAnimations.First().SetEnabled(!overWater);
             // handle movement and animations    
             var moveDir = new Vector2(this.xAxisInput.Value, this.yAxisInput.Value);
             
             if (moveDir == Vector2.Zero)
             {
                 this.shipAnimator.Pause();
-                this.animator.Pause();
+                this.partyAnimations.First().Pause();
                 return false;
             }
             
@@ -215,13 +223,13 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 this.GameState.Party.OverWorldPosition = this.GameState.Party.CurrentPosition;
             }
 
-            if (!this.animator.IsAnimationActive(animation))
+            if (! this.partyAnimations.First().IsAnimationActive(animation))
             {
-                this.animator.Play(animation);
+                this.partyAnimations.First().Play(animation);
             }
             else
             {
-                this.animator.UnPause();
+                this.partyAnimations.First().UnPause();
             }
 
             if (!this.shipAnimator.IsAnimationActive(animation))

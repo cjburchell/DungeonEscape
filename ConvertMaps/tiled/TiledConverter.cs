@@ -7,6 +7,7 @@ namespace ConvertMaps.Tiled
     public static class TiledConverter
     {
         const int BiomeOffset = 900;
+        private const int NpcOffset = 1000;
         
         public static TiledMap ToTileMap(Map map)
         {
@@ -17,9 +18,9 @@ namespace ConvertMaps.Tiled
             var wall = new List<int>();
             var biomes = new List<int>();
 
-            for (var y = 0; y < map.Width; y++)
+            for (var y = 0; y < map.Height; y++)
             {
-                for (var x = 0; x < map.Height; x++)
+                for (var x = 0; x < map.Width; x++)
                 {
                     var floorTile = map.FloorLayer.FirstOrDefault(item => item.Position.X == x && item.Position.Y == y);
                     floor.Add(floorTile?.Id + offset ?? 0);
@@ -53,9 +54,6 @@ namespace ConvertMaps.Tiled
             var tileId = new IdGenerator();
             foreach (var objSprite in map.Sprites)
             {
-                var size = map.TileInfo.Where(item => item.Id == objSprite.Id).Select(item => (float) item.size)
-                    .FirstOrDefault();
-
                 var properties = new List<TiledProperty>
                 {
                     new TiledProperty {name = "CanMove", type = "bool", value = objSprite.CanMove.ToString()},
@@ -78,32 +76,52 @@ namespace ConvertMaps.Tiled
                             {name = "WarpMapY", type = "int", value = objSprite.Warp.Location.Y.ToString()});
                     }
                 }
-
-                var obj = new TiledObject
-                {
-                    id = tileId.New(),
-                    gid = objSprite.Id + offset,
-                    name = objSprite.Name,
-                    x = objSprite.StartPosition.X * 32,
-                    y = (objSprite.StartPosition.Y + (size / 32)) * 32,
-                    width = size,
-                    height = size,
-                    type = objSprite.Type.ToString(),
-                    visible = true,
-                    properties = properties.ToArray()
-                };
-
+                
                 switch (objSprite.Type)
                 {
                     case SpriteType.Ship:
                     case SpriteType.Door:
                     case SpriteType.Chest:
                     case SpriteType.Warp:
+                    {
+                        var size = map.TileInfo.Where(item => item.Id == objSprite.Id).Select(item => (float) item.size)
+                            .FirstOrDefault();
+
+                        var obj = new TiledObject
+                        {
+                            id = tileId.New(),
+                            gid = objSprite.Id + offset,
+                            name = objSprite.Name,
+                            x = objSprite.StartPosition.X * 32,
+                            y = (objSprite.StartPosition.Y + (size / 32)) * 32,
+                            width = size,
+                            height = size,
+                            type = objSprite.Type.ToString(),
+                            visible = true,
+                            properties = properties.ToArray()
+                        };
+
                         objects.Add(obj);
                         break;
+                    }
                     default:
+                    {
+                        var obj = new TiledObject
+                        {
+                            id = tileId.New(),
+                            gid = objSprite.Id + NpcOffset,
+                            name = objSprite.Name,
+                            x = objSprite.StartPosition.X * 32,
+                            y = (objSprite.StartPosition.Y + (32 / 32)) * 32,
+                            width = 32,
+                            height = 48,
+                            type = objSprite.Type.ToString(),
+                            visible = true,
+                            properties = properties.ToArray()
+                        };
                         sprites.Add(obj);
                         break;
+                    }
                 }
             }
 
@@ -146,12 +164,22 @@ namespace ConvertMaps.Tiled
                 version = "1.6",
                 tilesets = map.Id == 0
                     ? new[] {new TiledTileset {firstgid = 1, source = "tiles.tsx"}, ToBiomeTileSet()}
-                    : new[] {new TiledTileset {firstgid = 1, source = "tiles.tsx"}},
+                    : new[] {new TiledTileset {firstgid = 1, source = "tiles.tsx"}, GetNpcTileset()},
                 layers = layers.ToArray()
             };
 
 
             return tiledMap;
+        }
+
+        private static TiledTileset GetNpcTileset()
+        {
+            var tiledSet = new TiledTileset
+            {
+                firstgid = NpcOffset,
+                source = "npc.tsx"
+            };
+            return tiledSet;
         }
 
         private static TiledLayer ToObjectGroup(int id, string name, List<TiledObject> objects, bool visible = true, float opacity = 1)

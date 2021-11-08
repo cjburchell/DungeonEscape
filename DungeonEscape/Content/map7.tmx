@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.6" type="map" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32">
   <tileset tilewidth="0" tileheight="0" tilecount="0" columns="0" spacing="0" margin="0" source="tiles.tsx" firstgid="1" />
+  <tileset tilewidth="0" tileheight="0" tilecount="0" columns="0" spacing="0" margin="0" source="npc.tsx" firstgid="1000" />
   <layer id="1" name="floor" width="40" height="40" type="tilelayer" visible="1" locked="false" x="0" y="0" opacity="1">
     <data encoding="csv">0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,8,8,0,0,0,0,0,0,0,0,0,24,34,0,0,0,0,0,0,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,8,8,8,8,8,8,8,8,0,0,0,0,24,0,0,0,0,0,0,0,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,8,8,8,8,8,8,8,8,8,8,8,0,24,24,24,0,0,0,0,0,0,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,8,8,8,8,8,8,8,8,8,8,8,0,24,24,24,0,8,0,0,0,0,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,8,8,8,8,8,8,0,0,22,0,0,0,0,0,0,0,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,8,8,0,0,8,8,8,8,8,8,8,8,22,8,0,22,0,0,0,0,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,8,8,0,8,8,8,8,8,8,8,8,22,8,0,22,22,0,0,0,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,8,0,8,8,8,0,8,8,8,8,8,8,8,22,22,22,22,22,22,22,0,0,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,8,0,8,22,22,16,22,22,8,8,8,8,8,22,8,8,0,22,22,22,0,0,34,0,0,0,0,0,0,0,0,8,8,8,8,8,0,0,8,8,8,0,8,22,0,0,0,22,8,8,8,8,8,22,8,8,0,0,0,0,0,0,34,0,0,0,0,0,0,0,0,8,8,8,8,0,0,8,8,8,8,0,8,22,0,0,0,22,22,22,22,22,22,22,8,8,8,8,8,8,8,0,34,0,0,0,0,0,0,0,0,8,8,8,8,0,8,8,8,8,8,0,8,22,0,0,0,22,8,8,8,22,8,8,8,8,8,8,8,8,8,0,34,0,0,0,0,0,0,0,0,8,8,8,0,0,8,8,8,8,8,0,8,22,22,22,22,22,8,8,8,22,8,8,8,8,8,8,8,22,22,22,34,0,0,0,0,0,0,0,0,8,8,8,0,0,8,8,8,8,8,0,8,8,8,8,8,8,8,8,8,22,8,8,8,8,8,8,22,22,8,0,34,0,0,0,0,0,0,0,0,0,0,0,0,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,22,8,8,8,8,8,8,22,8,8,0,8,0,0,0,0,0,0,0,0,8,8,8,8,8,8,8,8,8,8,0,0,0,0,0,0,0,0,0,8,22,8,8,8,8,8,8,22,8,8,0,8,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,22,22,22,0,22,22,22,0,8,22,8,8,8,22,22,22,22,8,8,0,8,8,8,0,0,0,0,0,0,8,8,8,8,8,8,8,8,8,8,0,22,11,22,0,22,22,22,0,8,22,22,22,22,22,2,2,2,8,8,0,8,8,8,8,0,0,0,0,0,8,8,8,8,8,8,8,8,8,8,0,22,11,11,11,22,22,22,22,22,22,8,8,2,33,33,33,33,2,8,0,8,8,8,21,21,0,0,0,0,8,8,8,8,8,8,8,8,8,8,0,22,11,22,0,22,22,22,22,22,22,8,8,2,33,0,0,33,33,2,0,8,8,8,21,0,0,8,0,0,8,8,8,8,8,8,8,8,8,8,0,22,22,22,0,22,22,22,0,8,22,8,8,2,33,0,0,0,33,33,0,8,8,0,0,0,21,8,8,0,8,8,8,8,8,8,8,8,8,8,0,0,0,0,0,22,22,22,0,8,22,8,8,2,33,0,0,0,0,33,0,8,0,0,8,21,8,8,8,8,8,8,8,8,8,8,8,8,8,8,0,0,22,22,22,22,22,22,0,8,22,8,8,2,33,33,33,33,0,0,0,0,0,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,0,0,22,22,22,22,22,22,0,22,22,22,8,2,2,2,2,33,33,33,0,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,0,0,0,0,0,0,0,0,0,22,22,22,0,0,0,0,0,0,0,0,0,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8</data>
   </layer>
@@ -172,7 +173,7 @@
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="24" name="Ship" type="Ship" x="864" y="256" rotation="0" width="32" height="32" gid="49" visible="true">
+    <object id="24" name="Ship" type="Ship" x="864" y="256" rotation="0" width="32" height="32" gid="45" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="False" />
@@ -206,7 +207,7 @@
         <property name="WarpMap" type="int" value="0" />
       </properties>
     </object>
-    <object id="29" name="Door" type="Door" x="832" y="384" rotation="0" width="32" height="32" gid="50" visible="true">
+    <object id="29" name="Door" type="Door" x="832" y="384" rotation="0" width="32" height="32" gid="46" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
@@ -371,26 +372,26 @@
     </object>
   </objectgroup>
   <objectgroup id="5" name="sprites" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="54" name="store" type="NPC_Store" x="544" y="832" rotation="0" width="32" height="32" gid="45" visible="true">
+    <object id="54" name="store" type="NPC_Store" x="544" y="832" rotation="0" width="32" height="48" gid="1111" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="55" name="heal" type="NPC_Heal" x="544" y="640" rotation="0" width="32" height="32" gid="46" visible="true">
+    <object id="55" name="heal" type="NPC_Heal" x="544" y="640" rotation="0" width="32" height="48" gid="1119" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="56" name="npc" type="NPC" x="800" y="992" rotation="0" width="32" height="32" gid="48" visible="true">
+    <object id="56" name="npc" type="NPC" x="800" y="992" rotation="0" width="32" height="48" gid="1145" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="welcome to coste" />
       </properties>
     </object>
-    <object id="57" name="npc" type="NPC" x="960" y="448" rotation="0" width="32" height="32" gid="47" visible="true">
+    <object id="57" name="npc" type="NPC" x="960" y="448" rotation="0" width="32" height="48" gid="1026" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />

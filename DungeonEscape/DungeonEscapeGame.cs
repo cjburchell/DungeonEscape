@@ -21,6 +21,8 @@ namespace DungeonEscape
         private bool deferredPause;
         
         public Party Party { get; set; }
+        
+        public List<ClassStats> ClassLevelStats { get; private set; } = new List<ClassStats>();
         public List<MapState> MapStates { get; private set; } = new List<MapState>();
         public List<Monster> Monsters { get; } = new List<Monster>();
         public List<Item> Items { get; } = new List<Item>();
@@ -129,6 +131,8 @@ namespace DungeonEscape
             PauseOnFocusLost = true;
 
             this.ReloadSaveGames();
+            
+            this.ClassLevelStats = JsonConvert.DeserializeObject<List<ClassStats>>(File.ReadAllText("Content/classLevels.json"));
 
             var tileSet = LoadTileSet($"Content/items.tsx");
             var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/items.json"));

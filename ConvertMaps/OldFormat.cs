@@ -30,16 +30,16 @@ namespace ConvertMaps
 
                 if (i == 0)
                 {
-                    LoadSprites(1, map, inputMapPath, spells, tiles, monsters, Biome.Grassland, randomMonsterIdGenerator, tileIdGenerator);
-                    LoadSprites(2, map, inputMapPath, spells, tiles, monsters, Biome.Water, randomMonsterIdGenerator, tileIdGenerator);
-                    LoadSprites(3, map, inputMapPath, spells, tiles, monsters, Biome.Desert, randomMonsterIdGenerator, tileIdGenerator);
-                    LoadSprites(4, map, inputMapPath, spells, tiles, monsters, Biome.Hills, randomMonsterIdGenerator, tileIdGenerator);
-                    LoadSprites(5, map, inputMapPath, spells, tiles, monsters, Biome.Forest, randomMonsterIdGenerator, tileIdGenerator);
-                    LoadSprites(4, map, inputMapPath, spells, tiles, monsters, Biome.Swamp,randomMonsterIdGenerator, tileIdGenerator);
+                    LoadSprites(1, map, inputMapPath, spells, monsters, Biome.Grassland, randomMonsterIdGenerator);
+                    LoadSprites(2, map, inputMapPath, spells, monsters, Biome.Water, randomMonsterIdGenerator);
+                    LoadSprites(3, map, inputMapPath, spells, monsters, Biome.Desert, randomMonsterIdGenerator);
+                    LoadSprites(4, map, inputMapPath, spells, monsters, Biome.Hills, randomMonsterIdGenerator);
+                    LoadSprites(5, map, inputMapPath, spells, monsters, Biome.Forest, randomMonsterIdGenerator);
+                    LoadSprites(4, map, inputMapPath, spells, monsters, Biome.Swamp,randomMonsterIdGenerator);
                 }
                 else
                 {
-                    LoadSprites(i, map, inputMapPath, spells, tiles, monsters, Biome.All, randomMonsterIdGenerator, tileIdGenerator);
+                    LoadSprites(i, map, inputMapPath, spells, monsters, Biome.All, randomMonsterIdGenerator);
                 }
 
                 maps.Add(map);
@@ -231,6 +231,12 @@ namespace ConvertMaps
                 var lineString = lines[line];
                 var yPos = line - 11;
                 var xPos = 0;
+                if (lineString.Length != map.Width)
+                {
+                    Console.WriteLine(
+                        $"Warning: Map {id} Width {lineString.Length} line {yPos} is not {map.Width}");
+                }
+                
                 foreach (var tileId in lineString)
                 {
                     var type = GetTileType(tileId);
@@ -295,8 +301,7 @@ namespace ConvertMaps
             return map;
         }
 
-        private static void LoadSprites(int id, Map map, string directory, IReadOnlyCollection<Spell> spells,
-            ICollection<TileInfo> tiles, List<Monster> monsters, Biome biome, IdGenerator randomMonsterIdGenerator, IdGenerator tileIdGenerator)
+        private static void LoadSprites(int id, Map map, string directory, IReadOnlyCollection<Spell> spells, List<Monster> monsters, Biome biome, IdGenerator randomMonsterIdGenerator)
         {
             var spriteFileName = Path.Combine(directory, $"monstset{id}.dat");
             if (!File.Exists(spriteFileName))
@@ -419,10 +424,35 @@ namespace ConvertMaps
                 {
                     if (posX != 0 && posY != 0)
                     {
-                        var spriteInfo = GetSprite(map.TileInfo, tiles, image, tileIdGenerator, size * GridSize);
+                        var spriteImageId = 0;
+                        switch (image)
+                        {
+                            case "muchc.bmp":
+                                spriteImageId = 111;
+                                break;
+                            case "wizc.bmp":
+                                spriteImageId = 26;
+                                break;
+                            case "healc.bmp":
+                                spriteImageId = 119;
+                                break;
+                            case "gard.bmp":
+                                spriteImageId = 145;
+                                break;
+                            case "shu.bmp":
+                                spriteImageId = 213;
+                                break;
+                            case "dlav.bmp":
+                                spriteImageId = 196;
+                                break;
+                            default:
+                                Console.WriteLine($"Unknown Sprite {image}");
+                                break;
+                        }
+                        
                         var sprite = new Sprite
                         {
-                            Id = spriteInfo.Id,
+                            Id = spriteImageId,
                             StartPosition = {X = posX, Y = posY},
                             Name = name,
                             Type = spriteType,

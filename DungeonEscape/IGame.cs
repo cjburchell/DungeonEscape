@@ -27,10 +27,11 @@ namespace DungeonEscape
         List<Monster> Monsters { get; }
 
         IEnumerable<GameSave> GameSaves { get; }
-        bool InGame { get; set; }    
-        
+        bool InGame { get; set; }
+        List<ClassStats> ClassLevelStats { get; }
+
         void ReloadSaveGames();
-        
+            
         void LoadGame(GameSave saveGame);
         void ResumeGame();
         void ShowMainMenu();

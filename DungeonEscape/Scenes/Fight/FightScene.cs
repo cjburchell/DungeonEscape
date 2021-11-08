@@ -582,7 +582,7 @@
                 foreach (var member in this.game.Party.Members.Where(member => !member.IsDead))
                 {
                     member.XP += xp;
-                        while (member.CheckLevelUp(this.game.Spells, out var message))
+                        while (member.CheckLevelUp(this.game.ClassLevelStats,this.game.Spells, out var message))
                         {
                             levelUpMessage += message;
                         }

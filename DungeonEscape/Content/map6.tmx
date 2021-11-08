@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.6" type="map" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32">
   <tileset tilewidth="0" tileheight="0" tilecount="0" columns="0" spacing="0" margin="0" source="tiles.tsx" firstgid="1" />
+  <tileset tilewidth="0" tileheight="0" tilecount="0" columns="0" spacing="0" margin="0" source="npc.tsx" firstgid="1000" />
   <layer id="1" name="floor" width="40" height="40" type="tilelayer" visible="1" locked="false" x="0" y="0" opacity="1">
     <data encoding="csv">0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,22,22,0,0,0,0,0,22,22,0,0,0,22,22,0,22,22,0,22,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,22,22,0,0,22,0,0,22,22,0,22,0,22,22,0,22,22,12,22,22,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,22,0,0,22,22,22,22,22,22,22,0,11,11,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,33,2,22,16,22,0,0,22,22,22,22,22,22,22,0,0,0,0,33,33,0,33,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,2,2,22,0,0,0,33,0,0,22,22,22,0,0,33,0,2,2,33,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,2,2,22,22,0,0,0,0,0,22,22,22,0,0,33,0,0,2,33,2,0,33,0,0,0,33,33,2,0,2,2,2,2,2,2,2,2,2,2,0,0,0,0,22,0,33,2,0,0,0,22,0,0,0,33,33,0,2,2,2,0,0,0,33,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,0,33,33,0,22,0,33,2,0,0,0,22,0,0,0,2,33,0,2,2,0,0,0,33,2,33,2,33,2,0,2,2,2,2,2,2,2,2,2,2,0,2,22,16,22,0,0,33,0,0,0,22,0,0,0,33,0,0,2,0,0,0,33,2,2,2,2,2,0,0,2,2,2,2,2,2,2,2,2,2,0,2,22,0,0,2,0,0,0,0,22,22,22,0,0,0,0,2,2,16,2,0,2,2,2,33,2,0,0,2,2,2,2,2,2,2,2,2,2,2,0,2,22,33,0,0,33,0,0,0,22,22,22,0,0,0,33,0,0,0,2,0,33,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,0,2,22,2,2,0,0,0,0,0,22,22,22,0,0,0,0,0,2,2,33,0,2,2,33,2,0,0,2,2,2,2,2,2,2,2,2,2,2,2,0,33,22,22,2,2,2,2,2,33,22,22,22,33,2,0,0,0,14,0,0,0,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,0,2,2,22,22,2,2,2,2,33,22,22,22,33,2,0,22,0,22,0,22,0,2,33,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,0,33,2,2,22,22,2,2,2,33,22,22,22,33,2,0,0,22,22,22,0,0,2,2,2,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,0,33,33,2,2,22,22,22,22,22,22,22,22,22,22,0,22,22,22,22,22,0,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,2,2,22,0,0,0,0,0,22,0,0,22,22,22,0,0,33,2,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,24,24,24,24,0,33,2,22,0,0,0,0,0,22,0,22,22,22,22,22,0,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,24,24,24,24,0,22,22,22,0,0,0,0,0,22,0,0,22,22,22,0,0,2,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,24,24,24,24,24,22,22,22,22,22,22,22,22,22,0,0,0,22,0,0,0,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,24,24,24,24,0,22,22,22,22,22,22,22,22,22,22,22,22,22,22,2,0,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,24,24,24,24,0,33,22,22,22,22,22,22,22,22,22,22,22,22,2,2,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,24,24,24,24,0,33,22,22,22,22,22,22,2,33,2,2,2,2,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,22,0,33,22,22,22,33,2,2,33,33,0,0,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,22,0,22,22,22,22,22,0,33,22,22,22,2,2,33,2,0,0,33,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,22,22,22,22,22,22,22,0,22,22,22,22,2,33,2,2,0,33,33,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,22,0,22,22,22,22,22,0,22,22,22,22,2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,22,22,22,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2</data>
   </layer>
@@ -79,60 +80,60 @@
     </object>
   </objectgroup>
   <objectgroup id="5" name="sprites" width="0" height="0" type="objectgroup" visible="1" locked="false" x="0" y="0" opacity="1" draworder="topdown">
-    <object id="11" name="store" type="NPC_Store" x="384" y="1056" rotation="0" width="32" height="32" gid="45" visible="true">
+    <object id="11" name="store" type="NPC_Store" x="384" y="1056" rotation="0" width="32" height="48" gid="1111" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="12" name="heal" type="NPC_Heal" x="896" y="736" rotation="0" width="32" height="32" gid="46" visible="true">
+    <object id="12" name="heal" type="NPC_Heal" x="896" y="736" rotation="0" width="32" height="48" gid="1119" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="13" name="save" type="NPC_Save" x="672" y="288" rotation="0" width="32" height="32" gid="47" visible="true">
+    <object id="13" name="save" type="NPC_Save" x="672" y="288" rotation="0" width="32" height="48" gid="1026" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
       </properties>
     </object>
-    <object id="14" name="npc" type="NPC" x="640" y="576" rotation="0" width="32" height="32" gid="48" visible="true">
+    <object id="14" name="npc" type="NPC" x="640" y="576" rotation="0" width="32" height="48" gid="1145" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="beware of the leviathan" />
       </properties>
     </object>
-    <object id="15" name="npc" type="NPC" x="608" y="1088" rotation="0" width="32" height="32" gid="48" visible="true">
+    <object id="15" name="npc" type="NPC" x="608" y="1088" rotation="0" width="32" height="48" gid="1145" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="False" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="welcome to Isis" />
       </properties>
     </object>
-    <object id="16" name="npc" type="NPC" x="416" y="896" rotation="0" width="32" height="32" gid="46" visible="true">
+    <object id="16" name="npc" type="NPC" x="416" y="896" rotation="0" width="32" height="48" gid="1119" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="dragons are very powerful" />
       </properties>
     </object>
-    <object id="17" name="npc" type="NPC" x="960" y="992" rotation="0" width="32" height="32" gid="47" visible="true">
+    <object id="17" name="npc" type="NPC" x="960" y="992" rotation="0" width="32" height="48" gid="1026" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="the sea is very dangerus&#xA;do not veture there until&#xA;you are experencd" />
       </properties>
     </object>
-    <object id="18" name="npc" type="NPC" x="352" y="512" rotation="0" width="32" height="32" gid="45" visible="true">
+    <object id="18" name="npc" type="NPC" x="352" y="512" rotation="0" width="32" height="48" gid="1111" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />
         <property name="Text" type="string" value="run if you are unshure" />
       </properties>
     </object>
-    <object id="19" name="npc" type="NPC" x="736" y="672" rotation="0" width="32" height="32" gid="45" visible="true">
+    <object id="19" name="npc" type="NPC" x="736" y="672" rotation="0" width="32" height="48" gid="1111" visible="true">
       <properties>
         <property name="CanMove" type="bool" value="True" />
         <property name="Collideable" type="bool" value="True" />

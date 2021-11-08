@@ -16,7 +16,6 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly TmxObject tmxObject;
         private readonly TmxMap map;
         protected readonly IGame gameState;
-        private readonly TmxTilesetTile mapTile;
         private SpriteAnimator animator;
         private Mover mover;
         private bool canMove;
@@ -28,8 +27,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         protected readonly SpriteState spriteState;
         private float elapsedTime;
         private float nextElapsedTime = Random.NextInt(5) + 1;
-        private TmxTileset tilset;
-        private int baseId;
+        private readonly TmxTileset tilset;
+        private readonly int baseId;
 
         public static Sprite Create(TmxObject tmxObject, SpriteState state, TmxMap map, UISystem ui, IGame gameState, AstarGridGraph graph)
         {

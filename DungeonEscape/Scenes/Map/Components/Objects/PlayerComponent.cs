@@ -102,14 +102,14 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
                 this.shipAnimator.AddAnimation("WalkRight", new[]
                 {
-                    sprites[6],
-                    sprites[7]
+                    sprites[2],
+                    sprites[3]
                 });
 
                 this.shipAnimator.AddAnimation("WalkLeft", new[]
                 {
-                    sprites[2],
-                    sprites[3]
+                    sprites[6],
+                    sprites[7]
                 });
             }
             

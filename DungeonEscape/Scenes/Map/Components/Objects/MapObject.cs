@@ -51,8 +51,13 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         {
             base.Initialize();
 
-            this.Entity.SetPosition(this.tmxObject.X + (int) (this.gridTileWidth / 2.0),
-                this.tmxObject.Y - (int) (this.gridTileHeight / 2.0));
+            var pos = new Vector2
+            {
+                X = this.tmxObject.X + (int) (this.tmxObject.Width / 2.0),
+                Y = this.tmxObject.Y - (int) (this.tmxObject.Height / 2.0)
+            };
+
+            this.Entity.SetPosition(pos);
 
             if (this.mapTile != null)
             {

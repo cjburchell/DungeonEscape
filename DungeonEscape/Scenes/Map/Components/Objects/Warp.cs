@@ -8,7 +8,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
     {
         private readonly int mapId;
         private Point? warpMap;
-        public Warp(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, IGame gameState) : base(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, gameState)
+        public Warp(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxMap map, IGame gameState) : base(tmxObject, state, gridTileHeight, gridTileWidth, map, gameState)
         {
             if (tmxObject.Properties.ContainsKey("WarpMap"))
             {

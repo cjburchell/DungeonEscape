@@ -9,9 +9,9 @@ namespace ConvertMaps
 {
     public static class OldFormat
     {
-        private const int GridSize = 32;
+        public const int GridSize = 32;
         
-        public static IEnumerable<Map> LoadMaps(string inputDirectory, List<Spell> spells, List<TileInfo> tiles, List<Monster> monsters, IdGenerator tileIdGenerator, IdGenerator randomMonsterIdGenerator)
+        public static IEnumerable<Map> LoadMaps(string inputDirectory, List<Spell> spells, List<TileInfo> tiles, List<Monster> monsters, List<TileInfo> objectTiles, IdGenerator randomMonsterIdGenerator, IdGenerator objectIdGenerator)
         {
             var maps = new List<Map>();
             var inputMapPath = Path.Combine(inputDirectory, "maps");
@@ -22,7 +22,7 @@ namespace ConvertMaps
                     continue;
                 }
 
-                var map = LoadMap(i, inputMapPath, tiles, tileIdGenerator);
+                var map = LoadMap(i, inputMapPath, tiles, objectTiles, objectIdGenerator);
                 if (map == null)
                 {
                     continue;
@@ -79,7 +79,6 @@ namespace ConvertMaps
                         Image = imageFileName,
                         Id = idGenerator.New(),
                         OldIds = new List<int> {tile.OldId},
-                        size = GridSize
                     };
 
                     gameTiles.Add(gameTile);
@@ -105,7 +104,7 @@ namespace ConvertMaps
                 }
 
                 var lineItems = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                var info = GetSprite(null, null, lineItems[7], idGenerator,GridSize, "images/items/");
+                var info = GetSprite( null, lineItems[7], idGenerator, "images/items/");
                 var item = new Item
                 {
                     Info = info,
@@ -141,7 +140,7 @@ namespace ConvertMaps
                 }
 
                 var lineItems = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                var info = GetSprite(null, null, lineItems[4], idGenerator, GridSize, "images/items/");
+                var info = GetSprite( null, lineItems[4], idGenerator, "images/items/");
                 var spell = new Spell
                 {
                     Info = info,
@@ -159,7 +158,7 @@ namespace ConvertMaps
             return spells;
         }
 
-        private static Map LoadMap(int id, string directory, ICollection<TileInfo> tiles, IdGenerator idGenerator)
+        private static Map LoadMap(int id, string directory, ICollection<TileInfo> tiles, ICollection<TileInfo> objectTiles, IdGenerator objectIdGenerator)
         {
             var fileName = Path.Combine(directory, $"map{id}.dat");
             if (!File.Exists(fileName))
@@ -248,7 +247,7 @@ namespace ConvertMaps
 
 
                     var (sprite, spriteTileId) =
-                        CreateSpriteInstance(tileId, exits, map.TileInfo, tiles, map.DefaultTileId, idGenerator);
+                        CreateSpriteInstance(tileId, exits, objectTiles, objectIdGenerator);
                     // is it a sprite
                     if (sprite != null)
                     {
@@ -319,7 +318,6 @@ namespace ConvertMaps
                 var posX = int.Parse(lineItems[8]);
                 var posY = int.Parse(lineItems[9]);
                 var canMove = int.Parse(lineItems[10]) == 1;
-                var size = int.Parse(lineItems[7]);
 
                 var spriteType = SpriteType.NPC;
                 switch (npcType)
@@ -360,7 +358,7 @@ namespace ConvertMaps
 
                 if (spriteType == SpriteType.Monster)
                 {
-                    var monsterInfo = GetMonster(monsters, image, name, randomMonsterIdGenerator, size * GridSize, "images/monsters/",
+                    var monsterInfo = GetMonster(monsters, image, name, randomMonsterIdGenerator, "images/monsters/",
                         info =>
                         {
                             List<int> spriteSpells = null;
@@ -470,8 +468,7 @@ namespace ConvertMaps
             }
         }
         
-        private static Monster GetMonster(ICollection<Monster> monsters, string image, string name, IdGenerator idGenerator,
-            int size, string path, Func<TileInfo, Monster> create)
+        private static Monster GetMonster(ICollection<Monster> monsters, string image, string name, IdGenerator idGenerator, string path, Func<TileInfo, Monster> create)
         {
             var imagePath = $"{path}{Path.GetFileNameWithoutExtension(image)}.png";
             var monster = monsters.FirstOrDefault(item => item.Info.Image == imagePath && item.Name == name);
@@ -480,8 +477,7 @@ namespace ConvertMaps
                 var tileInfo = new TileInfo
                 {
                     Id = idGenerator?.New() ?? 0,
-                    Image = imagePath,
-                    size = size,
+                    Image = imagePath
                 };
 
                 monster = create(tileInfo);
@@ -491,31 +487,21 @@ namespace ConvertMaps
             return monster;
         }
 
-        private static TileInfo GetSprite(ICollection<TileInfo> mapTiles, ICollection<TileInfo> tiles, string image, IdGenerator idGenerator,
-            int size = GridSize, string path="images/sprites/")
+        private static TileInfo GetSprite(ICollection<TileInfo> tiles, string image, IdGenerator idGenerator, string path="images/sprites/")
         {
             var imagePath = $"{path}{Path.GetFileNameWithoutExtension(image)}.png";
-
-            var info = mapTiles?.FirstOrDefault(item => item.Image == imagePath);
-            if (info != null)
-            {
-                return info;
-            }
-
+            
             var gameTileInfo = tiles?.FirstOrDefault(item => item.Image == imagePath);
             if (gameTileInfo == null)
             {
                 gameTileInfo = new TileInfo
                 {
                     Id = idGenerator?.New() ?? 0,
-                    Image = imagePath,
-                    size = size
+                    Image = imagePath
                 };
                 tiles?.Add(gameTileInfo);
             }
 
-            mapTiles?.Add(gameTileInfo);
-            
             return gameTileInfo;
         }
 
@@ -577,46 +563,47 @@ namespace ConvertMaps
             return null;
         }
 
-        private static (Sprite, char ) CreateSpriteInstance(char tileId, IEnumerable<Exit> exits,
-            ICollection<TileInfo> mapTiles, ICollection<TileInfo> tiles, int defaultTileId, IdGenerator idGenerator)
+        private static (Sprite, char ) CreateSpriteInstance(char tileId, IEnumerable<Exit> exits, ICollection<TileInfo> tiles, IdGenerator idGenerator)
         {
             TileInfo sprite;
             switch (tileId)
             {
+                case 'C':
+                    sprite = GetSprite( tiles, "column.bmp", idGenerator);
+                    return (new Sprite {Id = sprite.Id,  Name = "Column", Collideable = true, Type = SpriteType.Static, Height = 64, Width = 32}, 'g');
                 case 'd': // door
-                    sprite = GetSprite(mapTiles, tiles, "door.bmp", idGenerator);
+                    sprite = GetSprite( tiles, "door.bmp", idGenerator);
                     return (
                         new Sprite
                         {
                             Id = sprite.Id, State = 1, Name = "Door", Collideable = true, Type = SpriteType.Door
                         }, 'b');
                 case 'k': // key
-                    sprite = GetSprite(mapTiles, tiles, "chest.bmp", idGenerator);
+                    sprite = GetSprite( tiles, "chest.bmp", idGenerator);
                     return (
                         new Sprite
                         {
                             Id = sprite.Id, Name = "Key Chest", State = 2, Collideable = false, Type = SpriteType.Chest
                         }, 'b');
                 case 'G': // chest
-                    sprite = GetSprite(mapTiles, tiles, "chest.bmp", idGenerator);
+                    sprite = GetSprite( tiles, "chest.bmp", idGenerator);
                     return (
                         new Sprite
                         {
                             Id = sprite.Id, Name = "Chest", State = 1, Collideable = false, Type = SpriteType.Chest
                         }, 'b');
                 case '0': // open chest
-                    sprite = GetSprite(mapTiles, tiles, "ochest.bmp", idGenerator);
+                    sprite = GetSprite( tiles, "ochest.bmp", idGenerator);
                     return (
                         new Sprite
                         {
                             Id = sprite.Id, Name = "Open Chest", State = 0, Collideable = false, Type = SpriteType.Chest
                         }, 'b');
                 case '#': // ship
-                    sprite = GetSprite(mapTiles, tiles, "ship1.bmp", idGenerator);
                     return (
                         new Sprite
                         {
-                            Id = sprite.Id, Name = "Ship", State = 1, Collideable = false, Type = SpriteType.Ship
+                            Name = "Ship", State = 1, Collideable = false, Type = SpriteType.Ship
                         }, 'w');
             }
             
@@ -626,6 +613,8 @@ namespace ConvertMaps
                 return (null, (char) 0);
             }
 
+            var height = 32;
+            var width = 32;
             int spriteTileId;
             var warpBackground = (char) 0;
             var name = "Warp";
@@ -636,24 +625,26 @@ namespace ConvertMaps
                 case '3':
                 case '4':
                     name = $"Stairs up to {warp.MapId}";
-                    spriteTileId = GetSprite(mapTiles, tiles, "stairup.bmp", idGenerator)?.Id ?? 0;
+                    spriteTileId = GetSprite( tiles, "stairup.bmp", idGenerator)?.Id ?? 0;
                     break;
                 case '5':
                 case '6':
                 case '7':
                 case '8':
                     name = $"Stairs down to {warp.MapId}";
-                    spriteTileId = GetSprite(mapTiles, tiles, "stairdw.bmp", idGenerator)?.Id ?? 0;
+                    spriteTileId = GetSprite( tiles, "stairdw.bmp", idGenerator)?.Id ?? 0;
                     break;
                 case '9':
                     name = $"Warp to {warp.MapId}";
-                    spriteTileId = GetSprite(mapTiles, tiles, "warp.bmp", idGenerator)?.Id ?? 0;
+                    spriteTileId = GetSprite( tiles, "warp.bmp", idGenerator)?.Id ?? 0;
                     break;
                 case 'I':
                 case 'M':
                 case 'K':
                     name = $"Castle {warp.MapId}";
-                    spriteTileId = GetSprite(mapTiles, tiles, "castle.bmp", idGenerator)?.Id ?? 0;
+                    spriteTileId = GetSprite( tiles, "castle.bmp", idGenerator)?.Id ?? 0;
+                    height = 64;
+                    width = 64;
                     warpBackground = ' ';
                     break;
                 case 'J':
@@ -661,15 +652,16 @@ namespace ConvertMaps
                 case 'N':
                 case 'O':
                     name = $"Town {warp.MapId}";
-                    spriteTileId = GetSprite(mapTiles, tiles, "town.bmp", idGenerator)?.Id ?? 0;
+                    spriteTileId = GetSprite( tiles, "town.bmp", idGenerator)?.Id ?? 0;
                     warpBackground = ' ';
+                    width = 64;
                     break;
                 case 'P':
                 case 'Q':
                 case 'R':
                 case 'S':
                     name = $"Shrine {warp.MapId}";
-                    spriteTileId = GetSprite(mapTiles, tiles, "shrin.bmp", idGenerator)?.Id ?? 0;
+                    spriteTileId = GetSprite( tiles, "shrin.bmp", idGenerator)?.Id ?? 0;
                     warpBackground = ' ';
                     break;
                 case 'T':
@@ -680,31 +672,35 @@ namespace ConvertMaps
                 case 'Y':
                 case 'Z':
                     name = $"Cave {warp.MapId}";
-                    spriteTileId = GetSprite(mapTiles, tiles, "cave.bmp", idGenerator)?.Id ?? 0;
+                    spriteTileId = GetSprite( tiles, "cave.bmp", idGenerator)?.Id ?? 0;
                     warpBackground = ' ';
                     break;
                 case 'a':
                     name = $"Tower {warp.MapId}";
-                    spriteTileId = GetSprite(mapTiles, tiles, "tower.bmp", idGenerator)?.Id ?? 0;
+                    spriteTileId = GetSprite( tiles, "tower.bmp", idGenerator)?.Id ?? 0;
                     warpBackground = ' ';
+                    height = 64;
+                    width = 32;
                     break;
                 case 'c':
                     name = $"Tower {warp.MapId}";
-                    spriteTileId = GetSprite(mapTiles, tiles, "tower.bmp", idGenerator)?.Id ?? 0;
+                    spriteTileId = GetSprite( tiles, "tower.bmp", idGenerator)?.Id ?? 0;
                     warpBackground = ' ';
+                    height = 64;
+                    width = 32;
                     break;
                 case 'z':
                     name = $"Water Exit {warp.MapId}";
-                    spriteTileId = GetTileInfo(mapTiles, tiles, 'w')?.Id ?? 0;
+                    spriteTileId = 0;
                     warpBackground = 'w';
                     break;
                 case 'y':
                     name = $"Exit {warp.MapId}";
-                    spriteTileId = defaultTileId;
+                    spriteTileId = 0;
                     break;
                 default:
                     Console.WriteLine($"Unknown Warp Type {tileId}");
-                    spriteTileId = GetTileInfo(mapTiles, tiles, tileId)?.Id ?? 0;
+                    spriteTileId = 0;
                     break;
             }
 
@@ -712,7 +708,7 @@ namespace ConvertMaps
                 new Sprite
                 {
                     Id = spriteTileId, Type = SpriteType.Warp, Name = name, State = 0, Collideable = false,
-                    Warp = warp
+                    Warp = warp, Height = height, Width = width
                 }, warpBackground);
 
         }

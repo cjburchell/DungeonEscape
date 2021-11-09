@@ -17,8 +17,9 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private readonly TmxTilesetTile mapTile;
         private SpriteAnimator animator;
         protected IGame gameState;
+        private TmxTileset tileSet;
 
-        public static MapObject Create(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, UISystem ui, IGame gameState)
+        public static MapObject Create(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxMap map, UISystem ui, IGame gameState)
         {
             if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
             {
@@ -27,22 +28,23 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             return spriteType switch
             {
-                SpriteType.Ship => new Ship(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, gameState),
-                SpriteType.Warp => new Warp(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, gameState),
-                SpriteType.Chest => new Chest(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, ui, gameState),
-                SpriteType.Door => new Door(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, ui, gameState),
-                _ => new MapObject(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, gameState)
+                SpriteType.Ship => new Ship(tmxObject, state, gridTileHeight, gridTileWidth, map, gameState),
+                SpriteType.Warp => new Warp(tmxObject, state, gridTileHeight, gridTileWidth, map, gameState),
+                SpriteType.Chest => new Chest(tmxObject, state, gridTileHeight, gridTileWidth, map, ui, gameState),
+                SpriteType.Door => new Door(tmxObject, state, gridTileHeight, gridTileWidth, map, ui, gameState),
+                _ => new MapObject(tmxObject, state, gridTileHeight, gridTileWidth, map, gameState)
             };
         }
 
-        protected MapObject(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, IGame gameState)
+        protected MapObject(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxMap map, IGame gameState)
         {
             this.gameState = gameState;
             this.tmxObject = tmxObject;
             this.state = state;
             this.gridTileHeight = gridTileHeight;
             this.gridTileWidth = gridTileWidth;
-            this.mapTile = mapTile;
+            this.mapTile = map.GetTilesetTile(tmxObject.Tile.Gid);
+            this.tileSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
         }
 
         public override void Initialize()
@@ -51,25 +53,42 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             this.Entity.SetPosition(this.tmxObject.X + (int) (this.gridTileWidth / 2.0),
                 this.tmxObject.Y - (int) (this.gridTileHeight / 2.0));
-            
-            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(mapTile.Image.Texture, MapScene.DefaultTileSize, MapScene.DefaultTileSize);
-            this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
-            this.animator.RenderLayer = 20;
 
-            var collider = this.Entity.AddComponent(new ObjectBoxCollider(this,
-                new Rectangle
-                {
-                    X = (int)(-this.tmxObject.Width/2.0f), 
-                    Y = (int)(-this.tmxObject.Height/2.0f), 
-                    Width = (int) this.tmxObject.Width,
-                    Height = (int) this.tmxObject.Height
-                }));
+            if (this.mapTile != null)
+            {
+                var texture = this.mapTile.Image.Texture;
+                var sprites =
+                    Nez.Textures.Sprite.SpritesFromAtlas(this.mapTile.Image.Texture, texture.Width, texture.Height);
+                this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
+                this.animator.RenderLayer = 20;
+            }
+            else if (this.tileSet != null)
+            {
+                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this.tileSet.Image.Texture,
+                    (int) this.tmxObject.Width, (int) this.tmxObject.Height);
+                this.animator =
+                    this.Entity.AddComponent(
+                        new SpriteAnimator(sprites[this.tmxObject.Tile.Gid - this.tileSet.FirstGid]));
+                this.animator.RenderLayer = 20;
+            }
+
+            var offset = 5;
+            var box = new Rectangle
+            {
+                X = (int) (-this.tmxObject.Width / 2.0f) + offset,
+                Y = (int) (-this.tmxObject.Height / 2.0f) + offset,
+                Width = (int) this.tmxObject.Width - offset,
+                Height = (int) this.tmxObject.Height - offset
+            };
+
+            var collider = this.Entity.AddComponent(new ObjectBoxCollider(this, box));
+
             collider.IsTrigger = true;
         }
-        
+
         protected void DisplayVisual(bool display = true)
         {
-            this.animator.SetEnabled(display);
+            this.animator?.SetEnabled(display);
         }
 
         public virtual void OnHit(Party party)

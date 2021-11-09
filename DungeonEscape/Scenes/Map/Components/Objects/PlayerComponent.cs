@@ -39,10 +39,12 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
         public override void OnAddedToEntity()
         {
+            const int heroHeight = 48;
+            const int heroWidth = MapScene.DefaultTileSize;
             this.mover = this.Entity.AddComponent(new Mover());
             {
                 var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
-                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, MapScene.DefaultTileSize, 48);
+                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, heroHeight);
 
                 foreach (var hero in this.GameState.Party.Members)
                 {
@@ -50,7 +52,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                     var animator = this.Entity.AddComponent(new SpriteAnimator(sprites[animationBaseIndex + 4]));
                     animator.Speed = 0.5f;
                     animator.RenderLayer = 10;
-                    
+
                     animator.AddAnimation("WalkDown", new[]
                     {
                         sprites[animationBaseIndex + 4],
@@ -74,15 +76,15 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                         sprites[animationBaseIndex + 6],
                         sprites[animationBaseIndex + 7]
                     });
-                    
+
                     this.partyAnimations.Add(animator);
                     animator.SetEnabled(false);
                 }
             }
 
             {
-                var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/ship.png");
-                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, MapScene.DefaultTileSize, MapScene.DefaultTileSize);
+                var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/ship2.png");
+                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, 56);
                 this.shipAnimator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
                 this.shipAnimator.Speed = 0.5f;
                 this.shipAnimator.RenderLayer = 10;
@@ -94,44 +96,58 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
                 this.shipAnimator.AddAnimation("WalkUp", new[]
                 {
-                    sprites[2],
-                    sprites[3]
-                });
-
-                this.shipAnimator.AddAnimation("WalkRight", new[]
-                {
                     sprites[4],
                     sprites[5]
                 });
 
-                this.shipAnimator.AddAnimation("WalkLeft", new[]
+                this.shipAnimator.AddAnimation("WalkRight", new[]
                 {
                     sprites[6],
                     sprites[7]
                 });
-            }
 
-            this.Entity.AddComponent(new BoxCollider(-8, -8, 16, 16));
+                this.shipAnimator.AddAnimation("WalkLeft", new[]
+                {
+                    sprites[2],
+                    sprites[3]
+                });
+            }
             
+            var a = (heroHeight/2 - heroWidth/2); // 16
+
+            var box = new Rectangle
+            {
+                X = -(heroWidth / 4),
+                Y = a-heroWidth / 4,
+                Width = heroWidth / 2,
+                Height = heroWidth / 2
+            };
+
+            this.Entity.AddComponent(new BoxCollider(box));
+
             this.xAxisInput = new VirtualIntegerAxis();
             this.xAxisInput.Nodes.Add(new VirtualAxis.GamePadDpadLeftRight());
             this.xAxisInput.Nodes.Add(new VirtualAxis.GamePadLeftStickX());
-            this.xAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.Left, Keys.Right));
-            this.xAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.A, Keys.D));
-            
+            this.xAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.Left,
+                Keys.Right));
+            this.xAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.A,
+                Keys.D));
+
             this.yAxisInput = new VirtualIntegerAxis();
             this.yAxisInput.Nodes.Add(new VirtualAxis.GamePadDpadUpDown());
             this.yAxisInput.Nodes.Add(new VirtualAxis.GamePadLeftStickY());
-            this.yAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.Up, Keys.Down));
-            this.yAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.W, Keys.S));
-            
+            this.yAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.Up,
+                Keys.Down));
+            this.yAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.W,
+                Keys.S));
+
             this.actionButton = new VirtualButton();
             this.actionButton.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Space));
             this.actionButton.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.A));
 
             this.statusWindow =
                 new PartyStatusWindow(this.GameState.Party, this.ui.Canvas);
-            
+
             this.goldWindow =
                 new GoldWindow(this.GameState.Party, this.ui.Canvas);
 
@@ -302,7 +318,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             if (this.CheckForMonsterEncounter())
             {
-                this.DoMonsterEncounter();
+                //this.DoMonsterEncounter();
             }
         }
 

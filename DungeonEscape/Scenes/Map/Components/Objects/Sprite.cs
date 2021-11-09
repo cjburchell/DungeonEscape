@@ -62,7 +62,14 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
-            this.Entity.SetPosition(this.tmxObject.X + (int)(this.map.TileWidth/2.0), this.tmxObject.Y - (int)(this.map.TileHeight/2.0));
+            
+            var pos = new Vector2
+            {
+                X = this.tmxObject.X + (int) (this.tmxObject.Width / 2.0),
+                Y = this.tmxObject.Y - (int) (this.tmxObject.Height / 2.0)
+            };
+
+            this.Entity.SetPosition(pos);
             var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this.tilset.Image.Texture, this.tilset.TileWidth, this.tilset.TileHeight,  this.tilset.Spacing);
             this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[this.baseId]));
             this.animator.Speed = 0.5f;
@@ -96,30 +103,33 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.canMove = bool.Parse(this.tmxObject.Properties["CanMove"]);
             this.animator.RenderLayer = 15;
 
-            var collider = this.Entity.AddComponent(new ObjectBoxCollider(this,
-                new Rectangle
-                {
-                    X = (int)(-this.tmxObject.Width/2.0f), 
-                    Y = (int)(-this.tmxObject.Height/2.0f), 
-                    Width = (int) this.tmxObject.Width,
-                    Height = (int) this.tmxObject.Height
-                }));
+            var fullArea = new Rectangle
+            {
+                X = (int) (-this.tmxObject.Width / 2.0f),
+                Y = (int) (-this.tmxObject.Height / 2.0f),
+                Width = (int) this.tmxObject.Width,
+                Height = (int) this.tmxObject.Height
+            };
+
+            var collider = this.Entity.AddComponent(new ObjectBoxCollider(this,fullArea));
             collider.IsTrigger = true;
 
             if (!bool.Parse(this.tmxObject.Properties["Collideable"]))
             {
                 return;
             }
-            
-            var offsetWidth = (int) (this.tmxObject.Width * 0.25F);
-            var offsetHeight = (int) (this.tmxObject.Height * 0.25F);
-            this.Entity.AddComponent(new BoxCollider(new Rectangle
+
+            var a = (this.tmxObject.Height/2 - this.tmxObject.Width/2); // 16
+
+            var box = new Rectangle
             {
-                X = (int)(-this.tmxObject.Width/2.0f) + offsetWidth/2, 
-                Y = (int)(-this.tmxObject.Height/2.0f), 
-                Width = (int) this.tmxObject.Width - offsetWidth,
-                Height = (int) this.tmxObject.Height - offsetHeight / 2
-            }));
+                X = -((int)this.tmxObject.Width / 4),
+                Y = (int) (a - this.tmxObject.Width / 4),
+                Width = (int)this.tmxObject.Width / 2,
+                Height = (int)this.tmxObject.Width / 2
+            };
+            
+            this.Entity.AddComponent(new BoxCollider(box));
         }
 
         protected void DisplayVisual(bool display = true)

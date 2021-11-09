@@ -12,6 +12,7 @@
         NPC_Store,
         NPC_Save,
         NPC_Key,
-        NPC_Monster
+        NPC_Monster,
+        Static
     }
 }

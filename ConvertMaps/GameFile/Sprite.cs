@@ -20,6 +20,10 @@ namespace GameFile
         [JsonConverter(typeof(StringEnumConverter))]
         public SpriteType Type { get; set; }
 
+        public int Height { get; set; } = 32;
+
+        public int Width { get; set; } = 32;
+
         public string Name { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
         private BoxCollider boxCollider;
 
-        protected SolidObject(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, IGame gameState) : base(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, gameState)
+        protected SolidObject(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxMap map, IGame gameState) : base(tmxObject, state, gridTileHeight, gridTileWidth, map, gameState)
         {
             state.Collideable ??= bool.Parse(this.tmxObject.Properties["Collideable"]);
             

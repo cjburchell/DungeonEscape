@@ -8,6 +8,8 @@ namespace ConvertMaps.Tiled
     {
         const int BiomeOffset = 900;
         private const int NpcOffset = 1000;
+        public const int ObjectsOffset = 2000;
+        private const int ShipOffset = 3000;
         
         public static TiledMap ToTileMap(Map map)
         {
@@ -80,22 +82,37 @@ namespace ConvertMaps.Tiled
                 switch (objSprite.Type)
                 {
                     case SpriteType.Ship:
-                    case SpriteType.Door:
-                    case SpriteType.Chest:
-                    case SpriteType.Warp:
                     {
-                        var size = map.TileInfo.Where(item => item.Id == objSprite.Id).Select(item => (float) item.size)
-                            .FirstOrDefault();
-
                         var obj = new TiledObject
                         {
                             id = tileId.New(),
-                            gid = objSprite.Id + offset,
+                            gid = ShipOffset,
                             name = objSprite.Name,
                             x = objSprite.StartPosition.X * 32,
-                            y = (objSprite.StartPosition.Y + (size / 32)) * 32,
-                            width = size,
-                            height = size,
+                            y = (objSprite.StartPosition.Y + 1) * 32,
+                            width = 32,
+                            height = 56,
+                            type = objSprite.Type.ToString(),
+                            visible = true,
+                            properties = properties.ToArray()
+                        };
+                        objects.Add(obj);
+                        break;
+                    }
+                    case SpriteType.Door:
+                    case SpriteType.Chest:
+                    case SpriteType.Warp:
+                    case SpriteType.Static:
+                    {
+                        var obj = new TiledObject
+                        {
+                            id = tileId.New(),
+                            gid = objSprite.Id==0?0:objSprite.Id + ObjectsOffset,
+                            name = objSprite.Name,
+                            x = objSprite.StartPosition.X * 32,
+                            y = (objSprite.StartPosition.Y + 1) * 32,
+                            width = objSprite.Width,
+                            height = objSprite.Height,
                             type = objSprite.Type.ToString(),
                             visible = true,
                             properties = properties.ToArray()
@@ -163,8 +180,8 @@ namespace ConvertMaps.Tiled
                 type = "map",
                 version = "1.6",
                 tilesets = map.Id == 0
-                    ? new[] {new TiledTileset {firstgid = 1, source = "tiles.tsx"}, ToBiomeTileSet()}
-                    : new[] {new TiledTileset {firstgid = 1, source = "tiles.tsx"}, GetNpcTileset()},
+                    ? new[] {GetTiledTileset(), ToBiomeTileSet(), GetNpcTileset(), GetObjectTileset(), GetShipTileset()}
+                    : new[] {GetTiledTileset(), GetNpcTileset(), GetObjectTileset(), GetShipTileset()},
                 layers = layers.ToArray()
             };
 
@@ -174,12 +191,38 @@ namespace ConvertMaps.Tiled
 
         private static TiledTileset GetNpcTileset()
         {
-            var tiledSet = new TiledTileset
+            return new TiledTileset
             {
                 firstgid = NpcOffset,
                 source = "npc.tsx"
             };
-            return tiledSet;
+        }
+        
+        private static TiledTileset GetTiledTileset()
+        {
+            return new TiledTileset
+            {
+                firstgid = 1,
+                source = "tiles.tsx"
+            };
+        }
+        
+        private static TiledTileset GetObjectTileset()
+        {
+            return new TiledTileset
+            {
+                firstgid = ObjectsOffset,
+                source = "objects.tsx"
+            };
+        }
+        
+        private static TiledTileset GetShipTileset()
+        {
+            return new TiledTileset
+            {
+                firstgid = ShipOffset,
+                source = "ship.tsx"
+            };
         }
 
         private static TiledLayer ToObjectGroup(int id, string name, List<TiledObject> objects, bool visible = true, float opacity = 1)
@@ -257,21 +300,17 @@ namespace ConvertMaps.Tiled
             return tiledSet;
         }
 
-        public static TiledTileset ToTileSet(IEnumerable<TileInfo> mapTileInfo, string name)
+        public static TiledTileset ToTileSet(IEnumerable<TileInfo> mapTileInfo, int size, string name, int offset = 1)
         {
             var tileInfos = mapTileInfo as TileInfo[] ?? mapTileInfo.ToArray();
             var tiledSet = new TiledTileset
             {
-                firstgid = 1,
-                tilewidth = tileInfos.Max(item=> item.size),
-                tileheight = tileInfos.Max(item=> item.size),
+                firstgid = offset,
+                tilewidth = size,
+                tileheight = size,
                 tilecount = tileInfos.Length,
                 name = name,
-                transparentcolor = "#FF00FF",
-                //tiledversion = "1.7.2",
-                //version = "1.6",
-                //type = "tileset",
-                tiles = tileInfos.Select(mapTile => new TiledTile {id = mapTile.Id, imageObj = new TiledImage {source = mapTile.Image, height = mapTile.size, width = mapTile.size},image = mapTile.Image, imageheight = mapTile.size, imagewidth = mapTile.size}).ToArray()
+                tiles = tileInfos.Select(mapTile => new TiledTile {id = mapTile.Id, imageObj = new TiledImage {source = mapTile.Image, height = size, width = size},image = mapTile.Image, imageheight = size, imagewidth = size}).ToArray()
             };
 
             return tiledSet;
@@ -290,10 +329,8 @@ namespace ConvertMaps.Tiled
                     {
                         type = monster.Name,
                         id = monster.Info.Id, 
-                        image = monster.Info.Image, 
-                        imageheight = monster.Info.size,
-                        imagewidth = monster.Info.size,
-                        imageObj = new TiledImage {source = monster.Info.Image, height = monster.Info.size, width = monster.Info.size}
+                        image = monster.Info.Image,
+                        imageObj = new TiledImage {source = monster.Info.Image}
                     };
 
                     tiles.Add(tile);
@@ -304,8 +341,6 @@ namespace ConvertMaps.Tiled
             var tiledSet = new TiledTileset
             {
                 firstgid = 1,
-                tilewidth = monsterList.Max(item=> item.Info.size),
-                tileheight = monsterList.Max(item=> item.Info.size),
                 tilecount = monsterList.Count,
                 name = name,
                 transparentcolor = "#FF00FF",
@@ -320,7 +355,7 @@ namespace ConvertMaps.Tiled
             var tiles = new List<TiledTile>();
             foreach (var spell in spells)
             {
-                var size = spell.Info.size;
+                const int size = 32;
                 var tile = new TiledTile
                 {
                     type = spell.Name,
@@ -352,7 +387,7 @@ namespace ConvertMaps.Tiled
             var tiles = new List<TiledTile>();
             foreach (var item in items)
             {
-                var size = item.Info.size;
+                const int size = 32;
 
                 var tile = new TiledTile
                 {

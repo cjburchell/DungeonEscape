@@ -23,7 +23,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             set => this.state.IsOpen = value;
         }
 
-        public Chest(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxTilesetTile mapTile, UISystem ui, IGame gameState) : base(tmxObject, state, gridTileHeight, gridTileWidth, mapTile, gameState)
+        public Chest(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxMap map, UISystem ui, IGame gameState) : base(tmxObject, state, gridTileHeight, gridTileWidth, map, gameState)
         {
             if (!this.state.IsOpen.HasValue)
             {

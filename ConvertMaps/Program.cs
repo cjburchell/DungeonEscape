@@ -97,9 +97,12 @@ namespace ConvertMaps
 
             var monsterIdGenerator = new IdGenerator();
             var monsters = new List<Monster>();
+            
+            var objectIdGenerator = new IdGenerator();
+            var objectTiles = new List<TileInfo>();
 
-            var maps = OldFormat.LoadMaps(opts.InputDirectory, spells, tiles, monsters, tileIdGenerator,
-                monsterIdGenerator);
+            var maps = OldFormat.LoadMaps(opts.InputDirectory, spells, tiles, monsters, objectTiles,
+                monsterIdGenerator, objectIdGenerator);
 
             Directory.CreateDirectory(opts.OutputDirectory);
             if (opts.MapId == -1)
@@ -120,6 +123,7 @@ namespace ConvertMaps
                 }
 
                 WriteAllTileSet(tiles, opts.OutputDirectory);
+                WriteObjectTileSet(objectTiles, opts.OutputDirectory);
             }
 
             foreach (var map in maps)
@@ -178,10 +182,20 @@ namespace ConvertMaps
 
         private static void WriteAllTileSet(IEnumerable<TileInfo> tiles, string outputDirectory)
         {
-            var tileset = TiledConverter.ToTileSet(tiles, "All Tiles");
+            var tileset = TiledConverter.ToTileSet(tiles, OldFormat.GridSize,"All Tiles");
             Console.WriteLine($"writing {Path.Combine(outputDirectory, "tiles.tsx")}");
             var serializer = new XmlSerializer(typeof(TiledTileset));
             using var reader = new StreamWriter(Path.Combine(outputDirectory, "tiles.tsx"), false);
+            serializer.Serialize(reader, tileset);
+
+        }
+        
+        private static void WriteObjectTileSet(IEnumerable<TileInfo> tiles, string outputDirectory)
+        {
+            var tileset = TiledConverter.ToTileSet(tiles, 0,"Objects", TiledConverter.ObjectsOffset);
+            Console.WriteLine($"writing {Path.Combine(outputDirectory, "objects.tsx")}");
+            var serializer = new XmlSerializer(typeof(TiledTileset));
+            using var reader = new StreamWriter(Path.Combine(outputDirectory, "objects.tsx"), false);
             serializer.Serialize(reader, tileset);
 
         }

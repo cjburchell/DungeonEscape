@@ -237,15 +237,16 @@ namespace Nez.Tiled
 							spriteEffects |= SpriteEffects.FlipVertically;
 
 						var tileset = objGroup.Map.GetTilesetForTileGid(obj.Tile.Gid);
-						var sourceRect = tileset.TileRegions[obj.Tile.Gid];
-						if (tileset.Image != null)
+						if (tileset?.Image != null)
 						{
+							var sourceRect = tileset.TileRegions[obj.Tile.Gid];
 							batcher.Draw(tileset.Image.Texture, pos, sourceRect, Color.White, 0, Vector2.Zero, scale, spriteEffects, layerDepth);
 						}
 						else
 						{
-							if (tileset.Tiles != null)
+							if (tileset?.Tiles != null)
 							{
+								var sourceRect = tileset.TileRegions[obj.Tile.Gid];
 								batcher.Draw(tileset.Tiles[obj.Tile.Gid - tileset.FirstGid].Image.Texture, pos, sourceRect, Color.White, 0, Vector2.Zero, scale, spriteEffects, layerDepth);
 							}
 						}

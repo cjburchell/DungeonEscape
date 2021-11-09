@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using DungeonEscape.Scenes.Map.Components;
 using DungeonEscape.Scenes.Map.Components.Objects;
@@ -131,7 +131,7 @@ namespace DungeonEscape.Scenes
                 }
                 var itemEntity = this.CreateEntity(item.Name);
                 itemEntity.AddComponent(MapObject.Create(item, state, map.TileHeight, map.TileWidth,
-                    map.GetTilesetTile(item.Tile.Gid), ui, this.gameState));
+                    map, ui, this.gameState));
             }
 
             var graph = CreateGraph(map);

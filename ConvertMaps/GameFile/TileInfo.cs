@@ -9,8 +9,5 @@ namespace GameFile
         public string Image { get; set; }
         
         public List<int> OldIds { get; set; }
-
-        [JsonIgnore]
-        public int size { get; set; }
     }
 }

@@ -902,6 +902,18 @@
         <None Update="Content\images\sprites\npc.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Content\objects.tsx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\ship.tsx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\sprites\ship2.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\sprites\column.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Icon.ico" />
@@ -915,6 +927,7 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\Nez.ImGui\Nez.MG38.ImGui.csproj" />
       <ProjectReference Include="..\Nez.Portable\Nez.MG38.csproj" />
     </ItemGroup>
     <ItemGroup>

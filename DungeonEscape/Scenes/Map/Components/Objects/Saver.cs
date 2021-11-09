@@ -3,7 +3,6 @@ using DungeonEscape.Scenes.Common.Components.UI;
 using DungeonEscape.State;
 using Nez.AI.Pathfinding;
 using Nez.Tiled;
-using Nez;
 using DungeonEscape.Scenes.Map.Components.UI;
 
 namespace DungeonEscape.Scenes.Map.Components.Objects

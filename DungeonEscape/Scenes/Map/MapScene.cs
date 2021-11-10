@@ -110,7 +110,7 @@ namespace DungeonEscape.Scenes
             var tiledMapRenderer = tiledEntity.AddComponent(new TiledMapRenderer(map,
                 this.gameState.Party.HasShip && this.mapId == 0 ? new[] {"wall"} : new[] {"wall", "water"}));
             tiledMapRenderer.RenderLayer = 50;
-            tiledMapRenderer.SetLayersToRender("wall", "water", "floor");
+            tiledMapRenderer.SetLayersToRender("wall", "water", "floor", "floor2");
             map.GetObjectGroup("objects").Visible = false;
 
             var mapState = this.gameState.MapStates.FirstOrDefault(item => item.Id == this.mapId);

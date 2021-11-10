@@ -43,8 +43,11 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.state = state;
             this.gridTileHeight = gridTileHeight;
             this.gridTileWidth = gridTileWidth;
-            this.mapTile = map.GetTilesetTile(tmxObject.Tile.Gid);
-            this.tileSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
+            if (tmxObject.Tile != null)
+            {
+                this.mapTile = map.GetTilesetTile(tmxObject.Tile.Gid);
+                this.tileSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
+            }
         }
 
         public override void Initialize()

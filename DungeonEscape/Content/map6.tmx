@@ -326,21 +326,21 @@
     <property name="Collideable" type="bool" value="false"/>
    </properties>
   </object>
-  <object id="24" name="Exit 0" type="Warp" x="640" y="1152" width="32" height="32">
+  <object id="24" name="Exit 0" type="Warp" x="590" y="1115.5" width="32" height="112.5">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
     <property name="WarpMap" type="int" value="0"/>
    </properties>
   </object>
-  <object id="25" name="Exit 0" type="Warp" x="672" y="1152" width="32" height="32">
+  <object id="25" name="Exit 0" type="Warp" x="609.5" y="1193" width="153.5" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
     <property name="WarpMap" type="int" value="0"/>
    </properties>
   </object>
-  <object id="26" name="Exit 0" type="Warp" x="704" y="1152" width="32" height="32">
+  <object id="26" name="Exit 0" type="Warp" x="748.5" y="1114.5" width="32" height="115">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>

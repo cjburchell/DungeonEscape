@@ -53,15 +53,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         public override void Initialize()
         {
             base.Initialize();
-
-            var pos = new Vector2
-            {
-                X = this.tmxObject.X + (int) (this.tmxObject.Width / 2.0),
-                Y = this.tmxObject.Y - (int) (this.tmxObject.Height / 2.0)
-            };
-
-            this.Entity.SetPosition(pos);
-
+            
             if (this.mapTile != null)
             {
                 var texture = this.mapTile.Image.Texture;
@@ -80,17 +72,43 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 this.animator.RenderLayer = 20;
             }
 
-            var offset = 5;
-            var box = new Rectangle
+            Rectangle box;
+            Vector2 pos;
+            if (this.animator == null)
             {
-                X = (int) (-this.tmxObject.Width / 2.0f) + offset,
-                Y = (int) (-this.tmxObject.Height / 2.0f) + offset,
-                Width = (int) this.tmxObject.Width - offset,
-                Height = (int) this.tmxObject.Height - offset
-            };
-
+                pos = new Vector2
+                {
+                    X = this.tmxObject.X,
+                    Y = this.tmxObject.Y
+                };
+                
+                box = new Rectangle
+                {
+                    Y = 0,
+                    X = 0,
+                    Width = (int)this.tmxObject.Width,
+                    Height = (int)this.tmxObject.Height
+                };
+            }
+            else
+            {
+                pos = new Vector2
+                {
+                    X = this.tmxObject.X + (int) (this.tmxObject.Width / 2.0),
+                    Y = this.tmxObject.Y - (int) (this.tmxObject.Height / 2.0)
+                };
+                
+                box = new Rectangle
+                {
+                    X = (int) (-this.tmxObject.Width / 2.0f),
+                    Y = (int) (-this.tmxObject.Height / 2.0f),
+                    Width = (int) this.tmxObject.Width,
+                    Height = (int) this.tmxObject.Height
+                };
+            }
+            
+            this.Entity.SetPosition(pos);
             var collider = this.Entity.AddComponent(new ObjectBoxCollider(this, box));
-
             collider.IsTrigger = true;
         }
 

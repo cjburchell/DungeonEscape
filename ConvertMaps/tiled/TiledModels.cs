@@ -1,8 +1,8 @@
-namespace TiledCS
-{
-    using System.Xml.Serialization;
-    using Newtonsoft.Json;
+using System.Xml.Serialization;
+using Newtonsoft.Json;
 
+namespace ConvertMaps.Tiled
+{
     /// <summary>
     /// Represents an element within the Tilesets array of a TiledMap object
     /// </summary>
@@ -80,7 +80,7 @@ namespace TiledCS
         /// <summary>
         /// Defines if the layer is visible in the editor
         /// </summary>
-        [XmlAttribute] public bool visible;
+        [XmlAttribute] public int visible;
         /// <summary>
         /// Is true when the layer is locked
         /// </summary>
@@ -117,7 +117,7 @@ namespace TiledCS
         [XmlArrayItem(ElementName="property", Type = typeof(TiledProperty))][XmlArray("properties")] public TiledProperty[] properties { get; set; }
 
         [XmlAttribute] public string image;
-        [XmlAttribute] public int opacity;
+        [XmlAttribute] public float opacity;
         [XmlAttribute] public string draworder;
     }
 

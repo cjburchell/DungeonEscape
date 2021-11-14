@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Xml;
+using System.Xml.Serialization;
 
-namespace TiledCS
+namespace ConvertMaps.Tiled
 {
-    using System.Xml.Serialization;
-    using Newtonsoft.Json;
-
     [XmlRoot("map")]
     /// <summary>
     /// Represents a Tiled map

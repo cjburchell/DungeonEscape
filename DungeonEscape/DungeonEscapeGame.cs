@@ -1,214 +1,230 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Xml.Linq;
+using DungeonEscape.Scenes;
+using DungeonEscape.State;
+using Microsoft.Xna.Framework;
+using Nez;
+using Nez.Tiled;
+using Newtonsoft.Json;
 
 namespace DungeonEscape
 {
-    using System;
     using System.Linq;
-    using GameFile;
-    using Microsoft.Xna.Framework.Graphics;
-    using Microsoft.Xna.Framework.Input;
-    using World;
-    using Map = World.Map;
+    using Scenes.Fight;
 
-    public class DungeonEscapeGame : Game
+    public class DungeonEscapeGame : Core, IGame
     {
-        private GraphicsDeviceManager graphics;
-        private SpriteBatch spriteBatch;
-        private Map map;
-        private Camera camera = new Camera();
-        private Player player;
-        private const int OverWorldMapId = 0;
-
-        private const int screenWidth = 16;
-        private const int screenHeight = 15;
-
-
-        public DungeonEscapeGame()
+        private const string saveFile = "save.json";
+        private const int maxSaveSlots = 5;
+        private bool isPaused;
+        private bool deferredPause;
+        
+        public Party Party { get; set; }
+        
+        public List<ClassStats> ClassLevelStats { get; private set; } = new List<ClassStats>();
+        public List<MapState> MapStates { get; private set; } = new List<MapState>();
+        public List<Monster> Monsters { get; } = new List<Monster>();
+        public List<Item> Items { get; } = new List<Item>();
+        public List<Spell> Spells { get; } = new List<Spell>();
+        public IEnumerable<GameSave> GameSaves => this.saveSlots;
+        public bool InGame { get; set; }
+        public bool IsPaused
         {
-            this.graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
-            this.Window.AllowUserResizing = true;
-            
-            IsMouseVisible = false;
+            get => this.isPaused;
+            set
+            {
+                if (value)
+                {
+                    this.isPaused = true;
+                }
+                
+                this.deferredPause = value;
+            }
+        }
+        
+        private GameSave[] saveSlots;
+        
+        public void Save()
+        {
+            File.WriteAllText(saveFile,
+                JsonConvert.SerializeObject(this.saveSlots, Formatting.Indented,
+                    new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    }));
+        }
+
+        public void UpdatePauseState()
+        {
+            this.isPaused = this.deferredPause;
+        }
+        
+        public void LoadGame(GameSave saveGame)
+        {
+            this.Party = saveGame.Party;
+            this.MapStates = saveGame.MapStates;
+            foreach (var partyItem in this.Party.Items)
+            {
+                partyItem.UpdateItem(this.Items);
+            }
+
+            this.InGame = true;
+            this.SetMap(this.Party.SavedMapId, this.Party.SavedPoint);
+        }
+
+        public void ResumeGame()
+        {
+            this.SetMap(this.Party.CurrentMapId, this.Party.CurrentPosition);
+        }
+
+        public void ShowMainMenu()
+        {
+            StartSceneTransition(new FadeTransition(() =>
+            {
+                this.InGame = false;
+                var splash = new MainMenu();
+                splash.Initialize();
+                return splash;
+            }));
+        }
+
+        public void SetMap(int? mapId, Point? point)
+        {
+            mapId ??= 0;
+            this.IsPaused = true;
+            var map = new MapScene(this, mapId.Value, point);
+            var transition = new FadeTransition(() =>
+            {
+                map.Initialize();
+                return map;
+            });
+            transition.OnTransitionCompleted += () => { this.IsPaused = false; };
+
+            StartSceneTransition(transition);
+        }
+
+        public void ShowLoadQuest()
+        {
+            StartSceneTransition(new FadeTransition(() =>
+            {
+                var splash = new ContinueQuestScene();
+                splash.Initialize();
+                return splash;
+            }));
+        }
+
+        public void StartFight(IEnumerable<Monster> monsters)
+        {
+            StartSceneTransition(new FadeTransition(() =>
+            {
+                var splash = new FightScene(this, monsters);
+                splash.Initialize();
+                return splash;
+            }));
         }
 
         protected override void Initialize()
         {
-            this.graphics.IsFullScreen = false;
-            this.graphics.PreferredBackBufferHeight = 768;
-            this.graphics.PreferredBackBufferWidth = 1024;
-            this.graphics.ApplyChanges();
             base.Initialize();
-        }
-        
+            ExitOnEscapeKeypress = false;
+            PauseOnFocusLost = true;
 
-        private bool LoadMap(int id)
-        {
-            this.map = new Map();
-            if (!this.map.Load(id))
-                return false;
+            this.ReloadSaveGames();
             
-            Console.WriteLine($"Loaded map {id}");
-            this.map.LoadContent(this.Content);
-            this.player.Location = new Vector2(this.map.DefaultStart.X * Map.TileSize,
-                this.map.DefaultStart.Y * Map.TileSize);
+            this.ClassLevelStats = JsonConvert.DeserializeObject<List<ClassStats>>(File.ReadAllText("Content/classLevels.json"));
 
-            return true;
-        }
-
-        protected override void LoadContent()
-        {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            this.player = new Player();
-            this.player.Visual = new Image {Texture = this.Content.Load<Texture2D>("images/sprites/player")};
-            LoadMap(OverWorldMapId);
-        }
-
-        private bool MPressed = false;
-        private int CurrentMap = OverWorldMapId;
-        private bool NPressed = false;
-
-        protected override void Update(GameTime gameTime)
-        {
-            var keyboardState = Keyboard.GetState();
-            
-            const float playerSpeed = 128F;
-            var elapsedGame = (float)gameTime.ElapsedGameTime.TotalSeconds; // Get current time in seconds
-            var distance = elapsedGame * playerSpeed;
-
-            if (keyboardState.IsKeyDown(Keys.M))
-                MPressed = true;
-            if (keyboardState.IsKeyUp(Keys.M) && this.MPressed)
+            var tileSet = LoadTileSet($"Content/items.tsx");
+            var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/items.json"));
+            if (items != null)
             {
-                while (!this.LoadMap(++CurrentMap))
+                foreach (var item in items)
                 {
-                    if (this.CurrentMap > 100)
-                    {
-                        this.CurrentMap = -1;
-                    }
-                }
-                MPressed = false;
-            }
-            
-            if (keyboardState.IsKeyDown(Keys.N))
-                NPressed = true;
-            if (keyboardState.IsKeyUp(Keys.N) && this.NPressed)
-            {
-                while (!this.LoadMap(--CurrentMap))
-                {
-                    if (this.CurrentMap == -1)
-                    {
-                        this.CurrentMap = 100;
-                    }
-                }
-                NPressed = false;
-            }
-            
-            if (keyboardState.IsKeyDown(Keys.R))
-                this.LoadMap(CurrentMap);
-                
-            
-            var playerLocation = this.player.Location;
-            if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
-                playerLocation.Y -= distance;
-
-            if(keyboardState.IsKeyDown(Keys.Down)|| keyboardState.IsKeyDown(Keys.S))
-                playerLocation.Y += distance;
-
-            if (keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A))
-                playerLocation.X -= distance;
-
-            if(keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D))
-                playerLocation.X += distance;
-
-            var oldLocation = this.player.Location;
-            this.player.Location = playerLocation;
-
-            var (tiles, sprites) = this.map.ChekForCollision(this.player.BoundingBox);
-            var tileList = tiles.ToList();
-            var spriteList = sprites.ToList();
-            if ( tileList.Count != 0 )
-            {
-                this.player.Location = oldLocation;
-            }
-            else if ( spriteList.Count != 0)
-            {
-                var warpTile = spriteList.FirstOrDefault(item => item.Instance.Type == SpriteType.Warp && item.Instance.Warp != null);
-                if(warpTile != null)
-                {
-                    if (this.map.MapId == OverWorldMapId)
-                    {
-                        this.player.OverWorldLocation = oldLocation;
-                    }
-                    
-                    this.LoadMap(warpTile.Instance.Warp.MapId);
-                    if (warpTile.Instance.Warp.Location != null)
-                    {
-                        this.player.Location = new Vector2(warpTile.Instance.Warp.Location.X * Map.TileSize,
-                            warpTile.Instance.Warp.Location.Y * Map.TileSize);
-
-                    }
-                    else if(warpTile.Instance.Warp.MapId == OverWorldMapId)
-                    {
-                        this.player.Location = this.player.OverWorldLocation;
-                    }
-                }
-                else
-                {
-                    if (spriteList.Any(item => item.Instance.Collideable))
-                    {
-                        //this.player.Location = oldLocation;
-                    }
+                    var tile = tileSet.Tiles.FirstOrDefault(i => i.Value.Id == item.Id).Value;
+                    item.Setup(tile);
+                    this.Items.Add(item);
                 }
             }
+            
+            
+            var spellTileset = LoadTileSet($"Content/spells.tsx");
+            var spells = JsonConvert.DeserializeObject<List<Spell>>(File.ReadAllText("Content/spells.json"));
+            if (spells != null)
+            {
+                foreach (var spell in spells)
+                {
+                    var tile = spellTileset.Tiles.FirstOrDefault(i => i.Value.Id == spell.Id).Value;
+                    spell.Setup(tile);
+                    this.Spells.Add(spell);
+                }
+            }
+            
+            var monsterTileSet = LoadTileSet($"Content/allmonsters.tsx");
+            var monsters = JsonConvert.DeserializeObject<List<Monster>>(File.ReadAllText("Content/allmonsters.json"));
+            if (monsters != null)
+            {
+                foreach (var monster in monsters)
+                {
+                    var tile = monsterTileSet.Tiles.FirstOrDefault(item => item.Value.Id == monster.Id).Value;
+                    monster.Setup(tile, this.Spells);
+                    this.Monsters.Add(monster);
+                }
+            }
+            
 
-            this.player.Update(gameTime);
-            this.map.Update(gameTime);
-            this.camera.Pos = this.player.Location;
-            base.Update(gameTime);
+            DebugRenderEnabled = false;
+            Window.AllowUserResizing = true;
+            Screen.SetSize(MapScene.ScreenWidth, MapScene.ScreenHeight);
+            Scene = new EmptyScene();
+            StartSceneTransition(new FadeTransition(() =>
+            {
+                var splash = new SplashScreen();
+                splash.Initialize();
+                return splash;
+            }));
         }
 
-        protected override void Draw(GameTime gameTime)
+        public void ReloadSaveGames()
         {
+            this.saveSlots = this.LoadSaveGames(saveFile);
+        }
 
-            const int virtualWidth = screenWidth * Map.TileSize;
-            const int virtualHeight = screenHeight * Map.TileSize;
-            var rt = new RenderTarget2D(this.graphics.GraphicsDevice, virtualWidth, virtualHeight);
-            GraphicsDevice.SetRenderTarget(rt);
-            spriteBatch.Begin(SpriteSortMode.FrontToBack, transformMatrix: camera.GetTransormation(GraphicsDevice.Viewport));
-            this.map.DrawTiles(spriteBatch);
-            this.map.DrawSprites(spriteBatch);
-            this.player.Draw(this.spriteBatch, 1);
-            spriteBatch.End();
-            
-            
-            GraphicsDevice.SetRenderTarget(null);
-
-            var scaleWidth =  (double)GraphicsDevice.Viewport.Width / virtualWidth;
-            var scaleHeight =  (double)GraphicsDevice.Viewport.Height / virtualHeight;
-            double scale;
-            var xOffset = 0;
-            var yOffset = 0;
-            if (scaleWidth < scaleHeight)
+        private GameSave[] LoadSaveGames(string fileName)
+        {
+            var saves = new List<GameSave>();
+            if (File.Exists(fileName))
             {
-                scale = scaleWidth;
-                yOffset = (int) ((GraphicsDevice.Viewport.Height - (virtualHeight * scale)) / 2);
-            }
-            else
-            {
-                scale = scaleHeight;
-                xOffset = (int) ((GraphicsDevice.Viewport.Width - (virtualWidth * scale)) / 2);
+                saves = JsonConvert.DeserializeObject<List<GameSave>>(File.ReadAllText(fileName)) ?? new List<GameSave>();
             }
 
-            var rect = new Rectangle(xOffset, yOffset, (int) (virtualWidth * scale), (int) (virtualHeight * scale));
-            
-            spriteBatch.Begin();
+            for (var i = saves.Count; i < maxSaveSlots; i++)
+            {
+                saves.Add(new GameSave()); 
+            }
 
-            spriteBatch.Draw(rt, rect, Color.White);
+            return saves.ToArray();
+        }
 
-            spriteBatch.End();
+        public static TmxTileset LoadTileSet(string path)
+        {
+            if (!File.Exists(path))
+            {
+                return null;
+            }
             
-            base.Draw(gameTime);
+            using var stream = TitleContainer.OpenStream(path);
+            var xDocTileSet = XDocument.Load(stream);
+
+            var tsxDir = Path.GetDirectoryName(path);
+            var tileSet = new TmxTileset().LoadTmxTileset(null, xDocTileSet.Element("tileset"), 0, tsxDir);
+            tileSet.TmxDirectory = tsxDir;
+
+            return tileSet;
+        }
+
+        public TmxMap GetMap(int mapId)
+        {
+            return Content.LoadTiledMap($"Content/map{mapId}.tmx");
         }
     }
 }

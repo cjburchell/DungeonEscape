@@ -28,7 +28,6 @@
     <Tile text="Wall 1 solid" index="61" icon="14"/>
     <Tile text="sky" index="64" icon="45"/>
     <Tile text="Bridge" index="66" icon="13"/>
-    <Tile text="Column" index="67" icon="20"/>
     <Tile text="Dark" index="68" icon="24"/>
     <Tile text="Floor" index="70" icon="6"/>
     <Tile text="Chest" index="71" icon="6"/>

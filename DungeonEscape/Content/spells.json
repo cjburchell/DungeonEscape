@@ -1,0 +1,124 @@
+[
+  {
+    "Name": "Heal",
+    "Id": 1,
+    "Type": "Heal",
+    "Targets": "Single",
+    "Cost": 3,
+    "MinLevel": 2,
+    "Health": 10,
+    "HealthConst": 40,
+    "Classes": ["Hero", "Cleric"]
+  },
+  {
+    "Name": "Outside",
+    "Id": 2,
+    "Type": "Outside",
+    "Targets": "Group",
+    "Cost": 6,
+    "MinLevel": 12,
+    "Classes": ["Hero", "Thief"]
+  },
+  {
+    "Name": "Fireball",
+    "Id": 3,
+    "Type": "Damage",
+    "Targets": "Single",
+    "Cost": 10,
+    "MinLevel": 6,
+    "Health": 10,
+    "HealthConst": 5,
+    "Classes": ["Wizard", "Hero"]
+  },
+  {
+    "Name": "Lightning",
+    "Id": 4,
+    "Type": "Damage",
+    "Targets": "Single",
+    "Cost": 15,
+    "MinLevel": 8,
+    "Health": 20,
+    "HealthConst": 5,
+    "Classes": ["Wizard", "Hero"]
+  },
+  {
+    "Name": "Fire Blast",
+    "Id": 5,
+    "Type": "Damage",
+    "Targets": "Group",
+    "Cost": 25,
+    "MinLevel": 10,
+    "Health": 10,
+    "HealthConst": 5,
+    "Classes": ["Wizard"]
+  },
+  {
+    "Name": "Lightning Storm",
+    "Id": 6,
+    "Type": "Damage",
+    "Targets": "Group",
+    "Cost": 30,
+    "MinLevel": 12,
+    "Health": 20,
+    "HealthConst": 5,
+    "Classes": ["Wizard"]
+  },
+  {
+    "Name": "Return",
+    "Id": 7,
+    "Type": "Return",
+    "Targets": "Group",
+    "Cost": 6,
+    "MinLevel": 12,
+    "Classes": ["Hero", "Thief"]
+  },
+  {
+    "Name": "Revive",
+    "Id": 8,
+    "Type": "Revive",
+    "Targets": "Single",
+    "Cost": 25,
+    "MinLevel": 20,
+    "Health": 0,
+    "HealthConst": 1,
+    "Classes": ["Hero", "Cleric"]
+  },
+  {
+    "Name": "Vivify",
+    "Id": 9,
+    "Type": "Revive",
+    "Targets": "Single",
+    "Cost": 40,
+    "MinLevel": 27,
+    "Classes": ["Cleric"]
+  },
+  {
+    "Name": "Heal All",
+    "Id": 10,
+    "Type": "Heal",
+    "Targets": "Single",
+    "Cost": 7,
+    "MinLevel": 30,
+    "Classes": ["Hero", "Cleric"]
+  },
+  {
+    "Name": "Heal Us",
+    "Id": 11,
+    "Type": "Heal",
+    "Targets": "Group",
+    "Cost": 18,
+    "MinLevel": 34,
+    "Health": 10,
+    "HealthConst": 40,
+    "Classes": ["Cleric"]
+  },
+  {
+    "Name": "Heal Us All",
+    "Id": 12,
+    "Type": "Heal",
+    "Targets": "Group",
+    "Cost": 62,
+    "MinLevel": 38,
+    "Classes": ["Cleric"]
+  }
+]

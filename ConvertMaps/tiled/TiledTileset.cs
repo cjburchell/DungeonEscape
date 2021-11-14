@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Xml.Serialization;
 
-namespace TiledCS
+namespace ConvertMaps.Tiled
 {
-    [XmlRoot("tileset")]
     /// <summary>
     /// Represents a Tiled tileset
     /// </summary>
+    [XmlRoot("tileset")]
     public class TiledTileset
     {
         public string version { get; set; }

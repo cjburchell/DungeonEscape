@@ -18,7 +18,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         protected readonly IGame gameState;
         private SpriteAnimator animator;
         private Mover mover;
-        private bool canMove;
+        private readonly bool canMove;
         private MoveState state = MoveState.Stopped;
         private readonly AstarGridGraph graph;
         private List<Point> path;
@@ -27,8 +27,9 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         protected readonly SpriteState spriteState;
         private float elapsedTime;
         private float nextElapsedTime = Random.NextInt(5) + 1;
-        private readonly TmxTileset tilset;
+        private readonly TmxTileset tilSet;
         private readonly int baseId;
+        private readonly bool collideable;
 
         public static Sprite Create(TmxObject tmxObject, SpriteState state, TmxMap map, UISystem ui, IGame gameState, AstarGridGraph graph)
         {
@@ -44,6 +45,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 SpriteType.NPC_Save => new Saver(tmxObject, state, map, gameState, graph, ui),
                 SpriteType.NPC_Key => new KeyStore(tmxObject, state, map, gameState, graph, ui),
                 SpriteType.NPC => new Character(tmxObject, state, map, ui, gameState, graph),
+                SpriteType.NPC_PartyMember => new PartyMember(tmxObject, state, map, ui, gameState, graph),
                 _ => new Sprite(tmxObject, state, map, gameState, graph)
             };
         }
@@ -55,8 +57,10 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             this.tmxObject = tmxObject;
             this.map = map;
             this.gameState = gameState;
-            this.tilset = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
-            this.baseId = tmxObject.Tile.Gid - this.tilset.FirstGid;
+            this.tilSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
+            this.baseId = tmxObject.Tile.Gid - this.tilSet.FirstGid;
+            this.canMove = bool.Parse(this.tmxObject.Properties["CanMove"]);
+            this.collideable = bool.Parse(this.tmxObject.Properties["Collideable"]);
         }
 
         public override void OnAddedToEntity()
@@ -70,7 +74,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             };
 
             this.Entity.SetPosition(pos);
-            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this.tilset.Image.Texture, this.tilset.TileWidth, this.tilset.TileHeight,  this.tilset.Spacing);
+            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this.tilSet.Image.Texture, this.tilSet.TileWidth, this.tilSet.TileHeight,  this.tilSet.Spacing);
             this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[this.baseId]));
             this.animator.Speed = 0.5f;
             this.animator.RenderLayer = 10;
@@ -100,7 +104,6 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             
             
             this.mover = this.Entity.AddComponent(new Mover());
-            this.canMove = bool.Parse(this.tmxObject.Properties["CanMove"]);
             this.animator.RenderLayer = 15;
 
             var fullArea = new Rectangle
@@ -114,7 +117,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             var collider = this.Entity.AddComponent(new ObjectBoxCollider(this,fullArea));
             collider.IsTrigger = true;
 
-            if (!bool.Parse(this.tmxObject.Properties["Collideable"]))
+            if (!this.collideable)
             {
                 return;
             }

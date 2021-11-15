@@ -7,12 +7,11 @@ using Microsoft.Xna.Framework;
 using Nez;
 using Nez.Tiled;
 using Newtonsoft.Json;
+using System.Linq;
+using DungeonEscape.Scenes.Fight;
 
 namespace DungeonEscape
 {
-    using System.Linq;
-    using Scenes.Fight;
-
     public class DungeonEscapeGame : Core, IGame
     {
         private const string saveFile = "save.json";

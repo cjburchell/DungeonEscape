@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework.Input;
-using Nez;
-
-namespace DungeonEscape.Scenes.Common.Components.UI
+﻿namespace DungeonEscape.Scenes.Common.Components.UI
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Microsoft.Xna.Framework.Input;
+    using Nez;
+
     public class WindowInput : Component, IUpdatable
     {
         private readonly VirtualButton hideWindowInput = new VirtualButton();

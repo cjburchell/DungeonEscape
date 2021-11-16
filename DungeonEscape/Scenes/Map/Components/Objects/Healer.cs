@@ -1,11 +1,10 @@
-﻿using DungeonEscape.Scenes.Common.Components.UI;
-using DungeonEscape.State;
-using Nez.AI.Pathfinding;
-using Nez.Tiled;
-using Nez;
-
-namespace DungeonEscape.Scenes.Map.Components.Objects
+﻿namespace DungeonEscape.Scenes.Map.Components.Objects
 {
+    using Common.Components.UI;
+    using Nez.AI.Pathfinding;
+    using Nez.Tiled;
+    using State;
+
     public class Healer : Sprite
     {
         private readonly UISystem ui;

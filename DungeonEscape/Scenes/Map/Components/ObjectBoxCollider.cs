@@ -1,18 +1,11 @@
-﻿using DungeonEscape.State;
-using Microsoft.Xna.Framework;
-using Nez;
-
-namespace DungeonEscape.Scenes.Map.Components
+﻿namespace DungeonEscape.Scenes.Map.Components
 {
-    public interface ICollidable
-    {
-        void OnHit(Party party);
-        bool OnAction(Party party);
-    }
-    
+    using Microsoft.Xna.Framework;
+    using Nez;
+
     public class ObjectBoxCollider : BoxCollider
     {
-        public ICollidable Object { get; private set; }
+        public ICollidable Object { get; }
 
         public ObjectBoxCollider(ICollidable collidable, Rectangle rectangle) : base(rectangle)
         {

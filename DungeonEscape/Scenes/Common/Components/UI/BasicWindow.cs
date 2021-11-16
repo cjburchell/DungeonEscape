@@ -1,16 +1,14 @@
-﻿using Microsoft.Xna.Framework;
-using Nez;
-using Nez.UI;
-
-namespace DungeonEscape.Scenes.Common.Components.UI
+﻿namespace DungeonEscape.Scenes.Common.Components.UI
 {
-    using System;
+    using Microsoft.Xna.Framework;
+    using Nez;
+    using Nez.UI;
 
     public abstract class BasicWindow : Component
     {
         protected Window Window { get; private set; }
         protected readonly UISystem ui;
-        protected readonly string title;
+        private readonly string title;
         private readonly Point position;
         private readonly int width;
         private readonly int height;
@@ -18,7 +16,6 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 
         public static readonly Skin Skin = Skin.CreateDefaultSkin();
         private static BasicWindow focusedWindow;
-        protected readonly string id;
 
         public const int ButtonHeight = 30;
         public const int ButtonWidth = 80;
@@ -60,7 +57,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
                 Up = new BorderPrimitiveDrawable(Color.Black, Color.White, 1),
                 Down = new BorderPrimitiveDrawable(Color.LightGray, Color.White, 1),
                 Over = new BorderPrimitiveDrawable(Color.Gray, Color.White, 1),
-                Checked = new BorderPrimitiveDrawable(Color.Gray, Color.White, 1),
+                Checked = new BorderPrimitiveDrawable(Color.Gray, Color.White, 1)
             };
             Skin.Add("default", buttonStyle);
             
@@ -69,7 +66,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
                 Up = new BorderPrimitiveDrawable(Color.Black, Color.White),
                 Down = new BorderPrimitiveDrawable(Color.LightGray, Color.White),
                 Over = new BorderPrimitiveDrawable(Color.Gray, Color.White),
-                Checked = new BorderPrimitiveDrawable(Color.Gray, Color.White),
+                Checked = new BorderPrimitiveDrawable(Color.Gray, Color.White)
             };
             Skin.Add("no_border", buttonNoBorderStyle);
 
@@ -83,7 +80,6 @@ namespace DungeonEscape.Scenes.Common.Components.UI
 
         protected BasicWindow(UISystem ui, string title, Point position, int width, int height, bool focasable = true)
         {
-            this.id = Guid.NewGuid().ToString();
             this.ui = ui;
             this.title = title;
             this.position = position;
@@ -119,16 +115,18 @@ namespace DungeonEscape.Scenes.Common.Components.UI
                 this.ui.Input?.RemoveWindow(this);
                 this.ui.Canvas.Stage.SetGamepadFocusElement(null);
             }
-            
-            if (remove)
-            {
-                if (this.hasBeenAdded)
-                {
-                    this.ui.Canvas.RemoveComponent(this);
-                }
 
-                this.hasBeenAdded = false;
+            if (!remove)
+            {
+                return;
             }
+
+            if (this.hasBeenAdded)
+            {
+                this.ui.Canvas.RemoveComponent(this);
+            }
+
+            this.hasBeenAdded = false;
         }
 
         public void ShowWindow()

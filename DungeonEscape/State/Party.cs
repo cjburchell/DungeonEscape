@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-
-namespace DungeonEscape.State
+﻿namespace DungeonEscape.State
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Microsoft.Xna.Framework;
+
     public class Party
     {
         public const int MaxItems = 30;
@@ -21,7 +21,7 @@ namespace DungeonEscape.State
 
         public bool CanOpenChest(int level)
         {
-            return true;
+            return this.Members.Any(item => item.Level >= level);
         }
         
         public bool CanOpenDoor(int doorLevel)

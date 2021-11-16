@@ -1,12 +1,14 @@
 ﻿namespace DungeonEscape.Scenes
 {
-    public class EmptyScene : Nez.Scene
+    using Nez;
+
+    public class EmptyScene : Scene
     {
         public override void Initialize()
         {
             base.Initialize();
             this.SetDesignResolution(MapScene.ScreenWidth , MapScene.ScreenHeight, MapScene.SceneResolution);
-            Nez.Screen.SetSize(MapScene.ScreenWidth, MapScene.ScreenHeight);
+            Screen.SetSize(MapScene.ScreenWidth, MapScene.ScreenHeight);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿namespace DungeonEscape.Scenes.Map.Components.Objects
+﻿// ReSharper disable UnusedMember.Global
+namespace DungeonEscape.Scenes.Map.Components.Objects
 {
     public enum SpriteType
     {
@@ -14,6 +15,6 @@
         NPC_Key,
         NPC_PartyMember,
         NPC_Monster,
-        Static,
+        Static
     }
 }

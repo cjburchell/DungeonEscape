@@ -1,11 +1,11 @@
-﻿using System;
-using DungeonEscape.Scenes.Common.Components.UI;
-using DungeonEscape.State;
-using Microsoft.Xna.Framework;
-using Nez.UI;
-
-namespace DungeonEscape.Scenes.Map.Components.UI
+﻿namespace DungeonEscape.Scenes.Map.Components.UI
 {
+    using System;
+    using Common.Components.UI;
+    using Microsoft.Xna.Framework;
+    using Nez.UI;
+    using State;
+
     public class HeroStatusWindow: BasicWindow
     {
         private TextButton closeButton;
@@ -40,7 +40,7 @@ namespace DungeonEscape.Scenes.Map.Components.UI
             this.Window.GetStage().SetGamepadFocusElement(this.closeButton);
         }
 
-        void UpdateStatus()
+        private void UpdateStatus()
         {
             const int labelColumnWidth = 125;
             const int dataColumnWidth = 75;
@@ -51,10 +51,10 @@ namespace DungeonEscape.Scenes.Map.Components.UI
             this.statusTable.Add(new Label($"{this.hero.Level}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
             this.statusTable.Row();
             this.statusTable.Add(new Label("Health:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-            this.statusTable.Add(new Label($"{this.hero.Health}/{hero.MaxHealth}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
+            this.statusTable.Add(new Label($"{this.hero.Health}/{this.hero.MaxHealth}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
             this.statusTable.Row();
             this.statusTable.Add(new Label("Magic:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-            this.statusTable.Add(new Label($"{this.hero.Magic}/{hero.MaxMagic}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
+            this.statusTable.Add(new Label($"{this.hero.Magic}/{this.hero.MaxMagic}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
             this.statusTable.Row();
             this.statusTable.Add(new Label("Attack:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
             this.statusTable.Add(new Label($"{this.hero.Attack}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);

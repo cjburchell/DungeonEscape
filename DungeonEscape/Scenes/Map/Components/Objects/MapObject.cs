@@ -1,25 +1,23 @@
-﻿using System;
-using DungeonEscape.Scenes.Common.Components.UI;
-using DungeonEscape.State;
-using Microsoft.Xna.Framework;
-using Nez;
-using Nez.Sprites;
-using Nez.Tiled;
-
-namespace DungeonEscape.Scenes.Map.Components.Objects
+﻿namespace DungeonEscape.Scenes.Map.Components.Objects
 {
+    using System;
+    using Common.Components.UI;
+    using Microsoft.Xna.Framework;
+    using Nez;
+    using Nez.Sprites;
+    using Nez.Tiled;
+    using State;
+
     public class MapObject: Component, ICollidable
     {
         protected readonly TmxObject tmxObject;
         protected readonly ObjectState state;
-        private readonly int gridTileHeight;
-        private readonly int gridTileWidth;
         private readonly TmxTilesetTile mapTile;
         private SpriteAnimator animator;
-        protected IGame gameState;
-        private TmxTileset tileSet;
+        protected readonly IGame gameState;
+        private readonly TmxTileset tileSet;
 
-        public static MapObject Create(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxMap map, UISystem ui, IGame gameState)
+        public static MapObject Create(TmxObject tmxObject, ObjectState state, TmxMap map, UISystem ui, IGame gameState)
         {
             if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
             {
@@ -28,26 +26,26 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             return spriteType switch
             {
-                SpriteType.Ship => new Ship(tmxObject, state, gridTileHeight, gridTileWidth, map, gameState),
-                SpriteType.Warp => new Warp(tmxObject, state, gridTileHeight, gridTileWidth, map, gameState),
-                SpriteType.Chest => new Chest(tmxObject, state, gridTileHeight, gridTileWidth, map, ui, gameState),
-                SpriteType.Door => new Door(tmxObject, state, gridTileHeight, gridTileWidth, map, ui, gameState),
-                _ => new MapObject(tmxObject, state, gridTileHeight, gridTileWidth, map, gameState)
+                SpriteType.Ship => new Ship(tmxObject, state, map, gameState),
+                SpriteType.Warp => new Warp(tmxObject, state, map, gameState),
+                SpriteType.Chest => new Chest(tmxObject, state, map, ui, gameState),
+                SpriteType.Door => new Door(tmxObject, state, map, ui, gameState),
+                _ => new MapObject(tmxObject, state, map, gameState)
             };
         }
 
-        protected MapObject(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxMap map, IGame gameState)
+        protected MapObject(TmxObject tmxObject, ObjectState state, TmxMap map, IGame gameState)
         {
             this.gameState = gameState;
             this.tmxObject = tmxObject;
             this.state = state;
-            this.gridTileHeight = gridTileHeight;
-            this.gridTileWidth = gridTileWidth;
-            if (tmxObject.Tile != null)
+            if (tmxObject.Tile == null)
             {
-                this.mapTile = map.GetTilesetTile(tmxObject.Tile.Gid);
-                this.tileSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
+                return;
             }
+
+            this.mapTile = map.GetTilesetTile(tmxObject.Tile.Gid);
+            this.tileSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
         }
 
         public override void Initialize()

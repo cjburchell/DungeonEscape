@@ -1,9 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using Nez;
-using Nez.Tiled;
-
-namespace DungeonEscape.Scenes.Map.Components.Objects
+﻿namespace DungeonEscape.Scenes.Map.Components.Objects
 {
+    using Microsoft.Xna.Framework;
+    using Nez;
+    using Nez.Tiled;
     using State;
 
     public class SolidObject : MapObject
@@ -18,7 +17,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
         private BoxCollider boxCollider;
 
-        protected SolidObject(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxMap map, IGame gameState) : base(tmxObject, state, gridTileHeight, gridTileWidth, map, gameState)
+        protected SolidObject(TmxObject tmxObject, ObjectState state, TmxMap map, IGame gameState) : base(tmxObject, state, map, gameState)
         {
             state.Collideable ??= bool.Parse(this.tmxObject.Properties["Collideable"]);
             
@@ -33,7 +32,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             };
         }
 
-        public void SetEnableCollider(bool enable)
+        protected void SetEnableCollider(bool enable)
         {
             this.boxCollider?.SetEnabled(enable);
         }

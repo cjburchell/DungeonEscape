@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
-using Nez.Tiled;
-using Random = Nez.Random;
-using Microsoft.Xna.Framework.Graphics;
-
+﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace DungeonEscape.State
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.Xna.Framework.Graphics;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
+    using Nez;
+    using Nez.Tiled;
 
     public class Spell
     {
@@ -20,21 +22,15 @@ namespace DungeonEscape.State
 
             caster.Magic -= this.Cost;
 
-            switch (this.Type)
+            return this.Type switch
             {
-                case SpellType.Heal:
-                    return this.CastHeal(targets, caster, false);
-                case SpellType.Outside:
-                    return this.CastOutside(caster as Hero, game);
-                case SpellType.Damage:
-                    return this.CastDamage(targets, caster);
-                case SpellType.Return:
-                    return this.CastReturn(caster as Hero, game);
-                case SpellType.Revive:
-                    return this.CastHeal(targets, caster, true);
-                default:
-                    return $"{caster.Name} casts {this.Name} but it did not work";
-            }
+                SpellType.Heal => this.CastHeal(targets, caster, false),
+                SpellType.Outside => this.CastOutside(caster as Hero, game),
+                SpellType.Damage => this.CastDamage(targets, caster),
+                SpellType.Return => this.CastReturn(caster as Hero, game),
+                SpellType.Revive => this.CastHeal(targets, caster, true),
+                _ => $"{caster.Name} casts {this.Name} but it did not work"
+            };
         }
 
         private string CastDamage(IEnumerable<Fighter> targets, Fighter caster)
@@ -95,7 +91,7 @@ namespace DungeonEscape.State
             return message;
         }
 
-        private string CastOutside(Hero caster, IGame gameState)
+        private string CastOutside(Fighter caster, IGame gameState)
         {
             if (gameState.Party.CurrentMapId == 0)
             {
@@ -106,7 +102,7 @@ namespace DungeonEscape.State
             return null;
         }
 
-        private string CastReturn(Hero caster, IGame gameState)
+        private string CastReturn(Fighter caster, IGame gameState)
         {
             if (gameState.Party.CurrentMapId != 0)
             {

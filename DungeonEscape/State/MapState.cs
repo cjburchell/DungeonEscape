@@ -1,4 +1,7 @@
-﻿namespace DungeonEscape.State
+﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+namespace DungeonEscape.State
 {
     using System.Collections.Generic;
 

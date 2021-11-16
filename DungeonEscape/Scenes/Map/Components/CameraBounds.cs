@@ -1,14 +1,15 @@
-﻿using Microsoft.Xna.Framework;
-using Nez;
-
-namespace DungeonEscape.Scenes.Map.Components
+﻿namespace DungeonEscape.Scenes.Map.Components
 {
+    using Microsoft.Xna.Framework;
+    using Nez;
+
     public class CameraBounds : Component, IUpdatable
     {
-        public Vector2 Min, Max;
+        private readonly Vector2 Min;
+        private readonly Vector2 Max;
 
 
-        public CameraBounds()
+        private CameraBounds()
         {
             // make sure we run last so the camera is already moved before we evaluate its position
             this.SetUpdateOrder(int.MaxValue);

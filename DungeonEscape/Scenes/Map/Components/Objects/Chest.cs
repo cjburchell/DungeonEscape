@@ -1,14 +1,13 @@
-﻿using System.Linq;
-using DungeonEscape.Scenes.Common.Components.UI;
-using DungeonEscape.State;
-using Microsoft.Xna.Framework.Graphics;
-using Nez;
-using Nez.Sprites;
-using Nez.Tiled;
-using Random = Nez.Random;
-
-namespace DungeonEscape.Scenes.Map.Components.Objects
+﻿namespace DungeonEscape.Scenes.Map.Components.Objects
 {
+    using System.Linq;
+    using Common.Components.UI;
+    using Microsoft.Xna.Framework.Graphics;
+    using Nez;
+    using Nez.Sprites;
+    using Nez.Tiled;
+    using State;
+
     public class Chest : MapObject
     {
         private readonly UISystem ui;
@@ -23,13 +22,10 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             set => this.state.IsOpen = value;
         }
 
-        public Chest(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxMap map, UISystem ui, IGame gameState) : base(tmxObject, state, gridTileHeight, gridTileWidth, map, gameState)
+        public Chest(TmxObject tmxObject, ObjectState state, TmxMap map, UISystem ui, IGame gameState) : base(tmxObject, state, map, gameState)
         {
-            if (!this.state.IsOpen.HasValue)
-            {
-                this.state.IsOpen = this.tmxObject.Properties.ContainsKey("IsOpen") &&
-                                    bool.Parse(this.tmxObject.Properties["IsOpen"]);
-            }
+            this.state.IsOpen ??= this.tmxObject.Properties.ContainsKey("IsOpen") &&
+                                  bool.Parse(this.tmxObject.Properties["IsOpen"]);
             
             this.ui = ui;
             this.level = tmxObject.Properties.ContainsKey("ChestLevel") ? int.Parse(tmxObject.Properties["ChestLevel"]) : 0;
@@ -81,7 +77,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 return true;
             }
 
-            if (!party.CanOpenChest(this.level))
+            if (!this.gameState.Party.CanOpenChest(this.level))
             {
                 new TalkWindow(this.ui).Show("Unable to open chest", Done);
                 return true;

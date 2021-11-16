@@ -1,10 +1,10 @@
-﻿using DungeonEscape.State;
-using Microsoft.Xna.Framework;
-using Nez.UI;
-
-namespace DungeonEscape.Scenes.Common.Components.UI
+﻿namespace DungeonEscape.Scenes.Common.Components.UI
 {
+    using System.Linq;
+    using Microsoft.Xna.Framework;
     using Nez;
+    using Nez.UI;
+    using State;
 
     public class PartyStatusWindow: BasicWindow, IUpdatable
     {
@@ -14,8 +14,8 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         public PartyStatusWindow(Party party, UICanvas canvas) : this(party, canvas, new Point(10, 10))
         {
         }
-        
-        public PartyStatusWindow(Party party, UICanvas canvas, Point position) : base(new UISystem(canvas, true), "Status",
+
+        private PartyStatusWindow(Party party, UICanvas canvas, Point position) : base(new UISystem(canvas, true), "Status",
             position, 90, 100, false)
         {
             this.party = party;
@@ -39,23 +39,20 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             this.Window.SetWidth(this.party.Members.Count * 50 + 40);
             this.statusTable.ClearChildren();
             this.statusTable.Row();
-            foreach (var partyMember in this.party.Members)
+            foreach (var nameLabel in this.party.Members.Select(partyMember => new Label(partyMember.Name.Substring(0,4), Skin).SetAlignment(Align.Center)))
             {
-                var nameLabel = new Label(partyMember.Name.Substring(0,4), Skin).SetAlignment(Align.Center);
                 this.statusTable.Add(nameLabel).Width(50);
             }
             
             this.statusTable.Row().SetPadTop(5);
-            foreach (var partyMember in this.party.Members)
+            foreach (var healthLabel in this.party.Members.Select(partyMember => new Label($"H{partyMember.Health}", Skin).SetAlignment(Align.Center)))
             {
-                var healthLabel = new Label($"H{partyMember.Health}", Skin).SetAlignment(Align.Center);
                 this.statusTable.Add(healthLabel).Width(50);
             }
             
             this.statusTable.Row().SetPadTop(5);
-            foreach (var partyMember in this.party.Members)
+            foreach (var magicLabel in this.party.Members.Select(partyMember => new Label($"M{partyMember.Magic}", Skin).SetAlignment(Align.Center)))
             {
-                var magicLabel = new Label($"M{partyMember.Magic}", Skin).SetAlignment(Align.Center);
                 this.statusTable.Add(magicLabel).Width(50);
             }
             

@@ -1,12 +1,10 @@
-﻿using DungeonEscape.Scenes.Common.Components.UI;
-using DungeonEscape.State;
-using Nez.AI.Pathfinding;
-using Nez.Tiled;
-
-namespace DungeonEscape.Scenes.Map.Components.Objects
+﻿namespace DungeonEscape.Scenes.Map.Components.Objects
 {
+    using Common.Components.UI;
     using Microsoft.Xna.Framework;
-    using Nez;
+    using Nez.AI.Pathfinding;
+    using Nez.Tiled;
+    using State;
 
     public class KeyStore : Sprite
     {
@@ -26,7 +24,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         {
             this.gameState.IsPaused = true;
             var questionWindow = new QuestionWindow(this.ui);
-            var goldWindow = new GoldWindow(party, this.ui.Canvas, new Point((MapScene.ScreenWidth) - 155, MapScene.ScreenHeight / 3 * 2 - 55));
+            var goldWindow = new GoldWindow(party, this.ui.Canvas, new Point(MapScene.ScreenWidth - 155, MapScene.ScreenHeight / 3 * 2 - 55));
             goldWindow.ShowWindow();
             questionWindow.Show($"Would you like to buy a key\nFor {this.key.Gold} gold?", accepted =>
             {

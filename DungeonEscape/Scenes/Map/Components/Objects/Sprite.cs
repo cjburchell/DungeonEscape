@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using DungeonEscape.Scenes.Common.Components.UI;
-using DungeonEscape.State;
-using Microsoft.Xna.Framework;
-using Nez;
-using Nez.AI.Pathfinding;
-using Nez.Sprites;
-using Nez.Tiled;
-using Random = Nez.Random;
-
-namespace DungeonEscape.Scenes.Map.Components.Objects
+﻿namespace DungeonEscape.Scenes.Map.Components.Objects
 {
+    using System;
+    using System.Collections.Generic;
+    using Common.Components.UI;
+    using Microsoft.Xna.Framework;
+    using Nez;
+    using Nez.AI.Pathfinding;
+    using Nez.Sprites;
+    using Nez.Tiled;
+    using State;
+    using Random = Nez.Random;
+
     public class Sprite : Component, IUpdatable, ICollidable
     {
         private readonly TmxObject tmxObject;
@@ -24,7 +24,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
         private List<Point> path;
         private const float MoveSpeed = 75;
         private int currentPathIndex;
-        protected readonly SpriteState spriteState;
+        // ReSharper disable once NotAccessedField.Local
+        private readonly SpriteState spriteState;
         private float elapsedTime;
         private float nextElapsedTime = Random.NextInt(5) + 1;
         private readonly TmxTileset tilSet;
@@ -122,7 +123,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 return;
             }
 
-            var a = (this.tmxObject.Height/2 - this.tmxObject.Width/2); // 16
+            var a = this.tmxObject.Height/2 - this.tmxObject.Width/2; // 16
 
             var box = new Rectangle
             {
@@ -133,11 +134,6 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             };
             
             this.Entity.AddComponent(new BoxCollider(box));
-        }
-
-        protected void DisplayVisual(bool display = true)
-        {
-            this.animator.SetEnabled(display);
         }
 
         void IUpdatable.Update()
@@ -152,65 +148,66 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 return;
             }
             
-            if (this.state == MoveState.Stopped)
+            switch (this.state)
             {
-                this.elapsedTime += Time.DeltaTime;
-                if (!(this.elapsedTime >= this.nextElapsedTime))
+                case MoveState.Stopped:
                 {
-                    return;
-                }
+                    this.elapsedTime += Time.DeltaTime;
+                    if (!(this.elapsedTime >= this.nextElapsedTime))
+                    {
+                        return;
+                    }
 
-                this.elapsedTime = 0;
-                this.nextElapsedTime = Random.NextInt(5) + 1;
+                    this.elapsedTime = 0;
+                    this.nextElapsedTime = Random.NextInt(5) + 1;
                     
-                if (Random.Chance(0.05f))
-                {
-                    return;
-                }
+                    if (Random.Chance(0.05f))
+                    {
+                        return;
+                    }
                     
-                const int  MaxSpacesToMove = 2;
-                var pos = this.Entity.Position;
-                var mapGoTo = new Point(Random.NextInt(MaxSpacesToMove*2 + 1)-MaxSpacesToMove, Random.NextInt(MaxSpacesToMove*2 + 1)-MaxSpacesToMove);
-                if (mapGoTo.X < 0)
-                {
-                    mapGoTo.X = 0;
-                }
-                if (mapGoTo.Y < 0)
-                {
-                    mapGoTo.Y = 0;
-                }
-                if (mapGoTo.X >= this.map.Width)
-                {
-                    mapGoTo.X = this.map.Width-1;
-                }
-                if (mapGoTo.Y >= this.map.Height)
-                {
-                    mapGoTo.X = this.map.Height-1;
-                }
+                    const int  MaxSpacesToMove = 2;
+                    var pos = this.Entity.Position;
+                    var mapGoTo = new Point(Random.NextInt(MaxSpacesToMove*2 + 1)-MaxSpacesToMove, Random.NextInt(MaxSpacesToMove*2 + 1)-MaxSpacesToMove);
+                    if (mapGoTo.X < 0)
+                    {
+                        mapGoTo.X = 0;
+                    }
+                    if (mapGoTo.Y < 0)
+                    {
+                        mapGoTo.Y = 0;
+                    }
+                    if (mapGoTo.X >= this.map.Width)
+                    {
+                        mapGoTo.X = this.map.Width-1;
+                    }
+                    if (mapGoTo.Y >= this.map.Height)
+                    {
+                        mapGoTo.X = this.map.Height-1;
+                    }
                     
-                var toPos = pos + MapScene.ToRealLocation(mapGoTo, this.map);
-                this.path = this.graph.Search(
-                    MapScene.ToMapGrid(pos, this.map),
-                    MapScene.ToMapGrid(toPos, this.map));
+                    var toPos = pos + MapScene.ToRealLocation(mapGoTo, this.map);
+                    this.path = this.graph.Search(
+                        MapScene.ToMapGrid(pos, this.map),
+                        MapScene.ToMapGrid(toPos, this.map));
 
-                if (this.path == null)
-                {
-                    this.state = MoveState.Stopped;
+                    if (this.path == null)
+                    {
+                        this.state = MoveState.Stopped;
+                    }
+                    else
+                    {
+                        this.currentPathIndex = 0;
+                        this.state = MoveState.Moving;
+                    }
+
+                    break;
                 }
-                else
-                {
-                    this.currentPathIndex = 0;
-                    this.state = MoveState.Moving;
-                }
-            }
-            else if (this.state == MoveState.Moving)
-            {
-                if (this.path == null)
-                {
+                case MoveState.Moving when this.path == null:
                     this.state = MoveState.Stopped;
                     this.animator.Pause();
-                }
-                else
+                    break;
+                case MoveState.Moving:
                 {
                     var p1 = this.Entity.Position;
                     if (Vector2.Distance(p1,MapScene.ToRealLocation(this.path[this.currentPathIndex], this.map)) <= 1)
@@ -224,8 +221,8 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                         }
                     }
                     
-                    var p2 = MapScene.ToRealLocation(this.path[this.currentPathIndex], this.map);
-                    var angle = (float)Math.Atan2(p2.Y - p1.Y, p2.X - p1.X);
+                    var (x, y) = MapScene.ToRealLocation(this.path[this.currentPathIndex], this.map);
+                    var angle = (float)Math.Atan2(y - p1.Y, x - p1.X);
                     var vector = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
                     var animation = "WalkDown";
                     if (vector.X < 0)
@@ -264,7 +261,10 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                     }
                     
                     this.mover.ApplyMovement(movement);
+                    break;
                 }
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             
         }

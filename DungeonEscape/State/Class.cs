@@ -1,4 +1,5 @@
-﻿namespace DungeonEscape.State
+﻿// ReSharper disable UnusedMember.Global
+namespace DungeonEscape.State
 {
     public enum Class
     {

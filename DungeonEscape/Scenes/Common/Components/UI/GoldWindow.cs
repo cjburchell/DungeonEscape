@@ -11,7 +11,7 @@
         private Label goldLabel;
 
         public GoldWindow(Party party, UICanvas canvas) : this(party, canvas,
-            new Point((MapScene.ScreenWidth) - 155, (MapScene.ScreenHeight) - 55))
+            new Point(MapScene.ScreenWidth - 155, MapScene.ScreenHeight - 55))
         {
         }
 

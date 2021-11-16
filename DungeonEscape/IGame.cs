@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using DungeonEscape.State;
-using Nez.Tiled;
-
-namespace DungeonEscape
+﻿namespace DungeonEscape
 {
+    using System.Collections.Generic;
     using Microsoft.Xna.Framework;
+    using Nez.Tiled;
+    using State;
 
     public interface IGame
     {
@@ -12,7 +11,7 @@ namespace DungeonEscape
 
         void Save();
 
-        Party Party { get; set; }
+        Party Party { get; }
 
         bool IsPaused { get; set; }
     
@@ -27,7 +26,7 @@ namespace DungeonEscape
         List<Monster> Monsters { get; }
 
         IEnumerable<GameSave> GameSaves { get; }
-        bool InGame { get; set; }
+        bool InGame { get; }
         List<ClassStats> ClassLevelStats { get; }
 
         void ReloadSaveGames();

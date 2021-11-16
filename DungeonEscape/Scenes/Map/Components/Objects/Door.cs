@@ -1,10 +1,8 @@
-﻿using DungeonEscape.Scenes.Common.Components.UI;
-using DungeonEscape.State;
-using Nez.Tiled;
-
-namespace DungeonEscape.Scenes.Map.Components.Objects
+﻿namespace DungeonEscape.Scenes.Map.Components.Objects
 {
-    using Nez;
+    using Common.Components.UI;
+    using Nez.Tiled;
+    using State;
 
     public class Door: SolidObject
     {
@@ -17,14 +15,10 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             set => this.state.IsOpen = value;
         }
 
-        public Door(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxMap map, UISystem ui, IGame gameState) : base(tmxObject, state, gridTileHeight, gridTileWidth, map, gameState)
+        public Door(TmxObject tmxObject, ObjectState state, TmxMap map, UISystem ui, IGame gameState) : base(tmxObject, state, map, gameState)
         {
-            if (!this.state.IsOpen.HasValue)
-            {
-                this.state.IsOpen = this.tmxObject.Properties.ContainsKey("IsOpen") &&
-                                    bool.Parse(this.tmxObject.Properties["IsOpen"]);
-            }
-            
+            this.state.IsOpen ??= this.tmxObject.Properties.ContainsKey("IsOpen") &&
+                                  bool.Parse(this.tmxObject.Properties["IsOpen"]);
             this.ui = ui;
             this.level = tmxObject.Properties.ContainsKey("DoorLevel") ? int.Parse(tmxObject.Properties["DoorLevel"]) : 0;
         }

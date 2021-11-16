@@ -1,30 +1,30 @@
-using System;
-using System.Collections.Generic;
-using DungeonEscape.Scenes.Map.Components;
-using DungeonEscape.Scenes.Map.Components.Objects;
-using DungeonEscape.Scenes.Map.Components.UI;
-using DungeonEscape.State;
-using Microsoft.Xna.Framework;
-using Nez;
-using Nez.AI.Pathfinding;
-using Nez.Tiled;
-using Nez.UI;
-
 namespace DungeonEscape.Scenes
 {
+    using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using Common.Components.UI;
+    using Map.Components;
+    using Map.Components.Objects;
+    using Map.Components.UI;
+    using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Input;
     using Newtonsoft.Json;
+    using Nez;
+    using Nez.AI.Pathfinding;
+    using Nez.Console;
+    using Nez.Tiled;
+    using Nez.UI;
+    using State;
 
-    public class MapScene : Nez.Scene
+    public class MapScene : Scene
     {
         private const int ScreenSpaceRenderLayer = 999;
         
         public const int DefaultTileSize = 32;
-        public const int ScreenTileWidth = 32;
-        public const int ScreenTileHeight = 18;
+        private const int ScreenTileWidth = 32;
+        private const int ScreenTileHeight = 18;
         public const int ScreenWidth = ScreenTileWidth * DefaultTileSize;
         public const int ScreenHeight = ScreenTileHeight * DefaultTileSize;
         public const SceneResolutionPolicy SceneResolution = SceneResolutionPolicy.ShowAll;
@@ -47,13 +47,15 @@ namespace DungeonEscape.Scenes
 
         public static Point ToMapGrid(Vector2 pos, TmxMap map)
         {
-            return new Point {X = (int) (pos.X / map.TileWidth), Y = (int) (pos.Y / map.TileHeight)};
+            var (x, y) = pos;
+            return new Point {X = (int) (x / map.TileWidth), Y = (int) (y / map.TileHeight)};
         }
 
         public static Vector2 ToRealLocation(Point point, TmxMap map)
         {
-            return new Vector2(point.X * map.TileWidth + map.TileWidth / 2,
-                point.Y * map.TileHeight + map.TileHeight / 2);
+            var (x, y) = point;
+            return new Vector2(x * map.TileWidth + map.TileWidth / 2,
+                y * map.TileHeight + map.TileHeight / 2);
         }
 
         private static AstarGridGraph CreateGraph(TmxMap map)
@@ -94,7 +96,7 @@ namespace DungeonEscape.Scenes
                 SceneResolution);
 
 
-            this.randomMonsters = LoadRandomMonsters();
+            this.randomMonsters = this.LoadRandomMonsters();
 
             this.gameState.Party.CurrentMapId = this.mapId;
 
@@ -130,8 +132,8 @@ namespace DungeonEscape.Scenes
                     mapState.Objects.Add(state);
                 }
                 var itemEntity = this.CreateEntity(item.Name);
-                itemEntity.AddComponent(MapObject.Create(item, state, map.TileHeight, map.TileWidth,
-                    map, ui, this.gameState));
+                itemEntity.AddComponent(MapObject.Create(item, state,
+                    map, this.ui, this.gameState));
             }
 
             var graph = CreateGraph(map);
@@ -145,20 +147,20 @@ namespace DungeonEscape.Scenes
                     mapState.Sprites.Add(state);
                 }
                 var spriteEntity = this.CreateEntity(item.Name);
-                spriteEntity.AddComponent(Sprite.Create(item, state, map, ui, this.gameState, graph));
+                spriteEntity.AddComponent(Sprite.Create(item, state, map, this.ui, this.gameState, graph));
             }
 
             var topLeft = new Vector2(0, 0);
-            var bottomRight = new Vector2(map.TileWidth * (map.Width),
-                map.TileWidth * (map.Height));
+            var bottomRight = new Vector2(map.TileWidth * map.Width,
+                map.TileWidth * map.Height);
             tiledEntity.AddComponent(new CameraBounds(topLeft, bottomRight));
 
             var spawn = new Vector2();
             if (this.start == null)
             {
                 var spawnObject = map.GetObjectGroup("objects").Objects["spawn"];
-                spawn.X = spawnObject.X + (map.TileWidth / 2.0f);
-                spawn.Y = spawnObject.Y - (map.TileHeight / 2.0f);
+                spawn.X = spawnObject.X + map.TileWidth / 2.0f;
+                spawn.Y = spawnObject.Y - map.TileHeight / 2.0f;
             }
             else
             {
@@ -168,7 +170,7 @@ namespace DungeonEscape.Scenes
             var playerEntity = this.CreateEntity("player", spawn);
 
 
-            playerEntity.AddComponent(new PlayerComponent(this.gameState, map, this.debugText, this.randomMonsters, ui));
+            playerEntity.AddComponent(new PlayerComponent(this.gameState, map, this.debugText, this.randomMonsters, this.ui));
 
             this.Camera.Entity.AddComponent(new FollowCamera(playerEntity, FollowCamera.CameraStyle.CameraWindow));
             
@@ -209,7 +211,7 @@ namespace DungeonEscape.Scenes
 
         }
 
-        [Nez.Console.Command("map", "switches to map")]
+        [Command("map", "switches to map")]
         // ReSharper disable once UnusedMember.Global
         public static void SetMap(int? mapId = null, Point? point = null)
         {
@@ -316,7 +318,7 @@ namespace DungeonEscape.Scenes
             }
         }
 
-        private void CastSpell(Hero caster, Spell spell, Action done)
+        private void CastSpell(Fighter caster, Spell spell, Action done)
         {
             if (spell.Targets == Target.Group)
             {
@@ -432,7 +434,7 @@ namespace DungeonEscape.Scenes
                             case "Use":
                                 if (this.gameState.Party.Members.Count == 1)
                                 {
-                                    var result = this.UseItem(this.gameState.Party.Members.First(), item, this.gameState.Party);
+                                    var result = UseItem(this.gameState.Party.Members.First(), item, this.gameState.Party);
                                     if (string.IsNullOrEmpty(result))
                                     {
                                         done();
@@ -454,7 +456,7 @@ namespace DungeonEscape.Scenes
                                                 return;
                                             }
                                         
-                                            var result = this.UseItem(hero, item, this.gameState.Party);
+                                            var result = UseItem(hero, item, this.gameState.Party);
                                             if (string.IsNullOrEmpty(result))
                                             {
                                                 done();
@@ -470,7 +472,7 @@ namespace DungeonEscape.Scenes
                             {
                                 if (item.IsEquipped)
                                 {
-                                    item.Unequip(this.gameState.Party.Members);
+                                    item.UnEquip(this.gameState.Party.Members);
                                 }
 
                                 this.gameState.Party.Items.Remove(item);
@@ -486,8 +488,9 @@ namespace DungeonEscape.Scenes
             }
         }
         
-        private string UseItem(Hero hero, ItemInstance item, Party party)
+        private static string UseItem(Hero hero, ItemInstance item, Party party)
         {
+            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
             switch (item.Type)
             {
                 case ItemType.OneUse:

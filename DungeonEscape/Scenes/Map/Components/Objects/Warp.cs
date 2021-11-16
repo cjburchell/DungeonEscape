@@ -1,14 +1,14 @@
-﻿using DungeonEscape.State;
-using Microsoft.Xna.Framework;
-using Nez.Tiled;
-
-namespace DungeonEscape.Scenes.Map.Components.Objects
+﻿namespace DungeonEscape.Scenes.Map.Components.Objects
 {
+    using Microsoft.Xna.Framework;
+    using Nez.Tiled;
+    using State;
+
     public class Warp : MapObject
     {
         private readonly int mapId;
-        private Point? warpMap;
-        public Warp(TmxObject tmxObject, ObjectState state, int gridTileHeight, int gridTileWidth, TmxMap map, IGame gameState) : base(tmxObject, state, gridTileHeight, gridTileWidth, map, gameState)
+        private readonly Point? warpMap;
+        public Warp(TmxObject tmxObject, ObjectState state, TmxMap map, IGame gameState) : base(tmxObject, state,  map, gameState)
         {
             if (tmxObject.Properties.ContainsKey("WarpMap"))
             {

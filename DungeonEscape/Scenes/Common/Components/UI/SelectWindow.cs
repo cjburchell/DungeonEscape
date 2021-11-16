@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Nez.UI;
-
-namespace DungeonEscape.Scenes.Common.Components.UI
+﻿namespace DungeonEscape.Scenes.Common.Components.UI
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Microsoft.Xna.Framework;
+    using Nez.UI;
+
     public class SelectWindow<T> : BasicWindow where T : class
     {
         private Action<T> done;
-        private ButtonList list;
-        private ScrollPane scrollPane;
+        private readonly ButtonList list;
+        private readonly ScrollPane scrollPane;
         private IEnumerable<T> items;
 
 
@@ -69,10 +69,10 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             return button;
         }
 
-        public void Show(IEnumerable<T> items, Action<T> doneAction)
+        public void Show(IEnumerable<T> itemsList, Action<T> doneAction)
         {
             this.done = doneAction;
-            this.items = items;
+            this.items = itemsList;
             this.ShowWindow();
         }
     }

@@ -1,17 +1,17 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Xml.Linq;
-using DungeonEscape.Scenes;
-using DungeonEscape.State;
-using Microsoft.Xna.Framework;
-using Nez;
-using Nez.Tiled;
-using Newtonsoft.Json;
-using System.Linq;
-using DungeonEscape.Scenes.Fight;
-
-namespace DungeonEscape
+﻿namespace DungeonEscape
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Xml.Linq;
+    using Microsoft.Xna.Framework;
+    using Newtonsoft.Json;
+    using Nez;
+    using Nez.Tiled;
+    using Scenes;
+    using Scenes.Fight;
+    using State;
+
     public class DungeonEscapeGame : Core, IGame
     {
         private const string saveFile = "save.json";
@@ -19,7 +19,7 @@ namespace DungeonEscape
         private bool isPaused;
         private bool deferredPause;
         
-        public Party Party { get; set; }
+        public Party Party { get; private set; }
         
         public List<ClassStats> ClassLevelStats { get; private set; } = new List<ClassStats>();
         public List<MapState> MapStates { get; private set; } = new List<MapState>();
@@ -27,7 +27,7 @@ namespace DungeonEscape
         public List<Item> Items { get; } = new List<Item>();
         public List<Spell> Spells { get; } = new List<Spell>();
         public IEnumerable<GameSave> GameSaves => this.saveSlots;
-        public bool InGame { get; set; }
+        public bool InGame { get; private set; }
         public bool IsPaused
         {
             get => this.isPaused;
@@ -133,7 +133,7 @@ namespace DungeonEscape
             
             this.ClassLevelStats = JsonConvert.DeserializeObject<List<ClassStats>>(File.ReadAllText("Content/classLevels.json"));
 
-            var tileSet = LoadTileSet($"Content/items.tsx");
+            var tileSet = LoadTileSet("Content/items.tsx");
             var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/items.json"));
             if (items != null)
             {
@@ -146,7 +146,7 @@ namespace DungeonEscape
             }
             
             
-            var spellTileset = LoadTileSet($"Content/spells.tsx");
+            var spellTileset = LoadTileSet("Content/spells.tsx");
             var spells = JsonConvert.DeserializeObject<List<Spell>>(File.ReadAllText("Content/spells.json"));
             if (spells != null)
             {
@@ -158,7 +158,7 @@ namespace DungeonEscape
                 }
             }
             
-            var monsterTileSet = LoadTileSet($"Content/allmonsters.tsx");
+            var monsterTileSet = LoadTileSet("Content/allmonsters.tsx");
             var monsters = JsonConvert.DeserializeObject<List<Monster>>(File.ReadAllText("Content/allmonsters.json"));
             if (monsters != null)
             {
@@ -172,7 +172,7 @@ namespace DungeonEscape
             
 
             DebugRenderEnabled = false;
-            Window.AllowUserResizing = true;
+            this.Window.AllowUserResizing = true;
             Screen.SetSize(MapScene.ScreenWidth, MapScene.ScreenHeight);
             Scene = new EmptyScene();
             StartSceneTransition(new FadeTransition(() =>
@@ -185,10 +185,10 @@ namespace DungeonEscape
 
         public void ReloadSaveGames()
         {
-            this.saveSlots = this.LoadSaveGames(saveFile);
+            this.saveSlots = LoadSaveGames(saveFile);
         }
 
-        private GameSave[] LoadSaveGames(string fileName)
+        private static GameSave[] LoadSaveGames(string fileName)
         {
             var saves = new List<GameSave>();
             if (File.Exists(fileName))
@@ -204,7 +204,7 @@ namespace DungeonEscape
             return saves.ToArray();
         }
 
-        public static TmxTileset LoadTileSet(string path)
+        private static TmxTileset LoadTileSet(string path)
         {
             if (!File.Exists(path))
             {

@@ -1,10 +1,9 @@
-﻿using Nez;
-using DungeonEscape.Scenes.Common.Components.UI;
-using Microsoft.Xna.Framework;
-using Nez.UI;
-
-namespace DungeonEscape.Scenes
+﻿namespace DungeonEscape.Scenes
 {
+    using Common.Components.UI;
+    using Microsoft.Xna.Framework;
+    using Nez;
+    using Nez.UI;
     using State;
 
     public class CreatePlayerScene : Scene

@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using Nez;
-using Nez.UI;
-
-namespace DungeonEscape.Scenes.Common.Components
+﻿namespace DungeonEscape.Scenes.Common.Components
 {
+    using Microsoft.Xna.Framework;
+    using Nez;
+    using Nez.UI;
+
     public class BorderPrimitiveDrawable : PrimitiveDrawable
     {
         private readonly Color? borderColor;

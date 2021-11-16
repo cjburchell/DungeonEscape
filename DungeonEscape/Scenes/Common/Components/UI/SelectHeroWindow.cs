@@ -1,9 +1,8 @@
-﻿using DungeonEscape.State;
-using Microsoft.Xna.Framework;
-
-namespace DungeonEscape.Scenes.Common.Components.UI
+﻿namespace DungeonEscape.Scenes.Common.Components.UI
 {
-    
+    using Microsoft.Xna.Framework;
+    using State;
+
     public class SelectHeroWindow : SelectWindow<Hero>
     {
         public SelectHeroWindow(UISystem ui, Point point) : base(ui, "Select Hero", point, 250)

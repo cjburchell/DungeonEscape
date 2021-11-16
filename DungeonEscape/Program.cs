@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace DungeonEscape
+﻿namespace DungeonEscape
 {
+    using System;
+
     public static class Program
     {
         [STAThread]

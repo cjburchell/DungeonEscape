@@ -12,7 +12,7 @@
 
     public class StoreWindow : TextWindow    
     {
-        public StoreWindow(UISystem ui) : base(ui, "Store", new Point(10, (MapScene.ScreenHeight) / 3 * 2))
+        public StoreWindow(UISystem ui) : base(ui, "Store", new Point(10, MapScene.ScreenHeight / 3 * 2))
         {
         }
 

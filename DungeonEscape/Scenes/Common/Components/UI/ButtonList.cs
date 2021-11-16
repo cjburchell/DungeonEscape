@@ -1,8 +1,8 @@
-﻿using System;
-using Nez.UI;
-
-namespace DungeonEscape.Scenes.Common.Components.UI
+﻿namespace DungeonEscape.Scenes.Common.Components.UI
 {
+	using System;
+	using Nez.UI;
+
 	public class ButtonList : Table
 	{
 		public event Action<Button> OnClicked;

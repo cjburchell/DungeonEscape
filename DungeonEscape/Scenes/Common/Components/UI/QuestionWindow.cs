@@ -1,11 +1,11 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-
-namespace DungeonEscape.Scenes.Common.Components.UI
+﻿namespace DungeonEscape.Scenes.Common.Components.UI
 {
+    using System;
+    using Microsoft.Xna.Framework;
+
     public class QuestionWindow : TextWindow
     {
-        public QuestionWindow(UISystem ui) : base(ui,"Question",new Point(10, (MapScene.ScreenHeight) / 3 * 2))
+        public QuestionWindow(UISystem ui) : base(ui,"Question",new Point(10, MapScene.ScreenHeight / 3 * 2))
         {
         }
         

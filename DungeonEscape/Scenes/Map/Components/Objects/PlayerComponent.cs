@@ -1,17 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using DungeonEscape.Scenes.Common.Components.UI;
-using DungeonEscape.State;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Nez;
-using Nez.Sprites;
-using Nez.Tiled;
-using Nez.UI;
-using Random = Nez.Random;
-
-namespace DungeonEscape.Scenes.Map.Components.Objects
+﻿namespace DungeonEscape.Scenes.Map.Components.Objects
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Common.Components.UI;
+    using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Input;
+    using Nez;
+    using Nez.Sprites;
+    using Nez.Tiled;
+    using Nez.UI;
+    using State;
+
     public class PlayerComponent : Component, IUpdatable, ITriggerListener
     {
         private readonly TmxMap map;
@@ -113,7 +112,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
                 });
             }
             
-            var a = (heroHeight/2 - heroWidth/2); // 16
+            const int a = heroHeight/2 - heroWidth/2; // 16
 
             var box = new Rectangle
             {
@@ -285,12 +284,9 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
             
             if (this.actionButton.IsReleased)
             {
-                foreach (var overObject in this.currentlyOverObjects)
+                foreach (var unused in this.currentlyOverObjects.Where(overObject => overObject.OnAction(this.GameState.Party)))
                 {
-                    if (overObject.OnAction(this.GameState.Party))
-                    {
-                        break;
-                    }
+                    break;
                 }
             }
 
@@ -318,7 +314,7 @@ namespace DungeonEscape.Scenes.Map.Components.Objects
 
             if (this.CheckForMonsterEncounter())
             {
-                //this.DoMonsterEncounter();
+                this.DoMonsterEncounter();
             }
         }
 

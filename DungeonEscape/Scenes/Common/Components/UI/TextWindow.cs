@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Nez;
-using Nez.UI;
-
-namespace DungeonEscape.Scenes.Common.Components.UI
+﻿namespace DungeonEscape.Scenes.Common.Components.UI
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Microsoft.Xna.Framework;
+    using Nez;
+    using Nez.UI;
+
     public class TextWindow : BasicWindow, IUpdatable
     {
 
@@ -15,7 +15,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
         private Action<string> done;
         private int textIndex;
 
-        protected TextWindow(UISystem ui,string title, Point position, int width = MapScene.ScreenWidth - 20, int height = (MapScene.ScreenHeight) / 3 - 10) : base(ui, title, position, width, height)
+        protected TextWindow(UISystem ui,string title, Point position, int width = MapScene.ScreenWidth - 20, int height = MapScene.ScreenHeight / 3 - 10) : base(ui, title, position, width, height)
         {
         }
         
@@ -73,7 +73,7 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             {
                 var buttonControl = new TextButton(text, Skin)
                 {
-                    UserData = buttonText,
+                    UserData = this.buttonText
                 };
                 buttonControl.UserData = text;
                 this.AddButton(buttonControl);
@@ -129,32 +129,26 @@ namespace DungeonEscape.Scenes.Common.Components.UI
             }
             else
             {
-                if (!this.buttonTable.IsVisible())
+                if (this.buttonTable.IsVisible())
                 {
-                    this.Window.GetStage().SetGamepadFocusElement(this.firstButton);
-                    this.buttonTable.SetVisible(true);
-                    this.buttonTable.Validate();
-                    
+                    return;
                 }
+
+                this.Window.GetStage().SetGamepadFocusElement(this.firstButton);
+                this.buttonTable.SetVisible(true);
+                this.buttonTable.Validate();
             }
         } 
 
-        protected void Show(string text, Action<string> doneAction, IEnumerable<string> buttonText)
+        protected void Show(string text, Action<string> doneAction, IEnumerable<string> buttonTextList)
         {
             this.done = doneAction;
             this.textToShow = text ?? "";
-            this.buttonText = buttonText;
+            this.buttonText = buttonTextList;
             this.buttonTable?.SetVisible(false);
             this.buttonTable?.Validate();
             
             this.ShowWindow();
-        }
-
-        public void AppendText(string text)
-        {
-            this.textToShow += text;
-            this.buttonTable?.SetVisible(false);
-            this.buttonTable?.Validate();
         }
     }
 }

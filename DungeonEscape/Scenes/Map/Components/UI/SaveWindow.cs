@@ -1,10 +1,10 @@
-﻿using DungeonEscape.Scenes.Common.Components.UI;
-using Microsoft.Xna.Framework;
-using Nez.UI;
-using DungeonEscape.State;
-
-namespace DungeonEscape.Scenes.Map.Components.UI
+﻿namespace DungeonEscape.Scenes.Map.Components.UI
 {
+    using Common.Components.UI;
+    using Microsoft.Xna.Framework;
+    using Nez.UI;
+    using State;
+
     public class SaveWindow: SelectWindow<GameSave>
     {
         public SaveWindow(UISystem ui) : base(ui, "Save", new Point(20, 20), 300)

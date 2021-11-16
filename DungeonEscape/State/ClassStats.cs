@@ -1,9 +1,13 @@
-﻿namespace DungeonEscape.State
+﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// ReSharper disable CollectionNeverUpdated.Global
+namespace DungeonEscape.State
 {
     using System.Collections.Generic;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
 
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class ClassStats
     {
         [JsonConverter(typeof(StringEnumConverter))]

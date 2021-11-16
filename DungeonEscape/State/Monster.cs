@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Nez.Tiled;
-
+﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace DungeonEscape.State
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using Microsoft.Xna.Framework.Graphics;
     using Newtonsoft.Json;
+    using Nez.Tiled;
 
     public class Monster
     {
@@ -14,14 +16,14 @@ namespace DungeonEscape.State
             
         }
 
-        public void Setup(TmxTilesetTile tile, IReadOnlyCollection<Spell> spells)
+        public void Setup(TmxTilesetTile tile, IEnumerable<Spell> spells)
         {
             this.Image = tile.Image.Texture;
             this.Spells = this.SpellList.Select(spellId => spells.FirstOrDefault(item => item.Id == spellId))
                 .Where(spell => spell != null).ToList();
         }
         
-        public Monster(TmxTilesetTile tile, IReadOnlyCollection<Spell> spells) : this()
+        public Monster(TmxTilesetTile tile, IEnumerable<Spell> spells) : this()
         {
             this.Setup(tile, spells);
         }

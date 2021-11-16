@@ -8,6 +8,6 @@
         Shield,
         Key,
         Gold,
-        Unknown,
-    };
+        Unknown
+    }
 }

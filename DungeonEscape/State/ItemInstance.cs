@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
-
+﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// ReSharper disable MemberCanBePrivate.Global
 namespace DungeonEscape.State
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.Xna.Framework.Graphics;
+    using Newtonsoft.Json;
 
     public class ItemInstance
     {
@@ -52,7 +53,7 @@ namespace DungeonEscape.State
         public bool IsEquippable =>
             this.Type == ItemType.Armor || this.Type == ItemType.Shield || this.Type == ItemType.Weapon;
 
-        public void Unequip(IEnumerable<Hero> heroes)
+        public void UnEquip(IEnumerable<Hero> heroes)
         {
             if (this.IsEquipped && !string.IsNullOrEmpty(this.EquippedTo))
             {
@@ -70,6 +71,16 @@ namespace DungeonEscape.State
                         case ItemType.Shield:
                             equippedHero.ShieldId = null;
                             break;
+                        case ItemType.OneUse:
+                            break;
+                        case ItemType.Key:
+                            break;
+                        case ItemType.Gold:
+                            break;
+                        case ItemType.Unknown:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
 
                     equippedHero.Agility -= this.item.Agility;
@@ -95,19 +106,29 @@ namespace DungeonEscape.State
             {
                 case ItemType.Weapon:
                     oldItem = items.FirstOrDefault(i => i.Id == hero.WeaponId);
-                    oldItem?.Unequip(heroes);
+                    oldItem?.UnEquip(heroes);
                     hero.WeaponId = this.Id;
                     break;
                 case ItemType.Armor:
                     oldItem = items.FirstOrDefault(i => i.Id == hero.ArmorId);
-                    oldItem?.Unequip(heroes);
+                    oldItem?.UnEquip(heroes);
                     hero.ArmorId = this.Id;
                     break;
                 case ItemType.Shield:
                     oldItem = items.FirstOrDefault(i => i.Id == hero.ShieldId);
-                    oldItem?.Unequip(heroes);
+                    oldItem?.UnEquip(heroes);
                     hero.ShieldId = this.Id;
                     break;
+                case ItemType.OneUse:
+                    break;
+                case ItemType.Key:
+                    break;
+                case ItemType.Gold:
+                    break;
+                case ItemType.Unknown:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             
             this.IsEquipped = true;

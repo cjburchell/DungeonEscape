@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
+﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// ReSharper disable MemberCanBePrivate.Global
 namespace DungeonEscape.State
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using Random = Nez.Random;
@@ -52,10 +53,10 @@ namespace DungeonEscape.State
             this.Id = Guid.NewGuid().ToString();
         }
 
-        public void RollStats(List<ClassStats> clasLevels)
+        public void RollStats(IEnumerable<ClassStats> classLevels)
         {
             this.Level = 1;
-            var classStats = clasLevels.First(stats => stats.Class == this.Class);
+            var classStats = classLevels.First(stats => stats.Class == this.Class);
             this.NextLevel = classStats.FirstLevel;
             
             // Roll starting stats
@@ -70,7 +71,7 @@ namespace DungeonEscape.State
             this.Magic = this.MaxMagic;
         }
 
-        public bool CheckLevelUp(List<ClassStats> clasLevels, IEnumerable<Spell> availableSpells, out string levelUpMessage)
+        public bool CheckLevelUp(IEnumerable<ClassStats> classLevels, IEnumerable<Spell> availableSpells, out string levelUpMessage)
         {
             if (this.XP < this.NextLevel)
             {
@@ -80,8 +81,8 @@ namespace DungeonEscape.State
 
             var oldLevel = this.Level;
             ++this.Level;
-            var classStats = clasLevels.First(stats => stats.Class == this.Class);
-            this.NextLevel = (this.NextLevel * classStats.NextLevelFactor) + Random.NextInt(this.NextLevel / classStats.NextLevelRandomPercent);
+            var classStats = classLevels.First(stats => stats.Class == this.Class);
+            this.NextLevel = this.NextLevel * classStats.NextLevelFactor + Random.NextInt(this.NextLevel / classStats.NextLevelRandomPercent);
             
             levelUpMessage = $"{this.Name} has advanced to level {this.Level}\n";
             
@@ -92,11 +93,7 @@ namespace DungeonEscape.State
             this.MaxMagic += classStats.Stats.First( item=> item.Type == StatType.Magic).RollNextValue();
             this.Agility = classStats.Stats.First( item=> item.Type == StatType.Agility).RollNextValue();
 
-            foreach (var spell in availableSpells.Where(spell => spell.MinLevel <= this.Level && spell.MinLevel > oldLevel && spell.Classes.Contains(this.Class)))
-            {
-                levelUpMessage += $"   Has learned the {spell.Name} Spell\n";
-            }
-
+            levelUpMessage = availableSpells.Where(spell => spell.MinLevel <= this.Level && spell.MinLevel > oldLevel && spell.Classes.Contains(this.Class)).Aggregate(levelUpMessage, (current, spell) => current + $"   Has learned the {spell.Name} Spell\n");
             levelUpMessage += $"   Next Level is {this.NextLevel} XP\n";
             
             

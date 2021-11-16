@@ -1,10 +1,13 @@
-﻿using System;
-using Nez.Tiled;
-using Microsoft.Xna.Framework.Graphics;
-using Nez;
-
+﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace DungeonEscape.State
 {
+    using System;
+    using Microsoft.Xna.Framework.Graphics;
+    using Nez;
+    using Nez.Tiled;
+
     public class Item
     {
         public override string ToString()
@@ -12,6 +15,7 @@ namespace DungeonEscape.State
             return this.Name;
         }
 
+        // ReSharper disable once UnusedMember.Global
         public Item()
         {
             

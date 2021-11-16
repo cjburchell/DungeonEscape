@@ -1,4 +1,7 @@
-﻿namespace DungeonEscape.State
+﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+namespace DungeonEscape.State
 {
     using Nez;
     using Nez.UI;
@@ -31,7 +34,7 @@
 
             this.MaxMagic = this.Magic;
         }
-
+        
         public int MaxMagic { get; set; }
 
         public Image Image { get; set; }

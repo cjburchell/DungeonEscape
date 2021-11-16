@@ -1,4 +1,5 @@
-﻿namespace DungeonEscape.State
+﻿// ReSharper disable UnusedMember.Global
+namespace DungeonEscape.State
 {
     public enum Biome
     {
@@ -9,6 +10,6 @@
         Hills = 4,
         Desert = 5,
         Swamp = 6,
-        All = 7,
+        All = 7
     }
 }

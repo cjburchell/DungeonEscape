@@ -1,12 +1,12 @@
-﻿using DungeonEscape.Scenes.Common.Components.UI;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Nez;
-using Nez.UI;
-
-namespace DungeonEscape.Scenes
+﻿namespace DungeonEscape.Scenes
 {
-    public class MainMenu : Nez.Scene
+    using Common.Components.UI;
+    using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Input;
+    using Nez;
+    using Nez.UI;
+
+    public class MainMenu : Scene
     {
         private Table table;
 

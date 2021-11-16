@@ -9,9 +9,10 @@
     public class PartyMember : Sprite
     {
         private readonly UISystem ui;
-        private string text;
-        private string name;
-        private Class memberClass;
+        private readonly string text;
+        private readonly string name;
+        private readonly Class memberClass;
+        private readonly Gender gender;
 
         public PartyMember(TmxObject tmxObject, SpriteState state, TmxMap map, UISystem uiSystem, IGame gameState,
             AstarGridGraph graph) : base(tmxObject, state, map, gameState, graph)
@@ -19,9 +20,12 @@
             this.text = tmxObject.Properties.ContainsKey("Text") ? tmxObject.Properties["Text"] : "";
             this.name = tmxObject.Name;
             this.memberClass = tmxObject.Properties.ContainsKey("Class") ? Enum.Parse<Class>(tmxObject.Properties["Class"]) : Class.Fighter;
+            this.gender = tmxObject.Properties.ContainsKey("Gender") ? Enum.Parse<Gender>(tmxObject.Properties["Gender"]) : Gender.Male;
             this.ui = uiSystem;
         }
-        
+
+
+
         public override bool OnAction(Party party)
         {
             this.gameState.IsPaused = true;
@@ -32,7 +36,8 @@
                     var hero = new Hero
                     {
                         Name = this.name,
-                        Class = this.memberClass
+                        Class = this.memberClass,
+                        Gender = this.gender
                     };
                 
                     hero.RollStats(this.gameState.ClassLevelStats);

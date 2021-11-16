@@ -1,14 +1,12 @@
-﻿using System.Linq;
-using DungeonEscape.Scenes.Common.Components.UI;
-using DungeonEscape.State;
-using Nez.AI.Pathfinding;
-using Nez.Tiled;
-using DungeonEscape.Scenes.Map.Components.UI;
-
-namespace DungeonEscape.Scenes.Map.Components.Objects
+﻿namespace DungeonEscape.Scenes.Map.Components.Objects
 {
     using System;
-
+    using System.Linq;
+    using Common.Components.UI;
+    using Nez.AI.Pathfinding;
+    using Nez.Tiled;
+    using State;
+    using UI;
 
     public class Saver : Sprite
     {

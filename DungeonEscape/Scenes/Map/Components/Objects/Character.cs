@@ -1,11 +1,9 @@
-﻿using DungeonEscape.Scenes.Common.Components.UI;
-using DungeonEscape.State;
-using Nez.AI.Pathfinding;
-using Nez.Tiled;
-
-namespace DungeonEscape.Scenes.Map.Components.Objects
+﻿namespace DungeonEscape.Scenes.Map.Components.Objects
 {
-    using Nez;
+    using Common.Components.UI;
+    using Nez.AI.Pathfinding;
+    using Nez.Tiled;
+    using State;
 
     public class Character : Sprite
     {

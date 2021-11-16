@@ -3,6 +3,6 @@
     public enum MoveState
     {
         Moving,
-        Stopped,
+        Stopped
     }
 }

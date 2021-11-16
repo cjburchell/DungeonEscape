@@ -1,16 +1,14 @@
-﻿using Nez;
-
-namespace DungeonEscape.Scenes
+﻿namespace DungeonEscape.Scenes
 {
     using Common.Components.UI;
     using Microsoft.Xna.Framework;
+    using Nez;
     using Nez.UI;
     using State;
 
     public class ContinueQuestScene : Scene
     {
-        
-        Button CreateButton(GameSave item)
+        private static Button CreateButton(GameSave item)
         {
             var button = new Button(BasicWindow.Skin);
             var itemName = new Label(item.Name, BasicWindow.Skin).SetAlignment(Align.Left);
@@ -65,7 +63,7 @@ namespace DungeonEscape.Scenes
             game.ReloadSaveGames();
             foreach (var save in game.GameSaves)
             {
-                var button = this.CreateButton(save);
+                var button = CreateButton(save);
                 button.UserData = save;
                 buttonList.Add(button, 5).Width(470).Height(BasicWindow.ButtonHeight);
             }

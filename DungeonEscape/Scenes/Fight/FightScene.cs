@@ -10,7 +10,7 @@
     using State;
     using Random = Nez.Random;
 
-    public class FightScene : Nez.Scene
+    public class FightScene : Scene
     {
 
         private enum RoundActionState
@@ -18,7 +18,7 @@
             Run,
             Fight,
             Spell,
-            Item,
+            Item
         }
         
         private class RoundAction
@@ -47,7 +47,7 @@
         private UISystem ui;
         private EncounterRoundState state = EncounterRoundState.Begin;
         private readonly List<RoundAction> roundActions = new List<RoundAction>();
-        private List<Hero> heros;
+        private List<Hero> heroes;
 
         public FightScene(IGame game, IEnumerable<Monster> monsters)
         {
@@ -121,7 +121,7 @@
         private void StartRound()
         {
             this.roundActions.Clear();
-            this.heros = this.game.Party.Members.ToList();
+            this.heroes = this.game.Party.Members.ToList();
             foreach (var monster in this.monsters.Where(item=> !item.IsDead && !item.RanAway))
             {
                 var action = this.ChooseAction(monster);
@@ -132,7 +132,7 @@
 
         private void ChoosingActions()
         {
-            var nextHero = this.heros.FirstOrDefault(member => !member.IsDead);
+            var nextHero = this.heroes.FirstOrDefault(member => !member.IsDead);
             if (nextHero == null)
             {
                 this.OrderActions();
@@ -149,7 +149,7 @@
                         return;
                     }
 
-                    this.heros.Remove(nextHero);
+                    this.heroes.Remove(nextHero);
                     this.roundActions.Add(action);
                 });
             }
@@ -176,7 +176,7 @@
         private void ChooseAction(Hero hero, Action<RoundAction> done)
         {
             var selectAction =
-                new SelectWindow<string>(this.ui, "Select Action", new Point(10, (MapScene.ScreenHeight) / 3 * 2));
+                new SelectWindow<string>(this.ui, "Select Action", new Point(10, MapScene.ScreenHeight / 3 * 2));
             
             var options = new List<string> {"Fight"};
             var availableSpells = hero.GetSpells(this.game.Spells).Where(item => item.IsEncounterSpell && item.Cost <= hero.Magic).ToList();
@@ -206,7 +206,7 @@
                     case "Fight":
                     {
                         var selectTarget = new SelectWindow<MonsterInstance>(this.ui, "SelectMonster",
-                            new Point(10, (MapScene.ScreenHeight) / 3 * 2), 250);
+                            new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
                         selectTarget.Show(this.monsters.Where(item => !item.IsDead), monster =>
                         {
                             if (monster == null)
@@ -228,7 +228,7 @@
                     }
                     case "Spell":
                     {
-                        var selectItem = new SpellWindow(this.ui, new Point(10, (MapScene.ScreenHeight) / 3 * 2));
+                        var selectItem = new SpellWindow(this.ui, new Point(10, MapScene.ScreenHeight / 3 * 2));
                         selectItem.Show(availableSpells, spell =>
                             {
                                 if (spell == null)
@@ -249,7 +249,7 @@
                                     if (spell.Targets == Target.Single)
                                     {
                                         var selectTarget = new SelectWindow<MonsterInstance>(this.ui, "SelectMonster",
-                                            new Point(10, (MapScene.ScreenHeight) / 3 * 2), 250);
+                                            new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
                                         selectTarget.Show(this.monsters.Where(item => !item.IsDead), monster =>
                                         {
                                             if (monster == null)
@@ -280,7 +280,7 @@
                                     }
                                         
                                     var selectTarget = new SelectHeroWindow(this.ui,
-                                        new Point(10, (MapScene.ScreenHeight) / 3 * 2));
+                                        new Point(10, MapScene.ScreenHeight / 3 * 2));
                                     selectTarget.Show(this.game.Party.Members.Where(member => !member.IsDead), target =>
                                     {
                                         if (target == null)
@@ -302,7 +302,7 @@
                     }
                     case "Item":
                     {
-                        var selectItem = new InventoryWindow(this.ui, new Point(10, (MapScene.ScreenHeight) / 3 * 2));
+                        var selectItem = new InventoryWindow(this.ui, new Point(10, MapScene.ScreenHeight / 3 * 2));
                         selectItem.Show(availableItems, item =>
                         {
                             if (item == null)
@@ -326,7 +326,7 @@
                             }
 
                             var selectTarget = new SelectHeroWindow(this.ui,
-                                new Point(10, (MapScene.ScreenHeight) / 3 * 2));
+                                new Point(10, MapScene.ScreenHeight / 3 * 2));
                             selectTarget.Show(this.game.Party.Members.Where(member => !member.IsDead), target =>
                             {
                                 if (target == null)
@@ -353,7 +353,7 @@
                         var newAction = new RoundAction
                         {
                             Source = hero,
-                            State = RoundActionState.Run,
+                            State = RoundActionState.Run
                         };
                         done(newAction); 
                         return;
@@ -394,7 +394,7 @@
 
                 var targets = spell.Targets == Target.Group
                     ? this.game.Party.Members.Where(CanBeAttacked).OfType<Fighter>()
-                    : new List<Fighter>()
+                    : new List<Fighter>
                     {
                         this.game.Party.Members.Where(CanBeAttacked).ToArray()[
                             Random.NextInt(this.game.Party.Members.Count)]
@@ -445,7 +445,7 @@
                 {
                     case RoundActionState.Run:
                         message = $"{action.Source.Name} Tried to run\n";
-                        if (Nez.Random.NextInt(5) != 1)
+                        if (Random.NextInt(5) != 1)
                         {
                             message += "And got away";
                             switch (action.Source)
@@ -466,14 +466,14 @@
                         {
                             message = $"{action.Source.Name} Attacks {target.Name}.\n";
                             int damage;
-                            if(Random.NextInt(22-(action.Source.Agility/2))==0)
+                            if(Random.NextInt(22-action.Source.Agility/2)==0)
                             {
-                                damage = Nez.Random.NextInt(action.Source.Attack+20*action.Source.Level)+10;
+                                damage = Random.NextInt(action.Source.Attack+20*action.Source.Level)+10;
                                 message += "Heroic maneuver!\n";
                             }
                             else
                             {
-                                damage = Nez.Random.NextInt(action.Source.Attack);
+                                damage = Random.NextInt(action.Source.Attack);
                             }
 
                             damage -= (int)(damage * target.Defence / 100f);
@@ -488,11 +488,13 @@
                                 message += $"{target.Name} took {damage} points of damage\n";
                             }
 
-                            if (target.Health <= 0)
+                            if (target.Health > 0)
                             {
-                                message += "and has died!\n";
-                                target.Health = 0;
+                                continue;
                             }
+
+                            message += "and has died!\n";
+                            target.Health = 0;
                         }
                         break;
                     case RoundActionState.Spell:
@@ -506,17 +508,19 @@
                             if (target != action.Source)
                             {
                                 message = $"{action.Source.Name} Uses {action.Item.Name} on {target.Name}";
-                                this.UseItem(target as Hero, action.Item, this.game.Party);
+                                UseItem(target as Hero, action.Item, this.game.Party);
                             }
                             else
                             {
                                 message = $"{action.Source.Name} Uses {action.Item.Name}";
-                                this.UseItem(target as Hero, action.Item, this.game.Party);
+                                UseItem(target as Hero, action.Item, this.game.Party);
                             }
                         }
 
                         break;
                     }
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
                 
                 if (action.Target != null )
@@ -538,7 +542,7 @@
             }
         }
         
-        private void UseItem(Hero hero, ItemInstance item, Party party)
+        private static void UseItem(Hero hero, ItemInstance item, Party party)
         {
             if (hero == null)
             {
@@ -556,6 +560,14 @@
                 case ItemType.Shield:
                     item.Equip(hero, party.Items, party.Members);
                     break;
+                case ItemType.Key:
+                    break;
+                case ItemType.Gold:
+                    break;
+                case ItemType.Unknown:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
         

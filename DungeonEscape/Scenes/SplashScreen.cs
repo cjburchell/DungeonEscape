@@ -1,10 +1,10 @@
-﻿using Microsoft.Xna.Framework;
-using Nez;
-using Nez.Sprites;
-using Nez.Textures;
-
-namespace DungeonEscape.Scenes
+﻿namespace DungeonEscape.Scenes
 {
+    using Microsoft.Xna.Framework;
+    using Nez;
+    using Nez.Sprites;
+    using Nez.Textures;
+
     public class SplashScreen : Scene
     {
         private bool inTransition;

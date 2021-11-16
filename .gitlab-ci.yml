@@ -1,9 +1,8 @@
-image: mcr.microsoft.com/dotnet/sdk:5.0
-
 variables:
   OBJECTS_DIRECTORY: 'obj'
   NUGET_PACKAGES_DIRECTORY: '.nuget'
   SOURCE_CODE_PATH: '*/*/'
+  $RESHARPER_SOLUTION_NAME: 'Games.sln'
 
 cache:
   key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
@@ -18,11 +17,26 @@ before_script:
   - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
 
 build:
+  image: mcr.microsoft.com/dotnet/sdk:5.0
   stage: build
   script:
     - 'dotnet build --no-restore'
 
 tests:
+  image: mcr.microsoft.com/dotnet/sdk:5.0
   stage: test
   script:
     - 'dotnet test --no-restore'
+
+resharper-scan:
+  image: registry.gitlab.com/cjburchell/reshaper:1.0.0
+  stage: static_scan
+  script:
+    - '/tools/jb inspectcode --exclude=test -o=RsInspection.xml --caches-home=temp $RESHARPER_SOLUTION_NAME --toolset=16.0'
+  dependencies:
+    - build
+  artifacts:
+    when: always
+    paths:
+      - RsInspection.xml
+

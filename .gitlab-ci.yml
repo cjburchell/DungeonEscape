@@ -2,7 +2,7 @@ variables:
   OBJECTS_DIRECTORY: 'obj'
   NUGET_PACKAGES_DIRECTORY: '.nuget'
   SOURCE_CODE_PATH: '*/*/'
-  $RESHARPER_SOLUTION_NAME: 'Games.sln'
+  RESHARPER_SOLUTION_NAME: 'Games.sln'
 
 cache:
   key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"

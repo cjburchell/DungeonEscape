@@ -5,9 +5,9 @@ namespace Redpoint.DungeonEscape.Scenes.Map
     using System.IO;
     using System.Linq;
     using Common.Components.UI;
-    using Map.Components;
-    using Map.Components.Objects;
-    using Map.Components.UI;
+    using Components;
+    using Components.Objects;
+    using Components.UI;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Input;
     using Newtonsoft.Json;

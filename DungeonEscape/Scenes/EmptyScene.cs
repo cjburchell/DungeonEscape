@@ -1,5 +1,6 @@
 ﻿namespace Redpoint.DungeonEscape.Scenes
 {
+    using Map;
     using Nez;
 
     public class EmptyScene : Scene

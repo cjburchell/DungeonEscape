@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Common.Components.UI;
+    using Map;
     using Microsoft.Xna.Framework;
     using Nez;
     using Nez.UI;
@@ -431,7 +432,8 @@
 
         private void DoActions()
         {
-            var action = this._roundActions.FirstOrDefault(item=> CanBeAttacked(item.Source) && (item.Target == null || item.Target.Any(CanBeAttacked)));
+            var action = this._roundActions.FirstOrDefault(item =>
+                CanBeAttacked(item.Source) && (item.Target == null || item.Target.Any(CanBeAttacked)));
             if (action == null)
             {
                 this._state = EncounterRoundState.EndRound;
@@ -460,15 +462,16 @@
                                     break;
                             }
                         }
+
                         break;
                     case RoundActionState.Fight:
                         foreach (var target in action.Target)
                         {
                             message = $"{action.Source.Name} Attacks {target.Name}.\n";
                             int damage;
-                            if(Random.NextInt(22-action.Source.Agility/2)==0)
+                            if (Random.NextInt(22 - action.Source.Agility / 2) == 0)
                             {
-                                damage = Random.NextInt(action.Source.Attack+20*action.Source.Level)+10;
+                                damage = Random.NextInt(action.Source.Attack + 20 * action.Source.Level) + 10;
                                 message += "Heroic maneuver!\n";
                             }
                             else
@@ -476,9 +479,9 @@
                                 damage = Random.NextInt(action.Source.Attack);
                             }
 
-                            damage -= (int)(damage * target.Defence / 100f);
+                            damage -= (int) (damage * target.Defence / 100f);
                             target.Health -= damage;
-                        
+
                             if (damage == 0)
                             {
                                 message += $"{target.Name} was unharmed\n";
@@ -496,6 +499,7 @@
                             message += "and has died!\n";
                             target.Health = 0;
                         }
+
                         break;
                     case RoundActionState.Spell:
                         message = action.Spell.Cast(action.Target, action.Source, this._game);
@@ -522,8 +526,8 @@
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                
-                if (action.Target != null )
+
+                if (action.Target != null)
                 {
                     foreach (var target in action.Target)
                     {
@@ -534,14 +538,12 @@
                     }
 
                 }
-                
-                new FightTalkWindow(this._ui, "Fight").Show(message, ()=>
-                {
-                    this._state = EncounterRoundState.StartDoingActions;
-                });
+
+                new FightTalkWindow(this._ui, "Fight").Show(message,
+                    () => { this._state = EncounterRoundState.StartDoingActions; });
             }
         }
-        
+
         private static void UseItem(Hero hero, ItemInstance item, Party party)
         {
             if (hero == null)

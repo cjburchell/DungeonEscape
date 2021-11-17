@@ -1,4 +1,4 @@
-﻿namespace Redpoint.DungeonEscape.Scenes.Common.Components
+﻿namespace Redpoint.DungeonEscape.Scenes.Common.Components.UI
 {
     using Microsoft.Xna.Framework;
     using Nez;

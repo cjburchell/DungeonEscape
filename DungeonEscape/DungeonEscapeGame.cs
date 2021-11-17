@@ -10,6 +10,7 @@
     using Nez.Tiled;
     using Scenes;
     using Scenes.Fight;
+    using Scenes.Map;
     using State;
 
     public class Game : Core, IGame

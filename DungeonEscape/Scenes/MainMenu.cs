@@ -1,6 +1,7 @@
 ﻿namespace Redpoint.DungeonEscape.Scenes
 {
     using Common.Components.UI;
+    using Map;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Input;
     using Nez;

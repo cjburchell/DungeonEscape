@@ -15,13 +15,13 @@
         private readonly bool _focasable;
 
         public static readonly Skin Skin = Skin.CreateDefaultSkin();
-        private static BasicWindow focusedWindow;
+        private static BasicWindow _focusedWindow;
 
         public const int ButtonHeight = 30;
         public const int ButtonWidth = 80;
         private const int FontScale = 2;
 
-        public bool IsFocused => focusedWindow == this;
+        public bool IsFocused => _focusedWindow == this;
 
         private bool _hasBeenAdded;
         private bool _isVisible;
@@ -141,7 +141,7 @@
             this.Window?.SetVisible(true);
             if (this._focasable)
             {
-                focusedWindow = this;
+                _focusedWindow = this;
             }
         }
 

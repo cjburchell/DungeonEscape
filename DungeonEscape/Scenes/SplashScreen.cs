@@ -1,5 +1,6 @@
 ﻿namespace Redpoint.DungeonEscape.Scenes
 {
+    using Map;
     using Microsoft.Xna.Framework;
     using Nez;
     using Nez.Sprites;
@@ -7,7 +8,7 @@
 
     public class SplashScreen : Scene
     {
-        private bool inTransition;
+        private bool _inTransition;
         
         public override void Initialize()
         {
@@ -23,12 +24,12 @@
         {
             base.Update();
 
-            if (this.inTransition || !(Time.TimeSinceSceneLoad > 2.0f))
+            if (this._inTransition || !(Time.TimeSinceSceneLoad > 2.0f))
             {
                 return;
             }
 
-            this.inTransition = true;
+            this._inTransition = true;
             
             Core.StartSceneTransition(new FadeTransition(() =>
             {

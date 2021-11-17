@@ -3,7 +3,7 @@ variables:
   NUGET_PACKAGES_DIRECTORY: '.nuget'
   SOURCE_CODE_PATH: '*/*/'
   RESHARPER_SOLUTION_NAME: 'Games.sln'
-  RESHARPER_EXCLUDE: 'Nez.Portable/**;*.tsx'
+  RESHARPER_EXCLUDE: 'Nez.Portable/**;DungeonEscape/Content/*.tsx'
   
 stages:
   - build
@@ -35,7 +35,7 @@ tests:
     - 'dotnet test --no-restore'
 
 resharper-scan:
-  image: registry.gitlab.com/cjburchell/reshaper:1.0.0
+  image: registry.gitlab.com/cjburchell/reshaper:2021.2.2-410806016
   stage: scan
   script:
     - '/tools/jb inspectcode --exclude=$RESHARPER_EXCLUDE -o=RsInspection.xml --caches-home=temp $RESHARPER_SOLUTION_NAME --toolset=16.0'

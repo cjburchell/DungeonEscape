@@ -1,6 +1,7 @@
 ﻿namespace Redpoint.DungeonEscape.Scenes.Common.Components.UI
 {
     using System;
+    using Map;
     using Microsoft.Xna.Framework;
 
     public class TalkWindow : TextWindow

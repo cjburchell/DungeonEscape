@@ -529,14 +529,10 @@
 
                 if (action.Target != null)
                 {
-                    foreach (var target in action.Target)
+                    foreach (var monster in action.Target.OfType<MonsterInstance>().Where(item => item.IsDead))
                     {
-                        if (target is MonsterInstance monster && monster.IsDead)
-                        {
-                            monster.Image.SetVisible(false);
-                        }
+                        monster.Image.SetVisible(false);
                     }
-
                 }
 
                 new FightTalkWindow(this._ui, "Fight").Show(message,

@@ -6,11 +6,11 @@
 
     public class InventoryWindow : SelectWindow<ItemInstance>
     {
-        public InventoryWindow(UISystem ui) : this(ui, new Point(20, 20))
+        public InventoryWindow(UiSystem ui) : this(ui, new Point(20, 20))
         {
         }
         
-        public InventoryWindow(UISystem ui, Point position) : base(ui, "Inventory", position, 250)
+        public InventoryWindow(UiSystem ui, Point position) : base(ui, "Inventory", position, 250)
         {
         }
         

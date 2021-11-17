@@ -296,37 +296,37 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="sprites">
-  <object id="11" name="key" type="NPC_Key" gid="148" x="320" y="800" width="32" height="48">
+  <object id="11" name="key" type="NpcKey" gid="148" x="320" y="800" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="12" name="store" type="NPC_Store" gid="148" x="320" y="416" width="32" height="48">
+  <object id="12" name="store" type="NpcStore" gid="148" x="320" y="416" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="2" name="store" type="NPC_Store" gid="1178" x="320.333" y="447" width="32" height="32">
+  <object id="2" name="store" type="NpcStore" gid="1178" x="320.333" y="447" width="32" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="13" name="heal" type="NPC_Heal" gid="156" x="480" y="384" width="32" height="48">
+  <object id="13" name="heal" type="NpcHeal" gid="156" x="480" y="384" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="14" name="save" type="NPC_Save" gid="63" x="896" y="352" width="32" height="48">
+  <object id="14" name="save" type="NpcSave" gid="63" x="896" y="352" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="15" name="npc" type="NPC" gid="63" x="832" y="800" width="32" height="48">
+  <object id="15" name="npc" type="Npc" gid="63" x="832" y="800" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
@@ -335,7 +335,7 @@ the tower to the
 north</property>
    </properties>
   </object>
-  <object id="16" name="npc" type="NPC" gid="182" x="704" y="192" width="32" height="48">
+  <object id="16" name="npc" type="Npc" gid="182" x="704" y="192" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
@@ -343,7 +343,7 @@ north</property>
 knows the way</property>
    </properties>
   </object>
-  <object id="17" name="npc" type="NPC" gid="182" x="576" y="192" width="32" height="48">
+  <object id="17" name="npc" type="Npc" gid="182" x="576" y="192" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
@@ -351,7 +351,7 @@ knows the way</property>
 to be on the wall</property>
    </properties>
   </object>
-  <object id="18" name="npc" type="NPC" gid="182" x="224" y="192" width="32" height="48">
+  <object id="18" name="npc" type="Npc" gid="182" x="224" y="192" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
@@ -360,21 +360,21 @@ you can almost see
 the southern desert</property>
    </properties>
   </object>
-  <object id="19" name="npc" type="NPC" gid="182" x="224" y="1088" width="32" height="48">
+  <object id="19" name="npc" type="Npc" gid="182" x="224" y="1088" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="this is the walled city"/>
    </properties>
   </object>
-  <object id="20" name="npc" type="NPC" gid="182" x="1088" y="1088" width="32" height="48">
+  <object id="20" name="npc" type="Npc" gid="182" x="1088" y="1088" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="garding the wall is fun"/>
    </properties>
   </object>
-  <object id="21" name="npc" type="NPC" gid="182" x="1088" y="192" width="32" height="48">
+  <object id="21" name="npc" type="Npc" gid="182" x="1088" y="192" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
@@ -382,7 +382,7 @@ the southern desert</property>
 power of dragons</property>
    </properties>
   </object>
-  <object id="22" name="npc" type="NPC" gid="148" x="512" y="896" width="32" height="48">
+  <object id="22" name="npc" type="Npc" gid="148" x="512" y="896" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>

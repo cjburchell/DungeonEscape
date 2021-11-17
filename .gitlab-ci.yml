@@ -3,7 +3,7 @@ variables:
   NUGET_PACKAGES_DIRECTORY: '.nuget'
   SOURCE_CODE_PATH: '*/*/'
   RESHARPER_SOLUTION_NAME: 'Games.sln'
-  RESHARPER_EXCLUDE: 'Nez.Portable/**'
+  RESHARPER_EXCLUDE: 'Nez.Portable/**;*.tsx'
   
 stages:
   - build

@@ -23,11 +23,11 @@
         
         private class RoundAction
         {
-            public Fighter Source { get; set; }
+            public IFighter Source { get; set; }
             public RoundActionState State { get; set; }
             public Spell Spell { get; set; }
             public ItemInstance Item { get; set; }
-            public IEnumerable<Fighter> Target { get; set; }
+            public IEnumerable<IFighter> Target { get; set; }
         }
 
         private enum EncounterRoundState
@@ -42,19 +42,19 @@
             StartDoingActions
         }
         
-        private readonly IGame game;
-        private readonly List<MonsterInstance> monsters = new List<MonsterInstance>();
-        private UISystem ui;
-        private EncounterRoundState state = EncounterRoundState.Begin;
-        private readonly List<RoundAction> roundActions = new List<RoundAction>();
-        private List<Hero> heroes;
+        private readonly IGame _game;
+        private readonly List<MonsterInstance> _monsters = new List<MonsterInstance>();
+        private UiSystem _ui;
+        private EncounterRoundState _state = EncounterRoundState.Begin;
+        private readonly List<RoundAction> _roundActions = new List<RoundAction>();
+        private List<Hero> _heroes;
 
         public FightScene(IGame game, IEnumerable<Monster> monsters)
         {
-            this.game = game;
+            this._game = game;
             foreach (var monster in monsters)
             {
-                this.monsters.Add(new MonsterInstance(monster));
+                this._monsters.Add(new MonsterInstance(monster));
             }
         }
 
@@ -67,31 +67,31 @@
                 MapScene.SceneResolution);
 
             this.AddRenderer(new DefaultRenderer());
-            this.ui = new UISystem(this.CreateEntity("ui-canvas").AddComponent(new UICanvas()));
-            this.ui.Canvas.SetRenderLayer(999);
-            this.ui.Canvas.Stage.GamepadActionButton = null;
+            this._ui = new UiSystem(this.CreateEntity("ui-canvas").AddComponent(new UICanvas()));
+            this._ui.Canvas.SetRenderLayer(999);
+            this._ui.Canvas.Stage.GamepadActionButton = null;
 
-            var table = this.ui.Canvas.Stage.AddElement(new Table());
+            var table = this._ui.Canvas.Stage.AddElement(new Table());
             table.SetFillParent(true);
             table.Center();
-            foreach (var monster in this.monsters)
+            foreach (var monster in this._monsters)
             {
                 monster.Image = table.Add(new Image(monster.Info.Image)).Pad(10).GetElement<Image>();
             }
             
-            var partyWindow = new PartyStatusWindow(this.game.Party,this.ui.Canvas);
+            var partyWindow = new PartyStatusWindow(this._game.Party,this._ui.Canvas);
             partyWindow.ShowWindow();
 
-            var monsterName = this.monsters.Count == 1 ?$"a {this.monsters.First().Name}"  : $"{this.monsters.Count} enemies";
+            var monsterName = this._monsters.Count == 1 ?$"a {this._monsters.First().Name}"  : $"{this._monsters.Count} enemies";
             var message =$"You have encountered {monsterName}!";
             
-            new FightTalkWindow(this.ui, "Start Fight").Show(message, ()=> this.state = EncounterRoundState.StartRound);
+            new FightTalkWindow(this._ui, "Start Fight").Show(message, ()=> this._state = EncounterRoundState.StartRound);
         }
 
         public override void Update()
         {
             base.Update();
-            switch (this.state)
+            switch (this._state)
             {
                 case EncounterRoundState.Begin:
                     break;
@@ -120,72 +120,72 @@
         
         private void StartRound()
         {
-            this.roundActions.Clear();
-            this.heroes = this.game.Party.Members.ToList();
-            foreach (var monster in this.monsters.Where(item=> !item.IsDead && !item.RanAway))
+            this._roundActions.Clear();
+            this._heroes = this._game.Party.Members.ToList();
+            foreach (var monster in this._monsters.Where(item=> !item.IsDead && !item.RanAway))
             {
                 var action = this.ChooseAction(monster);
-                this.roundActions.Add(action);
+                this._roundActions.Add(action);
             }
-            this.state = EncounterRoundState.ChooseAction;
+            this._state = EncounterRoundState.ChooseAction;
         }
 
         private void ChoosingActions()
         {
-            var nextHero = this.heroes.FirstOrDefault(member => !member.IsDead);
+            var nextHero = this._heroes.FirstOrDefault(member => !member.IsDead);
             if (nextHero == null)
             {
                 this.OrderActions();
-                this.state = EncounterRoundState.StartDoingActions;
+                this._state = EncounterRoundState.StartDoingActions;
             }
             else
             {
-                this.state = EncounterRoundState.ChoosingAction;
+                this._state = EncounterRoundState.ChoosingAction;
                 this.ChooseAction(nextHero, action =>
                 {
-                    this.state = EncounterRoundState.ChooseAction;
+                    this._state = EncounterRoundState.ChooseAction;
                     if (action == null)
                     {
                         return;
                     }
 
-                    this.heroes.Remove(nextHero);
-                    this.roundActions.Add(action);
+                    this._heroes.Remove(nextHero);
+                    this._roundActions.Add(action);
                 });
             }
         }
 
-        private static bool CanBeAttacked(Fighter fighter)
+        private static bool CanBeAttacked(IFighter fighter)
         {
             return !fighter.IsDead && !fighter.RanAway;
         }
 
         private void EndRound()
         {
-            if (this.game.Party.Members.Count(CanBeAttacked) != 0 &&
-                this.monsters.Count(CanBeAttacked) != 0)
+            if (this._game.Party.Members.Count(CanBeAttacked) != 0 &&
+                this._monsters.Count(CanBeAttacked) != 0)
             {
-                this.state = EncounterRoundState.StartRound;
+                this._state = EncounterRoundState.StartRound;
                 return;
             }
 
-            this.state = EncounterRoundState.EndEncounter;
+            this._state = EncounterRoundState.EndEncounter;
             this.EndEncounter();
         }
 
         private void ChooseAction(Hero hero, Action<RoundAction> done)
         {
             var selectAction =
-                new SelectWindow<string>(this.ui, "Select Action", new Point(10, MapScene.ScreenHeight / 3 * 2));
+                new SelectWindow<string>(this._ui, "Select Action", new Point(10, MapScene.ScreenHeight / 3 * 2));
             
             var options = new List<string> {"Fight"};
-            var availableSpells = hero.GetSpells(this.game.Spells).Where(item => item.IsEncounterSpell && item.Cost <= hero.Magic).ToList();
+            var availableSpells = hero.GetSpells(this._game.Spells).Where(item => item.IsEncounterSpell && item.Cost <= hero.Magic).ToList();
             if (availableSpells.Count != 0)
             {
                 options.Add("Spell");
             }
             
-            var availableItems = this.game.Party.Items.Where(item => item.Type == ItemType.OneUse).ToList();
+            var availableItems = this._game.Party.Items.Where(item => item.Type == ItemType.OneUse).ToList();
             if (availableItems.Count != 0)
             {
                 options.Add("Item");
@@ -205,9 +205,9 @@
                 {
                     case "Fight":
                     {
-                        var selectTarget = new SelectWindow<MonsterInstance>(this.ui, "SelectMonster",
+                        var selectTarget = new SelectWindow<MonsterInstance>(this._ui, "SelectMonster",
                             new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
-                        selectTarget.Show(this.monsters.Where(item => !item.IsDead), monster =>
+                        selectTarget.Show(this._monsters.Where(item => !item.IsDead), monster =>
                         {
                             if (monster == null)
                             {
@@ -228,7 +228,7 @@
                     }
                     case "Spell":
                     {
-                        var selectItem = new SpellWindow(this.ui, new Point(10, MapScene.ScreenHeight / 3 * 2));
+                        var selectItem = new SpellWindow(this._ui, new Point(10, MapScene.ScreenHeight / 3 * 2));
                         selectItem.Show(availableSpells, spell =>
                             {
                                 if (spell == null)
@@ -248,9 +248,9 @@
                                 {
                                     if (spell.Targets == Target.Single)
                                     {
-                                        var selectTarget = new SelectWindow<MonsterInstance>(this.ui, "SelectMonster",
+                                        var selectTarget = new SelectWindow<MonsterInstance>(this._ui, "SelectMonster",
                                             new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
-                                        selectTarget.Show(this.monsters.Where(item => !item.IsDead), monster =>
+                                        selectTarget.Show(this._monsters.Where(item => !item.IsDead), monster =>
                                         {
                                             if (monster == null)
                                             {
@@ -264,7 +264,7 @@
                                         return;
                                     }
 
-                                    newAction.Target = this.monsters.Where(item => !item.IsDead);
+                                    newAction.Target = this._monsters.Where(item => !item.IsDead);
                                     done(newAction);
                                     return;
 
@@ -272,16 +272,16 @@
 
                                 if (spell.Targets == Target.Single)
                                 {
-                                    if (this.game.Party.Members.Count(member => !member.IsDead) == 1)
+                                    if (this._game.Party.Members.Count(member => !member.IsDead) == 1)
                                     {
                                         newAction.Target = new[] {hero};
                                         done(newAction);
                                         return;
                                     }
                                         
-                                    var selectTarget = new SelectHeroWindow(this.ui,
+                                    var selectTarget = new SelectHeroWindow(this._ui,
                                         new Point(10, MapScene.ScreenHeight / 3 * 2));
-                                    selectTarget.Show(this.game.Party.Members.Where(member => !member.IsDead), target =>
+                                    selectTarget.Show(this._game.Party.Members.Where(member => !member.IsDead), target =>
                                     {
                                         if (target == null)
                                         {
@@ -295,14 +295,14 @@
                                     return;
                                 }
 
-                                newAction.Target = this.game.Party.Members.Where(item => !item.IsDead);
+                                newAction.Target = this._game.Party.Members.Where(item => !item.IsDead);
                                 done(newAction);
                             });
                         return;
                     }
                     case "Item":
                     {
-                        var selectItem = new InventoryWindow(this.ui, new Point(10, MapScene.ScreenHeight / 3 * 2));
+                        var selectItem = new InventoryWindow(this._ui, new Point(10, MapScene.ScreenHeight / 3 * 2));
                         selectItem.Show(availableItems, item =>
                         {
                             if (item == null)
@@ -311,7 +311,7 @@
                                 return;
                             }
 
-                            if (this.game.Party.Members.Count(member => !member.IsDead) == 1)
+                            if (this._game.Party.Members.Count(member => !member.IsDead) == 1)
                             {
                                 var newAction = new RoundAction
                                 {
@@ -325,9 +325,9 @@
                                 return;
                             }
 
-                            var selectTarget = new SelectHeroWindow(this.ui,
+                            var selectTarget = new SelectHeroWindow(this._ui,
                                 new Point(10, MapScene.ScreenHeight / 3 * 2));
-                            selectTarget.Show(this.game.Party.Members.Where(member => !member.IsDead), target =>
+                            selectTarget.Show(this._game.Party.Members.Where(member => !member.IsDead), target =>
                             {
                                 if (target == null)
                                 {
@@ -393,11 +393,11 @@
                 var spell = attackSpells[Random.NextInt(attackSpells.Length)];
 
                 var targets = spell.Targets == Target.Group
-                    ? this.game.Party.Members.Where(CanBeAttacked).OfType<Fighter>()
-                    : new List<Fighter>
+                    ? this._game.Party.Members.Where(CanBeAttacked).OfType<IFighter>()
+                    : new List<IFighter>
                     {
-                        this.game.Party.Members.Where(CanBeAttacked).ToArray()[
-                            Random.NextInt(this.game.Party.Members.Count)]
+                        this._game.Party.Members.Where(CanBeAttacked).ToArray()[
+                            Random.NextInt(this._game.Party.Members.Count)]
                     };
                     
                 var spellAction = new RoundAction
@@ -416,8 +416,8 @@
                 State = RoundActionState.Fight,
                 Target = new[]
                 {
-                    this.game.Party.Members.Where(CanBeAttacked).ToArray()[
-                        Random.NextInt(this.game.Party.Members.Count)]
+                    this._game.Party.Members.Where(CanBeAttacked).ToArray()[
+                        Random.NextInt(this._game.Party.Members.Count)]
                 }
             };
             
@@ -426,20 +426,20 @@
 
         private void OrderActions()
         {
-            this.roundActions.Sort((x, y) => x.Source.Agility - y.Source.Agility);
+            this._roundActions.Sort((x, y) => x.Source.Agility - y.Source.Agility);
         }
 
         private void DoActions()
         {
-            var action = this.roundActions.FirstOrDefault(item=> CanBeAttacked(item.Source) && (item.Target == null || item.Target.Any(CanBeAttacked)));
+            var action = this._roundActions.FirstOrDefault(item=> CanBeAttacked(item.Source) && (item.Target == null || item.Target.Any(CanBeAttacked)));
             if (action == null)
             {
-                this.state = EncounterRoundState.EndRound;
+                this._state = EncounterRoundState.EndRound;
             }
             else
             {
-                this.roundActions.Remove(action);
-                this.state = EncounterRoundState.DoingActions;
+                this._roundActions.Remove(action);
+                this._state = EncounterRoundState.DoingActions;
                 var message = "";
                 switch (action.State)
                 {
@@ -451,8 +451,8 @@
                             switch (action.Source)
                             {
                                 case Hero _:
-                                    this.state = EncounterRoundState.EndEncounter;
-                                    new FightTalkWindow(this.ui, "Fight").Show(message, this.game.ResumeGame);
+                                    this._state = EncounterRoundState.EndEncounter;
+                                    new FightTalkWindow(this._ui, "Fight").Show(message, this._game.ResumeGame);
                                     return;
                                 case MonsterInstance monster:
                                     monster.RanAway = true;
@@ -498,7 +498,7 @@
                         }
                         break;
                     case RoundActionState.Spell:
-                        message = action.Spell.Cast(action.Target, action.Source, this.game);
+                        message = action.Spell.Cast(action.Target, action.Source, this._game);
                         break;
                     case RoundActionState.Item:
                     {
@@ -508,12 +508,12 @@
                             if (target != action.Source)
                             {
                                 message = $"{action.Source.Name} Uses {action.Item.Name} on {target.Name}";
-                                UseItem(target as Hero, action.Item, this.game.Party);
+                                UseItem(target as Hero, action.Item, this._game.Party);
                             }
                             else
                             {
                                 message = $"{action.Source.Name} Uses {action.Item.Name}";
-                                UseItem(target as Hero, action.Item, this.game.Party);
+                                UseItem(target as Hero, action.Item, this._game.Party);
                             }
                         }
 
@@ -535,9 +535,9 @@
 
                 }
                 
-                new FightTalkWindow(this.ui, "Fight").Show(message, ()=>
+                new FightTalkWindow(this._ui, "Fight").Show(message, ()=>
                 {
-                    this.state = EncounterRoundState.StartDoingActions;
+                    this._state = EncounterRoundState.StartDoingActions;
                 });
             }
         }
@@ -573,34 +573,34 @@
         
         private void EndEncounter()
         {
-            var talkWindow = new FightTalkWindow(this.ui, "End Fight");
-            if (this.game.Party.Members.Count(CanBeAttacked) == 0)
+            var talkWindow = new FightTalkWindow(this._ui, "End Fight");
+            if (this._game.Party.Members.Count(CanBeAttacked) == 0)
             {
-                talkWindow.Show("Everyone has died!", this.game.ShowMainMenu);
+                talkWindow.Show("Everyone has died!", this._game.ShowMainMenu);
             }
             else
             {
-                var xp = this.monsters.Where(monster=> monster.IsDead).Sum(monster => monster.Info.XP) / this.game.Party.Members.Count(member => !member.IsDead);
+                var xp = this._monsters.Where(monster=> monster.IsDead).Sum(monster => monster.Info.Xp) / this._game.Party.Members.Count(member => !member.IsDead);
                 if (xp == 0)
                 {
                     xp = 1;
                 }
 
-                var gold = this.monsters.Where(monster=> monster.IsDead).Sum(monster => monster.Info.Gold);
-                this.game.Party.Gold += gold;
+                var gold = this._monsters.Where(monster=> monster.IsDead).Sum(monster => monster.Info.Gold);
+                this._game.Party.Gold += gold;
 
-                var monsterName = this.monsters.Count == 1 ?$"the {this.monsters.First().Name}"  : "all the enemies";
+                var monsterName = this._monsters.Count == 1 ?$"the {this._monsters.First().Name}"  : "all the enemies";
                 var levelUpMessage =$"You have defeated {monsterName},\nEach party member has gained {xp}XP\nand the party got {gold} gold\n";
-                foreach (var member in this.game.Party.Members.Where(member => !member.IsDead))
+                foreach (var member in this._game.Party.Members.Where(member => !member.IsDead))
                 {
-                    member.XP += xp;
-                        while (member.CheckLevelUp(this.game.ClassLevelStats,this.game.Spells, out var message))
+                    member.Xp += xp;
+                        while (member.CheckLevelUp(this._game.ClassLevelStats,this._game.Spells, out var message))
                         {
                             levelUpMessage += message;
                         }
                 }
                 
-                talkWindow.Show(levelUpMessage, this.game.ResumeGame);
+                talkWindow.Show(levelUpMessage, this._game.ResumeGame);
             }
         }
         

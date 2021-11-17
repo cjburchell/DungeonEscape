@@ -13,39 +13,41 @@
 
     public class PlayerComponent : Component, IUpdatable, ITriggerListener
     {
-        private readonly TmxMap map;
-        private readonly Label debugText;
-        private readonly List<RandomMonster> randomMonsters;
-        private readonly UISystem ui;
+        private readonly TmxMap _map;
+        private readonly Label _debugText;
+        private readonly List<RandomMonster> _randomMonsters;
+        private readonly UiSystem _ui;
         private const float MoveSpeed = 150;
-        private readonly List<SpriteAnimator> partyAnimations = new List<SpriteAnimator>();
-        private SpriteAnimator shipAnimator;
-        private VirtualIntegerAxis xAxisInput;
-        private VirtualIntegerAxis yAxisInput;
-        private IGame GameState { get; }
+        private readonly List<SpriteAnimator> _partyAnimations = new List<SpriteAnimator>();
+        private SpriteAnimator _shipAnimator;
+        private VirtualIntegerAxis _xAxisInput;
+        private VirtualIntegerAxis _yAxisInput;
+        private readonly IGame _gameState;
+        private readonly List<ICollidable> _currentlyOverObjects = new List<ICollidable>();
+        private PartyStatusWindow _statusWindow;
+        private GoldWindow _goldWindow;
+        private Mover _mover;
+        private VirtualButton _actionButton;
 
-        public PlayerComponent(IGame gameState, TmxMap map, Label debugText, List<RandomMonster> randomMonsters, UISystem ui)
+        public PlayerComponent(IGame gameState, TmxMap map, Label debugText, List<RandomMonster> randomMonsters, UiSystem ui)
         {
-            this.map = map;
-            this.debugText = debugText;
-            this.randomMonsters = randomMonsters;
-            this.ui = ui;
-            this.GameState = gameState;
+            this._map = map;
+            this._debugText = debugText;
+            this._randomMonsters = randomMonsters;
+            this._ui = ui;
+            this._gameState = gameState;
         }
-
-        private Mover mover;
-        private VirtualButton actionButton;
-
+        
         public override void OnAddedToEntity()
         {
             const int heroHeight = 48;
             const int heroWidth = MapScene.DefaultTileSize;
-            this.mover = this.Entity.AddComponent(new Mover());
+            this._mover = this.Entity.AddComponent(new Mover());
             {
                 var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
                 var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, heroHeight);
 
-                foreach (var hero in this.GameState.Party.Members)
+                foreach (var hero in this._gameState.Party.Members)
                 {
                     var animationBaseIndex = (int) hero.Class * 16 + (int) hero.Gender * 8;
                     var animator = this.Entity.AddComponent(new SpriteAnimator(sprites[animationBaseIndex + 4]));
@@ -76,7 +78,7 @@
                         sprites[animationBaseIndex + 7]
                     });
 
-                    this.partyAnimations.Add(animator);
+                    this._partyAnimations.Add(animator);
                     animator.SetEnabled(false);
                 }
             }
@@ -84,28 +86,28 @@
             {
                 var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/ship2.png");
                 var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, 56);
-                this.shipAnimator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
-                this.shipAnimator.Speed = 0.5f;
-                this.shipAnimator.RenderLayer = 10;
-                this.shipAnimator.AddAnimation("WalkDown", new[]
+                this._shipAnimator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
+                this._shipAnimator.Speed = 0.5f;
+                this._shipAnimator.RenderLayer = 10;
+                this._shipAnimator.AddAnimation("WalkDown", new[]
                 {
                     sprites[0],
                     sprites[1]
                 });
 
-                this.shipAnimator.AddAnimation("WalkUp", new[]
+                this._shipAnimator.AddAnimation("WalkUp", new[]
                 {
                     sprites[4],
                     sprites[5]
                 });
 
-                this.shipAnimator.AddAnimation("WalkRight", new[]
+                this._shipAnimator.AddAnimation("WalkRight", new[]
                 {
                     sprites[2],
                     sprites[3]
                 });
 
-                this.shipAnimator.AddAnimation("WalkLeft", new[]
+                this._shipAnimator.AddAnimation("WalkLeft", new[]
                 {
                     sprites[6],
                     sprites[7]
@@ -124,63 +126,63 @@
 
             this.Entity.AddComponent(new BoxCollider(box));
 
-            this.xAxisInput = new VirtualIntegerAxis();
-            this.xAxisInput.Nodes.Add(new VirtualAxis.GamePadDpadLeftRight());
-            this.xAxisInput.Nodes.Add(new VirtualAxis.GamePadLeftStickX());
-            this.xAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.Left,
+            this._xAxisInput = new VirtualIntegerAxis();
+            this._xAxisInput.Nodes.Add(new VirtualAxis.GamePadDpadLeftRight());
+            this._xAxisInput.Nodes.Add(new VirtualAxis.GamePadLeftStickX());
+            this._xAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.Left,
                 Keys.Right));
-            this.xAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.A,
+            this._xAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.A,
                 Keys.D));
 
-            this.yAxisInput = new VirtualIntegerAxis();
-            this.yAxisInput.Nodes.Add(new VirtualAxis.GamePadDpadUpDown());
-            this.yAxisInput.Nodes.Add(new VirtualAxis.GamePadLeftStickY());
-            this.yAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.Up,
+            this._yAxisInput = new VirtualIntegerAxis();
+            this._yAxisInput.Nodes.Add(new VirtualAxis.GamePadDpadUpDown());
+            this._yAxisInput.Nodes.Add(new VirtualAxis.GamePadLeftStickY());
+            this._yAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.Up,
                 Keys.Down));
-            this.yAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.W,
+            this._yAxisInput.Nodes.Add(new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.W,
                 Keys.S));
 
-            this.actionButton = new VirtualButton();
-            this.actionButton.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Space));
-            this.actionButton.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.A));
+            this._actionButton = new VirtualButton();
+            this._actionButton.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Space));
+            this._actionButton.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.A));
 
-            this.statusWindow =
-                new PartyStatusWindow(this.GameState.Party, this.ui.Canvas);
+            this._statusWindow =
+                new PartyStatusWindow(this._gameState.Party, this._ui.Canvas);
 
-            this.goldWindow =
-                new GoldWindow(this.GameState.Party, this.ui.Canvas);
+            this._goldWindow =
+                new GoldWindow(this._gameState.Party, this._ui.Canvas);
 
             var overWater = this.IsOverWater();
-            this.shipAnimator.SetEnabled(overWater);
-            this.partyAnimations.First().SetEnabled(!overWater);
+            this._shipAnimator.SetEnabled(overWater);
+            this._partyAnimations.First().SetEnabled(!overWater);
         }
 
         public override void OnRemovedFromEntity()
         {
-            this.xAxisInput.Deregister();
-            this.yAxisInput.Deregister();
-            this.actionButton.Deregister();
+            this._xAxisInput.Deregister();
+            this._yAxisInput.Deregister();
+            this._actionButton.Deregister();
         }
 
         private bool IsOverWater()
         {
-            var (x, y) = MapScene.ToMapGrid(this.Entity.Position, this.map);
-            var tile = this.map.GetLayer<TmxLayer>("water").GetTile(x, y);
+            var (x, y) = MapScene.ToMapGrid(this.Entity.Position, this._map);
+            var tile = this._map.GetLayer<TmxLayer>("water").GetTile(x, y);
             return tile != null && tile.Gid != 0;
         }
 
         private bool UpdateMovement()
         {
             var overWater = this.IsOverWater();
-            this.shipAnimator.SetEnabled(overWater);
-            this.partyAnimations.First().SetEnabled(!overWater);
+            this._shipAnimator.SetEnabled(overWater);
+            this._partyAnimations.First().SetEnabled(!overWater);
             // handle movement and animations    
-            var moveDir = new Vector2(this.xAxisInput.Value, this.yAxisInput.Value);
+            var moveDir = new Vector2(this._xAxisInput.Value, this._yAxisInput.Value);
             
             if (moveDir == Vector2.Zero)
             {
-                this.shipAnimator.Pause();
-                this.partyAnimations.First().Pause();
+                this._shipAnimator.Pause();
+                this._partyAnimations.First().Pause();
                 return false;
             }
             
@@ -206,108 +208,108 @@
             var movement = moveDir * (overWater?MoveSpeed*1.5f:MoveSpeed) * Time.DeltaTime;
             var newPoint = movement + this.Entity.Position;
 
-            var minX = this.map.TileWidth / 2.0f;
-            var maxX = this.map.Width * this.map.TileWidth - this.map.TileWidth/2.0f;
+            var minX = this._map.TileWidth / 2.0f;
+            var maxX = this._map.Width * this._map.TileWidth - this._map.TileWidth/2.0f;
                 
             if (newPoint.X < minX)
             {
-                newPoint.X = this.GameState.Party.CurrentMapId != 0 ? minX : maxX;
+                newPoint.X = this._gameState.Party.CurrentMapId != 0 ? minX : maxX;
             }
             else if (newPoint.X > maxX)
             {
-                newPoint.X = this.GameState.Party.CurrentMapId != 0 ? maxX : minX;
+                newPoint.X = this._gameState.Party.CurrentMapId != 0 ? maxX : minX;
             }
 
-            var minY = this.map.TileHeight / 2.0f;
-            var maxY = this.map.Height * this.map.TileHeight - this.map.TileHeight/2.0f;
+            var minY = this._map.TileHeight / 2.0f;
+            var maxY = this._map.Height * this._map.TileHeight - this._map.TileHeight/2.0f;
                 
             if (newPoint.Y < minY)
             {
-                newPoint.Y = this.GameState.Party.CurrentMapId != 0 ? minY : maxY;
+                newPoint.Y = this._gameState.Party.CurrentMapId != 0 ? minY : maxY;
             }
             else if (newPoint.Y > maxY)
             {
-                newPoint.Y = this.GameState.Party.CurrentMapId != 0 ? maxY : minY;
+                newPoint.Y = this._gameState.Party.CurrentMapId != 0 ? maxY : minY;
             }
 
             movement = newPoint - this.Entity.Position;
 
-            this.GameState.Party.CurrentPosition = MapScene.ToMapGrid(this.Entity.Position, this.map);
-            if (this.GameState.Party.CurrentMapId == 0)
+            this._gameState.Party.CurrentPosition = MapScene.ToMapGrid(this.Entity.Position, this._map);
+            if (this._gameState.Party.CurrentMapId == 0)
             {
-                this.GameState.Party.OverWorldPosition = this.GameState.Party.CurrentPosition;
+                this._gameState.Party.OverWorldPosition = this._gameState.Party.CurrentPosition;
             }
 
-            if (! this.partyAnimations.First().IsAnimationActive(animation))
+            if (! this._partyAnimations.First().IsAnimationActive(animation))
             {
-                this.partyAnimations.First().Play(animation);
+                this._partyAnimations.First().Play(animation);
             }
             else
             {
-                this.partyAnimations.First().UnPause();
+                this._partyAnimations.First().UnPause();
             }
 
-            if (!this.shipAnimator.IsAnimationActive(animation))
+            if (!this._shipAnimator.IsAnimationActive(animation))
             {
-                this.shipAnimator.Play(animation);
+                this._shipAnimator.Play(animation);
             }
             else
             {
-                this.shipAnimator.UnPause();
+                this._shipAnimator.UnPause();
             }
 
-            if (this.mover.CalculateMovement(ref movement, out _))
+            if (this._mover.CalculateMovement(ref movement, out _))
             {
                 return false;
             }
 
-            this.mover.ApplyMovement(movement);
+            this._mover.ApplyMovement(movement);
             return true;
         }
 
         void IUpdatable.Update()
         {
-            if (this.GameState.IsPaused)
+            if (this._gameState.IsPaused)
             {
-                this.GameState.UpdatePauseState();
-                this.statusWindow.CloseWindow(false);
-                this.goldWindow.CloseWindow(false);
+                this._gameState.UpdatePauseState();
+                this._statusWindow.CloseWindow(false);
+                this._goldWindow.CloseWindow(false);
                 return;
             }
 
-            if (this.debugText.IsVisible())
+            if (this._debugText.IsVisible())
             {
                 var currentBiome = this.GetCurrentBiome();
-                this.debugText.SetText(
-                    $"B: {currentBiome}, G: {MapScene.ToMapGrid(this.Entity.Position, this.map)}, R: {this.Entity.Position}");
+                this._debugText.SetText(
+                    $"B: {currentBiome}, G: {MapScene.ToMapGrid(this.Entity.Position, this._map)}, R: {this.Entity.Position}");
             }
             
-            if (this.actionButton.IsReleased)
+            if (this._actionButton.IsReleased)
             {
-                foreach (var unused in this.currentlyOverObjects.Where(overObject => overObject.OnAction(this.GameState.Party)))
+                foreach (var unused in this._currentlyOverObjects.Where(overObject => overObject.OnAction(this._gameState.Party)))
                 {
                     break;
                 }
             }
 
-            if (this.GameState.IsPaused)
+            if (this._gameState.IsPaused)
             {
-                this.statusWindow.CloseWindow(false);
-                this.goldWindow.CloseWindow(false);
+                this._statusWindow.CloseWindow(false);
+                this._goldWindow.CloseWindow(false);
                 return;
             }
 
             if (!this.UpdateMovement())
             {
-                this.statusWindow.ShowWindow();
-                this.goldWindow.ShowWindow();
+                this._statusWindow.ShowWindow();
+                this._goldWindow.ShowWindow();
                 return;
             }
 
-            this.statusWindow.CloseWindow(false);
-            this.goldWindow.CloseWindow(false);
+            this._statusWindow.CloseWindow(false);
+            this._goldWindow.CloseWindow(false);
 
-            if (this.GameState.IsPaused)
+            if (this._gameState.IsPaused)
             {
                 return;
             }
@@ -322,8 +324,8 @@
         {
             var currentBiome = this.GetCurrentBiome();
             var availableMonsters = new List<Monster>();
-            foreach (var monster in this.randomMonsters.Where(item =>
-                item.Biome == currentBiome || item.Biome == Biome.All && item.Data.MinLevel >= this.GameState.Party.Members.First().Level))
+            foreach (var monster in this._randomMonsters.Where(item =>
+                item.Biome == currentBiome || item.Biome == Biome.All && item.Data.MinLevel >= this._gameState.Party.Members.First().Level))
             {
                 for (var i = 0; i < monster.Probability; i++)
                 {
@@ -336,11 +338,11 @@
                 return;
             }
             
-            const int MaxMonstersToFight = 10;
-            var maxMonsters = this.GameState.Party.Members.First().Level / 4 + this.GameState.Party.Members.Count;
-            if (maxMonsters > MaxMonstersToFight)
+            const int maxMonstersToFight = 10;
+            var maxMonsters = this._gameState.Party.Members.First().Level / 4 + this._gameState.Party.Members.Count;
+            if (maxMonsters > maxMonstersToFight)
             {
-                maxMonsters = MaxMonstersToFight;
+                maxMonsters = maxMonstersToFight;
             }
             
             var numberOfMonsters = Random.NextInt(maxMonsters) + 1;
@@ -351,18 +353,18 @@
                 monsters.Add(availableMonsters[monsterNub]);
             }
             
-            this.GameState.StartFight(monsters);
+            this._gameState.StartFight(monsters);
         }
 
         private Biome GetCurrentBiome()
         {
-            if (this.GameState.Party.CurrentMapId != 0)
+            if (this._gameState.Party.CurrentMapId != 0)
             {
                 return Biome.None;
             }
 
-            var (x, y) = MapScene.ToMapGrid(this.Entity.Position, this.map);
-            var tile = this.map.GetLayer<TmxLayer>("biomes")?.GetTile(x, y);
+            var (x, y) = MapScene.ToMapGrid(this.Entity.Position, this._map);
+            var tile = this._map.GetLayer<TmxLayer>("biomes")?.GetTile(x, y);
             if (tile != null)
             {
                 return (Biome) (tile.Gid - 900);
@@ -375,17 +377,12 @@
         private bool CheckForMonsterEncounter()
         {
             var currentBiome = this.GetCurrentBiome();
-            return this.randomMonsters.Count(item => item.Biome == currentBiome || item.Biome == Biome.All) != 0 && Random.Chance(1.0f / 64.0f);
+            return this._randomMonsters.Count(item => item.Biome == currentBiome || item.Biome == Biome.All) != 0 && Random.Chance(1.0f / 64.0f);
         }
-
-        private readonly List<ICollidable> currentlyOverObjects = new List<ICollidable>();
-        private PartyStatusWindow statusWindow;
-        private GoldWindow goldWindow;
-
-
+        
         public void OnTriggerEnter(Collider other, Collider local)
         {
-            if (this.GameState.IsPaused)
+            if (this._gameState.IsPaused)
             {
                 return;
             }
@@ -395,14 +392,14 @@
                 return;
             }
             
-            this.currentlyOverObjects.Add(objCollider.Object);
+            this._currentlyOverObjects.Add(objCollider.Object);
             
-            objCollider.Object.OnHit(this.GameState.Party);
+            objCollider.Object.OnHit(this._gameState.Party);
         }
 
         public void OnTriggerExit(Collider other, Collider local)
         {
-            if (this.GameState.IsPaused)
+            if (this._gameState.IsPaused)
             {
                 return;
             }
@@ -412,7 +409,7 @@
                 return;
             }
             
-            this.currentlyOverObjects.Remove(objCollider.Object);
+            this._currentlyOverObjects.Remove(objCollider.Object);
         }
     }
 }    

@@ -5,11 +5,11 @@
 
     public class SelectHeroWindow : SelectWindow<Hero>
     {
-        public SelectHeroWindow(UISystem ui, Point point) : base(ui, "Select Hero", point, 250)
+        public SelectHeroWindow(UiSystem ui, Point point) : base(ui, "Select Hero", point, 250)
         {
         }
         
-        public SelectHeroWindow(UISystem ui) : this(ui, new Point(20, 20))
+        public SelectHeroWindow(UiSystem ui) : this(ui, new Point(20, 20))
         {
         }
     }

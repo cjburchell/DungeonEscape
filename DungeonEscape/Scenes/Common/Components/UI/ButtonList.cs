@@ -6,21 +6,21 @@
 	public class ButtonList : Table
 	{
 		public event Action<Button> OnClicked;
-		private Button firstButton;
-		private Button lastButton;
+		private Button _firstButton;
+		private Button _lastButton;
 
 
 		public ButtonList(Button firstButton = null, Button lastButton = null)
 		{
-			this.firstButton = firstButton;
-			this.lastButton = lastButton;
+			this._firstButton = firstButton;
+			this._lastButton = lastButton;
 		}
 
 		public override void ClearChildren()
 		{
 			base.ClearChildren();
-			this.firstButton = null;
-			this.lastButton = null;
+			this._firstButton = null;
+			this._lastButton = null;
 		}
 
 		public Cell Add(Button button, int topPadding = 0)
@@ -34,21 +34,21 @@
 			var cell = base.Add(button);
 			
 			button.ShouldUseExplicitFocusableControl = true;
-			if (this.firstButton == null)
+			if (this._firstButton == null)
 			{
 				this.GetStage().SetGamepadFocusElement(button);
-				this.firstButton = button;
-				this.lastButton = button;
+				this._firstButton = button;
+				this._lastButton = button;
 			}
 			else
 			{
-				this.firstButton.GamepadUpElement = button;
-				this.lastButton.GamepadDownElement = button;
+				this._firstButton.GamepadUpElement = button;
+				this._lastButton.GamepadDownElement = button;
 			}
 			
-			button.GamepadDownElement = this.firstButton;
-			button.GamepadUpElement = this.lastButton;
-			this.lastButton = button;
+			button.GamepadDownElement = this._firstButton;
+			button.GamepadUpElement = this._lastButton;
+			this._lastButton = button;
 
 			return cell;
 		}

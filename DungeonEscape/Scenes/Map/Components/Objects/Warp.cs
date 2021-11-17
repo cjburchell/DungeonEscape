@@ -6,19 +6,19 @@
 
     public class Warp : MapObject
     {
-        private readonly int mapId;
-        private readonly Point? warpMap;
+        private readonly int _mapId;
+        private readonly Point? _warpMap;
         public Warp(TmxObject tmxObject, ObjectState state, TmxMap map, IGame gameState) : base(tmxObject, state,  map, gameState)
         {
             if (tmxObject.Properties.ContainsKey("WarpMap"))
             {
-                this.mapId = int.Parse(tmxObject.Properties["WarpMap"]);
+                this._mapId = int.Parse(tmxObject.Properties["WarpMap"]);
             }
 
             if (tmxObject.Properties.ContainsKey("WarpMapX") &&
                 tmxObject.Properties.ContainsKey("WarpMapY"))
             {
-                this.warpMap = new Point
+                this._warpMap = new Point
                 {
                     X = int.Parse(tmxObject.Properties["WarpMapX"]), 
                     Y = int.Parse(tmxObject.Properties["WarpMapY"])
@@ -28,17 +28,17 @@
 
         public override void OnHit(Party party)
         {
-            var point = this.warpMap;
+            var point = this._warpMap;
             if (!point.HasValue)
             {
-                if (this.mapId == 0 && party.OverWorldPosition != Point.Zero)
+                if (this._mapId == 0 && party.OverWorldPosition != Point.Zero)
                 {
                     point = party.OverWorldPosition;
                 }
             }
             
-            this.gameState.IsPaused = true;
-            this.gameState.SetMap(this.mapId, point);
+            this.GameState.IsPaused = true;
+            this.GameState.SetMap(this._mapId, point);
         }
     }
 }

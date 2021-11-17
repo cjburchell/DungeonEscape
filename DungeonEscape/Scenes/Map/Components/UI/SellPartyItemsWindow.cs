@@ -7,7 +7,7 @@
 
     public class SellPartyItemsWindow : SelectWindow<ItemInstance>
     {
-        public SellPartyItemsWindow(UISystem ui) : base(ui, "Sell", new Point(20, 20), 250)
+        public SellPartyItemsWindow(UiSystem ui) : base(ui, "Sell", new Point(20, 20), 250)
         {
         }
 

@@ -29,20 +29,20 @@ namespace Redpoint.DungeonEscape.Scenes
         public const int ScreenHeight = ScreenTileHeight * DefaultTileSize;
         public const SceneResolutionPolicy SceneResolution = SceneResolutionPolicy.ShowAll;
         
-        private readonly int mapId;
-        private readonly Point? start;
-        private readonly IGame gameState;
-        private Label debugText;
-        private List<RandomMonster> randomMonsters = new List<RandomMonster>();
-        private VirtualButton showCommandWindowInput;
-        private VirtualButton showExitWindowInput;
-        private UISystem ui;
+        private readonly int _mapId;
+        private readonly Point? _start;
+        private readonly IGame _gameState;
+        private Label _debugText;
+        private List<RandomMonster> _randomMonsters = new List<RandomMonster>();
+        private VirtualButton _showCommandWindowInput;
+        private VirtualButton _showExitWindowInput;
+        private UiSystem _ui;
 
         public MapScene(IGame game, int mapId, Point? start = null)
         {
-            this.mapId = mapId;
-            this.start = start;
-            this.gameState = game;
+            this._mapId = mapId;
+            this._start = start;
+            this._gameState = game;
         }
 
         public static Point ToMapGrid(Vector2 pos, TmxMap map)
@@ -91,35 +91,35 @@ namespace Redpoint.DungeonEscape.Scenes
         {
             base.Initialize();
             
-            var map = this.gameState.GetMap(this.mapId);
+            var map = this._gameState.GetMap(this._mapId);
             this.SetDesignResolution(ScreenTileWidth * map.TileWidth, ScreenTileHeight * map.TileHeight,
                 SceneResolution);
 
 
-            this.randomMonsters = this.LoadRandomMonsters();
+            this._randomMonsters = this.LoadRandomMonsters();
 
-            this.gameState.Party.CurrentMapId = this.mapId;
+            this._gameState.Party.CurrentMapId = this._mapId;
 
             this.AddRenderer(new ScreenSpaceRenderer(100, ScreenSpaceRenderLayer));
-            this.ui = new UISystem(this.CreateEntity("ui-canvas").AddComponent(new UICanvas()));
-            this.ui.Canvas.SetRenderLayer(999);
-            this.ui.Canvas.Stage.GamepadActionButton = null;
+            this._ui = new UiSystem(this.CreateEntity("ui-canvas").AddComponent(new UICanvas()));
+            this._ui.Canvas.SetRenderLayer(999);
+            this._ui.Canvas.Stage.GamepadActionButton = null;
             
-            this.debugText = this.ui.Canvas.Stage.AddElement(new Label("", BasicWindow.Skin));
-            this.debugText.SetPosition(10, 20);
+            this._debugText = this._ui.Canvas.Stage.AddElement(new Label("", BasicWindow.Skin));
+            this._debugText.SetPosition(10, 20);
 
             var tiledEntity = this.CreateEntity("map");
             var tiledMapRenderer = tiledEntity.AddComponent(new TiledMapRenderer(map,
-                this.gameState.Party.HasShip && this.mapId == 0 ? new[] {"wall"} : new[] {"wall", "water"}));
+                this._gameState.Party.HasShip && this._mapId == 0 ? new[] {"wall"} : new[] {"wall", "water"}));
             tiledMapRenderer.RenderLayer = 50;
             tiledMapRenderer.SetLayersToRender("wall", "wall2", "water", "floor", "floor2");
             map.GetObjectGroup("objects").Visible = false;
 
-            var mapState = this.gameState.MapStates.FirstOrDefault(item => item.Id == this.mapId);
+            var mapState = this._gameState.MapStates.FirstOrDefault(item => item.Id == this._mapId);
             if (mapState == null)
             {
-                mapState = new MapState {Id = this.mapId};
-                this.gameState.MapStates.Add(mapState);
+                mapState = new MapState {Id = this._mapId};
+                this._gameState.MapStates.Add(mapState);
             }
 
             var objects = map.GetObjectGroup("items");
@@ -133,7 +133,7 @@ namespace Redpoint.DungeonEscape.Scenes
                 }
                 var itemEntity = this.CreateEntity(item.Name);
                 itemEntity.AddComponent(MapObject.Create(item, state,
-                    map, this.ui, this.gameState));
+                    map, this._ui, this._gameState));
             }
 
             var graph = CreateGraph(map);
@@ -147,7 +147,7 @@ namespace Redpoint.DungeonEscape.Scenes
                     mapState.Sprites.Add(state);
                 }
                 var spriteEntity = this.CreateEntity(item.Name);
-                spriteEntity.AddComponent(Sprite.Create(item, state, map, this.ui, this.gameState, graph));
+                spriteEntity.AddComponent(Sprite.Create(item, state, map, this._ui, this._gameState, graph));
             }
 
             var topLeft = new Vector2(0, 0);
@@ -156,7 +156,7 @@ namespace Redpoint.DungeonEscape.Scenes
             tiledEntity.AddComponent(new CameraBounds(topLeft, bottomRight));
 
             var spawn = new Vector2();
-            if (this.start == null)
+            if (this._start == null)
             {
                 var spawnObject = map.GetObjectGroup("objects").Objects["spawn"];
                 spawn.X = spawnObject.X + map.TileWidth / 2.0f;
@@ -164,28 +164,28 @@ namespace Redpoint.DungeonEscape.Scenes
             }
             else
             {
-                spawn = ToRealLocation(this.start.Value, map);
+                spawn = ToRealLocation(this._start.Value, map);
             }
 
             var playerEntity = this.CreateEntity("player", spawn);
 
 
-            playerEntity.AddComponent(new PlayerComponent(this.gameState, map, this.debugText, this.randomMonsters, this.ui));
+            playerEntity.AddComponent(new PlayerComponent(this._gameState, map, this._debugText, this._randomMonsters, this._ui));
 
             this.Camera.Entity.AddComponent(new FollowCamera(playerEntity, FollowCamera.CameraStyle.CameraWindow));
             
-            this.showCommandWindowInput = new VirtualButton();
-            this.showCommandWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.E));
-            this.showCommandWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.X));
+            this._showCommandWindowInput = new VirtualButton();
+            this._showCommandWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.E));
+            this._showCommandWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.X));
             
-            this.showExitWindowInput = new VirtualButton();
-            this.showExitWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Escape));
-            this.showExitWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.Y));
+            this._showExitWindowInput = new VirtualButton();
+            this._showExitWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Escape));
+            this._showExitWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.Y));
         }
 
         private List<RandomMonster> LoadRandomMonsters()
         {
-            var fileName = $"Content/monsters{this.mapId}.json";
+            var fileName = $"Content/monsters{this._mapId}.json";
             if (!File.Exists(fileName))
             {
                 return new List<RandomMonster>();
@@ -200,7 +200,7 @@ namespace Redpoint.DungeonEscape.Scenes
             var list = new List<RandomMonster>();
             foreach (var monster in random)
             {
-                monster.Data = this.gameState.Monsters.FirstOrDefault(Item => Item.Id == monster.Id);
+                monster.Data = this._gameState.Monsters.FirstOrDefault(item => item.Id == monster.Id);
                 if (monster.Data != null)
                 {
                     list.Add(monster);
@@ -221,72 +221,72 @@ namespace Redpoint.DungeonEscape.Scenes
 
         public override void Update()
         {
-            this.ui.Input.HandledHide = false;
-            if (this.gameState.IsPaused)
+            this._ui.Input.HandledHide = false;
+            if (this._gameState.IsPaused)
             {
                 base.Update();
                 return;
             }
             
-            if (this.showCommandWindowInput.IsReleased)
+            if (this._showCommandWindowInput.IsReleased)
             {
                 var menuItems = new List<string> {"Status"};
-                if (this.gameState.Party.Members.Count(member => member.GetSpells(this.gameState.Spells).Count() != 0) != 0)
+                if (this._gameState.Party.Members.Count(member => member.GetSpells(this._gameState.Spells).Count() != 0) != 0)
                 {
                     menuItems.Add("Spells");
                 }
 
-                if (this.gameState.Party.Items.Count != 0)
+                if (this._gameState.Party.Items.Count != 0)
                 {
                     menuItems.Add("Items");
                 }
                 
-                this.gameState.IsPaused = true;
-                void unPause()
+                this._gameState.IsPaused = true;
+                void UnPause()
                 {
-                    this.gameState.IsPaused = false;
+                    this._gameState.IsPaused = false;
                 }
                 
-                var commandMenu = new CommandMenu(this.ui);
+                var commandMenu = new CommandMenu(this._ui);
                 commandMenu.Show(menuItems, result =>
                 {
                     switch (result)
                     {
                         case "Spells":
-                            this.ShowSpell(unPause);
+                            this.ShowSpell(UnPause);
                             break;
                         case "Status":
-                            this.ShowHeroStatus(unPause);
+                            this.ShowHeroStatus(UnPause);
                             break;
                         case "Items":
-                            this.ShowItems(unPause);
+                            this.ShowItems(UnPause);
                             break;
                         default:
-                            unPause();
+                            UnPause();
                             break;
                     }   
                 });
             }
-            else if(this.showExitWindowInput.IsReleased)
+            else if(this._showExitWindowInput.IsReleased)
             {
-                this.ui.Input.HandledHide = true;
-                this.gameState.IsPaused = true;
-                var commandMenu = new SelectWindow<string>(this.ui, "menu", new Point(20,20), 200);
+                this._ui.Input.HandledHide = true;
+                this._gameState.IsPaused = true;
+                var commandMenu = new SelectWindow<string>(this._ui, "menu", new Point(20,20), 200);
                 commandMenu.Show(new []{"Main Menu", "Load Quest", "Quit"}, result =>
                 {
                     switch (result)
                     {
                         case "Main Menu":
-                            this.gameState.ShowMainMenu();
+                            this._gameState.ShowMainMenu();
                             break;
                         case "Load Quest":
-                            this.gameState.ShowLoadQuest();
+                            this._gameState.ShowLoadQuest();
                             break;
                         case "Quit":
                             Core.Exit();
                             break;
                         default:
-                            this.gameState.IsPaused = false;
+                            this._gameState.IsPaused = false;
                             break;
                     }
                 });
@@ -297,39 +297,39 @@ namespace Redpoint.DungeonEscape.Scenes
 
         private void ShowHeroStatus(Action done)
         {
-            if (this.gameState.Party.Members.Count == 1)
+            if (this._gameState.Party.Members.Count == 1)
             {
-                var statusWindow = new HeroStatusWindow(this.ui);
-                statusWindow.Show(this.gameState.Party.Members.First(), done);
+                var statusWindow = new HeroStatusWindow(this._ui);
+                statusWindow.Show(this._gameState.Party.Members.First(), done);
             }
             else
             {
-                var selectWindow = new SelectHeroWindow(this.ui);
-                selectWindow.Show( this.gameState.Party.Members, hero =>
+                var selectWindow = new SelectHeroWindow(this._ui);
+                selectWindow.Show( this._gameState.Party.Members, hero =>
                 {
                     if (hero == null)
                     {
                         done();
                         return;
                     }
-                    var statusWindow = new HeroStatusWindow(this.ui);
+                    var statusWindow = new HeroStatusWindow(this._ui);
                     statusWindow.Show(hero, done);
                 });
             }
         }
 
-        private void CastSpell(Fighter caster, Spell spell, Action done)
+        private void CastSpell(IFighter caster, Spell spell, Action done)
         {
             if (spell.Targets == Target.Group)
             {
-                var result = spell.Cast(this.gameState.Party.Members, caster, this.gameState);
+                var result = spell.Cast(this._gameState.Party.Members, caster, this._gameState);
                 if (string.IsNullOrEmpty(result))
                 {
                     done();
                     return;
                 }
                 
-                new TalkWindow(this.ui).Show(result, done);
+                new TalkWindow(this._ui).Show(result, done);
                 return;
             }
 
@@ -339,14 +339,14 @@ namespace Redpoint.DungeonEscape.Scenes
                 filter = hero => hero.IsDead;
             }
                 
-            if(this.gameState.Party.Members.Count(filter) == 1 && spell.Type != SpellType.Revive)
+            if(this._gameState.Party.Members.Count(filter) == 1 && spell.Type != SpellType.Revive)
             {
-                var result = spell.Cast(this.gameState.Party.Members.Where(filter), caster, this.gameState);
-                new TalkWindow(this.ui).Show(result, done);
+                var result = spell.Cast(this._gameState.Party.Members.Where(filter), caster, this._gameState);
+                new TalkWindow(this._ui).Show(result, done);
                 return;
             }
                 
-            new SelectHeroWindow(this.ui).Show(this.gameState.Party.Members.Where(filter), target =>
+            new SelectHeroWindow(this._ui).Show(this._gameState.Party.Members.Where(filter), target =>
             {
                 if (target == null)
                 {
@@ -354,16 +354,16 @@ namespace Redpoint.DungeonEscape.Scenes
                     return;
                 }
 
-                new TalkWindow(this.ui).Show(spell.Cast(new[] {target}, caster, this.gameState), done);
+                new TalkWindow(this._ui).Show(spell.Cast(new[] {target}, caster, this._gameState), done);
             });
         }
 
         private void ShowSpell(Action done)
         {
-            if (this.gameState.Party.Members.Count == 1)
+            if (this._gameState.Party.Members.Count == 1)
             {
-                var spellWindow = new SpellWindow(this.ui);
-                spellWindow.Show(this.gameState.Party.Members.First().GetSpells(this.gameState.Spells).Where(item => item.IsNonEncounterSpell), spell=>
+                var spellWindow = new SpellWindow(this._ui);
+                spellWindow.Show(this._gameState.Party.Members.First().GetSpells(this._gameState.Spells).Where(item => item.IsNonEncounterSpell), spell=>
                 {
                     if (spell == null)
                     {
@@ -371,14 +371,14 @@ namespace Redpoint.DungeonEscape.Scenes
                         return;
                     }
 
-                    this.CastSpell(this.gameState.Party.Members.First(), spell, done);
+                    this.CastSpell(this._gameState.Party.Members.First(), spell, done);
 
                 });
             }
             else
             {
-                var selectWindow = new SelectHeroWindow(this.ui);
-                selectWindow.Show(this.gameState.Party.Members.Where(item => item.GetSpells(this.gameState.Spells).Count() != 0), hero =>
+                var selectWindow = new SelectHeroWindow(this._ui);
+                selectWindow.Show(this._gameState.Party.Members.Where(item => item.GetSpells(this._gameState.Spells).Count() != 0), hero =>
                 {
                     if (hero == null)
                     {
@@ -386,8 +386,8 @@ namespace Redpoint.DungeonEscape.Scenes
                         return;
                     }
                     
-                    var spellWindow = new SpellWindow(this.ui);
-                    spellWindow.Show(hero.GetSpells(this.gameState.Spells).Where(item => item.IsNonEncounterSpell), spell =>
+                    var spellWindow = new SpellWindow(this._ui);
+                    spellWindow.Show(hero.GetSpells(this._gameState.Spells).Where(item => item.IsNonEncounterSpell), spell =>
                     {
                         if (spell == null)
                         {
@@ -403,14 +403,14 @@ namespace Redpoint.DungeonEscape.Scenes
 
         private void ShowItems(Action done)
         {
-            if (this.gameState.Party.Items.Count == 0)
+            if (this._gameState.Party.Items.Count == 0)
             {
-                new TalkWindow(this.ui).Show("The party has no items", done);
+                new TalkWindow(this._ui).Show("The party has no items", done);
             }
             else
             {
-                var inventoryWindow = new InventoryWindow(this.ui);
-                inventoryWindow.Show(this.gameState.Party.Items, item =>
+                var inventoryWindow = new InventoryWindow(this._ui);
+                inventoryWindow.Show(this._gameState.Party.Items, item =>
                 {
                     if (item == null)
                     {
@@ -419,35 +419,35 @@ namespace Redpoint.DungeonEscape.Scenes
                     }
                     
                     var menuItems = new List<string>();
-                    if (this.gameState.Party.Members.Count(hero => hero.CanUseItem(item)) != 0)
+                    if (this._gameState.Party.Members.Count(hero => hero.CanUseItem(item)) != 0)
                     {
                         menuItems.Add(item.IsEquippable ? "Equip" : "Use");
                     }
                     menuItems.Add("Drop");
                     
-                    var selectWindow = new SelectWindow<string>(this.ui, "Select", new Point(20, 20));
+                    var selectWindow = new SelectWindow<string>(this._ui, "Select", new Point(20, 20));
                     selectWindow.Show(menuItems, action =>
                     {
                         switch (action)
                         {
                             case "Equip":
                             case "Use":
-                                if (this.gameState.Party.Members.Count == 1)
+                                if (this._gameState.Party.Members.Count == 1)
                                 {
-                                    var result = UseItem(this.gameState.Party.Members.First(), item, this.gameState.Party);
+                                    var result = UseItem(this._gameState.Party.Members.First(), item, this._gameState.Party);
                                     if (string.IsNullOrEmpty(result))
                                     {
                                         done();
                                     }
                                     else
                                     {
-                                        new TalkWindow(this.ui).Show(result, done);
+                                        new TalkWindow(this._ui).Show(result, done);
                                     }
                                 }
                                 else
                                 {
-                                    var selectHero = new SelectHeroWindow(this.ui);
-                                    selectHero.Show(this.gameState.Party.Members.Where(hero => hero.CanUseItem(item)),
+                                    var selectHero = new SelectHeroWindow(this._ui);
+                                    selectHero.Show(this._gameState.Party.Members.Where(hero => hero.CanUseItem(item)),
                                         hero =>
                                         {
                                             if (hero == null)
@@ -456,14 +456,14 @@ namespace Redpoint.DungeonEscape.Scenes
                                                 return;
                                             }
                                         
-                                            var result = UseItem(hero, item, this.gameState.Party);
+                                            var result = UseItem(hero, item, this._gameState.Party);
                                             if (string.IsNullOrEmpty(result))
                                             {
                                                 done();
                                             }
                                             else
                                             {
-                                                new TalkWindow(this.ui).Show(result, done);
+                                                new TalkWindow(this._ui).Show(result, done);
                                             }
                                         });
                                 }
@@ -472,11 +472,11 @@ namespace Redpoint.DungeonEscape.Scenes
                             {
                                 if (item.IsEquipped)
                                 {
-                                    item.UnEquip(this.gameState.Party.Members);
+                                    item.UnEquip(this._gameState.Party.Members);
                                 }
 
-                                this.gameState.Party.Items.Remove(item);
-                                new TalkWindow(this.ui).Show($"You dropped {item.Name}", done);
+                                this._gameState.Party.Items.Remove(item);
+                                new TalkWindow(this._ui).Show($"You dropped {item.Name}", done);
                                 break;
                             }
                             default:

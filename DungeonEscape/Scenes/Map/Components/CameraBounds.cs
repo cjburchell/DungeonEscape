@@ -5,8 +5,8 @@
 
     public class CameraBounds : Component, IUpdatable
     {
-        private readonly Vector2 Min;
-        private readonly Vector2 Max;
+        private readonly Vector2 _min;
+        private readonly Vector2 _max;
 
 
         private CameraBounds()
@@ -18,8 +18,8 @@
 
         public CameraBounds(Vector2 min, Vector2 max) : this()
         {
-            this.Min = min;
-            this.Max = max;
+            this._min = min;
+            this._max = max;
         }
 
 
@@ -33,17 +33,17 @@
         {
             var cameraBounds = this.Entity.Scene.Camera.Bounds;
 
-            if (cameraBounds.Top < this.Min.Y)
-                this.Entity.Scene.Camera.Position += new Vector2(0, this.Min.Y - cameraBounds.Top);
+            if (cameraBounds.Top < this._min.Y)
+                this.Entity.Scene.Camera.Position += new Vector2(0, this._min.Y - cameraBounds.Top);
 
-            if (cameraBounds.Left < this.Min.X)
-                this.Entity.Scene.Camera.Position += new Vector2(this.Min.X - cameraBounds.Left, 0);
+            if (cameraBounds.Left < this._min.X)
+                this.Entity.Scene.Camera.Position += new Vector2(this._min.X - cameraBounds.Left, 0);
 
-            if (cameraBounds.Bottom > this.Max.Y)
-                this.Entity.Scene.Camera.Position += new Vector2(0, this.Max.Y - cameraBounds.Bottom);
+            if (cameraBounds.Bottom > this._max.Y)
+                this.Entity.Scene.Camera.Position += new Vector2(0, this._max.Y - cameraBounds.Bottom);
 
-            if (cameraBounds.Right > this.Max.X)
-                this.Entity.Scene.Camera.Position += new Vector2(this.Max.X - cameraBounds.Right, 0);
+            if (cameraBounds.Right > this._max.X)
+                this.Entity.Scene.Camera.Position += new Vector2(this._max.X - cameraBounds.Right, 0);
         }
     }
 }

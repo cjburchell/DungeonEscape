@@ -13,7 +13,7 @@ namespace Redpoint.DungeonEscape.State
 
     public class Spell
     {
-        public string Cast(IEnumerable<Fighter> targets, Fighter caster, IGame game)
+        public string Cast(IEnumerable<IFighter> targets, IFighter caster, IGame game)
         {
             if (caster.Magic < this.Cost)
             {
@@ -33,7 +33,7 @@ namespace Redpoint.DungeonEscape.State
             };
         }
 
-        private string CastDamage(IEnumerable<Fighter> targets, Fighter caster)
+        private string CastDamage(IEnumerable<IFighter> targets, IFighter caster)
         {
             var message = $"{caster.Name} casts {this.Name}\n";
             foreach (var target in targets)
@@ -58,7 +58,7 @@ namespace Redpoint.DungeonEscape.State
             return message;
         }
 
-        private string CastHeal(IEnumerable<Fighter> targets, Fighter caster, bool everyone)
+        private string CastHeal(IEnumerable<IFighter> targets, IFighter caster, bool everyone)
         {
             var message = $"{caster.Name} casts {this.Name}\n";
             foreach (var target in targets.Where(item => everyone || !item.IsDead))
@@ -91,7 +91,7 @@ namespace Redpoint.DungeonEscape.State
             return message;
         }
 
-        private string CastOutside(Fighter caster, IGame gameState)
+        private string CastOutside(IFighter caster, IGame gameState)
         {
             if (gameState.Party.CurrentMapId == 0)
             {
@@ -102,7 +102,7 @@ namespace Redpoint.DungeonEscape.State
             return null;
         }
 
-        private string CastReturn(Fighter caster, IGame gameState)
+        private string CastReturn(IFighter caster, IGame gameState)
         {
             if (gameState.Party.CurrentMapId != 0)
             {
@@ -118,12 +118,12 @@ namespace Redpoint.DungeonEscape.State
             return null;
         }
 
-        private static readonly List<SpellType> attackSpells = new List<SpellType> {SpellType.Damage};
+        private static readonly List<SpellType> AttackSpells = new List<SpellType> {SpellType.Damage};
 
-        private static readonly List<SpellType> encounterSpells = new List<SpellType>
+        private static readonly List<SpellType> EncounterSpells = new List<SpellType>
             {SpellType.Heal, SpellType.Damage, SpellType.Revive};
 
-        private static readonly List<SpellType> nonEncounterSpells = new List<SpellType>
+        private static readonly List<SpellType> NonEncounterSpells = new List<SpellType>
             {SpellType.Heal, SpellType.Outside, SpellType.Return, SpellType.Revive};
 
         public override string ToString()
@@ -149,13 +149,13 @@ namespace Redpoint.DungeonEscape.State
         }
 
         [JsonIgnore]
-        public bool IsNonEncounterSpell => nonEncounterSpells.Contains(this.Type);
+        public bool IsNonEncounterSpell => NonEncounterSpells.Contains(this.Type);
 
         [JsonIgnore]
-        public bool IsEncounterSpell => encounterSpells.Contains(this.Type);
+        public bool IsEncounterSpell => EncounterSpells.Contains(this.Type);
 
         [JsonIgnore]
-        public bool IsAttackSpell => attackSpells.Contains(this.Type);
+        public bool IsAttackSpell => AttackSpells.Contains(this.Type);
 
         [JsonConverter(typeof(StringEnumConverter))]
         public Target Targets { get; set; }

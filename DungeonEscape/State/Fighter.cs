@@ -1,6 +1,6 @@
 ﻿namespace Redpoint.DungeonEscape.State
 {
-    public interface Fighter
+    public interface IFighter
     {
         string Name { get; }
         int Health { get; set; }

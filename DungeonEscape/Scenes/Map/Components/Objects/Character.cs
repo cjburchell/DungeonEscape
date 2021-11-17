@@ -7,21 +7,21 @@
 
     public class Character : Sprite
     {
-        private readonly UISystem ui;
-        private readonly string text;
+        private readonly UiSystem _ui;
+        private readonly string _text;
 
-        public Character(TmxObject tmxObject, SpriteState state, TmxMap map, UISystem ui, IGame gameState, AstarGridGraph graph) : base(tmxObject, state, map, gameState, graph)
+        public Character(TmxObject tmxObject, SpriteState state, TmxMap map, UiSystem ui, IGame gameState, AstarGridGraph graph) : base(tmxObject, state, map, gameState, graph)
         {
-            this.ui = ui;
-            this.text = tmxObject.Properties.ContainsKey("Text") ? tmxObject.Properties["Text"] : tmxObject.Name;
+            this._ui = ui;
+            this._text = tmxObject.Properties.ContainsKey("Text") ? tmxObject.Properties["Text"] : tmxObject.Name;
         }
 
         public override bool OnAction(Party party)
         {
-            this.gameState.IsPaused = true;
-            new TalkWindow(this.ui, "Talk Npc").Show(this.text, () =>
+            this.GameState.IsPaused = true;
+            new TalkWindow(this._ui, "Talk Npc").Show(this._text, () =>
             {
-                this.gameState.IsPaused = false;
+                this.GameState.IsPaused = false;
             });
             return true;
         }

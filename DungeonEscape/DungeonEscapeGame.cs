@@ -14,10 +14,10 @@
 
     public class Game : Core, IGame
     {
-        private const string saveFile = "save.json";
-        private const int maxSaveSlots = 5;
-        private bool isPaused;
-        private bool deferredPause;
+        private const string SaveFile = "save.json";
+        private const int MaxSaveSlots = 5;
+        private bool _isPaused;
+        private bool _deferredPause;
         
         public Party Party { get; private set; }
         
@@ -26,28 +26,28 @@
         public List<Monster> Monsters { get; } = new List<Monster>();
         public List<Item> Items { get; } = new List<Item>();
         public List<Spell> Spells { get; } = new List<Spell>();
-        public IEnumerable<GameSave> GameSaves => this.saveSlots;
+        public IEnumerable<GameSave> GameSaves => this._saveSlots;
         public bool InGame { get; private set; }
         public bool IsPaused
         {
-            get => this.isPaused;
+            get => this._isPaused;
             set
             {
                 if (value)
                 {
-                    this.isPaused = true;
+                    this._isPaused = true;
                 }
                 
-                this.deferredPause = value;
+                this._deferredPause = value;
             }
         }
         
-        private GameSave[] saveSlots;
+        private GameSave[] _saveSlots;
         
         public void Save()
         {
-            File.WriteAllText(saveFile,
-                JsonConvert.SerializeObject(this.saveSlots, Formatting.Indented,
+            File.WriteAllText(SaveFile,
+                JsonConvert.SerializeObject(this._saveSlots, Formatting.Indented,
                     new JsonSerializerSettings
                     {
                         NullValueHandling = NullValueHandling.Ignore
@@ -56,7 +56,7 @@
 
         public void UpdatePauseState()
         {
-            this.isPaused = this.deferredPause;
+            this._isPaused = this._deferredPause;
         }
         
         public void LoadGame(GameSave saveGame)
@@ -185,7 +185,7 @@
 
         public void ReloadSaveGames()
         {
-            this.saveSlots = LoadSaveGames(saveFile);
+            this._saveSlots = LoadSaveGames(SaveFile);
         }
 
         private static GameSave[] LoadSaveGames(string fileName)
@@ -196,7 +196,7 @@
                 saves = JsonConvert.DeserializeObject<List<GameSave>>(File.ReadAllText(fileName)) ?? new List<GameSave>();
             }
 
-            for (var i = saves.Count; i < maxSaveSlots; i++)
+            for (var i = saves.Count; i < MaxSaveSlots; i++)
             {
                 saves.Add(new GameSave()); 
             }

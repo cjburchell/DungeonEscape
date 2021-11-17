@@ -297,48 +297,48 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="sprites">
-  <object id="23" name="heal" type="NPC_Heal" gid="156" x="544" y="288" width="32" height="48">
+  <object id="23" name="heal" type="NpcHeal" gid="156" x="544" y="288" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="24" name="npc" type="NPC" gid="182" x="480" y="896" width="32" height="48">
+  <object id="24" name="npc" type="Npc" gid="182" x="480" y="896" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="hello"/>
    </properties>
   </object>
-  <object id="25" name="npc" type="NPC" gid="182" x="608" y="896" width="32" height="48">
+  <object id="25" name="npc" type="Npc" gid="182" x="608" y="896" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="Welcome to the shrine of healing"/>
    </properties>
   </object>
-  <object id="26" name="npc" type="NPC" gid="156" x="352" y="544" width="32" height="48">
+  <object id="26" name="npc" type="Npc" gid="156" x="352" y="544" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="Welcome"/>
    </properties>
   </object>
-  <object id="27" name="npc" type="NPC" gid="156" x="704" y="544" width="32" height="48">
+  <object id="27" name="npc" type="Npc" gid="156" x="704" y="544" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="Have a nice day"/>
    </properties>
   </object>
-  <object id="28" name="npc" type="NPC" gid="250" x="640" y="704" width="32" height="48">
+  <object id="28" name="npc" type="Npc" gid="250" x="640" y="704" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="chrip"/>
    </properties>
   </object>
-  <object id="29" name="npc" type="NPC" gid="250" x="448" y="704" width="32" height="48">
+  <object id="29" name="npc" type="Npc" gid="250" x="448" y="704" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>

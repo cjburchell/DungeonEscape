@@ -6,51 +6,51 @@
 
     public class Door: SolidObject
     {
-        private readonly UISystem ui;
-        private readonly int level;
+        private readonly UiSystem _ui;
+        private readonly int _level;
 
-        private bool isOpen
+        private bool IsOpen
         {
-            get => this.state.IsOpen != null && this.state.IsOpen.Value;
-            set => this.state.IsOpen = value;
+            get => this.State.IsOpen != null && this.State.IsOpen.Value;
+            set => this.State.IsOpen = value;
         }
 
-        public Door(TmxObject tmxObject, ObjectState state, TmxMap map, UISystem ui, IGame gameState) : base(tmxObject, state, map, gameState)
+        public Door(TmxObject tmxObject, ObjectState state, TmxMap map, UiSystem ui, IGame gameState) : base(tmxObject, state, map, gameState)
         {
-            this.state.IsOpen ??= this.tmxObject.Properties.ContainsKey("IsOpen") &&
-                                  bool.Parse(this.tmxObject.Properties["IsOpen"]);
-            this.ui = ui;
-            this.level = tmxObject.Properties.ContainsKey("DoorLevel") ? int.Parse(tmxObject.Properties["DoorLevel"]) : 0;
+            this.State.IsOpen ??= this.TmxObject.Properties.ContainsKey("IsOpen") &&
+                                  bool.Parse(this.TmxObject.Properties["IsOpen"]);
+            this._ui = ui;
+            this._level = tmxObject.Properties.ContainsKey("DoorLevel") ? int.Parse(tmxObject.Properties["DoorLevel"]) : 0;
         }
 
         public override void Initialize()
         {
             base.Initialize();
-            this.DisplayVisual(!this.isOpen);
-            this.SetEnableCollider(!this.isOpen);
+            this.DisplayVisual(!this.IsOpen);
+            this.SetEnableCollider(!this.IsOpen);
         }
 
         public override bool OnAction(Party party)
         {
-            if (this.isOpen)
+            if (this.IsOpen)
             {
                 return false;
             }
 
-            if (!party.CanOpenDoor(this.level))
+            if (!party.CanOpenDoor(this._level))
             {
 
-                this.gameState.IsPaused = true;
-                new TalkWindow(this.ui).Show("Unable to open door", () =>
+                this.GameState.IsPaused = true;
+                new TalkWindow(this._ui).Show("Unable to open door", () =>
                 {
-                    this.gameState.IsPaused = false;
+                    this.GameState.IsPaused = false;
                 });
                 return true;
             }
 
             this.SetEnableCollider(false);
             this.DisplayVisual(false);
-            this.isOpen = true;
+            this.IsOpen = true;
             this.Collideable = false;
             return true;
         }

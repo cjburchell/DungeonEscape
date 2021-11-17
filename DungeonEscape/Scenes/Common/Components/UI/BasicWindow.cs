@@ -7,12 +7,12 @@
     public abstract class BasicWindow : Component
     {
         protected Window Window { get; private set; }
-        protected readonly UISystem ui;
-        private readonly string title;
-        private readonly Point position;
-        private readonly int width;
-        private readonly int height;
-        private readonly bool focasable;
+        protected readonly UiSystem Ui;
+        private readonly string _title;
+        private readonly Point _position;
+        private readonly int _width;
+        private readonly int _height;
+        private readonly bool _focasable;
 
         public static readonly Skin Skin = Skin.CreateDefaultSkin();
         private static BasicWindow focusedWindow;
@@ -23,8 +23,8 @@
 
         public bool IsFocused => focusedWindow == this;
 
-        private bool hasBeenAdded;
-        private bool isVisible;
+        private bool _hasBeenAdded;
+        private bool _isVisible;
         
         static BasicWindow()
         {
@@ -78,42 +78,42 @@
             textFieldStyle.Background =new BorderPrimitiveDrawable(Color.Black, Color.White, 1);
         }
 
-        protected BasicWindow(UISystem ui, string title, Point position, int width, int height, bool focasable = true)
+        protected BasicWindow(UiSystem ui, string title, Point position, int width, int height, bool focasable = true)
         {
-            this.ui = ui;
-            this.title = title;
-            this.position = position;
-            this.width = width;
-            this.height = height;
-            this.focasable = focasable;
+            this.Ui = ui;
+            this._title = title;
+            this._position = position;
+            this._width = width;
+            this._height = height;
+            this._focasable = focasable;
             ui.Input?.AddWindow(this);
         }
 
         public override void OnAddedToEntity()
         {
-            this.Window = new Window(this.title, Skin);
-            this.ui.Canvas.Stage.AddElement(this.Window);
-            this.Window.SetPosition(this.position.X, this.position.Y);
-            this.Window.SetWidth(this.width);
-            this.Window.SetHeight(this.height);
+            this.Window = new Window(this._title, Skin);
+            this.Ui.Canvas.Stage.AddElement(this.Window);
+            this.Window.SetPosition(this._position.X, this._position.Y);
+            this.Window.SetWidth(this._width);
+            this.Window.SetHeight(this._height);
             this.Window.SetMovable(false);
             this.Window.SetResizable(false);
             this.Window.GetTitleLabel().SetVisible(false);
-            this.Window.GetTitleLabel().SetText(this.title);
+            this.Window.GetTitleLabel().SetText(this._title);
 
             base.OnAddedToEntity();
-            this.Window.SetVisible(this.isVisible);
+            this.Window.SetVisible(this._isVisible);
         }
 
         public virtual void CloseWindow(bool remove = true)
         {
             this.Window?.SetVisible(false);
-            this.isVisible = false;
+            this._isVisible = false;
             
-            if (this.focasable)
+            if (this._focasable)
             {
-                this.ui.Input?.RemoveWindow(this);
-                this.ui.Canvas.Stage.SetGamepadFocusElement(null);
+                this.Ui.Input?.RemoveWindow(this);
+                this.Ui.Canvas.Stage.SetGamepadFocusElement(null);
             }
 
             if (!remove)
@@ -121,25 +121,25 @@
                 return;
             }
 
-            if (this.hasBeenAdded)
+            if (this._hasBeenAdded)
             {
-                this.ui.Canvas.RemoveComponent(this);
+                this.Ui.Canvas.RemoveComponent(this);
             }
 
-            this.hasBeenAdded = false;
+            this._hasBeenAdded = false;
         }
 
         public void ShowWindow()
         {
-            if (!this.hasBeenAdded)
+            if (!this._hasBeenAdded)
             {
-                this.ui.Canvas.AddComponent(this);
+                this.Ui.Canvas.AddComponent(this);
             }
             
-            this.hasBeenAdded = true;
-            this.isVisible = true;
+            this._hasBeenAdded = true;
+            this._isVisible = true;
             this.Window?.SetVisible(true);
-            if (this.focasable)
+            if (this._focasable)
             {
                 focusedWindow = this;
             }

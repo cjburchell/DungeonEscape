@@ -7,7 +7,7 @@
 
     public class SaveWindow: SelectWindow<GameSave>
     {
-        public SaveWindow(UISystem ui) : base(ui, "Save", new Point(20, 20), 300)
+        public SaveWindow(UiSystem ui) : base(ui, "Save", new Point(20, 20), 300)
         {
         }
         

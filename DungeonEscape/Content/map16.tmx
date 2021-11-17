@@ -169,14 +169,14 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="sprites">
-  <object id="94" name="npc" type="NPC" gid="182" x="608" y="1152" width="32" height="48">
+  <object id="94" name="npc" type="Npc" gid="182" x="608" y="1152" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="beware of the leviathan"/>
    </properties>
   </object>
-  <object id="95" name="npc" type="NPC" gid="182" x="704" y="1152" width="32" height="48">
+  <object id="95" name="npc" type="Npc" gid="182" x="704" y="1152" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>

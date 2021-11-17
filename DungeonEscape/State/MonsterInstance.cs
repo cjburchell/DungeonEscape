@@ -6,7 +6,7 @@ namespace Redpoint.DungeonEscape.State
     using Nez;
     using Nez.UI;
 
-    public class MonsterInstance : Fighter
+    public class MonsterInstance : IFighter
     {
         public override string ToString()
         {

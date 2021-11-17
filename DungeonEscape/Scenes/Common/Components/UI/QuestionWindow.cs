@@ -5,7 +5,7 @@
 
     public class QuestionWindow : TextWindow
     {
-        public QuestionWindow(UISystem ui) : base(ui,"Question",new Point(10, MapScene.ScreenHeight / 3 * 2))
+        public QuestionWindow(UiSystem ui) : base(ui,"Question",new Point(10, MapScene.ScreenHeight / 3 * 2))
         {
         }
         

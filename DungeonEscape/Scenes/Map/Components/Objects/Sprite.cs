@@ -13,26 +13,26 @@
 
     public class Sprite : Component, IUpdatable, ICollidable
     {
-        private readonly TmxObject tmxObject;
-        private readonly TmxMap map;
-        protected readonly IGame gameState;
-        private SpriteAnimator animator;
-        private Mover mover;
-        private readonly bool canMove;
-        private MoveState state = MoveState.Stopped;
-        private readonly AstarGridGraph graph;
-        private List<Point> path;
+        private readonly TmxObject _tmxObject;
+        private readonly TmxMap _map;
+        protected readonly IGame GameState;
+        private SpriteAnimator _animator;
+        private Mover _mover;
+        private readonly bool _canMove;
+        private MoveState _state = MoveState.Stopped;
+        private readonly AstarGridGraph _graph;
+        private List<Point> _path;
         private const float MoveSpeed = 75;
-        private int currentPathIndex;
+        private int _currentPathIndex;
         // ReSharper disable once NotAccessedField.Local
-        private readonly SpriteState spriteState;
-        private float elapsedTime;
-        private float nextElapsedTime = Random.NextInt(5) + 1;
-        private readonly TmxTileset tilSet;
-        private readonly int baseId;
-        private readonly bool collideable;
+        private readonly SpriteState _spriteState;
+        private float _elapsedTime;
+        private float _nextElapsedTime = Random.NextInt(5) + 1;
+        private readonly TmxTileset _tilSet;
+        private readonly int _baseId;
+        private readonly bool _collideable;
 
-        public static Sprite Create(TmxObject tmxObject, SpriteState state, TmxMap map, UISystem ui, IGame gameState, AstarGridGraph graph)
+        public static Sprite Create(TmxObject tmxObject, SpriteState state, TmxMap map, UiSystem ui, IGame gameState, AstarGridGraph graph)
         {
             if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
             {
@@ -41,27 +41,27 @@
 
             return spriteType switch
             {
-                SpriteType.NPC_Heal => new Healer(tmxObject, state, map, gameState, graph, ui),
-                SpriteType.NPC_Store => new Store(tmxObject, state, map, gameState, graph, ui),
-                SpriteType.NPC_Save => new Saver(tmxObject, state, map, gameState, graph, ui),
-                SpriteType.NPC_Key => new KeyStore(tmxObject, state, map, gameState, graph, ui),
-                SpriteType.NPC => new Character(tmxObject, state, map, ui, gameState, graph),
-                SpriteType.NPC_PartyMember => new PartyMember(tmxObject, state, map, ui, gameState, graph),
+                SpriteType.NpcHeal => new Healer(tmxObject, state, map, gameState, graph, ui),
+                SpriteType.NpcStore => new Store(tmxObject, state, map, gameState, graph, ui),
+                SpriteType.NpcSave => new Saver(tmxObject, state, map, gameState, graph, ui),
+                SpriteType.NpcKey => new KeyStore(tmxObject, state, map, gameState, graph, ui),
+                SpriteType.Npc => new Character(tmxObject, state, map, ui, gameState, graph),
+                SpriteType.NpcPartyMember => new PartyMember(tmxObject, state, map, ui, gameState, graph),
                 _ => new Sprite(tmxObject, state, map, gameState, graph)
             };
         }
         
         protected Sprite(TmxObject tmxObject, SpriteState state, TmxMap map, IGame gameState, AstarGridGraph graph)
         {
-            this.spriteState = state;
-            this.graph = graph;
-            this.tmxObject = tmxObject;
-            this.map = map;
-            this.gameState = gameState;
-            this.tilSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
-            this.baseId = tmxObject.Tile.Gid - this.tilSet.FirstGid;
-            this.canMove = bool.Parse(this.tmxObject.Properties["CanMove"]);
-            this.collideable = bool.Parse(this.tmxObject.Properties["Collideable"]);
+            this._spriteState = state;
+            this._graph = graph;
+            this._tmxObject = tmxObject;
+            this._map = map;
+            this.GameState = gameState;
+            this._tilSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
+            this._baseId = tmxObject.Tile.Gid - this._tilSet.FirstGid;
+            this._canMove = bool.Parse(this._tmxObject.Properties["CanMove"]);
+            this._collideable = bool.Parse(this._tmxObject.Properties["Collideable"]);
         }
 
         public override void OnAddedToEntity()
@@ -70,67 +70,67 @@
             
             var pos = new Vector2
             {
-                X = this.tmxObject.X + (int) (this.tmxObject.Width / 2.0),
-                Y = this.tmxObject.Y - (int) (this.tmxObject.Height / 2.0)
+                X = this._tmxObject.X + (int) (this._tmxObject.Width / 2.0),
+                Y = this._tmxObject.Y - (int) (this._tmxObject.Height / 2.0)
             };
 
             this.Entity.SetPosition(pos);
-            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this.tilSet.Image.Texture, this.tilSet.TileWidth, this.tilSet.TileHeight,  this.tilSet.Spacing);
-            this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[this.baseId]));
-            this.animator.Speed = 0.5f;
-            this.animator.RenderLayer = 10;
-            this.animator.AddAnimation("WalkDown", new[]
+            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this._tilSet.Image.Texture, this._tilSet.TileWidth, this._tilSet.TileHeight,  this._tilSet.Spacing);
+            this._animator = this.Entity.AddComponent(new SpriteAnimator(sprites[this._baseId]));
+            this._animator.Speed = 0.5f;
+            this._animator.RenderLayer = 10;
+            this._animator.AddAnimation("WalkDown", new[]
             {
-                sprites[this.baseId + 0],
-                sprites[this.baseId + 1]
+                sprites[this._baseId + 0],
+                sprites[this._baseId + 1]
             });
 
-            this.animator.AddAnimation("WalkUp", new[]
+            this._animator.AddAnimation("WalkUp", new[]
             {
-                sprites[this.baseId + 6],
-                sprites[this.baseId + 7]
+                sprites[this._baseId + 6],
+                sprites[this._baseId + 7]
             });
 
-            this.animator.AddAnimation("WalkRight", new[]
+            this._animator.AddAnimation("WalkRight", new[]
             {
-                sprites[this.baseId + 2],
-                sprites[this.baseId + 3]
+                sprites[this._baseId + 2],
+                sprites[this._baseId + 3]
             });
 
-            this.animator.AddAnimation("WalkLeft", new[]
+            this._animator.AddAnimation("WalkLeft", new[]
             {
-                sprites[this.baseId + 4],
-                sprites[this.baseId + 5]
+                sprites[this._baseId + 4],
+                sprites[this._baseId + 5]
             });
             
             
-            this.mover = this.Entity.AddComponent(new Mover());
-            this.animator.RenderLayer = 15;
+            this._mover = this.Entity.AddComponent(new Mover());
+            this._animator.RenderLayer = 15;
 
             var fullArea = new Rectangle
             {
-                X = (int) (-this.tmxObject.Width / 2.0f),
-                Y = (int) (-this.tmxObject.Height / 2.0f),
-                Width = (int) this.tmxObject.Width,
-                Height = (int) this.tmxObject.Height
+                X = (int) (-this._tmxObject.Width / 2.0f),
+                Y = (int) (-this._tmxObject.Height / 2.0f),
+                Width = (int) this._tmxObject.Width,
+                Height = (int) this._tmxObject.Height
             };
 
             var collider = this.Entity.AddComponent(new ObjectBoxCollider(this,fullArea));
             collider.IsTrigger = true;
 
-            if (!this.collideable)
+            if (!this._collideable)
             {
                 return;
             }
 
-            var a = this.tmxObject.Height/2 - this.tmxObject.Width/2; // 16
+            var a = this._tmxObject.Height/2 - this._tmxObject.Width/2; // 16
 
             var box = new Rectangle
             {
-                X = -((int)this.tmxObject.Width / 4),
-                Y = (int) (a - this.tmxObject.Width / 4),
-                Width = (int)this.tmxObject.Width / 2,
-                Height = (int)this.tmxObject.Width / 2
+                X = -((int)this._tmxObject.Width / 4),
+                Y = (int) (a - this._tmxObject.Width / 4),
+                Width = (int)this._tmxObject.Width / 2,
+                Height = (int)this._tmxObject.Width / 2
             };
             
             this.Entity.AddComponent(new BoxCollider(box));
@@ -138,91 +138,96 @@
 
         void IUpdatable.Update()
         {
-            if (this.gameState.IsPaused)
+            if (this.GameState.IsPaused)
             {
                 return;
             }
-            
-            if (!this.canMove)
+
+            if (!this._canMove)
             {
                 return;
             }
-            
-            switch (this.state)
+
+            switch (this._state)
             {
                 case MoveState.Stopped:
                 {
-                    this.elapsedTime += Time.DeltaTime;
-                    if (!(this.elapsedTime >= this.nextElapsedTime))
+                    this._elapsedTime += Time.DeltaTime;
+                    if (!(this._elapsedTime >= this._nextElapsedTime))
                     {
                         return;
                     }
 
-                    this.elapsedTime = 0;
-                    this.nextElapsedTime = Random.NextInt(5) + 1;
-                    
+                    this._elapsedTime = 0;
+                    this._nextElapsedTime = Random.NextInt(5) + 1;
+
                     if (Random.Chance(0.05f))
                     {
                         return;
                     }
-                    
-                    const int  MaxSpacesToMove = 2;
+
+                    const int maxSpacesToMove = 2;
                     var pos = this.Entity.Position;
-                    var mapGoTo = new Point(Random.NextInt(MaxSpacesToMove*2 + 1)-MaxSpacesToMove, Random.NextInt(MaxSpacesToMove*2 + 1)-MaxSpacesToMove);
+                    var mapGoTo = new Point(Random.NextInt(maxSpacesToMove * 2 + 1) - maxSpacesToMove,
+                        Random.NextInt(maxSpacesToMove * 2 + 1) - maxSpacesToMove);
                     if (mapGoTo.X < 0)
                     {
                         mapGoTo.X = 0;
                     }
+
                     if (mapGoTo.Y < 0)
                     {
                         mapGoTo.Y = 0;
                     }
-                    if (mapGoTo.X >= this.map.Width)
-                    {
-                        mapGoTo.X = this.map.Width-1;
-                    }
-                    if (mapGoTo.Y >= this.map.Height)
-                    {
-                        mapGoTo.X = this.map.Height-1;
-                    }
-                    
-                    var toPos = pos + MapScene.ToRealLocation(mapGoTo, this.map);
-                    this.path = this.graph.Search(
-                        MapScene.ToMapGrid(pos, this.map),
-                        MapScene.ToMapGrid(toPos, this.map));
 
-                    if (this.path == null)
+                    if (mapGoTo.X >= this._map.Width)
                     {
-                        this.state = MoveState.Stopped;
+                        mapGoTo.X = this._map.Width - 1;
+                    }
+
+                    if (mapGoTo.Y >= this._map.Height)
+                    {
+                        mapGoTo.X = this._map.Height - 1;
+                    }
+
+                    var toPos = pos + MapScene.ToRealLocation(mapGoTo, this._map);
+                    this._path = this._graph.Search(
+                        MapScene.ToMapGrid(pos, this._map),
+                        MapScene.ToMapGrid(toPos, this._map));
+
+                    if (this._path == null)
+                    {
+                        this._state = MoveState.Stopped;
                     }
                     else
                     {
-                        this.currentPathIndex = 0;
-                        this.state = MoveState.Moving;
+                        this._currentPathIndex = 0;
+                        this._state = MoveState.Moving;
                     }
 
                     break;
                 }
-                case MoveState.Moving when this.path == null:
-                    this.state = MoveState.Stopped;
-                    this.animator.Pause();
+                case MoveState.Moving when this._path == null:
+                    this._state = MoveState.Stopped;
+                    this._animator.Pause();
                     break;
                 case MoveState.Moving:
                 {
                     var p1 = this.Entity.Position;
-                    if (Vector2.Distance(p1,MapScene.ToRealLocation(this.path[this.currentPathIndex], this.map)) <= 1)
+                    if (Vector2.Distance(p1, MapScene.ToRealLocation(this._path[this._currentPathIndex], this._map)) <=
+                        1)
                     {
-                        this.currentPathIndex++;
-                        if (this.currentPathIndex >= this.path.Count)
+                        this._currentPathIndex++;
+                        if (this._currentPathIndex >= this._path.Count)
                         {
-                            this.state = MoveState.Stopped;
-                            this.animator.Pause();
+                            this._state = MoveState.Stopped;
+                            this._animator.Pause();
                             return;
                         }
                     }
-                    
-                    var (x, y) = MapScene.ToRealLocation(this.path[this.currentPathIndex], this.map);
-                    var angle = (float)Math.Atan2(y - p1.Y, x - p1.X);
+
+                    var (x, y) = MapScene.ToRealLocation(this._path[this._currentPathIndex], this._map);
+                    var angle = (float) Math.Atan2(y - p1.Y, x - p1.X);
                     var vector = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
                     var animation = "WalkDown";
                     if (vector.X < 0)
@@ -242,31 +247,30 @@
                     {
                         animation = "WalkDown";
                     }
-                    
-                    if (! this.animator.IsAnimationActive(animation))
+
+                    if (!this._animator.IsAnimationActive(animation))
                     {
-                        this.animator.Play(animation);
+                        this._animator.Play(animation);
                     }
                     else
                     {
-                        this.animator.UnPause();
+                        this._animator.UnPause();
                     }
-                    
+
                     var movement = vector * MoveSpeed * Time.DeltaTime;
-                    if (this.mover.CalculateMovement(ref movement, out _))
+                    if (this._mover.CalculateMovement(ref movement, out _))
                     {
-                        this.state = MoveState.Stopped;
-                        this.animator.Pause();
+                        this._state = MoveState.Stopped;
+                        this._animator.Pause();
                         return;
                     }
-                    
-                    this.mover.ApplyMovement(movement);
+
+                    this._mover.ApplyMovement(movement);
                     break;
                 }
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
         }
 
         public virtual void OnHit(Party party)

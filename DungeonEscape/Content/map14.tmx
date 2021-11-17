@@ -212,7 +212,7 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="sprites">
-  <object id="66" name="npc" type="NPC" gid="156" x="256" y="320" width="32" height="48">
+  <object id="66" name="npc" type="Npc" gid="156" x="256" y="320" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
@@ -220,7 +220,7 @@
 and get to the forest contnent</property>
    </properties>
   </object>
-  <object id="67" name="npc" type="NPC" gid="156" x="320" y="384" width="32" height="48">
+  <object id="67" name="npc" type="Npc" gid="156" x="320" y="384" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>

@@ -8,12 +8,12 @@
 
     public class HeroStatusWindow: BasicWindow
     {
-        private TextButton closeButton;
-        private Action done;
-        private Table statusTable;
-        private Hero hero;
+        private TextButton _closeButton;
+        private Action _done;
+        private Table _statusTable;
+        private Hero _hero;
 
-        public HeroStatusWindow(UISystem ui) : base(ui, "Hero Status",
+        public HeroStatusWindow(UiSystem ui) : base(ui, "Hero Status",
             new Point(20, 20), 220, 250)
         {
         }
@@ -22,62 +22,62 @@
         {
             base.OnAddedToEntity();
             var table = this.Window.AddElement(new Table());
-            this.statusTable = new Table();
-            this.closeButton = new TextButton("Close", Skin);
-            this.closeButton.GetLabel();    
-            this.closeButton.ShouldUseExplicitFocusableControl = true;
-            this.closeButton.OnClicked += _ => { this.CloseWindow(); };
+            this._statusTable = new Table();
+            this._closeButton = new TextButton("Close", Skin);
+            this._closeButton.GetLabel();    
+            this._closeButton.ShouldUseExplicitFocusableControl = true;
+            this._closeButton.OnClicked += _ => { this.CloseWindow(); };
 
             // layout
             table.SetFillParent(true);
             table.Row();
-            table.Add(this.statusTable).Expand().Top().Left().SetPadLeft(10);
+            table.Add(this._statusTable).Expand().Top().Left().SetPadLeft(10);
             table.Row();
-            table.Add(this.closeButton).Height(ButtonHeight).Width(ButtonWidth).SetColspan(4).Center().Bottom().SetPadBottom(2);
+            table.Add(this._closeButton).Height(ButtonHeight).Width(ButtonWidth).SetColspan(4).Center().Bottom().SetPadBottom(2);
             
             this.ShowWindow();
             this.UpdateStatus();
-            this.Window.GetStage().SetGamepadFocusElement(this.closeButton);
+            this.Window.GetStage().SetGamepadFocusElement(this._closeButton);
         }
 
         private void UpdateStatus()
         {
             const int labelColumnWidth = 125;
             const int dataColumnWidth = 75;
-            this.statusTable.Row().SetPadTop(5);
-            this.statusTable.Add(new Label(this.hero.Name, Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-            this.statusTable.Row();
-            this.statusTable.Add(new Label("Level:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-            this.statusTable.Add(new Label($"{this.hero.Level}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
-            this.statusTable.Row();
-            this.statusTable.Add(new Label("Health:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-            this.statusTable.Add(new Label($"{this.hero.Health}/{this.hero.MaxHealth}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
-            this.statusTable.Row();
-            this.statusTable.Add(new Label("Magic:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-            this.statusTable.Add(new Label($"{this.hero.Magic}/{this.hero.MaxMagic}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
-            this.statusTable.Row();
-            this.statusTable.Add(new Label("Attack:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-            this.statusTable.Add(new Label($"{this.hero.Attack}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
-            this.statusTable.Row();
-            this.statusTable.Add(new Label("Defence:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-            this.statusTable.Add(new Label($"{this.hero.Defence}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
-            this.statusTable.Row();
-            this.statusTable.Add(new Label("Agility:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-            this.statusTable.Add(new Label($"{this.hero.Agility}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
-            this.statusTable.Row();
-            this.statusTable.Add(new Label("XP:", Skin).SetAlignment(Align.TopLeft)).Width(labelColumnWidth);
-            this.statusTable.Add(new Label($"{this.hero.XP}", Skin).SetAlignment(Align.TopLeft)).Width(dataColumnWidth);
-            this.statusTable.Row();
-            this.statusTable.Add(new Label("Next Level:", Skin).SetAlignment(Align.TopLeft)).Width(labelColumnWidth);
-            this.statusTable.Add(new Label($"{this.hero.NextLevel - this.hero.XP}XP", Skin).SetAlignment(Align.TopLeft)).Width(dataColumnWidth);
+            this._statusTable.Row().SetPadTop(5);
+            this._statusTable.Add(new Label(this._hero.Name, Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
+            this._statusTable.Row();
+            this._statusTable.Add(new Label("Level:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Level}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
+            this._statusTable.Row();
+            this._statusTable.Add(new Label("Health:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Health}/{this._hero.MaxHealth}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
+            this._statusTable.Row();
+            this._statusTable.Add(new Label("Magic:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Magic}/{this._hero.MaxMagic}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
+            this._statusTable.Row();
+            this._statusTable.Add(new Label("Attack:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Attack}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
+            this._statusTable.Row();
+            this._statusTable.Add(new Label("Defence:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Defence}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
+            this._statusTable.Row();
+            this._statusTable.Add(new Label("Agility:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Agility}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
+            this._statusTable.Row();
+            this._statusTable.Add(new Label("XP:", Skin).SetAlignment(Align.TopLeft)).Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Xp}", Skin).SetAlignment(Align.TopLeft)).Width(dataColumnWidth);
+            this._statusTable.Row();
+            this._statusTable.Add(new Label("Next Level:", Skin).SetAlignment(Align.TopLeft)).Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.NextLevel - this._hero.Xp}XP", Skin).SetAlignment(Align.TopLeft)).Width(dataColumnWidth);
             
-            this.statusTable.Validate();
+            this._statusTable.Validate();
         }
 
         public override void CloseWindow(bool remove = true)
         {
             base.CloseWindow(remove);
-            this.done?.Invoke();
+            this._done?.Invoke();
         }
 
         public override void DoAction()
@@ -87,8 +87,8 @@
         
         public void Show(Hero heroToShow, Action doneAction)
         {
-            this.done = doneAction;
-            this.hero = heroToShow;
+            this._done = doneAction;
+            this._hero = heroToShow;
             this.ShowWindow();
         }
     }

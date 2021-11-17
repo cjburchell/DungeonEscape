@@ -7,11 +7,11 @@
 
     public class SpellWindow : SelectWindow<Spell>
     {
-        public SpellWindow(UISystem ui, Point point) : base(ui, "Spells", point, 250)
+        public SpellWindow(UiSystem ui, Point point) : base(ui, "Spells", point, 250)
         {
         }
         
-        public SpellWindow(UISystem ui) : this(ui, new Point(20, 20))
+        public SpellWindow(UiSystem ui) : this(ui, new Point(20, 20))
         {
         }
         

@@ -269,67 +269,67 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="sprites">
-  <object id="91" name="store" type="NPC_Store" gid="148" x="1216" y="1056" width="32" height="48">
+  <object id="91" name="store" type="NpcStore" gid="148" x="1216" y="1056" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="92" name="heal" type="NPC_Heal" gid="156" x="320" y="288" width="32" height="48">
+  <object id="92" name="heal" type="NpcHeal" gid="156" x="320" y="288" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="93" name="save" type="NPC_Save" gid="63" x="1152" y="544" width="32" height="48">
+  <object id="93" name="save" type="NpcSave" gid="63" x="1152" y="544" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="94" name="npc" type="NPC" gid="156" x="928" y="320" width="32" height="48">
+  <object id="94" name="npc" type="Npc" gid="156" x="928" y="320" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="venture into the desert"/>
    </properties>
   </object>
-  <object id="95" name="npc" type="NPC" gid="182" x="1024" y="1312" width="32" height="48">
+  <object id="95" name="npc" type="Npc" gid="182" x="1024" y="1312" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="welcome to forest"/>
    </properties>
   </object>
-  <object id="96" name="npc" type="NPC" gid="182" x="768" y="480" width="32" height="48">
+  <object id="96" name="npc" type="Npc" gid="182" x="768" y="480" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="welcome to the forest palce"/>
    </properties>
   </object>
-  <object id="97" name="npc" type="NPC" gid="182" x="1216" y="832" width="32" height="48">
+  <object id="97" name="npc" type="Npc" gid="182" x="1216" y="832" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="welcome"/>
    </properties>
   </object>
-  <object id="98" name="npc" type="NPC" gid="182" x="1216" y="288" width="32" height="48">
+  <object id="98" name="npc" type="Npc" gid="182" x="1216" y="288" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="welcome"/>
    </properties>
   </object>
-  <object id="99" name="npc" type="NPC" gid="182" x="768" y="576" width="32" height="48">
+  <object id="99" name="npc" type="Npc" gid="182" x="768" y="576" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="welcome"/>
    </properties>
   </object>
-  <object id="100" name="npc" type="NPC" gid="182" x="768" y="800" width="32" height="48">
+  <object id="100" name="npc" type="Npc" gid="182" x="768" y="800" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>

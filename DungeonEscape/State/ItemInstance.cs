@@ -10,12 +10,12 @@ namespace Redpoint.DungeonEscape.State
 
     public class ItemInstance
     {
-        private Item item;
+        private Item _item;
 
         public ItemInstance(Item item)
         {
             this.Id = Guid.NewGuid().ToString();
-            this.item = item;
+            this._item = item;
             this.ItemId = item.Id;
         }
 
@@ -26,7 +26,7 @@ namespace Redpoint.DungeonEscape.State
 
         public void UpdateItem(IEnumerable<Item> items)
         {
-            this.item = items.FirstOrDefault(i => i.Id == this.ItemId);
+            this._item = items.FirstOrDefault(i => i.Id == this.ItemId);
         }
         
         public string Id { get; set; }
@@ -35,19 +35,19 @@ namespace Redpoint.DungeonEscape.State
         public bool IsEquipped { get; set; }
 
         [JsonIgnore]
-        public Texture2D Image => this.item.Image;
+        public Texture2D Image => this._item.Image;
 
         [JsonIgnore]
-        public int MinLevel => this.item.MinLevel;
+        public int MinLevel => this._item.MinLevel;
         
         [JsonIgnore]
-        public ItemType Type => this.item.Type;
+        public ItemType Type => this._item.Type;
         
         [JsonIgnore]
-        public string Name => this.item.Name;
+        public string Name => this._item.Name;
 
         [JsonIgnore]
-        public int Gold => this.item.Gold;
+        public int Gold => this._item.Gold;
         
         [JsonIgnore]
         public bool IsEquippable =>
@@ -83,10 +83,10 @@ namespace Redpoint.DungeonEscape.State
                             throw new ArgumentOutOfRangeException();
                     }
 
-                    equippedHero.Agility -= this.item.Agility;
-                    equippedHero.Attack -= this.item.Attack;
-                    equippedHero.Defence -= this.item.Defence;
-                    equippedHero.MaxHealth -= this.item.Health;
+                    equippedHero.Agility -= this._item.Agility;
+                    equippedHero.Attack -= this._item.Attack;
+                    equippedHero.Defence -= this._item.Defence;
+                    equippedHero.MaxHealth -= this._item.Health;
 
                     if (equippedHero.Health > equippedHero.MaxHealth)
                     {
@@ -133,18 +133,18 @@ namespace Redpoint.DungeonEscape.State
             
             this.IsEquipped = true;
             this.EquippedTo = hero.Id;
-            hero.Agility += this.item.Agility;
-            hero.Attack += this.item.Attack;
-            hero.Defence += this.item.Defence;
-            hero.MaxHealth += this.item.Health;
+            hero.Agility += this._item.Agility;
+            hero.Attack += this._item.Attack;
+            hero.Defence += this._item.Defence;
+            hero.MaxHealth += this._item.Health;
         }
 
         public void Use(Hero hero)
         {
-            hero.Agility += this.item.Agility;
-            hero.Attack += this.item.Attack;
-            hero.Defence += this.item.Defence;
-            hero.Health += this.item.Health;
+            hero.Agility += this._item.Agility;
+            hero.Attack += this._item.Attack;
+            hero.Defence += this._item.Defence;
+            hero.Health += this._item.Health;
             if (hero.Health > hero.MaxHealth)
             {
                 hero.Health = hero.MaxHealth;

@@ -138,7 +138,7 @@
   <tile id="46" type="Green Dragon">
     <image width="0" height="0" source="images/monsters/dGreen.png" />
   </tile>
-  <tile id="47" type="Polar_ Bear">
+  <tile id="47" type="Polar Bear">
     <image width="0" height="0" source="images/monsters/polerb.png" />
   </tile>
 </tileset>

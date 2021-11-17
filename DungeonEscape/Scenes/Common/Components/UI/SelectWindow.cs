@@ -8,17 +8,17 @@
 
     public class SelectWindow<T> : BasicWindow where T : class
     {
-        private Action<T> done;
-        private readonly ButtonList list;
-        private readonly ScrollPane scrollPane;
-        private IEnumerable<T> items;
+        private Action<T> _done;
+        private readonly ButtonList _list;
+        private readonly ScrollPane _scrollPane;
+        private IEnumerable<T> _items;
 
 
-        public SelectWindow(UISystem ui, string title, Point position, int width = 180,
+        public SelectWindow(UiSystem ui, string title, Point position, int width = 180,
             int height = 150) : base(ui, title, position, width, height)
         {
-            this.list = new ButtonList();
-            this.scrollPane = new ScrollPane(this.list, Skin) {FillParent = true};
+            this._list = new ButtonList();
+            this._scrollPane = new ScrollPane(this._list, Skin) {FillParent = true};
         }
 
         public override void CloseWindow(bool remove = true)
@@ -29,37 +29,37 @@
         private void CloseWindow(T result, bool remove = true)
         {
             base.CloseWindow(remove);
-            this.done?.Invoke(result);
+            this._done?.Invoke(result);
         }
         
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
-            this.Window.AddElement(this.scrollPane);
-            this.list.OnClicked += button =>
+            this.Window.AddElement(this._scrollPane);
+            this._list.OnClicked += button =>
             {
                 this.CloseWindow(button?.UserData as T);
             };
             
-            this.list.SetFillParent(true);
+            this._list.SetFillParent(true);
             const int margin = 10;
-            this.list.Top().PadLeft(margin).PadTop(margin).PadRight(margin);
+            this._list.Top().PadLeft(margin).PadTop(margin).PadRight(margin);
             var itemWidth = this.Window.GetWidth();
-            var itemList = this.items.ToList();
+            var itemList = this._items.ToList();
             foreach (var item in itemList)
             {
                 var button = this.CreateButton(item);
                 button.UserData = item;
-                this.list.Add(button).Width(itemWidth - margin * 2).Height(ButtonHeight);
+                this._list.Add(button).Width(itemWidth - margin * 2).Height(ButtonHeight);
             }
 
             this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count * ButtonHeight, 400));
-            this.scrollPane.Validate();
+            this._scrollPane.Validate();
         }
 
         public override void DoAction()
         {
-            this.CloseWindow(this.list.GetSelected()?.UserData as T);
+            this.CloseWindow(this._list.GetSelected()?.UserData as T);
         }
 
         protected virtual Button CreateButton(T item)
@@ -71,8 +71,8 @@
 
         public void Show(IEnumerable<T> itemsList, Action<T> doneAction)
         {
-            this.done = doneAction;
-            this.items = itemsList;
+            this._done = doneAction;
+            this._items = itemsList;
             this.ShowWindow();
         }
     }

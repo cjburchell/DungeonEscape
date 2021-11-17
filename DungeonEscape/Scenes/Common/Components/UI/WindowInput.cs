@@ -7,53 +7,53 @@
 
     public class WindowInput : Component, IUpdatable
     {
-        private readonly VirtualButton hideWindowInput = new VirtualButton();
-        private readonly VirtualButton actionWindowInput = new VirtualButton();
-        private readonly List<BasicWindow> windows = new List<BasicWindow>();
+        private readonly VirtualButton _hideWindowInput = new VirtualButton();
+        private readonly VirtualButton _actionWindowInput = new VirtualButton();
+        private readonly List<BasicWindow> _windows = new List<BasicWindow>();
         public bool HandledHide = false;
 
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
             
-            this.hideWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Escape));
-            this.hideWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.B));
+            this._hideWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Escape));
+            this._hideWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.B));
             
-            this.actionWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Space));
-            this.actionWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Enter));
-            this.actionWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.A));
+            this._actionWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Space));
+            this._actionWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Enter));
+            this._actionWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.A));
         }
 
         public override void OnRemovedFromEntity()
         {
             base.OnRemovedFromEntity();
-            this.hideWindowInput.Deregister();
-            this.actionWindowInput.Deregister();
+            this._hideWindowInput.Deregister();
+            this._actionWindowInput.Deregister();
         }
 
         public void AddWindow(BasicWindow window)
         {
-            this.windows.Add(window);
+            this._windows.Add(window);
         }
         
         public void RemoveWindow(BasicWindow window)
         {
-            this.windows.Remove(window);
+            this._windows.Remove(window);
         }
 
         public void Update()
         {
-            if (this.hideWindowInput.IsReleased && !this.HandledHide)
+            if (this._hideWindowInput.IsReleased && !this.HandledHide)
             {
-                foreach (var window in this.windows.Where(window => window.IsVisible && window.IsFocused))
+                foreach (var window in this._windows.Where(window => window.IsVisible && window.IsFocused))
                 {
                     window.CloseWindow();
                     return;
                 }
             }
-            else if (this.actionWindowInput.IsReleased)
+            else if (this._actionWindowInput.IsReleased)
             {
-                foreach (var window in this.windows.Where(window => window.IsVisible && window.IsFocused))
+                foreach (var window in this._windows.Where(window => window.IsVisible && window.IsFocused))
                 {
                     window.DoAction();
                     return;

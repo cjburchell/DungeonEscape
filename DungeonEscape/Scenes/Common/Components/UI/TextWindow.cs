@@ -10,20 +10,20 @@
     public class TextWindow : BasicWindow, IUpdatable
     {
 
-        private string textToShow = "";
-        private Label textLabel;
-        private Action<string> done;
-        private int textIndex;
+        private string _textToShow = "";
+        private Label _textLabel;
+        private Action<string> _done;
+        private int _textIndex;
 
-        protected TextWindow(UISystem ui,string title, Point position, int width = MapScene.ScreenWidth - 20, int height = MapScene.ScreenHeight / 3 - 10) : base(ui, title, position, width, height)
+        protected TextWindow(UiSystem ui,string title, Point position, int width = MapScene.ScreenWidth - 20, int height = MapScene.ScreenHeight / 3 - 10) : base(ui, title, position, width, height)
         {
         }
         
-        private Button firstButton;
-        private Button lastButton;
-        private Table buttonTable;
-        private ScrollPane scrollPane;
-        private IEnumerable<string> buttonText;
+        private Button _firstButton;
+        private Button _lastButton;
+        private Table _buttonTable;
+        private ScrollPane _scrollPane;
+        private IEnumerable<string> _buttonText;
 
         private void AddButton(Button button)
         {
@@ -33,64 +33,64 @@
             };
 
             button.ShouldUseExplicitFocusableControl = true;
-            if (this.firstButton == null)
+            if (this._firstButton == null)
             {
-                this.firstButton = button;
-                this.lastButton = button;
+                this._firstButton = button;
+                this._lastButton = button;
             }
             else
             {
-                this.firstButton.GamepadLeftElement = button;
-                this.lastButton.GamepadRightElement = button;
+                this._firstButton.GamepadLeftElement = button;
+                this._lastButton.GamepadRightElement = button;
             }
 			
-            button.GamepadRightElement = this.firstButton;
-            button.GamepadLeftElement = this.lastButton;
-            this.lastButton = button;
+            button.GamepadRightElement = this._firstButton;
+            button.GamepadLeftElement = this._lastButton;
+            this._lastButton = button;
         }
 
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
-            this.textLabel = new Label(this.textToShow, Skin) {FillParent = true};
-            this.textLabel.SetAlignment(Align.TopLeft);
-            this.textLabel.SetWrap(false);
-            this.textIndex = 0;
-            this.textLabel.SetText("");
-            this.scrollPane = new ScrollPane(this.textLabel, Skin);
+            this._textLabel = new Label(this._textToShow, Skin) {FillParent = true};
+            this._textLabel.SetAlignment(Align.TopLeft);
+            this._textLabel.SetWrap(false);
+            this._textIndex = 0;
+            this._textLabel.SetText("");
+            this._scrollPane = new ScrollPane(this._textLabel, Skin);
 
             var table = this.Window.AddElement(new Table());
             table.SetFillParent(true);
             table.Top().PadLeft(10).PadTop(10).PadRight(10).Row();
             table.Row();
-            table.Add(this.scrollPane).Height(105).Width(452);
+            table.Add(this._scrollPane).Height(105).Width(452);
             
-            this.buttonTable = new Table();
+            this._buttonTable = new Table();
             // layout
-            this.firstButton = null;
-            this.lastButton = null;
-            foreach (var text in this.buttonText.ToList())
+            this._firstButton = null;
+            this._lastButton = null;
+            foreach (var text in this._buttonText.ToList())
             {
                 var buttonControl = new TextButton(text, Skin)
                 {
-                    UserData = this.buttonText
+                    UserData = this._buttonText
                 };
                 buttonControl.UserData = text;
                 this.AddButton(buttonControl);
-                this.buttonTable.Add(buttonControl).Height(ButtonHeight).Width(ButtonWidth).SetPadRight(3).SetPadLeft(3);
+                this._buttonTable.Add(buttonControl).Height(ButtonHeight).Width(ButtonWidth).SetPadRight(3).SetPadLeft(3);
             }
             
             table.Row();
-            table.Add(this.buttonTable).Width(452).Height(30);
-            this.buttonTable.SetVisible(false);
-            this.buttonTable.Validate();
-            this.ui.Canvas.Stage.SetGamepadFocusElement(null);
+            table.Add(this._buttonTable).Width(452).Height(30);
+            this._buttonTable.SetVisible(false);
+            this._buttonTable.Validate();
+            this.Ui.Canvas.Stage.SetGamepadFocusElement(null);
         }
 
         private void CloseWindow(Element result, bool remove = true)
         {
             base.CloseWindow(remove);
-            this.done?.Invoke(result?.UserData as string);
+            this._done?.Invoke(result?.UserData as string);
         }
         
         public override void CloseWindow(bool remove = true)
@@ -100,14 +100,14 @@
 
         public override void DoAction()
         {
-            if (this.textIndex <= this.textToShow.Length)
+            if (this._textIndex <= this._textToShow.Length)
             {
-                this.textIndex = this.textToShow.Length;
-                this.textLabel.SetText(this.textToShow);
+                this._textIndex = this._textToShow.Length;
+                this._textLabel.SetText(this._textToShow);
             }
             else
             {
-                this.CloseWindow(this.ui.Canvas.Stage.GamepadFocusElement as Element);
+                this.CloseWindow(this.Ui.Canvas.Stage.GamepadFocusElement as Element);
             }
         }
 
@@ -118,35 +118,35 @@
                 return;
             }
 
-            if (this.textIndex <= this.textToShow.Length)
+            if (this._textIndex <= this._textToShow.Length)
             {
-                var text = this.textToShow.Substring(0, this.textIndex);
-                this.textLabel.SetText(text);
-                this.textIndex++;
-                this.textLabel.Validate();
-                this.scrollPane.Validate();
-                this.scrollPane.SetScrollY(this.scrollPane.GetMaxY());
+                var text = this._textToShow.Substring(0, this._textIndex);
+                this._textLabel.SetText(text);
+                this._textIndex++;
+                this._textLabel.Validate();
+                this._scrollPane.Validate();
+                this._scrollPane.SetScrollY(this._scrollPane.GetMaxY());
             }
             else
             {
-                if (this.buttonTable.IsVisible())
+                if (this._buttonTable.IsVisible())
                 {
                     return;
                 }
 
-                this.Window.GetStage().SetGamepadFocusElement(this.firstButton);
-                this.buttonTable.SetVisible(true);
-                this.buttonTable.Validate();
+                this.Window.GetStage().SetGamepadFocusElement(this._firstButton);
+                this._buttonTable.SetVisible(true);
+                this._buttonTable.Validate();
             }
         } 
 
         protected void Show(string text, Action<string> doneAction, IEnumerable<string> buttonTextList)
         {
-            this.done = doneAction;
-            this.textToShow = text ?? "";
-            this.buttonText = buttonTextList;
-            this.buttonTable?.SetVisible(false);
-            this.buttonTable?.Validate();
+            this._done = doneAction;
+            this._textToShow = text ?? "";
+            this._buttonText = buttonTextList;
+            this._buttonTable?.SetVisible(false);
+            this._buttonTable?.Validate();
             
             this.ShowWindow();
         }

@@ -333,32 +333,32 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="sprites">
-  <object id="54" name="store" type="NPC_Store" gid="148" x="511.333" y="831" width="32" height="48">
+  <object id="54" name="store" type="NpcStore" gid="148" x="511.333" y="831" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="2" name="store" type="NPC_Store" gid="698" x="543.667" y="834" width="32" height="32">
+  <object id="2" name="store" type="NpcStore" gid="698" x="543.667" y="834" width="32" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="55" name="heal" type="NPC_Heal" gid="156" x="544" y="640" width="32" height="48">
+  <object id="55" name="heal" type="NpcHeal" gid="156" x="544" y="640" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="56" name="npc" type="NPC" gid="182" x="800" y="992" width="32" height="48">
+  <object id="56" name="npc" type="Npc" gid="182" x="800" y="992" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="welcome to coste"/>
    </properties>
   </object>
-  <object id="57" name="npc" type="NPC" gid="63" x="960" y="448" width="32" height="48">
+  <object id="57" name="npc" type="Npc" gid="63" x="960" y="448" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>

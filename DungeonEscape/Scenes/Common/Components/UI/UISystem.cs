@@ -2,9 +2,9 @@
 {
     using Nez;
 
-    public class UISystem
+    public class UiSystem
     {
-        public UISystem(UICanvas canvas, bool noInput = false)
+        public UiSystem(UICanvas canvas, bool noInput = false)
         {
             this.Canvas = canvas;
             if (!noInput)

@@ -10,14 +10,14 @@
 
     public class MapObject: Component, ICollidable
     {
-        protected readonly TmxObject tmxObject;
-        protected readonly ObjectState state;
-        private readonly TmxTilesetTile mapTile;
-        private SpriteAnimator animator;
-        protected readonly IGame gameState;
-        private readonly TmxTileset tileSet;
+        protected readonly TmxObject TmxObject;
+        protected readonly ObjectState State;
+        private readonly TmxTilesetTile _mapTile;
+        private SpriteAnimator _animator;
+        protected readonly IGame GameState;
+        private readonly TmxTileset _tileSet;
 
-        public static MapObject Create(TmxObject tmxObject, ObjectState state, TmxMap map, UISystem ui, IGame gameState)
+        public static MapObject Create(TmxObject tmxObject, ObjectState state, TmxMap map, UiSystem ui, IGame gameState)
         {
             if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
             {
@@ -36,72 +36,72 @@
 
         protected MapObject(TmxObject tmxObject, ObjectState state, TmxMap map, IGame gameState)
         {
-            this.gameState = gameState;
-            this.tmxObject = tmxObject;
-            this.state = state;
+            this.GameState = gameState;
+            this.TmxObject = tmxObject;
+            this.State = state;
             if (tmxObject.Tile == null)
             {
                 return;
             }
 
-            this.mapTile = map.GetTilesetTile(tmxObject.Tile.Gid);
-            this.tileSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
+            this._mapTile = map.GetTilesetTile(tmxObject.Tile.Gid);
+            this._tileSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
         }
 
         public override void Initialize()
         {
             base.Initialize();
             
-            if (this.mapTile != null)
+            if (this._mapTile != null)
             {
-                var texture = this.mapTile.Image.Texture;
+                var texture = this._mapTile.Image.Texture;
                 var sprites =
-                    Nez.Textures.Sprite.SpritesFromAtlas(this.mapTile.Image.Texture, texture.Width, texture.Height);
-                this.animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
-                this.animator.RenderLayer = 20;
+                    Nez.Textures.Sprite.SpritesFromAtlas(this._mapTile.Image.Texture, texture.Width, texture.Height);
+                this._animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
+                this._animator.RenderLayer = 20;
             }
-            else if (this.tileSet != null)
+            else if (this._tileSet != null)
             {
-                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this.tileSet.Image.Texture,
-                    (int) this.tmxObject.Width, (int) this.tmxObject.Height);
-                this.animator =
+                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this._tileSet.Image.Texture,
+                    (int) this.TmxObject.Width, (int) this.TmxObject.Height);
+                this._animator =
                     this.Entity.AddComponent(
-                        new SpriteAnimator(sprites[this.tmxObject.Tile.Gid - this.tileSet.FirstGid]));
-                this.animator.RenderLayer = 20;
+                        new SpriteAnimator(sprites[this.TmxObject.Tile.Gid - this._tileSet.FirstGid]));
+                this._animator.RenderLayer = 20;
             }
 
             Rectangle box;
             Vector2 pos;
-            if (this.animator == null)
+            if (this._animator == null)
             {
                 pos = new Vector2
                 {
-                    X = this.tmxObject.X,
-                    Y = this.tmxObject.Y
+                    X = this.TmxObject.X,
+                    Y = this.TmxObject.Y
                 };
                 
                 box = new Rectangle
                 {
                     Y = 0,
                     X = 0,
-                    Width = (int)this.tmxObject.Width,
-                    Height = (int)this.tmxObject.Height
+                    Width = (int)this.TmxObject.Width,
+                    Height = (int)this.TmxObject.Height
                 };
             }
             else
             {
                 pos = new Vector2
                 {
-                    X = this.tmxObject.X + (int) (this.tmxObject.Width / 2.0),
-                    Y = this.tmxObject.Y - (int) (this.tmxObject.Height / 2.0)
+                    X = this.TmxObject.X + (int) (this.TmxObject.Width / 2.0),
+                    Y = this.TmxObject.Y - (int) (this.TmxObject.Height / 2.0)
                 };
                 
                 box = new Rectangle
                 {
-                    X = (int) (-this.tmxObject.Width / 2.0f),
-                    Y = (int) (-this.tmxObject.Height / 2.0f),
-                    Width = (int) this.tmxObject.Width,
-                    Height = (int) this.tmxObject.Height
+                    X = (int) (-this.TmxObject.Width / 2.0f),
+                    Y = (int) (-this.TmxObject.Height / 2.0f),
+                    Width = (int) this.TmxObject.Width,
+                    Height = (int) this.TmxObject.Height
                 };
             }
             
@@ -112,7 +112,7 @@
 
         protected void DisplayVisual(bool display = true)
         {
-            this.animator?.SetEnabled(display);
+            this._animator?.SetEnabled(display);
         }
 
         public virtual void OnHit(Party party)

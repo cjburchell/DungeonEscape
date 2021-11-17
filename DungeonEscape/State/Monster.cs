@@ -46,7 +46,7 @@ namespace Redpoint.DungeonEscape.State
 
         public int Defence { get; set;}
 
-        public int XP { get; set;}
+        public int Xp { get; set;}
 
         public int HealthConst { get; set;}
         

@@ -7,14 +7,14 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
         Door,
         Chest,
         Warp,
-        NPC,
+        Npc,
         Monster,
-        NPC_Heal,
-        NPC_Store,
-        NPC_Save,
-        NPC_Key,
-        NPC_PartyMember,
-        NPC_Monster,
+        NpcHeal,
+        NpcStore,
+        NpcSave,
+        NpcKey,
+        NpcPartyMember,
+        NpcMonster,
         Static
     }
 }

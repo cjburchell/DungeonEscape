@@ -9,7 +9,7 @@ namespace Redpoint.DungeonEscape.State
     using Newtonsoft.Json.Converters;
     using Random = Nez.Random;
 
-    public class Hero : Fighter
+    public class Hero : IFighter
     {
         public override string ToString()
         {
@@ -23,7 +23,7 @@ namespace Redpoint.DungeonEscape.State
         public Gender Gender { get; set; }
 
         public string Name { get; set; }
-        public int XP { get; set; }
+        public int Xp { get; set; }
         public int Health { get; set; }
         public int MaxHealth { get; set; }
         public bool RanAway => false;
@@ -73,7 +73,7 @@ namespace Redpoint.DungeonEscape.State
 
         public bool CheckLevelUp(IEnumerable<ClassStats> classLevels, IEnumerable<Spell> availableSpells, out string levelUpMessage)
         {
-            if (this.XP < this.NextLevel)
+            if (this.Xp < this.NextLevel)
             {
                 levelUpMessage = null;
                 return false;

@@ -4,7 +4,7 @@
 // ReSharper disable CollectionNeverUpdated.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable ClassNeverInstantiated.Global
-namespace DungeonEscape.State
+namespace Redpoint.DungeonEscape.State
 {
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;

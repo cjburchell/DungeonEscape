@@ -1,4 +1,4 @@
-﻿namespace DungeonEscape.State
+﻿namespace Redpoint.DungeonEscape.State
 {
     public enum Target
     {

@@ -1,5 +1,5 @@
 ﻿// ReSharper disable UnusedMember.Global
-namespace DungeonEscape.State
+namespace Redpoint.DungeonEscape.State
 {
     public enum Biome
     {

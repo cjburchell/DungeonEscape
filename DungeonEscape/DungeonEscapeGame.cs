@@ -1,4 +1,4 @@
-﻿namespace DungeonEscape
+﻿namespace Redpoint.DungeonEscape
 {
     using System.Collections.Generic;
     using System.IO;
@@ -12,7 +12,7 @@
     using Scenes.Fight;
     using State;
 
-    public class DungeonEscapeGame : Core, IGame
+    public class Game : Core, IGame
     {
         private const string saveFile = "save.json";
         private const int maxSaveSlots = 5;

@@ -6,6 +6,7 @@
         <TieredCompilation>false</TieredCompilation>
         <Company>Redpoint Games</Company>
         <Product>Dungeon Escape</Product>
+        <RootNamespace>Redpoint.DungeonEscape</RootNamespace>
     </PropertyGroup>
     <PropertyGroup>
         <ApplicationManifest>app.manifest</ApplicationManifest>

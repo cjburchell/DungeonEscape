@@ -1,5 +1,5 @@
 ﻿// ReSharper disable UnusedMember.Global
-namespace DungeonEscape.Scenes.Map.Components.Objects
+namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 {
     public enum SpriteType
     {

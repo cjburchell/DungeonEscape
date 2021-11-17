@@ -1,4 +1,4 @@
-﻿namespace DungeonEscape
+﻿namespace Redpoint.DungeonEscape
 {
     using System;
 
@@ -7,7 +7,7 @@
         [STAThread]
         public static void Main()
         {
-            using var game = new DungeonEscapeGame();
+            using var game = new Game();
             game.Run();
         }
     }

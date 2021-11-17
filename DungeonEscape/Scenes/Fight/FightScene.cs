@@ -1,4 +1,4 @@
-﻿namespace DungeonEscape.Scenes.Fight
+﻿namespace Redpoint.DungeonEscape.Scenes.Fight
 {
     using System;
     using System.Collections.Generic;

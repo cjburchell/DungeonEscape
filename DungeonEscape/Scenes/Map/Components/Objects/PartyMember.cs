@@ -1,4 +1,4 @@
-﻿namespace DungeonEscape.Scenes.Map.Components.Objects
+﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 {
     using System;
     using Common.Components.UI;

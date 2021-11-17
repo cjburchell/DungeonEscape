@@ -1,4 +1,4 @@
-﻿namespace DungeonEscape.Scenes.Map.Components.Objects
+﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 {
     using Common.Components.UI;
     using Nez.AI.Pathfinding;

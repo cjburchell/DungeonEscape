@@ -1,4 +1,4 @@
-﻿namespace DungeonEscape.Scenes.Map.Components
+﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components
 {
     using Microsoft.Xna.Framework;
     using Nez;

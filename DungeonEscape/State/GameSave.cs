@@ -1,4 +1,4 @@
-﻿namespace DungeonEscape.State
+﻿namespace Redpoint.DungeonEscape.State
 {
     using System;
     using System.Collections.Generic;

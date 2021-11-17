@@ -1,4 +1,4 @@
-﻿namespace DungeonEscape.Scenes.Common.Components.UI
+﻿namespace Redpoint.DungeonEscape.Scenes.Common.Components.UI
 {
     using System.Linq;
     using Microsoft.Xna.Framework;

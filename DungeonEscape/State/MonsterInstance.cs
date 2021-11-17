@@ -1,7 +1,7 @@
 ﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
-namespace DungeonEscape.State
+namespace Redpoint.DungeonEscape.State
 {
     using Nez;
     using Nez.UI;

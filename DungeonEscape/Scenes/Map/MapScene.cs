@@ -1,4 +1,4 @@
-namespace DungeonEscape.Scenes
+namespace Redpoint.DungeonEscape.Scenes
 {
     using System;
     using System.Collections.Generic;

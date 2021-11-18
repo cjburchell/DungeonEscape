@@ -16,7 +16,7 @@
         private readonly TmxObject _tmxObject;
         private readonly TmxMap _map;
         protected readonly IGame GameState;
-        private SpriteAnimator _animator;
+        protected SpriteAnimator Animator;
         private Mover _mover;
         private readonly bool _canMove;
         private MoveState _state = MoveState.Stopped;
@@ -29,7 +29,7 @@
         private float _elapsedTime;
         private float _nextElapsedTime = Random.NextInt(5) + 1;
         private readonly TmxTileset _tilSet;
-        private readonly int _baseId;
+        protected readonly int BaseId;
         private readonly bool _collideable;
 
         public static Sprite Create(TmxObject tmxObject, SpriteState state, TmxMap map, UiSystem ui, IGame gameState, AstarGridGraph graph)
@@ -59,9 +59,36 @@
             this._map = map;
             this.GameState = gameState;
             this._tilSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
-            this._baseId = tmxObject.Tile.Gid - this._tilSet.FirstGid;
+            this.BaseId = tmxObject.Tile.Gid - this._tilSet.FirstGid;
             this._canMove = bool.Parse(this._tmxObject.Properties["CanMove"]);
             this._collideable = bool.Parse(this._tmxObject.Properties["Collideable"]);
+        }
+        
+        protected virtual void SetupAnimation(List<Nez.Textures.Sprite> sprites)
+        {
+            this.Animator.AddAnimation("WalkDown", new[]
+            {
+                sprites[this.BaseId + 0],
+                sprites[this.BaseId + 1]
+            });
+
+            this.Animator.AddAnimation("WalkUp", new[]
+            {
+                sprites[this.BaseId + 6],
+                sprites[this.BaseId + 7]
+            });
+
+            this.Animator.AddAnimation("WalkRight", new[]
+            {
+                sprites[this.BaseId + 2],
+                sprites[this.BaseId + 3]
+            });
+
+            this.Animator.AddAnimation("WalkLeft", new[]
+            {
+                sprites[this.BaseId + 4],
+                sprites[this.BaseId + 5]
+            });
         }
 
         public override void OnAddedToEntity()
@@ -76,36 +103,14 @@
 
             this.Entity.SetPosition(pos);
             var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this._tilSet.Image.Texture, this._tilSet.TileWidth, this._tilSet.TileHeight,  this._tilSet.Spacing);
-            this._animator = this.Entity.AddComponent(new SpriteAnimator(sprites[this._baseId]));
-            this._animator.Speed = 0.5f;
-            this._animator.RenderLayer = 10;
-            this._animator.AddAnimation("WalkDown", new[]
-            {
-                sprites[this._baseId + 0],
-                sprites[this._baseId + 1]
-            });
+            this.Animator = this.Entity.AddComponent(new SpriteAnimator(sprites[this.BaseId]));
+            this.Animator.Speed = 0.5f;
+            this.Animator.RenderLayer = 10;
 
-            this._animator.AddAnimation("WalkUp", new[]
-            {
-                sprites[this._baseId + 6],
-                sprites[this._baseId + 7]
-            });
-
-            this._animator.AddAnimation("WalkRight", new[]
-            {
-                sprites[this._baseId + 2],
-                sprites[this._baseId + 3]
-            });
-
-            this._animator.AddAnimation("WalkLeft", new[]
-            {
-                sprites[this._baseId + 4],
-                sprites[this._baseId + 5]
-            });
-            
+            SetupAnimation(sprites);
             
             this._mover = this.Entity.AddComponent(new Mover());
-            this._animator.RenderLayer = 15;
+            this.Animator.RenderLayer = 15;
 
             var fullArea = new Rectangle
             {
@@ -209,7 +214,7 @@
                 }
                 case MoveState.Moving when this._path == null:
                     this._state = MoveState.Stopped;
-                    this._animator.Pause();
+                    this.Animator.Pause();
                     break;
                 case MoveState.Moving:
                 {
@@ -221,7 +226,7 @@
                         if (this._currentPathIndex >= this._path.Count)
                         {
                             this._state = MoveState.Stopped;
-                            this._animator.Pause();
+                            this.Animator.Pause();
                             return;
                         }
                     }
@@ -248,20 +253,20 @@
                         animation = "WalkDown";
                     }
 
-                    if (!this._animator.IsAnimationActive(animation))
+                    if (!this.Animator.IsAnimationActive(animation))
                     {
-                        this._animator.Play(animation);
+                        this.Animator.Play(animation);
                     }
                     else
                     {
-                        this._animator.UnPause();
+                        this.Animator.UnPause();
                     }
 
                     var movement = vector * MoveSpeed * Time.DeltaTime;
                     if (this._mover.CalculateMovement(ref movement, out _))
                     {
                         this._state = MoveState.Stopped;
-                        this._animator.Pause();
+                        this.Animator.Pause();
                         return;
                     }
 

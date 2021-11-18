@@ -1,6 +1,7 @@
 ﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 {
     using System;
+    using System.Collections.Generic;
     using Common.Components.UI;
     using Nez.AI.Pathfinding;
     using Nez.Tiled;
@@ -24,7 +25,33 @@
             this._ui = uiSystem;
         }
 
+        protected override void SetupAnimation(List<Nez.Textures.Sprite> sprites)
+        {
+            const int offset = 4;
+            this.Animator.AddAnimation("WalkUp", new[]
+            {
+                sprites[this.BaseId + 0 - offset],
+                sprites[this.BaseId + 1 - offset]
+            });
 
+            this.Animator.AddAnimation("WalkRight", new[]
+            {
+                sprites[this.BaseId + 2 - offset],
+                sprites[this.BaseId + 3 - offset]
+            });
+
+            this.Animator.AddAnimation("WalkDown", new[]
+            {
+                sprites[this.BaseId + 4 - offset],
+                sprites[this.BaseId + 5 - offset]
+            });
+
+            this.Animator.AddAnimation("WalkLeft", new[]
+            {
+                sprites[this.BaseId + 6 - offset],
+                sprites[this.BaseId + 7 - offset]
+            });
+        }
 
         public override bool OnAction(Party party)
         {

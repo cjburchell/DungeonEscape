@@ -4,6 +4,7 @@ variables:
   SOURCE_CODE_PATH: '*/*/'
   RESHARPER_SOLUTION_NAME: 'Games.sln'
   RESHARPER_EXCLUDE: 'Nez.Portable/**;DungeonEscape/Content/*.tsx'
+  RESHARPER_THRESHOLD: 0
   
 stages:
   - build
@@ -35,10 +36,11 @@ tests:
     - 'dotnet test --no-restore'
 
 resharper-scan:
-  image: registry.gitlab.com/cjburchell/reshaper:2021.2.2-410806016
+  image: registry.gitlab.com/cjburchell/reshaper:2021.2.2-411203010
   stage: scan
   script:
     - '/tools/jb inspectcode --exclude=$RESHARPER_EXCLUDE -o=RsInspection.xml --caches-home=temp $RESHARPER_SOLUTION_NAME --toolset=16.0'
+    - 'dotnet /tools/checkwarnings/checkwarnings.dll --file=RsInspection.xml --threshold=$RESHARPER_THRESHOLD'
   dependencies:
     - build
   artifacts:

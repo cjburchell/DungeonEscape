@@ -229,7 +229,7 @@
 </data>
  </layer>
  <objectgroup id="4" name="items">
-  <object id="1" name="Exit 0" type="Warp" x="600.667" y="96.6667" width="100" height="32">
+  <object id="1" name="Exit 0" type="Warp" x="608" y="96" width="100" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
@@ -267,14 +267,14 @@
     <property name="Collideable" type="bool" value="false"/>
    </properties>
   </object>
-  <object id="7" name="Exit 0" type="Warp" x="160" y="613.333" width="32" height="90.6667">
+  <object id="7" name="Exit 0" type="Warp" x="160" y="608" width="32" height="96">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
     <property name="WarpMap" type="int" value="0"/>
    </properties>
   </object>
-  <object id="8" name="Exit 0" type="Warp" x="1154" y="615.333" width="32" height="86.6667">
+  <object id="8" name="Exit 0" type="Warp" x="1152" y="608" width="32" height="96">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
@@ -287,7 +287,7 @@
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="10" name="Exit 0" type="Warp" x="591.333" y="1184" width="124.667" height="32">
+  <object id="10" name="Exit 0" type="Warp" x="576" y="1184" width="156.667" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
@@ -296,7 +296,7 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="sprites">
-  <object id="11" name="key" type="NpcKey" gid="148" x="320" y="800" width="32" height="48">
+  <object id="11" name="key" type="NpcKey" gid="165" x="320" y="800" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
@@ -308,7 +308,7 @@
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="2" name="store" type="NpcStore" gid="1178" x="320.333" y="447" width="32" height="32">
+  <object id="2" name="store" type="NpcStore" gid="1178" x="320" y="448" width="32" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
@@ -320,7 +320,7 @@
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="14" name="save" type="NpcSave" gid="63" x="896" y="352" width="32" height="48">
+  <object id="14" name="save" type="NpcSave" gid="37" x="896" y="352" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
@@ -335,7 +335,7 @@ the tower to the
 north</property>
    </properties>
   </object>
-  <object id="16" name="npc" type="Npc" gid="182" x="704" y="192" width="32" height="48">
+  <object id="16" name="npc" type="Npc" gid="54" x="704" y="192" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
@@ -343,7 +343,7 @@ north</property>
 knows the way</property>
    </properties>
   </object>
-  <object id="17" name="npc" type="Npc" gid="182" x="576" y="192" width="32" height="48">
+  <object id="17" name="npc" type="Npc" gid="54" x="576" y="192" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
@@ -351,7 +351,7 @@ knows the way</property>
 to be on the wall</property>
    </properties>
   </object>
-  <object id="18" name="npc" type="Npc" gid="182" x="224" y="192" width="32" height="48">
+  <object id="18" name="npc" type="Npc" gid="54" x="224" y="192" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
@@ -360,21 +360,21 @@ you can almost see
 the southern desert</property>
    </properties>
   </object>
-  <object id="19" name="npc" type="Npc" gid="182" x="224" y="1088" width="32" height="48">
+  <object id="19" name="npc" type="Npc" gid="54" x="224" y="1088" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="this is the walled city"/>
    </properties>
   </object>
-  <object id="20" name="npc" type="Npc" gid="182" x="1088" y="1088" width="32" height="48">
+  <object id="20" name="npc" type="Npc" gid="54" x="1088" y="1088" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="garding the wall is fun"/>
    </properties>
   </object>
-  <object id="21" name="npc" type="Npc" gid="182" x="1088" y="192" width="32" height="48">
+  <object id="21" name="npc" type="Npc" gid="54" x="1088" y="192" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
@@ -382,7 +382,7 @@ the southern desert</property>
 power of dragons</property>
    </properties>
   </object>
-  <object id="22" name="npc" type="Npc" gid="148" x="512" y="896" width="32" height="48">
+  <object id="22" name="npc" type="Npc" gid="122" x="512" y="896" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
@@ -392,6 +392,6 @@ himself Inside</property>
   </object>
  </objectgroup>
  <objectgroup id="6" name="objects">
-  <object id="1" name="spawn" type="Spawn" x="640" y="192" width="32" height="32"/>
+  <object id="1" name="spawn" type="Spawn" x="640" y="128" width="32" height="32"/>
  </objectgroup>
 </map>

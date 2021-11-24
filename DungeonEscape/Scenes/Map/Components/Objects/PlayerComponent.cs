@@ -28,6 +28,7 @@
         private GoldWindow _goldWindow;
         private Mover _mover;
         private VirtualButton _actionButton;
+        private float _distance;
 
         public PlayerComponent(IGame gameState, TmxMap map, Label debugText, List<RandomMonster> randomMonsters, UiSystem ui)
         {
@@ -155,6 +156,8 @@
             var overWater = this.IsOverWater();
             this._shipAnimator.SetEnabled(overWater);
             this._partyAnimations.First().SetEnabled(!overWater);
+
+            //this.Entity.AddComponent(new SpriteTrail());
         }
 
         public override void OnRemovedFromEntity()
@@ -263,6 +266,7 @@
                 return false;
             }
 
+            this._distance += movement.Length();
             this._mover.ApplyMovement(movement);
             return true;
         }
@@ -281,7 +285,7 @@
             {
                 var currentBiome = this.GetCurrentBiome();
                 this._debugText.SetText(
-                    $"B: {currentBiome}, G: {MapScene.ToMapGrid(this.Entity.Position, this._map)}, R: {this.Entity.Position}");
+                    $"B: {currentBiome}, G: {MapScene.ToMapGrid(this.Entity.Position, this._map)}, R: {this.Entity.Position} d: {this._distance}");
             }
             
             if (this._actionButton.IsReleased)
@@ -365,19 +369,29 @@
 
             var (x, y) = MapScene.ToMapGrid(this.Entity.Position, this._map);
             var tile = this._map.GetLayer<TmxLayer>("biomes")?.GetTile(x, y);
-            if (tile != null)
+            if (tile == null)
             {
-                return (Biome) (tile.Gid - 900);
+                return Biome.None;
             }
 
-            return Biome.None;
-
+            var tileset = this._map.GetTilesetForTileGid(tile.Gid);
+            return (Biome) (tile.Gid - tileset.FirstGid);
         }
 
         private bool CheckForMonsterEncounter()
         {
+            if (this._distance <= this._map.TileWidth)
+            {
+                return false;
+            }
+
+            this._distance = 0;
             var currentBiome = this.GetCurrentBiome();
-            return this._randomMonsters.Count(item => item.Biome == currentBiome || item.Biome == Biome.All) != 0 && Random.Chance(1.0f / 64.0f);
+            var hasRandomMonsters =
+                this._randomMonsters.Count(item => item.Biome == currentBiome || item.Biome == Biome.All) != 0;
+            
+            //  Todo: use parties agility to calculate encounters
+            return  hasRandomMonsters && Random.Chance(0.1f);
         }
         
         public void OnTriggerEnter(Collider other, Collider local)

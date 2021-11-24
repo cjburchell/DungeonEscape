@@ -107,7 +107,7 @@
             this.Animator.Speed = 0.5f;
             this.Animator.RenderLayer = 10;
 
-            SetupAnimation(sprites);
+            this.SetupAnimation(sprites);
             
             this._mover = this.Entity.AddComponent(new Mover());
             this.Animator.RenderLayer = 15;

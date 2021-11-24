@@ -37,11 +37,13 @@ namespace Redpoint.DungeonEscape.Scenes.Map
         private VirtualButton _showCommandWindowInput;
         private VirtualButton _showExitWindowInput;
         private UiSystem _ui;
+        private int? _spawnId;
 
-        public MapScene(IGame game, int mapId, Point? start = null)
+        public MapScene(IGame game, int mapId, int? spawnId, Point? start = null)
         {
             this._mapId = mapId;
             this._start = start;
+            this._spawnId = spawnId;
             this._gameState = game;
         }
 
@@ -107,13 +109,27 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             
             this._debugText = this._ui.Canvas.Stage.AddElement(new Label("", BasicWindow.Skin));
             this._debugText.SetPosition(10, 20);
+            //this._debugText.SetIsVisible(false);
 
-            var tiledEntity = this.CreateEntity("map");
-            var tiledMapRenderer = tiledEntity.AddComponent(new TiledMapRenderer(map,
-                this._gameState.Party.HasShip && this._mapId == 0 ? new[] {"wall"} : new[] {"wall", "water"}));
-            tiledMapRenderer.RenderLayer = 50;
-            tiledMapRenderer.SetLayersToRender("wall", "wall2", "water", "floor", "floor2");
-            map.GetObjectGroup("objects").Visible = false;
+            {
+                var tiledEntity = this.CreateEntity("map");
+                var tiledMapRenderer = tiledEntity.AddComponent(new TiledMapRenderer(map,
+                    this._gameState.Party.HasShip && this._mapId == 0 ? new[] {"wall"} : new[] {"wall", "water"}));
+                tiledMapRenderer.RenderLayer = 50;
+                tiledMapRenderer.SetLayersToRender("wall", "wall2", "water", "floor", "floor2");
+                
+                var topLeft = new Vector2(0, 0);
+                var bottomRight = new Vector2(map.TileWidth * map.Width,
+                    map.TileWidth * map.Height);
+                tiledEntity.AddComponent(new CameraBounds(topLeft, bottomRight));
+            }
+
+            {
+                var ceilingEntity = this.CreateEntity("ceiling");
+                var ceilingMapRenderer = ceilingEntity.AddComponent(new TiledMapRenderer(map, null, false));
+                ceilingMapRenderer.RenderLayer = 5;
+                ceilingMapRenderer.SetLayersToRender("ceiling", "ceiling2");
+            }
 
             var mapState = this._gameState.MapStates.FirstOrDefault(item => item.Id == this._mapId);
             if (mapState == null)
@@ -149,18 +165,33 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                 var spriteEntity = this.CreateEntity(item.Name);
                 spriteEntity.AddComponent(Sprite.Create(item, state, map, this._ui, this._gameState, graph));
             }
-
-            var topLeft = new Vector2(0, 0);
-            var bottomRight = new Vector2(map.TileWidth * map.Width,
-                map.TileWidth * map.Height);
-            tiledEntity.AddComponent(new CameraBounds(topLeft, bottomRight));
-
+            
             var spawn = new Vector2();
             if (this._start == null)
             {
-                var spawnObject = map.GetObjectGroup("objects").Objects["spawn"];
-                spawn.X = spawnObject.X + map.TileWidth / 2.0f;
-                spawn.Y = spawnObject.Y - map.TileHeight / 2.0f;
+                if (this._spawnId.HasValue)
+                {
+                    var key = $"spawn{this._spawnId.Value}";
+                    if (map.GetObjectGroup("objects") != null &&
+                        map.GetObjectGroup("objects").Objects.TryGetValue(key, out var spawnObject))
+                    {
+                        spawn.X = spawnObject.X + spawnObject.Width / 2.0f;
+                        spawn.Y = spawnObject.Y + spawnObject.Height / 2.0f;
+                    }
+                }
+                else if (this._mapId == 0 && this._gameState.Party.OverWorldPosition != Point.Zero)
+                {
+                    spawn = ToRealLocation(this._gameState.Party.OverWorldPosition, map);
+                }
+                else
+                {
+                    if (map.GetObjectGroup("objects") != null &&
+                        map.GetObjectGroup("objects").Objects.TryGetValue("spawn", out var spawnObject))
+                    {
+                        spawn.X = spawnObject.X + spawnObject.Width / 2.0f;
+                        spawn.Y = spawnObject.Y + spawnObject.Height / 2.0f;
+                    }
+                }
             }
             else
             {
@@ -168,8 +199,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             }
 
             var playerEntity = this.CreateEntity("player", spawn);
-
-
+            
             playerEntity.AddComponent(new PlayerComponent(this._gameState, map, this._debugText, this._randomMonsters, this._ui));
 
             this.Camera.Entity.AddComponent(new FollowCamera(playerEntity, FollowCamera.CameraStyle.CameraWindow));
@@ -213,10 +243,10 @@ namespace Redpoint.DungeonEscape.Scenes.Map
 
         [Command("map", "switches to map")]
         // ReSharper disable once UnusedMember.Global
-        public static void SetMap(int? mapId = null, Point? point = null)
+        public static void SetMap(int? mapId = null)
         {
             var game = Core.Instance as IGame;
-            game?.SetMap(mapId, point);
+            game?.SetMap(mapId);
         }
 
         public override void Update()

@@ -59,7 +59,7 @@
         {
             this._isPaused = this._deferredPause;
         }
-        
+
         public void LoadGame(GameSave saveGame)
         {
             this.Party = saveGame.Party;
@@ -70,12 +70,12 @@
             }
 
             this.InGame = true;
-            this.SetMap(this.Party.SavedMapId, this.Party.SavedPoint);
+            this.SetMap(this.Party.SavedMapId, null, this.Party.SavedPoint);
         }
 
         public void ResumeGame()
         {
-            this.SetMap(this.Party.CurrentMapId, this.Party.CurrentPosition);
+            this.SetMap(this.Party.CurrentMapId, null, this.Party.CurrentPosition);
         }
 
         public void ShowMainMenu()
@@ -89,11 +89,11 @@
             }));
         }
 
-        public void SetMap(int? mapId, Point? point)
+        public void SetMap(int? mapId, int? spawnId , Point? point)
         {
             mapId ??= 0;
             this.IsPaused = true;
-            var map = new MapScene(this, mapId.Value, point);
+            var map = new MapScene(this, mapId.Value, spawnId, point);
             var transition = new FadeTransition(() =>
             {
                 map.Initialize();

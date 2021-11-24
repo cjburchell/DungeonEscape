@@ -34,7 +34,7 @@
         void LoadGame(GameSave saveGame);
         void ResumeGame();
         void ShowMainMenu();
-        void SetMap(int? mapId = null, Point? point = null);
+        void SetMap(int? mapId = null, int? spawnId = null, Point? point = null);
         void ShowLoadQuest();
 
         void StartFight(IEnumerable<Monster> monsters);

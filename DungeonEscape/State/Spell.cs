@@ -114,7 +114,7 @@ namespace Redpoint.DungeonEscape.State
                 return $"{caster.Name} casts {this.Name} but you have never saved your game";
             }
 
-            gameState.SetMap(gameState.Party.SavedMapId, gameState.Party.SavedPoint);
+            gameState.SetMap(gameState.Party.SavedMapId, null, gameState.Party.SavedPoint);
             return null;
         }
 

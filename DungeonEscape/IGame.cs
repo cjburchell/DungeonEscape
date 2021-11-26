@@ -12,6 +12,8 @@
         void Save();
 
         Party Party { get; }
+        
+        Names Names { get; }
 
         bool IsPaused { get; set; }
     
@@ -34,7 +36,7 @@
         void LoadGame(GameSave saveGame);
         void ResumeGame();
         void ShowMainMenu();
-        void SetMap(int? mapId = null, int? spawnId = null, Point? point = null);
+        void SetMap(int? mapId = null, int? spawnId = null, Vector2? point = null);
         void ShowLoadQuest();
 
         void StartFight(IEnumerable<Monster> monsters);

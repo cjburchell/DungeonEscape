@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="35" height="35" tilewidth="32" tileheight="32" infinite="0" nextlayerid="9" nextobjectid="2">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="35" height="35" tilewidth="32" tileheight="32" infinite="0" nextlayerid="9" nextobjectid="4">
  <tileset firstgid="1" source="tiles.tsx"/>
  <tileset firstgid="37" source="npc.tsx"/>
  <tileset firstgid="258" source="objects.tsx"/>
  <tileset firstgid="271" source="ship.tsx"/>
  <tileset firstgid="279" source="dungeon.tsx"/>
  <tileset firstgid="759" source="tower.tsx"/>
+ <tileset firstgid="1239" source="hero.tsx"/>
  <layer id="2" name="water" width="35" height="35">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -465,7 +466,18 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="5" name="sprites"/>
+ <objectgroup id="5" name="sprites">
+  <object id="3" name="Azura" type="NpcPartyMember" gid="1299" x="896" y="160" width="32" height="48">
+   <properties>
+    <property name="CanMove" type="bool" value="true"/>
+    <property name="Class" value="Wizard"/>
+    <property name="Collideable" type="bool" value="true"/>
+    <property name="Gender" value="Female"/>
+    <property name="Level" type="int" value="3"/>
+    <property name="Text" value="Hey I am lost can I tag along?"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup id="6" name="objects">
   <object id="1" name="spawn" type="Spawn" x="512" y="992" width="32" height="32"/>
  </objectgroup>

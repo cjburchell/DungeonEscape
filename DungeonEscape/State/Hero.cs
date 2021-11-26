@@ -53,14 +53,14 @@ namespace Redpoint.DungeonEscape.State
             this.Id = Guid.NewGuid().ToString();
         }
 
-        public void RollStats(IEnumerable<ClassStats> classLevels)
+        public void RollStats(IEnumerable<ClassStats> classLevels, int level = 1)
         {
             this.Level = 1;
-            var classStats = classLevels.First(stats => stats.Class == this.Class);
+            var classStatList = classLevels.ToList();
+            var classStats = classStatList.First(stats => stats.Class == this.Class);
             this.NextLevel = classStats.FirstLevel;
             
             // Roll starting stats
-            
             this.MaxHealth = classStats.Stats.First( item=> item.Type == StatType.Health).RollStartValue();
             this.Attack = classStats.Stats.First( item=> item.Type == StatType.Attack).RollStartValue();
             this.Defence = classStats.Stats.First(item => item.Type == StatType.Defence).RollStartValue();
@@ -69,6 +69,11 @@ namespace Redpoint.DungeonEscape.State
 
             this.Health = this.MaxHealth;
             this.Magic = this.MaxMagic;
+            while (this.Level < level)
+            {
+                this.Xp = this.NextLevel;
+                this.CheckLevelUp(classStatList, null, out _);
+            }
         }
 
         public bool CheckLevelUp(IEnumerable<ClassStats> classLevels, IEnumerable<Spell> availableSpells, out string levelUpMessage)
@@ -80,22 +85,50 @@ namespace Redpoint.DungeonEscape.State
             }
 
             var oldLevel = this.Level;
-            ++this.Level;
+            this.Level++;
             var classStats = classLevels.First(stats => stats.Class == this.Class);
             this.NextLevel = this.NextLevel * classStats.NextLevelFactor + Random.NextInt(this.NextLevel / classStats.NextLevelRandomPercent);
             
             levelUpMessage = $"{this.Name} has advanced to level {this.Level}\n";
             
-           
-            this.MaxHealth += classStats.Stats.First( item=> item.Type == StatType.Health).RollNextValue();
-            this.Attack += classStats.Stats.First( item=> item.Type == StatType.Attack).RollNextValue();
-            this.Defence += classStats.Stats.First(item => item.Type == StatType.Defence).RollNextValue();
-            this.MaxMagic += classStats.Stats.First( item=> item.Type == StatType.Magic).RollNextValue();
-            this.Agility = classStats.Stats.First( item=> item.Type == StatType.Agility).RollNextValue();
-
-            levelUpMessage = availableSpells.Where(spell => spell.MinLevel <= this.Level && spell.MinLevel > oldLevel && spell.Classes.Contains(this.Class)).Aggregate(levelUpMessage, (current, spell) => current + $"   Has learned the {spell.Name} Spell\n");
-            levelUpMessage += $"   Next Level is {this.NextLevel} XP\n";
+            var health = classStats.Stats.First( item=> item.Type == StatType.Health).RollNextValue();
+            if (health != 0)
+            {
+                levelUpMessage += $"Health +{health}\n";
+            }
+            var attack = classStats.Stats.First( item=> item.Type == StatType.Attack).RollNextValue();
+            if (attack != 0)
+            {
+                levelUpMessage += $"Attack +{attack}\n";
+            }
+            var defence = classStats.Stats.First(item => item.Type == StatType.Defence).RollNextValue();
+            if (defence != 0)
+            {
+                levelUpMessage += $"Defence +{defence}\n";
+            }
+            var magic = classStats.Stats.First( item=> item.Type == StatType.Magic).RollNextValue();
+            if (magic != 0)
+            {
+                levelUpMessage += $"Magic +{magic}\n";
+            }
+            var agility = classStats.Stats.First( item=> item.Type == StatType.Agility).RollNextValue();
+            if (agility != 0)
+            {
+                levelUpMessage += $"Agility +{agility}\n";
+            }
             
+            this.MaxHealth += health;
+            this.Attack += attack;
+            this.Defence += defence;
+            this.MaxMagic += magic;
+            this.Agility += agility;
+
+            if (availableSpells != null)
+            {
+                levelUpMessage = availableSpells.Where(spell => spell.MinLevel <= this.Level && spell.MinLevel > oldLevel && spell.Classes.Contains(this.Class)).Aggregate(levelUpMessage, (current, spell) => current + $"Has learned the {spell.Name} Spell\n");
+            }
+            
+            levelUpMessage += $"Next Level is {this.NextLevel} XP\n";
             
             this.Magic = this.MaxMagic;
             this.Health = this.MaxHealth;

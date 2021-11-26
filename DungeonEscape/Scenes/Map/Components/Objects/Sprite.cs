@@ -25,7 +25,7 @@
         private const float MoveSpeed = 75;
         private int _currentPathIndex;
         // ReSharper disable once NotAccessedField.Local
-        private readonly SpriteState _spriteState;
+        protected readonly SpriteState SpriteState;
         private float _elapsedTime;
         private float _nextElapsedTime = Random.NextInt(5) + 1;
         private readonly TmxTileset _tilSet;
@@ -53,7 +53,7 @@
         
         protected Sprite(TmxObject tmxObject, SpriteState state, TmxMap map, IGame gameState, AstarGridGraph graph)
         {
-            this._spriteState = state;
+            this.SpriteState = state;
             this._graph = graph;
             this._tmxObject = tmxObject;
             this._map = map;
@@ -235,22 +235,27 @@
                     var angle = (float) Math.Atan2(y - p1.Y, x - p1.X);
                     var vector = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
                     var animation = "WalkDown";
-                    if (vector.X < 0)
+                    if (Math.Abs(vector.X) > Math.Abs(vector.Y))
                     {
-                        animation = "WalkLeft";
+                        if (vector.X < 0)
+                        {
+                            animation = "WalkLeft";
+                        }
+                        else if (vector.X > 0)
+                        {
+                            animation = "WalkRight";
+                        }
                     }
-                    else if (vector.X > 0)
+                    else
                     {
-                        animation = "WalkRight";
-                    }
-
-                    if (vector.Y < 0)
-                    {
-                        animation = "WalkUp";
-                    }
-                    else if (vector.Y > 0)
-                    {
-                        animation = "WalkDown";
+                        if (vector.Y < 0)
+                        {
+                            animation = "WalkUp";
+                        }
+                        else if (vector.Y > 0)
+                        {
+                            animation = "WalkDown";
+                        }
                     }
 
                     if (!this.Animator.IsAnimationActive(animation))

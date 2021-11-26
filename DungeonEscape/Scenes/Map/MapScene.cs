@@ -30,7 +30,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
         public const SceneResolutionPolicy SceneResolution = SceneResolutionPolicy.ShowAll;
         
         private readonly int _mapId;
-        private readonly Point? _start;
+        private readonly Vector2? _start;
         private readonly IGame _gameState;
         private Label _debugText;
         private List<RandomMonster> _randomMonsters = new List<RandomMonster>();
@@ -39,7 +39,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
         private UiSystem _ui;
         private int? _spawnId;
 
-        public MapScene(IGame game, int mapId, int? spawnId, Point? start = null)
+        public MapScene(IGame game, int mapId, int? spawnId, Vector2? start = null)
         {
             this._mapId = mapId;
             this._start = start;
@@ -147,6 +147,12 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                     state = new ObjectState {Id = item.Id};
                     mapState.Objects.Add(state);
                 }
+                
+                if (!state.IsActive)
+                {
+                    continue;
+                }
+                
                 var itemEntity = this.CreateEntity(item.Name);
                 itemEntity.AddComponent(MapObject.Create(item, state,
                     map, this._ui, this._gameState));
@@ -162,6 +168,12 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                     state = new SpriteState {Id = item.Id};
                     mapState.Sprites.Add(state);
                 }
+
+                if (!state.IsActive)
+                {
+                    continue;
+                }
+
                 var spriteEntity = this.CreateEntity(item.Name);
                 spriteEntity.AddComponent(Sprite.Create(item, state, map, this._ui, this._gameState, graph));
             }
@@ -179,9 +191,9 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                         spawn.Y = spawnObject.Y + spawnObject.Height / 2.0f;
                     }
                 }
-                else if (this._mapId == 0 && this._gameState.Party.OverWorldPosition != Point.Zero)
+                else if (this._mapId == 0 && this._gameState.Party.OverWorldPosition != Vector2.Zero)
                 {
-                    spawn = ToRealLocation(this._gameState.Party.OverWorldPosition, map);
+                    spawn = this._gameState.Party.OverWorldPosition;
                 }
                 else
                 {
@@ -195,15 +207,30 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             }
             else
             {
-                spawn = ToRealLocation(this._start.Value, map);
+                spawn = this._start.Value;
             }
 
-            var playerEntity = this.CreateEntity("player", spawn);
-            
-            playerEntity.AddComponent(new PlayerComponent(this._gameState, map, this._debugText, this._randomMonsters, this._ui));
+            var first = true;
+            Entity lastEntity = null;
+            PlayerComponent player = null;
+            foreach (var hero in this._gameState.Party.Members)
+            {
+                if (first)
+                {
+                    var playerEntity = this.CreateEntity(hero.Name, spawn);
+                    player = playerEntity.AddComponent(new PlayerComponent( hero, this._gameState, map, this._debugText, this._randomMonsters, this._ui)).GetComponent<PlayerComponent>();
+                    this.Camera.Entity.AddComponent(new FollowCamera(playerEntity, FollowCamera.CameraStyle.CameraWindow));
+                    first = false;
+                    lastEntity = playerEntity;
+                }
+                else
+                {
+                    var followerEntity = this.CreateEntity(hero.Name, spawn);
+                    followerEntity.AddComponent(new Follower( hero, lastEntity, player, this._gameState));
+                    lastEntity = followerEntity;
+                }
+            }
 
-            this.Camera.Entity.AddComponent(new FollowCamera(playerEntity, FollowCamera.CameraStyle.CameraWindow));
-            
             this._showCommandWindowInput = new VirtualButton();
             this._showCommandWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.E));
             this._showCommandWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.X));

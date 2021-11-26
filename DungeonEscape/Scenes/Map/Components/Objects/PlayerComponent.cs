@@ -1,5 +1,6 @@
 ﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Common.Components.UI;
@@ -10,6 +11,7 @@
     using Nez.Tiled;
     using Nez.UI;
     using State;
+    using Random = Nez.Random;
 
     public class PlayerComponent : Component, IUpdatable, ITriggerListener
     {
@@ -18,7 +20,7 @@
         private readonly List<RandomMonster> _randomMonsters;
         private readonly UiSystem _ui;
         private const float MoveSpeed = 150;
-        private readonly List<SpriteAnimator> _partyAnimations = new List<SpriteAnimator>();
+        private SpriteAnimator _playerAnimation;
         private SpriteAnimator _shipAnimator;
         private VirtualIntegerAxis _xAxisInput;
         private VirtualIntegerAxis _yAxisInput;
@@ -29,14 +31,16 @@
         private Mover _mover;
         private VirtualButton _actionButton;
         private float _distance;
+        private readonly Hero _hero;
 
-        public PlayerComponent(IGame gameState, TmxMap map, Label debugText, List<RandomMonster> randomMonsters, UiSystem ui)
+        public PlayerComponent(Hero hero, IGame gameState, TmxMap map, Label debugText, List<RandomMonster> randomMonsters, UiSystem ui)
         {
             this._map = map;
             this._debugText = debugText;
             this._randomMonsters = randomMonsters;
             this._ui = ui;
             this._gameState = gameState;
+            this._hero = hero;
         }
         
         public override void OnAddedToEntity()
@@ -47,41 +51,38 @@
             {
                 var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
                 var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, heroHeight);
+                
+                var animationBaseIndex = (int) this._hero.Class * 16 + (int) this._hero.Gender * 8;
+                var animator = this.Entity.AddComponent(new SpriteAnimator(sprites[animationBaseIndex + 4]));
+                animator.Speed = 0.5f;
+                animator.RenderLayer = 10;
 
-                foreach (var hero in this._gameState.Party.Members)
+                animator.AddAnimation("WalkDown", new[]
                 {
-                    var animationBaseIndex = (int) hero.Class * 16 + (int) hero.Gender * 8;
-                    var animator = this.Entity.AddComponent(new SpriteAnimator(sprites[animationBaseIndex + 4]));
-                    animator.Speed = 0.5f;
-                    animator.RenderLayer = 10;
+                    sprites[animationBaseIndex + 4],
+                    sprites[animationBaseIndex + 5]
+                });
 
-                    animator.AddAnimation("WalkDown", new[]
-                    {
-                        sprites[animationBaseIndex + 4],
-                        sprites[animationBaseIndex + 5]
-                    });
+                animator.AddAnimation("WalkUp", new[]
+                {
+                    sprites[animationBaseIndex + 0],
+                    sprites[animationBaseIndex + 1]
+                });
 
-                    animator.AddAnimation("WalkUp", new[]
-                    {
-                        sprites[animationBaseIndex + 0],
-                        sprites[animationBaseIndex + 1]
-                    });
+                animator.AddAnimation("WalkRight", new[]
+                {
+                    sprites[animationBaseIndex + 2],
+                    sprites[animationBaseIndex + 3]
+                });
 
-                    animator.AddAnimation("WalkRight", new[]
-                    {
-                        sprites[animationBaseIndex + 2],
-                        sprites[animationBaseIndex + 3]
-                    });
+                animator.AddAnimation("WalkLeft", new[]
+                {
+                    sprites[animationBaseIndex + 6],
+                    sprites[animationBaseIndex + 7]
+                });
 
-                    animator.AddAnimation("WalkLeft", new[]
-                    {
-                        sprites[animationBaseIndex + 6],
-                        sprites[animationBaseIndex + 7]
-                    });
-
-                    this._partyAnimations.Add(animator);
-                    animator.SetEnabled(false);
-                }
+                this._playerAnimation = animator;
+                this._playerAnimation.SetEnabled(false);
             }
 
             {
@@ -155,7 +156,7 @@
 
             var overWater = this.IsOverWater();
             this._shipAnimator.SetEnabled(overWater);
-            this._partyAnimations.First().SetEnabled(!overWater);
+            this._playerAnimation.SetEnabled(!overWater);
 
             //this.Entity.AddComponent(new SpriteTrail());
         }
@@ -167,7 +168,7 @@
             this._actionButton.Deregister();
         }
 
-        private bool IsOverWater()
+        public bool IsOverWater()
         {
             var (x, y) = MapScene.ToMapGrid(this.Entity.Position, this._map);
             var tile = this._map.GetLayer<TmxLayer>("water").GetTile(x, y);
@@ -178,17 +179,26 @@
         {
             var overWater = this.IsOverWater();
             this._shipAnimator.SetEnabled(overWater);
-            this._partyAnimations.First().SetEnabled(!overWater);
+            this._playerAnimation.SetEnabled(!overWater);
             // handle movement and animations    
             var moveDir = new Vector2(this._xAxisInput.Value, this._yAxisInput.Value);
             
             if (moveDir == Vector2.Zero)
             {
                 this._shipAnimator.Pause();
-                this._partyAnimations.First().Pause();
+                this._playerAnimation.Pause();
                 return false;
             }
-            
+
+            if (Math.Abs(moveDir.X) > Math.Abs(moveDir.Y))
+            {
+                moveDir.Y = 0;
+            }
+            else
+            {
+                moveDir.X = 0;
+            }
+
             var animation = "WalkDown";
             if (moveDir.X < 0)
             {
@@ -237,19 +247,19 @@
 
             movement = newPoint - this.Entity.Position;
 
-            this._gameState.Party.CurrentPosition = MapScene.ToMapGrid(this.Entity.Position, this._map);
+            this._gameState.Party.CurrentPosition = this.Entity.Position;
             if (this._gameState.Party.CurrentMapId == 0)
             {
                 this._gameState.Party.OverWorldPosition = this._gameState.Party.CurrentPosition;
             }
 
-            if (! this._partyAnimations.First().IsAnimationActive(animation))
+            if (! this._playerAnimation.IsAnimationActive(animation))
             {
-                this._partyAnimations.First().Play(animation);
+                this._playerAnimation.Play(animation);
             }
             else
             {
-                this._partyAnimations.First().UnPause();
+                this._playerAnimation.UnPause();
             }
 
             if (!this._shipAnimator.IsAnimationActive(animation))
@@ -374,7 +384,7 @@
                 return Biome.None;
             }
 
-            var tileset = this._map.GetTilesetForTileGid(tile.Gid);
+            var tileset = tile.Tileset;
             return (Biome) (tile.Gid - tileset.FirstGid);
         }
 

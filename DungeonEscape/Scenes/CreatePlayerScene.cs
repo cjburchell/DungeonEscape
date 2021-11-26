@@ -13,6 +13,11 @@
         {
             base.Initialize();
             
+            if (!(Core.Instance is IGame game))
+            {
+                return;
+            }
+            
             this.ClearColor = Color.Black;
             this.SetDesignResolution(MapScene.ScreenWidth, MapScene.ScreenHeight,
                 MapScene.SceneResolution);
@@ -25,26 +30,22 @@
             table.SetFillParent(true);
             table.Top().PadLeft(10).PadTop(50);
             table.Add(new Label("Name:", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).GetElement<Label>();
-            var textField = table.Add(new TextField("player", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).GetElement<TextField>();
+            var name = game.Names.Male[Random.NextInt(game.Names.Male.Count)];
+            var textField = table.Add(new TextField(name, BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).GetElement<TextField>();
             table.Row().SetPadTop(20);
             var playButton = table.Add(new TextButton("Start", BasicWindow.Skin)).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).GetElement<TextButton>();
             playButton.OnClicked += _ =>
             {
-                if (!(Core.Instance is IGame game))
-                {
-                    return;
-                }
-
                 var party = new Party();
                 var hero = new Hero
                 {
                     Name = textField.GetText(),
-                    Class = Class.Hero
+                    Class = Class.Hero,
+                    Gender = Gender.Male
                 };
-                
                 hero.RollStats(game.ClassLevelStats);
                 party.Members.Add(hero);
-
+                
                 game.LoadGame(new GameSave {Party = party});
             };
             playButton.ShouldUseExplicitFocusableControl = true;

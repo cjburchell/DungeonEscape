@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="3">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="5">
  <tileset firstgid="1" source="tiles.tsx"/>
  <tileset firstgid="37" source="npc.tsx"/>
  <tileset firstgid="258" source="objects.tsx"/>
@@ -8,6 +8,7 @@
  <tileset firstgid="759" source="outdoors.tsx"/>
  <tileset firstgid="1239" source="edge.tsx"/>
  <tileset firstgid="1302" source="overworld.tsx"/>
+ <tileset firstgid="1782" source="hero.tsx"/>
  <layer id="2" name="water" width="50" height="50">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -342,6 +343,16 @@
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Text" value="eeek"/>
+   </properties>
+  </object>
+  <object id="4" name="Viktas" type="NpcPartyMember" gid="1818" x="704" y="352" width="32" height="48">
+   <properties>
+    <property name="CanMove" type="bool" value="true"/>
+    <property name="Class" value="Cleric"/>
+    <property name="Collideable" type="bool" value="true"/>
+    <property name="Gender" value="Male"/>
+    <property name="Level" type="int" value="2"/>
+    <property name="Text" value="Looking for some help? Can I come along?"/>
    </properties>
   </object>
  </objectgroup>

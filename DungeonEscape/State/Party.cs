@@ -7,16 +7,16 @@
     public class Party
     {
         public const int MaxItems = 30;
-        public Point OverWorldPosition { get; set; } = Point.Zero;
+        public Vector2 OverWorldPosition { get; set; } = Vector2.Zero;
 
-        public Point? SavedPoint { get; set; }
+        public Vector2? SavedPoint { get; set; }
         public int? SavedMapId { get; set; }
         
         public bool HasShip { get; set; }
         public List<Hero> Members { get; } = new List<Hero>();
         public int Gold { get; set; }
         public List<ItemInstance> Items { get; } = new List<ItemInstance>();
-        public Point CurrentPosition { get; set; }
+        public Vector2 CurrentPosition { get; set; }
         public int CurrentMapId { get; set; }
 
         public bool CanOpenChest(int level)

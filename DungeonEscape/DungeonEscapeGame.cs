@@ -89,7 +89,7 @@
             }));
         }
 
-        public void SetMap(int? mapId, int? spawnId , Point? point)
+        public void SetMap(int? mapId, int? spawnId , Vector2? point)
         {
             mapId ??= 0;
             this.IsPaused = true;
@@ -131,6 +131,8 @@
             PauseOnFocusLost = true;
 
             this.ReloadSaveGames();
+            
+            this.Names = JsonConvert.DeserializeObject<Names>(File.ReadAllText("Content/names.json"));
             
             this.ClassLevelStats = JsonConvert.DeserializeObject<List<ClassStats>>(File.ReadAllText("Content/classLevels.json"));
 
@@ -183,6 +185,8 @@
                 return splash;
             }));
         }
+
+        public Names Names { get; private set; }
 
         public void ReloadSaveGames()
         {

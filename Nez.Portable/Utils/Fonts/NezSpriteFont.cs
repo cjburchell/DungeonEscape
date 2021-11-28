@@ -7,10 +7,13 @@ using System.Text;
 
 namespace Nez
 {
+	using BitmapFonts;
+
 #if !FNA
 	public class NezSpriteFont : IFont
 	{
 		public float LineSpacing => _font.LineSpacing;
+		public Padding Padding { get; } = new Padding();
 
 		SpriteFont _font;
 		readonly Dictionary<char, SpriteFont.Glyph> _glyphs;
@@ -20,11 +23,14 @@ namespace Nez
 		/// </summary>
 		Matrix2D _transformationMatrix = Matrix2D.Identity;
 
+		private readonly float _spaceWidth;
+
 
 		public NezSpriteFont(SpriteFont font)
 		{
 			_font = font;
 			_glyphs = font.GetGlyphs();
+			_spaceWidth = this.MeasureString(this._font.DefaultCharacter.ToString()).X;
 		}
 
 
@@ -186,6 +192,109 @@ namespace Nez
 		{
 			var source = new FontCharacterSource(text);
 			DrawInto(batcher, ref source, position, color, rotation, origin, scale, effect, depth);
+		}
+
+		public float DefaultCharacterXAdvance => GetXAdvance(this._font.DefaultCharacter.Value);
+
+		public float GetXAdvance(char c)
+		{
+			return 0;
+		}
+
+		public float DefaultCharacterWidth => this.MeasureString(this._font.DefaultCharacter.ToString()).X;
+
+		public string TruncateText(string text, string ellipsis, float maxLineWidth)
+		{
+			if (maxLineWidth < _spaceWidth)
+				return string.Empty;
+
+			var size = MeasureString(text);
+
+			// do we even need to truncate?
+			var ellipsisWidth = MeasureString(ellipsis).X;
+			if (size.X > maxLineWidth)
+			{
+				var sb = new StringBuilder();
+
+				var width = 0.0f;
+				char? currentChar = null;
+				var offsetX = 0.0f;
+
+				// determine how many chars we can fit in maxLineWidth - ellipsisWidth
+				for (var i = 0; i < text.Length; i++)
+				{
+					var c = text[i];
+
+					// we don't deal with line breaks or tabs
+					if (c == '\r' || c == '\n')
+						continue;
+
+					if (currentChar.HasValue)
+						offsetX += this._font.Spacing + this.GetXAdvance(currentChar.Value);
+
+					if (this._font.Characters.Contains(c))
+						currentChar = c;
+					else
+						currentChar = this._font.DefaultCharacter;
+
+					var proposedWidth = offsetX + this.GetXAdvance(currentChar.Value) + this._font.Spacing;
+					if (proposedWidth > width)
+						width = proposedWidth;
+
+					if (width < maxLineWidth - ellipsisWidth)
+					{
+						sb.Append(c);
+					}
+					else
+					{
+						// no more room. append our ellipsis and get out of here
+						sb.Append(ellipsis);
+						break;
+					}
+				}
+
+				return sb.ToString();
+			}
+
+			return text;
+		}
+
+
+		public string WrapText(string text, float maxLineWidth)
+		{
+			var words = text.Split(' ');
+			var sb = new StringBuilder();
+			var lineWidth = 0f;
+
+			if (maxLineWidth < _spaceWidth)
+				return string.Empty;
+
+			foreach (var word in words)
+			{
+				var size = MeasureString(word);
+				if (lineWidth + size.X < maxLineWidth)
+				{
+					sb.Append(word + " ");
+					lineWidth += size.X + _spaceWidth;
+				}
+				else
+				{
+					if (size.X > maxLineWidth)
+					{
+						if (sb.ToString() == "")
+							sb.Append(WrapText(word.Insert(word.Length / 2, " ") + " ", maxLineWidth));
+						else
+							sb.Append("\n" + WrapText(word.Insert(word.Length / 2, " ") + " ", maxLineWidth));
+					}
+					else
+					{
+						sb.Append("\n" + word + " ");
+						lineWidth = size.X + _spaceWidth;
+					}
+				}
+			}
+
+			return sb.ToString();
 		}
 
 

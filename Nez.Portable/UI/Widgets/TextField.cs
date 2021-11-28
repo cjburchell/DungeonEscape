@@ -408,7 +408,7 @@ namespace Nez.UI
 
 		protected int LetterUnderCursor(float x)
 		{
-			var halfSpaceSize = style.Font.DefaultCharacter.Bounds.Width + style.Font.DefaultCharacter.XAdvance;
+			var halfSpaceSize = style.Font.DefaultCharacterWidth + style.Font.DefaultCharacterXAdvance;
 			x -= textOffset + fontOffset + halfSpaceSize /*- style.font.getData().cursorX*/ -
 				 glyphPositions[visibleTextStart];
 			var n = glyphPositions.Count;
@@ -499,7 +499,7 @@ namespace Nez.UI
 		public TextField SetStyle(TextFieldStyle style)
 		{
 			this.style = style;
-			textHeight = style.Font.LineHeight;
+			textHeight = style.Font.LineSpacing;
 			InvalidateHierarchy();
 			return this;
 		}
@@ -617,7 +617,7 @@ namespace Nez.UI
 			}
 
 			var textY = GetTextY(font, background);
-			var yOffset = (textY < 0) ? -textY - font.LineHeight / 2f + GetHeight() / 2 : 0;
+			var yOffset = (textY < 0) ? -textY - font.LineSpacing / 2f + GetHeight() / 2 : 0;
 			CalculateOffsets();
 
 			if (_isFocused && hasSelection && selection != null)
@@ -655,7 +655,7 @@ namespace Nez.UI
 		}
 
 
-		protected float GetTextY(BitmapFont font, IDrawable background)
+		protected float GetTextY(IFont font, IDrawable background)
 		{
 			float height = GetHeight();
 			float textY = textHeight / 2 + font.Padding.Bottom;
@@ -681,14 +681,14 @@ namespace Nez.UI
 		/// <param name="font">Font.</param>
 		/// <param name="x">The x coordinate.</param>
 		/// <param name="y">The y coordinate.</param>
-		protected void DrawSelection(IDrawable selection, Batcher batcher, BitmapFont font, float x, float y)
+		protected void DrawSelection(IDrawable selection, Batcher batcher, IFont font, float x, float y)
 		{
 			selection.Draw(batcher, x + selectionX + renderOffset + fontOffset, y - font.Padding.Bottom / 2,
 				selectionWidth, textHeight, Color.White);
 		}
 
 
-		protected void DrawCursor(IDrawable cursorPatch, Batcher batcher, BitmapFont font, float x, float y)
+		protected void DrawCursor(IDrawable cursorPatch, Batcher batcher, IFont font, float x, float y)
 		{
 			cursorPatch.Draw(batcher,
 				x + textOffset + glyphPositions[cursor] - glyphPositions[visibleTextStart] + fontOffset -
@@ -735,13 +735,13 @@ namespace Nez.UI
 			{
 				for (var i = 0; i < displayText.Length; i++)
 				{
-					var region = style.Font[displayText[i]];
+					var xAdvance = style.Font.GetXAdvance(displayText[i]);
 
 					// we dont have fontOffset in BitmapFont, it is the first Glyph in a GlyphRun
 					//if( i == 0 )
 					//	fontOffset = region.xAdvance;
 					glyphPositions.Add(x);
-					x += region.XAdvance;
+					x += xAdvance;
 				}
 
 				//GlyphRun run = layout.runs.first();
@@ -1305,7 +1305,7 @@ namespace Nez.UI
 
 	public class TextFieldStyle
 	{
-		public BitmapFont Font;
+		public IFont Font;
 
 		public Color FontColor = Color.White;
 
@@ -1328,7 +1328,7 @@ namespace Nez.UI
 		}
 
 
-		public TextFieldStyle(BitmapFont font, Color fontColor, IDrawable cursor, IDrawable selection,
+		public TextFieldStyle(IFont font, Color fontColor, IDrawable cursor, IDrawable selection,
 							  IDrawable background)
 		{
 			Background = background;

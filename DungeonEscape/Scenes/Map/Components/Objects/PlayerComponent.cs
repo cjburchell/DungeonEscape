@@ -338,8 +338,10 @@
         {
             var currentBiome = this.GetCurrentBiome();
             var availableMonsters = new List<Monster>();
+            
+            var level = this._gameState.Party.Members.Select(hero => hero.Level).Max();
             foreach (var monster in this._randomMonsters.Where(item =>
-                item.Biome == currentBiome || item.Biome == Biome.All && item.Data.MinLevel >= this._gameState.Party.Members.First().Level))
+                item.Biome == currentBiome || item.Biome == Biome.All && item.Data.MinLevel <= level))
             {
                 for (var i = 0; i < monster.Probability; i++)
                 {
@@ -353,7 +355,7 @@
             }
             
             const int maxMonstersToFight = 10;
-            var maxMonsters = this._gameState.Party.Members.First().Level / 4 + this._gameState.Party.Members.Count;
+            var maxMonsters = level / 4 + this._gameState.Party.Members.Count;
             if (maxMonsters > maxMonstersToFight)
             {
                 maxMonsters = maxMonstersToFight;

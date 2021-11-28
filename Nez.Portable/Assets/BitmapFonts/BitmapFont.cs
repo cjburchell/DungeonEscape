@@ -91,7 +91,10 @@ namespace Nez.BitmapFonts
 		/// <summary>
 		/// padding for each character.
 		/// </summary>
-		public Padding Padding;
+		public Padding Padding { get; set; }
+
+		public float DefaultCharacterWidth => this.DefaultCharacter.XAdvance;
+		public float DefaultCharacterXAdvance => this.DefaultCharacter.Bounds.Width;
 
 		/// <summary>
 		/// texture pages for the font.
@@ -221,6 +224,11 @@ namespace Nez.BitmapFonts
 			}
 
 			return sb.ToString();
+		}
+
+		public float GetXAdvance(char c)
+		{
+			return this[c].XAdvance;
 		}
 
 		/// <summary>

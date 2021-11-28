@@ -69,20 +69,20 @@ namespace Nez.UI
 		{ }
 
 
-		public Label(string text, BitmapFont font, Color fontColor) : this(text, new LabelStyle(font, fontColor))
+		public Label(string text, IFont font, Color fontColor) : this(text, new LabelStyle(font, fontColor))
 		{ }
 
 
-		public Label(string text, BitmapFont font, Color fontColor, float fontScale) : this(text, font, fontColor, fontScale, fontScale)
+		public Label(string text, IFont font, Color fontColor, float fontScale) : this(text, font, fontColor, fontScale, fontScale)
         { }
 
 
-        public Label(string text, BitmapFont font, Color fontColor, float fontScaleX, float fontScaleY) : this(text, new LabelStyle(font, fontColor, fontScaleX, fontScaleY))
+        public Label(string text, IFont font, Color fontColor, float fontScaleX, float fontScaleY) : this(text, new LabelStyle(font, fontColor, fontScaleX, fontScaleY))
         { }
 
 
 
-		public Label(string text, BitmapFont font) : this(text, font, Color.White)
+		public Label(string text, IFont font) : this(text, font, Color.White)
 		{ }
 
 
@@ -328,7 +328,7 @@ namespace Nez.UI
 			else
 			{
 				textWidth = width;
-				textHeight = _style.Font.LineHeight * _style.FontScaleY;
+				textHeight = _style.Font.LineSpacing * _style.FontScaleY;
 			}
 
 			if ((labelAlign & AlignInternal.Bottom) != 0)
@@ -377,7 +377,7 @@ namespace Nez.UI
 	public class LabelStyle
 	{
 		public Color FontColor = Color.White;
-		public BitmapFont Font;
+		public IFont Font;
 		public IDrawable Background;
 		public float FontScaleX = 1f;
 		public float FontScaleY = 1f;
@@ -390,11 +390,11 @@ namespace Nez.UI
 		}
 
 
-		public LabelStyle(BitmapFont font, Color fontColor) : this(font, fontColor, 1f)
+		public LabelStyle(IFont font, Color fontColor) : this(font, fontColor, 1f)
         { }
 
 
-        public LabelStyle(BitmapFont font, Color fontColor, float fontScaleX, float fontScaleY)
+        public LabelStyle(IFont font, Color fontColor, float fontScaleX, float fontScaleY)
 		{
 			Font = font ?? Graphics.Instance.BitmapFont;
 			FontColor = fontColor;
@@ -403,7 +403,7 @@ namespace Nez.UI
 		}
 
 
-		public LabelStyle(BitmapFont font, Color fontColor, float fontScale) : this(font, fontColor, fontScale, fontScale)
+		public LabelStyle(IFont font, Color fontColor, float fontScale) : this(font, fontColor, fontScale, fontScale)
         {
 
         }

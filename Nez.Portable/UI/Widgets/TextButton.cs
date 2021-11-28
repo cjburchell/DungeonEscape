@@ -116,7 +116,7 @@ namespace Nez.UI
 	/// </summary>
 	public class TextButtonStyle : ButtonStyle
 	{
-		public BitmapFont Font;
+		public IFont Font;
 
 		/** Optional. */
 		public Color FontColor = Color.White;
@@ -131,7 +131,7 @@ namespace Nez.UI
 		}
 
 
-		public TextButtonStyle(IDrawable up, IDrawable down, IDrawable over, BitmapFont font) : base(up, down, over)
+		public TextButtonStyle(IDrawable up, IDrawable down, IDrawable over, IFont font) : base(up, down, over)
 		{
 			Font = font ?? Graphics.Instance.BitmapFont;
 		}

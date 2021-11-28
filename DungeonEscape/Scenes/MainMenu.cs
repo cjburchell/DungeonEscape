@@ -24,7 +24,7 @@
             this._table = canvas.Stage.AddElement(new Table());
             this._table.SetFillParent(true);
             this._table.Top().PadLeft(10).PadTop(50);
-            this._table.Add(new Label("Dungeon Escape").SetFontScale(6));
+            this._table.Add(new Label("Dungeon Escape", BasicWindow.Skin, "big_label"));
             this._table.Row().SetPadTop(20);
             var playButton = this._table.Add(new TextButton("Start new quest", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(250).GetElement<TextButton>();
             playButton.OnClicked += _ =>

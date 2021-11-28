@@ -5,6 +5,8 @@ using System.Text;
 
 namespace Nez
 {
+	using BitmapFonts;
+
 	public interface IFont
 	{
 		/// <summary>
@@ -12,6 +14,10 @@ namespace Nez
 		/// </summary>
 		/// <value>The height of the line.</value>
 		float LineSpacing { get; }
+		
+		Padding Padding { get; }
+		float DefaultCharacterWidth { get; }
+		float DefaultCharacterXAdvance { get; }
 
 		/// <summary>
 		/// returns the size in pixels of text when rendered in this font
@@ -39,5 +45,9 @@ namespace Nez
 
 		void DrawInto(Batcher batcher, StringBuilder text, Vector2 position, Color color,
 		              float rotation, Vector2 origin, Vector2 scale, SpriteEffects effect, float depth);
+
+		string TruncateText(string text, string ellipsis, float maxLineWidth);
+		string WrapText(string text, float maxLineWidth);
+		float GetXAdvance(char c);
 	}
 }

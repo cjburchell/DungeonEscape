@@ -177,7 +177,7 @@
         private void ChooseAction(Hero hero, Action<RoundAction> done)
         {
             var selectAction =
-                new SelectWindow<string>(this._ui, "Select Action", new Point(10, MapScene.ScreenHeight / 3 * 2));
+                new SelectWindow<string>(this._ui, hero.Name, new Point(10, MapScene.ScreenHeight / 3 * 2));
             
             var options = new List<string> {"Fight"};
             var availableSpells = hero.GetSpells(this._game.Spells).Where(item => item.IsEncounterSpell && item.Cost <= hero.Magic).ToList();

@@ -1,8 +1,11 @@
 ﻿namespace Redpoint.DungeonEscape.Scenes.Common.Components.UI
 {
     using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Graphics;
     using Nez;
+    using Nez.BitmapFonts;
     using Nez.UI;
+    using Game = DungeonEscape.Game;
 
     public abstract class BasicWindow : Component
     {
@@ -19,7 +22,7 @@
 
         public const int ButtonHeight = 30;
         public const int ButtonWidth = 80;
-        private const int FontScale = 2;
+        private const int FontScale = 1;
 
         public bool IsFocused => _focusedWindow == this;
 
@@ -28,7 +31,9 @@
         
         static BasicWindow()
         {
+            var font = new NezSpriteFont(Core.Content.Load<SpriteFont>("fonts/Arial_bold"));
             var windowStyle = Skin.Get<WindowStyle>();
+            windowStyle.TitleFont = font;
             windowStyle.Background = new BorderPrimitiveDrawable(Color.Black, Color.White, 1);
             var textButtonStyle = new TextButtonStyle
             {
@@ -36,7 +41,8 @@
                 Down = new BorderPrimitiveDrawable(Color.LightGray, Color.White, 1),
                 Over = new BorderPrimitiveDrawable(Color.Gray, Color.White, 1),
                 Checked = new BorderPrimitiveDrawable(Color.Gray, Color.White, 1),
-                FontScale = FontScale
+                FontScale = FontScale,
+                Font = font
             };
 
             Skin.Add("default", textButtonStyle);
@@ -47,7 +53,8 @@
                 Down = new BorderPrimitiveDrawable(Color.LightGray, Color.White),
                 Over = new BorderPrimitiveDrawable(Color.Gray, Color.White),
                 Checked = new BorderPrimitiveDrawable(Color.Gray, Color.White),
-                FontScale = FontScale
+                FontScale = FontScale,
+                Font = font
             };
             Skin.Add("no_border", textButtonNoBorderStyle);
             
@@ -72,9 +79,16 @@
 
             var labelStyle = Skin.Get<LabelStyle>();
             labelStyle.FontScale = FontScale;
+            labelStyle.Font = font;
             Skin.Add("default", labelStyle);
             
+            var bigLabelStyle = new LabelStyle();
+            bigLabelStyle.FontScale = FontScale;
+            bigLabelStyle.Font = new NezSpriteFont(Core.Content.Load<SpriteFont>("fonts/Arial_bold_big"));
+            Skin.Add("big_label", bigLabelStyle);
+            
             var textFieldStyle = Skin.Get<TextFieldStyle>();
+            textFieldStyle.Font = font;
             textFieldStyle.Background =new BorderPrimitiveDrawable(Color.Black, Color.White, 1);
         }
 
@@ -98,8 +112,9 @@
             this.Window.SetHeight(this._height);
             this.Window.SetMovable(false);
             this.Window.SetResizable(false);
-            this.Window.GetTitleLabel().SetVisible(false);
+            this.Window.GetTitleLabel().SetVisible(true);
             this.Window.GetTitleLabel().SetText(this._title);
+            this.Window.GetTitleLabel().SetFontScale(FontScale);
 
             base.OnAddedToEntity();
             this.Window.SetVisible(this._isVisible);

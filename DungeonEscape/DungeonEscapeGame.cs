@@ -132,12 +132,12 @@
 
             this.ReloadSaveGames();
             
-            this.Names = JsonConvert.DeserializeObject<Names>(File.ReadAllText("Content/names.json"));
+            this.Names = JsonConvert.DeserializeObject<Names>(File.ReadAllText("Content/data/names.json"));
             
-            this.ClassLevelStats = JsonConvert.DeserializeObject<List<ClassStats>>(File.ReadAllText("Content/classLevels.json"));
+            this.ClassLevelStats = JsonConvert.DeserializeObject<List<ClassStats>>(File.ReadAllText("Content/data/classLevels.json"));
 
             var tileSet = LoadTileSet("Content/items.tsx");
-            var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/items.json"));
+            var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/data/items.json"));
             if (items != null)
             {
                 foreach (var item in items)
@@ -150,7 +150,7 @@
             
             
             var spellTileset = LoadTileSet("Content/spells.tsx");
-            var spells = JsonConvert.DeserializeObject<List<Spell>>(File.ReadAllText("Content/spells.json"));
+            var spells = JsonConvert.DeserializeObject<List<Spell>>(File.ReadAllText("Content/data/spells.json"));
             if (spells != null)
             {
                 foreach (var spell in spells)
@@ -162,7 +162,7 @@
             }
             
             var monsterTileSet = LoadTileSet("Content/allmonsters.tsx");
-            var monsters = JsonConvert.DeserializeObject<List<Monster>>(File.ReadAllText("Content/allmonsters.json"));
+            var monsters = JsonConvert.DeserializeObject<List<Monster>>(File.ReadAllText("Content/data/allmonsters.json"));
             if (monsters != null)
             {
                 foreach (var monster in monsters)

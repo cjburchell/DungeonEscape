@@ -362,7 +362,7 @@ namespace Nez.UI
 
 	public class WindowStyle
 	{
-		public BitmapFont TitleFont;
+		public IFont TitleFont;
 
 		/** Optional. */
 		public float TitleFontScaleX = 1f;

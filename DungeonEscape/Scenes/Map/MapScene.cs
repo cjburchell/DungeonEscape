@@ -242,7 +242,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
 
         private List<RandomMonster> LoadRandomMonsters()
         {
-            var fileName = $"Content/monsters{this._mapId}.json";
+            var fileName = $"Content/data/monsters{this._mapId}.json";
             if (!File.Exists(fileName))
             {
                 return new List<RandomMonster>();

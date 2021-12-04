@@ -16,7 +16,7 @@
         private readonly UiSystem _ui;
         private readonly List<Item> _items;
         private readonly string _text;
-        private bool _willBuyItems;
+        private readonly bool _willBuyItems;
 
         public Store(TmxObject tmxObject, SpriteState state, TmxMap map, IGame gameState, AstarGridGraph graph, UiSystem ui) : base(
             tmxObject, state, map, gameState, graph)

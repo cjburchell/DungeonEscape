@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.CompilerServices;
     using Common.Components.UI;
     using Microsoft.Xna.Framework;
     using Nez;

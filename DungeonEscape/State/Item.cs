@@ -4,6 +4,7 @@
 namespace Redpoint.DungeonEscape.State
 {
     using System;
+    using System.Text.Json.Serialization;
     using Microsoft.Xna.Framework.Graphics;
     using Nez;
     using Nez.Tiled;
@@ -34,7 +35,7 @@ namespace Redpoint.DungeonEscape.State
 
         public int Id { get; set; }
 
-        public Item(string image, string name, ItemType type, int gold, int minLevel)
+        public Item(string image, string name, ItemType type, int cost, int minLevel)
         {
             if (!string.IsNullOrEmpty(image))
             {
@@ -42,11 +43,10 @@ namespace Redpoint.DungeonEscape.State
                 this.Image = Texture2D.FromFile(Core.GraphicsDevice,this.ImageSource);
             }
             this.Name = name;
-            this.Gold = gold;
+            this.Cost = cost;
             this.MinLevel = minLevel;
             this.Type = type;
         }
-
 
         public Texture2D Image { get; set; }
         public string ImageSource { get; set; }
@@ -56,8 +56,14 @@ namespace Redpoint.DungeonEscape.State
         public int Health { get; set; }
         public int Attack { get; set; }
         public int Agility { get; set; }
-        public int Gold { get; set; }
+        public int Cost { get; set; }
         public int MinLevel { get; set; }
+
+        [JsonIgnore]
+        public bool CanBeSoldInStore => this.Type == ItemType.Armor ||
+                                        this.Type == ItemType.Shield ||
+                                        this.Type == ItemType.Weapon ||
+                                        this.Type == ItemType.OneUse;
     }
 
 }

@@ -34,7 +34,7 @@
   },
   {
     "Type": "Armor",
-    "Name": "Lether Armor",
+    "Name": "Leather Armor",
     "Defence": 4,
     "Health": 0,
     "Attack": 0,
@@ -155,7 +155,7 @@
   },
   {
     "Type": "Armor",
-    "Name": "Hevy Armor",
+    "Name": "Heavy Armor",
     "Defence": 27,
     "Health": 0,
     "Attack": -1,
@@ -243,7 +243,7 @@
   },
   {
     "Type": "OneUse",
-    "Name": "Elixer Strength",
+    "Name": "Elixir of Strength",
     "Defence": 0,
     "Health": 0,
     "Attack": 1,
@@ -254,7 +254,7 @@
   },
   {
     "Type": "OneUse",
-    "Name": "Elixer Defence",
+    "Name": "Elixir of Defence",
     "Defence": 1,
     "Health": 0,
     "Attack": 0,
@@ -265,7 +265,7 @@
   },
   {
     "Type": "OneUse",
-    "Name": "Elixer Agility",
+    "Name": "Elixir of Agility",
     "Defence": 0,
     "Health": 0,
     "Attack": 0,
@@ -273,5 +273,12 @@
     "Cost": 5000,
     "Id": 25,
     "MinLevel": 18
+  },
+  {
+    "Type": "Key",
+    "Name": "Iron Key",
+    "Cost": 250,
+    "Id": 26,
+    "MinLevel": 0
   }
 ]

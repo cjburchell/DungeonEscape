@@ -13,7 +13,7 @@
         private Table _statusTable;
         private Hero _hero;
 
-        public HeroStatusWindow(UiSystem ui) : base(ui, "Hero Status",
+        public HeroStatusWindow(UiSystem ui) : base(ui, null,
             new Point(20, 20), 220, 250)
         {
         }

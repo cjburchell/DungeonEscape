@@ -229,7 +229,7 @@
                     }
                     case "Spell":
                     {
-                        var selectItem = new SpellWindow(this._ui, new Point(10, MapScene.ScreenHeight / 3 * 2));
+                        var selectItem = new SpellWindow(this._ui, new Point(10, MapScene.ScreenHeight / 3 * 2), hero);
                         selectItem.Show(availableSpells, spell =>
                             {
                                 if (spell == null)

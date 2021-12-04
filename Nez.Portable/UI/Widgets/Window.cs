@@ -13,6 +13,7 @@ namespace Nez.UI
 	/// </summary>
 	public class Window : Table, IInputListener
 	{
+		
 		static private int MOVE = 1 << 5;
 
 		private WindowStyle style;
@@ -21,28 +22,48 @@ namespace Nez.UI
 		bool _dragging;
 		bool _keepWithinStage = true;
 		Label titleLabel;
-		Table titleTable;
+		private readonly string _title;
 
 
 		public Window(string title, WindowStyle style)
 		{
-			Insist.IsNotNull(title, "title cannot be null");
-
+			this._title = title;
 			touchable = Touchable.Enabled;
 			Clip = true;
 
-			titleLabel = new Label(title, new LabelStyle(style.TitleFont, style.TitleFontColor, style.TitleFontScaleX, style.TitleFontScaleY));
+			titleLabel = new Label(string.IsNullOrEmpty(title) ? "" : title,
+				new LabelStyle(style.TitleFont, style.TitleFontColor, style.TitleFontScaleX, style.TitleFontScaleY));
 			titleLabel.SetEllipsis(true);
 
-			titleTable = new Table();
-			titleTable.Add(titleLabel).SetExpandX().SetFillX().SetMinWidth(0);
-			AddElement(titleTable);
+			if (!string.IsNullOrEmpty(title))
+			{
+				this.Add(titleLabel).SetExpandX().SetFillX().SetMinWidth(0);
+			}
+			this.Row().SetFillX().SetExpandX().SetExpandY().SetFillY();
 
 			SetStyle(style);
 			width = 150;
 			height = 150;
 		}
 
+		public new T AddElement<T>(T element) where T : Element
+		{
+			this.Add(element).SetExpandY().SetFillY().SetExpandX().SetFillY();
+			return element;
+		}
+
+		public new void SetHeight(float height)
+		{
+			if (string.IsNullOrEmpty(this._title))
+			{
+				base.SetHeight(height);
+			}
+			else
+			{
+				base.SetHeight(height + this.style.TitleFont.LineSpacing);
+			}
+		}
+		
 
 		public Window(string title, Skin skin, string styleName = null) : this(title, skin.Get<WindowStyle>(styleName))
 		{ }
@@ -276,19 +297,6 @@ namespace Nez.UI
 			style.StageBackground.Draw(batcher, x, y, width, height, ColorExt.Create(color, (int)(color.A * parentAlpha)));
 		}
 
-
-		protected override void DrawBackground(Batcher batcher, float parentAlpha, float x, float y)
-		{
-			base.DrawBackground(batcher, parentAlpha, x, y);
-
-			// Manually draw the title table before clipping is done.
-			titleTable.color.A = color.A;
-			float padTop = GetPadTop(), padLeft = GetPadLeft();
-			titleTable.SetSize(GetWidth() - padLeft - GetPadRight(), padTop);
-			titleTable.SetPosition(padLeft, 0);
-		}
-
-
 		public override Element Hit(Vector2 point)
 		{
 			var hit = base.Hit(point);
@@ -353,7 +361,7 @@ namespace Nez.UI
 		}
 
 
-		public Table GetTitleTable() => titleTable;
+		//public Table GetTitleTable() => titleTable;
 
 
 		public Label GetTitleLabel() => titleLabel;

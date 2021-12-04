@@ -1,6 +1,6 @@
 ﻿namespace Redpoint.DungeonEscape.Scenes.Common.Components.UI
 {
-    using System.Linq;
+    using Map;
     using Microsoft.Xna.Framework;
     using Nez;
     using Nez.UI;
@@ -15,8 +15,8 @@
         {
         }
 
-        private PartyStatusWindow(Party party, UICanvas canvas, Point position) : base(new UiSystem(canvas, true), "Status",
-            position, 90, 100, false)
+        private PartyStatusWindow(Party party, UICanvas canvas, Point position) : base(new UiSystem(canvas, true), null,
+            position, 90, 110, false)
         {
             this._party = party;
         }
@@ -25,45 +25,43 @@
         {
             base.OnAddedToEntity();
             this._statusTable = new Table();
-            var table = this.Window.AddElement(new Table());
-            // layout
-            table.SetFillParent(true);
-            table.Row();
-            table.Add(this._statusTable).Expand().Top().Left().SetPadLeft(10);
-            
+            this.Window.AddElement(this._statusTable);
             this.UpdateStatus();
         }
 
         private void UpdateStatus()
         {
-            this.Window.SetWidth(this._party.Members.Count * 50 + 40);
+            const int heroHeight = 48;
+            const int heroWidth = MapScene.DefaultTileSize;
+            const int statusWidth = 80;
+            const int statusItemWidth = statusWidth/2;
+            const int padding = 5;
+            var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
+            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, heroHeight);
+            
+            var windowWidth = this._party.Members.Count * (heroWidth + statusWidth + 15);
+            this.Window.SetWidth(windowWidth);
             this._statusTable.ClearChildren();
-            this._statusTable.Row();
-            foreach (var nameLabel in this._party.Members.Select(partyMember =>
-                new Label(partyMember.Name.Length < 4 ? partyMember.Name : partyMember.Name.Substring(0, 4), Skin)
-                    .SetAlignment(Align.Center)))
+            this._statusTable.SetFillParent(true);
+            foreach (var member in this._party.Members)
             {
-                this._statusTable.Add(nameLabel).Width(50);
+                var animationBaseIndex = (int) member.Class * 16 + (int) member.Gender * 8;
+                var image = new Image(sprites[animationBaseIndex + 4]).SetAlignment(Align.Center);
+                this._statusTable.Add(image).Width(heroWidth).SetPadLeft(5).SetPadRight(5);
+                var memberStatus = new Table();
+                memberStatus.Row().SetPadTop(padding);
+                memberStatus.Add(new Label(member.Name.Length < 10 ? member.Name : member.Name.Substring(0, 10), Skin).SetAlignment(Align.Left)).Width(statusWidth).SetColspan(2).SetPadRight(5);
+                memberStatus.Row().SetPadTop(padding);
+                memberStatus.Add(new Label("HP", Skin).SetAlignment(Align.Left)).Width(statusItemWidth);
+                memberStatus.Add(new Label($"{member.Health}", Skin).SetAlignment(Align.Right)).Width(statusItemWidth).SetPadRight(5);
+                memberStatus.Row().SetPadTop(padding);
+                memberStatus.Add( new Label("MP", Skin).SetAlignment(Align.Left)).Width(statusItemWidth);
+                memberStatus.Add( new Label($"{member.Magic}", Skin).SetAlignment(Align.Right)).Width(statusItemWidth).SetPadRight(5);
+                memberStatus.Row().SetPadTop(padding);
+                memberStatus.Add(new Label($"{member.Class.ToString().Substring(0, 3)}:", Skin).SetAlignment(Align.Left)).Width(statusItemWidth).SetPadRight(5);
+                memberStatus.Add(new Label($"{member.Level}", Skin).SetAlignment(Align.Right)).Width(statusItemWidth).SetPadRight(5);
+                this._statusTable.Add(memberStatus).Width(statusWidth);
             }
-
-            this._statusTable.Row().SetPadTop(5);
-            foreach (var healthLabel in this._party.Members.Select(partyMember => new Label($"H{partyMember.Health}", Skin).SetAlignment(Align.Center)))
-            {
-                this._statusTable.Add(healthLabel).Width(50);
-            }
-            
-            this._statusTable.Row().SetPadTop(5);
-            foreach (var magicLabel in this._party.Members.Select(partyMember => new Label($"M{partyMember.Magic}", Skin).SetAlignment(Align.Center)))
-            {
-                this._statusTable.Add(magicLabel).Width(50);
-            }
-            
-            this._statusTable.Row().SetPadTop(5);
-            foreach (var partyMember in this._party.Members)
-            {
-                this._statusTable.Add(new Label($"L{partyMember.Level}", Skin).SetAlignment(Align.Center)).Width(50);
-            }
-
             this._statusTable.Invalidate();
         }
 

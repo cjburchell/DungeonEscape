@@ -12,13 +12,19 @@
 
     public class StoreWindow : TextWindow    
     {
-        public StoreWindow(UiSystem ui) : base(ui, "Store", new Point(10, MapScene.ScreenHeight / 3 * 2))
+        private readonly bool _sell;
+        private readonly string _text;
+
+        public StoreWindow(UiSystem ui, bool sell = true, string text = null) : base(ui, null, new Point(10, MapScene.ScreenHeight / 3 * 2))
         {
+            this._sell = sell;
+            this._text = text ?? "Welcome to my store.\nI buy and sell items what can I do for you?";
         }
 
         public void Show(Action<StoreAction?> doneAction)
         {
-            base.Show("Welcome to my store. I buy and sell items what can I do for you?", choice =>
+            var buttonText = this._sell ? new[] {"Buy", "Sell"} : new[] {"Buy"};
+            base.Show(this._text, choice =>
             {
                 doneAction(choice switch
                 {
@@ -27,7 +33,7 @@
                     _ => null
                 });
                 
-            }, new []{"Buy", "Sell"} );
+            },  buttonText);
         }
     }
 }

@@ -16,10 +16,11 @@
         private Action<string> _done;
         private int _textIndex;
 
-        protected TextWindow(UiSystem ui,string title, Point position, int width = MapScene.ScreenWidth - 20, int height = MapScene.ScreenHeight / 3 - 10) : base(ui, title, position, width, height)
+        protected TextWindow(UiSystem ui, string title, Point position, int width = MapScene.ScreenWidth - 20,
+            int height = MapScene.ScreenHeight / 3 - 10) : base(ui, title, position, width, height)
         {
         }
-        
+
         private Button _firstButton;
         private Button _lastButton;
         private Table _buttonTable;
@@ -59,12 +60,10 @@
             this._textIndex = 0;
             this._textLabel.SetText("");
             this._scrollPane = new ScrollPane(this._textLabel, Skin);
-
-            var table = this.Window.AddElement(new Table());
+            var table =  new Table();
+            this.Window.Add(table);
             table.SetFillParent(true);
-            table.Top().PadLeft(10).PadTop(10).PadRight(10).Row();
-            table.Row();
-            table.Add(this._scrollPane).Height(105).Width(452);
+            table.Add(this._scrollPane).Width(this.Width-20).Height(this.Height - 50);
             
             this._buttonTable = new Table();
             // layout
@@ -82,7 +81,7 @@
             }
             
             table.Row();
-            table.Add(this._buttonTable).Width(452).Height(30);
+            table.Add(this._buttonTable).Width(this.Width).Height(30);
             this._buttonTable.SetVisible(false);
             this._buttonTable.Validate();
             this.Ui.Canvas.Stage.SetGamepadFocusElement(null);

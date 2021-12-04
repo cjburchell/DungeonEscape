@@ -7,7 +7,7 @@
 
     public class SellPartyItemsWindow : SelectWindow<ItemInstance>
     {
-        public SellPartyItemsWindow(UiSystem ui) : base(ui, "Sell", new Point(20, 20), 250)
+        public SellPartyItemsWindow(UiSystem ui) : base(ui, null, new Point(20, 20), 300)
         {
         }
 
@@ -21,7 +21,7 @@
             var cost = new Label($"{item.Gold * 3 / 4}", Skin).SetAlignment(Align.Right);
             table.Add(image).Width(32);
             table.Add(equip).Width(ButtonHeight);
-            table.Add(itemName).Width(100);
+            table.Add(itemName).Width(150);
             table.Add(cost).Width(32);
 
             var button = new Button(Skin, "no_border");

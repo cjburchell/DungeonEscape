@@ -6,7 +6,7 @@
 
     public class TalkWindow : TextWindow
     {
-        public TalkWindow(UiSystem ui, string title = "Talk") : this(ui, title, new Point(10, MapScene.ScreenHeight / 3 * 2))
+        public TalkWindow(UiSystem ui, string title = null) : this(ui, title, new Point(10, MapScene.ScreenHeight / 3 * 2))
         {
         }
 

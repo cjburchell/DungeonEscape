@@ -16,7 +16,7 @@
         {
         }
 
-        public GoldWindow(Party party, UICanvas canvas, Point position) : base(new UiSystem(canvas, true), "Gold",
+        public GoldWindow(Party party, UICanvas canvas, Point position) : base(new UiSystem(canvas, true), null,
             position, 150, 50, false)
         {
             this._party = party;
@@ -26,7 +26,6 @@
         {
             base.OnAddedToEntity();
             this._goldLabel = new Label($"Gold: {this._party.Gold}", Skin).SetAlignment(Align.Center);
-            this._goldLabel.FillParent = true;
             this.Window.AddElement(this._goldLabel);
         }
 

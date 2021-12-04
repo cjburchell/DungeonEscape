@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Runtime.CompilerServices;
     using Common.Components.UI;
     using Microsoft.Xna.Framework;
     using Nez;
@@ -44,7 +46,7 @@
                 SpriteType.NpcHeal => new Healer(tmxObject, state, map, gameState, graph, ui),
                 SpriteType.NpcStore => new Store(tmxObject, state, map, gameState, graph, ui),
                 SpriteType.NpcSave => new Saver(tmxObject, state, map, gameState, graph, ui),
-                SpriteType.NpcKey => new KeyStore(tmxObject, state, map, gameState, graph, ui),
+                SpriteType.NpcKey => new Store(tmxObject, state, map, gameState, graph, ui, gameState.Items.Where(i=> i.Type == ItemType.Key).ToList(), "Would you like to buy a key?", false),
                 SpriteType.Npc => new Character(tmxObject, state, map, ui, gameState, graph),
                 SpriteType.NpcPartyMember => new PartyMember(tmxObject, state, map, ui, gameState, graph),
                 _ => new Sprite(tmxObject, state, map, gameState, graph)

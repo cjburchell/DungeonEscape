@@ -7,7 +7,7 @@
 
     public class BuyItemsWindow : SelectWindow<Item>
     {
-        public BuyItemsWindow(UiSystem ui) : base(ui, "Buy", new Point(20, 20), 250)
+        public BuyItemsWindow(UiSystem ui) : base(ui, null, new Point(20, 20), 250)
         {
         }
 
@@ -16,9 +16,9 @@
             var table = new Table();
             var image = new Image(item.Image).SetAlignment(Align.Left);
             var itemName = new Label(item.Name, Skin).SetAlignment(Align.Left);
-            var cost = new Label($"{item.Gold * 3 / 4}", Skin).SetAlignment(Align.Right);
+            var cost = new Label($"{item.Cost}", Skin).SetAlignment(Align.Right);
             table.Add(image).Width(32);
-            table.Add(itemName).Width(100);
+            table.Add(itemName).Width(150);
             table.Add(cost).Width(30);
 
             var button = new Button(Skin, "no_border");

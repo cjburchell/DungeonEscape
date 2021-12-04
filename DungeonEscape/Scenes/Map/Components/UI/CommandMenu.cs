@@ -5,7 +5,7 @@
 
     public class CommandMenu: SelectWindow<string>
     {
-        public CommandMenu(UiSystem ui) : base(ui,"Command", new Point(20,20),100)
+        public CommandMenu(UiSystem ui) : base(ui,null, new Point(20,20),100)
         {
         }
     }

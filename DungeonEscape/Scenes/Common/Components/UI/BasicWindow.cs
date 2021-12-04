@@ -3,9 +3,7 @@
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
     using Nez;
-    using Nez.BitmapFonts;
     using Nez.UI;
-    using Game = DungeonEscape.Game;
 
     public abstract class BasicWindow : Component
     {
@@ -13,18 +11,18 @@
         protected readonly UiSystem Ui;
         private readonly string _title;
         private readonly Point _position;
-        private readonly int _width;
-        private readonly int _height;
+        protected readonly int Width;
+        protected readonly int Height;
         private readonly bool _focasable;
 
         public static readonly Skin Skin = Skin.CreateDefaultSkin();
-        private static BasicWindow _focusedWindow;
+        private static BasicWindow focusedWindow;
 
         public const int ButtonHeight = 30;
         public const int ButtonWidth = 80;
         private const int FontScale = 1;
 
-        public bool IsFocused => _focusedWindow == this;
+        public bool IsFocused => focusedWindow == this;
 
         private bool _hasBeenAdded;
         private bool _isVisible;
@@ -81,10 +79,12 @@
             labelStyle.FontScale = FontScale;
             labelStyle.Font = font;
             Skin.Add("default", labelStyle);
-            
-            var bigLabelStyle = new LabelStyle();
-            bigLabelStyle.FontScale = FontScale;
-            bigLabelStyle.Font = new NezSpriteFont(Core.Content.Load<SpriteFont>("fonts/Arial_bold_big"));
+
+            var bigLabelStyle = new LabelStyle
+            {
+                FontScale = FontScale,
+                Font = new NezSpriteFont(Core.Content.Load<SpriteFont>("fonts/Arial_bold_big"))
+            };
             Skin.Add("big_label", bigLabelStyle);
             
             var textFieldStyle = Skin.Get<TextFieldStyle>();
@@ -97,8 +97,8 @@
             this.Ui = ui;
             this._title = title;
             this._position = position;
-            this._width = width;
-            this._height = height;
+            this.Width = width;
+            this.Height = height;
             this._focasable = focasable;
             ui.Input?.AddWindow(this);
         }
@@ -108,13 +108,12 @@
             this.Window = new Window(this._title, Skin);
             this.Ui.Canvas.Stage.AddElement(this.Window);
             this.Window.SetPosition(this._position.X, this._position.Y);
-            this.Window.SetWidth(this._width);
-            this.Window.SetHeight(this._height);
+            this.Window.SetWidth(this.Width);
+            this.Window.SetHeight(this.Height);
             this.Window.SetMovable(false);
             this.Window.SetResizable(false);
-            this.Window.GetTitleLabel().SetVisible(true);
-            this.Window.GetTitleLabel().SetText(this._title);
-            this.Window.GetTitleLabel().SetFontScale(FontScale);
+            var title = this.Window.GetTitleLabel();
+            title.SetFontScale(FontScale);
 
             base.OnAddedToEntity();
             this.Window.SetVisible(this._isVisible);
@@ -156,7 +155,7 @@
             this.Window?.SetVisible(true);
             if (this._focasable)
             {
-                _focusedWindow = this;
+                focusedWindow = this;
             }
         }
 

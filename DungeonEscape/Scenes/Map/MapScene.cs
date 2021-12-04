@@ -328,7 +328,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             {
                 this._ui.Input.HandledHide = true;
                 this._gameState.IsPaused = true;
-                var commandMenu = new SelectWindow<string>(this._ui, "menu", new Point(20,20), 200);
+                var commandMenu = new SelectWindow<string>(this._ui, null, new Point(20,20), 200);
                 commandMenu.Show(new []{"Main Menu", "Load Quest", "Quit"}, result =>
                 {
                     switch (result)
@@ -419,8 +419,9 @@ namespace Redpoint.DungeonEscape.Scenes.Map
         {
             if (this._gameState.Party.Members.Count == 1)
             {
-                var spellWindow = new SpellWindow(this._ui);
-                spellWindow.Show(this._gameState.Party.Members.First().GetSpells(this._gameState.Spells).Where(item => item.IsNonEncounterSpell), spell=>
+                var hero = this._gameState.Party.Members.First();
+                var spellWindow = new SpellWindow(this._ui, hero);
+                spellWindow.Show(hero.GetSpells(this._gameState.Spells).Where(item => item.IsNonEncounterSpell), spell=>
                 {
                     if (spell == null)
                     {
@@ -443,7 +444,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                         return;
                     }
                     
-                    var spellWindow = new SpellWindow(this._ui);
+                    var spellWindow = new SpellWindow(this._ui, hero);
                     spellWindow.Show(hero.GetSpells(this._gameState.Spells).Where(item => item.IsNonEncounterSpell), spell =>
                     {
                         if (spell == null)

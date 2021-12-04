@@ -47,7 +47,7 @@ namespace Redpoint.DungeonEscape.State
         public string Name => this._item.Name;
 
         [JsonIgnore]
-        public int Gold => this._item.Gold;
+        public int Gold => this._item.Cost;
         
         [JsonIgnore]
         public bool IsEquippable =>

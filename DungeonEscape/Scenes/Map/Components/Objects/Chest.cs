@@ -30,25 +30,50 @@
             this._ui = ui;
             this._level = tmxObject.Properties.ContainsKey("ChestLevel") ? int.Parse(tmxObject.Properties["ChestLevel"]) : 0;
             this._openImageName = tmxObject.Properties.ContainsKey("OpenImage") ? tmxObject.Properties["OpenImage"] : "ochest.png";
+            if (this.State.Gold.HasValue)
+            {
+                this._item = new Item("", "Gold", ItemType.Gold,this.State.Gold.Value , 0);
+                return;
+            }
+            
+            if(this.State.ItemId.HasValue)
+            {
+                this._item = gameState.Items.First(item => item.Id == this.State.ItemId);
+                return;
+            }
+            
+            if (this.TmxObject.Properties.ContainsKey("ItemId"))
+            {
+                this.State.ItemId = int.Parse(tmxObject.Properties["ItemId"]);
+                this._item = gameState.Items.First(item => item.Id == this.State.ItemId);
+                return;
+            }
+
+            if (this.TmxObject.Properties.ContainsKey("Gold"))
+            {
+                this.State.Gold = int.Parse(tmxObject.Properties["Gold"]);
+                this._item = new Item("", "Gold", ItemType.Gold,this.State.Gold.Value , 0);
+                return;
+            }
 
             if (tmxObject.Name == "Key Chest")
             {
-                this._item = new Item("Content/images/items/key.png", "Key", ItemType.Key, 250, 0);
+                this.State.ItemId = 26; // key item
+                this._item = gameState.Items.First(item => item.Id == this.State.ItemId);
+                return;
             }
-            else
+
+            if (Random.Chance(0.25f))
             {
-                if (Random.Chance(0.25f))
-                {
-                    var levelItems = gameState.Items.Where(item => item.MinLevel <= this._level).ToArray();
-                    var itemNumber = Random.NextInt(levelItems.Length);
-                    this._item = levelItems[itemNumber];
-                }
-                else
-                {
-                    this._item = new Item("", "Gold", ItemType.Gold, Random.NextInt(100) + 20, 0);
-                }
+                var levelItems = gameState.Items.Where(item => item.MinLevel <= this._level).ToArray();
+                var itemNumber = Random.NextInt(levelItems.Length);
+                this._item = levelItems[itemNumber];
+                this.State.ItemId = this._item.Id;
+                return;
             }
-           
+
+            this.State.Gold = Random.NextInt(100) + 20;
+            this._item = new Item("", "Gold", ItemType.Gold,this.State.Gold.Value , 0);
         }
         
         public override void Initialize()
@@ -85,8 +110,8 @@
             
             if (this._item.Type == ItemType.Gold)
             {
-                new TalkWindow(this._ui).Show($"You found {this._item.Gold} Gold", Done);
-                party.Gold += this._item.Gold;
+                new TalkWindow(this._ui).Show($"You found {this._item.Cost} Gold", Done);
+                party.Gold += this._item.Cost;
             }
             else
             {

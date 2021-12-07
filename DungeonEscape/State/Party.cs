@@ -14,6 +14,10 @@
         
         public bool HasShip { get; set; }
         public List<Hero> Members { get; } = new List<Hero>();
+        
+        // ReSharper disable once UnusedMember.Global
+        public List<Quest> Quests { get; } = new List<Quest>();
+        
         public int Gold { get; set; }
         public List<ItemInstance> Items { get; } = new List<ItemInstance>();
         public Vector2 CurrentPosition { get; set; }

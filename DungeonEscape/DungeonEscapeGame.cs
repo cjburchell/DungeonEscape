@@ -27,6 +27,10 @@
         public List<Monster> Monsters { get; } = new List<Monster>();
         public List<Item> Items { get; } = new List<Item>();
         public List<Spell> Spells { get; } = new List<Spell>();
+        public List<Quest> Quests { get; private set; } = new List<Quest>();
+        
+        public List<Dialog> Dialogs { get; private set; } = new List<Dialog>();
+        
         public IEnumerable<GameSave> GameSaves => this._saveSlots;
         public bool InGame { get; private set; }
         public bool IsPaused
@@ -133,6 +137,9 @@
             this.ReloadSaveGames();
             
             this.Names = JsonConvert.DeserializeObject<Names>(File.ReadAllText("Content/data/names.json"));
+            
+            this.Quests = JsonConvert.DeserializeObject<List<Quest>>(File.ReadAllText("Content/data/quests.json"));
+            this.Dialogs = JsonConvert.DeserializeObject<List<Dialog>>(File.ReadAllText("Content/data/dialog.json"));
             
             this.ClassLevelStats = JsonConvert.DeserializeObject<List<ClassStats>>(File.ReadAllText("Content/data/classLevels.json"));
 

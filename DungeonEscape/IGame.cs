@@ -1,4 +1,6 @@
-﻿namespace Redpoint.DungeonEscape
+﻿// ReSharper disable UnusedMemberInSuper.Global
+// ReSharper disable UnusedMember.Global
+namespace Redpoint.DungeonEscape
 {
     using System.Collections.Generic;
     using Microsoft.Xna.Framework;
@@ -26,6 +28,10 @@
         List<MapState> MapStates { get; }
         
         List<Monster> Monsters { get; }
+        
+        List<Quest> Quests { get; }
+        
+        List<Dialog> Dialogs { get; }
 
         IEnumerable<GameSave> GameSaves { get; }
         bool InGame { get; }

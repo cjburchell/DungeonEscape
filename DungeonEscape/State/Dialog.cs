@@ -9,13 +9,13 @@ namespace Redpoint.DungeonEscape.State
     public enum QuestAction
     {
         None,
-        StartQuest,
-        GiveItem,
-        GetItem
+        GetItem,
+        LookingForItem
     }
 
     public class Dialog
     {
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public int? Id { get; set; }
         public string Text { get; set; }
         public List<Choice> Choices { get; set; }
@@ -24,12 +24,16 @@ namespace Redpoint.DungeonEscape.State
     public class Choice
     {
         public string Text { get; set; }
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public Dialog Dialog { get; set; }
-        
+
         [JsonConverter(typeof(StringEnumConverter))]
         public QuestAction Action { get; set; } = QuestAction.None;
-        
+
         public int? ItemId { get; set; }
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public int? QuestStage { get; set; }
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public int? QuestId { get; set; }
     }
 }

@@ -16,7 +16,7 @@
         public List<Hero> Members { get; } = new List<Hero>();
         
         // ReSharper disable once UnusedMember.Global
-        public List<Quest> Quests { get; } = new List<Quest>();
+        public List<ActiveQuest> ActiveQuests { get; } = new List<ActiveQuest>();
         
         public int Gold { get; set; }
         public List<ItemInstance> Items { get; } = new List<ItemInstance>();

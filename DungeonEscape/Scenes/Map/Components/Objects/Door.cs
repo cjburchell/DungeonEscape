@@ -47,7 +47,7 @@
                 });
                 return true;
             }
-
+            this.GameState.Sounds.PlaySoundEffect("door");
             this.SetEnableCollider(false);
             this.DisplayVisual(false);
             this.IsOpen = true;

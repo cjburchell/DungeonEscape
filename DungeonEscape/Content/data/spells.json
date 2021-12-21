@@ -2,6 +2,7 @@
   {
     "Name": "Heal",
     "Id": 1,
+    "ImageId": 54,
     "Type": "Heal",
     "Targets": "Single",
     "Cost": 3,
@@ -13,6 +14,7 @@
   {
     "Name": "Outside",
     "Id": 2,
+    "ImageId": 344,
     "Type": "Outside",
     "Targets": "Group",
     "Cost": 6,
@@ -22,6 +24,7 @@
   {
     "Name": "Fireball",
     "Id": 3,
+    "ImageId": 1,
     "Type": "Damage",
     "Targets": "Single",
     "Cost": 10,
@@ -33,6 +36,7 @@
   {
     "Name": "Lightning",
     "Id": 4,
+    "ImageId": 8,
     "Type": "Damage",
     "Targets": "Single",
     "Cost": 15,
@@ -44,6 +48,7 @@
   {
     "Name": "Fire Blast",
     "Id": 5,
+    "ImageId": 57,
     "Type": "Damage",
     "Targets": "Group",
     "Cost": 25,
@@ -55,6 +60,7 @@
   {
     "Name": "Lightning Storm",
     "Id": 6,
+    "ImageId": 50,
     "Type": "Damage",
     "Targets": "Group",
     "Cost": 30,
@@ -66,6 +72,7 @@
   {
     "Name": "Return",
     "Id": 7,
+    "ImageId": 220,
     "Type": "Return",
     "Targets": "Group",
     "Cost": 6,
@@ -75,6 +82,7 @@
   {
     "Name": "Revive",
     "Id": 8,
+    "ImageId": 53,
     "Type": "Revive",
     "Targets": "Single",
     "Cost": 25,
@@ -86,6 +94,7 @@
   {
     "Name": "Vivify",
     "Id": 9,
+    "ImageId": 53,
     "Type": "Revive",
     "Targets": "Single",
     "Cost": 40,
@@ -95,6 +104,7 @@
   {
     "Name": "Heal All",
     "Id": 10,
+    "ImageId": 54,
     "Type": "Heal",
     "Targets": "Single",
     "Cost": 7,
@@ -104,6 +114,7 @@
   {
     "Name": "Heal Us",
     "Id": 11,
+    "ImageId": 54,
     "Type": "Heal",
     "Targets": "Group",
     "Cost": 18,
@@ -115,6 +126,7 @@
   {
     "Name": "Heal Us All",
     "Id": 12,
+    "ImageId": 54,
     "Type": "Heal",
     "Targets": "Group",
     "Cost": 62,

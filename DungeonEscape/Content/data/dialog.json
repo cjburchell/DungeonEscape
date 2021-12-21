@@ -1,1 +1,60 @@
-﻿[]
+﻿[
+  {
+    "Id": 1,
+    "Quest": 1,
+    "Dialogs": [
+      {
+        "ForQuestStage": 0,
+        "Text": "I lost my bucket can you find it?",
+        "Choice": [
+          {
+            "Text": "Yes",
+            "NextQuestStage": 1,
+            "Dialogs": [
+              {
+                "Text": "Come back here when you find it."
+              }
+            ]
+          },
+          {
+            "Text": "No",
+            "Dialogs": [
+              {
+                "Text": "I guess I will have to find someone else"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "ForQuestStage": 1,
+        "Text": "Did you find my bucket?",
+        "Choice": [
+          {
+            "Text": "Yes",
+            "Action": "LookingForItem",
+            "ItemId": 3,
+            "NextQuestStage": 2,
+            "Dialogs": [
+              {
+                "Text": "Thank you."
+              }
+            ]
+          },
+          {
+            "Text": "No",
+            "Dialogs": [
+              {
+                "Text": "Keep trying!"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "ForQuestStage": 2,
+        "Text": "Thank you for finding my bucket"
+      }
+    ]
+  }
+]

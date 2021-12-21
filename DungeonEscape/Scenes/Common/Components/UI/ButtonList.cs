@@ -6,12 +6,14 @@
 	public class ButtonList : Table
 	{
 		public event Action<Button> OnClicked;
+		private readonly ISounds _sounds;
 		private Button _firstButton;
 		private Button _lastButton;
 
 
-		public ButtonList(Button firstButton = null, Button lastButton = null)
+		public ButtonList(ISounds sounds, Button firstButton = null, Button lastButton = null)
 		{
+			this._sounds = sounds;
 			this._firstButton = firstButton;
 			this._lastButton = lastButton;
 		}
@@ -27,6 +29,7 @@
 		{
 			button.OnClicked += _ =>
 			{
+				this._sounds.PlaySoundEffect("confirm");
 				this.OnClicked?.Invoke(button);
 			};
 

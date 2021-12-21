@@ -20,7 +20,7 @@
         {
             this.GameState.IsPaused = true;
             var questionWindow = new QuestionWindow(this._ui);
-            var goldWindow = new GoldWindow(party, this._ui.Canvas);
+            var goldWindow = new GoldWindow(party, this._ui.Canvas, this._ui.Sounds);
             goldWindow.ShowWindow();
             questionWindow.Show($"Would you like to be healed\nFor {this._cost} gold?", accepted =>
             {

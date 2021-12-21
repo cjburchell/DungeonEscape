@@ -1,7 +1,7 @@
 
 #----------------------------- Global Properties ----------------------------#
 
-/outputDir:bin
+/outputDir:.
 /intermediateDir:obj
 /platform:Windows
 /config:
@@ -13,31 +13,91 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Arial.spritefont
+#begin fonts/Arial.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Arial.spritefont
+/build:fonts/Arial.spritefont
 
-#begin Arial_bold.spritefont
+#begin fonts/Arial_bold.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Arial_bold.spritefont
+/build:fonts/Arial_bold.spritefont
 
-#begin Arial_bold_big.spritefont
+#begin fonts/Arial_bold_big.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Arial_bold_big.spritefont
+/build:fonts/Arial_bold_big.spritefont
 
-#begin Segoeui.spritefont
+#begin fonts/Segoeui.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Segoeui.spritefont
+/build:fonts/Segoeui.spritefont
+
+#begin sound/battleground.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sound/battleground.ogg
+
+#begin sound/first-story.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sound/first-story.ogg
+
+#begin sound/in-the-city.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sound/in-the-city.ogg
+
+#begin sound/like-totally-rad.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sound/like-totally-rad.ogg
+
+#begin sound/not-in-vain.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sound/not-in-vain.ogg
+
+#begin sound/sky-factory-zone.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sound/sky-factory-zone.ogg
+
+#begin sound/sword-metal.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sound/sword-metal.ogg
+
+#begin sound/underground-town.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sound/underground-town.ogg
+
+#begin sound/unprepared.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sound/unprepared.ogg
+
+#begin sound/will.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sound/will.ogg
 

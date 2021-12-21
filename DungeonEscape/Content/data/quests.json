@@ -1,1 +1,67 @@
-﻿[]
+﻿[
+  {
+    "Id": 1,
+    "Name": "Find my bucket",
+    "Xp": 100,
+    "Stages": [
+      {
+        "Id": 1,
+        "Description": "Talked to the villager"
+      },
+      {
+        "Id": 2,
+        "Description": "Found the bucket"
+      },
+      {
+        "Id": 3,
+        "Description": "Returned The bucket"
+      }
+    ]
+  },
+  {
+    "Id": 2,
+    "Name": "Lost Dog",
+    "Xp": 100,
+    "Stages": [
+      {
+        "Id": 1,
+        "Description": "Talked to the villager"
+      },
+      {
+        "Id": 2,
+        "Description": "Found the dog"
+      },
+      {
+        "Id": 3,
+        "Description": "Returned The dog"
+      }
+    ]
+  },
+  {
+    "Id": 3,
+    "Name": "Get a ship",
+    "Xp": 100,
+    "Stages": [
+      {
+        "Id": 1,
+        "Description": "Talked to priest"
+      },
+      {
+        "Id": 2,
+        "Description": "Talked to the old man"
+      },
+      {
+        "Id": 3,
+        "Description": "Found the key"
+      },
+      {
+        "Id": 4,
+        "Description": "Opened the door"
+      },
+      {
+        "Id": 4,
+        "Description": "Got the ship"
+      }
+    ]
+  }
+]

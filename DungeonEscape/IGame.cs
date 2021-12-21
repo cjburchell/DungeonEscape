@@ -38,6 +38,8 @@ namespace Redpoint.DungeonEscape
         List<ClassStats> ClassLevelStats { get; }
 
         void ReloadSaveGames();
+        
+        ISounds Sounds { get; }
             
         void LoadGame(GameSave saveGame);
         void ResumeGame();

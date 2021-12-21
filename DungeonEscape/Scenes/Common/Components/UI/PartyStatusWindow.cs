@@ -11,11 +11,11 @@
         private Table _statusTable;
         private readonly Party _party;
 
-        public PartyStatusWindow(Party party, UICanvas canvas) : this(party, canvas, new Point(10, 10))
+        public PartyStatusWindow(Party party, UICanvas canvas, ISounds sounds) : this(party, canvas, sounds, new Point(10, 10))
         {
         }
 
-        private PartyStatusWindow(Party party, UICanvas canvas, Point position) : base(new UiSystem(canvas, true), null,
+        private PartyStatusWindow(Party party, UICanvas canvas, ISounds sounds, Point position) : base(new UiSystem(canvas, sounds,true), null,
             position, 90, 110, false)
         {
             this._party = party;

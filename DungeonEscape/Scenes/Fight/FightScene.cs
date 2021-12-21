@@ -58,7 +58,13 @@
                 this._monsters.Add(new MonsterInstance(monster));
             }
         }
+        
+        // list of songs that can play during a battle
+        private static readonly List<string> Songs = new List<string>
+            { "battleground", "like-totally-rad", "sword-metal", "unprepared"};
 
+        private const string EndFightSong = "not-in-vain";
+        
         public override void Initialize()
         {
             base.Initialize();
@@ -68,7 +74,7 @@
                 MapScene.SceneResolution);
 
             this.AddRenderer(new DefaultRenderer());
-            this._ui = new UiSystem(this.CreateEntity("ui-canvas").AddComponent(new UICanvas()));
+            this._ui = new UiSystem(this.CreateEntity("ui-canvas").AddComponent(new UICanvas()), this._game.Sounds);
             this._ui.Canvas.SetRenderLayer(999);
             this._ui.Canvas.Stage.GamepadActionButton = null;
 
@@ -80,13 +86,15 @@
                 monster.Image = table.Add(new Image(monster.Info.Image)).Pad(10).GetElement<Image>();
             }
             
-            var partyWindow = new PartyStatusWindow(this._game.Party,this._ui.Canvas);
+            var partyWindow = new PartyStatusWindow(this._game.Party, this._ui.Canvas, this._game.Sounds);
             partyWindow.ShowWindow();
 
             var monsterName = this._monsters.Count == 1 ?$"a {this._monsters.First().Name}"  : $"{this._monsters.Count} enemies";
             var message =$"You have encountered {monsterName}!";
             
             new FightTalkWindow(this._ui, "Start Fight").Show(message, ()=> this._state = EncounterRoundState.StartRound);
+            
+            this._game.Sounds.PlayMusic(Songs[Random.NextInt(Songs.Count)]);
         }
 
         public override void Update()
@@ -449,10 +457,12 @@
                         message = $"{action.Source.Name} Tried to run\n";
                         if (Random.NextInt(5) != 1)
                         {
+                            this._game.Sounds.PlaySoundEffect("stairs-up");
                             message += "And got away";
                             switch (action.Source)
                             {
                                 case Hero _:
+                                    this._game.Sounds.PlayMusic(EndFightSong);
                                     this._state = EncounterRoundState.EndEncounter;
                                     new FightTalkWindow(this._ui, "Fight").Show(message, this._game.ResumeGame);
                                     return;
@@ -465,6 +475,8 @@
 
                         break;
                     case RoundActionState.Fight:
+                        this._game.Sounds.PlaySoundEffect("prepare-attack", true);
+                        var totalDamage = 0;
                         foreach (var target in action.Target)
                         {
                             message = $"{action.Source.Name} Attacks {target.Name}.\n";
@@ -480,6 +492,7 @@
                             }
 
                             damage -= (int) (damage * target.Defence / 100f);
+                            totalDamage += damage;
                             target.Health -= damage;
 
                             if (damage == 0)
@@ -499,6 +512,8 @@
                             message += "and has died!\n";
                             target.Health = 0;
                         }
+
+                        this._game.Sounds.PlaySoundEffect(totalDamage == 0 ? "miss" : "receive-damage");
 
                         break;
                     case RoundActionState.Spell:
@@ -578,6 +593,9 @@
             }
             else
             {
+                this._game.Sounds.StopMusic();
+                this._game.Sounds.PlaySoundEffect("victory", true);
+                this._game.Sounds.PlayMusic(EndFightSong);
                 var xp = this._monsters.Where(monster=> monster.IsDead).Sum(monster => monster.Info.Xp) / this._game.Party.Members.Count(member => !member.IsDead);
                 if (xp == 0)
                 {
@@ -589,13 +607,20 @@
 
                 var monsterName = this._monsters.Count == 1 ?$"the {this._monsters.First().Name}"  : "all the enemies";
                 var levelUpMessage =$"You have defeated {monsterName},\nEach party member has gained {xp}XP\nand the party got {gold} gold\n";
+                var leveledUp = false;
                 foreach (var member in this._game.Party.Members.Where(member => !member.IsDead))
                 {
                     member.Xp += xp;
                         while (member.CheckLevelUp(this._game.ClassLevelStats,this._game.Spells, out var message))
                         {
+                            leveledUp = true;
                             levelUpMessage += message;
                         }
+                }
+
+                if (leveledUp)
+                {
+                    this._game.Sounds.PlaySoundEffect("level-up");
                 }
                 
                 talkWindow.Show(levelUpMessage, this._game.ResumeGame);

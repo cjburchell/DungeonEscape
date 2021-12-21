@@ -97,13 +97,15 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             this.SetDesignResolution(ScreenTileWidth * map.TileWidth, ScreenTileHeight * map.TileHeight,
                 SceneResolution);
 
-
+            var songPath = map.Properties != null && map.Properties.ContainsKey("song")?map.Properties["song"]:@"not-in-vain";
+            this._gameState.Sounds.PlayMusic(songPath);
+            
             this._randomMonsters = this.LoadRandomMonsters();
 
             this._gameState.Party.CurrentMapId = this._mapId;
 
             this.AddRenderer(new ScreenSpaceRenderer(100, ScreenSpaceRenderLayer));
-            this._ui = new UiSystem(this.CreateEntity("ui-canvas").AddComponent(new UICanvas()));
+            this._ui = new UiSystem(this.CreateEntity("ui-canvas").AddComponent(new UICanvas()), this._gameState.Sounds);
             this._ui.Canvas.SetRenderLayer(999);
             this._ui.Canvas.Stage.GamepadActionButton = null;
             

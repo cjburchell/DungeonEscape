@@ -22,6 +22,7 @@ namespace Redpoint.DungeonEscape.State
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public int MinimumLevel { get; set; } = 0;
         public int? Xp { get; set; }
         public int? Gold { get; set; }
         public int? Item { get; set; }

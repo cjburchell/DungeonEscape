@@ -70,7 +70,7 @@
         {
             this.GameState.IsPaused = true;
             
-            var goldWindow = new GoldWindow(party, this._ui.Canvas, new Point(MapScene.ScreenWidth - 155, MapScene.ScreenHeight / 3 * 2 - 55));
+            var goldWindow = new GoldWindow(party, this._ui.Canvas, this._ui.Sounds, new Point(MapScene.ScreenWidth - 155, MapScene.ScreenHeight / 3 * 2 - 55));
             goldWindow.ShowWindow();
             void Done()
             {

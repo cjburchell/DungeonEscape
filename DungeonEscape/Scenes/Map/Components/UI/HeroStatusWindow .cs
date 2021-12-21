@@ -26,7 +26,11 @@
             this._closeButton = new TextButton("Close", Skin);
             this._closeButton.GetLabel();    
             this._closeButton.ShouldUseExplicitFocusableControl = true;
-            this._closeButton.OnClicked += _ => { this.CloseWindow(); };
+            this._closeButton.OnClicked += _ =>
+            {
+                this.Ui.Sounds.PlaySoundEffect("confirm");
+                this.CloseWindow();
+            };
 
             // layout
             table.SetFillParent(true);

@@ -23,6 +23,7 @@
 
         public override void OnHit(Party party)
         {
+            this.GameState.Sounds.PlaySoundEffect("stairs-up");
             this.GameState.IsPaused = true;
             this.GameState.SetMap(this._mapId, this._spawnId);
         }

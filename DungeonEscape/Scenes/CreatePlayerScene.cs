@@ -9,6 +9,12 @@
 
     public class CreatePlayerScene : Scene
     {
+        private readonly ISounds _sounds;
+
+        public CreatePlayerScene(ISounds sounds)
+        {
+            this._sounds = sounds;
+        }
         public override void Initialize()
         {
             base.Initialize();
@@ -36,6 +42,7 @@
             var playButton = table.Add(new TextButton("Start", BasicWindow.Skin)).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).GetElement<TextButton>();
             playButton.OnClicked += _ =>
             {
+                this._sounds.PlaySoundEffect("confirm");
                 var party = new Party();
                 var hero = new Hero
                 {
@@ -53,9 +60,10 @@
             var backButton = table.Add(new TextButton("Back", BasicWindow.Skin)).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).GetElement<TextButton>();
             backButton.OnClicked += _ =>
             {
+                this._sounds.PlaySoundEffect("confirm");
                 Core.StartSceneTransition(new TransformTransition(() =>
                 {
-                    var scene = new MainMenu();
+                    var scene = new MainMenu(this._sounds);
                     scene.Initialize();
                     return scene;
                 }, TransformTransition.TransformTransitionType.SlideRight){Duration = 0.25f});
@@ -67,6 +75,7 @@
             backButton.GamepadRightElement = playButton;
             playButton.GamepadRightElement = backButton;
             playButton.GamepadLeftElement = backButton;
+            this._sounds.PlayMusic(@"first-story");
         }
     }
 }

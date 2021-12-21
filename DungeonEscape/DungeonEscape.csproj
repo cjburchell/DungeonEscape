@@ -15,97 +15,103 @@
     <ItemGroup>
         <None Remove="Icon.ico" />
         <None Remove="Icon.png" />
-        <None Update="Content\images\items\BattleAxe.png">
+        <None Update="Content\castle.tsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\BlizzardSword.png">
+        <None Update="Content\castle2.tsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\BluePotion.png">
+        <None Update="Content\Content.mgcb">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\chainmail.png">
+        <None Update="Content\de.tiled-project">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\Club.png">
+        <None Update="Content\de.tiled-session">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\Dagger.png">
+        <None Update="Content\dungeon.tsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\fireball.png">
+        <None Update="Content\edge.tsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\FireBlast.png">
+        <None Update="Content\fonts\Arial.xnb">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\FlameShield.png">
+        <None Update="Content\fonts\Arial_bold.xnb">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\FullArmor.png">
+        <None Update="Content\fonts\Arial_bold_big.xnb">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\GreenPotion.png">
+        <None Update="Content\fonts\Segoeui.xnb">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\healspell.png">
+        <None Update="Content\data\classlevels.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\HevyArmor.png">
+        <None Update="Content\data\dialog.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\KingsArmor.png">
+        <None Update="Content\data\items.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\KingsSword.png">
+        <None Update="Content\data\monsters0.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\LargeShield.png">
+        <None Update="Content\data\monsters15.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\LeatherA.png">
+        <None Update="Content\data\monsters17.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\Lightning.png">
+        <None Update="Content\data\monsters19.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\LitBlast.png">
+        <None Update="Content\data\monsters24.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\LongSword.png">
+        <None Update="Content\data\monsters25.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\Mace.png">
+        <None Update="Content\data\monsters40.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\MagicArmor.png">
+        <None Update="Content\data\monsters41.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\outside.png">
+        <None Update="Content\data\monsters42.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\Potion.png">
+        <None Update="Content\data\monsters43.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\PurplePotion.png">
+        <None Update="Content\data\monsters44.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\Robe.png">
+        <None Update="Content\data\monsters45.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\ShortSord.png">
+        <None Update="Content\data\monsters46.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\SmallShield.png">
+        <None Update="Content\data\names.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\SpikedArmor.png">
+        <None Update="Content\data\quests.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\SPotion.png">
+        <None Update="Content\data\spells.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\items\TowerShield.png">
+        <None Update="Content\hero.tsx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\items\items.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\monsters\ant.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\monsters\ape.png">
@@ -138,9 +144,6 @@
         <None Update="Content\images\monsters\dblue.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\monsters\defalt.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
         <None Update="Content\images\monsters\dgreen.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
@@ -153,13 +156,13 @@
         <None Update="Content\images\monsters\draco.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Content\images\monsters\drake.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
         <None Update="Content\images\monsters\eeal.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\monsters\elf.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\monsters\fball.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\monsters\fly.png">
@@ -183,13 +186,22 @@
         <None Update="Content\images\monsters\lav.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\monsters\lball.png">
+        <None Update="Content\images\monsters\lion.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\monsters\man.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Content\images\monsters\mountainlion.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
         <None Update="Content\images\monsters\oct.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\monsters\owl.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\monsters\panther.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\monsters\peed.png">
@@ -205,6 +217,12 @@
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\monsters\scorp.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\monsters\seadragon.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\monsters\seaserpent.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\monsters\sgost.png">
@@ -228,37 +246,16 @@
         <None Update="Content\images\monsters\ssnake.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Content\images\monsters\tiger.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
         <None Update="Content\images\monsters\weard.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\monsters\wido.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\ant.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\ape.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\bab.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\band.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\bbare.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\bee.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\beet.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\bird.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\bore.png">
+        <None Update="Content\images\sprites\castle.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\sprites\cave.png">
@@ -267,151 +264,25 @@
         <None Update="Content\images\sprites\chest.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\cobra.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\dblue.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\defalt.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\dgreen.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\dlav.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\dog.png">
+        <None Update="Content\images\sprites\column.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\sprites\door.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\draco.png">
+        <None Update="Content\images\sprites\hero.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\eeal.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\elf.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\fball.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\fly.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\gard.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\geco.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\gob.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\gris.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\healc.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\hgob.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\karken.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\lav.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\lball.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\man.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\mountan.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\much.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\muchc.png">
+        <None Update="Content\images\sprites\npc.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\sprites\ochest.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\oct.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\peed.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\player.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\player1.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\player2.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\player2b.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\player3.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\player3b.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\player4.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\player4b.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\polerb.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\rsnake.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\sands.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\scorp.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\sgost.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\shark.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\Ship1b.png">
+        <None Update="Content\images\sprites\ship2.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\sprites\shrin.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\shu.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\slime.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\slimeti.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\squid.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\ssnake.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\sprites\stairdw.png">
@@ -429,16 +300,19 @@
         <None Update="Content\images\sprites\warp.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\weard.png">
+        <None Update="Content\images\tiles\brick.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\wido.png">
+        <None Update="Content\images\tiles\brige.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\wizc.png">
+        <None Update="Content\images\tiles\castle.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\collom.png">
+        <None Update="Content\images\tiles\castle2.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\tiles\cwall1.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\tiles\cwall10.png">
@@ -486,10 +360,22 @@
         <None Update="Content\images\tiles\defalt.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Content\images\tiles\desert.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\tiles\dungeon.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\tiles\edge.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
         <None Update="Content\images\tiles\Floor.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\tiles\fstars.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\tiles\grass.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\tiles\grbrick.png">
@@ -501,16 +387,40 @@
         <None Update="Content\images\tiles\ice2.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\Ship.png">
+        <None Update="Content\images\tiles\indoor.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\tiles\mountan.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\tiles\outdoors.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\tiles\overworld.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\tiles\sky.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\stairdw.png">
+        <None Update="Content\images\tiles\snow.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\stairup.png">
+        <None Update="Content\images\tiles\swamp.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\tiles\tower.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\tiles\town.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\tiles\tree.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\tiles\wall1.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\tiles\wall1y.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\tiles\wall2.png">
@@ -519,13 +429,40 @@
         <None Update="Content\images\tiles\wall2y.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\wall3.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\warp.png">
+        <None Update="Content\images\tiles\water.png">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\tiles\wground.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\ui\splash.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\allmonsters.tsx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\data\allmonsters.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\indoor.tsx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\items.tsx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\map0.tmx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\map10.tmx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\map13.tmx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\map14.tmx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\map15.tmx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\map16.tmx">
@@ -582,196 +519,91 @@
         <None Update="Content\map9.tmx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\monsters15.tsx">
+        <None Update="Content\nez\effects\Bevels.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\monsters17.tsx">
+        <None Update="Content\nez\effects\BloomCombine.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\monsters19.tsx">
+        <None Update="Content\nez\effects\BloomExtract.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\monsters24.tsx">
+        <None Update="Content\nez\effects\Crosshatch.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\monsters25.tsx">
+        <None Update="Content\nez\effects\DeferredLighting.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\monsters40.tsx">
+        <None Update="Content\nez\effects\DeferredSprite.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\monsters41.tsx">
+        <None Update="Content\nez\effects\Dissolve.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\monsters42.tsx">
+        <None Update="Content\nez\effects\Dots.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\monsters43.tsx">
+        <None Update="Content\nez\effects\ForwardLighting.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\monsters44.tsx">
+        <None Update="Content\nez\effects\GaussianBlur.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\monsters45.tsx">
+        <None Update="Content\nez\effects\Grayscale.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\monsters46.tsx">
+        <None Update="Content\nez\effects\HeatDistortion.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\tiles.tsx">
+        <None Update="Content\nez\effects\Invert.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map0.json">
+        <None Update="Content\nez\effects\Letterbox.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map10.json">
+        <None Update="Content\nez\effects\MultiTexture.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map13.json">
+        <None Update="Content\nez\effects\MultiTextureOverlay.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map14.json">
+        <None Update="Content\nez\effects\Noise.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map15.json">
+        <None Update="Content\nez\effects\PaletteCycler.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map16.json">
+        <None Update="Content\nez\effects\PixelGlitch.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map17.json">
+        <None Update="Content\nez\effects\PolygonLight.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map18.json">
+        <None Update="Content\nez\effects\Reflection.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map19.json">
+        <None Update="Content\nez\effects\Scanlines.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map24.json">
+        <None Update="Content\nez\effects\Sepia.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map25.json">
+        <None Update="Content\nez\effects\SpriteAlphaTest.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map40.json">
+        <None Update="Content\nez\effects\SpriteBlinkEffect.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map41.json">
+        <None Update="Content\nez\effects\SpriteEffect.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map42.json">
+        <None Update="Content\nez\effects\SpriteLightMultiply.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map43.json">
+        <None Update="Content\nez\effects\SpriteLines.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="data\maps\map44.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="data\maps\map45.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="data\maps\map46.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="data\maps\map47.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="data\maps\map6.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="data\maps\map7.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="data\maps\map8.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="data\maps\map9.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\map0.tmx">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\map10.tmx">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\monsters0.tsx">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\brick.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\water.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\tree.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\snow.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\mountan.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\grass.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\shrin.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\Ship1.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\desert.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\town.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\tower.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\swamp.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\cave.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\brige.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\playeranimation.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\map13.tmx">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\map14.tmx">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\map15.tmx">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\cwall1.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\Sound\DRUMC0.wav">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\Sound\HIT.wav">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\Sound\START.wav">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\Sound\WOUND.wav">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\wall1.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\wall1y.png">
+        <None Update="Content\nez\effects\StencilLight.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\nez\effects\transitions\Squares.mgfxo">
@@ -783,145 +615,16 @@
         <None Update="Content\nez\effects\transitions\Wind.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\spells.tsx">
+        <None Update="Content\nez\effects\Twist.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\items.tsx">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\ui\splash.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\ui\start1.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\ship.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\castle.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\monsters\ant.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\items\key.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\items\return.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\items\revive.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\monsters\panther.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\monsters\tiger.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\monsters\drake.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\monsters\lion.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\monsters\mountainlion.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\monsters\owl.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\monsters\seadragon.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\monsters\seaserpent.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\allmonsters.tsx">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\monsters0.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\monsters15.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\monsters17.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\monsters19.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\monsters24.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\monsters25.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\monsters40.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\monsters41.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\monsters42.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\monsters43.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\monsters44.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\monsters45.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\monsters46.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\allmonsters.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\items.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\spells.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\classlevels.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\hero.tsx">
+        <None Update="Content\nez\effects\Vignette.mgfxo">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\npc.tsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\sprites\hero.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\npc.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
         <None Update="Content\objects.tsx">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\ship.tsx">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\ship2.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\sprites\column.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\castle.tsx">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\dungeon.tsx">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\indoor.tsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\outdoors.tsx">
@@ -930,106 +633,124 @@
         <None Update="Content\overworld.tsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Content\ship.tsx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\sound\battleground.ogg">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\sound\first-story.ogg">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\sound\in-the-city.ogg">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\sound\like-totally-rad.ogg">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\sound\not-in-vain.ogg">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\sound\sky-factory-zone.ogg">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\sound\sword-metal.ogg">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\sound\underground-town.ogg">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\sound\unprepared.ogg">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\sound\will.ogg">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\tiles.tsx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
         <None Update="Content\tower.tsx">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\castle.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\dungeon.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\indoor.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\outdoors.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\overworld.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\edge.tsx">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\images\tiles\edge.png">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\castle2.tsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\town.tsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\images\tiles\castle2.png">
+        <None Update="Content\fonts\Arial.spritefont">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\allmonsters.json">
+        <None Update="Content\fonts\Arial_bold.spritefont">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\classlevels.json">
+        <None Update="Content\fonts\Arial_bold_big.spritefont">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\items.json">
+        <None Update="Content\fonts\Segoeui.spritefont">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\monsters0.json">
+        <None Update="Content\sound\fx\select.wav">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\monsters15.json">
+        <None Update="Content\sound\music\battleground.ogg">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\monsters17.json">
+        <None Update="Content\sound\music\first-story.ogg">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\monsters19.json">
+        <None Update="Content\sound\music\in-the-city.ogg">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\monsters24.json">
+        <None Update="Content\sound\music\like-totally-rad.ogg">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\monsters25.json">
+        <None Update="Content\sound\music\not-in-vain.ogg">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\monsters40.json">
+        <None Update="Content\sound\music\sky-factory-zone.ogg">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\monsters41.json">
+        <None Update="Content\sound\music\sword-metal.ogg">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\monsters42.json">
+        <None Update="Content\sound\music\underground-town.ogg">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\monsters43.json">
+        <None Update="Content\sound\music\unprepared.ogg">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\monsters44.json">
+        <None Update="Content\sound\music\will.ogg">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\monsters45.json">
+        <None Update="Content\sound\fx\confirm.wav">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\names.json">
+        <None Update="Content\sound\fx\door.wav">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\spells.json">
+        <None Update="Content\sound\fx\flute.wav">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\fonts\Arial.xnb">
+        <None Update="Content\sound\fx\receive-damage.wav">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\fonts\Arial_bold.xnb">
+        <None Update="Content\sound\fx\spell.wav">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\fonts\Arial_bold_big.xnb">
+        <None Update="Content\sound\fx\stairs-up.wav">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\fonts\Segoeui.xnb">
+        <None Update="Content\sound\fx\miss.wav">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\quests.json">
+        <None Update="Content\sound\fx\prepare-attack.wav">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\dialog.json">
+        <None Update="Content\sound\fx\treasure.wav">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\sound\fx\level-up.wav">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\sound\fx\victory.wav">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
@@ -1048,7 +769,6 @@
       <ProjectReference Include="..\Nez.Portable\Nez.MG38.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Content\bin" />
       <Folder Include="Content\nez" />
     </ItemGroup>
 </Project>

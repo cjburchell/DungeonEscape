@@ -21,8 +21,7 @@
             {
                 this._dialog = new Dialog
                 {
-                    Text =  text,
-                    Choices = new List<Choice> { new Choice {Action =  QuestAction.None, Text = "OK"}}
+                    Dialogs = new List<DialogText> { new DialogText() {Text = text, Choices = new List<Choice> { new Choice {Text = "Ok"}}}}
                 };
                 
                 return;
@@ -40,7 +39,8 @@
             }
             
             this.GameState.IsPaused = true;
-            this.ShowDialog(this._dialog, () =>
+            var quest = this._dialog.Quest.HasValue ? this.GameState.Quests.FirstOrDefault(i => i.Id == this._dialog.Quest) : null;
+            this.ShowDialog(this._dialog.Dialogs, quest,() =>
             {
                 this.GameState.IsPaused = false;
             });
@@ -48,9 +48,50 @@
 
         }
 
-        private void ShowDialog(Dialog dialog, Action done)
+        private void ShowDialog(List<DialogText> dialogs, Quest quest, Action done)
         {
-            new TalkWindow(this._ui).Show(dialog,choice =>
+            // Choose the dialog based on the correct quest state.
+            DialogText dialog;
+            ActiveQuest activeQuest = null;
+            if (quest == null)
+            {
+                dialog = dialogs.First();
+            }
+            else
+            {
+                activeQuest =
+                    this.GameState.Party.ActiveQuests.FirstOrDefault(i => i.Id == quest.Id);
+                if (activeQuest == null)
+                {
+                    activeQuest = new ActiveQuest
+                    {
+                        Id = quest.Id, CurrentStage = 0,
+                        Stages = quest.Stages.Select(i => new QuestStageState {Number = i.Number}).ToList()
+                    };
+                    this.GameState.Party.ActiveQuests.Add(activeQuest);
+                }
+
+                dialog = dialogs.FirstOrDefault(d =>
+                    d.ForQuestStage == activeQuest.CurrentStage
+                ) ?? dialogs.First(d => !d.ForQuestStage.HasValue);
+            }
+
+            if (dialog == null)
+            {
+                done();
+                return;
+            }
+            
+            new TalkWindow(this._ui).Show(dialog.Text, dialog.Choices.Where(choice =>
+            {
+                if (choice.Action == QuestAction.LookingForItem && choice.ItemId.HasValue)
+                {
+                    // if the action is looking for an item
+                    return this.GameState.Party.Items.FirstOrDefault(i => i.ItemId == choice.ItemId) != null;
+                }
+                return true;
+
+            }) ,choice =>
             {
                 if (choice == null)
                 {
@@ -60,45 +101,38 @@
 
                 switch (choice.Action)
                 {
-                    case QuestAction.GetItem:
+                    case QuestAction.GiveItem:
+                        this.GameState.Party.Items.Add(new ItemInstance(this.GameState.Items.FirstOrDefault(i=> i.Id == choice.ItemId)));
                         break;
                     case QuestAction.LookingForItem:
+                        var item =this.GameState.Party.Items.FirstOrDefault(i => i.ItemId == choice.ItemId);
+                        this.GameState.Party.Items.Remove(item);
                         break;
                     case QuestAction.None:
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-
-                if (choice.QuestId.HasValue)
+                
+                // advance a quest
+                if (quest != null && activeQuest != null)
                 {
-                    var quest = this.GameState.Quests.FirstOrDefault(i => i.Id == choice.QuestId);
-                    if (quest != null)
+                    var stageNumber = choice.NextQuestStage ?? 0;
+                    if (stageNumber > activeQuest.CurrentStage)
                     {
-                        var activeQuest = this.GameState.Party.ActiveQuests.FirstOrDefault(i => i.Id == choice.QuestId);
-                        if (activeQuest == null)
+                        var activeStage = activeQuest.Stages.FirstOrDefault(i => i.Number == activeQuest.CurrentStage);
+                        if (activeStage != null)
                         {
-                            activeQuest = new ActiveQuest {Id = quest.Id, CurrentStage = 0, Stages = quest.Stages.Select(i => new QuestStageState {Number = i.Number}).ToList()};
-                            this.GameState.Party.ActiveQuests.Add(activeQuest);
+                            activeStage.Completed = true;
                         }
 
-                        var stageNumber = choice.QuestStage ?? 0;
-                        if (stageNumber > activeQuest.CurrentStage)
-                        {
-                            var activeStage = activeQuest.Stages.FirstOrDefault(i => i.Number == activeQuest.CurrentStage);
-                            if (activeStage != null)
-                            {
-                                activeStage.Completed = true;
-                            }
-                            
-                            activeQuest.CurrentStage = stageNumber;
-                        }
+                        activeQuest.CurrentStage = stageNumber;
                     }
                 }
 
-                if (choice.Dialog != null)
+                if (choice.Dialogs != null)
                 {
-                    this.ShowDialog(choice.Dialog, done);
+                    this.ShowDialog(choice.Dialogs, quest, done);
                 }
                 else
                 {

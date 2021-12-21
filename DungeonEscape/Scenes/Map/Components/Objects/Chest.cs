@@ -32,7 +32,7 @@
             this._openImageName = tmxObject.Properties.ContainsKey("OpenImage") ? tmxObject.Properties["OpenImage"] : "ochest.png";
             if (this.State.Gold.HasValue)
             {
-                this._item = new Item("", "Gold", ItemType.Gold,this.State.Gold.Value , 0);
+                this._item = Item.CreateGold(this.State.Gold.Value);
                 return;
             }
             
@@ -52,7 +52,7 @@
             if (this.TmxObject.Properties.ContainsKey("Gold"))
             {
                 this.State.Gold = int.Parse(tmxObject.Properties["Gold"]);
-                this._item = new Item("", "Gold", ItemType.Gold,this.State.Gold.Value , 0);
+                this._item = Item.CreateGold(this.State.Gold.Value);
                 return;
             }
 
@@ -73,7 +73,7 @@
             }
 
             this.State.Gold = Random.NextInt(100) + 20;
-            this._item = new Item("", "Gold", ItemType.Gold,this.State.Gold.Value , 0);
+            this._item = Item.CreateGold(this.State.Gold.Value);
         }
         
         public override void Initialize()
@@ -124,7 +124,7 @@
                 new TalkWindow(this._ui).Show($"You found a {this._item.Name}", Done);
                 party.Items.Add(new ItemInstance(this._item));
             }
-            
+            this.GameState.Sounds.PlaySoundEffect("treasure");
             this.IsOpen = true;
             this.DisplayVisual(!this.IsOpen);
             this._openImage.SetEnabled(this.IsOpen);

@@ -149,10 +149,10 @@
             this._actionButton.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.A));
 
             this._statusWindow =
-                new PartyStatusWindow(this._gameState.Party, this._ui.Canvas);
+                new PartyStatusWindow(this._gameState.Party, this._ui.Canvas, this._ui.Sounds);
 
             this._goldWindow =
-                new GoldWindow(this._gameState.Party, this._ui.Canvas);
+                new GoldWindow(this._gameState.Party, this._ui.Canvas, this._ui.Sounds);
 
             var overWater = this.IsOverWater();
             this._shipAnimator.SetEnabled(overWater);

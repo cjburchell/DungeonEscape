@@ -17,7 +17,7 @@
         public SelectWindow(UiSystem ui, string title, Point position, int width = 180,
             int height = 150) : base(ui, title, position, width, height)
         {
-            this._list = new ButtonList();
+            this._list = new ButtonList(ui.Sounds);
             this._scrollPane = new ScrollPane(this._list, Skin) {FillParent = true};
         }
 
@@ -38,6 +38,7 @@
             this.Window.AddElement(this._scrollPane);
             this._list.OnClicked += button =>
             {
+                this.Ui.Sounds.PlaySoundEffect("confirm");
                 this.CloseWindow(button?.UserData as T);
             };
             

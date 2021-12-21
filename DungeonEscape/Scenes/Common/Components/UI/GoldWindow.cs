@@ -11,12 +11,12 @@
         private readonly Party _party;
         private Label _goldLabel;
 
-        public GoldWindow(Party party, UICanvas canvas) : this(party, canvas,
+        public GoldWindow(Party party, UICanvas canvas, ISounds sounds) : this(party, canvas, sounds,
             new Point(MapScene.ScreenWidth - 155, MapScene.ScreenHeight - 55))
         {
         }
 
-        public GoldWindow(Party party, UICanvas canvas, Point position) : base(new UiSystem(canvas, true), null,
+        public GoldWindow(Party party, UICanvas canvas, ISounds sounds, Point position) : base(new UiSystem(canvas, sounds, true), null,
             position, 150, 50, false)
         {
             this._party = party;

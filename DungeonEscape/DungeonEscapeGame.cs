@@ -87,7 +87,7 @@
             StartSceneTransition(new FadeTransition(() =>
             {
                 this.InGame = false;
-                var splash = new MainMenu();
+                var splash = new MainMenu(this.Sounds);
                 splash.Initialize();
                 return splash;
             }));
@@ -112,7 +112,7 @@
         {
             StartSceneTransition(new FadeTransition(() =>
             {
-                var splash = new ContinueQuestScene();
+                var splash = new ContinueQuestScene(this.Sounds);
                 splash.Initialize();
                 return splash;
             }));
@@ -149,21 +149,18 @@
             {
                 foreach (var item in items)
                 {
-                    var tile = tileSet.Tiles.FirstOrDefault(i => i.Value.Id == item.Id).Value;
-                    item.Setup(tile);
+                    item.Setup(tileSet);
                     this.Items.Add(item);
                 }
             }
             
             
-            var spellTileset = LoadTileSet("Content/spells.tsx");
             var spells = JsonConvert.DeserializeObject<List<Spell>>(File.ReadAllText("Content/data/spells.json"));
             if (spells != null)
             {
                 foreach (var spell in spells)
                 {
-                    var tile = spellTileset.Tiles.FirstOrDefault(i => i.Value.Id == spell.Id).Value;
-                    spell.Setup(tile);
+                    spell.Setup(tileSet);
                     this.Spells.Add(spell);
                 }
             }
@@ -187,7 +184,7 @@
             Scene = new EmptyScene();
             StartSceneTransition(new FadeTransition(() =>
             {
-                var splash = new SplashScreen();
+                var splash = new SplashScreen(this.Sounds);
                 splash.Initialize();
                 return splash;
             }));
@@ -199,6 +196,8 @@
         {
             this._saveSlots = LoadSaveGames(SaveFile);
         }
+
+        public ISounds Sounds { get; } = new Sounds();
 
         private static GameSave[] LoadSaveGames(string fileName)
         {
@@ -216,7 +215,7 @@
             return saves.ToArray();
         }
 
-        private static TmxTileset LoadTileSet(string path)
+        public static TmxTileset LoadTileSet(string path)
         {
             if (!File.Exists(path))
             {

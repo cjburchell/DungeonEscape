@@ -9,6 +9,7 @@ namespace Redpoint.DungeonEscape.State
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using Nez;
+    using Nez.Textures;
     using Nez.Tiled;
 
     public class Spell
@@ -24,21 +25,24 @@ namespace Redpoint.DungeonEscape.State
 
             return this.Type switch
             {
-                SpellType.Heal => this.CastHeal(targets, caster, false),
+                SpellType.Heal => this.CastHeal(targets, caster, false, game),
                 SpellType.Outside => this.CastOutside(caster as Hero, game),
-                SpellType.Damage => this.CastDamage(targets, caster),
+                SpellType.Damage => this.CastDamage(targets, caster, game),
                 SpellType.Return => this.CastReturn(caster as Hero, game),
-                SpellType.Revive => this.CastHeal(targets, caster, true),
+                SpellType.Revive => this.CastHeal(targets, caster, true, game),
                 _ => $"{caster.Name} casts {this.Name} but it did not work"
             };
         }
 
-        private string CastDamage(IEnumerable<IFighter> targets, IFighter caster)
+        private string CastDamage(IEnumerable<IFighter> targets, IFighter caster, IGame gameState)
         {
+            gameState.Sounds.PlaySoundEffect("spell", true);
             var message = $"{caster.Name} casts {this.Name}\n";
+            var totalDamage = 0;
             foreach (var target in targets)
             {
                 var damage = Random.NextInt(this.Health) + this.HealthConst;
+                totalDamage += damage;
                 target.Health -= damage;
                 if (damage == 0)
                 {
@@ -55,11 +59,14 @@ namespace Redpoint.DungeonEscape.State
                 }
             }
 
+            gameState.Sounds.PlaySoundEffect(totalDamage == 0 ? "miss" : "receive-damage");
+
             return message;
         }
 
-        private string CastHeal(IEnumerable<IFighter> targets, IFighter caster, bool everyone)
+        private string CastHeal(IEnumerable<IFighter> targets, IFighter caster, bool everyone, IGame gameState)
         {
+            gameState.Sounds.PlaySoundEffect("spell");
             var message = $"{caster.Name} casts {this.Name}\n";
             foreach (var target in targets.Where(item => everyone || !item.IsDead))
             {
@@ -98,6 +105,7 @@ namespace Redpoint.DungeonEscape.State
                 return $"{caster.Name} casts {this.Name} but you are already outside";
             }
 
+            gameState.Sounds.PlaySoundEffect("spell");
             gameState.SetMap();
             return null;
         }
@@ -114,6 +122,7 @@ namespace Redpoint.DungeonEscape.State
                 return $"{caster.Name} casts {this.Name} but you have never saved your game";
             }
 
+            gameState.Sounds.PlaySoundEffect("spell");
             gameState.SetMap(gameState.Party.SavedMapId, null, gameState.Party.SavedPoint);
             return null;
         }
@@ -131,21 +140,13 @@ namespace Redpoint.DungeonEscape.State
             return this.Name;
         }
         
+        public int ImageId { get; set; }
+        
         public int Id { get; set; }
 
-        public Spell()
+        public void Setup(TmxTileset tileset)
         {
-            
-        }
-
-        public void Setup(TmxTilesetTile tile)
-        {
-            this.Image = tile.Image.Texture;
-        }
-
-        public Spell(TmxTilesetTile tile) : this()
-        {
-            this.Setup(tile);
+            this.Image = tileset.Image != null ? new Sprite(tileset.Image.Texture, tileset.TileRegions[this.ImageId]) : new Sprite(tileset.Tiles[this.ImageId].Image.Texture);
         }
 
         [JsonIgnore]
@@ -177,6 +178,6 @@ namespace Redpoint.DungeonEscape.State
         public string Name { get; set; }
         
         [JsonIgnore]
-        public Texture2D Image { get; private set; }
+        public Sprite Image { get; private set; }
     }
 }

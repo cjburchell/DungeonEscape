@@ -9,6 +9,12 @@
 
     public class ContinueQuestScene : Scene
     {
+        private readonly ISounds _sounds;
+
+        public ContinueQuestScene(ISounds sounds)
+        {
+            this._sounds = sounds;
+        }
         private static Button CreateButton(GameSave item)
         {
             var button = new Button(BasicWindow.Skin);
@@ -55,9 +61,10 @@
             backButton.ShouldUseExplicitFocusableControl = true;
             canvas.Stage.SetGamepadFocusElement(backButton);
             
-            var buttonList = table.Add(new ButtonList(backButton, backButton)).GetElement<ButtonList>();
+            var buttonList = table.Add(new ButtonList(this._sounds,backButton, backButton)).GetElement<ButtonList>();
             buttonList.OnClicked += button =>
             {
+                this._sounds.PlaySoundEffect("confirm");
                 game.LoadGame(button?.UserData as GameSave);
             };
 
@@ -73,6 +80,7 @@
             table.Add(backButton).SetPadTop(5).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).GetElement<TextButton>();
             backButton.OnClicked += _ =>
             {
+                this._sounds.PlaySoundEffect("confirm");
                 if (game.InGame)
                 {
                     game.ResumeGame();
@@ -81,12 +89,14 @@
                 {
                     Core.StartSceneTransition(new TransformTransition(() =>
                     {
-                        var scene = new MainMenu();
+                        var scene = new MainMenu(this._sounds);
                         scene.Initialize();
                         return scene;
                     }, TransformTransition.TransformTransitionType.SlideRight){Duration = 0.25f});
                 }
             };
+            
+            this._sounds.PlayMusic(@"first-story");
         }
     }
 }

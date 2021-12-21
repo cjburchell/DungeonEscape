@@ -9,7 +9,13 @@
 
     public class MainMenu : Scene
     {
+        private readonly ISounds _sounds;
         private Table _table;
+
+        public MainMenu(ISounds sounds)
+        {
+            this._sounds = sounds;
+        }
 
         public override void Initialize()
         {
@@ -29,9 +35,10 @@
             var playButton = this._table.Add(new TextButton("Start new quest", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(250).GetElement<TextButton>();
             playButton.OnClicked += _ =>
             {
+                this._sounds.PlaySoundEffect("confirm");
                 Core.StartSceneTransition(new TransformTransition(() =>
                 {
-                    var scene = new CreatePlayerScene();
+                    var scene = new CreatePlayerScene(this._sounds);
                     scene.Initialize();
                     return scene;
                 }, TransformTransition.TransformTransitionType.SlideLeft){Duration = 0.25f});
@@ -41,9 +48,10 @@
             var loadButton = this._table.Add(new TextButton("Continue quest", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(250).GetElement<TextButton>();
             loadButton.OnClicked += _ =>
             {
+                this._sounds.PlaySoundEffect("confirm");
                 Core.StartSceneTransition(new TransformTransition(() =>
                 {
-                    var scene = new ContinueQuestScene();
+                    var scene = new ContinueQuestScene(this._sounds);
                     scene.Initialize();
                     return scene;
                 }, TransformTransition.TransformTransitionType.SlideLeft){Duration = 0.25f});
@@ -58,6 +66,7 @@
             loadButton.GamepadUpElement = playButton;
 
             base.Initialize();
+            this._sounds.PlayMusic(@"first-story");
         }
     }
 }

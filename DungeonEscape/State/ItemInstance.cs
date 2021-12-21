@@ -5,7 +5,6 @@ namespace Redpoint.DungeonEscape.State
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.Xna.Framework.Graphics;
     using Newtonsoft.Json;
 
     public class ItemInstance
@@ -35,7 +34,7 @@ namespace Redpoint.DungeonEscape.State
         public bool IsEquipped { get; set; }
 
         [JsonIgnore]
-        public Texture2D Image => this._item.Image;
+        public Nez.Textures.Sprite Image => this._item.Image;
 
         [JsonIgnore]
         public int MinLevel => this._item.MinLevel;

@@ -31,6 +31,7 @@
         {
             button.OnClicked += _ =>
             {
+                this.Ui.Sounds.PlaySoundEffect("confirm");
                 this.CloseWindow(button);
             };
 

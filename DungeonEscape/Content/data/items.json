@@ -7,6 +7,7 @@
     "Attack": 0,
     "Agility": 0,
     "Cost": 16,
+    "ImageId": 144,
     "Id": 1,
     "MinLevel": 0
   },
@@ -18,6 +19,7 @@
     "Attack": 0,
     "Agility": 0,
     "Cost": 5,
+    "ImageId": 121,
     "Id": 2,
     "MinLevel": 0
   },
@@ -29,6 +31,7 @@
     "Attack": 2,
     "Agility": 0,
     "Cost": 10,
+    "ImageId": 87,
     "Id": 3,
     "MinLevel": 0
   },
@@ -40,6 +43,7 @@
     "Attack": 0,
     "Agility": 0,
     "Cost": 40,
+    "ImageId": 118,
     "Id": 4,
     "MinLevel": 0
   },
@@ -51,6 +55,7 @@
     "Attack": 0,
     "Agility": 0,
     "Cost": 60,
+    "ImageId": 96,
     "Id": 5,
     "MinLevel": 0
   },
@@ -62,6 +67,7 @@
     "Attack": 4,
     "Agility": 0,
     "Cost": 60,
+    "ImageId": 93,
     "Id": 6,
     "MinLevel": 0
   },
@@ -73,6 +79,7 @@
     "Attack": 10,
     "Agility": 0,
     "Cost": 180,
+    "ImageId": 84,
     "Id": 7,
     "MinLevel": 0
   },
@@ -84,6 +91,7 @@
     "Attack": 0,
     "Agility": 0,
     "Cost": 300,
+    "ImageId": 119,
     "Id": 8,
     "MinLevel": 6
   },
@@ -95,6 +103,7 @@
     "Attack": 20,
     "Agility": 0,
     "Cost": 1500,
+    "ImageId": 81,
     "Id": 9,
     "MinLevel": 6
   },
@@ -106,18 +115,8 @@
     "Attack": 0,
     "Agility": 0,
     "Cost": 2000,
+    "ImageId": 97,
     "Id": 10,
-    "MinLevel": 6
-  },
-  {
-    "Type": "Armor",
-    "Name": "Spiked Armor",
-    "Defence": 15,
-    "Health": 0,
-    "Attack": 5,
-    "Agility": 0,
-    "Cost": 2500,
-    "Id": 11,
     "MinLevel": 6
   },
   {
@@ -128,6 +127,7 @@
     "Attack": 22,
     "Agility": 0,
     "Cost": 3000,
+    "ImageId": 91,
     "Id": 12,
     "MinLevel": 6
   },
@@ -139,6 +139,7 @@
     "Attack": 15,
     "Agility": 3,
     "Cost": 3100,
+    "ImageId": 92,
     "Id": 13,
     "MinLevel": 6
   },
@@ -150,6 +151,7 @@
     "Attack": 0,
     "Agility": 0,
     "Cost": 100,
+    "ImageId": 308,
     "Id": 14,
     "MinLevel": 6
   },
@@ -161,6 +163,7 @@
     "Attack": -1,
     "Agility": -2,
     "Cost": 3500,
+    "ImageId": 117,
     "Id": 15,
     "MinLevel": 12
   },
@@ -172,6 +175,7 @@
     "Attack": 0,
     "Agility": 0,
     "Cost": 3000,
+    "ImageId": 116,
     "Id": 16,
     "MinLevel": 12
   },
@@ -183,6 +187,7 @@
     "Attack": 0,
     "Agility": 0,
     "Cost": 10000,
+    "ImageId": 98,
     "Id": 17,
     "MinLevel": 12
   },
@@ -194,6 +199,7 @@
     "Attack": 40,
     "Agility": 0,
     "Cost": 25000,
+    "ImageId": 82,
     "Id": 18,
     "MinLevel": 12
   },
@@ -205,18 +211,8 @@
     "Attack": 1,
     "Agility": 4,
     "Cost": 30000,
+    "ImageId": 120,
     "Id": 19,
-    "MinLevel": 12
-  },
-  {
-    "Type": "Shield",
-    "Name": "Flame Shield",
-    "Defence": 19,
-    "Health": 0,
-    "Attack": 3,
-    "Agility": 0,
-    "Cost": 51000,
-    "Id": 20,
     "MinLevel": 12
   },
   {
@@ -227,19 +223,9 @@
     "Attack": 50,
     "Agility": 5,
     "Cost": 55000,
+    "ImageId": 84,
     "Id": 21,
     "MinLevel": 12
-  },
-  {
-    "Type": "Armor",
-    "Name": "Kings Armor",
-    "Defence": 44,
-    "Health": 0,
-    "Attack": 8,
-    "Agility": 3,
-    "Cost": 65000,
-    "Id": 22,
-    "MinLevel": 18
   },
   {
     "Type": "OneUse",
@@ -249,6 +235,7 @@
     "Attack": 1,
     "Agility": 0,
     "Cost": 5000,
+    "ImageId": 150,
     "Id": 23,
     "MinLevel": 18
   },
@@ -260,6 +247,7 @@
     "Attack": 0,
     "Agility": 0,
     "Cost": 5000,
+    "ImageId": 149,
     "Id": 24,
     "MinLevel": 18
   },
@@ -271,6 +259,7 @@
     "Attack": 0,
     "Agility": 1,
     "Cost": 5000,
+    "ImageId": 151,
     "Id": 25,
     "MinLevel": 18
   },
@@ -279,6 +268,7 @@
     "Name": "Iron Key",
     "Cost": 250,
     "Id": 26,
+    "ImageId": 185,
     "MinLevel": 0
   }
 ]

@@ -8,7 +8,13 @@
 
     public class SplashScreen : Scene
     {
+        private readonly ISounds _sounds;
         private bool _inTransition;
+
+        public SplashScreen(ISounds sounds)
+        {
+            this._sounds = sounds;
+        }
         
         public override void Initialize()
         {
@@ -18,6 +24,7 @@
             var renderer = new SpriteRenderer(new Sprite(texture)) {Origin = Vector2.Zero};
             splash.AddComponent(renderer);
             base.Initialize();
+            this._sounds.PlayMusic(@"first-story");
         }
 
         public override void Update()
@@ -33,7 +40,7 @@
             
             Core.StartSceneTransition(new FadeTransition(() =>
             {
-                var splash = new MainMenu();
+                var splash = new MainMenu(this._sounds);
                 splash.Initialize();
                 return splash;
             }));

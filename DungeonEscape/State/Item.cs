@@ -3,10 +3,10 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace Redpoint.DungeonEscape.State
 {
-    using System;
+    using System.Linq;
     using System.Text.Json.Serialization;
     using Microsoft.Xna.Framework.Graphics;
-    using Nez;
+    using Nez.Textures;
     using Nez.Tiled;
 
     public class Item
@@ -16,40 +16,34 @@ namespace Redpoint.DungeonEscape.State
             return this.Name;
         }
 
-        // ReSharper disable once UnusedMember.Global
-        public Item()
+        public void Setup(TmxTileset tileset)
         {
-            
-        }
-
-        public void Setup(TmxTilesetTile tile)
-        {
-            if (Enum.TryParse(tile.Type, out ItemType type))
-            {
-                this.Type = type;
-            }
-            
-            this.ImageSource = tile.Image.Source;
-            this.Image = tile.Image.Texture;
+            this.Image = tileset.Image != null ? new Sprite(tileset.Image.Texture, tileset.TileRegions[this.ImageId]) : new Sprite(tileset.Tiles[this.ImageId].Image.Texture);
         }
 
         public int Id { get; set; }
+        public int ImageId { get; set; }
 
-        public Item(string image, string name, ItemType type, int cost, int minLevel)
+        public static Item CreateGold(int value)
         {
-            if (!string.IsNullOrEmpty(image))
+            var item = new Item
             {
-                this.ImageSource = image;
-                this.Image = Texture2D.FromFile(Core.GraphicsDevice,this.ImageSource);
-            }
-            this.Name = name;
-            this.Cost = cost;
-            this.MinLevel = minLevel;
-            this.Type = type;
+                Name = "Gold",
+                Cost = value,
+                MinLevel = 0,
+                Type = ItemType.Gold,
+                ImageId = 202,
+                Id = 0
+            };
+            
+            // gold Image
+            var tileSet = Game.LoadTileSet("Content/items.tsx");
+            item.Setup(tileSet);
+
+            return item;
         }
 
-        public Texture2D Image { get; set; }
-        public string ImageSource { get; set; }
+        public Sprite Image { get; set; }
         public ItemType Type { get; set; } = ItemType.Unknown;
         public string Name { get; set; }
         public int Defence { get; set; }

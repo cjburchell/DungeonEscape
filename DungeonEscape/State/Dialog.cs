@@ -10,7 +10,10 @@ namespace Redpoint.DungeonEscape.State
     {
         None,
         GiveItem,
-        LookingForItem
+        LookingForItem,
+        Fight,
+        Warp,
+        Join
     }
     
     public class Dialog
@@ -36,6 +39,10 @@ namespace Redpoint.DungeonEscape.State
         public QuestAction Action { get; set; } = QuestAction.None;
 
         public int? ItemId { get; set; }
+        
+        public int? MonsterId { get; set; }
         public int? NextQuestStage { get; set; }
+        public int? MapId { get; set; }
+        public int? SpawnId { get; set; }
     }
 }

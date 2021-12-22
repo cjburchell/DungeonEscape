@@ -92,7 +92,7 @@
             var monsterName = this._monsters.Count == 1 ?$"a {this._monsters.First().Name}"  : $"{this._monsters.Count} enemies";
             var message =$"You have encountered {monsterName}!";
             
-            new FightTalkWindow(this._ui, "Start Fight").Show(message, ()=> this._state = EncounterRoundState.StartRound);
+            new FightTalkWindow(this._ui, "").Show(message, ()=> this._state = EncounterRoundState.StartRound);
             
             this._game.Sounds.PlayMusic(Songs[Random.NextInt(Songs.Count)]);
         }
@@ -406,7 +406,7 @@
                     : new List<IFighter>
                     {
                         this._game.Party.Members.Where(CanBeAttacked).ToArray()[
-                            Random.NextInt(this._game.Party.Members.Count)]
+                            Random.NextInt(this._game.Party.Members.Where(CanBeAttacked).Count())]
                     };
                     
                 var spellAction = new RoundAction
@@ -426,7 +426,7 @@
                 Target = new[]
                 {
                     this._game.Party.Members.Where(CanBeAttacked).ToArray()[
-                        Random.NextInt(this._game.Party.Members.Count)]
+                        Random.NextInt(this._game.Party.Members.Where(CanBeAttacked).Count())]
                 }
             };
             
@@ -464,7 +464,7 @@
                                 case Hero _:
                                     this._game.Sounds.PlayMusic(EndFightSong);
                                     this._state = EncounterRoundState.EndEncounter;
-                                    new FightTalkWindow(this._ui, "Fight").Show(message, this._game.ResumeGame);
+                                    new FightTalkWindow(this._ui, "").Show(message, this._game.ResumeGame);
                                     return;
                                 case MonsterInstance monster:
                                     monster.RanAway = true;
@@ -550,7 +550,7 @@
                     }
                 }
 
-                new FightTalkWindow(this._ui, "Fight").Show(message,
+                new FightTalkWindow(this._ui, "").Show(message,
                     () => { this._state = EncounterRoundState.StartDoingActions; });
             }
         }
@@ -586,7 +586,7 @@
         
         private void EndEncounter()
         {
-            var talkWindow = new FightTalkWindow(this._ui, "End Fight");
+            var talkWindow = new FightTalkWindow(this._ui, "");
             if (this._game.Party.Members.Count(CanBeAttacked) == 0)
             {
                 talkWindow.Show("Everyone has died!", this._game.ShowMainMenu);

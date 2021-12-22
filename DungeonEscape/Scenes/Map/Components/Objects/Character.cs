@@ -11,7 +11,7 @@
     public class Character : Sprite
     {
         private readonly UiSystem _ui;
-        private readonly Dialog _dialog;
+        protected  Dialog Dialog;
 
         public Character(TmxObject tmxObject, SpriteState state, TmxMap map, UiSystem ui, IGame gameState, AstarGridGraph graph) : base(tmxObject, state, map, gameState, graph)
         {
@@ -19,28 +19,28 @@
             var text = tmxObject.Properties.ContainsKey("Text") ? tmxObject.Properties["Text"] : null;
             if (!string.IsNullOrEmpty(text))
             {
-                this._dialog = new Dialog
+                this.Dialog = new Dialog
                 {
-                    Dialogs = new List<DialogText> { new DialogText() {Text = text, Choices = new List<Choice> { new Choice {Text = "Ok"}}}}
+                    Dialogs = new List<DialogText> { new DialogText {Text = text, Choices = new List<Choice> { new Choice {Text = "Ok"}}}}
                 };
                 
                 return;
             }
             
             var dialogId = tmxObject.Properties.ContainsKey("Dialog") ? int.Parse(tmxObject.Properties["Dialog"]) : 0;
-            this._dialog = gameState.Dialogs.FirstOrDefault(i => i.Id == dialogId);
+            this.Dialog = gameState.Dialogs.FirstOrDefault(i => i.Id == dialogId);
         }
 
         public override bool OnAction(Party party)
         {
-            if (this._dialog == null)
+            if (this.Dialog == null)
             {
                 return false;
             }
             
             this.GameState.IsPaused = true;
-            var quest = this._dialog.Quest.HasValue ? this.GameState.Quests.FirstOrDefault(i => i.Id == this._dialog.Quest) : null;
-            this.ShowDialog(this._dialog.Dialogs, quest,() =>
+            var quest = this.Dialog.Quest.HasValue ? this.GameState.Quests.FirstOrDefault(i => i.Id == this.Dialog.Quest) : null;
+            this.ShowDialog(this.Dialog.Dialogs, quest,() =>
             {
                 this.GameState.IsPaused = false;
             });
@@ -98,21 +98,6 @@
                     done();
                     return;
                 }
-
-                switch (choice.Action)
-                {
-                    case QuestAction.GiveItem:
-                        this.GameState.Party.Items.Add(new ItemInstance(this.GameState.Items.FirstOrDefault(i=> i.Id == choice.ItemId)));
-                        break;
-                    case QuestAction.LookingForItem:
-                        var item =this.GameState.Party.Items.FirstOrDefault(i => i.ItemId == choice.ItemId);
-                        this.GameState.Party.Items.Remove(item);
-                        break;
-                    case QuestAction.None:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
                 
                 // advance a quest
                 if (quest != null && activeQuest != null)
@@ -129,6 +114,42 @@
                         activeQuest.CurrentStage = stageNumber;
                     }
                 }
+                
+                switch (choice.Action)
+                {
+                    case QuestAction.GiveItem:
+                        this.GameState.Party.Items.Add(new ItemInstance(this.GameState.Items.FirstOrDefault(i=> i.Id == choice.ItemId)));
+                        break;
+                    case QuestAction.LookingForItem:
+                        var item = this.GameState.Party.Items.FirstOrDefault(i => i.ItemId == choice.ItemId);
+                        if (item != null)
+                        {
+                            this.GameState.Party.Items.Remove(item);
+                        }
+                        break;
+                    case QuestAction.Fight:
+                        var monster = this.GameState.Monsters.FirstOrDefault(m => m.Id == choice.MonsterId);
+                        if (monster != null)
+                        {
+                            this.GameState.StartFight(new[]{monster});
+                            return;
+                        }
+                        break;
+                    case QuestAction.Warp:
+                        if (choice.MapId.HasValue)
+                        {
+                            this.GameState.SetMap(choice.MapId,  choice.SpawnId);
+                            return;
+                        }
+                        break;
+                    case QuestAction.Join:
+                        this.JoinParty();
+                        break;
+                    case QuestAction.None:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
 
                 if (choice.Dialogs != null)
                 {
@@ -140,6 +161,10 @@
                 }
                 
             });
+        }
+
+        protected virtual void JoinParty()
+        {
         }
     }
 }

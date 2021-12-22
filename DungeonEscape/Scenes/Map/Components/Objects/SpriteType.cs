@@ -8,13 +8,11 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
         Chest,
         Warp,
         Npc,
-        Monster,
         NpcHeal,
         NpcStore,
         NpcSave,
         NpcKey,
         NpcPartyMember,
-        NpcMonster,
         Static
     }
 }

@@ -8,18 +8,15 @@
     using Nez.Tiled;
     using State;
 
-    public class PartyMember : Sprite
+    public class PartyMember : Character
     {
-        private readonly UiSystem _ui;
-        private readonly string _text;
         private readonly Class _memberClass;
         private readonly Gender _gender;
         private readonly int _level;
 
         public PartyMember(TmxObject tmxObject, SpriteState state, TmxMap map, UiSystem uiSystem, IGame gameState,
-            AstarGridGraph graph) : base(tmxObject, state, map, gameState, graph)
+            AstarGridGraph graph) : base(tmxObject, state, map, uiSystem, gameState, graph)
         {
-            this._text = tmxObject.Properties.ContainsKey("Text") ? tmxObject.Properties["Text"] : "";
             this._gender = tmxObject.Properties.ContainsKey("Gender") ? Enum.Parse<Gender>(tmxObject.Properties["Gender"]) : Gender.Male;
             if (string.IsNullOrEmpty(this.SpriteState.Name))
             {
@@ -34,7 +31,36 @@
             
             this._memberClass = tmxObject.Properties.ContainsKey("Class") ? Enum.Parse<Class>(tmxObject.Properties["Class"]) : Class.Fighter;
             this._level = tmxObject.Properties.ContainsKey("Level") ? int.Parse(tmxObject.Properties["Level"]) : 1;
-            this._ui = uiSystem;
+
+            var text = tmxObject.Properties.ContainsKey("Text") ? tmxObject.Properties["Text"] : null;
+            if (!string.IsNullOrEmpty(text))
+            {
+                this.Dialog = new Dialog
+                {
+                    Dialogs = new List<DialogText>
+                    {
+                        new DialogText
+                        {
+                            Text = $"{this.SpriteState.Name}: {text}",
+                            Choices = new List<Choice>
+                            {
+                                new Choice
+                                {
+                                    Text = "Yes", Action = QuestAction.Join,
+                                    Dialogs = new List<DialogText>
+                                    {
+                                        new DialogText
+                                        {
+                                            Text = $"{this.SpriteState.Name} Joined the party"
+                                        }
+                                    }
+                                },
+                                new Choice {Text = "No"}
+                            }
+                        }
+                    }
+                };
+            }
         }
 
         protected override void SetupAnimation(List<Nez.Textures.Sprite> sprites)
@@ -65,46 +91,28 @@
             });
         }
 
-        public override bool OnAction(Party party)
+        protected override void JoinParty()
         {
-            this.GameState.IsPaused = true;
-            new QuestionWindow(this._ui).Show($"{this.SpriteState.Name}: {this._text}", join =>
+            var hero = new Hero
             {
-                if (join)
-                {
-                    var hero = new Hero
-                    {
-                        Name = this.SpriteState.Name,
-                        Class = this._memberClass,
-                        Gender = this._gender
-                    };
+                Name = this.SpriteState.Name,
+                Class = this._memberClass,
+                Gender = this._gender
+            };
                 
-                    hero.RollStats(this.GameState.ClassLevelStats, this._level);
+            hero.RollStats(this.GameState.ClassLevelStats, this._level);
                     
-                    var lastMember = this.GameState.Party.Members.Last();
-                    this.GameState.Party.Members.Add(hero);
-                    this.SpriteState.IsActive = false;
+            var lastMember = this.GameState.Party.Members.Last();
+            this.GameState.Party.Members.Add(hero);
+            this.SpriteState.IsActive = false;
 
-                    this.Entity.SetEnabled(false);
-                    this.Entity.Scene.Entities.Remove(this.Entity);
+            this.Entity.SetEnabled(false);
+            this.Entity.Scene.Entities.Remove(this.Entity);
 
-                    var lastEntity = this.Entity.Scene.FindEntity(lastMember.Name);
-                    var player = this.Entity.Scene.FindEntity(this.GameState.Party.Members.First().Name).GetComponent<PlayerComponent>();
-                    var followerEntity = this.Entity.Scene.CreateEntity(hero.Name, this.Entity.Position);
-                    followerEntity.AddComponent(new Follower( hero, lastEntity, player, this.GameState));
-
-                    new TalkWindow(this._ui).Show($"{hero.Name} Joined the party", ()=>
-                    {
-                        this.GameState.IsPaused = false;
-                    });
-                }
-                else
-                {
-                    this.GameState.IsPaused = false;
-                }
-
-            });
-            return true;
+            var lastEntity = this.Entity.Scene.FindEntity(lastMember.Name);
+            var player = this.Entity.Scene.FindEntity(this.GameState.Party.Members.First().Name).GetComponent<PlayerComponent>();
+            var followerEntity = this.Entity.Scene.CreateEntity(hero.Name, this.Entity.Position);
+            followerEntity.AddComponent(new Follower( hero, lastEntity, player, this.GameState));
         }
     }
 }

@@ -48,7 +48,7 @@
 
         }
 
-        private void ShowDialog(List<DialogText> dialogs, Quest quest, Action done)
+        private void ShowDialog(IReadOnlyCollection<DialogText> dialogs, Quest quest, Action done)
         {
             // Choose the dialog based on the correct quest state.
             DialogText dialog;

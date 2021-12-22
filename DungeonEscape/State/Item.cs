@@ -3,9 +3,7 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace Redpoint.DungeonEscape.State
 {
-    using System.Linq;
     using System.Text.Json.Serialization;
-    using Microsoft.Xna.Framework.Graphics;
     using Nez.Textures;
     using Nez.Tiled;
 

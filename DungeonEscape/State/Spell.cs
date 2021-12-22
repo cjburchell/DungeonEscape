@@ -5,7 +5,6 @@ namespace Redpoint.DungeonEscape.State
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.Xna.Framework.Graphics;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using Nez;

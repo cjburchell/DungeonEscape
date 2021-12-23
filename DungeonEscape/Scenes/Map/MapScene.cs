@@ -272,10 +272,37 @@ namespace Redpoint.DungeonEscape.Scenes.Map
 
         [Command("map", "switches to map")]
         // ReSharper disable once UnusedMember.Global
-        public static void SetMap(int? mapId = null)
+        public static void SetMap(int mapId = 0)
         {
             var game = Core.Instance as IGame;
             game?.SetMap(mapId);
+        }
+        
+        [Command("fight", "fights a monster")]
+        // ReSharper disable once UnusedMember.Global
+        public static void StartFight(int monsterId = 0)
+        {
+            var game = Core.Instance as IGame;
+            var monster = game?.Monsters.FirstOrDefault(m => m.Id == monsterId);
+            if (monster != null)
+            {
+                game.StartFight(new[]{monster});
+            }
+        }
+        
+        [Command("level", "fights a monster")]
+        // ReSharper disable once UnusedMember.Global    
+        public static void SetLevel(int level = 1)
+        {
+            if (!(Core.Instance is IGame game))
+            {
+                return;
+            }
+            
+            foreach (var member in game.Party.Members)
+            {
+                member.RollStats(game.ClassLevelStats, level);
+            }
         }
 
         public override void Update()

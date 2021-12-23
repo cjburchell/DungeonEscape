@@ -1,9 +1,7 @@
 ﻿[
   {
     "Class": "Hero",
-    "FirstLevel": 100,
-    "NextLevelFactor": 3,
-    "NextLevelRandomPercent": 20,
+    "FirstLevel": 29,
     "Stats": [
       {
         "Type": "Health",
@@ -39,9 +37,7 @@
   },
   {
     "Class": "Soldier",
-    "FirstLevel": 100,
-    "NextLevelFactor": 3,
-    "NextLevelRandomPercent": 20,
+    "FirstLevel": 12,
     "Stats": [
       {
         "Type": "Health",
@@ -77,9 +73,7 @@
   },
   {
     "Class": "Wizard",
-    "FirstLevel": 100,
-    "NextLevelFactor": 3,
-    "NextLevelRandomPercent": 20,
+    "FirstLevel": 15,
     "Stats": [
       {
         "Type": "Health",
@@ -115,9 +109,7 @@
   },
   {
     "Class": "Cleric",
-    "FirstLevel": 100,
-    "NextLevelFactor": 3,
-    "NextLevelRandomPercent": 20,
+    "FirstLevel": 14,
     "Stats": [
       {
         "Type": "Health",

@@ -23,7 +23,7 @@ namespace Redpoint.DungeonEscape.State
         public Gender Gender { get; set; }
 
         public string Name { get; set; }
-        public int Xp { get; set; }
+        public ulong Xp { get; set; }
         public int Health { get; set; }
         public int MaxHealth { get; set; }
         public bool RanAway => false;
@@ -32,7 +32,7 @@ namespace Redpoint.DungeonEscape.State
         public int Attack { get; set; }
         public int Defence { get; set; }
         public int Agility { get; set; }
-        public int NextLevel { get; set; }
+        public ulong NextLevel { get; set; }
         public int Level { get; set; }
 
         public IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells)
@@ -58,6 +58,7 @@ namespace Redpoint.DungeonEscape.State
             this.Level = 1;
             var classStatList = classLevels.ToList();
             var classStats = classStatList.First(stats => stats.Class == this.Class);
+            this.Xp = 0;
             this.NextLevel = classStats.FirstLevel;
             
             // Roll starting stats
@@ -83,12 +84,13 @@ namespace Redpoint.DungeonEscape.State
                 levelUpMessage = null;
                 return false;
             }
-
+            
+            var classStats = classLevels.First(stats => stats.Class == this.Class);
+            
             var oldLevel = this.Level;
             this.Level++;
-            var classStats = classLevels.First(stats => stats.Class == this.Class);
-            this.NextLevel = this.NextLevel * classStats.NextLevelFactor + Random.NextInt(this.NextLevel / classStats.NextLevelRandomPercent);
-            
+            this.NextLevel = CalculateNextLevel(oldLevel, this.Xp);
+
             levelUpMessage = $"{this.Name} has advanced to level {this.Level}\n";
             
             var health = classStats.Stats.First( item=> item.Type == StatType.Health).RollNextValue();
@@ -133,6 +135,41 @@ namespace Redpoint.DungeonEscape.State
             this.Magic = this.MaxMagic;
             this.Health = this.MaxHealth;
             return true;
+        }
+
+        private static ulong CalculateNextLevel(int oldLevel, ulong currentLevel)
+        {
+            var factors = new Dictionary<int, double>
+            {
+                {1, 3.0},
+                {2, 2.0},
+                {3, 1.75},
+                {4, 1.65},
+                {5, 1.5},
+                {10, 1.35},
+                {15, 1.2},
+                {20, 1.1},
+                {45, 1}
+            };
+
+            var factor = 1.0;
+            foreach (var (key, value) in factors)
+            {
+                if (oldLevel < key)
+                {
+                    break;
+                }
+
+                factor = value;
+            }
+
+            const double randomFactor = 0.05;
+
+            var nextLevel = (ulong) (currentLevel * factor) +
+                             (ulong) Random.NextInt((int) (Math.Min(currentLevel, int.MaxValue) * randomFactor));
+            
+            Console.WriteLine($"{oldLevel}: {factor} {nextLevel} {nextLevel - currentLevel}");
+            return nextLevel;
         }
 
         public bool CanUseItem(ItemInstance item)

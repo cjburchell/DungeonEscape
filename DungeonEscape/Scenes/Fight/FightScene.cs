@@ -481,7 +481,7 @@
                         {
                             message = $"{action.Source.Name} Attacks {target.Name}.\n";
                             int damage;
-                            if (Random.NextInt(22 - action.Source.Agility / 2) == 0)
+                            if (Random.NextInt(Math.Max(30 - action.Source.Agility / 2, 2)) == 0)
                             {
                                 damage = Random.NextInt(action.Source.Attack + 20 * action.Source.Level) + 10;
                                 message += "Heroic maneuver!\n";
@@ -610,7 +610,7 @@
                 var leveledUp = false;
                 foreach (var member in this._game.Party.Members.Where(member => !member.IsDead))
                 {
-                    member.Xp += xp;
+                    member.Xp += (ulong)xp;
                         while (member.CheckLevelUp(this._game.ClassLevelStats,this._game.Spells, out var message))
                         {
                             leveledUp = true;

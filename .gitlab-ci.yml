@@ -5,11 +5,13 @@ variables:
   RESHARPER_SOLUTION_NAME: 'Games.sln'
   RESHARPER_EXCLUDE: 'Nez.Portable/**;DungeonEscape/Content/*.tsx'
   RESHARPER_THRESHOLD: 0
+  PUBLISH_PROJECT: 'DungeonEscape/DungeonEscape.csproj'
   
 stages:
   - build
   - scan
   - test
+  - publish
 
 cache:
   key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
@@ -47,4 +49,16 @@ resharper-scan:
     when: always
     paths:
       - RsInspection.xml
+
+publish:
+  image: mcr.microsoft.com/dotnet/sdk:5.0
+  stage: publish
+  only:
+    - main
+  artifacts:
+    when: always
+    paths:
+      - publish/
+  script: 
+    - 'dotnet publish -c Release -o ../publish $PUBLISH_PROJECT'
 

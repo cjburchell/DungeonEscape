@@ -50,11 +50,13 @@ resharper-scan:
     paths:
       - RsInspection.xml
 
-publish:
+publish-windows:
   image: mcr.microsoft.com/dotnet/sdk:5.0
   stage: publish
   only:
-    - main
+    - tags
+    except:
+      - branches
   artifacts:
     when: always
     paths:

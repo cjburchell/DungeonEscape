@@ -58,7 +58,7 @@ publish:
   artifacts:
     when: always
     paths:
-      - publish/
+      - publish
   script: 
-    - 'dotnet publish -c Release -o ../publish $PUBLISH_PROJECT'
+    - 'dotnet publish -c Release -o publish $PUBLISH_PROJECT'
 

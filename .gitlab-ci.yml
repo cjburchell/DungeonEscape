@@ -62,5 +62,5 @@ publish-windows:
     paths:
       - de
   script:
-    - 'dotnet publish -c Release -o de -r win10-x64 -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true $PUBLISH_PROJECT'
+    - 'dotnet publish -c Release -o de -r win10-x64 -p:PublishTrimmed=true $PUBLISH_PROJECT'
 

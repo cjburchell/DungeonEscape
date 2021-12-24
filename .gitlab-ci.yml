@@ -60,5 +60,5 @@ publish:
     paths:
       - publish
   script: 
-    - 'dotnet publish -c Release -o publish $PUBLISH_PROJECT'
+    - 'dotnet publish -c Release -o publish -r win10-x64 $PUBLISH_PROJECT'
 

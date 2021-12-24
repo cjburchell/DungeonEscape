@@ -6,7 +6,7 @@ variables:
   RESHARPER_EXCLUDE: 'Nez.Portable/**;DungeonEscape/Content/*.tsx'
   RESHARPER_THRESHOLD: 0
   PUBLISH_PROJECT: 'DungeonEscape/DungeonEscape.csproj'
-  
+
 stages:
   - build
   - scan
@@ -55,12 +55,12 @@ publish-windows:
   stage: publish
   only:
     - tags
-    except:
-      - branches
+  except:
+    - branches
   artifacts:
     when: always
     paths:
       - de
-  script: 
+  script:
     - 'dotnet publish -c Release -o de -r win10-x64 -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true $PUBLISH_PROJECT'
 

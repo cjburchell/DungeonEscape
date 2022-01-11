@@ -226,11 +226,11 @@
                 
             if (newPoint.X < minX)
             {
-                newPoint.X = this._gameState.Party.CurrentMapId != 0 ? minX : maxX;
+                newPoint.X = !this._gameState.Party.CurrentMapIsOverWorld? minX : maxX;
             }
             else if (newPoint.X > maxX)
             {
-                newPoint.X = this._gameState.Party.CurrentMapId != 0 ? maxX : minX;
+                newPoint.X = !this._gameState.Party.CurrentMapIsOverWorld ? maxX : minX;
             }
 
             var minY = this._map.TileHeight / 2.0f;
@@ -238,17 +238,17 @@
                 
             if (newPoint.Y < minY)
             {
-                newPoint.Y = this._gameState.Party.CurrentMapId != 0 ? minY : maxY;
+                newPoint.Y = !this._gameState.Party.CurrentMapIsOverWorld ? minY : maxY;
             }
             else if (newPoint.Y > maxY)
             {
-                newPoint.Y = this._gameState.Party.CurrentMapId != 0 ? maxY : minY;
+                newPoint.Y = !this._gameState.Party.CurrentMapIsOverWorld ? maxY : minY;
             }
 
             movement = newPoint - this.Entity.Position;
 
             this._gameState.Party.CurrentPosition = this.Entity.Position;
-            if (this._gameState.Party.CurrentMapId == 0)
+            if (this._gameState.Party.CurrentMapIsOverWorld)
             {
                 this._gameState.Party.OverWorldPosition = this._gameState.Party.CurrentPosition;
             }
@@ -374,7 +374,7 @@
 
         private Biome GetCurrentBiome()
         {
-            if (this._gameState.Party.CurrentMapId != 0)
+            if (!this._gameState.Party.CurrentMapIsOverWorld)
             {
                 return Biome.None;
             }

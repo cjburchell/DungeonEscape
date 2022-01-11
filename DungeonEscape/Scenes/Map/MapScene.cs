@@ -96,6 +96,8 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             var map = this._gameState.GetMap(this._mapId);
             this.SetDesignResolution(ScreenTileWidth * map.TileWidth, ScreenTileHeight * map.TileHeight,
                 SceneResolution);
+            
+            var isOverWorld = map.Properties != null && map.Properties.ContainsKey("overworld") && bool.Parse(map.Properties["overworld"]);
 
             var songPath = map.Properties != null && map.Properties.ContainsKey("song")?map.Properties["song"]:@"not-in-vain";
             this._gameState.Sounds.PlayMusic(songPath);
@@ -103,6 +105,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             this._randomMonsters = this.LoadRandomMonsters();
 
             this._gameState.Party.CurrentMapId = this._mapId;
+            this._gameState.Party.CurrentMapIsOverWorld = isOverWorld;
 
             this.AddRenderer(new ScreenSpaceRenderer(100, ScreenSpaceRenderLayer));
             this._ui = new UiSystem(this.CreateEntity("ui-canvas").AddComponent(new UICanvas()), this._gameState.Sounds);
@@ -116,7 +119,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             {
                 var tiledEntity = this.CreateEntity("map");
                 var tiledMapRenderer = tiledEntity.AddComponent(new TiledMapRenderer(map,
-                    this._gameState.Party.HasShip && this._mapId == 0 ? new[] {"wall"} : new[] {"wall", "water"}));
+                    this._gameState.Party.HasShip && this._gameState.Party.CurrentMapIsOverWorld ? new[] {"wall"} : new[] {"wall", "water"}));
                 tiledMapRenderer.RenderLayer = 50;
                 tiledMapRenderer.SetLayersToRender("wall", "wall2", "water", "floor", "floor2");
                 
@@ -193,7 +196,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                         spawn.Y = spawnObject.Y + spawnObject.Height / 2.0f;
                     }
                 }
-                else if (this._mapId == 0 && this._gameState.Party.OverWorldPosition != Vector2.Zero)
+                else if (this._gameState.Party.CurrentMapIsOverWorld && this._gameState.Party.OverWorldPosition != Vector2.Zero)
                 {
                     spawn = this._gameState.Party.OverWorldPosition;
                 }

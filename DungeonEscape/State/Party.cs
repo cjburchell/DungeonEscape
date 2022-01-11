@@ -22,6 +22,7 @@
         public List<ItemInstance> Items { get; } = new List<ItemInstance>();
         public Vector2 CurrentPosition { get; set; }
         public int CurrentMapId { get; set; }
+        public bool CurrentMapIsOverWorld { get; set; }
 
         public bool CanOpenChest(int level)
         {

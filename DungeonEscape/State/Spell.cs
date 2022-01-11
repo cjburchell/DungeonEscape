@@ -99,7 +99,7 @@ namespace Redpoint.DungeonEscape.State
 
         private string CastOutside(IFighter caster, IGame gameState)
         {
-            if (gameState.Party.CurrentMapId == 0)
+            if (gameState.Party.CurrentMapIsOverWorld)
             {
                 return $"{caster.Name} casts {this.Name} but you are already outside";
             }
@@ -111,7 +111,7 @@ namespace Redpoint.DungeonEscape.State
 
         private string CastReturn(IFighter caster, IGame gameState)
         {
-            if (gameState.Party.CurrentMapId != 0)
+            if (!gameState.Party.CurrentMapIsOverWorld)
             {
                 return $"{caster.Name} casts {this.Name} but you are not outside";
             }

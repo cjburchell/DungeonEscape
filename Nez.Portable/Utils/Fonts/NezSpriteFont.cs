@@ -194,7 +194,7 @@ namespace Nez
 			DrawInto(batcher, ref source, position, color, rotation, origin, scale, effect, depth);
 		}
 
-		public float DefaultCharacterXAdvance => GetXAdvance(this._font.DefaultCharacter.Value);
+		public float DefaultCharacterXAdvance => this.GetXAdvance(this._font.DefaultCharacter ?? 'A');
 
 		public float GetXAdvance(char c)
 		{

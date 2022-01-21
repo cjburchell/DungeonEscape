@@ -142,5 +142,185 @@
         "RollConst": 5
       }
     ]
+  },
+  {
+    "Class": "Fighter",
+    "FirstLevel": 29,
+    "Stats": [
+      {
+        "Type": "Health",
+        "StartConst": 40,
+        "Roll": 7,
+        "RollConst": 3
+      },
+      {
+        "Type": "Attack",
+        "StartConst": 5,
+        "Roll": 7,
+        "RollConst": 1
+      },
+      {
+        "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollConst": 1
+      },
+      {
+        "Type": "Agility",
+        "StartConst": 1,
+        "Roll": 3,
+        "RollConst": 1
+      },
+      {
+        "Type": "Magic",
+        "StartConst": 5,
+        "Roll": 6,
+        "RollConst": 5
+      }
+    ]
+  },
+  {
+    "Class": "Merchant",
+    "FirstLevel": 12,
+    "Stats": [
+      {
+        "Type": "Health",
+        "StartConst": 40,
+        "Roll": 7,
+        "RollConst": 3
+      },
+      {
+        "Type": "Attack",
+        "StartConst": 5,
+        "Roll": 7,
+        "RollConst": 1
+      },
+      {
+        "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollConst": 1
+      },
+      {
+        "Type": "Agility",
+        "StartConst": 1,
+        "Roll": 3,
+        "RollConst": 1
+      },
+      {
+        "Type": "Magic",
+        "StartConst": 5,
+        "Roll": 6,
+        "RollConst": 5
+      }
+    ]
+  },
+  {
+    "Class": "Clown",
+    "FirstLevel": 15,
+    "Stats": [
+      {
+        "Type": "Health",
+        "StartConst": 40,
+        "Roll": 7,
+        "RollConst": 3
+      },
+      {
+        "Type": "Attack",
+        "StartConst": 5,
+        "Roll": 7,
+        "RollConst": 1
+      },
+      {
+        "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollConst": 1
+      },
+      {
+        "Type": "Agility",
+        "StartConst": 1,
+        "Roll": 3,
+        "RollConst": 1
+      },
+      {
+        "Type": "Magic",
+        "StartConst": 5,
+        "Roll": 6,
+        "RollConst": 5
+      }
+    ]
+  },
+  {
+    "Class": "Thief",
+    "FirstLevel": 14,
+    "Stats": [
+      {
+        "Type": "Health",
+        "StartConst": 40,
+        "Roll": 7,
+        "RollConst": 3
+      },
+      {
+        "Type": "Attack",
+        "StartConst": 5,
+        "Roll": 7,
+        "RollConst": 1
+      },
+      {
+        "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollConst": 1
+      },
+      {
+        "Type": "Agility",
+        "StartConst": 1,
+        "Roll": 3,
+        "RollConst": 1
+      },
+      {
+        "Type": "Magic",
+        "StartConst": 5,
+        "Roll": 6,
+        "RollConst": 5
+      }
+    ]
+  },
+  {
+    "Class": "Sage",
+    "FirstLevel": 14,
+    "Stats": [
+      {
+        "Type": "Health",
+        "StartConst": 40,
+        "Roll": 7,
+        "RollConst": 3
+      },
+      {
+        "Type": "Attack",
+        "StartConst": 5,
+        "Roll": 7,
+        "RollConst": 1
+      },
+      {
+        "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollConst": 1
+      },
+      {
+        "Type": "Agility",
+        "StartConst": 1,
+        "Roll": 3,
+        "RollConst": 1
+      },
+      {
+        "Type": "Magic",
+        "StartConst": 5,
+        "Roll": 6,
+        "RollConst": 5
+      }
+    ]
   }
 ]

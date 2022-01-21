@@ -90,6 +90,16 @@
             var textFieldStyle = Skin.Get<TextFieldStyle>();
             textFieldStyle.Font = font;
             textFieldStyle.Background =new BorderPrimitiveDrawable(Color.Black, Color.White, 1);
+            
+            var selectBoxStyle = Skin.Get<SelectBoxStyle>();
+            selectBoxStyle.Font = font;
+            selectBoxStyle.Background =new BorderPrimitiveDrawable(Color.Black, Color.White, 1);
+            Skin.Add("default", selectBoxStyle);
+            
+            var listBoxStyle = Skin.Get<ListBoxStyle>();
+            listBoxStyle.Font = font;
+            listBoxStyle.Background =new BorderPrimitiveDrawable(Color.Black, Color.White, 1);
+            Skin.Add("default", selectBoxStyle);
         }
 
         protected BasicWindow(UiSystem ui, string title, Point position, int width, int height, bool focasable = true)

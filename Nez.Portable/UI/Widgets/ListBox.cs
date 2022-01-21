@@ -146,7 +146,7 @@ namespace Nez.UI
 			var font = _style.Font;
 			IDrawable selectedDrawable = _style.Selection;
 
-			_itemHeight = /*font.getCapHeight()*/ font.LineHeight - font.Padding.Bottom * 2;
+			_itemHeight = /*font.getCapHeight()*/ font.LineSpacing - font.Padding.Bottom * 2;
 			_itemHeight += selectedDrawable.TopHeight + selectedDrawable.BottomHeight;
 
 			_textOffsetX = selectedDrawable.LeftWidth;
@@ -395,7 +395,7 @@ namespace Nez.UI
 
 	public class ListBoxStyle
 	{
-		public BitmapFont Font;
+		public IFont Font;
 		public Color FontColorSelected = Color.Black;
 		public Color FontColorUnselected = Color.White;
 		public Color FontColorHovered = Color.Black;

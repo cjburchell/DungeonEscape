@@ -48,10 +48,10 @@ namespace Nez.UI
 			var font = style.Font;
 
 			if (bg != null)
-				_prefHeight = Math.Max(bg.TopHeight + bg.BottomHeight + font.LineHeight - font.Padding.Bottom * 2f,
+				_prefHeight = Math.Max(bg.TopHeight + bg.BottomHeight + font.LineSpacing - font.Padding.Bottom * 2f,
 					bg.MinHeight);
 			else
-				_prefHeight = font.LineHeight - font.Padding.Bottom * 2;
+				_prefHeight = font.LineSpacing - font.Padding.Bottom * 2;
 
 			float maxItemWidth = 0;
 			for (var i = 0; i < _items.Count; i++)
@@ -112,11 +112,11 @@ namespace Nez.UI
 					width -= background.LeftWidth + background.RightWidth;
 					height -= background.BottomHeight + background.TopHeight;
 					x += background.LeftWidth;
-					y += (int)(height / 2 + background.BottomHeight - font.LineHeight / 2);
+					y += (int)(height / 2 + background.BottomHeight - font.LineSpacing / 2);
 				}
 				else
 				{
-					y += (int)(height / 2 + font.LineHeight / 2);
+					y += (int)(height / 2 + font.LineSpacing / 2);
 				}
 
 				fontColor = ColorExt.Create(fontColor, (int)(fontColor.A * parentAlpha));
@@ -259,9 +259,9 @@ namespace Nez.UI
 		/// </summary>
 		/// <returns>The items.</returns>
 		/// <param name="newItems">New items.</param>
-		public void SetItems(params T[] newItems)
+		public SelectBox<T> SetItems(params T[] newItems)
 		{
-			SetItems(new List<T>(newItems));
+			return SetItems(new List<T>(newItems));
 		}
 
 
@@ -270,7 +270,7 @@ namespace Nez.UI
 		/// </summary>
 		/// <returns>The items.</returns>
 		/// <param name="newItems">New items.</param>
-		public void SetItems(List<T> newItems)
+		public SelectBox<T> SetItems(List<T> newItems)
 		{
 			Insist.IsNotNull(newItems, "newItems cannot be null");
 			float oldPrefWidth = PreferredWidth;
@@ -287,6 +287,8 @@ namespace Nez.UI
 				InvalidateHierarchy();
 				SetSize(_prefWidth, _prefHeight);
 			}
+
+			return this;
 		}
 
 
@@ -451,7 +453,7 @@ namespace Nez.UI
 
 	public class SelectBoxStyle
 	{
-		public BitmapFont Font;
+		public IFont Font;
 
 		public Color FontColor = Color.White;
 

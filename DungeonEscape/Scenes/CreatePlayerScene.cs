@@ -1,19 +1,27 @@
 ﻿namespace Redpoint.DungeonEscape.Scenes
 {
+    using System;
     using Common.Components.UI;
     using Map;
     using Microsoft.Xna.Framework;
     using Nez;
     using Nez.UI;
     using State;
+    using Random = Nez.Random;
 
     public class CreatePlayerScene : Scene
     {
         private readonly ISounds _sounds;
+        private Hero _hero;
+        private Table _statusTable;
+        
+        const int labelColumnWidth = 125;
+        const int dataColumnWidth = 75;
 
         public CreatePlayerScene(ISounds sounds)
         {
             this._sounds = sounds;
+            
         }
         public override void Initialize()
         {
@@ -23,6 +31,15 @@
             {
                 return;
             }
+
+            this._hero = new Hero
+            {
+                Name = game.Names.Male[Random.NextInt(game.Names.Male.Count)],
+                Class = Class.Hero,
+                Gender = Gender.Male
+            };
+            
+            this._hero.RollStats(game.ClassLevelStats);
             
             this.ClearColor = Color.Black;
             this.SetDesignResolution(MapScene.ScreenWidth, MapScene.ScreenHeight,
@@ -32,32 +49,108 @@
             var canvas = this.CreateEntity("ui-canvas").AddComponent(new UICanvas());
             canvas.SetRenderLayer(999);
             
-            var table = canvas.Stage.AddElement(new Table());
-            table.SetFillParent(true);
-            table.Top().PadLeft(10).PadTop(50);
-            table.Add(new Label("Name:", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).GetElement<Label>();
-            var name = game.Names.Male[Random.NextInt(game.Names.Male.Count)];
-            var textField = table.Add(new TextField(name, BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).GetElement<TextField>();
+            const int heroHeight = 48;
+            const int heroWidth = MapScene.DefaultTileSize;
+            var imageTable = canvas.Stage.AddElement(new Table());
+            imageTable.SetFillParent(true);
+            imageTable.Top().PadLeft(10).PadTop(50);
+            var texture = this.Content.LoadTexture("Content/images/sprites/hero.png");
+            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, heroHeight);
+            var animationBaseIndex = (int) this._hero.Class * 16 + (int) this._hero.Gender * 8;
+            var image = new Image(sprites[animationBaseIndex + 4]);
+            imageTable.Add(image).Width(heroWidth).SetPadLeft(5).SetPadRight(5);
+            
+            
+            var table = imageTable.Add(new Table()).GetElement<Table>();
+            table.Add(new Label("Name:", BasicWindow.Skin).SetAlignment(Align.Left)).Height(BasicWindow.ButtonHeight).Width(labelColumnWidth);
+            var nameField = table.Add(new TextField(this._hero.Name, BasicWindow.Skin).SetAlignment(Align.Left)).Height(BasicWindow.ButtonHeight).Width(dataColumnWidth).GetElement<TextField>();
+            var nameChanged = false;
+            nameField.OnTextChanged += (_, s) =>
+            {
+                nameChanged = true;
+                this._hero.Name = s;
+            };
+            
+            var nameButton = new TextButton("Generate Name", BasicWindow.Skin);
+            table.Add(nameButton).Width(BasicWindow.ButtonWidth * 2).Height(BasicWindow.ButtonHeight).SetPadLeft(5);
+            nameButton.OnClicked += _ =>
+            {
+                this._hero.Name =  this._hero.Gender == Gender.Male ? game.Names.Male[Random.NextInt(game.Names.Male.Count)] : game.Names.Female[Random.NextInt(game.Names.Female.Count)];
+                nameField.SetText(this._hero.Name);
+                nameChanged = false;
+            };
+            
+            table.Row().SetPadTop(3);
+            
+            table.Add(new Label("Gender:", BasicWindow.Skin).SetAlignment(Align.Left)).Height(BasicWindow.ButtonHeight).Width(labelColumnWidth);
+            var genderField =
+                new SelectBox<string>(BasicWindow.Skin).SetItems(Gender.Male.ToString(), Gender.Female.ToString());
+            table.Add(genderField).Height(BasicWindow.ButtonHeight).Width(dataColumnWidth);
+            genderField.OnChanged += _ =>
+            {
+                this._hero.Gender = Enum.Parse<Gender>(genderField.GetSelected());
+                if (!nameChanged)
+                {
+                    this._hero.Name =  this._hero.Gender == Gender.Male ? game.Names.Male[Random.NextInt(game.Names.Male.Count)] : game.Names.Female[Random.NextInt(game.Names.Female.Count)];
+                    nameField.SetText(this._hero.Name);
+                    nameChanged = false;
+                }
+                
+     
+                image.SetSprite(sprites[(int) this._hero.Class * 16 + (int) this._hero.Gender * 8 + 4]);
+            };
+            table.Row().SetPadTop(3);
+            
+            table.Add(new Label("Class:", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(labelColumnWidth);
+            var classField = new SelectBox<string>(BasicWindow.Skin).SetItems(
+                Class.Hero.ToString(),
+                Class.Soldier.ToString(),
+                Class.Cleric.ToString(),
+                Class.Wizard.ToString(),
+                Class.Fighter.ToString(),
+                Class.Merchant.ToString(),
+                Class.Clown.ToString(),
+                Class.Thief.ToString(),
+                Class.Sage.ToString());
+            table.Add(classField).Height(BasicWindow.ButtonHeight).Width(dataColumnWidth);
+            classField.OnChanged += _ =>
+            {
+                this._hero.Class = Enum.Parse<Class>(classField.GetSelected());
+                this._hero.RollStats(game.ClassLevelStats);
+                this.UpdateStatus();
+                image.SetSprite(sprites[(int) this._hero.Class * 16 + (int) this._hero.Gender * 8 + 4]);
+            };
+            table.Row();
+            
+            this._statusTable = new Table();
+            table.Add(this._statusTable).SetColspan(2);
+            
+            table.Row().SetPadTop(10);
+
+            var rollButton = new TextButton("Re-roll", BasicWindow.Skin);
+            table.Add(rollButton).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).SetColspan(3);
+            rollButton.OnClicked += _ =>
+            {
+                this._hero.RollStats(game.ClassLevelStats);
+                this.UpdateStatus();
+            };
+            
             table.Row().SetPadTop(20);
-            var playButton = table.Add(new TextButton("Start", BasicWindow.Skin)).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).GetElement<TextButton>();
+            
+            var  buttonTable = new Table();
+            table.Add(buttonTable).SetColspan(3).SetFillX();
+            
+            var playButton = buttonTable.Add(new TextButton("Start", BasicWindow.Skin)).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).GetElement<TextButton>();
             playButton.OnClicked += _ =>
             {
                 this._sounds.PlaySoundEffect("confirm");
                 var party = new Party();
-                var hero = new Hero
-                {
-                    Name = textField.GetText(),
-                    Class = Class.Hero,
-                    Gender = Gender.Male
-                };
-                hero.RollStats(game.ClassLevelStats);
-                party.Members.Add(hero);
-                
+                party.Members.Add(this._hero);
                 game.LoadGame(new GameSave {Party = party});
             };
             playButton.ShouldUseExplicitFocusableControl = true;
             
-            var backButton = table.Add(new TextButton("Back", BasicWindow.Skin)).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).GetElement<TextButton>();
+            var backButton = buttonTable.Add(new TextButton("Back", BasicWindow.Skin)).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).GetElement<TextButton>();
             backButton.OnClicked += _ =>
             {
                 this._sounds.PlaySoundEffect("confirm");
@@ -75,7 +168,30 @@
             backButton.GamepadRightElement = playButton;
             playButton.GamepadRightElement = backButton;
             playButton.GamepadLeftElement = backButton;
+            this.UpdateStatus();
             this._sounds.PlayMusic(@"first-story");
+        }
+        
+         private void UpdateStatus()
+        {
+            this._statusTable.Clear();
+            this._statusTable.Row();
+            this._statusTable.Add(new Label("Health:",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Health}/{this._hero.MaxHealth}",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
+            this._statusTable.Row();
+            this._statusTable.Add(new Label("Magic:",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Magic}/{this._hero.MaxMagic}",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
+            this._statusTable.Row();
+            this._statusTable.Add(new Label("Attack:",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Attack}",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
+            this._statusTable.Row();
+            this._statusTable.Add(new Label("Defence:",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Defence}",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
+            this._statusTable.Row();
+            this._statusTable.Add(new Label("Agility:",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Agility}", BasicWindow. Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
+
+            this._statusTable.Validate();
         }
     }
 }

@@ -22,6 +22,16 @@ namespace Nez.UI
 			touchable = Touchable.Disabled;
 		}
 
+		public void SetSprite(Sprite sprite)
+		{
+			this.SetDrawable(new SpriteDrawable(sprite));
+		}
+		
+		public void SetTexure(Texture2D texture)
+		{
+			this.SetSprite(new Sprite(texture));
+		}
+
 
 		public Image() : this((IDrawable) null)
 		{

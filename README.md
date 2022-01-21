@@ -1,6 +1,7 @@
 # Games
 ## Todo
  - Balance pass
+ - Choose Class / Roll stats
  - Flash opponent when damaged
  - Temp status effects/spells
     - Poison

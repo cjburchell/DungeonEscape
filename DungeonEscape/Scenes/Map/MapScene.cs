@@ -244,6 +244,26 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             this._showExitWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Escape));
             this._showExitWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.Y));
         }
+        
+        public static Biome GetCurrentBiome(TmxMap map, Vector2 pos)
+        {
+            var isOverWorld = map.Properties != null && map.Properties.ContainsKey("overworld") && bool.Parse(map.Properties["overworld"]);
+            if (!isOverWorld)
+            {
+                var biome = map.Properties != null && map.Properties.ContainsKey("biome")? Enum.Parse<Biome>(map.Properties["biome"]):Biome.None;
+                return biome;
+            }
+
+            var (x, y) = MapScene.ToMapGrid(pos, map);
+            var tile = map.GetLayer<TmxLayer>("biomes")?.GetTile(x, y);
+            if (tile == null)
+            {
+                return Biome.None;
+            }
+
+            var tileset = tile.Tileset;
+            return (Biome) (tile.Gid - tileset.FirstGid);
+        }
 
         private List<RandomMonster> LoadRandomMonsters()
         {
@@ -289,7 +309,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             var monster = game?.Monsters.FirstOrDefault(m => m.Id == monsterId);
             if (monster != null)
             {
-                game.StartFight(new[]{monster});
+                game.StartFight(new[]{monster}, Biome.Grassland);
             }
         }
         

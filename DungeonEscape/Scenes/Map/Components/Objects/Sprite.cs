@@ -15,7 +15,7 @@
     public class Sprite : Component, IUpdatable, ICollidable
     {
         private readonly TmxObject _tmxObject;
-        private readonly TmxMap _map;
+        protected readonly TmxMap Map;
         protected readonly IGame GameState;
         protected SpriteAnimator Animator;
         private Mover _mover;
@@ -57,14 +57,14 @@
             this.SpriteState = state;
             this._graph = graph;
             this._tmxObject = tmxObject;
-            this._map = map;
+            this.Map = map;
             this.GameState = gameState;
             this._tilSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
             this.BaseId = tmxObject.Tile.Gid - this._tilSet.FirstGid;
             this._canMove = bool.Parse(this._tmxObject.Properties["CanMove"]);
             this._collideable = bool.Parse(this._tmxObject.Properties["Collideable"]);
         }
-        
+
         protected virtual void SetupAnimation(List<Nez.Textures.Sprite> sprites)
         {
             this.Animator.AddAnimation("WalkDown", new[]
@@ -186,20 +186,20 @@
                         mapGoTo.Y = 0;
                     }
 
-                    if (mapGoTo.X >= this._map.Width)
+                    if (mapGoTo.X >= this.Map.Width)
                     {
-                        mapGoTo.X = this._map.Width - 1;
+                        mapGoTo.X = this.Map.Width - 1;
                     }
 
-                    if (mapGoTo.Y >= this._map.Height)
+                    if (mapGoTo.Y >= this.Map.Height)
                     {
-                        mapGoTo.X = this._map.Height - 1;
+                        mapGoTo.X = this.Map.Height - 1;
                     }
 
-                    var toPos = pos + MapScene.ToRealLocation(mapGoTo, this._map);
+                    var toPos = pos + MapScene.ToRealLocation(mapGoTo, this.Map);
                     this._path = this._graph.Search(
-                        MapScene.ToMapGrid(pos, this._map),
-                        MapScene.ToMapGrid(toPos, this._map));
+                        MapScene.ToMapGrid(pos, this.Map),
+                        MapScene.ToMapGrid(toPos, this.Map));
 
                     if (this._path == null)
                     {
@@ -220,7 +220,7 @@
                 case MoveState.Moving:
                 {
                     var p1 = this.Entity.Position;
-                    if (Vector2.Distance(p1, MapScene.ToRealLocation(this._path[this._currentPathIndex], this._map)) <=
+                    if (Vector2.Distance(p1, MapScene.ToRealLocation(this._path[this._currentPathIndex], this.Map)) <=
                         1)
                     {
                         this._currentPathIndex++;
@@ -232,7 +232,7 @@
                         }
                     }
 
-                    var (x, y) = MapScene.ToRealLocation(this._path[this._currentPathIndex], this._map);
+                    var (x, y) = MapScene.ToRealLocation(this._path[this._currentPathIndex], this.Map);
                     var angle = (float) Math.Atan2(y - p1.Y, x - p1.X);
                     var vector = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
                     var animation = "WalkDown";

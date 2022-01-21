@@ -51,7 +51,8 @@
                                     {
                                         new DialogText
                                         {
-                                            Text = $"{this.SpriteState.Name} Joined the party"
+                                            Text = $"{this.SpriteState.Name} Joined the party",
+                                            Choices = new List<Choice> {new Choice {Text = "OK"}}
                                         }
                                     }
                                 },

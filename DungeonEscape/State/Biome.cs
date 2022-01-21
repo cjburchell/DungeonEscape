@@ -10,6 +10,9 @@ namespace Redpoint.DungeonEscape.State
         Hills = 4,
         Desert = 5,
         Swamp = 6,
-        All = 7
+        Cave = 7,
+        Town = 8,
+        Tower = 9,
+        All = 10
     }
 }

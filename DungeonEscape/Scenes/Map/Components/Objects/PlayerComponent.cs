@@ -293,7 +293,7 @@
 
             if (this._debugText.IsVisible())
             {
-                var currentBiome = this.GetCurrentBiome();
+                var currentBiome = MapScene.GetCurrentBiome(this._map, this.Entity.Position);
                 this._debugText.SetText(
                     $"B: {currentBiome}, G: {MapScene.ToMapGrid(this.Entity.Position, this._map)}, R: {this.Entity.Position} d: {this._distance}");
             }
@@ -336,7 +336,7 @@
 
         private void DoMonsterEncounter()
         {
-            var currentBiome = this.GetCurrentBiome();
+            var currentBiome = MapScene.GetCurrentBiome(this._map, this.Entity.Position);
             var availableMonsters = new List<Monster>();
             
             var level = this._gameState.Party.Members.Select(hero => hero.Level).Max();
@@ -369,25 +369,7 @@
                 monsters.Add(availableMonsters[monsterNub]);
             }
             
-            this._gameState.StartFight(monsters);
-        }
-
-        private Biome GetCurrentBiome()
-        {
-            if (!this._gameState.Party.CurrentMapIsOverWorld)
-            {
-                return Biome.None;
-            }
-
-            var (x, y) = MapScene.ToMapGrid(this.Entity.Position, this._map);
-            var tile = this._map.GetLayer<TmxLayer>("biomes")?.GetTile(x, y);
-            if (tile == null)
-            {
-                return Biome.None;
-            }
-
-            var tileset = tile.Tileset;
-            return (Biome) (tile.Gid - tileset.FirstGid);
+            this._gameState.StartFight(monsters, currentBiome);
         }
 
         private bool CheckForMonsterEncounter()
@@ -398,7 +380,7 @@
             }
 
             this._distance = 0;
-            var currentBiome = this.GetCurrentBiome();
+            var currentBiome = MapScene.GetCurrentBiome(this._map, this.Entity.Position);
             var hasRandomMonsters =
                 this._randomMonsters.Count(item => item.Biome == currentBiome || item.Biome == Biome.All) != 0;
             

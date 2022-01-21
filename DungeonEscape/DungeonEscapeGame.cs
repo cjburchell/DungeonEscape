@@ -118,11 +118,11 @@
             }));
         }
 
-        public void StartFight(IEnumerable<Monster> monsters)
+        public void StartFight(IEnumerable<Monster> monsters, Biome biome)
         {
             StartSceneTransition(new FadeTransition(() =>
             {
-                var splash = new FightScene(this, monsters);
+                var splash = new FightScene(this, monsters, biome);
                 splash.Initialize();
                 return splash;
             }));

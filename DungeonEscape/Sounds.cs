@@ -25,8 +25,16 @@
             }
             else
             {
-                
-                song = Song.FromUri(songPath,new Uri($"Content\\sound\\music\\{songPath}.ogg", UriKind.Relative) );
+
+                try
+                {
+                    song = Song.FromUri(songPath,new Uri($"Content\\sound\\music\\{songPath}.ogg", UriKind.Relative) );
+                }
+                catch (NoAudioHardwareException)
+                {
+                    return;
+                }
+               
                 this._songs.Add(songPath, song);
             }
             
@@ -44,8 +52,16 @@
             }
             else
             {
+
+                try
+                {
+                    sfx = SoundEffect.FromFile($"Content\\sound\\fx\\{effectPath}.wav");
+                }
+                catch (NoAudioHardwareException)
+                {
+                   return;
+                }
                 
-                sfx = SoundEffect.FromFile($"Content\\sound\\fx\\{effectPath}.wav");
                 this._sounds.Add(effectPath, sfx);
             }
             sfx.Play();

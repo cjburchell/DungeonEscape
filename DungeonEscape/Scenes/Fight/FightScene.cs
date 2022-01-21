@@ -44,15 +44,17 @@
         }
         
         private readonly IGame _game;
+        private readonly Biome _biome;
         private readonly List<MonsterInstance> _monsters = new List<MonsterInstance>();
         private UiSystem _ui;
         private EncounterRoundState _state = EncounterRoundState.Begin;
         private readonly List<RoundAction> _roundActions = new List<RoundAction>();
         private List<Hero> _heroes;
 
-        public FightScene(IGame game, IEnumerable<Monster> monsters)
+        public FightScene(IGame game, IEnumerable<Monster> monsters, Biome biome)
         {
             this._game = game;
+            this._biome = biome;
             foreach (var monster in monsters)
             {
                 this._monsters.Add(new MonsterInstance(monster));
@@ -64,6 +66,26 @@
             { "battleground", "like-totally-rad", "sword-metal", "unprepared"};
 
         private const string EndFightSong = "not-in-vain";
+
+        private Image GetBackgroundImage(Biome biome)
+        {
+            var imageFile = biome switch
+            {
+                Biome.Grassland => "field",
+                Biome.Forest => "field",
+                Biome.Water => "ocean",
+                Biome.Hills => "mountain",
+                Biome.Desert => "desert",
+                Biome.Swamp => "swamp",
+                Biome.Cave => "cave",
+                Biome.Town => "castle",
+                Biome.Tower => "tower",
+                _ => "field"
+            };
+
+            var texture = this.Content.LoadTexture($"Content/images/background/{imageFile}.png");
+            return new Image(texture, Scaling.None);
+        }
         
         public override void Initialize()
         {
@@ -78,6 +100,10 @@
             this._ui.Canvas.SetRenderLayer(999);
             this._ui.Canvas.Stage.GamepadActionButton = null;
 
+            var background = this._ui.Canvas.Stage.AddElement(this.GetBackgroundImage(this._biome));
+            background.SetWidth(MapScene.ScreenWidth);
+            background.SetHeight((MapScene.ScreenHeight * 2) / 3);
+            
             var table = this._ui.Canvas.Stage.AddElement(new Table());
             table.SetFillParent(true);
             table.Center();

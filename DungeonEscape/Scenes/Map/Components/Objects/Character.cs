@@ -21,7 +21,7 @@
             {
                 this.Dialog = new Dialog
                 {
-                    Dialogs = new List<DialogText> { new DialogText {Text = text, Choices = new List<Choice> { new Choice {Text = "Ok"}}}}
+                    Dialogs = new List<DialogText> { new DialogText {Text = text, Choices = new List<Choice> { new Choice {Text = "OK"}}}}
                 };
                 
                 return;
@@ -82,7 +82,7 @@
                 return;
             }
             
-            new TalkWindow(this._ui).Show(dialog.Text, dialog.Choices.Where(choice =>
+            new TalkWindow(this._ui).Show(dialog.Text, dialog.Choices?.Where(choice =>
             {
                 if (choice.Action == QuestAction.LookingForItem && choice.ItemId.HasValue)
                 {
@@ -131,7 +131,7 @@
                         var monster = this.GameState.Monsters.FirstOrDefault(m => m.Id == choice.MonsterId);
                         if (monster != null)
                         {
-                            this.GameState.StartFight(new[]{monster});
+                            this.GameState.StartFight(new[]{monster}, MapScene.GetCurrentBiome(this.Map, this.Entity.Position));
                             return;
                         }
                         break;

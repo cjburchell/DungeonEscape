@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="35" height="35" tilewidth="32" tileheight="32" infinite="0" nextlayerid="1" nextobjectid="3">
  <properties>
+  <property name="biome" value="Tower"/>
   <property name="song" value="like-totally-rad"/>
  </properties>
  <tileset firstgid="1" source="tiles.tsx"/>

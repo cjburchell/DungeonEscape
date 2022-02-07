@@ -28,7 +28,7 @@
             public RoundActionState State { get; set; }
             public Spell Spell { get; set; }
             public ItemInstance Item { get; set; }
-            public IEnumerable<IFighter> Target { get; set; }
+            public IEnumerable<IFighter> Targets { get; set; }
         }
 
         private enum EncounterRoundState
@@ -102,7 +102,7 @@
 
             var background = this._ui.Canvas.Stage.AddElement(this.GetBackgroundImage(this._biome));
             background.SetWidth(MapScene.ScreenWidth);
-            background.SetHeight((MapScene.ScreenHeight * 2) / 3);
+            background.SetHeight(MapScene.ScreenHeight * 2.0f / 3.0f);
             
             var table = this._ui.Canvas.Stage.AddElement(new Table());
             table.SetFillParent(true);
@@ -240,6 +240,108 @@
                 {
                     case "Fight":
                     {
+                        this.ChooseFight(hero, done);
+                        return;
+                    }
+                    case "Spell":
+                    { 
+                        this.ChooseSpell(hero, availableSpells, done);
+                        return;
+                    }
+                    case "Item":
+                    {
+                        this.ChooseItem(hero, availableItems, done);
+                        return;
+                    }
+                    case "Run":
+                    {
+                        ChooseRun(hero, done);
+                        return;
+                    }
+                }
+
+            });
+        }
+
+        private static void ChooseRun(IFighter hero, Action<RoundAction> done)
+        {
+            done(new RoundAction
+            {
+                Source = hero,
+                State = RoundActionState.Run
+            });
+        }
+
+        private void ChooseItem(Hero hero, IEnumerable<ItemInstance> availableItems, Action<RoundAction> done)
+        {
+            var selectItem = new InventoryWindow(this._ui, new Point(10, MapScene.ScreenHeight / 3 * 2));
+            selectItem.Show(availableItems, item =>
+            {
+                if (item == null)
+                {
+                    done(null);
+                    return;
+                }
+
+                if (this._game.Party.Members.Count(member => !member.IsDead) == 1)
+                {
+                    var newAction = new RoundAction
+                    {
+                        Source = hero,
+                        State = RoundActionState.Item,
+                        Targets = new []{hero},
+                        Item = item
+                    };
+
+                    done(newAction);
+                    return;
+                }
+
+                var selectTarget = new SelectHeroWindow(this._ui,
+                    new Point(10, MapScene.ScreenHeight / 3 * 2));
+                selectTarget.Show(this._game.Party.Members.Where(member => !member.IsDead), target =>
+                {
+                    if (target == null)
+                    {
+                        done(null);
+                        return;
+                    }
+
+                    var newAction = new RoundAction
+                    {
+                        Source = hero,
+                        State = RoundActionState.Item,
+                        Targets = new []{target},
+                        Item = item
+                    };
+
+                    done(newAction);
+                });
+            });
+        }
+
+        private void ChooseSpell(Hero hero, IEnumerable<Spell> availableSpells, Action<RoundAction> done)
+        {
+            var selectItem = new SpellWindow(this._ui, new Point(10, MapScene.ScreenHeight / 3 * 2), hero);
+            selectItem.Show(availableSpells, spell =>
+            {
+                if (spell == null)
+                {
+                    done(null);
+                    return;
+                }
+
+                var newAction = new RoundAction
+                {
+                    Source = hero,
+                    State = RoundActionState.Spell,
+                    Spell = spell
+                };
+
+                if (spell.IsAttackSpell)
+                {
+                    if (spell.Targets == Target.Single)
+                    {
                         var selectTarget = new SelectWindow<MonsterInstance>(this._ui, "SelectMonster",
                             new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
                         selectTarget.Show(this._monsters.Where(item => !item.IsDead), monster =>
@@ -250,177 +352,90 @@
                                 return;
                             }
 
-                            var newAction = new RoundAction
-                            {
-                                Source = hero,
-                                State = RoundActionState.Fight,
-                                Target = new []{monster}
-                            };
-
+                            newAction.Targets = new[] {monster};
                             done(newAction);
                         });
                         return;
                     }
-                    case "Spell":
-                    {
-                        var selectItem = new SpellWindow(this._ui, new Point(10, MapScene.ScreenHeight / 3 * 2), hero);
-                        selectItem.Show(availableSpells, spell =>
-                            {
-                                if (spell == null)
-                                {
-                                    done(null);
-                                    return;
-                                }
 
-                                var newAction = new RoundAction
-                                {
-                                    Source = hero,
-                                    State = RoundActionState.Spell,
-                                    Spell = spell
-                                };
-                                
-                                if (spell.IsAttackSpell)
-                                {
-                                    if (spell.Targets == Target.Single)
-                                    {
-                                        var selectTarget = new SelectWindow<MonsterInstance>(this._ui, "SelectMonster",
-                                            new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
-                                        selectTarget.Show(this._monsters.Where(item => !item.IsDead), monster =>
-                                        {
-                                            if (monster == null)
-                                            {
-                                                done(null);
-                                                return;
-                                            }
+                    newAction.Targets = this._monsters.Where(item => !item.IsDead);
+                    done(newAction);
+                    return;
 
-                                            newAction.Target = new[] {monster};
-                                            done(newAction);
-                                        });
-                                        return;
-                                    }
-
-                                    newAction.Target = this._monsters.Where(item => !item.IsDead);
-                                    done(newAction);
-                                    return;
-
-                                }
-
-                                if (spell.Targets == Target.Single)
-                                {
-                                    if (this._game.Party.Members.Count(member => !member.IsDead) == 1)
-                                    {
-                                        newAction.Target = new[] {hero};
-                                        done(newAction);
-                                        return;
-                                    }
-                                        
-                                    var selectTarget = new SelectHeroWindow(this._ui,
-                                        new Point(10, MapScene.ScreenHeight / 3 * 2));
-                                    selectTarget.Show(this._game.Party.Members.Where(member => !member.IsDead), target =>
-                                    {
-                                        if (target == null)
-                                        {
-                                            done(null);
-                                            return;
-                                        }
-
-                                        newAction.Target = new[] {target};
-                                        done(newAction);
-                                    });
-                                    return;
-                                }
-
-                                newAction.Target = this._game.Party.Members.Where(item => !item.IsDead);
-                                done(newAction);
-                            });
-                        return;
-                    }
-                    case "Item":
-                    {
-                        var selectItem = new InventoryWindow(this._ui, new Point(10, MapScene.ScreenHeight / 3 * 2));
-                        selectItem.Show(availableItems, item =>
-                        {
-                            if (item == null)
-                            {
-                                done(null);
-                                return;
-                            }
-
-                            if (this._game.Party.Members.Count(member => !member.IsDead) == 1)
-                            {
-                                var newAction = new RoundAction
-                                {
-                                    Source = hero,
-                                    State = RoundActionState.Item,
-                                    Target = new []{hero},
-                                    Item = item
-                                };
-
-                                done(newAction);
-                                return;
-                            }
-
-                            var selectTarget = new SelectHeroWindow(this._ui,
-                                new Point(10, MapScene.ScreenHeight / 3 * 2));
-                            selectTarget.Show(this._game.Party.Members.Where(member => !member.IsDead), target =>
-                            {
-                                if (target == null)
-                                {
-                                    done(null);
-                                    return;
-                                }
-
-                                var newAction = new RoundAction
-                                {
-                                    Source = hero,
-                                    State = RoundActionState.Item,
-                                    Target = new []{target},
-                                    Item = item
-                                };
-
-                                done(newAction);
-                            });
-                        });
-                        return;
-                    }
-                    case "Run":
-                    {
-                        var newAction = new RoundAction
-                        {
-                            Source = hero,
-                            State = RoundActionState.Run
-                        };
-                        done(newAction); 
-                        return;
-                    }
                 }
 
+                if (spell.Targets == Target.Single)
+                {
+                    if (this._game.Party.Members.Count(member => !member.IsDead) == 1)
+                    {
+                        newAction.Targets = new[] {hero};
+                        done(newAction);
+                        return;
+                    }
+
+                    var selectTarget = new SelectHeroWindow(this._ui,
+                        new Point(10, MapScene.ScreenHeight / 3 * 2));
+                    selectTarget.Show(this._game.Party.Members.Where(member => !member.IsDead), target =>
+                    {
+                        if (target == null)
+                        {
+                            done(null);
+                            return;
+                        }
+
+                        newAction.Targets = new[] {target};
+                        done(newAction);
+                    });
+                    return;
+                }
+
+                newAction.Targets = this._game.Party.Members.Where(item => !item.IsDead);
+                done(newAction);
+            });
+        }
+
+        private void ChooseFight(IFighter hero, Action<RoundAction> done)
+        {
+            var selectTarget = new SelectWindow<MonsterInstance>(this._ui, "SelectMonster",
+                new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
+            selectTarget.Show(this._monsters.Where(item => !item.IsDead), monster =>
+            {
+                if (monster == null)
+                {
+                    done(null);
+                    return;
+                }
+
+                var newAction = new RoundAction
+                {
+                    Source = hero,
+                    State = RoundActionState.Fight,
+                    Targets = new []{monster}
+                };
+
+                done(newAction);
             });
         }
 
         private RoundAction ChooseAction(MonsterInstance monster)
         {
-            var hasAttackSpell = monster.Info.Spells.Count(item => item.IsAttackSpell && item.Cost <= monster.Magic) !=
-                                 0;
-            var hasHeal =
-                monster.Info.Spells.Count(item => item.Type == SpellType.Heal && item.Cost <= monster.Magic) != 0;
-            if (hasHeal && (float) monster.Health / monster.MaxHealth * 100f < 10)
+            RoundAction action;
+            if ( monster.Info.Spells.Count(item => item.Type == SpellType.Heal && item.Cost <= monster.Magic) != 0 
+                 && (float) monster.Health / monster.MaxHealth * 100f < 10)
             {
                 var healSpells =
                     monster.Info.Spells.Where(item => item.Type == SpellType.Heal && item.Cost <= monster.Magic)
                         .ToArray();
 
                 var spell = healSpells[Random.NextInt(healSpells.Length)];
-                var spellAction = new RoundAction
+                action = new RoundAction
                 {
                     Source = monster,
                     State = RoundActionState.Spell,
                     Spell = spell
                 };
-                return spellAction;
             }
-
-            if (hasAttackSpell && Random.NextInt(6) != 0)
+            else if (monster.Info.Spells.Count(item => item.IsAttackSpell && item.Cost <= monster.Magic) != 0) // has spells
             {
                 var attackSpells =
                     monster.Info.Spells.Where(item => item.IsAttackSpell && item.Cost <= monster.Magic).ToArray();
@@ -435,28 +450,29 @@
                             Random.NextInt(this._game.Party.Members.Where(CanBeAttacked).Count())]
                     };
                     
-                var spellAction = new RoundAction
+                action = new RoundAction
                 {
                     Source = monster,
                     State = RoundActionState.Spell,
                     Spell = spell,
-                    Target = targets
+                    Targets = targets
                 };
-                return spellAction;
             }
-
-            var fightAction = new RoundAction
+            else
             {
-                Source = monster,
-                State = RoundActionState.Fight,
-                Target = new[]
+                action = new RoundAction
                 {
-                    this._game.Party.Members.Where(CanBeAttacked).ToArray()[
-                        Random.NextInt(this._game.Party.Members.Where(CanBeAttacked).Count())]
-                }
-            };
+                    Source = monster,
+                    State = RoundActionState.Fight,
+                    Targets = new[]
+                    {
+                        this._game.Party.Members.Where(CanBeAttacked).ToArray()[
+                            Random.NextInt(this._game.Party.Members.Where(CanBeAttacked).Count())]
+                    }
+                };
+            }
             
-            return fightAction;
+            return action;
         }
 
         private void OrderActions()
@@ -467,118 +483,143 @@
         private void DoActions()
         {
             var action = this._roundActions.FirstOrDefault(item =>
-                CanBeAttacked(item.Source) && (item.Target == null || item.Target.Any(CanBeAttacked)));
+                CanBeAttacked(item.Source) && (item.Targets == null || item.Targets.Any(CanBeAttacked)));
             if (action == null)
             {
                 this._state = EncounterRoundState.EndRound;
+                return;
             }
-            else
+
+            this._roundActions.Remove(action);
+            this._state = EncounterRoundState.DoingActions;
+            var message = "";
+            var endFight = false;
+            switch (action.State)
             {
-                this._roundActions.Remove(action);
-                this._state = EncounterRoundState.DoingActions;
-                var message = "";
-                switch (action.State)
+                case RoundActionState.Run:
+                    (message, endFight) = this.Run(action.Source);
+                    break;
+                case RoundActionState.Fight:
+                    message = this.Fight(action.Source, action.Targets);
+                    break;
+                case RoundActionState.Spell:
+                    message = action.Spell.Cast(action.Targets, action.Source, this._game);
+                    break;
+                case RoundActionState.Item:
                 {
-                    case RoundActionState.Run:
-                        message = $"{action.Source.Name} Tried to run\n";
-                        if (Random.NextInt(5) != 1)
-                        {
-                            this._game.Sounds.PlaySoundEffect("stairs-up");
-                            message += "And got away";
-                            switch (action.Source)
-                            {
-                                case Hero _:
-                                    this._game.Sounds.PlayMusic(EndFightSong);
-                                    this._state = EncounterRoundState.EndEncounter;
-                                    new FightTalkWindow(this._ui, "").Show(message, this._game.ResumeGame);
-                                    return;
-                                case MonsterInstance monster:
-                                    monster.RanAway = true;
-                                    monster.Image.SetVisible(false);
-                                    break;
-                            }
-                        }
-
-                        break;
-                    case RoundActionState.Fight:
-                        this._game.Sounds.PlaySoundEffect("prepare-attack", true);
-                        var totalDamage = 0;
-                        foreach (var target in action.Target)
-                        {
-                            message = $"{action.Source.Name} Attacks {target.Name}.\n";
-                            int damage;
-                            if (Random.NextInt(Math.Max(30 - action.Source.Agility / 2, 2)) == 0)
-                            {
-                                damage = Random.NextInt(action.Source.Attack + 20 * action.Source.Level) + 10;
-                                message += "Heroic maneuver!\n";
-                            }
-                            else
-                            {
-                                damage = Random.NextInt(action.Source.Attack);
-                            }
-
-                            damage -= (int) (damage * target.Defence / 100f);
-                            totalDamage += damage;
-                            target.Health -= damage;
-
-                            if (damage == 0)
-                            {
-                                message += $"{target.Name} was unharmed\n";
-                            }
-                            else
-                            {
-                                message += $"{target.Name} took {damage} points of damage\n";
-                            }
-
-                            if (target.Health > 0)
-                            {
-                                continue;
-                            }
-
-                            message += "and has died!\n";
-                            target.Health = 0;
-                        }
-
-                        this._game.Sounds.PlaySoundEffect(totalDamage == 0 ? "miss" : "receive-damage");
-
-                        break;
-                    case RoundActionState.Spell:
-                        message = action.Spell.Cast(action.Target, action.Source, this._game);
-                        break;
-                    case RoundActionState.Item:
+                    var target = action.Targets.FirstOrDefault();
+                    if (target != null)
                     {
-                        var target = action.Target.FirstOrDefault();
-                        if (target != null)
+                        if (target != action.Source)
                         {
-                            if (target != action.Source)
-                            {
-                                message = $"{action.Source.Name} Uses {action.Item.Name} on {target.Name}";
-                                UseItem(target as Hero, action.Item, this._game.Party);
-                            }
-                            else
-                            {
-                                message = $"{action.Source.Name} Uses {action.Item.Name}";
-                                UseItem(target as Hero, action.Item, this._game.Party);
-                            }
+                            message = $"{action.Source.Name} Uses {action.Item.Name} on {target.Name}";
+                            UseItem(target as Hero, action.Item, this._game.Party);
                         }
-
-                        break;
+                        else
+                        {
+                            message = $"{action.Source.Name} Uses {action.Item.Name}";
+                            UseItem(target as Hero, action.Item, this._game.Party);
+                        }
                     }
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
 
-                if (action.Target != null)
-                {
-                    foreach (var monster in action.Target.OfType<MonsterInstance>().Where(item => item.IsDead))
-                    {
-                        monster.Image.SetVisible(false);
-                    }
+                    break;
                 }
-
-                new FightTalkWindow(this._ui, "").Show(message,
-                    () => { this._state = EncounterRoundState.StartDoingActions; });
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
+
+            if (action.Targets != null)
+            {
+                foreach (var monster in action.Targets.OfType<MonsterInstance>().Where(item => item.IsDead))
+                {
+                    monster.Image.SetVisible(false);
+                }
+            }
+
+            void DoneAction()
+            {
+                if (endFight)
+                {
+                    this._state = EncounterRoundState.EndEncounter;
+                    this._game.ResumeGame();
+                }
+                else
+                {
+                    this._state = EncounterRoundState.StartDoingActions;
+                }    
+            }
+
+            new FightTalkWindow(this._ui, "").Show(message,
+                DoneAction);
+        }
+
+        private string Fight(IFighter source, IEnumerable<IFighter> targets)
+        {
+            var message = "";
+            this._game.Sounds.PlaySoundEffect("prepare-attack", true);
+            var totalDamage = 0;
+            foreach (var target in targets)
+            {
+                message += $"{source.Name} Attacks {target.Name}.\n";
+                int damage;
+                if (Random.NextInt(Math.Max(30 - source.Agility / 2, 2)) == 0)
+                {
+                    damage = Random.NextInt(source.Attack + 20 * source.Level) + 10;
+                    message += "Heroic maneuver!\n";
+                }
+                else
+                {
+                    damage = Random.NextInt(source.Attack);
+                }
+
+                damage -= (int) (damage * target.Defence / 100f);
+                totalDamage += damage;
+                target.Health -= damage;
+
+                if (damage == 0)
+                {
+                    message += $"{target.Name} was unharmed\n";
+                }
+                else
+                {
+                    message += $"{target.Name} took {damage} points of damage\n";
+                }
+
+                if (target.Health <= 0)
+                {
+                    message += "and has died!\n";
+                    target.Health = 0;
+                }
+            }
+
+            this._game.Sounds.PlaySoundEffect(totalDamage == 0 ? "miss" : "receive-damage");
+            return message;
+        }
+
+        private (string message, bool endFight) Run(IFighter fighter)
+        {
+            var message = $"{fighter.Name} Tried to run\n";
+            if (Random.NextInt(5) == 1)
+            {
+                return (message, false);
+            }
+
+            var endFight = false;
+            this._game.Sounds.PlaySoundEffect("stairs-up");
+            message += "And got away\n";
+            switch (fighter)
+            {
+                case Hero _:
+                    this._game.Sounds.PlayMusic(EndFightSong);
+                    endFight = true;
+                    break;
+                case MonsterInstance monster:
+                    monster.RanAway = true;
+                    monster.Image.SetVisible(false);
+                    break;
+            }
+
+            return (message, endFight);
         }
 
         private static void UseItem(Hero hero, ItemInstance item, Party party)

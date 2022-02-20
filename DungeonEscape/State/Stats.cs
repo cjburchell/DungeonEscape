@@ -15,16 +15,19 @@ namespace Redpoint.DungeonEscape.State
         public StatType Type { get; set; }
         public int StartConst { get; set; }
         public int Roll { get; set; }
+
+        public int RollTimes { get; set; } = 1;
+        
         public int RollConst { get; set; }
 
         public int RollStartValue()
         {
-            return Random.NextInt(this.Roll) + this.StartConst;
+            return Dice.Roll(this.Roll, this.RollTimes, this.StartConst);
         }
             
         public int RollNextValue()
         {
-            return Random.NextInt(this.Roll) + this.RollConst;
+            return Dice.Roll(this.Roll, this.RollTimes, this.RollConst);
         }
     }
 }

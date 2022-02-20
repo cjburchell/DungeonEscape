@@ -3,51 +3,71 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace Redpoint.DungeonEscape.State
 {
-    using Nez;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Linq;
+    using Nez.Sprites;
+    using Nez.Textures;
     using Nez.UI;
 
-    public class MonsterInstance : IFighter
+    public class MonsterInstance : Fighter
     {
-        public override string ToString()
-        {
-            return this.Name;
-        }
+        private readonly Monster _info;
         
-        public Monster Info { get; }
-
         public MonsterInstance(Monster info)
         {
-            this.Info = info;
-            this.Health = 0;
-            for (var i = 0; i < info.Health; i++)
-            {
-                this.Health+=Random.NextInt(8)+1;
-            }
-
-            this.Health += info.HealthConst;
+            this._info = info;
+            this.Health = Dice.Roll(8,info.Health, info.HealthConst);
             this.MaxHealth = this.Health;
-            
-            for (var i = 0; i < info.Magic; i++)
-            {
-                this.Magic+=Random.NextInt(8)+1;
-            }
-
+            this.Magic = Dice.Roll(8, info.Magic, info.MagicConst);
             this.MaxMagic = this.Magic;
+            this.Attack = info.Attack;
+            this.Defence = info.Defence;
+            this.Agility = info.Agility;
+            this.Name = info.Name;
+            this.Level = info.MinLevel;
+            this.Xp = info.Xp;
+            this.Gold = info.Gold;
+            
+            var spriteImage = new Sprite(this._info.Image);
+            var spriteFlash = new Sprite(this._info.Flash);
+            this.Image = new Image(spriteImage);
+            this.Animator = new SpriteAnimator(spriteImage);
+            this.Animator.Speed = 1.0f;
+            this.Animator.AddAnimation("Damage", new[]
+            {
+                spriteImage,
+                spriteFlash,
+                spriteImage,
+                spriteFlash,
+                spriteImage,
+                spriteFlash,
+                spriteImage,
+                spriteFlash
+            });
+        }
+
+        public override void PlayDamageAnimation()
+        {
+            this.Animator.Play("Damage", SpriteAnimator.LoopMode.Once);
+        }
+
+        public void Update()
+        {
+            this.Animator.Update();
+            this.Image.SetSprite(this.Animator.Sprite);
         }
         
-        public int MaxMagic { get; set; }
+        public SpriteAnimator Animator { get; set; }
 
-        public Image Image { get; set; }
+        public int Gold { get; }
+
+        public Image Image { get; }
         
-        public string Name => this.Info.Name;
-        public int Health { get; set; }
-        public int Magic { get; set; }
-        public int Attack => this.Info.Attack;
-        public int Defence => this.Info.Defence;
-        public int Agility => this.Info.Agility;      
-        public bool IsDead => this.Health <= 0;
-        public int Level => this.Info.MinLevel;
-        public int MaxHealth { get; }
-        public bool RanAway { get; set; }
+        public override IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells)
+        {
+            return this._info.SpellList.Select(spellId => availableSpells.FirstOrDefault(item => item.Id == spellId))
+                .Where(spell => spell != null).ToList();
+        }
     }
 }

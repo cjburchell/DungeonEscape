@@ -72,7 +72,7 @@
                 return;
             }
 
-            this.State.Gold = Random.NextInt(100) + 20;
+            this.State.Gold = Dice.Roll(5, 20);
             this._item = Item.CreateGold(this.State.Gold.Value);
         }
         

@@ -172,7 +172,7 @@
                 foreach (var monster in monsters)
                 {
                     var tile = monsterTileSet.Tiles.FirstOrDefault(item => item.Value.Id == monster.Id).Value;
-                    monster.Setup(tile, this.Spells);
+                    monster.Setup(tile);
                     this.Monsters.Add(monster);
                 }
             }

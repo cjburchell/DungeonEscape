@@ -19,7 +19,8 @@
             Run,
             Fight,
             Spell,
-            Item
+            Item,
+            Nothing,
         }
         
         private class RoundAction
@@ -50,6 +51,7 @@
         private EncounterRoundState _state = EncounterRoundState.Begin;
         private readonly List<RoundAction> _roundActions = new List<RoundAction>();
         private List<Hero> _heroes;
+        private int _round;
 
         public FightScene(IGame game, IEnumerable<Monster> monsters, Biome biome)
         {
@@ -109,7 +111,7 @@
             table.Center();
             foreach (var monster in this._monsters)
             {
-                monster.Image = table.Add(new Image(monster.Info.Image)).Pad(10).GetElement<Image>();
+                table.Add(monster.Image).Pad(10);
             }
             
             var partyWindow = new PartyStatusWindow(this._game.Party, this._ui.Canvas, this._game.Sounds);
@@ -125,6 +127,11 @@
 
         public override void Update()
         {
+            foreach (var monster in this._monsters)
+            {
+                monster.Update();
+            }
+            
             base.Update();
             switch (this._state)
             {
@@ -155,6 +162,7 @@
         
         private void StartRound()
         {
+            this._round++;
             this._roundActions.Clear();
             this._heroes = this._game.Party.Members.ToList();
             foreach (var monster in this._monsters.Where(item=> !item.IsDead && !item.RanAway))
@@ -208,14 +216,31 @@
             this.EndEncounter();
         }
 
-        private void ChooseAction(Hero hero, Action<RoundAction> done)
+        private void ChooseAction(IFighter hero, Action<RoundAction> done)
         {
+            if (hero.Status.Count(i => i.Type == EffectType.Sleep) != 0)
+            {
+                done(new RoundAction
+                {
+                    Source = hero,
+                    State = RoundActionState.Nothing
+                });
+                
+                return;
+            }
+            
+            if (hero.Status.Count(i => i.Type == EffectType.Confusion) != 0)
+            {
+                done(this.ChooseAction(hero));
+                return;
+            }
+            
             var selectAction =
                 new SelectWindow<string>(this._ui, hero.Name, new Point(10, MapScene.ScreenHeight / 3 * 2));
             
             var options = new List<string> {"Fight"};
             var availableSpells = hero.GetSpells(this._game.Spells).Where(item => item.IsEncounterSpell && item.Cost <= hero.Magic).ToList();
-            if (availableSpells.Count != 0)
+            if (availableSpells.Count != 0 && hero.Status.Count(i => i.Type == EffectType.StopSpell) != 0)
             {
                 options.Add("Spell");
             }
@@ -272,7 +297,7 @@
             });
         }
 
-        private void ChooseItem(Hero hero, IEnumerable<ItemInstance> availableItems, Action<RoundAction> done)
+        private void ChooseItem(IFighter hero, IEnumerable<ItemInstance> availableItems, Action<RoundAction> done)
         {
             var selectItem = new InventoryWindow(this._ui, new Point(10, MapScene.ScreenHeight / 3 * 2));
             selectItem.Show(availableItems, item =>
@@ -320,7 +345,7 @@
             });
         }
 
-        private void ChooseSpell(Hero hero, IEnumerable<Spell> availableSpells, Action<RoundAction> done)
+        private void ChooseSpell(IFighter hero, IEnumerable<Spell> availableSpells, Action<RoundAction> done)
         {
             var selectItem = new SpellWindow(this._ui, new Point(10, MapScene.ScreenHeight / 3 * 2), hero);
             selectItem.Show(availableSpells, spell =>
@@ -417,62 +442,79 @@
             });
         }
 
-        private RoundAction ChooseAction(MonsterInstance monster)
+        private RoundAction ChooseAction(IFighter fighter)
         {
-            RoundAction action;
-            if ( monster.Info.Spells.Count(item => item.Type == SpellType.Heal && item.Cost <= monster.Magic) != 0 
-                 && (float) monster.Health / monster.MaxHealth * 100f < 10)
+            if (fighter.Status.Count(i => i.Type == EffectType.Sleep) != 0)
             {
-                var healSpells =
-                    monster.Info.Spells.Where(item => item.Type == SpellType.Heal && item.Cost <= monster.Magic)
-                        .ToArray();
-
-                var spell = healSpells[Random.NextInt(healSpells.Length)];
-                action = new RoundAction
+                return new RoundAction
                 {
-                    Source = monster,
-                    State = RoundActionState.Spell,
-                    Spell = spell
+                    Source = fighter,
+                    State = RoundActionState.Nothing
                 };
             }
-            else if (monster.Info.Spells.Count(item => item.IsAttackSpell && item.Cost <= monster.Magic) != 0) // has spells
-            {
-                var attackSpells =
-                    monster.Info.Spells.Where(item => item.IsAttackSpell && item.Cost <= monster.Magic).ToArray();
 
-                var spell = attackSpells[Random.NextInt(attackSpells.Length)];
-
-                var targets = spell.Targets == Target.Group
-                    ? this._game.Party.Members.Where(CanBeAttacked).OfType<IFighter>()
-                    : new List<IFighter>
-                    {
-                        this._game.Party.Members.Where(CanBeAttacked).ToArray()[
-                            Random.NextInt(this._game.Party.Members.Where(CanBeAttacked).Count())]
-                    };
-                    
-                action = new RoundAction
-                {
-                    Source = monster,
-                    State = RoundActionState.Spell,
-                    Spell = spell,
-                    Targets = targets
-                };
-            }
-            else
+            var availableTargets = this._game.Party.Members.OfType<IFighter>().Where(CanBeAttacked).ToList();
+            if (fighter.Status.Count(i => i.Type == EffectType.Confusion) != 0)
             {
-                action = new RoundAction
-                {
-                    Source = monster,
-                    State = RoundActionState.Fight,
-                    Targets = new[]
-                    {
-                        this._game.Party.Members.Where(CanBeAttacked).ToArray()[
-                            Random.NextInt(this._game.Party.Members.Where(CanBeAttacked).Count())]
-                    }
-                };
+                availableTargets.AddRange(this._monsters.Where(CanBeAttacked));
             }
+
+            var target = availableTargets.ToArray()[Random.NextInt(availableTargets.Count)];
             
-            return action;
+            if (fighter.Status.Count(i => i.Type == EffectType.StopSpell) == 0)
+            {
+                // check to cast heal spell
+                if ( fighter.GetSpells(this._game.Spells).Count(item => item.Type == SpellType.Heal && item.Cost <= fighter.Magic) != 0 
+                     && (float) fighter.Health / fighter.MaxHealth * 100f < 10)
+                {
+                    var healSpells =
+                        fighter.GetSpells(this._game.Spells).Where(item => item.Type == SpellType.Heal && item.Cost <= fighter.Magic)
+                            .ToArray();
+
+                    var spell = healSpells[Random.NextInt(healSpells.Length)];
+                    return new RoundAction
+                    {
+                        Source = fighter,
+                        State = RoundActionState.Spell,
+                        Spell = spell
+                    };
+                }
+
+                // check to cast offencive spells
+                if (fighter.GetSpells(this._game.Spells).Count(item => item.IsAttackSpell && item.Cost <= fighter.Magic) != 0) // has spells
+                {
+                    var attackSpells =
+                        fighter.GetSpells(this._game.Spells).Where(item => item.IsAttackSpell && item.Cost <= fighter.Magic).ToArray();
+
+                    var spell = attackSpells[Random.NextInt(attackSpells.Length)];
+
+                    var targets = spell.Targets == Target.Group
+                        ? this._game.Party.Members.Where(CanBeAttacked).OfType<IFighter>()
+                        : new List<IFighter>
+                        {
+                            target
+                        };
+                    
+                    return new RoundAction
+                    {
+                        Source = fighter,
+                        State = RoundActionState.Spell,
+                        Spell = spell,
+                        Targets = targets
+                    };
+                }
+            }
+
+            // do attack
+            return new RoundAction
+            {
+                Source = fighter,
+                State = RoundActionState.Fight,
+                Targets = new[]
+                {
+                   target
+                }
+            };
         }
 
         private void OrderActions()
@@ -492,18 +534,27 @@
 
             this._roundActions.Remove(action);
             this._state = EncounterRoundState.DoingActions;
-            var message = "";
+            var (message, _) = action.Source.UpdateStatusEffects(this._round, DurationType.Rounds, this._game);
+
+            if (action.Source.IsDead)
+            {
+                this._state = EncounterRoundState.StartDoingActions;
+                return;
+            }
+            
             var endFight = false;
             switch (action.State)
             {
                 case RoundActionState.Run:
-                    (message, endFight) = this.Run(action.Source);
+                    string m;
+                    (m, endFight) = this.Run(action.Source);
+                    message += m;
                     break;
                 case RoundActionState.Fight:
-                    message = this.Fight(action.Source, action.Targets);
+                    message += this.Fight(action.Source, action.Targets);
                     break;
                 case RoundActionState.Spell:
-                    message = action.Spell.Cast(action.Targets, action.Source, this._game);
+                    message += action.Spell.Cast(action.Targets, action.Source, this._game, this._round);
                     break;
                 case RoundActionState.Item:
                 {
@@ -512,18 +563,21 @@
                     {
                         if (target != action.Source)
                         {
-                            message = $"{action.Source.Name} Uses {action.Item.Name} on {target.Name}";
-                            UseItem(target as Hero, action.Item, this._game.Party);
+                            message += $"{action.Source.Name} Uses {action.Item.Name} on {target.Name}";
+                            UseItem(target, action.Item, this._game.Party);
                         }
                         else
                         {
-                            message = $"{action.Source.Name} Uses {action.Item.Name}";
-                            UseItem(target as Hero, action.Item, this._game.Party);
+                            message += $"{action.Source.Name} Uses {action.Item.Name}";
+                            UseItem(target, action.Item, this._game.Party);
                         }
                     }
 
                     break;
                 }
+                case RoundActionState.Nothing:
+                    message += $"{action.Source.Name} doesn't do anything";
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -582,6 +636,7 @@
                 }
                 else
                 {
+                    target.PlayDamageAnimation();
                     message += $"{target.Name} took {damage} points of damage\n";
                 }
 
@@ -622,7 +677,7 @@
             return (message, endFight);
         }
 
-        private static void UseItem(Hero hero, ItemInstance item, Party party)
+        private static void UseItem(IFighter hero, ItemInstance item, Party party)
         {
             if (hero == null)
             {
@@ -632,13 +687,14 @@
             switch (item.Type)
             {
                 case ItemType.OneUse:
-                    item.Use(hero);
+                    hero.Use(item);
                     party.Items.Remove(item);
                     break;
                 case ItemType.Armor:
                 case ItemType.Weapon:
                 case ItemType.Shield:
-                    item.Equip(hero, party.Items, party.Members);
+                    item.UnEquip(party.Members);
+                    hero.Equip(item);
                     break;
                 case ItemType.Key:
                     break;
@@ -663,13 +719,13 @@
                 this._game.Sounds.StopMusic();
                 this._game.Sounds.PlaySoundEffect("victory", true);
                 this._game.Sounds.PlayMusic(EndFightSong);
-                var xp = this._monsters.Where(monster=> monster.IsDead).Sum(monster => monster.Info.Xp) / this._game.Party.Members.Count(member => !member.IsDead);
+                var xp = this._monsters.Where(monster=> monster.IsDead).Sum(monster => (int)monster.Xp) / this._game.Party.Members.Count(member => !member.IsDead);
                 if (xp == 0)
                 {
                     xp = 1;
                 }
 
-                var gold = this._monsters.Where(monster=> monster.IsDead).Sum(monster => monster.Info.Gold);
+                var gold = this._monsters.Where(monster=> monster.IsDead).Sum(monster => monster.Gold);
                 this._game.Party.Gold += gold;
 
                 var monsterName = this._monsters.Count == 1 ?$"the {this._monsters.First().Name}"  : "all the enemies";
@@ -689,7 +745,16 @@
                 {
                     this._game.Sounds.PlaySoundEffect("level-up");
                 }
-                
+
+                // clear round only status effects
+                foreach (var hero in this._heroes)
+                {
+                    foreach (var effect in hero.Status.Where(i => i.DurationType == DurationType.Rounds))
+                    {
+                        hero.RemoveEffect(effect);
+                    }
+                }
+                    
                 talkWindow.Show(levelUpMessage, this._game.ResumeGame);
             }
         }

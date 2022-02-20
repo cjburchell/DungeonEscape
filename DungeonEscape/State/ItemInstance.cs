@@ -49,105 +49,30 @@ namespace Redpoint.DungeonEscape.State
         public int Gold => this._item.Cost;
         
         [JsonIgnore]
+        public int Agility => this._item.Agility;
+
+        [JsonIgnore]
+        public int Attack => this._item.Attack;
+        
+        [JsonIgnore]
+        public int Defence => this._item.Defence;
+
+        [JsonIgnore]
+        public int Health => this._item.Health;
+        
+        [JsonIgnore]
         public bool IsEquippable =>
             this.Type == ItemType.Armor || this.Type == ItemType.Shield || this.Type == ItemType.Weapon;
-
+        
         public void UnEquip(IEnumerable<Hero> heroes)
         {
-            if (this.IsEquipped && !string.IsNullOrEmpty(this.EquippedTo))
+            if (!this.IsEquipped || string.IsNullOrEmpty(this.EquippedTo))
             {
-                var equippedHero = heroes.FirstOrDefault(hero => hero.Id == this.EquippedTo);
-                if (equippedHero != null)
-                {
-                    switch (this.Type)
-                    {
-                        case ItemType.Weapon:
-                            equippedHero.WeaponId = null;
-                            break;
-                        case ItemType.Armor:
-                            equippedHero.ArmorId = null;
-                            break;
-                        case ItemType.Shield:
-                            equippedHero.ShieldId = null;
-                            break;
-                        case ItemType.OneUse:
-                            break;
-                        case ItemType.Key:
-                            break;
-                        case ItemType.Gold:
-                            break;
-                        case ItemType.Unknown:
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-
-                    equippedHero.Agility -= this._item.Agility;
-                    equippedHero.Attack -= this._item.Attack;
-                    equippedHero.Defence -= this._item.Defence;
-                    equippedHero.MaxHealth -= this._item.Health;
-
-                    if (equippedHero.Health > equippedHero.MaxHealth)
-                    {
-                        equippedHero.Health = equippedHero.MaxHealth;
-                    }
-                }
+                return;
             }
-            
-            this.EquippedTo = null;
-            this.IsEquipped = false;
-        }
 
-        public void Equip(Hero hero, IEnumerable<ItemInstance> items, IEnumerable<Hero> heroes)
-        {
-            ItemInstance oldItem;
-            switch (this.Type)
-            {
-                case ItemType.Weapon:
-                    oldItem = items.FirstOrDefault(i => i.Id == hero.WeaponId);
-                    oldItem?.UnEquip(heroes);
-                    hero.WeaponId = this.Id;
-                    break;
-                case ItemType.Armor:
-                    oldItem = items.FirstOrDefault(i => i.Id == hero.ArmorId);
-                    oldItem?.UnEquip(heroes);
-                    hero.ArmorId = this.Id;
-                    break;
-                case ItemType.Shield:
-                    oldItem = items.FirstOrDefault(i => i.Id == hero.ShieldId);
-                    oldItem?.UnEquip(heroes);
-                    hero.ShieldId = this.Id;
-                    break;
-                case ItemType.OneUse:
-                    break;
-                case ItemType.Key:
-                    break;
-                case ItemType.Gold:
-                    break;
-                case ItemType.Unknown:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            
-            this.IsEquipped = true;
-            this.EquippedTo = hero.Id;
-            hero.Agility += this._item.Agility;
-            hero.Attack += this._item.Attack;
-            hero.Defence += this._item.Defence;
-            hero.MaxHealth += this._item.Health;
-        }
-
-        public void Use(Hero hero)
-        {
-            hero.Agility += this._item.Agility;
-            hero.Attack += this._item.Attack;
-            hero.Defence += this._item.Defence;
-            hero.Health += this._item.Health;
-            if (hero.Health > hero.MaxHealth)
-            {
-                hero.Health = hero.MaxHealth;
-            }
+            var equippedHero = heroes.FirstOrDefault(hero => hero.Id == this.EquippedTo);
+            equippedHero?.UnEquip(this);
         }
     }
 }

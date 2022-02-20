@@ -6,6 +6,7 @@
         Attack,
         Defence,
         Agility,
-        Magic
+        Magic,
+        None
     }
 }

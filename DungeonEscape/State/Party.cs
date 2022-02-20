@@ -24,6 +24,8 @@
         public int CurrentMapId { get; set; }
         public bool CurrentMapIsOverWorld { get; set; }
 
+        public int StepCount { get; set; }
+
         public bool CanOpenChest(int level)
         {
             return this.Members.Any(item => item.Level >= level);

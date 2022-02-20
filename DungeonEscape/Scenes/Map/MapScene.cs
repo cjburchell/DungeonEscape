@@ -598,19 +598,22 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             }
         }
         
-        private static string UseItem(Hero hero, ItemInstance item, Party party)
+        private static string UseItem(IFighter hero, ItemInstance item, Party party)
         {
             // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
             switch (item.Type)
             {
                 case ItemType.OneUse:
-                    item.Use(hero);
+                    hero.Use(item);
                     party.Items.Remove(item);
                     return  $"{hero.Name} used {item.Name}";
                 case ItemType.Armor:
                 case ItemType.Weapon:
                 case ItemType.Shield:
-                    item.Equip(hero, party.Items, party.Members);
+                    var oldItem = party.Items.FirstOrDefault(i => i.Id == hero.GetEquipmentId(item.Type));
+                    oldItem?.UnEquip(party.Members);
+                    item.UnEquip(party.Members);
+                    hero.Equip(item);
                     return  $"{hero.Name} equipped {item.Name}";
                 default:
                     return $"{hero.Name} is unable to use {item.Name}";

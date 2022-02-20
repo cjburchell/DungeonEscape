@@ -40,7 +40,7 @@ namespace Redpoint.DungeonEscape
         void ReloadSaveGames();
         
         ISounds Sounds { get; }
-            
+
         void LoadGame(GameSave saveGame);
         void ResumeGame();
         void ShowMainMenu();

@@ -6,6 +6,13 @@
         Outside,
         Damage,
         Return,
-        Revive
+        Revive,
+        Dot,
+        Sleep,
+        Confusion,
+        StopSpell,
+        Buff,
+        Decrease,
+        Clear,
     }
 }

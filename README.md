@@ -1,18 +1,19 @@
 # Games
 ## Todo
- - Balance pass
- - Choose Class / Roll stats
- - Flash opponent when damaged
- - Temp status effects/spells
-    - Poison
-    - Fatigue
-    - Sleep
-    - Curse
-    - Confusion
+
+### New Features
  - Escort Quests
- - Multiplayer Network support
- - Finish Maps Revamp
  - Damage Tiles
+ - Add Monsters that do poison damage
+ - Agility check dodging for spells
  - Fog of exploration
+ - Multiplayer Network support
+ 
+ #Improvements
+ - Create Spells with status effects
+ - Balance pass
+ - Finish Maps Revamp
+ 
  
 
+ 

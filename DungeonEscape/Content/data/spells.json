@@ -7,7 +7,7 @@
     "Targets": "Single",
     "Cost": 3,
     "MinLevel": 2,
-    "Health": 10,
+    "StatRandom": 10,
     "HealthConst": 40,
     "Classes": ["Hero", "Cleric"]
   },
@@ -29,8 +29,8 @@
     "Targets": "Single",
     "Cost": 10,
     "MinLevel": 6,
-    "Health": 10,
-    "HealthConst": 5,
+    "StatRandom": 10,
+    "StatConst": 5,
     "Classes": ["Wizard", "Hero"]
   },
   {
@@ -41,8 +41,8 @@
     "Targets": "Single",
     "Cost": 15,
     "MinLevel": 8,
-    "Health": 20,
-    "HealthConst": 5,
+    "StatRandom": 20,
+    "StatConst": 5,
     "Classes": ["Wizard", "Hero"]
   },
   {
@@ -53,8 +53,8 @@
     "Targets": "Group",
     "Cost": 25,
     "MinLevel": 10,
-    "Health": 10,
-    "HealthConst": 5,
+    "StatRandom": 10,
+    "StatConst": 5,
     "Classes": ["Wizard"]
   },
   {
@@ -65,8 +65,8 @@
     "Targets": "Group",
     "Cost": 30,
     "MinLevel": 12,
-    "Health": 20,
-    "HealthConst": 5,
+    "StatRandom": 20,
+    "StatConst": 5,
     "Classes": ["Wizard"]
   },
   {
@@ -87,8 +87,8 @@
     "Targets": "Single",
     "Cost": 25,
     "MinLevel": 20,
-    "Health": 0,
-    "HealthConst": 1,
+    "StatRandom": 0,
+    "StatConst": 1,
     "Classes": ["Hero", "Cleric"]
   },
   {
@@ -119,8 +119,8 @@
     "Targets": "Group",
     "Cost": 18,
     "MinLevel": 34,
-    "Health": 10,
-    "HealthConst": 40,
+    "StatRandom": 10,
+    "StatConst": 40,
     "Classes": ["Cleric"]
   },
   {

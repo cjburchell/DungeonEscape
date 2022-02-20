@@ -9,39 +9,21 @@ namespace Redpoint.DungeonEscape.State
     using Newtonsoft.Json.Converters;
     using Random = Nez.Random;
 
-    public class Hero : IFighter
+    public class Hero : Fighter
     {
-        public override string ToString()
-        {
-            return this.Name;
-        }
-        
+
         [JsonConverter(typeof(StringEnumConverter))]
         public Class Class { get; set; }
         
         [JsonConverter(typeof(StringEnumConverter))]
         public Gender Gender { get; set; }
-
-        public string Name { get; set; }
-        public ulong Xp { get; set; }
-        public int Health { get; set; }
-        public int MaxHealth { get; set; }
-        public bool RanAway => false;
-        public int Magic { get; set; }
-        public int MaxMagic { get; set; }
-        public int Attack { get; set; }
-        public int Defence { get; set; }
-        public int Agility { get; set; }
+        
         public ulong NextLevel { get; set; }
-        public int Level { get; set; }
 
-        public IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells)
+        public override IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells)
         {
             return availableSpells.Where(spell => spell.MinLevel <= this.Level && spell.Classes.Contains(this.Class));
         }
-
-        [JsonIgnore]
-        public bool IsDead => this.Health <= 0;
         
         public string WeaponId { get; set; }
         public string ArmorId { get; set; }
@@ -178,6 +160,72 @@ namespace Redpoint.DungeonEscape.State
                                                         item.Type == ItemType.Weapon ||
                                                         item.Type == ItemType.Armor ||
                                                         item.Type == ItemType.Shield);
+        }
+        
+        public void UnEquip(ItemInstance item)
+        {
+            item.EquippedTo = null;
+            item.IsEquipped = false;
+            switch (item.Type)
+            {
+                case ItemType.Weapon:
+                    this.WeaponId = null;
+                    break;
+                case ItemType.Armor:
+                    this.ArmorId = null;
+                    break;
+                case ItemType.Shield:
+                    this.ShieldId = null;
+                    break;
+                default:
+                    return;
+            }
+
+            this.Agility -= item.Agility;
+            this.Attack -= item.Attack;
+            this.Defence -= item.Defence;
+            this.MaxHealth -= item.Health;
+
+            if (this.Health > this.MaxHealth)
+            {
+                this.Health = this.MaxHealth;
+            }
+        }
+
+        public override string GetEquipmentId(ItemType itemType)
+        {
+            return itemType switch
+            {
+                ItemType.Weapon => this.WeaponId,
+                ItemType.Armor => this.ArmorId,
+                ItemType.Shield => this.ShieldId,
+                _ => null
+            };
+        }
+
+        public override void Equip(ItemInstance item)
+        {
+            switch (item.Type)
+            {
+                case ItemType.Weapon:
+                    this.WeaponId = item.Id;
+                    break;
+                case ItemType.Armor:
+                    this.ArmorId = item.Id;
+                    break;
+                case ItemType.Shield:
+                    this.ShieldId = item.Id;
+                    break;
+                default:
+                    return;
+            }
+            
+            item.IsEquipped = true;
+            item.EquippedTo = this.Id;
+            this.Agility += this.Agility;
+            this.Attack += this.Attack;
+            this.Defence += this.Defence;
+            this.MaxHealth += this.Health;
         }
     }
 }

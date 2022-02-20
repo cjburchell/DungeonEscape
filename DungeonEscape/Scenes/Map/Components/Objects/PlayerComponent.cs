@@ -328,9 +328,45 @@
                 return;
             }
 
-            if (this.CheckForMonsterEncounter())
+            if (this.CheckForFullStep())
             {
-                this.DoMonsterEncounter();
+                if (this.CheckForMonsterEncounter())
+                {
+                    this.DoMonsterEncounter();
+                    return;
+                }
+
+                var message = "";
+                foreach (var member in this._gameState.Party.Members)
+                {
+                   var (_, hadDied) = member.UpdateStatusEffects(this._gameState.Party.StepCount, DurationType.Distance, this._gameState);
+                   if (hadDied)
+                   {
+                       message += $"{member.Name} has died!\n"; 
+                   }
+                }
+
+                if (string.IsNullOrWhiteSpace(message))
+                {
+                    if (this._gameState.Party.Members.Count(i => !i.IsDead) == 0)
+                    {
+                        this._gameState.ShowMainMenu();
+                    }
+                }
+                else
+                {
+                    this._gameState.IsPaused = true;
+                    new TalkWindow(this._ui).Show(message, () =>
+                    {
+                        this._gameState.IsPaused = false;
+                        if (this._gameState.Party.Members.Count(i => !i.IsDead) == 0)
+                        {
+                            this._gameState.ShowMainMenu();
+                        }
+                    });
+                }
+                
+                
             }
         }
 
@@ -372,18 +408,24 @@
             this._gameState.StartFight(monsters, currentBiome);
         }
 
-        private bool CheckForMonsterEncounter()
+        private bool CheckForFullStep()
         {
             if (this._distance <= this._map.TileWidth)
             {
                 return false;
             }
 
+            this._gameState.Party.StepCount++;
             this._distance = 0;
+            return true;
+        }
+
+        private bool CheckForMonsterEncounter()
+        {
             var currentBiome = MapScene.GetCurrentBiome(this._map, this.Entity.Position);
             var hasRandomMonsters =
                 this._randomMonsters.Count(item => item.Biome == currentBiome || item.Biome == Biome.All) != 0;
-            
+
             //  Todo: use parties agility to calculate encounters
             return  hasRandomMonsters && Random.Chance(0.1f);
         }

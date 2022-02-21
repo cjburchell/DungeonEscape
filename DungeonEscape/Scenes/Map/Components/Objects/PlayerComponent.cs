@@ -372,7 +372,7 @@
                 return "";
             }
 
-s            var message = "";
+            var message = "";
             var damage = int.Parse(tile.TilesetTile.Properties["damage"]);
             foreach (var member in this._gameState.Party.Members.FindAll(i => !i.IsDead))
             {

@@ -328,46 +328,81 @@
                 return;
             }
 
-            if (this.CheckForFullStep())
+            if (!this.CheckForFullStep())
             {
-                if (this.CheckForMonsterEncounter())
-                {
-                    this.DoMonsterEncounter();
-                    return;
-                }
+                return;
+            }
 
-                var message = "";
-                foreach (var member in this._gameState.Party.Members)
-                {
-                   var (_, hadDied) = member.UpdateStatusEffects(this._gameState.Party.StepCount, DurationType.Distance, this._gameState);
-                   if (hadDied)
-                   {
-                       message += $"{member.Name} has died!\n"; 
-                   }
-                }
+            if (this.CheckForMonsterEncounter())
+            {
+                this.DoMonsterEncounter();
+                return;
+            }
+            
+            var message = this.CheckStatusEffects();
+            message += this.CheckDamageTile();
+            
 
-                if (string.IsNullOrWhiteSpace(message))
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                this._gameState.IsPaused = true;
+                new TalkWindow(this._ui).Show(message, () =>
                 {
+                    this._gameState.IsPaused = false;
                     if (this._gameState.Party.Members.Count(i => !i.IsDead) == 0)
                     {
                         this._gameState.ShowMainMenu();
                     }
-                }
-                else
-                {
-                    this._gameState.IsPaused = true;
-                    new TalkWindow(this._ui).Show(message, () =>
-                    {
-                        this._gameState.IsPaused = false;
-                        if (this._gameState.Party.Members.Count(i => !i.IsDead) == 0)
-                        {
-                            this._gameState.ShowMainMenu();
-                        }
-                    });
-                }
-                
-                
+                });
+                return;
             }
+
+            if (this._gameState.Party.Members.Count(i => !i.IsDead) == 0)
+            {
+                this._gameState.ShowMainMenu();
+            }
+        }
+
+        private string CheckDamageTile()
+        {
+            var (x, y) = MapScene.ToMapGrid(this.Entity.Position, this._map);
+            var tile = this._map.GetLayer<TmxLayer>("damage").GetTile(x, y);
+            if (tile == null || tile.Gid == 0 || !tile.TilesetTile.Properties.ContainsKey("damage"))
+            {
+                return "";
+            }
+
+s            var message = "";
+            var damage = int.Parse(tile.TilesetTile.Properties["damage"]);
+            foreach (var member in this._gameState.Party.Members.FindAll(i => !i.IsDead))
+            {
+                member.Health -= damage;
+                this._gameState.Sounds.PlaySoundEffect("receive-damage");
+                if (!member.IsDead)
+                {
+                    continue;
+                }
+
+                message += $"{member.Name} has died!\n";
+                member.Health = 0;
+            }
+
+            return message;
+        }
+
+        private string CheckStatusEffects()
+        {
+            var message = "";
+            foreach (var member in this._gameState.Party.Members.FindAll(i => !i.IsDead))
+            {
+                member.UpdateStatusEffects(this._gameState.Party.StepCount, DurationType.Distance, this._gameState);
+                if (member.IsDead)
+                {
+                    message += $"{member.Name} has died!\n"; 
+                }
+            }
+
+            return message;
         }
 
         private void DoMonsterEncounter()

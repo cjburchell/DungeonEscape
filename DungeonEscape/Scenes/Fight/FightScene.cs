@@ -534,15 +534,28 @@
 
             this._roundActions.Remove(action);
             this._state = EncounterRoundState.DoingActions;
-            var (message, _) = action.Source.UpdateStatusEffects(this._round, DurationType.Rounds, this._game);
-
+            var message = action.Source.UpdateStatusEffects(this._round, DurationType.Rounds, this._game);
+            var endFight = false;
+            void DoneAction()
+            {
+                if (endFight)
+                {
+                    this._state = EncounterRoundState.EndEncounter;
+                    this._game.ResumeGame();
+                }
+                else
+                {
+                    this._state = EncounterRoundState.StartDoingActions;
+                }    
+            }
+            
             if (action.Source.IsDead)
             {
-                this._state = EncounterRoundState.StartDoingActions;
+                new FightTalkWindow(this._ui, "").Show(message,
+                    DoneAction);
                 return;
             }
             
-            var endFight = false;
             switch (action.State)
             {
                 case RoundActionState.Run:
@@ -588,19 +601,6 @@
                 {
                     monster.Image.SetVisible(false);
                 }
-            }
-
-            void DoneAction()
-            {
-                if (endFight)
-                {
-                    this._state = EncounterRoundState.EndEncounter;
-                    this._game.ResumeGame();
-                }
-                else
-                {
-                    this._state = EncounterRoundState.StartDoingActions;
-                }    
             }
 
             new FightTalkWindow(this._ui, "").Show(message,

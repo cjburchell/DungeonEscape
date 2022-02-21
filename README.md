@@ -2,9 +2,8 @@
 ## Todo
 
 ### New Features
- - Escort Quests
- - Damage Tiles
  - Add Monsters that do poison damage
+ - Escort Quests
  - Agility check dodging for spells
  - Fog of exploration
  - Multiplayer Network support

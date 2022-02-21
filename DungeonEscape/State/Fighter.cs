@@ -27,7 +27,7 @@ namespace Redpoint.DungeonEscape.State
         void Use(ItemInstance item);
         void Equip(ItemInstance item);
         string GetEquipmentId(ItemType itemType);
-        (string, bool) UpdateStatusEffects(int round, DurationType durationType, IGame game);
+        string UpdateStatusEffects(int round, DurationType durationType, IGame game);
         void PlayDamageAnimation();
     }
     
@@ -139,7 +139,7 @@ namespace Redpoint.DungeonEscape.State
             return null;
         }
 
-        public (string, bool) UpdateStatusEffects(int round, DurationType durationType, IGame game)
+        public string UpdateStatusEffects(int round, DurationType durationType, IGame game)
         {
             var message = "";
             var expiredList =
@@ -159,8 +159,6 @@ namespace Redpoint.DungeonEscape.State
             {
                 message += $"{this.Name} is confused\n";
             }
-
-            var hadDied = false;
 
             foreach (var effect in this.Status.FindAll(i => i.Type == EffectType.OverTime))
             {
@@ -183,7 +181,6 @@ namespace Redpoint.DungeonEscape.State
                         {
                             message += "and has died!\n";
                             this.Health = 0;
-                            hadDied = true;
                         }
                         if (this.Health > this.MaxHealth)
                         {
@@ -216,7 +213,7 @@ namespace Redpoint.DungeonEscape.State
                 }
             }
 
-            return (message, hadDied);
+            return message;
         }
 
         public virtual void PlayDamageAnimation()

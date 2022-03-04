@@ -11,8 +11,6 @@
  #Improvements
  - Create Spells with status effects
  - Balance pass
- - Finish Maps Revamp
- 
  
 
  

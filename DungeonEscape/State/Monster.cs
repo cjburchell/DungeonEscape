@@ -19,10 +19,14 @@ namespace Redpoint.DungeonEscape.State
         public void Setup(TmxTilesetTile tile)
         {
             this.Image = tile.Image.Texture;
-            
-            this.Flash = new Texture2D(Core.GraphicsDevice, this.Image.Width, this.Image.Height);
-            var data = new byte[this.Image.Width*this.Image.Height*4];
-            this.Image.GetData(data);
+            this.Flash = CreateFlashImage(this.Image);
+        }
+
+        public static Texture2D CreateFlashImage(Texture2D image)
+        {
+            var flash = new Texture2D(Core.GraphicsDevice, image.Width, image.Height);
+            var data = new byte[image.Width*image.Height*4];
+            image.GetData(data);
             // create a silhouette of the monster
             for (var index = 0; index < data.Length; index += 4)
             {
@@ -37,7 +41,9 @@ namespace Redpoint.DungeonEscape.State
                 data[index + 2] = 255;
             }
             
-            this.Flash.SetData(data);
+            flash.SetData(data);
+
+            return flash;
         }
         
         public Monster(TmxTilesetTile tile) : this()

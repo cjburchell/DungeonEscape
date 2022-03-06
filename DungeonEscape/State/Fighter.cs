@@ -6,6 +6,8 @@ namespace Redpoint.DungeonEscape.State
     using System.Collections.Generic;
     using System.Linq;
     using Newtonsoft.Json;
+    using Nez.Sprites;
+    using Nez.UI;
 
     public interface IFighter
     {
@@ -215,9 +217,20 @@ namespace Redpoint.DungeonEscape.State
 
             return message;
         }
+        
+        [JsonIgnore] protected SpriteAnimator Animator { get; set; }
+        
+        [JsonIgnore] public Image Image { get; protected set; } = new Image();
 
-        public virtual void PlayDamageAnimation()
+        public void PlayDamageAnimation()
         {
+            this.Animator.Play("Damage", SpriteAnimator.LoopMode.Once);
+        }
+
+        public void Update()
+        {
+            this.Animator?.Update();
+            this.Image?.SetSprite(this.Animator.Sprite);
         }
 
         public void Use(ItemInstance item)

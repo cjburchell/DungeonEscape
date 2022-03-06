@@ -33,6 +33,5 @@
         public int Duration { get; set; }
         public string Name { get; set; }
         public int StartTime { get; set; }
-        public string Verb { get; set; }
     }
 }

@@ -31,23 +31,20 @@
 
         private void UpdateStatus()
         {
-            const int heroHeight = 48;
             const int heroWidth = MapScene.DefaultTileSize;
             const int statusWidth = 80;
             const int statusItemWidth = statusWidth/2;
             const int padding = 5;
             var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
-            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, heroHeight);
-            
             var windowWidth = this._party.Members.Count * (heroWidth + statusWidth + 15);
             this.Window.SetWidth(windowWidth);
             this._statusTable.ClearChildren();
             this._statusTable.SetFillParent(true);
             foreach (var member in this._party.Members)
             {
-                var animationBaseIndex = (int) member.Class * 16 + (int) member.Gender * 8;
-                var image = new Image(sprites[animationBaseIndex + 4]).SetAlignment(Align.Center);
-                this._statusTable.Add(image).Width(heroWidth).SetPadLeft(5).SetPadRight(5);
+                member.SetupImage(texture);
+                member.Image.SetAlignment(Align.Center);
+                this._statusTable.Add(member.Image).Width(heroWidth).SetPadLeft(5).SetPadRight(5);
                 var memberStatus = new Table();
                 memberStatus.Row().SetPadTop(padding);
                 memberStatus.Add(new Label(member.Name.Length < 10 ? member.Name : member.Name.Substring(0, 10), Skin).SetAlignment(Align.Left)).Width(statusWidth).SetColspan(2).SetPadRight(5);

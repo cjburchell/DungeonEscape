@@ -132,6 +132,11 @@
                 monster.Update();
             }
             
+            foreach (var member in this._game.Party.Members)
+            {
+                member.Update();
+            }
+            
             base.Update();
             switch (this._state)
             {

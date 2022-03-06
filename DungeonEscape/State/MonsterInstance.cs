@@ -4,7 +4,6 @@
 namespace Redpoint.DungeonEscape.State
 {
     using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
     using Nez.Sprites;
     using Nez.Textures;
@@ -31,7 +30,7 @@ namespace Redpoint.DungeonEscape.State
             
             var spriteImage = new Sprite(this._info.Image);
             var spriteFlash = new Sprite(this._info.Flash);
-            this.Image = new Image(spriteImage);
+            this.Image.SetSprite(spriteImage);
             this.Animator = new SpriteAnimator(spriteImage);
             this.Animator.Speed = 1.0f;
             this.Animator.AddAnimation("Damage", new[]
@@ -47,23 +46,8 @@ namespace Redpoint.DungeonEscape.State
             });
         }
 
-        public override void PlayDamageAnimation()
-        {
-            this.Animator.Play("Damage", SpriteAnimator.LoopMode.Once);
-        }
-
-        public void Update()
-        {
-            this.Animator.Update();
-            this.Image.SetSprite(this.Animator.Sprite);
-        }
-        
-        public SpriteAnimator Animator { get; set; }
-
         public int Gold { get; }
 
-        public Image Image { get; }
-        
         public override IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells)
         {
             return this._info.SpellList.Select(spellId => availableSpells.FirstOrDefault(item => item.Id == spellId))

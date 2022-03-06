@@ -78,7 +78,6 @@ namespace Redpoint.DungeonEscape.State
                     target.AddEffect(new StatusEffect
                     {
                         Name = this.EffectName,
-                        Verb = this.EffectVerb,
                         Type = EffectType.OverTime,
                         StatType = this.StatType,
                         StatValue =  -buff,
@@ -103,7 +102,6 @@ namespace Redpoint.DungeonEscape.State
                 target.AddEffect(new StatusEffect
                 {
                     Name = this.EffectName,
-                    Verb = this.EffectVerb,
                     Type = EffectType.StopSpell,
                     Duration = Dice.Roll(this.DurationRandom, this.DurationTimes, this.DurationConst),
                     DurationType = this.DurationType,
@@ -125,7 +123,6 @@ namespace Redpoint.DungeonEscape.State
                 target.AddEffect(new StatusEffect
                 {
                     Name = this.EffectName,
-                    Verb = this.EffectVerb,
                     Type = EffectType.Confusion,
                     Duration = Dice.Roll(this.DurationRandom, this.DurationTimes, this.DurationConst),
                     DurationType = this.DurationType,
@@ -147,7 +144,6 @@ namespace Redpoint.DungeonEscape.State
                 target.AddEffect(new StatusEffect
                 {
                     Name = this.EffectName,
-                    Verb = this.EffectVerb,
                     Type = EffectType.Sleep,
                     Duration = Dice.Roll(this.DurationRandom, this.DurationTimes, this.DurationConst),
                     DurationType = this.DurationType,
@@ -176,7 +172,6 @@ namespace Redpoint.DungeonEscape.State
                     target.AddEffect(new StatusEffect
                     {
                         Name = this.EffectName,
-                        Verb = this.EffectVerb,
                         Type = EffectType.Buff,
                         StatType = this.StatType,
                         StatValue = increase? buff: -buff,
@@ -331,8 +326,6 @@ namespace Redpoint.DungeonEscape.State
         public DurationType DurationType { get; set; }
         
         public string EffectName { get; set; }
-        
-        public string EffectVerb { get; set; }
 
         public int Cost { get; set; }
 

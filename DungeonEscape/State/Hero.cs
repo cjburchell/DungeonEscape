@@ -5,8 +5,13 @@ namespace Redpoint.DungeonEscape.State
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.Xna.Framework.Graphics;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
+    using Nez.Sprites;
+    using Nez.Textures;
+    using Nez.UI;
+    using Scenes.Map;
     using Random = Nez.Random;
 
     public class Hero : Fighter
@@ -33,6 +38,32 @@ namespace Redpoint.DungeonEscape.State
         public Hero()
         {
             this.Id = Guid.NewGuid().ToString();
+        }
+
+        public void SetupImage(Texture2D heroTexture)
+        {
+            const int heroHeight = 48;
+            const int heroWidth = MapScene.DefaultTileSize;
+            var flashTexture = Monster.CreateFlashImage(heroTexture);
+            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(heroTexture, heroWidth, heroHeight);
+            var flashSprites = Nez.Textures.Sprite.SpritesFromAtlas(flashTexture, heroWidth, heroHeight);
+            var animationBaseIndex = (int) this.Class * 16 + (int) this.Gender * 8;
+            var spriteImage = sprites[animationBaseIndex + 4];
+            var spriteFlash = flashSprites[animationBaseIndex + 4];
+            this.Image.SetSprite(spriteImage);
+            this.Animator = new SpriteAnimator(spriteImage);
+            this.Animator.Speed = 1.0f;
+            this.Animator.AddAnimation("Damage", new[]
+            {
+                spriteImage,
+                spriteFlash,
+                spriteImage,
+                spriteFlash,
+                spriteImage,
+                spriteFlash,
+                spriteImage,
+                spriteFlash
+            });
         }
 
         public void RollStats(IEnumerable<ClassStats> classLevels, int level = 1)

@@ -132,5 +132,66 @@
     "Cost": 62,
     "MinLevel": 38,
     "Classes": ["Cleric"]
-  }
+  },
+  {
+    "Name": "Antidote",
+    "Id": 13,
+    "ImageId": 54,
+    "Type": "Clear",
+    "Targets": "Single",
+    "Cost": 3,
+    "MinLevel": 11,
+    "Classes": ["Cleric"]
+  },
+  {
+    "Name": "Speed Up",
+    "Id": 14,
+    "ImageId": 60,
+    "Type": "Buff",
+    "EffectName": "sped up",
+    "Targets": "Group",
+    "DurationType": "Rounds",
+    "DurationConst": 2,
+    "DurationRandom": 10,
+    "StatType": "Agility",
+    "StatRandom": 10,
+    "StatConst": 20,
+    "Cost": 3,
+    "MinLevel": 5,
+    "Classes": ["Cleric"]
+  },
+  {
+    "Name": "Upper",
+    "Id": 15,
+    "ImageId": 56,
+    "Type": "Buff",
+    "EffectName": "defence increased",
+    "Targets": "Single",
+    "DurationType": "Rounds",
+    "DurationConst": 2,
+    "DurationRandom": 10,
+    "StatType": "Defence",
+    "StatRandom": 10,
+    "StatConst": 20,
+    "Cost": 3,
+    "MinLevel": 4,
+    "Classes": ["Wizard"]
+  },
+  {
+  "Name": "Increase",
+  "Id": 16,
+  "ImageId": 56,
+  "Type": "Buff", 
+  "EffectName": "defence increased",
+  "Targets": "Group",
+  "DurationType": "Rounds",
+  "DurationConst": 2,
+  "DurationRandom": 10,
+  "StatType": "Defence",
+  "StatRandom": 10,
+  "StatConst": 20,
+  "Cost": 4,
+  "MinLevel": 10,
+  "Classes": ["Wizard"]
+}
 ]

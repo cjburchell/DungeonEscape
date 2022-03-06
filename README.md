@@ -9,7 +9,6 @@
  - Multiplayer Network support
  
  #Improvements
- - Create Spells with status effects
  - Balance pass
  
 

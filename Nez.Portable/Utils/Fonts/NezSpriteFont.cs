@@ -81,7 +81,7 @@ namespace Nez
 			var width = 0.0f;
 			var finalLineHeight = (float) _font.LineSpacing;
 
-			var currentGlyph = SpriteFont.Glyph.Empty;
+			
 			var offset = Vector2.Zero;
 			var firstGlyphOfLine = true;
 
@@ -102,12 +102,12 @@ namespace Nez
 					continue;
 				}
 
-				if (!_glyphs.TryGetValue(c, out currentGlyph))
+				if (!_glyphs.TryGetValue(c, out var currentGlyph))
 				{
-					if (!defaultGlyph.HasValue)
-						throw new ArgumentException("Errors.TextContainsUnresolvableCharacters", "text");
-
-					currentGlyph = defaultGlyph.Value;
+					if (defaultGlyph.HasValue)
+					{
+						currentGlyph = defaultGlyph.Value;
+					}
 				}
 
 				// The first character on a line might have a negative left side bearing.
@@ -345,7 +345,6 @@ namespace Nez
 			if (_font.DefaultCharacter.HasValue)
 				defaultGlyph = _glyphs[_font.DefaultCharacter.Value];
 
-			var currentGlyph = SpriteFont.Glyph.Empty;
 			var offset = requiresTransformation ? Vector2.Zero : position - origin;
 			var firstGlyphOfLine = true;
 
@@ -364,12 +363,12 @@ namespace Nez
 					continue;
 				}
 
-				if (!_glyphs.TryGetValue(c, out currentGlyph))
+				if (!_glyphs.TryGetValue(c, out var currentGlyph))
 				{
-					if (!defaultGlyph.HasValue)
-						throw new ArgumentException("Errors.TextContainsUnresolvableCharacters", "text");
-
-					currentGlyph = defaultGlyph.Value;
+					if (defaultGlyph.HasValue)
+					{
+						currentGlyph = defaultGlyph.Value;
+					}
 				}
 
 				// The first character on a line might have a negative left side bearing.

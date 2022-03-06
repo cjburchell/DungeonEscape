@@ -366,7 +366,7 @@
         private string CheckDamageTile()
         {
             var (x, y) = MapScene.ToMapGrid(this.Entity.Position, this._map);
-            var tile = this._map.GetLayer<TmxLayer>("damage").GetTile(x, y);
+            var tile = this._map.GetLayer<TmxLayer>("damage")?.GetTile(x, y);
             if (tile == null || tile.Gid == 0 || !tile.TilesetTile.Properties.ContainsKey("damage"))
             {
                 return "";
@@ -412,7 +412,7 @@
             
             var level = this._gameState.Party.Members.Select(hero => hero.Level).Max();
             foreach (var monster in this._randomMonsters.Where(item =>
-                item.Biome == currentBiome || item.Biome == Biome.All && item.Data.MinLevel <= level))
+                (item.Biome == currentBiome || item.Biome == Biome.All) && item.Data.MinLevel <= level))
             {
                 for (var i = 0; i < monster.Probability; i++)
                 {

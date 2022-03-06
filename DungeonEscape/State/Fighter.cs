@@ -230,7 +230,10 @@ namespace Redpoint.DungeonEscape.State
         public void Update()
         {
             this.Animator?.Update();
-            this.Image?.SetSprite(this.Animator.Sprite);
+            if (this.Animator != null)
+            {
+                this.Image?.SetSprite(this.Animator.Sprite);
+            }
         }
 
         public void Use(ItemInstance item)

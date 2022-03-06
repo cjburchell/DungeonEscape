@@ -9,7 +9,11 @@
     "MinLevel": 2,
     "StatRandom": 10,
     "HealthConst": 40,
-    "Classes": ["Hero", "Cleric", "Sage"]
+    "Classes": [
+      "Hero",
+      "Cleric",
+      "Sage"
+    ]
   },
   {
     "Name": "Outside",
@@ -18,20 +22,27 @@
     "Type": "Outside",
     "Targets": "Group",
     "Cost": 6,
-    "MinLevel": 12,
-    "Classes": ["Hero", "Thief"]
+    "MinLevel": 10,
+    "Classes": [
+      "Hero",
+      "Thief"
+    ]
   },
   {
-    "Name": "Fireball",
+    "Name": "Blaze",
     "Id": 3,
     "ImageId": 1,
     "Type": "Damage",
     "Targets": "Single",
-    "Cost": 10,
-    "MinLevel": 6,
+    "Cost": 2,
+    "MinLevel": 2,
     "StatRandom": 10,
     "StatConst": 5,
-    "Classes": ["Wizard", "Hero", "Sage"]
+    "Classes": [
+      "Wizard",
+      "Hero",
+      "Sage"
+    ]
   },
   {
     "Name": "Lightning",
@@ -43,7 +54,11 @@
     "MinLevel": 8,
     "StatRandom": 20,
     "StatConst": 5,
-    "Classes": ["Wizard", "Hero", "Sage"]
+    "Classes": [
+      "Wizard",
+      "Hero",
+      "Sage"
+    ]
   },
   {
     "Name": "Fire Blast",
@@ -55,7 +70,10 @@
     "MinLevel": 10,
     "StatRandom": 10,
     "StatConst": 5,
-    "Classes": ["Wizard", "Sage"]
+    "Classes": [
+      "Wizard",
+      "Sage"
+    ]
   },
   {
     "Name": "Lightning Storm",
@@ -67,7 +85,10 @@
     "MinLevel": 12,
     "StatRandom": 20,
     "StatConst": 5,
-    "Classes": ["Wizard", "Sage"]
+    "Classes": [
+      "Wizard",
+      "Sage"
+    ]
   },
   {
     "Name": "Return",
@@ -77,7 +98,11 @@
     "Targets": "Group",
     "Cost": 6,
     "MinLevel": 12,
-    "Classes": ["Hero", "Thief", "Sage"]
+    "Classes": [
+      "Hero",
+      "Thief",
+      "Sage"
+    ]
   },
   {
     "Name": "Revive",
@@ -89,7 +114,11 @@
     "MinLevel": 20,
     "StatRandom": 0,
     "StatConst": 1,
-    "Classes": ["Hero", "Cleric", "Sage"]
+    "Classes": [
+      "Hero",
+      "Cleric",
+      "Sage"
+    ]
   },
   {
     "Name": "Vivify",
@@ -99,7 +128,10 @@
     "Targets": "Single",
     "Cost": 40,
     "MinLevel": 27,
-    "Classes": ["Cleric", "Sage"]
+    "Classes": [
+      "Cleric",
+      "Sage"
+    ]
   },
   {
     "Name": "Heal All",
@@ -109,7 +141,11 @@
     "Targets": "Single",
     "Cost": 7,
     "MinLevel": 30,
-    "Classes": ["Hero", "Cleric", "Sage"]
+    "Classes": [
+      "Hero",
+      "Cleric",
+      "Sage"
+    ]
   },
   {
     "Name": "Heal Us",
@@ -121,7 +157,10 @@
     "MinLevel": 34,
     "StatRandom": 10,
     "StatConst": 40,
-    "Classes": ["Cleric", "Sage"]
+    "Classes": [
+      "Cleric",
+      "Sage"
+    ]
   },
   {
     "Name": "Heal Us All",
@@ -131,7 +170,10 @@
     "Targets": "Group",
     "Cost": 62,
     "MinLevel": 38,
-    "Classes": ["Cleric", "Sage"]
+    "Classes": [
+      "Cleric",
+      "Sage"
+    ]
   },
   {
     "Name": "Antidote",
@@ -141,7 +183,10 @@
     "Targets": "Single",
     "Cost": 3,
     "MinLevel": 11,
-    "Classes": ["Cleric", "Sage"]
+    "Classes": [
+      "Cleric",
+      "Sage"
+    ]
   },
   {
     "Name": "Speed Up",
@@ -158,7 +203,10 @@
     "StatConst": 20,
     "Cost": 3,
     "MinLevel": 5,
-    "Classes": ["Cleric", "Sage"]
+    "Classes": [
+      "Cleric",
+      "Sage"
+    ]
   },
   {
     "Name": "Upper",
@@ -175,25 +223,31 @@
     "StatConst": 20,
     "Cost": 3,
     "MinLevel": 4,
-    "Classes": ["Wizard", "Sage"]
+    "Classes": [
+      "Wizard",
+      "Sage"
+    ]
   },
   {
-  "Name": "Increase",
-  "Id": 16,
-  "ImageId": 56,
-  "Type": "Buff", 
-  "EffectName": "defence increased",
-  "Targets": "Group",
-  "DurationType": "Rounds",
-  "DurationConst": 2,
-  "DurationRandom": 10,
-  "StatType": "Defence",
-  "StatRandom": 10,
-  "StatConst": 20,
-  "Cost": 4,
-  "MinLevel": 10,
-  "Classes": ["Wizard", "Sage"]
-},
+    "Name": "Increase",
+    "Id": 16,
+    "ImageId": 56,
+    "Type": "Buff",
+    "EffectName": "defence increased",
+    "Targets": "Group",
+    "DurationType": "Rounds",
+    "DurationConst": 2,
+    "DurationRandom": 10,
+    "StatType": "Defence",
+    "StatRandom": 10,
+    "StatConst": 20,
+    "Cost": 4,
+    "MinLevel": 10,
+    "Classes": [
+      "Wizard",
+      "Sage"
+    ]
+  },
   {
     "Name": "Sap",
     "Id": 17,
@@ -209,7 +263,10 @@
     "StatConst": 20,
     "Cost": 3,
     "MinLevel": 8,
-    "Classes": ["Cleric", "Sage"]
+    "Classes": [
+      "Cleric",
+      "Sage"
+    ]
   },
   {
     "Name": "Sleep",
@@ -223,7 +280,11 @@
     "DurationRandom": 10,
     "Cost": 3,
     "MinLevel": 8,
-    "Classes": ["Cleric", "Hero", "Sage"]
+    "Classes": [
+      "Cleric",
+      "Hero",
+      "Sage"
+    ]
   },
   {
     "Name": "Stop Spell",
@@ -237,25 +298,32 @@
     "DurationRandom": 10,
     "Cost": 3,
     "MinLevel": 13,
-    "Classes": ["Cleric", "Hero", "Sage"]
+    "Classes": [
+      "Cleric",
+      "Hero",
+      "Sage"
+    ]
   },
   {
-  "Name": "Slow",
-  "Id": 20,
-  "ImageId": 61,
-  "Type": "Decrease",
-  "EffectName": "slowed",
-  "Targets": "Group",
-  "DurationType": "Rounds",
-  "DurationConst": 2,
-  "DurationRandom": 10,
-  "StatType": "Agility",
-  "StatRandom": 10,
-  "StatConst": 20,
-  "Cost": 3,
-  "MinLevel": 12,
-  "Classes": ["Wizard", "Sage"]
-},
+    "Name": "Slow",
+    "Id": 20,
+    "ImageId": 61,
+    "Type": "Decrease",
+    "EffectName": "slowed",
+    "Targets": "Group",
+    "DurationType": "Rounds",
+    "DurationConst": 2,
+    "DurationRandom": 10,
+    "StatType": "Agility",
+    "StatRandom": 10,
+    "StatConst": 20,
+    "Cost": 3,
+    "MinLevel": 12,
+    "Classes": [
+      "Wizard",
+      "Sage"
+    ]
+  },
   {
     "Name": "Chaos",
     "Id": 21,
@@ -268,6 +336,9 @@
     "DurationRandom": 10,
     "Cost": 5,
     "MinLevel": 27,
-    "Classes": ["Wizard", "Sage"]
+    "Classes": [
+      "Wizard",
+      "Sage"
+    ]
   }
 ]

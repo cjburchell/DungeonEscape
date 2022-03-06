@@ -19,6 +19,11 @@
             position, 90, 110, false)
         {
             this._party = party;
+            var texture = canvas.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
+            foreach (var member in this._party.Members)
+            {
+                member.SetupImage(texture);
+            }
         }
 
         public override void OnAddedToEntity()
@@ -35,14 +40,13 @@
             const int statusWidth = 80;
             const int statusItemWidth = statusWidth/2;
             const int padding = 5;
-            var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
+            
             var windowWidth = this._party.Members.Count * (heroWidth + statusWidth + 15);
             this.Window.SetWidth(windowWidth);
             this._statusTable.ClearChildren();
             this._statusTable.SetFillParent(true);
             foreach (var member in this._party.Members)
             {
-                member.SetupImage(texture);
                 member.Image.SetAlignment(Align.Center);
                 this._statusTable.Add(member.Image).Width(heroWidth).SetPadLeft(5).SetPadRight(5);
                 var memberStatus = new Table();

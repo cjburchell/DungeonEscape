@@ -1,50 +1,50 @@
 [
   {
+    "Name": "Killerpillar",
     "Health": 1,
     "HealthConst": 35,
     "Attack": 27,
     "Xp": 31,
     "Gold": 12,
-    "Name": "Killerpillar",
     "Defence": 25,
     "Agility": 11,
     "Id": 1,
-    "MinLevel": 1,
+    "MinLevel": 5,
     "Magic": 25
   },
   {
+    "Name": "Bodkin Archer",
     "Health": 1,
     "HealthConst": 13,
     "Attack": 26,
     "Xp": 15,
     "Gold": 13,
-    "Name": "Bodkin Archer",
     "Defence": 20,
     "Agility": 20,
     "Id": 2,
-    "MinLevel": 1,
+    "MinLevel": 5,
     "Magic": 3
   },
   {
+    "Name": "Hell hornet",
     "Health": 1,
     "HealthConst": 30,
     "Attack": 38,
     "Xp": 26,
     "Gold": 20,
-    "Name": "Hell hornet",
     "Defence": 35,
     "Agility": 12,
     "Id": 3,
-    "MinLevel": 1,
+    "MinLevel": 5,
     "Magic": 0
   },
   {
+    "Name": "Scissor beetle",
     "Health": 1,
     "HealthConst": 5,
     "Attack": 9,
     "Xp": 1,
     "Gold": 4,
-    "Name": "Scissor beetle",
     "Defence": 5,
     "Agility": 3,
     "Id": 4,
@@ -52,29 +52,29 @@
     "Magic": 0
   },
   {
+    "Name": "Ram raider",
     "Health": 1,
     "HealthConst": 55,
     "Attack": 65,
     "Xp": 162,
     "Gold": 45,
-    "Name": "Ram raider",
     "Defence": 49,
     "Agility": 28,
     "Id": 5,
-    "MinLevel": 1,
+    "MinLevel": 10,
     "Magic": 12
   },
   {
+    "Name": "Bodkin bowyer",
     "Health": 1,
     "HealthConst": 25,
     "Attack": 46,
     "Xp": 47,
     "Gold": 16,
-    "Name": "Bodkin bowyer",
     "Defence": 36,
     "Agility": 21,
     "Id": 6,
-    "MinLevel": 1,
+    "MinLevel": 10,
     "Magic": 5
   },
   {
@@ -90,7 +90,7 @@
     "Defence": 80,
     "Agility": 87,
     "Id": 7,
-    "MinLevel": 5,
+    "MinLevel": 10,
     "Magic": 5
   },
   {
@@ -129,13 +129,13 @@
     "Defence": 20,
     "Agility": 42,
     "Id": 10,
-    "MinLevel": 1,
+    "MinLevel": 10,
     "Magic": 5
   },
   {
     "Health": 1,
     "HealthConst": 1,
-    "Attack": 40,
+    "Attack": 1,
     "Xp": 4140,
     "Gold": 5,
     "Name": "Metal Slime",
@@ -158,7 +158,7 @@
     "Defence": 150,
     "Agility": 100,
     "Id": 12,
-    "MinLevel": 15,
+    "MinLevel": 20,
     "Magic": 5
   },
   {

@@ -109,7 +109,9 @@
 
             this.Entity.SetEnabled(false);
             this.Entity.Scene.Entities.Remove(this.Entity);
-
+            
+            var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
+            hero.SetupImage(texture);
             var lastEntity = this.Entity.Scene.FindEntity(lastMember.Name);
             var player = this.Entity.Scene.FindEntity(this.GameState.Party.Members.First().Name).GetComponent<PlayerComponent>();
             var followerEntity = this.Entity.Scene.CreateEntity(hero.Name, this.Entity.Position);

@@ -244,8 +244,9 @@
                 new SelectWindow<string>(this._ui, hero.Name, new Point(10, MapScene.ScreenHeight / 3 * 2));
             
             var options = new List<string> {"Fight"};
-            var availableSpells = hero.GetSpells(this._game.Spells).Where(item => item.IsEncounterSpell && item.Cost <= hero.Magic).ToList();
-            if (availableSpells.Count != 0 && hero.Status.Count(i => i.Type == EffectType.StopSpell) != 0)
+            var spells = hero.GetSpells(this._game.Spells).ToList();
+            var availableSpells = spells.Where(item => item.IsEncounterSpell && item.Cost <= hero.Magic).ToList();
+            if (availableSpells.Count != 0 && hero.Status.Count(i => i.Type == EffectType.StopSpell) == 0)
             {
                 options.Add("Spell");
             }
@@ -628,13 +629,18 @@
                 }
                 else
                 {
-                    damage = Random.NextInt(source.Attack);
+                    var defence = (100 - Math.Min(target.Defence, 99)) / 100f;
+                    var attack = Random.NextInt(source.Attack);
+                    damage = attack != 0 ? Math.Max((int) ( attack * defence), 1) : 0;
                 }
-
-                damage -= (int) (damage * target.Defence / 100f);
+                
+                if (damage <= 0)
+                {
+                    damage = 0;
+                }
+                    
                 totalDamage += damage;
                 target.Health -= damage;
-
                 if (damage == 0)
                 {
                     message += $"{target.Name} was unharmed\n";

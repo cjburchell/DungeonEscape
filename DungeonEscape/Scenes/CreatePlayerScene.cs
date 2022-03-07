@@ -137,7 +137,7 @@
             var  buttonTable = new Table();
             table.Add(buttonTable).SetColspan(3).SetFillX();
             
-            var playButton = buttonTable.Add(new TextButton("Start", BasicWindow.Skin)).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).GetElement<TextButton>();
+            var playButton = buttonTable.Add(new TextButton("Start", BasicWindow.Skin)).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).SetPadRight(5).GetElement<TextButton>();
             playButton.OnClicked += _ =>
             {
                 this._sounds.PlaySoundEffect("confirm");
@@ -147,7 +147,7 @@
             };
             playButton.ShouldUseExplicitFocusableControl = true;
             
-            var backButton = buttonTable.Add(new TextButton("Back", BasicWindow.Skin)).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).GetElement<TextButton>();
+            var backButton = buttonTable.Add(new TextButton("Back", BasicWindow.Skin)).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).SetPadLeft(5).GetElement<TextButton>();
             backButton.OnClicked += _ =>
             {
                 this._sounds.PlaySoundEffect("confirm");

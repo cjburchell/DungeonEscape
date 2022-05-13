@@ -1,8 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonEscape", "DungeonEscape\DungeonEscape.csproj", "{4831E7C3-6114-4F19-9FED-BC4D57A9E95A}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31702.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonEscape", "DungeonEscape\DungeonEscape.csproj", "{4831E7C3-6114-4F19-9FED-BC4D57A9E95A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nez.MG38", "Nez.Portable\Nez.MG38.csproj", "{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nez.MG38", "Nez.Portable\Nez.MG38.csproj", "{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonEscape.Test", "DungeonEscape.Test\DungeonEscape.Test.csproj", "{76542A2E-8812-4F5F-B899-5AD0F106E74D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +23,15 @@ Global
 		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76542A2E-8812-4F5F-B899-5AD0F106E74D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76542A2E-8812-4F5F-B899-5AD0F106E74D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76542A2E-8812-4F5F-B899-5AD0F106E74D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76542A2E-8812-4F5F-B899-5AD0F106E74D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BBB4A64F-6545-4227-9AC1-10A6058F3161}
 	EndGlobalSection
 EndGlobal

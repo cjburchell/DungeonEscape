@@ -3,21 +3,6 @@
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
 
-    public enum EffectType
-    {
-        OverTime,
-        Sleep,
-        Confusion,
-        StopSpell,
-        Buff
-    }
-
-    public enum DurationType
-    {
-        Distance,
-        Rounds
-    }
-
     public class StatusEffect
     {
         [JsonConverter(typeof(StringEnumConverter))]

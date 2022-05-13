@@ -703,7 +703,6 @@
                     break;
                 case ItemType.Armor:
                 case ItemType.Weapon:
-                case ItemType.Shield:
                     item.UnEquip(party.Members);
                     hero.Equip(item);
                     break;

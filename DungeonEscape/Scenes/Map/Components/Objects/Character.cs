@@ -84,10 +84,10 @@
             
             new TalkWindow(this._ui).Show(dialog.Text, dialog.Choices?.Where(choice =>
             {
-                if (choice.Action == QuestAction.LookingForItem && choice.ItemId.HasValue)
+                if (choice.Action == QuestAction.LookingForItem && choice.ItemId != null)
                 {
                     // if the action is looking for an item
-                    return this.GameState.Party.Items.FirstOrDefault(i => i.ItemId == choice.ItemId) != null;
+                    return this.GameState.Party.Items.FirstOrDefault(i => i.Item.Id == choice.ItemId) != null;
                 }
                 return true;
 
@@ -118,10 +118,10 @@
                 switch (choice.Action)
                 {
                     case QuestAction.GiveItem:
-                        this.GameState.Party.Items.Add(new ItemInstance(this.GameState.Items.FirstOrDefault(i=> i.Id == choice.ItemId)));
+                        this.GameState.Party.Items.Add(new ItemInstance(this.GameState.CustomItems.FirstOrDefault(i=> i.Id == choice.ItemId)));
                         break;
                     case QuestAction.LookingForItem:
-                        var item = this.GameState.Party.Items.FirstOrDefault(i => i.ItemId == choice.ItemId);
+                        var item = this.GameState.Party.Items.FirstOrDefault(i => i.Item.Id == choice.ItemId);
                         if (item != null)
                         {
                             this.GameState.Party.Items.Remove(item);

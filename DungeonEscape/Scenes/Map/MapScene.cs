@@ -17,6 +17,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
     using Nez.Tiled;
     using Nez.UI;
     using State;
+    using Game = DungeonEscape.Game;
 
     public class MapScene : Scene
     {
@@ -114,7 +115,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             
             this._debugText = this._ui.Canvas.Stage.AddElement(new Label("", BasicWindow.Skin));
             this._debugText.SetPosition(10, 20);
-            //this._debugText.SetIsVisible(false);
+            this._debugText.SetIsVisible(this._gameState.Settings.MapDebugInfo);
 
             {
                 var tiledEntity = this.CreateEntity("map");
@@ -165,6 +166,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
 
             var graph = CreateGraph(map);
             var sprites = map.GetObjectGroup("sprites");
+            var tileSet = Game.LoadTileSet("Content/items.tsx");
             foreach (var item in sprites.Objects)
             {
                 var state = mapState.Sprites.FirstOrDefault(i => item.Id == i.Id);
@@ -173,6 +175,15 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                     state = new SpriteState {Id = item.Id};
                     mapState.Sprites.Add(state);
                 }
+
+                if (state.Items != null)
+                {
+                    foreach (var spriteItem in state.Items)
+                    {
+                        spriteItem.Setup(tileSet);
+                    }
+                }
+                
 
                 if (!state.IsActive)
                 {
@@ -609,7 +620,6 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                     return  $"{hero.Name} used {item.Name}";
                 case ItemType.Armor:
                 case ItemType.Weapon:
-                case ItemType.Shield:
                     var oldItem = party.Items.FirstOrDefault(i => i.Id == hero.GetEquipmentId(item.Type));
                     oldItem?.UnEquip(party.Members);
                     item.UnEquip(party.Members);

@@ -1,0 +1,83 @@
+﻿[
+  {
+    "Type": "Agility",
+    "Prefix": [
+      "Quick",
+      "Swift",
+      "Speedy",
+      "Nimble",
+      "Brisk",
+      "Deft"
+    ],
+    "Suffix": [
+      "Dexterity",
+      "Skill",
+      "Accuracy",
+      "Precision",
+      "Perfection",
+      "Nirvana"
+    ]
+  },
+  {
+    "Type": "Defence",
+    "Prefix": [
+      "Sturdy",
+      "Strong",
+      "Glorious",
+      "Blessed",
+      "Saintly",
+      "Holy"
+    ],
+    "Suffix": null
+  },
+  {
+    "Type": "Health",
+    "Prefix": null,
+    "Suffix": [
+      "The Jackal",
+      "The Fox",
+      "The Wolf",
+      "The Tiger",
+      "The Mammoth",
+      "The Colossus"
+    ]
+  },
+  {
+    "Type": "Attack",
+    "Prefix": [
+      "Bronze",
+      "Iron",
+      "Steel",
+      "Silver",
+      "Gold",
+      "Platinum"
+    ],
+    "Suffix": [
+      "Strength",
+      "Might",
+      "The Ox",
+      "The Giant",
+      "The Titan",
+      "The Atlas"
+    ]
+  },
+  {
+    "Type": "Magic",
+    "Prefix": [
+      "Lizard's",
+      "Snakes",
+      "Serpent's",
+      "Drake's",
+      "Dragon's",
+      "Wyrm's"
+    ],
+    "Suffix": [
+      "Energy",
+      "The Mind",
+      "Brilliance",
+      "Sorcery",
+      "Wizardry",
+      "Enlightenment"
+    ]
+  }
+]

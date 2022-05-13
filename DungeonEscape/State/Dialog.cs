@@ -4,7 +4,7 @@
 namespace Redpoint.DungeonEscape.State
 {
     using System.Collections.Generic;
-    using System.Text.Json.Serialization;
+    using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
 
     public enum QuestAction
@@ -40,7 +40,7 @@ namespace Redpoint.DungeonEscape.State
         [JsonConverter(typeof(StringEnumConverter))]
         public QuestAction Action { get; set; } = QuestAction.None;
 
-        public int? ItemId { get; set; }
+        public string ItemId { get; set; }
         
         public int? MonsterId { get; set; }
         public int? NextQuestStage { get; set; }

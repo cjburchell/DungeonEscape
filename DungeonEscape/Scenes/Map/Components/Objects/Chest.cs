@@ -14,8 +14,7 @@
         private readonly int _level;
         private SpriteAnimator _openImage;
         private readonly string _openImageName;
-        private readonly Item _item;
-
+        
         private bool IsOpen
         {
             get => this.State.IsOpen != null && this.State.IsOpen.Value;
@@ -30,50 +29,38 @@
             this._ui = ui;
             this._level = tmxObject.Properties.ContainsKey("ChestLevel") ? int.Parse(tmxObject.Properties["ChestLevel"]) : 0;
             this._openImageName = tmxObject.Properties.ContainsKey("OpenImage") ? tmxObject.Properties["OpenImage"] : "ochest.png";
-            if (this.State.Gold.HasValue)
+            if(this.State.Item != null)
             {
-                this._item = Item.CreateGold(this.State.Gold.Value);
-                return;
-            }
-            
-            if(this.State.ItemId.HasValue)
-            {
-                this._item = gameState.Items.First(item => item.Id == this.State.ItemId);
+                var tileSet = Game.LoadTileSet("Content/items.tsx");
+                this.State.Item.Setup(tileSet);
                 return;
             }
             
             if (this.TmxObject.Properties.ContainsKey("ItemId"))
             {
-                this.State.ItemId = int.Parse(tmxObject.Properties["ItemId"]);
-                this._item = gameState.Items.First(item => item.Id == this.State.ItemId);
+                this.State.Item = gameState.CustomItems.First(item => item.Id == tmxObject.Properties["ItemId"]);
                 return;
             }
 
             if (this.TmxObject.Properties.ContainsKey("Gold"))
             {
-                this.State.Gold = int.Parse(tmxObject.Properties["Gold"]);
-                this._item = Item.CreateGold(this.State.Gold.Value);
+                this.State.Item = Item.CreateGold(int.Parse(tmxObject.Properties["ItemId"]));
                 return;
             }
 
             if (tmxObject.Name == "Key Chest")
             {
-                this.State.ItemId = 26; // key item
-                this._item = gameState.Items.First(item => item.Id == this.State.ItemId);
+                this.State.Item = gameState.CustomItems.First(item => item.Id == "26");
                 return;
             }
 
             if (Random.Chance(0.25f))
             {
-                var levelItems = gameState.Items.Where(item => item.MinLevel <= this._level).ToArray();
-                var itemNumber = Random.NextInt(levelItems.Length);
-                this._item = levelItems[itemNumber];
-                this.State.ItemId = this._item.Id;
+                this.State.Item =  Item.CreateRandomItem(this.GameState.ItemDefinitions, this.GameState.StatNames, this._level);
                 return;
             }
-
-            this.State.Gold = Dice.Roll(5, 20);
-            this._item = Item.CreateGold(this.State.Gold.Value);
+            
+            this.State.Item = Item.CreateGold(Dice.Roll(5, 20));
         }
         
         public override void Initialize()
@@ -108,21 +95,21 @@
                 return true;
             }
             
-            if (this._item.Type == ItemType.Gold)
+            if (this.State.Item.Type == ItemType.Gold)
             {
-                new TalkWindow(this._ui).Show($"You found {this._item.Cost} Gold", Done);
-                party.Gold += this._item.Cost;
+                new TalkWindow(this._ui).Show($"You found {this.State.Item.Cost} Gold", Done);
+                party.Gold += this.State.Item.Cost;
             }
             else
             {
                 if (party.Items.Count >= Party.MaxItems)
                 {
-                    new TalkWindow(this._ui).Show($"You do not have enough space in your inventory for {this._item.Name}", Done);
+                    new TalkWindow(this._ui).Show($"You do not have enough space in your inventory for {this.State.Item.Name}", Done);
                     return true;
                 }
 
-                new TalkWindow(this._ui).Show($"You found a {this._item.Name}", Done);
-                party.Items.Add(new ItemInstance(this._item));
+                new TalkWindow(this._ui).Show($"You found a {this.State.Item.Name}", Done);
+                party.Items.Add(new ItemInstance(this.State.Item));
             }
             this.GameState.Sounds.PlaySoundEffect("treasure");
             this.IsOpen = true;

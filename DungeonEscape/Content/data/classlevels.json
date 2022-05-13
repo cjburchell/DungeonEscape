@@ -41,7 +41,7 @@
     "Stats": [
       {
         "Type": "Health",
-        "StartConst": 40,
+        "StartConst": 50,
         "Roll": 7,
         "RollConst": 3
       },
@@ -77,14 +77,14 @@
     "Stats": [
       {
         "Type": "Health",
-        "StartConst": 40,
-        "Roll": 7,
-        "RollConst": 3
+        "StartConst": 20,
+        "Roll": 5,
+        "RollConst": 1
       },
       {
         "Type": "Attack",
-        "StartConst": 5,
-        "Roll": 7,
+        "StartConst": 1,
+        "Roll": 2,
         "RollConst": 1
       },
       {
@@ -101,8 +101,8 @@
       },
       {
         "Type": "Magic",
-        "StartConst": 5,
-        "Roll": 6,
+        "StartConst": 10,
+        "Roll": 10,
         "RollConst": 5
       }
     ]
@@ -182,42 +182,6 @@
   {
     "Class": "Merchant",
     "FirstLevel": 12,
-    "Stats": [
-      {
-        "Type": "Health",
-        "StartConst": 40,
-        "Roll": 7,
-        "RollConst": 3
-      },
-      {
-        "Type": "Attack",
-        "StartConst": 5,
-        "Roll": 7,
-        "RollConst": 1
-      },
-      {
-        "Type": "Defence",
-        "StartConst": 1,
-        "Roll": 4,
-        "RollConst": 1
-      },
-      {
-        "Type": "Agility",
-        "StartConst": 1,
-        "Roll": 3,
-        "RollConst": 1
-      },
-      {
-        "Type": "Magic",
-        "StartConst": 5,
-        "Roll": 6,
-        "RollConst": 5
-      }
-    ]
-  },
-  {
-    "Class": "Clown",
-    "FirstLevel": 15,
     "Stats": [
       {
         "Type": "Health",

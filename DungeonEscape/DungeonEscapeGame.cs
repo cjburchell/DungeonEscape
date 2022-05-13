@@ -13,6 +13,13 @@
     using Scenes.Map;
     using State;
 
+
+    public class Settings
+    {
+        public bool NoMonsters { get; set; }
+        public bool MapDebugInfo { get; set; }
+    }
+
     public class Game : Core, IGame
     {
         private const string SaveFile = "save.json";
@@ -25,7 +32,7 @@
         public List<ClassStats> ClassLevelStats { get; private set; } = new List<ClassStats>();
         public List<MapState> MapStates { get; private set; } = new List<MapState>();
         public List<Monster> Monsters { get; } = new List<Monster>();
-        public List<Item> Items { get; } = new List<Item>();
+        public List<Item> CustomItems { get; } = new List<Item>();
         public List<Spell> Spells { get; } = new List<Spell>();
         public List<Quest> Quests { get; private set; } = new List<Quest>();
         
@@ -68,9 +75,10 @@
         {
             this.Party = saveGame.Party;
             this.MapStates = saveGame.MapStates;
+            var tileSet = LoadTileSet("Content/items.tsx");
             foreach (var partyItem in this.Party.Items)
             {
-                partyItem.UpdateItem(this.Items);
+                partyItem.Item.Setup(tileSet);
             }
 
             this.InGame = true;
@@ -133,7 +141,9 @@
             base.Initialize();
             ExitOnEscapeKeypress = false;
             PauseOnFocusLost = true;
-
+            
+            this.Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText("Content/data/gameSettings.json"));
+            
             this.ReloadSaveGames();
             
             this.Names = JsonConvert.DeserializeObject<Names>(File.ReadAllText("Content/data/names.json"));
@@ -142,15 +152,18 @@
             this.Dialogs = JsonConvert.DeserializeObject<List<Dialog>>(File.ReadAllText("Content/data/dialog.json"));
             
             this.ClassLevelStats = JsonConvert.DeserializeObject<List<ClassStats>>(File.ReadAllText("Content/data/classLevels.json"));
-
+            
+            this.StatNames = JsonConvert.DeserializeObject<List<StatName>>(File.ReadAllText("Content/data/statnames.json"));
+            this.ItemDefinitions = JsonConvert.DeserializeObject<List<ItemDefinition>>(File.ReadAllText("Content/data/itemdef.json"));
+            
             var tileSet = LoadTileSet("Content/items.tsx");
-            var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/data/items.json"));
+            var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/data/customitems.json"));
             if (items != null)
             {
                 foreach (var item in items)
                 {
                     item.Setup(tileSet);
-                    this.Items.Add(item);
+                    this.CustomItems.Add(item);
                 }
             }
             
@@ -189,6 +202,12 @@
                 return splash;
             }));
         }
+
+        public Settings Settings { get; private set; }
+
+        public List<ItemDefinition> ItemDefinitions { get; private set; }
+
+        public List<StatName> StatNames { get; private set; }
 
         public Names Names { get; private set; }
 

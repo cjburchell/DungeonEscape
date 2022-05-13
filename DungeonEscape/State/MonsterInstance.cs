@@ -7,7 +7,6 @@ namespace Redpoint.DungeonEscape.State
     using System.Linq;
     using Nez.Sprites;
     using Nez.Textures;
-    using Nez.UI;
 
     public class MonsterInstance : Fighter
     {

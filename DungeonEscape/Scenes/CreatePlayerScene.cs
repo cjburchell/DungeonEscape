@@ -106,7 +106,6 @@
                 Class.Wizard.ToString(),
                 Class.Fighter.ToString(),
                 Class.Merchant.ToString(),
-                Class.Clown.ToString(),
                 Class.Thief.ToString(),
                 Class.Sage.ToString());
             table.Add(classField).Height(BasicWindow.ButtonHeight).Width(DataColumnWidth);

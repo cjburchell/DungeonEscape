@@ -1,0 +1,70 @@
+[
+  {
+    "Type": "OneUse",
+    "Name": "Potion",
+    "Defence": 0,
+    "Health": 40,
+    "Attack": 0,
+    "Agility": 0,
+    "Cost": 16,
+    "ImageId": 144,
+    "Id": 1,
+    "MinLevel": 0
+  },
+  {
+    "Type": "OneUse",
+    "Name": "Super Potion",
+    "Defence": 0,
+    "Health": 100,
+    "Attack": 0,
+    "Agility": 0,
+    "Cost": 100,
+    "ImageId": 308,
+    "Id": 14,
+    "MinLevel": 6
+  },
+  {
+    "Type": "OneUse",
+    "Name": "Elixir of Strength",
+    "Defence": 0,
+    "Health": 0,
+    "Attack": 1,
+    "Agility": 0,
+    "Cost": 5000,
+    "ImageId": 150,
+    "Id": 23,
+    "MinLevel": 18
+  },
+  {
+    "Type": "OneUse",
+    "Name": "Elixir of Defence",
+    "Defence": 1,
+    "Health": 0,
+    "Attack": 0,
+    "Agility": 0,
+    "Cost": 5000,
+    "ImageId": 149,
+    "Id": 24,
+    "MinLevel": 18
+  },
+  {
+    "Type": "OneUse",
+    "Name": "Elixir of Agility",
+    "Defence": 0,
+    "Health": 0,
+    "Attack": 0,
+    "Agility": 1,
+    "Cost": 5000,
+    "ImageId": 151,
+    "Id": 25,
+    "MinLevel": 18
+  },
+  {
+    "Type": "Key",
+    "Name": "Iron Key",
+    "Cost": 250,
+    "Id": 26,
+    "ImageId": 185,
+    "MinLevel": 0
+  }
+]

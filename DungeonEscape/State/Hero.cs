@@ -9,8 +9,6 @@ namespace Redpoint.DungeonEscape.State
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using Nez.Sprites;
-    using Nez.Textures;
-    using Nez.UI;
     using Scenes.Map;
     using Random = Nez.Random;
 
@@ -32,7 +30,6 @@ namespace Redpoint.DungeonEscape.State
         
         public string WeaponId { get; set; }
         public string ArmorId { get; set; }
-        public string ShieldId { get; set; }
         public string Id { get; set; }
 
         public Hero()
@@ -51,8 +48,7 @@ namespace Redpoint.DungeonEscape.State
             var spriteImage = sprites[animationBaseIndex + 4];
             var spriteFlash = flashSprites[animationBaseIndex + 4];
             this.Image.SetSprite(spriteImage);
-            this.Animator = new SpriteAnimator(spriteImage);
-            this.Animator.Speed = 1.0f;
+            this.Animator = new SpriteAnimator(spriteImage) {Speed = 1.0f};
             this.Animator.AddAnimation("Damage", new[]
             {
                 spriteImage,
@@ -187,10 +183,8 @@ namespace Redpoint.DungeonEscape.State
 
         public bool CanUseItem(ItemInstance item)
         {
-            return !this.IsDead && !item.IsEquipped && (item.Type == ItemType.OneUse ||
-                                                        item.Type == ItemType.Weapon ||
-                                                        item.Type == ItemType.Armor ||
-                                                        item.Type == ItemType.Shield);
+            return !this.IsDead && !item.IsEquipped && (item.Type == ItemType.OneUse || item.IsEquippable) &&
+                   (!item.IsEquippable || item.Classes == null || item.Classes.Contains(this.Class));
         }
         
         public void UnEquip(ItemInstance item)
@@ -204,9 +198,6 @@ namespace Redpoint.DungeonEscape.State
                     break;
                 case ItemType.Armor:
                     this.ArmorId = null;
-                    break;
-                case ItemType.Shield:
-                    this.ShieldId = null;
                     break;
                 default:
                     return;
@@ -229,7 +220,6 @@ namespace Redpoint.DungeonEscape.State
             {
                 ItemType.Weapon => this.WeaponId,
                 ItemType.Armor => this.ArmorId,
-                ItemType.Shield => this.ShieldId,
                 _ => null
             };
         }
@@ -243,9 +233,6 @@ namespace Redpoint.DungeonEscape.State
                     break;
                 case ItemType.Armor:
                     this.ArmorId = item.Id;
-                    break;
-                case ItemType.Shield:
-                    this.ShieldId = item.Id;
                     break;
                 default:
                     return;

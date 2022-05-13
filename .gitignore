@@ -4,17 +4,12 @@ obj
 
 bin
 
-DungeonEscape/data/maps/images
-
-DungeonEscape/data/de.tiled-project
-
-DungeonEscape/data/de.tiled-session
-
 .vs
-
 
 *.tiled-session
 
 DungeonEscape/imgui.ini
 
 DungeonEscape/save.json
+
+packages

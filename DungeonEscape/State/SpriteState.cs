@@ -7,6 +7,6 @@
         public int Id { get; set; }
         public bool IsActive { get; set; } = true;
         public string Name { get; set; }
-        public List<int> Items { get; set; }
+        public List<Item> Items { get; set; }
     }
 }

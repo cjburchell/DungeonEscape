@@ -21,7 +21,7 @@ namespace Redpoint.DungeonEscape
     
         public void UpdatePauseState();
 
-        List<Item> Items { get; }
+        List<Item> CustomItems { get; }
             
         List<Spell> Spells { get; }
         
@@ -32,10 +32,16 @@ namespace Redpoint.DungeonEscape
         List<Quest> Quests { get; }
         
         List<Dialog> Dialogs { get; }
+        
+        List<ItemDefinition> ItemDefinitions { get; }
+        
+        List<StatName> StatNames { get; }
 
         IEnumerable<GameSave> GameSaves { get; }
         bool InGame { get; }
         List<ClassStats> ClassLevelStats { get; }
+        
+        Settings Settings { get; }
 
         void ReloadSaveGames();
         

@@ -9,12 +9,10 @@
     using Nez.Tiled;
     using State;
     using UI;
-    using Random = Nez.Random;
 
     public class Store : Sprite
     {
         private readonly UiSystem _ui;
-        private readonly List<Item> _items;
         private readonly string _text;
         private readonly bool _willBuyItems;
 
@@ -29,29 +27,22 @@
                 var itemListString = tmxObject.Properties.ContainsKey("Items") ? tmxObject.Properties["Items"] : null;
                 if (itemListString != null)
                 {
-                    this.SpriteState.Items = itemListString.Split(",").Select(int.Parse).ToList();
+                    this.SpriteState.Items = itemListString.Split(",").Select(itemId => gameState.CustomItems.FirstOrDefault(i => i.Id == itemId)).Where(item => item != null).OrderBy(i=> i.Cost).ToList();
                 }
                 else
                 {
                     var level = this.GameState.Party.Members.Max(item => item.Level);
-                    var availableItems = this.GameState.Items
-                        .Where(item => item.MinLevel < level && item.CanBeSoldInStore).ToArray();
-                    var maxItems = Math.Min(5, availableItems.Length);
+                    const int maxItems = 5;
                     var items = new List<Item>();
                     for (var i = 0; i < maxItems; i++)
                     {
-                        var item = availableItems[Random.NextInt(availableItems.Length)];
+                        var item = Item.CreateRandomItem(this.GameState.ItemDefinitions, this.GameState.StatNames, level);
                         items.Add(item);
-                        var tempItems = availableItems.ToList();
-                        tempItems.Remove(item);
-                        availableItems = tempItems.ToArray();
                     }
 
-                    this.SpriteState.Items = items.Select(i => i.Id).ToList();
-                }
+                    this.SpriteState.Items = items.OrderBy(i=> i.Cost).ToList();
+                }        
             }
-
-            this._items = this.SpriteState.Items.Select(i => this.GameState.Items.First(j => j.Id == i)).OrderBy(i=> i.Cost).ToList();
         }
 
         public Store(TmxObject tmxObject, SpriteState state, TmxMap map, IGame gameState, AstarGridGraph graph,
@@ -61,8 +52,7 @@
             this._ui = ui;
             this._text = text;
             this._willBuyItems = willBuyItems;
-            this._items = items.OrderBy(i=> i.Cost).ToList();
-            this.SpriteState.Items = items.Select(i => i.Id).ToList();
+            this.SpriteState.Items = items.OrderBy(i=> i.Cost).ToList();
         }
 
 
@@ -89,7 +79,7 @@
                     case StoreAction.Buy:
                     {
                         var sellItems = new BuyItemsWindow(this._ui);
-                        sellItems.Show(this._items, item =>
+                        sellItems.Show(this.SpriteState.Items, item =>
                         {
                             if (item == null)
                             {
@@ -108,7 +98,7 @@
                                     new TalkWindow(this._ui).Show($"You got the {item.Name}", Done);
                                     this.GameState.Party.Items.Add(new ItemInstance(item));
                                     this.GameState.Party.Gold -= item.Cost;
-                                    this._items.Remove(item);
+                                    this.SpriteState.Items.Remove(item);
                                 }
                                 else
                                 {

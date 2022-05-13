@@ -9,13 +9,10 @@ namespace Redpoint.DungeonEscape.State
 
     public class ItemInstance
     {
-        private Item _item;
-
         public ItemInstance(Item item)
         {
             this.Id = Guid.NewGuid().ToString();
-            this._item = item;
-            this.ItemId = item.Id;
+            this.Item = item;
         }
 
         // ReSharper disable once UnusedMember.Global
@@ -23,46 +20,50 @@ namespace Redpoint.DungeonEscape.State
         {
         }
 
-        public void UpdateItem(IEnumerable<Item> items)
-        {
-            this._item = items.FirstOrDefault(i => i.Id == this.ItemId);
-        }
-        
+        public Item Item { get; set; }
         public string Id { get; set; }
-        public int ItemId { get; set; }
         public string EquippedTo { get; set; }
         public bool IsEquipped { get; set; }
 
         [JsonIgnore]
-        public Nez.Textures.Sprite Image => this._item.Image;
+        public Nez.Textures.Sprite Image => this.Item.Image;
 
         [JsonIgnore]
-        public int MinLevel => this._item.MinLevel;
+        public int MinLevel => this.Item.MinLevel;
         
         [JsonIgnore]
-        public ItemType Type => this._item.Type;
+        public ItemType Type => this.Item.Type;
         
         [JsonIgnore]
-        public string Name => this._item.Name;
+        public string Name => this.Item.Name;
 
         [JsonIgnore]
-        public int Gold => this._item.Cost;
+        public int Gold => this.Item.Cost;
         
         [JsonIgnore]
-        public int Agility => this._item.Agility;
+        public int Agility => this.GetAttribute(StatType.Agility);
 
         [JsonIgnore]
-        public int Attack => this._item.Attack;
+        public int Attack => this.GetAttribute(StatType.Attack);
         
         [JsonIgnore]
-        public int Defence => this._item.Defence;
+        public int Defence => this.GetAttribute(StatType.Defence);
 
         [JsonIgnore]
-        public int Health => this._item.Health;
+        public int Health => this.GetAttribute(StatType.Health);
         
         [JsonIgnore]
-        public bool IsEquippable =>
-            this.Type == ItemType.Armor || this.Type == ItemType.Shield || this.Type == ItemType.Weapon;
+        public int Magic => this.GetAttribute(StatType.Magic);
+
+        public int GetAttribute(StatType statType)
+        {
+            return this.Item.Stats.Where(i => i.Type == statType).Sum(stat => stat.Value);
+        }
+        
+        [JsonIgnore] public IReadOnlyCollection<Class> Classes => this.Item.Classes;
+        
+        [JsonIgnore]
+        public bool IsEquippable => Item.EquippableItems.Contains(this.Type);
         
         public void UnEquip(IEnumerable<Hero> heroes)
         {

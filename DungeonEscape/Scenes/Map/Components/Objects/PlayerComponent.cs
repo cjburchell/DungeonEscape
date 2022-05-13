@@ -457,9 +457,13 @@
 
         private bool CheckForMonsterEncounter()
         {
+            if (this._gameState.Settings.NoMonsters)
+            {
+                return false;
+            }
+            
             var currentBiome = MapScene.GetCurrentBiome(this._map, this.Entity.Position);
-            var hasRandomMonsters =
-                this._randomMonsters.Count(item => item.Biome == currentBiome || item.Biome == Biome.All) != 0;
+            var hasRandomMonsters = this._randomMonsters.Any(item => item.Biome == currentBiome || item.Biome == Biome.All);
 
             //  Todo: use parties agility to calculate encounters
             return  hasRandomMonsters && Random.Chance(0.1f);

@@ -6,7 +6,6 @@ namespace Redpoint.DungeonEscape.State
 {
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
-    using Nez;
 
     // ReSharper disable once ClassNeverInstantiated.Global
     public class Stats

@@ -1,7 +1,7 @@
 ﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable MemberCanBePrivate.Global
-
 // ReSharper disable MemberCanBeProtected.Global
+
 namespace Redpoint.DungeonEscape.State
 {
     using System.Collections.Generic;

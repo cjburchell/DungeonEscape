@@ -9,8 +9,6 @@ namespace Redpoint.DungeonEscape.State
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using Nez.Sprites;
-    using Scenes.Map;
-    using Random = Nez.Random;
 
     public class Hero : Fighter
     {
@@ -40,7 +38,7 @@ namespace Redpoint.DungeonEscape.State
         public void SetupImage(Texture2D heroTexture)
         {
             const int heroHeight = 48;
-            const int heroWidth = MapScene.DefaultTileSize;
+            const int heroWidth = Scenes.Map.MapScene.DefaultTileSize;
             var flashTexture = Monster.CreateFlashImage(heroTexture);
             var sprites = Nez.Textures.Sprite.SpritesFromAtlas(heroTexture, heroWidth, heroHeight);
             var flashSprites = Nez.Textures.Sprite.SpritesFromAtlas(flashTexture, heroWidth, heroHeight);
@@ -175,7 +173,7 @@ namespace Redpoint.DungeonEscape.State
             const double randomFactor = 0.05;
 
             var nextLevel = (ulong) (currentLevel * factor) +
-                             (ulong) Random.NextInt((int) (Math.Min(currentLevel, int.MaxValue) * randomFactor));
+                             (ulong) Nez.Random.NextInt((int) (Math.Min(currentLevel, int.MaxValue) * randomFactor));
             
             Console.WriteLine($"{oldLevel}: {factor} {nextLevel} {nextLevel - currentLevel}");
             return nextLevel;

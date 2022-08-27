@@ -12,7 +12,7 @@ namespace Redpoint.DungeonEscape.State
     {
         [JsonConverter(typeof(StringEnumConverter))]
         public Class Class { get; set; }
-        public List<Stats> Stats { get; set; } = new List<Stats>();
+        public List<Stats> Stats { get; set; } = new();
         public ulong FirstLevel { get; set; }
     }
 }

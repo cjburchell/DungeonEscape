@@ -13,13 +13,13 @@
         public int? SavedMapId { get; set; }
         
         public bool HasShip { get; set; }
-        public List<Hero> Members { get; } = new List<Hero>();
+        public List<Hero> Members { get; } = new();
         
         // ReSharper disable once UnusedMember.Global
-        public List<ActiveQuest> ActiveQuests { get; } = new List<ActiveQuest>();
+        public List<ActiveQuest> ActiveQuests { get; } = new();
         
         public int Gold { get; set; }
-        public List<ItemInstance> Items { get; } = new List<ItemInstance>();
+        public List<ItemInstance> Items { get; } = new();
         public Vector2 CurrentPosition { get; set; }
         public int CurrentMapId { get; set; }
         public bool CurrentMapIsOverWorld { get; set; }

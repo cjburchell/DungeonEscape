@@ -17,7 +17,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
     using Nez.Tiled;
     using Nez.UI;
     using State;
-    using Game = DungeonEscape.Game;
+    using Game = Game;
 
     public class MapScene : Scene
     {
@@ -38,7 +38,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
         private VirtualButton _showCommandWindowInput;
         private VirtualButton _showExitWindowInput;
         private UiSystem _ui;
-        private int? _spawnId;
+        private readonly int? _spawnId;
 
         public MapScene(IGame game, int mapId, int? spawnId, Vector2? start = null)
         {
@@ -620,11 +620,34 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                     return  $"{hero.Name} used {item.Name}";
                 case ItemType.Armor:
                 case ItemType.Weapon:
-                    var oldItem = party.Items.FirstOrDefault(i => i.Id == hero.GetEquipmentId(item.Type));
-                    oldItem?.UnEquip(party.Members);
+                    var oldItems = party.Items.Where(i => hero.GetEquipmentId(item.Slots).Contains(i.Id)).ToList();
+                    foreach (var oldItem in oldItems)
+                    {
+                        oldItem.UnEquip(party.Members);
+                    }
+                    
                     item.UnEquip(party.Members);
                     hero.Equip(item);
-                    return  $"{hero.Name} equipped {item.Name}";
+                    if (oldItems.Count == 0)
+                    {
+                        return $"{hero.Name} put on the {item.Name}";
+                    }
+
+                    var itemList = "";
+                    foreach (var oldItem in oldItems)
+                    {
+                        if (string.IsNullOrEmpty(itemList))
+                        {
+                            itemList = $" {oldItem.Name}";
+                        }
+                        else
+                        {
+                            itemList += $" and {oldItem.Name}";
+                        }
+                    }
+                    
+                    return  $"{hero.Name} took off{itemList}, and put on the {item.Name}";
+                    
                 default:
                     return $"{hero.Name} is unable to use {item.Name}";
             }

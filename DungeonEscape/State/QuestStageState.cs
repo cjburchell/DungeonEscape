@@ -4,13 +4,9 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace Redpoint.DungeonEscape.State
 {
-    using System.Collections.Generic;
-
-    public class Dialog
+    public class QuestStageState
     {
-
-        public int? Id { get; set; }
-        public int? Quest { get; set; }
-        public List<DialogText> Dialogs { get; set; }
+        public int Number { get; set; }
+        public bool Completed { get; set; }
     }
 }

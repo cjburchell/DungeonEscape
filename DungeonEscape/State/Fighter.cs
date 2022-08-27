@@ -38,7 +38,7 @@ namespace Redpoint.DungeonEscape.State
 
         public abstract IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells);
 
-        public List<StatusEffect> Status { get; set; } = new List<StatusEffect>();
+        public List<StatusEffect> Status { get; set; } = new();
 
         public void RemoveEffect(StatusEffect effect)
         {
@@ -111,9 +111,9 @@ namespace Redpoint.DungeonEscape.State
         }
 
         public virtual void Equip(ItemInstance item){}
-        public virtual string GetEquipmentId(ItemType itemType)
+        public virtual List<string> GetEquipmentId(IEnumerable<Slot> slots)
         {
-            return null;
+            return new List<string>();
         }
 
         public string UpdateStatusEffects(int round, DurationType durationType, IGame game)

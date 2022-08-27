@@ -35,6 +35,9 @@ namespace Redpoint.DungeonEscape.State
         public ItemType Type => this.Item.Type;
         
         [JsonIgnore]
+        public List<Slot> Slots => this.Item.Slots;
+        
+        [JsonIgnore]
         public string Name => this.Item.Name;
 
         [JsonIgnore]

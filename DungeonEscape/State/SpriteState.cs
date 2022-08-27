@@ -4,6 +4,7 @@
 
     public class SpriteState
     {
+        // ReSharper disable once PropertyCanBeMadeInitOnly.Global
         public int Id { get; set; }
         public bool IsActive { get; set; } = true;
         public string Name { get; set; }

@@ -1,7 +1,7 @@
 ﻿[
   {
     "Type": "Armor",
-    "Slot": "Hold",
+    "Slots": ["OffHand"],
     "Classes": [
       "Cleric",
       "Hero",
@@ -32,7 +32,7 @@
   },
   {
     "Type": "Armor",
-    "Slot": "Head",
+    "Slots": ["Head"],
     "Classes": null,
     "Names": [
       {
@@ -55,7 +55,7 @@
   },
   {
     "Type": "Armor",
-    "Slot": "Head",
+    "Slots": ["Head"],
     "Classes": [
       "Cleric",
       "Merchant",
@@ -87,7 +87,7 @@
   },
   {
     "Type": "Armor",
-    "Slot": "Chest",
+    "Slots": ["Chest"],
     "Classes": [
       "Cleric",
       "Merchant",
@@ -121,7 +121,7 @@
   },
   {
     "Type": "Armor",
-    "Slot": "Chest",
+    "Slots": ["Chest"],
     "Classes": [
       "Cleric",
       "Hero",
@@ -156,7 +156,7 @@
   },
   {
     "Type": "Armor",
-    "Slot": "Chest",
+    "Slots": ["Chest"],
     "Classes": [
       "Soldier"
     ],
@@ -177,7 +177,7 @@
   },
   {
     "Type": "Armor",
-    "Slot": "Chest",
+    "Slots": ["Chest"],
     "Classes": null,
     "Names": [
       {
@@ -196,7 +196,7 @@
   },
   {
     "Type": "Armor",
-    "Slot": "Hand",
+    "Slots": ["Hands"],
     "Classes": [
       "Cleric",
       "Merchant",
@@ -230,7 +230,7 @@
   },
   {
     "Type": "Armor",
-    "Slot": "Feet",
+    "Slots": ["Feet"],
     "Classes": [
       "Cleric",
       "Merchant",
@@ -264,7 +264,7 @@
   },
   {
     "Type": "Armor",
-    "Slot": "Hand",
+    "Slots": ["Hands"],
     "Classes": null,
     "Names": [
       {
@@ -275,7 +275,7 @@
   },
   {
     "Type": "Weapon",
-    "Slot": "Hand",
+    "Slots": ["PrimaryHand"],
     "Classes": [
       "Merchant",
       "Hero",
@@ -306,7 +306,7 @@
   },
   {
     "Type": "Weapon",
-    "Slot": "Hand",
+    "Slots": ["PrimaryHand"],
     "Classes": [
       "Merchant",
       "Hero",
@@ -342,7 +342,7 @@
   },
   {
     "Type": "Weapon",
-    "Slot": "Hand",
+    "Slots": ["PrimaryHand"],
     "Classes": [
       "Cleric",
       "Merchant",
@@ -370,7 +370,7 @@
   },
   {
     "Type": "Weapon",
-    "Slot": "Hand",
+    "Slots": ["PrimaryHand"],
     "Classes": [
       "Merchant",
       "Hero",
@@ -400,7 +400,7 @@
   },
   {
     "Type": "Weapon",
-    "Slot": "Hand",
+    "Slots": ["PrimaryHand", "OffHand"],
     "Classes": [
       "Cleric",
       "Merchant",

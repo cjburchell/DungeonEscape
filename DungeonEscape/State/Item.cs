@@ -1,6 +1,7 @@
 ﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable PropertyCanBeMadeInitOnly.Global
 namespace Redpoint.DungeonEscape.State
 {
     using System;
@@ -11,51 +12,6 @@ namespace Redpoint.DungeonEscape.State
     using Nez;
     using Nez.Textures;
     using Nez.Tiled;
-
-    public enum Rarity
-    {
-        Common = 0,
-        Uncommon = 1,
-        Rare = 2,
-        Epic = 3
-    }
-
-    public class StatName
-    {
-        [JsonConverter(typeof(StringEnumConverter))]
-        public StatType Type { get; set; }
-        public List<string> Prefix { get; set; }
-        public List<string> Suffix { get; set; }
-    }
-    
-    public enum Slot
-    {
-        Hold,
-        Hand,
-        Head,
-        Chest,
-        Feet,
-    }
-
-    public class ItemName
-    {
-        public string Name { get; set; }
-        public int ImageId { get; set; }
-    }
-
-    public class ItemDefinition
-    {
-        [JsonConverter(typeof(StringEnumConverter))]
-        public ItemType Type { get; set; }
-        
-        [JsonConverter(typeof(StringEnumConverter))]
-        public Slot Slot { get; set; }
-        
-        [JsonProperty("Classes", ItemConverterType=typeof(StringEnumConverter))]
-        public List<Class> Classes { get; set; }
-        public List<ItemName> Names { get; set; }
-        
-    }
 
     public class Item
     {
@@ -68,7 +24,7 @@ namespace Redpoint.DungeonEscape.State
         {
             this.Image = tileset.Image != null ? new Sprite(tileset.Image.Texture, tileset.TileRegions[this.ImageId]) : new Sprite(tileset.Tiles[this.ImageId].Image.Texture);
         }
-
+        
         public string Id { get; set; }
         public int ImageId { get; set; }
 
@@ -91,7 +47,7 @@ namespace Redpoint.DungeonEscape.State
             return item;
         }
         
-        public static readonly List<ItemType> EquippableItems = new List<ItemType>
+        public static readonly List<ItemType> EquippableItems = new()
         {
             ItemType.Weapon,
             ItemType.Armor
@@ -161,7 +117,7 @@ namespace Redpoint.DungeonEscape.State
             }
 
             item.ImageId = baseName.ImageId;
-            item.Slot = itemDefinition.Slot;
+            item.Slots = itemDefinition.Slots;
             
             var prefix = string.Empty;
             var suffix = string.Empty;
@@ -236,8 +192,8 @@ namespace Redpoint.DungeonEscape.State
             return item;
         }
 
-        [JsonConverter(typeof(StringEnumConverter))]
-        public Slot Slot { get; set; }
+        [JsonProperty("Slots", ItemConverterType=typeof(StringEnumConverter))]
+        public List<Slot> Slots { get; set; }
 
         [JsonIgnore]
         public Sprite Image { get; set; }
@@ -250,7 +206,7 @@ namespace Redpoint.DungeonEscape.State
         [JsonConverter(typeof(StringEnumConverter))]
         public Rarity Rarity { get; set; }
 
-        public List<StatValue> Stats { get; set; } = new List<StatValue>();
+        public List<StatValue> Stats { get; set; } = new();
         
         public int Cost { get; set; }
         public int MinLevel { get; set; }
@@ -263,12 +219,4 @@ namespace Redpoint.DungeonEscape.State
                                         this.Type != ItemType.Key &&
                                         this.Type != ItemType.Unknown;
     }
-
-    public class StatValue
-    {
-        [JsonConverter(typeof(StringEnumConverter))]
-        public StatType Type { get; set; }
-        public int Value { get; set; }
-    }
-
 }

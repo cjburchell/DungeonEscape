@@ -7,9 +7,9 @@
 
     public class WindowInput : Component, IUpdatable
     {
-        private readonly VirtualButton _hideWindowInput = new VirtualButton();
-        private readonly VirtualButton _actionWindowInput = new VirtualButton();
-        private readonly List<BasicWindow> _windows = new List<BasicWindow>();
+        private readonly VirtualButton _hideWindowInput = new();
+        private readonly VirtualButton _actionWindowInput = new();
+        private readonly List<BasicWindow> _windows = new();
         public bool HandledHide = false;
 
         public override void OnAddedToEntity()

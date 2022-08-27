@@ -1,4 +1,8 @@
-﻿namespace Redpoint.DungeonEscape.State
+﻿// ReSharper disable PropertyCanBeMadeInitOnly.Global
+// ReSharper disable UnusedMember.Global
+// ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+namespace Redpoint.DungeonEscape.State
 {
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;

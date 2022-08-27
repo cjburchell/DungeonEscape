@@ -25,9 +25,9 @@ namespace Redpoint.DungeonEscape.State
         {
             return availableSpells.Where(spell => spell.MinLevel <= this.Level && spell.Classes.Contains(this.Class));
         }
+
+        public Dictionary<Slot, string> Slots = new();
         
-        public string WeaponId { get; set; }
-        public string ArmorId { get; set; }
         public string Id { get; set; }
 
         public Hero()
@@ -187,20 +187,23 @@ namespace Redpoint.DungeonEscape.State
         
         public void UnEquip(ItemInstance item)
         {
+            if (!item.IsEquipped)
+            {
+                return;
+            }
+            
+            if (!item.Slots.Any(slot => this.Slots.ContainsKey(slot) && this.Slots[slot] == item.Id))
+            {
+                return;
+            }
+            
             item.EquippedTo = null;
             item.IsEquipped = false;
-            switch (item.Type)
+            foreach (var slot in item.Slots)
             {
-                case ItemType.Weapon:
-                    this.WeaponId = null;
-                    break;
-                case ItemType.Armor:
-                    this.ArmorId = null;
-                    break;
-                default:
-                    return;
+                this.Slots[slot] = null;
             }
-
+            
             this.Agility -= item.Agility;
             this.Attack -= item.Attack;
             this.Defence -= item.Defence;
@@ -212,30 +215,17 @@ namespace Redpoint.DungeonEscape.State
             }
         }
 
-        public override string GetEquipmentId(ItemType itemType)
+        public override List<string> GetEquipmentId(IEnumerable<Slot> slots)
         {
-            return itemType switch
-            {
-                ItemType.Weapon => this.WeaponId,
-                ItemType.Armor => this.ArmorId,
-                _ => null
-            };
+            return (from slot in slots where this.Slots.ContainsKey(slot) select this.Slots[slot]).ToList();
         }
 
         public override void Equip(ItemInstance item)
         {
-            switch (item.Type)
+            foreach (var slot in item.Slots)
             {
-                case ItemType.Weapon:
-                    this.WeaponId = item.Id;
-                    break;
-                case ItemType.Armor:
-                    this.ArmorId = item.Id;
-                    break;
-                default:
-                    return;
+                this.Slots[slot] = item.Id;
             }
-            
             item.IsEquipped = true;
             item.EquippedTo = this.Id;
             this.Agility += this.Agility;

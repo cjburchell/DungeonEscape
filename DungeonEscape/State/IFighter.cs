@@ -21,7 +21,7 @@
         void RemoveEffect(StatusEffect effect);
         void Use(ItemInstance item);
         void Equip(ItemInstance item);
-        string GetEquipmentId(ItemType itemType);
+        List<string> GetEquipmentId(IEnumerable<Slot> slots);
         string UpdateStatusEffects(int round, DurationType durationType, IGame game);
         void PlayDamageAnimation();
     }

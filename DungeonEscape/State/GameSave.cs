@@ -14,6 +14,6 @@
         public DateTime? Time { get; set; }
         public Party Party { get; set; }
         
-        public List<MapState> MapStates { get; set; } = new List<MapState>();
+        public List<MapState> MapStates { get; set; } = new();
     }
 }

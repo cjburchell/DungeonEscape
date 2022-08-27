@@ -2,6 +2,7 @@
 {
     public class ObjectState
     {
+        // ReSharper disable once PropertyCanBeMadeInitOnly.Global
         public int Id { get; set; }
         public bool? Collideable { get; set; }
         public bool? IsOpen { get; set; }

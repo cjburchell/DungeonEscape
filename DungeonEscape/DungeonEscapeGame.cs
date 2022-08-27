@@ -14,12 +14,6 @@
     using State;
 
 
-    public class Settings
-    {
-        public bool NoMonsters { get; set; }
-        public bool MapDebugInfo { get; set; }
-    }
-
     public class Game : Core, IGame
     {
         private const string SaveFile = "save.json";

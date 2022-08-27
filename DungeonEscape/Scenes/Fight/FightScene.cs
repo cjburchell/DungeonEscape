@@ -25,10 +25,10 @@
         
         private class RoundAction
         {
-            public IFighter Source { get; set; }
-            public RoundActionState State { get; set; }
-            public Spell Spell { get; set; }
-            public ItemInstance Item { get; set; }
+            public IFighter Source { get; init; }
+            public RoundActionState State { get; init; }
+            public Spell Spell { get; init; }
+            public ItemInstance Item { get; init; }
             public IEnumerable<IFighter> Targets { get; set; }
         }
 

@@ -30,8 +30,10 @@ namespace Redpoint.DungeonEscape.State
             var spriteImage = new Sprite(this._info.Image);
             var spriteFlash = new Sprite(this._info.Flash);
             this.Image.SetSprite(spriteImage);
-            this.Animator = new SpriteAnimator(spriteImage);
-            this.Animator.Speed = 1.0f;
+            this.Animator = new SpriteAnimator(spriteImage)
+            {
+                Speed = 1.0f
+            };
             this.Animator.AddAnimation("Damage", new[]
             {
                 spriteImage,

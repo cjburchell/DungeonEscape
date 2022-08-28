@@ -15,33 +15,37 @@
         private readonly UiSystem _ui;
         private readonly string _text;
         private readonly bool _willBuyItems;
+        private const int MaxItems = 10;
+        private const int MinItems = 5;
 
-        public Store(TmxObject tmxObject, SpriteState state, TmxMap map, IGame gameState, AstarGridGraph graph, UiSystem ui) : base(
+        public Store(TmxObject tmxObject, SpriteState state, TmxMap map, IGame gameState, AstarGridGraph graph,
+            UiSystem ui) : base(
             tmxObject, state, map, gameState, graph)
         {
             this._ui = ui;
-            this._willBuyItems = !tmxObject.Properties.ContainsKey("WillBuyItems") || bool.Parse(tmxObject.Properties["WillBuyItems"]);
+            this._willBuyItems = !tmxObject.Properties.ContainsKey("WillBuyItems") ||
+                                 bool.Parse(tmxObject.Properties["WillBuyItems"]);
             this._text = tmxObject.Properties.ContainsKey("Text") ? tmxObject.Properties["Text"] : null;
-            if (this.SpriteState.Items == null)
-            {
-                var itemListString = tmxObject.Properties.ContainsKey("Items") ? tmxObject.Properties["Items"] : null;
-                if (itemListString != null)
-                {
-                    this.SpriteState.Items = itemListString.Split(",").Select(itemId => gameState.CustomItems.FirstOrDefault(i => i.Id == itemId)).Where(item => item != null).OrderBy(i=> i.Cost).ToList();
-                }
-                else
-                {
-                    var level = this.GameState.Party.Members.Max(item => item.Level);
-                    const int maxItems = 5;
-                    var items = new List<Item>();
-                    for (var i = 0; i < maxItems; i++)
-                    {
-                        var item = Item.CreateRandomItem(this.GameState.ItemDefinitions, this.GameState.StatNames, level);
-                        items.Add(item);
-                    }
 
-                    this.SpriteState.Items = items.OrderBy(i=> i.Cost).ToList();
-                }        
+            var itemListString = tmxObject.Properties.ContainsKey("Items") ? tmxObject.Properties["Items"] : null;
+            if (itemListString != null)
+            {
+                this.SpriteState.Items = itemListString.Split(",")
+                    .Select(itemId => gameState.CustomItems.FirstOrDefault(i => i.Id == itemId))
+                    .Where(item => item != null).OrderBy(i => i.Cost).ToList();
+            }
+            else
+            {
+                var level = this.GameState.Party.Members.Max(item => item.Level);
+                this.SpriteState.Items ??= new List<Item>();
+                var missing = MinItems - this.SpriteState.Items.Count;
+                for (var i = 0; i < missing; i++)
+                {
+                    var item = Item.CreateRandomItem(this.GameState.ItemDefinitions, this.GameState.StatNames, level);
+                    this.SpriteState.Items.Add(item);
+                }
+
+                this.SpriteState.Items = this.SpriteState.Items.OrderBy(i => i.Cost).ToList();
             }
         }
 
@@ -113,7 +117,7 @@
                         return;
                     case StoreAction.Sell:
                     {
-                        var inventoryWindow = new SellPartyItemsWindow(this._ui);
+                        var inventoryWindow = new SellPartyItemsWindow(this._ui, party.Members);
                         inventoryWindow.Show(this.GameState.Party.Items.Where(i => i.Gold != 0), item =>
                         {
                             if (item == null)
@@ -140,6 +144,11 @@
                                     }
 
                                     this.GameState.Party.Items.Remove(item);
+                                    if (this.SpriteState.Items.Count <= MaxItems)
+                                    {
+                                        this.SpriteState.Items.Add(item.Item);
+                                    }
+                                    
                                     Done();
                                 });
                         });

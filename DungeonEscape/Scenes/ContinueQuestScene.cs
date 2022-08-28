@@ -1,5 +1,6 @@
 ﻿namespace Redpoint.DungeonEscape.Scenes
 {
+    using System.Linq;
     using Common.Components.UI;
     using Map;
     using Microsoft.Xna.Framework;
@@ -69,7 +70,7 @@
             };
 
             game.ReloadSaveGames();
-            foreach (var save in game.GameSaves)
+            foreach (var save in game.LoadableGameSaves.OrderByDescending(i => i.Time))
             {
                 var button = CreateButton(save);
                 button.UserData = save;

@@ -7,7 +7,7 @@
 
     public class SaveWindow: SelectWindow<GameSave>
     {
-        public SaveWindow(UiSystem ui) : base(ui, "Save", new Point(20, 20), 300)
+        public SaveWindow(UiSystem ui) : base(ui, "Save", new Point(20, 20), 370)
         {
         }
         
@@ -15,13 +15,13 @@
         {
             var table = new Table();
             var itemName = new Label(item.Name, Skin).SetAlignment(Align.Left);
-            table.Add(itemName).Width(150);
+            table.Add(itemName).Width(100);
             if (item.Level.HasValue && item.Time.HasValue)
             {
                 var level = new Label($"LV: {item.Level.Value}", Skin).SetAlignment(Align.Left);
                 var time = new Label(item.Time.Value.ToString("g"), Skin).SetAlignment(Align.Left);
-                table.Add(level).Width(30);
-                table.Add(time).Width(100);
+                table.Add(level).Width(50);
+                table.Add(time).Width(200);
             }
             var button = new Button(Skin, "no_border");
             button.Add(table);

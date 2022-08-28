@@ -11,7 +11,7 @@ namespace Redpoint.DungeonEscape
     {
         TmxMap GetMap(int mapId);
 
-        void Save();
+        void Save(GameSave save, bool isQuick = false);
 
         Party Party { get; }
         
@@ -37,7 +37,7 @@ namespace Redpoint.DungeonEscape
         
         List<StatName> StatNames { get; }
 
-        IEnumerable<GameSave> GameSaves { get; }
+        IEnumerable<GameSave> GameSaveSlots { get; }
         bool InGame { get; }
         List<ClassStats> ClassLevelStats { get; }
         
@@ -46,6 +46,7 @@ namespace Redpoint.DungeonEscape
         void ReloadSaveGames();
         
         ISounds Sounds { get; }
+        IEnumerable<GameSave> LoadableGameSaves { get; }
 
         void LoadGame(GameSave saveGame);
         void ResumeGame();

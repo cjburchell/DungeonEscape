@@ -420,7 +420,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             if (this._gameState.Party.Members.Count == 1)
             {
                 var statusWindow = new HeroStatusWindow(this._ui);
-                statusWindow.Show(this._gameState.Party.Members.First(), done);
+                statusWindow.Show(this._gameState.Party.Members.First(), done, this._gameState.Party.Items);
             }
             else
             {
@@ -433,7 +433,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                         return;
                     }
                     var statusWindow = new HeroStatusWindow(this._ui);
-                    statusWindow.Show(hero, done);
+                    statusWindow.Show(hero, done, this._gameState.Party.Items);
                 });
             }
         }
@@ -530,7 +530,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             }
             else
             {
-                var inventoryWindow = new InventoryWindow(this._ui);
+                var inventoryWindow = new InventoryWindow(this._ui, this._gameState.Party.Members);
                 inventoryWindow.Show(this._gameState.Party.Items, item =>
                 {
                     if (item == null)

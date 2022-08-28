@@ -1,5 +1,6 @@
 ﻿namespace Redpoint.DungeonEscape
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -23,16 +24,17 @@
         
         public Party Party { get; private set; }
         
-        public List<ClassStats> ClassLevelStats { get; private set; } = new List<ClassStats>();
-        public List<MapState> MapStates { get; private set; } = new List<MapState>();
-        public List<Monster> Monsters { get; } = new List<Monster>();
-        public List<Item> CustomItems { get; } = new List<Item>();
-        public List<Spell> Spells { get; } = new List<Spell>();
-        public List<Quest> Quests { get; private set; } = new List<Quest>();
+        public List<ClassStats> ClassLevelStats { get; private set; } = new();
+        public List<MapState> MapStates { get; private set; } = new();
+        public List<Monster> Monsters { get; } = new();
+        public List<Item> CustomItems { get; } = new();
+        public List<Spell> Spells { get; } = new();
+        public List<Quest> Quests { get; private set; } = new();
         
-        public List<Dialog> Dialogs { get; private set; } = new List<Dialog>();
+        public List<Dialog> Dialogs { get; private set; } = new();
         
-        public IEnumerable<GameSave> GameSaves => this._saveSlots;
+        public IEnumerable<GameSave> GameSaveSlots => this._saveSlots.Where(i=> !i.IsQuick);
+        public IEnumerable<GameSave> LoadableGameSaves => this._saveSlots;
         public bool InGame { get; private set; }
         public bool IsPaused
         {
@@ -48,10 +50,28 @@
             }
         }
         
-        private GameSave[] _saveSlots;
+        private List<GameSave> _saveSlots;
         
-        public void Save()
+        public void Save(GameSave save, bool isQuick = false)
         {
+            if (save == null)
+            {
+                this.ReloadSaveGames();
+                save = this._saveSlots.FirstOrDefault(i => i.IsQuick == isQuick);
+                if (save == null)
+                {
+                    save = new GameSave();
+                    this._saveSlots.Add(save);
+                }
+            }
+            
+            this.Party.SavedMapId = this.Party.CurrentMapId;
+            this.Party.SavedPoint = this.Party.CurrentPosition;
+            save.Party = this.Party;
+            save.MapStates = this.MapStates;
+            save.Time = DateTime.Now;
+            save.IsQuick = isQuick;
+            
             File.WriteAllText(SaveFile,
                 JsonConvert.SerializeObject(this._saveSlots, Formatting.Indented,
                     new JsonSerializerSettings
@@ -99,6 +119,25 @@
         {
             mapId ??= 0;
             this.IsPaused = true;
+            if (this.Party.CurrentMapId != mapId)
+            {
+                if (this.Party.CurrentMapIsOverWorld)
+                {
+                    this.Save(null, true);
+                }
+                else
+                {
+                    var mapFile = this.GetMap(mapId.Value);
+                    var isNewMapOverworld = mapFile.Properties != null && mapFile.Properties.ContainsKey("overworld") &&
+                                            bool.Parse(mapFile.Properties["overworld"]);
+                    if (isNewMapOverworld)
+                    {
+                        this.Save(null, true);
+                    }
+                    
+                }
+            }
+            
             var map = new MapScene(this, mapId.Value, spawnId, point);
             var transition = new FadeTransition(() =>
             {
@@ -212,7 +251,7 @@
 
         public ISounds Sounds { get; } = new Sounds();
 
-        private static GameSave[] LoadSaveGames(string fileName)
+        private static List<GameSave> LoadSaveGames(string fileName)
         {
             var saves = new List<GameSave>();
             if (File.Exists(fileName))
@@ -220,12 +259,12 @@
                 saves = JsonConvert.DeserializeObject<List<GameSave>>(File.ReadAllText(fileName)) ?? new List<GameSave>();
             }
 
-            for (var i = saves.Count; i < MaxSaveSlots; i++)
+            for (var i = saves.Count(i => !i.IsQuick); i < MaxSaveSlots; i++)
             {
                 saves.Add(new GameSave()); 
             }
 
-            return saves.ToArray();
+            return saves;
         }
 
         public static TmxTileset LoadTileSet(string path)

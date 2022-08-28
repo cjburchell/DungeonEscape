@@ -1,6 +1,5 @@
 ﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 {
-    using System;
     using System.Linq;
     using Common.Components.UI;
     using Nez.AI.Pathfinding;
@@ -27,20 +26,14 @@
                 {
                     this.GameState.ReloadSaveGames();
                     var saveWindow = new SaveWindow(this._ui);
-                    saveWindow.Show(this.GameState.GameSaves, save =>
+                    saveWindow.Show(this.GameState.GameSaveSlots.OrderByDescending(i => i.Time), save =>
                         {
                             if (save == null)
                             {
                                 this.GameState.IsPaused = false;
                                 return;
                             }
-                            
-                            this.GameState.Party.SavedMapId = this.GameState.Party.CurrentMapId;
-                            this.GameState.Party.SavedPoint = this.GameState.Party.CurrentPosition;
-                            save.Party = this.GameState.Party;
-                            save.MapStates = this.GameState.MapStates;
-                            save.Time = DateTime.Now;
-                            this.GameState.Save();
+                            this.GameState.Save(save);
                             new TalkWindow(this._ui).Show($"It has been recorded\nYou have {party.Members.First().NextLevel} xp\nto the next level",
                                 () =>
                                 {

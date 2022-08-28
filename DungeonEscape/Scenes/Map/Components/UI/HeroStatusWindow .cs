@@ -15,7 +15,6 @@
         private Table _statusTable;
         private Hero _hero;
         private Table _itemTable;
-        private List<ItemInstance> _items;
 
         public HeroStatusWindow(UiSystem ui) : base(ui, null,
             new Point(20, 20), 600, 300)
@@ -97,7 +96,7 @@
             {
                 this._itemTable.Add(new Label($"{slot}:" , Skin).SetAlignment(Align.Left)).Width(itemLabelColumnWidth);
                 var itemId = this._hero.GetEquipmentId(new[] { slot }).FirstOrDefault();
-                var item = this._items.FirstOrDefault(i => i.Id == itemId);
+                var item = this._hero.Items.FirstOrDefault(i => i.Id == itemId);
                 if (item != null)
                 {
                     var image = new Image(item.Image).SetAlignment(Align.Left);
@@ -123,11 +122,10 @@
             this.CloseWindow();
         }
         
-        public void Show(Hero heroToShow, Action doneAction, List<ItemInstance> items)
+        public void Show(Hero heroToShow, Action doneAction)
         {
             this._done = doneAction;
             this._hero = heroToShow;
-            this._items = items;
             this.ShowWindow();
         }
     }

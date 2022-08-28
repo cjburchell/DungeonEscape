@@ -87,8 +87,9 @@
                 if (choice.Action == QuestAction.LookingForItem && choice.ItemId != null)
                 {
                     // if the action is looking for an item
-                    return this.GameState.Party.Items.FirstOrDefault(i => i.Item.Id == choice.ItemId) != null;
+                    return this.GameState.Party.GetItem(choice.ItemId) != null;
                 }
+                
                 return true;
 
             }) ,choice =>
@@ -118,14 +119,10 @@
                 switch (choice.Action)
                 {
                     case QuestAction.GiveItem:
-                        this.GameState.Party.Items.Add(new ItemInstance(this.GameState.CustomItems.FirstOrDefault(i=> i.Id == choice.ItemId)));
+                        this.GameState.Party.AddItem(new ItemInstance(this.GameState.CustomItems.FirstOrDefault(i=> i.Id == choice.ItemId)));
                         break;
                     case QuestAction.LookingForItem:
-                        var item = this.GameState.Party.Items.FirstOrDefault(i => i.Item.Id == choice.ItemId);
-                        if (item != null)
-                        {
-                            this.GameState.Party.Items.Remove(item);
-                        }
+                        this.GameState.Party.RemoveItem(choice.ItemId);
                         break;
                     case QuestAction.Fight:
                         var monster = this.GameState.Monsters.FirstOrDefault(m => m.Id == choice.MonsterId);

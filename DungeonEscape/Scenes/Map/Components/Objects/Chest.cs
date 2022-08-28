@@ -102,14 +102,14 @@
             }
             else
             {
-                if (party.Items.Count >= Party.MaxItems)
+                var selectedMember = party.AddItem(new ItemInstance(this.State.Item));
+                if (selectedMember == null)
                 {
                     new TalkWindow(this._ui).Show($"You do not have enough space in your inventory for {this.State.Item.Name}", Done);
                     return true;
                 }
 
-                new TalkWindow(this._ui).Show($"You found a {this.State.Item.Name}", Done);
-                party.Items.Add(new ItemInstance(this.State.Item));
+                new TalkWindow(this._ui).Show($"{selectedMember.Name} found a {this.State.Item.Name}", Done);
             }
             this.GameState.Sounds.PlaySoundEffect("treasure");
             this.IsOpen = true;

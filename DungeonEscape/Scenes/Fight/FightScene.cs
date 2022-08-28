@@ -251,7 +251,7 @@
                 options.Add("Spell");
             }
             
-            var availableItems = this._game.Party.Items.Where(item => item.Type == ItemType.OneUse).ToList();
+            var availableItems = hero.Items.Where(item => item.Type == ItemType.OneUse).ToList();
             if (availableItems.Count != 0)
             {
                 options.Add("Item");
@@ -583,12 +583,12 @@
                         if (target != action.Source)
                         {
                             message += $"{action.Source.Name} Uses {action.Item.Name} on {target.Name}";
-                            UseItem(target, action.Item, this._game.Party);
+                            UseItem(action.Source, target, action.Item, this._game.Party);
                         }
                         else
                         {
                             message += $"{action.Source.Name} Uses {action.Item.Name}";
-                            UseItem(target, action.Item, this._game.Party);
+                            UseItem(action.Source, target, action.Item, this._game.Party);
                         }
                     }
 
@@ -688,7 +688,7 @@
             return (message, endFight);
         }
 
-        private static void UseItem(IFighter hero, ItemInstance item, Party party)
+        private static void UseItem(IFighter source, IFighter hero, ItemInstance item, Party party)
         {
             if (hero == null)
             {
@@ -699,17 +699,12 @@
             {
                 case ItemType.OneUse:
                     hero.Use(item);
-                    party.Items.Remove(item);
+                    source.Items.Remove(item);
                     break;
                 case ItemType.Armor:
                 case ItemType.Weapon:
-                    item.UnEquip(party.Members);
-                    hero.Equip(item);
-                    break;
                 case ItemType.Key:
-                    break;
                 case ItemType.Gold:
-                    break;
                 case ItemType.Unknown:
                     break;
                 default:

@@ -351,12 +351,12 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             if (this._showCommandWindowInput.IsReleased)
             {
                 var menuItems = new List<string> {"Status"};
-                if (this._gameState.Party.Members.Count(member => member.GetSpells(this._gameState.Spells).Count() != 0) != 0)
+                if (_gameState.Party.Members.Any(member => member.GetSpells(this._gameState.Spells).Count() != 0))
                 {
                     menuItems.Add("Spells");
                 }
 
-                if (this._gameState.Party.Items.Count != 0)
+                if (this._gameState.Party.Members.Any(i => i.Items.Count != 0))
                 {
                     menuItems.Add("Items");
                 }
@@ -420,7 +420,8 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             if (this._gameState.Party.Members.Count == 1)
             {
                 var statusWindow = new HeroStatusWindow(this._ui);
-                statusWindow.Show(this._gameState.Party.Members.First(), done, this._gameState.Party.Items);
+                var hero = this._gameState.Party.Members.First();
+                statusWindow.Show(hero, done);
             }
             else
             {
@@ -433,7 +434,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                         return;
                     }
                     var statusWindow = new HeroStatusWindow(this._ui);
-                    statusWindow.Show(hero, done, this._gameState.Party.Items);
+                    statusWindow.Show(hero, done);
                 });
             }
         }
@@ -524,38 +525,74 @@ namespace Redpoint.DungeonEscape.Scenes.Map
 
         private void ShowItems(Action done)
         {
-            if (this._gameState.Party.Items.Count == 0)
+            if (this._gameState.Party.Members.All(i => i.Items.Count == 0))
             {
                 new TalkWindow(this._ui).Show("The party has no items", done);
             }
             else
             {
-                var inventoryWindow = new InventoryWindow(this._ui, this._gameState.Party.Members);
-                inventoryWindow.Show(this._gameState.Party.Items, item =>
+                void SelectItems(Hero selectedHero)
                 {
-                    if (item == null)
+                    if (selectedHero == null)
                     {
                         done();
                         return;
                     }
                     
-                    var menuItems = new List<string>();
-                    if (this._gameState.Party.Members.Count(hero => hero.CanUseItem(item)) != 0)
+                    var inventoryWindow = new InventoryWindow(this._ui, this._gameState.Party.Members);
+                    inventoryWindow.Show(selectedHero.Items, item =>
                     {
-                        menuItems.Add(item.IsEquippable ? "Equip" : "Use");
-                    }
-                    menuItems.Add("Drop");
-                    
-                    var selectWindow = new SelectWindow<string>(this._ui, "Select", new Point(20, 20));
-                    selectWindow.Show(menuItems, action =>
-                    {
-                        switch (action)
+                        if (item == null)
                         {
-                            case "Equip":
-                            case "Use":
-                                if (this._gameState.Party.Members.Count == 1)
+                            done();
+                            return;
+                        }
+
+                        var menuItems = new List<string>();
+                        if (_gameState.Party.Members.Any(hero => hero.CanUseItem(item)))
+                        {
+                            menuItems.Add(item.IsEquippable ? "Equip" : "Use");
+                        }
+                        
+                        if (this._gameState.Party.Members.Count != 1 && this._gameState.Party.Members.Any(hero => hero.Items.Count < Party.MaxItems && hero != selectedHero) )
+                        {
+                            menuItems.Add("Transfer");
+                        }
+
+                        menuItems.Add("Drop");
+                        
+                        var selectWindow = new SelectWindow<string>(this._ui, "Select", new Point(20, 20));
+                        selectWindow.Show(menuItems, action =>
+                        {
+                            switch (action)
+                            {
+                                case "Transfer":
                                 {
-                                    var result = UseItem(this._gameState.Party.Members.First(), item, this._gameState.Party);
+                                    var selectHero = new SelectHeroWindow(this._ui);
+                                    selectHero.Show(this._gameState.Party.Members.Where(hero => hero.Items.Count < Party.MaxItems && hero != selectedHero),
+                                        hero =>
+                                        {
+                                            if (hero == null)
+                                            {
+                                                done();
+                                                return;
+                                            }
+                                            if (item.IsEquipped)
+                                            {
+                                                item.UnEquip(this._gameState.Party.Members);
+                                            }
+                                            
+                                            selectedHero.Items.Remove(item);
+                                            hero.Items.Add(item);
+                                            
+                                            new TalkWindow(this._ui).Show($"{selectedHero.Name} gave {item.Name} {hero.Name}", done);
+                                            
+                                        });
+                                    break;
+                                }
+                                case "Equip":
+                                {
+                                    var result = UseItem(selectedHero, selectedHero, item, this._gameState.Party);
                                     if (string.IsNullOrEmpty(result))
                                     {
                                         done();
@@ -564,73 +601,103 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                                     {
                                         new TalkWindow(this._ui).Show(result, done);
                                     }
+                                    break;
                                 }
-                                else
-                                {
-                                    var selectHero = new SelectHeroWindow(this._ui);
-                                    selectHero.Show(this._gameState.Party.Members.Where(hero => hero.CanUseItem(item)),
-                                        hero =>
+                                case "Use":
+                                    if (this._gameState.Party.Members.Count == 1)
+                                    {
+                                        var result = UseItem(selectedHero,this._gameState.Party.Members.First(), item, this._gameState.Party);
+                                        if (string.IsNullOrEmpty(result))
                                         {
-                                            if (hero == null)
+                                            done();
+                                        }
+                                        else
+                                        {
+                                            new TalkWindow(this._ui).Show(result, done);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var selectHero = new SelectHeroWindow(this._ui);
+                                        selectHero.Show(this._gameState.Party.Members.Where(hero => hero.CanUseItem(item)),
+                                            hero =>
                                             {
-                                                done();
-                                                return;
-                                            }
-                                        
-                                            var result = UseItem(hero, item, this._gameState.Party);
-                                            if (string.IsNullOrEmpty(result))
-                                            {
-                                                done();
-                                            }
-                                            else
-                                            {
-                                                new TalkWindow(this._ui).Show(result, done);
-                                            }
-                                        });
-                                }
-                                break;
-                            case "Drop":
-                            {
-                                if (item.IsEquipped)
-                                {
-                                    item.UnEquip(this._gameState.Party.Members);
-                                }
+                                                if (hero == null)
+                                                {
+                                                    done();
+                                                    return;
+                                                }
 
-                                this._gameState.Party.Items.Remove(item);
-                                new TalkWindow(this._ui).Show($"You dropped {item.Name}", done);
-                                break;
+                                                var result = UseItem(selectedHero,hero, item, this._gameState.Party);
+                                                if (string.IsNullOrEmpty(result))
+                                                {
+                                                    done();
+                                                }
+                                                else
+                                                {
+                                                    new TalkWindow(this._ui).Show(result, done);
+                                                }
+                                            });
+                                    }
+
+                                    break;
+                                case "Drop":
+                                {
+                                    if (item.IsEquipped)
+                                    {
+                                        item.UnEquip(this._gameState.Party.Members);
+                                    }
+
+                                    selectedHero.Items.Remove(item);
+                                    new TalkWindow(this._ui).Show($"{selectedHero.Name} dropped {item.Name}", done);
+                                    break;
+                                }
+                                default:
+                                    done();
+                                    break;
                             }
-                            default:
-                                done();
-                                break;
-                        }
+                        });
                     });
-                });
+                }
+                
+                if (_gameState.Party.Members.Count == 1)
+                {
+                    var hero = _gameState.Party.Members.First();
+                    SelectItems(hero);
+                }
+                else
+                {
+                    var selectHero = new SelectHeroWindow(this._ui);
+                    selectHero.Show(this._gameState.Party.Members.Where(hero => hero.Items.Count != 0 && !hero.IsDead),
+                        SelectItems
+                    );
+                }
             }
         }
         
-        private static string UseItem(IFighter hero, ItemInstance item, Party party)
+        private static string UseItem(IFighter source, IFighter target, ItemInstance item, Party party)
         {
             // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
             switch (item.Type)
             {
                 case ItemType.OneUse:
-                    hero.Use(item);
-                    party.Items.Remove(item);
-                    return  $"{hero.Name} used {item.Name}";
+                    target.Use(item);
+                    source.Items.Remove(item);
+                    return source != target ? $"{source.Name} used {item.Name} on {target.Name}" : $"{source.Name} used {item.Name}";
+                    
                 case ItemType.Armor:
                 case ItemType.Weapon:
-                    var oldItems = party.Items.Where(i => hero.GetEquipmentId(item.Slots).Contains(i.Id)).ToList();
+                    var oldItems = target.Items.Where(i => target.GetEquipmentId(item.Slots).Contains(i.Id)).ToList();
                     foreach (var oldItem in oldItems)
                     {
                         oldItem.UnEquip(party.Members);
                     }
                     
                     item.UnEquip(party.Members);
-                    hero.Equip(item);
+                    target.Equip(item);
                     if (oldItems.Count == 0)
                     {
-                        return $"{hero.Name} put on the {item.Name}";
+                        return $"{target.Name} put on the {item.Name}";
                     }
 
                     var itemList = "";
@@ -646,10 +713,10 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                         }
                     }
                     
-                    return  $"{hero.Name} took off{itemList}, and put on the {item.Name}";
+                    return  $"{target.Name} took off{itemList}, and put on the {item.Name}";
                     
                 default:
-                    return $"{hero.Name} is unable to use {item.Name}";
+                    return $"{target.Name} is unable to use {item.Name}";
             }
         }
     }

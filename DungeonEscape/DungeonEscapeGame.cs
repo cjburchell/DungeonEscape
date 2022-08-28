@@ -90,11 +90,11 @@
             this.Party = saveGame.Party;
             this.MapStates = saveGame.MapStates;
             var tileSet = LoadTileSet("Content/items.tsx");
-            foreach (var partyItem in this.Party.Items)
+            foreach (var partyItem in this.Party.Members.SelectMany(partyMember => partyMember.Items))
             {
                 partyItem.Item.Setup(tileSet);
             }
-
+            
             this.InGame = true;
             this.SetMap(this.Party.SavedMapId, null, this.Party.SavedPoint);
         }

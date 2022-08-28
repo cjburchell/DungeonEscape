@@ -17,6 +17,7 @@
         IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells);
 
         List<StatusEffect> Status { get; }
+        List<ItemInstance> Items { get; }
         void AddEffect(StatusEffect effect);
         void RemoveEffect(StatusEffect effect);
         void Use(ItemInstance item);

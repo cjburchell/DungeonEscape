@@ -91,7 +91,8 @@
                                 return;
                             }
                         
-                            if (this.GameState.Party.Items.Count >= Party.MaxItems)
+                            var selectedMember = party.Members.FirstOrDefault(partyMember => partyMember.Items.Count < Party.MaxItems);
+                            if (selectedMember == null)
                             {
                                 new TalkWindow(this._ui).Show($"You do not have enough space in your inventory for {item.Name}", Done);
                             }
@@ -99,8 +100,8 @@
                             {
                                 if (this.GameState.Party.Gold >= item.Cost)
                                 {
-                                    new TalkWindow(this._ui).Show($"You got the {item.Name}", Done);
-                                    this.GameState.Party.Items.Add(new ItemInstance(item));
+                                    new TalkWindow(this._ui).Show($"{selectedMember.Name} got the {item.Name}", Done);
+                                    selectedMember.Items.Add(new ItemInstance(item));
                                     this.GameState.Party.Gold -= item.Cost;
                                     this.SpriteState.Items.Remove(item);
                                 }
@@ -112,45 +113,50 @@
                         });
                         break;
                     }
-                    case StoreAction.Sell when this.GameState.Party.Items.Count == 0:
+                    case StoreAction.Sell when party.Members.All(partyMember => partyMember.Items.Count == 0):
                         new TalkWindow(this._ui).Show("You do not have any items that I would like to buy.", Done);
                         return;
                     case StoreAction.Sell:
                     {
-                        var inventoryWindow = new SellPartyItemsWindow(this._ui, party.Members);
-                        inventoryWindow.Show(this.GameState.Party.Items.Where(i => i.Gold != 0), item =>
+                        var selectHero = new SelectHeroWindow(this._ui);
+                        selectHero.Show(this.GameState.Party.Members,
+                        hero =>
                         {
-                            if (item == null)
+                            var inventoryWindow = new SellPartyItemsWindow(this._ui, party.Members);
+                            inventoryWindow.Show(hero.Items.Where(i => i.Gold != 0), item =>
                             {
-                                Done();
-                                return;
-                            }
-
-                            var questionWindow = new QuestionWindow(this._ui);
-                            questionWindow.Show(
-                                $"You can sell the {item.Name} to me for {item.Gold * 3 / 4} gold",
-                                result =>
+                                if (item == null)
                                 {
-                                    if (!result)
-                                    {
-                                        this.GameState.IsPaused = false;
-                                        return;
-                                    }
-
-                                    this.GameState.Party.Gold += item.Gold * 3 / 4;
-                                    if (item.IsEquipped)
-                                    {
-                                        item.UnEquip(this.GameState.Party.Members);
-                                    }
-
-                                    this.GameState.Party.Items.Remove(item);
-                                    if (this.SpriteState.Items.Count <= MaxItems)
-                                    {
-                                        this.SpriteState.Items.Add(item.Item);
-                                    }
-                                    
                                     Done();
-                                });
+                                    return;
+                                }
+
+                                var questionWindow = new QuestionWindow(this._ui);
+                                questionWindow.Show(
+                                    $"You can sell the {item.Name} to me for {item.Gold * 3 / 4} gold",
+                                    result =>
+                                    {
+                                        if (!result)
+                                        {
+                                            this.GameState.IsPaused = false;
+                                            return;
+                                        }
+
+                                        this.GameState.Party.Gold += item.Gold * 3 / 4;
+                                        if (item.IsEquipped)
+                                        {
+                                            item.UnEquip(this.GameState.Party.Members);
+                                        }
+
+                                        hero.Items.Remove(item);
+                                        if (this.SpriteState.Items.Count <= MaxItems)
+                                        {
+                                            this.SpriteState.Items.Add(item.Item);
+                                        }
+
+                                        Done();
+                                    });
+                            });
                         });
                         break;
                     }

@@ -103,6 +103,40 @@
             };
             Skin.Add("orange_label", orangeLabelStyle);
             
+            
+            
+            
+            var commonItemLabelStyle = new LabelStyle
+            {
+                FontScale = FontScale,
+                Font = font
+            };
+            Skin.Add("common_label", commonItemLabelStyle);
+            
+            var uncommonLabelStyle = new LabelStyle
+            {
+                FontScale = FontScale,
+                Font = font,
+                FontColor = Color.Green
+            };
+            Skin.Add("uncommon_label", uncommonLabelStyle);
+            
+            var rareLabelStyle = new LabelStyle
+            {
+                FontScale = FontScale,
+                Font = font,
+                FontColor = Color.Blue
+            };
+            Skin.Add("rare_label", rareLabelStyle);
+            
+            var epicLabelStyle = new LabelStyle
+            {
+                FontScale = FontScale,
+                Font = font,
+                FontColor = Color.Purple
+            };
+            Skin.Add("epic_label", epicLabelStyle);
+            
             var textFieldStyle = Skin.Get<TextFieldStyle>();
             textFieldStyle.Font = font;
             textFieldStyle.Background =new BorderPrimitiveDrawable(Color.Black, Color.White, 1);

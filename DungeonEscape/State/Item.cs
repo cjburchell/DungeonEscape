@@ -54,9 +54,16 @@ namespace Redpoint.DungeonEscape.State
         };
 
 
-        public static Item CreateRandomItem(List<ItemDefinition> itemDefinitions, List<StatName> statNames, int maxLevel, int minLevel = 1, Rarity? rarity = null)
+        public static Item CreateRandomItem(IEnumerable<ItemDefinition> itemDefinitions, IEnumerable<Item> staticItems, List<StatName> statNames, int maxLevel, int minLevel = 1, Rarity? rarity = null)
         {
             maxLevel = Math.Max(maxLevel, 1);
+            if (Nez.Random.Chance(0.25f))
+            {
+                var staticItemsList = staticItems.ToList();
+                return staticItemsList.Where(i => i.Type == ItemType.OneUse && i.MinLevel < maxLevel).ToArray()[Nez.Random.NextInt(staticItemsList.Count(i => i.Type == ItemType.OneUse && i.MinLevel < maxLevel))];
+            }
+            
+            
             var itemRarity = Nez.Random.NextInt(100);
             rarity ??= itemRarity > 75
                 ? itemRarity > 90 ? itemRarity > 98 ? Rarity.Epic : Rarity.Rare : Rarity.Uncommon
@@ -75,13 +82,14 @@ namespace Redpoint.DungeonEscape.State
 
             List<StatType> availableStats;
             ItemDefinition itemDefinition;
+            var definitions = itemDefinitions.ToList();
             switch (type)
             {
                 case ItemType.Weapon:
                 {
                     availableStats = new List<StatType>
                         {StatType.Agility, StatType.Attack, StatType.Health, StatType.Magic};
-                    itemDefinition = itemDefinitions.FindAll(i => i.Type == ItemType.Weapon).ToArray()[Nez.Random.NextInt(itemDefinitions.Count(i => i.Type == ItemType.Weapon))];
+                    itemDefinition = definitions.Where(i => i.Type == ItemType.Weapon).ToArray()[Nez.Random.NextInt(definitions.Count(i => i.Type == ItemType.Weapon))];
                     item.MinLevel = Nez.Random.NextInt(maxLevel - minLevel) + minLevel;
                     item.Stats.Add(new StatValue
                     {
@@ -95,7 +103,7 @@ namespace Redpoint.DungeonEscape.State
                 {
                     availableStats = new List<StatType>
                         {StatType.Agility, StatType.Defence, StatType.Health, StatType.Magic};
-                    itemDefinition = itemDefinitions.FindAll(i => i.Type == ItemType.Armor).ToArray()[Nez.Random.NextInt(itemDefinitions.Count(i => i.Type == ItemType.Armor))];
+                    itemDefinition = definitions.Where(i => i.Type == ItemType.Armor).ToArray()[Nez.Random.NextInt(definitions.Count(i => i.Type == ItemType.Armor))];
                     item.MinLevel = Nez.Random.NextInt(maxLevel - minLevel) + minLevel;
                     item.Stats.Add(new StatValue
                     {

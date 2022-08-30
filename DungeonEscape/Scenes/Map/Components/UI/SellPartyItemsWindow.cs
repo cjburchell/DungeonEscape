@@ -31,8 +31,17 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
                 }
             }
             
+            var style = item.Rarity switch
+            {
+                Rarity.Uncommon => "uncommon_label",
+                Rarity.Rare => "rare_label",
+                Rarity.Epic => "epic_label",
+                Rarity.Common => "common_label",
+                _ => null
+            };
+            
             var equip = new Label(equipSymbol, Skin).SetAlignment(Align.Left);
-            var itemName = new Label(item.Name, Skin).SetAlignment(Align.Left);
+            var itemName = new Label(item.Name, Skin, style).SetAlignment(Align.Left);
             var cost = new Label($"{item.Gold * 3 / 4}", Skin).SetAlignment(Align.Right);
             table.Add(image).Width(32);
             table.Add(itemName).Width(500);

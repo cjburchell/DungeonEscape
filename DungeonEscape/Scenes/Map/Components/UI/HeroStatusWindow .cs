@@ -100,8 +100,16 @@
                 if (item != null)
                 {
                     var image = new Image(item.Image).SetAlignment(Align.Left);
-                    this._itemTable.Add(image).Width(32);
-                    this._itemTable.Add(new Label($"{item.Name}", Skin).SetAlignment(Align.Left)).Width(itemColumnWidth);
+                    this._itemTable.Add(image).Width(48);
+                    var style = item.Rarity switch
+                    {
+                        Rarity.Uncommon => "uncommon_label",
+                        Rarity.Rare => "rare_label",
+                        Rarity.Epic => "epic_label",
+                        Rarity.Common => "common_label",
+                        _ => null
+                    };
+                    this._itemTable.Add(new Label($"{item.Name}", Skin, style).SetAlignment(Align.Left)).Width(itemColumnWidth);
                 }
 
                 this._itemTable.Row();

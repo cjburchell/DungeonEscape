@@ -15,8 +15,8 @@
         private readonly UiSystem _ui;
         private readonly string _text;
         private readonly bool _willBuyItems;
-        private const int MaxItems = 10;
-        private const int MinItems = 5;
+        private const int MaxItems = 15;
+        private const int MinItems = 10;
 
         public Store(TmxObject tmxObject, SpriteState state, TmxMap map, IGame gameState, AstarGridGraph graph,
             UiSystem ui) : base(
@@ -41,7 +41,7 @@
                 var missing = MinItems - this.SpriteState.Items.Count;
                 for (var i = 0; i < missing; i++)
                 {
-                    var item = Item.CreateRandomItem(this.GameState.ItemDefinitions, this.GameState.StatNames, level);
+                    var item = Item.CreateRandomItem(this.GameState.ItemDefinitions, this.GameState.CustomItems, this.GameState.StatNames, level);
                     this.SpriteState.Items.Add(item);
                 }
 

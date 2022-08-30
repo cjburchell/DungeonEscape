@@ -500,7 +500,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             else
             {
                 var selectWindow = new SelectHeroWindow(this._ui);
-                selectWindow.Show(this._gameState.Party.AliveMembers.Where(item => item.GetSpells(_gameState.Spells).Any()), hero =>
+                selectWindow.Show(this._gameState.Party.AliveMembers.Where(item => item.GetSpells(_gameState.Spells).Any(spell => spell.IsNonEncounterSpell)), hero =>
                 {
                     if (hero == null)
                     {

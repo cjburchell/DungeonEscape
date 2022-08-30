@@ -15,9 +15,19 @@
         {
             var table = new Table();
             var image = new Image(item.Image).SetAlignment(Align.Left);
-            var itemName = new Label(item.Name, Skin).SetAlignment(Align.Left);
+            
+            var style = item.Rarity switch
+            {
+                Rarity.Uncommon => "uncommon_label",
+                Rarity.Rare => "rare_label",
+                Rarity.Epic => "epic_label",
+                Rarity.Common => "common_label",
+                _ => null
+            };
+            
+            var itemName = new Label(item.Name, Skin, style).SetAlignment(Align.Left);
             var cost = new Label($"{item.Cost}", Skin).SetAlignment(Align.Right);
-            table.Add(image).Width(32);
+            table.Add(image).Width(48);
             table.Add(itemName).Width(500);
             table.Add(cost).Width(30);
 

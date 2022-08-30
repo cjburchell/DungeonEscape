@@ -27,6 +27,9 @@ namespace Redpoint.DungeonEscape.State
 
         [JsonIgnore]
         public Nez.Textures.Sprite Image => this.Item.Image;
+        
+        [JsonIgnore]
+        public Rarity Rarity => this.Item.Rarity;
 
         [JsonIgnore]
         public int MinLevel => this.Item.MinLevel;

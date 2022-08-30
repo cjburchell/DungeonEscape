@@ -222,6 +222,11 @@ namespace Redpoint.DungeonEscape.State
             {
                 this.Health = this.MaxHealth;
             }
+            this.Magic += item.Magic;
+            if (this.Magic > this.MaxMagic)
+            {
+                this.Magic = this.MaxMagic;
+            }
         }
     }
 }

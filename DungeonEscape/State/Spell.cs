@@ -43,7 +43,7 @@ namespace Redpoint.DungeonEscape.State
         {
             gameState.Sounds.PlaySoundEffect("spell", true);
             var message = $"{caster.Name} casts {this.Name}\n";
-            foreach (var target in targets)
+            foreach (var target in targets.Where(i=> !i.IsDead && !i.RanAway ))
             {
                 if (target.Status.Count == 0)
                 {
@@ -66,7 +66,7 @@ namespace Redpoint.DungeonEscape.State
         {
             gameState.Sounds.PlaySoundEffect("spell", true);
             var message = $"{caster.Name} casts {this.Name}\n";
-            foreach (var target in targets)
+            foreach (var target in targets.Where(i=> !i.IsDead && !i.RanAway ))
             {
                 var buff = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
                 if (buff == 0)
@@ -97,7 +97,7 @@ namespace Redpoint.DungeonEscape.State
         {
             gameState.Sounds.PlaySoundEffect("spell", true);
             var message = $"{caster.Name} casts {this.Name}\n";
-            foreach (var target in targets)
+            foreach (var target in targets.Where(i=> !i.IsDead && !i.RanAway ))
             {
                 target.AddEffect(new StatusEffect
                 {
@@ -118,7 +118,7 @@ namespace Redpoint.DungeonEscape.State
         {
             gameState.Sounds.PlaySoundEffect("spell", true);
             var message = $"{caster.Name} casts {this.Name}\n";
-            foreach (var target in targets)
+            foreach (var target in targets.Where(i=> !i.IsDead && !i.RanAway ))
             {
                 target.AddEffect(new StatusEffect
                 {
@@ -139,7 +139,7 @@ namespace Redpoint.DungeonEscape.State
         {
             gameState.Sounds.PlaySoundEffect("spell", true);
             var message = $"{caster.Name} casts {this.Name}\n";
-            foreach (var target in targets)
+            foreach (var target in targets.Where(i=> !i.IsDead && !i.RanAway ))
             {
                 target.AddEffect(new StatusEffect
                 {
@@ -160,7 +160,7 @@ namespace Redpoint.DungeonEscape.State
         {
             gameState.Sounds.PlaySoundEffect("spell", true);
             var message = $"{caster.Name} casts {this.Name}\n";
-            foreach (var target in targets)
+            foreach (var target in targets.Where(i=> !i.IsDead && !i.RanAway ))
             {
                 var buff = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
                 if (buff == 0)
@@ -193,7 +193,7 @@ namespace Redpoint.DungeonEscape.State
             gameState.Sounds.PlaySoundEffect("spell", true);
             var message = $"{caster.Name} casts {this.Name}\n";
             var totalDamage = 0;
-            foreach (var target in targets)
+            foreach (var target in targets.Where(i=> !i.IsDead && !i.RanAway ))
             {
                 var damage = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
                 totalDamage += damage;
@@ -223,7 +223,7 @@ namespace Redpoint.DungeonEscape.State
         {
             gameState.Sounds.PlaySoundEffect("spell");
             var message = $"{caster.Name} casts {this.Name}\n";
-            foreach (var target in targets.Where(item => everyone || !item.IsDead))
+            foreach (var target in targets.Where(item => (everyone || !item.IsDead) && !item.RanAway))
             {
                 var oldHeath = target.Health;
                 if (this.StatRandom != 0)

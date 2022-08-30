@@ -56,7 +56,7 @@
 
             if (Random.Chance(0.25f))
             {
-                this.State.Item =  Item.CreateRandomItem(this.GameState.ItemDefinitions, this.GameState.StatNames, this._level);
+                this.State.Item =  Item.CreateRandomItem(this.GameState.ItemDefinitions, this.GameState.CustomItems, this.GameState.StatNames, this._level);
                 return;
             }
             

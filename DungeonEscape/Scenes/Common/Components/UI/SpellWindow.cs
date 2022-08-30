@@ -15,11 +15,11 @@
         {
         }
         
-        protected override Button CreateButton(Spell item)
+        protected override Button CreateButton(Spell spell)
         {
             var table = new Table();
-            var image = new Image(item.Image).SetAlignment(Align.Left);
-            var itemName = new Label(item.Name, Skin).SetAlignment(Align.Left);
+            var image = new Image(spell.Image).SetAlignment(Align.Left);
+            var itemName = new Label(spell.Name, Skin).SetAlignment(Align.Left);
             table.Add(image).Width(32);
             table.Add(itemName).Width(100);
             var button = new Button(Skin, "no_border");

@@ -606,12 +606,12 @@
                         if (target != action.Source)
                         {
                             message += $"{action.Source.Name} Uses {action.Item.Name} on {target.Name}";
-                            UseItem(action.Source, target, action.Item, this._game.Party);
+                            UseItem(action.Source, target, action.Item);
                         }
                         else
                         {
                             message += $"{action.Source.Name} Uses {action.Item.Name}";
-                            UseItem(action.Source, target, action.Item, this._game.Party);
+                            UseItem(action.Source, target, action.Item);
                         }
                     }
 
@@ -711,7 +711,7 @@
             return (message, endFight);
         }
 
-        private static void UseItem(IFighter source, IFighter hero, ItemInstance item, Party party)
+        private static void UseItem(IFighter source, IFighter hero, ItemInstance item)
         {
             if (hero == null)
             {

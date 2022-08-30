@@ -96,7 +96,7 @@ namespace Redpoint.DungeonEscape.State
             
             var oldLevel = this.Level;
             this.Level++;
-            this.NextLevel = CalculateNextLevel(oldLevel, this.Xp);
+            this.NextLevel = CalculateNextLevel(oldLevel, this.NextLevel);
 
             levelUpMessage = $"{this.Name} has advanced to level {this.Level}\n";
             

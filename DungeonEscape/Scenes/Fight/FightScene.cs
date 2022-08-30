@@ -46,10 +46,11 @@
         
         private readonly IGame _game;
         private readonly Biome _biome;
-        private readonly List<MonsterInstance> _monsters = new List<MonsterInstance>();
+        private readonly List<MonsterInstance> _monsters = new();
+        private IEnumerable<MonsterInstance> AliveMonsters => this._monsters.Where(item => !item.IsDead && !item.RanAway);
         private UiSystem _ui;
         private EncounterRoundState _state = EncounterRoundState.Begin;
-        private readonly List<RoundAction> _roundActions = new List<RoundAction>();
+        private readonly List<RoundAction> _roundActions = new();
         private List<Hero> _heroes;
         private int _round;
 
@@ -170,7 +171,7 @@
             this._round++;
             this._roundActions.Clear();
             this._heroes = this._game.Party.AliveMembers.ToList();
-            foreach (var monster in this._monsters.Where(item=> !item.IsDead && !item.RanAway))
+            foreach (var monster in this.AliveMonsters)
             {
                 var action = this.ChooseAction(monster);
                 this._roundActions.Add(action);
@@ -210,8 +211,8 @@
 
         private void EndRound()
         {
-            if (this._game.Party.Members.Count(CanBeAttacked) != 0 &&
-                this._monsters.Count(CanBeAttacked) != 0)
+            if (_game.Party.Members.Any(CanBeAttacked) &&
+                AliveMonsters.Any())
             {
                 this._state = EncounterRoundState.StartRound;
                 return;
@@ -373,9 +374,17 @@
                 {
                     if (spell.Targets == Target.Single)
                     {
+                        if (this.AliveMonsters.Count() == 1)
+                        {
+                            var monster = this.AliveMonsters.First();
+                            newAction.Targets = new[] {monster};
+                            done(newAction);
+                            return;
+                        }
+                        
                         var selectTarget = new SelectWindow<MonsterInstance>(this._ui, "SelectMonster",
                             new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
-                        selectTarget.Show(this._monsters.Where(item => !item.IsDead), monster =>
+                        selectTarget.Show(this.AliveMonsters, monster =>
                         {
                             if (monster == null)
                             {
@@ -389,7 +398,7 @@
                         return;
                     }
 
-                    newAction.Targets = this._monsters.Where(item => !item.IsDead);
+                    newAction.Targets = this.AliveMonsters;
                     done(newAction);
                     return;
 
@@ -427,9 +436,23 @@
 
         private void ChooseFight(IFighter hero, Action<RoundAction> done)
         {
+            if (this.AliveMonsters.Count() == 1)
+            {
+                var monster = this.AliveMonsters.First();
+                var newAction = new RoundAction
+                {
+                    Source = hero,
+                    State = RoundActionState.Fight,
+                    Targets = new []{monster}
+                };
+
+                done(newAction);
+                return;
+            }
+
             var selectTarget = new SelectWindow<MonsterInstance>(this._ui, "SelectMonster",
                 new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
-            selectTarget.Show(this._monsters.Where(item => !item.IsDead), monster =>
+            selectTarget.Show(this.AliveMonsters, monster =>
             {
                 if (monster == null)
                 {
@@ -462,7 +485,7 @@
             var availableTargets = this._game.Party.Members.OfType<IFighter>().Where(CanBeAttacked).ToList();
             if (fighter.Status.Count(i => i.Type == EffectType.Confusion) != 0)
             {
-                availableTargets.AddRange(this._monsters.Where(CanBeAttacked));
+                availableTargets.AddRange(this.AliveMonsters);
             }
 
             var target = availableTargets.ToArray()[Random.NextInt(availableTargets.Count)];
@@ -733,7 +756,7 @@
                 var gold = this._monsters.Where(monster=> monster.IsDead).Sum(monster => monster.Gold);
                 this._game.Party.Gold += gold;
 
-                var monsterName = this._monsters.Count == 1 ?$"the {this._monsters.First().Name}"  : "all the enemies";
+                var monsterName = this._monsters.Count(i => i.IsDead) == 1 ?$"the {this._monsters.First(i => i.IsDead).Name}"  : "all the enemies";
                 var levelUpMessage =$"You have defeated {monsterName},\nEach party member has gained {xp}XP\nand the party got {gold} gold\n";
                 var leveledUp = false;
                 foreach (var member in this._game.Party.AliveMembers)

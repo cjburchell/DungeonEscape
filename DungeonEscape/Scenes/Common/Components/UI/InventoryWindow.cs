@@ -28,8 +28,7 @@ namespace Redpoint.DungeonEscape.Scenes.Common.Components.UI
             var equipSymbol = string.Empty;
             if (item.IsEquipped)
             {
-                var equippedHero = this._heroes.FirstOrDefault(hero => hero.Id == item.EquippedTo);
-                if (equippedHero != null)
+                if (this._heroes.Any(hero => hero.Id == item.EquippedTo))
                 {
                     equipSymbol = "(E)";
                 }
@@ -45,7 +44,7 @@ namespace Redpoint.DungeonEscape.Scenes.Common.Components.UI
             };
 
             var equip = new Label(equipSymbol, Skin).SetAlignment(Align.Left);
-            var itemName = new Label(item.Name, Skin, style).SetAlignment(Align.Left);
+            var itemName = new Label(item.NameWithStats, Skin, style).SetAlignment(Align.Left);
             table.Add(image).Width(48);
             table.Add(itemName).Width(500);
             table.Add(equip).Width(100);

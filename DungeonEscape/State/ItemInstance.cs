@@ -1,5 +1,6 @@
 ﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable MemberCanBePrivate.Global
+
 namespace Redpoint.DungeonEscape.State
 {
     using System;
@@ -43,29 +44,26 @@ namespace Redpoint.DungeonEscape.State
         [JsonIgnore]
         public string Name => this.Item.Name;
 
+        [JsonIgnore] public string NameWithStats => this.Item.NameWithStats;
+        
         [JsonIgnore]
         public int Gold => this.Item.Cost;
         
         [JsonIgnore]
-        public int Agility => this.GetAttribute(StatType.Agility);
+        public int Agility => this.Item.GetAttribute(StatType.Agility);
 
         [JsonIgnore]
-        public int Attack => this.GetAttribute(StatType.Attack);
+        public int Attack => this.Item.GetAttribute(StatType.Attack);
         
         [JsonIgnore]
-        public int Defence => this.GetAttribute(StatType.Defence);
+        public int Defence => this.Item.GetAttribute(StatType.Defence);
 
         [JsonIgnore]
-        public int Health => this.GetAttribute(StatType.Health);
+        public int Health => this.Item.GetAttribute(StatType.Health);
         
         [JsonIgnore]
-        public int Magic => this.GetAttribute(StatType.Magic);
+        public int Magic => this.Item.GetAttribute(StatType.Magic);
 
-        public int GetAttribute(StatType statType)
-        {
-            return this.Item.Stats.Where(i => i.Type == statType).Sum(stat => stat.Value);
-        }
-        
         [JsonIgnore] public IReadOnlyCollection<Class> Classes => this.Item.Classes;
         
         [JsonIgnore]

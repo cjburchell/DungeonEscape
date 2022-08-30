@@ -24,10 +24,9 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
             var equipSymbol = string.Empty;
             if (item.IsEquipped)
             {
-                var equippedHero = this._heroes.FirstOrDefault(hero => hero.Id == item.EquippedTo);
-                if (equippedHero != null)
+                if (_heroes.Any(hero => hero.Id == item.EquippedTo))
                 {
-                    equipSymbol = $"(E-{equippedHero.Name})";
+                    equipSymbol = "(E)";
                 }
             }
             
@@ -41,7 +40,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
             };
             
             var equip = new Label(equipSymbol, Skin).SetAlignment(Align.Left);
-            var itemName = new Label(item.Name, Skin, style).SetAlignment(Align.Left);
+            var itemName = new Label(item.NameWithStats, Skin, style).SetAlignment(Align.Left);
             var cost = new Label($"{item.Gold * 3 / 4}", Skin).SetAlignment(Align.Right);
             table.Add(image).Width(32);
             table.Add(itemName).Width(500);

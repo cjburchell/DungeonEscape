@@ -17,7 +17,7 @@
         private Table _itemTable;
 
         public HeroStatusWindow(UiSystem ui) : base(ui, null,
-            new Point(20, 20), 600, 300)
+            new Point(20, 20), 1000, 300)
         {
         }
 
@@ -84,7 +84,7 @@
             
             
             const int itemLabelColumnWidth = 125;
-            const int itemColumnWidth = 75;
+            const int itemColumnWidth = 500;
             this._itemTable.Row().SetPadTop(5);
             this._itemTable.Add(new Label("Equipment" , Skin).SetAlignment(Align.Left)).Width(itemLabelColumnWidth);
             this._itemTable.Row();
@@ -109,7 +109,7 @@
                         Rarity.Common => "common_label",
                         _ => null
                     };
-                    this._itemTable.Add(new Label($"{item.Name}", Skin, style).SetAlignment(Align.Left)).Width(itemColumnWidth);
+                    this._itemTable.Add(new Label($"{item.NameWithStats}", Skin, style).SetAlignment(Align.Left)).Width(itemColumnWidth);
                 }
 
                 this._itemTable.Row();

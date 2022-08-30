@@ -25,7 +25,7 @@
                 _ => null
             };
             
-            var itemName = new Label(item.Name, Skin, style).SetAlignment(Align.Left);
+            var itemName = new Label(item.NameWithStats, Skin, style).SetAlignment(Align.Left);
             var cost = new Label($"{item.Cost}", Skin).SetAlignment(Align.Right);
             table.Add(image).Width(48);
             table.Add(itemName).Width(500);

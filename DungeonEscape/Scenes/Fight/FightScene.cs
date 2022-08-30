@@ -29,7 +29,7 @@
             public RoundActionState State { get; init; }
             public Spell Spell { get; init; }
             public ItemInstance Item { get; init; }
-            public IEnumerable<IFighter> Targets { get; set; }
+            public List<IFighter> Targets { get; set; }
         }
 
         private enum EncounterRoundState
@@ -321,7 +321,7 @@
                     {
                         Source = hero,
                         State = RoundActionState.Item,
-                        Targets = new []{hero},
+                        Targets = new List<IFighter> { hero },
                         Item = item
                     };
 
@@ -343,7 +343,7 @@
                     {
                         Source = hero,
                         State = RoundActionState.Item,
-                        Targets = new []{target},
+                        Targets = new List<IFighter> { target },
                         Item = item
                     };
 
@@ -377,7 +377,7 @@
                         if (this.AliveMonsters.Count() == 1)
                         {
                             var monster = this.AliveMonsters.First();
-                            newAction.Targets = new[] {monster};
+                            newAction.Targets = new List<IFighter> { monster };
                             done(newAction);
                             return;
                         }
@@ -392,13 +392,13 @@
                                 return;
                             }
 
-                            newAction.Targets = new[] {monster};
+                            newAction.Targets = new List<IFighter> { monster };
                             done(newAction);
                         });
                         return;
                     }
 
-                    newAction.Targets = this.AliveMonsters;
+                    newAction.Targets = this.AliveMonsters.Cast<IFighter>().ToList();
                     done(newAction);
                     return;
 
@@ -408,7 +408,7 @@
                 {
                     if (this._game.Party.AliveMembers.Count() == 1)
                     {
-                        newAction.Targets = new[] {hero};
+                        newAction.Targets = new List<IFighter> { hero };
                         done(newAction);
                         return;
                     }
@@ -423,13 +423,13 @@
                             return;
                         }
 
-                        newAction.Targets = new[] {target};
+                        newAction.Targets = new List<IFighter> { target };
                         done(newAction);
                     });
                     return;
                 }
 
-                newAction.Targets = this._game.Party.AliveMembers;
+                newAction.Targets = this._game.Party.AliveMembers.Cast<IFighter>().ToList();
                 done(newAction);
             });
         }
@@ -443,7 +443,7 @@
                 {
                     Source = hero,
                     State = RoundActionState.Fight,
-                    Targets = new []{monster}
+                    Targets = new List<IFighter> { monster }
                 };
 
                 done(newAction);
@@ -464,7 +464,7 @@
                 {
                     Source = hero,
                     State = RoundActionState.Fight,
-                    Targets = new []{monster}
+                    Targets = new List<IFighter> { monster }
                 };
 
                 done(newAction);
@@ -518,7 +518,7 @@
                     var spell = attackSpells[Random.NextInt(attackSpells.Length)];
 
                     var targets = spell.Targets == Target.Group
-                        ? this._game.Party.Members.Where(CanBeAttacked).OfType<IFighter>()
+                        ? this._game.Party.Members.Where(CanBeAttacked).OfType<IFighter>().ToList()
                         : new List<IFighter>
                         {
                             target
@@ -539,10 +539,7 @@
             {
                 Source = fighter,
                 State = RoundActionState.Fight,
-                Targets = new[]
-                {
-                   target
-                }
+                Targets = new List<IFighter> { target }
             };
         }
 

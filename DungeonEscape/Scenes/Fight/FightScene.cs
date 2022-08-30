@@ -58,9 +58,20 @@
         {
             this._game = game;
             this._biome = biome;
-            foreach (var monster in monsters)
+            foreach (var monsterGroup in monsters.OrderBy(i => i.MinLevel).GroupBy(i => i.Id))
             {
-                this._monsters.Add(new MonsterInstance(monster));
+                var monsterId = 'A';
+                foreach (var monster  in monsterGroup)
+                {
+                    var instance = new MonsterInstance(monster);
+                    if (monsterGroup.Count() != 1)
+                    {
+                        instance.Name = $"{instance.Name} {monsterId}";
+                        monsterId++;
+                    }
+                    
+                    this._monsters.Add(instance);
+                }
             }
         }
         

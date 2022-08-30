@@ -458,6 +458,7 @@
             }
             
             const int maxMonstersToFight = 10;
+            const int maxMonsterGroups = 3;
             var maxMonsters = level / 4 + this._gameState.Party.AliveMembers.Count();
             if (maxMonsters > maxMonstersToFight)
             {
@@ -466,11 +467,39 @@
             
             var numberOfMonsters = Random.NextInt(maxMonsters) + 1;
             var monsters = new List<Monster>();
-            for (var i = 0; i < numberOfMonsters; i++)
+            var totalMonsters = 0;
+            var usedMonsters = new List<int>();
+            for (var group = 0; group < maxMonsterGroups-1; group++)
             {
-                var monsterNub = Random.NextInt(availableMonsters.Count);
-                monsters.Add(availableMonsters[monsterNub]);
+                var availableMonstersList = availableMonsters.Where(i => !usedMonsters.Contains(i.Id)).ToArray();
+                var monsterNub = Random.NextInt(availableMonstersList.Length);
+                var monster = availableMonstersList[monsterNub];
+                usedMonsters.Add(monster.Id);
+                var numberInGroup = Random.NextInt(Math.Min(numberOfMonsters-totalMonsters, monster.GroupSize))+1;
+                for (var i = 0; i < numberInGroup; i++)
+                {
+                    monsters.Add(monster);
+                }
+
+                totalMonsters += numberInGroup;
+                if (totalMonsters >= numberOfMonsters)
+                {
+                    break;
+                }
             }
+
+            if (totalMonsters < numberOfMonsters)
+            {
+                var availableMonstersList = availableMonsters.Where(i => !usedMonsters.Contains(i.Id)).ToArray();
+                var monsterNub = Random.NextInt(availableMonstersList.Length);
+                var monster = availableMonstersList[monsterNub];
+                var numberInGroup = Math.Min(numberOfMonsters-totalMonsters, monster.GroupSize);
+                for (var i = 0; i < numberInGroup; i++)
+                {
+                    monsters.Add(monster);
+                }
+            }
+            
             
             this._gameState.StartFight(monsters, currentBiome);
         }

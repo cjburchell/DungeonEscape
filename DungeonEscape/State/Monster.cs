@@ -58,6 +58,8 @@ namespace Redpoint.DungeonEscape.State
         public int MinLevel { get; set;}
         
         public int MagicConst { get; set;}
+        
+        public int GroupSize { get; set; }
 
         [JsonIgnore] public Texture2D Image { get; private set; }
         [JsonIgnore] public Texture2D Flash { get; private set; }

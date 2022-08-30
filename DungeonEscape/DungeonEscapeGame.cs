@@ -64,9 +64,13 @@
                     this._saveSlots.Add(save);
                 }
             }
-            
-            this.Party.SavedMapId = this.Party.CurrentMapId;
-            this.Party.SavedPoint = this.Party.CurrentPosition;
+
+            if (!isQuick)
+            {
+                this.Party.SavedMapId = this.Party.CurrentMapId;
+                this.Party.SavedPoint = this.Party.CurrentPosition;
+            }
+
             save.Party = this.Party;
             save.MapStates = this.MapStates;
             save.Time = DateTime.Now;
@@ -96,7 +100,7 @@
             }
             
             this.InGame = true;
-            this.SetMap(this.Party.SavedMapId, null, this.Party.SavedPoint);
+            this.SetMap(this.Party.CurrentMapId, null, this.Party.CurrentPosition);
         }
 
         public void ResumeGame()

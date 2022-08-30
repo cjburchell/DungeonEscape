@@ -136,7 +136,7 @@
     "Health": 1,
     "HealthConst": 1,
     "Attack": 1,
-    "Xp": 4140,
+    "Xp": 414,
     "Gold": 5,
     "Name": "Metal Slime",
     "Defence": 1023,
@@ -149,7 +149,7 @@
     "Health": 10,
     "HealthConst": 500,
     "Attack": 310,
-    "Xp": 4200,
+    "Xp": 420,
     "Gold": 150,
     "Spells": [
       6
@@ -252,7 +252,7 @@
     "Defence": 5,
     "Agility": 5,
     "Id": 19,
-    "MinLevel": 1,
+    "MinLevel": 10,
     "Magic": 5
   },
   {
@@ -265,14 +265,14 @@
     "Defence": 5,
     "Agility": 5,
     "Id": 20,
-    "MinLevel": 1,
+    "MinLevel": 15,
     "Magic": 5
   },
   {
     "Health": 8,
     "HealthConst": 100,
     "Attack": 100,
-    "Xp": 1750,
+    "Xp": 375,
     "Gold": 1000,
     "Spells": [
       6
@@ -281,33 +281,33 @@
     "Defence": 5,
     "Agility": 5,
     "Id": 21,
-    "MinLevel": 1,
+    "MinLevel": 20,
     "Magic": 5
   },
   {
     "Health": 64,
     "HealthConst": 0,
     "Attack": 300,
-    "Xp": 26000,
+    "Xp": 560,
     "Gold": 3000,
     "Name": "Kraken",
     "Defence": 5,
     "Agility": 5,
     "Id": 22,
-    "MinLevel": 1,
+    "MinLevel": 20,
     "Magic": 5
   },
   {
     "Health": 70,
     "HealthConst": 0,
     "Attack": 200,
-    "Xp": 57500,
+    "Xp": 575,
     "Gold": 4000,
     "Name": "Leviathan",
     "Defence": 5,
     "Agility": 5,
     "Id": 23,
-    "MinLevel": 1,
+    "MinLevel": 20,
     "Magic": 5
   },
   {
@@ -440,7 +440,7 @@
     "Defence": 5,
     "Agility": 5,
     "Id": 33,
-    "MinLevel": 1,
+    "MinLevel": 5,
     "Magic": 5
   },
   {
@@ -453,20 +453,20 @@
     "Defence": 5,
     "Agility": 5,
     "Id": 34,
-    "MinLevel": 1,
+    "MinLevel": 10,
     "Magic": 5
   },
   {
     "Health": 60,
     "HealthConst": 0,
     "Attack": 300,
-    "Xp": 35750,
+    "Xp": 700,
     "Gold": 3000,
     "Name": "Desert Leviathan",
     "Defence": 5,
     "Agility": 5,
     "Id": 35,
-    "MinLevel": 1,
+    "MinLevel": 20,
     "Magic": 5
   },
   {
@@ -479,7 +479,7 @@
     "Defence": 25,
     "Agility": 21,
     "Id": 36,
-    "MinLevel": 1,
+    "MinLevel": 10,
     "Magic": 0
   },
   {
@@ -492,7 +492,7 @@
     "Defence": 12,
     "Agility": 18,
     "Id": 37,
-    "MinLevel": 1,
+    "MinLevel": 10,
     "Magic": 5
   },
   {
@@ -570,7 +570,7 @@
     "Defence": 5,
     "Agility": 5,
     "Id": 43,
-    "MinLevel": 1,
+    "MinLevel": 5,
     "Magic": 5
   },
   {
@@ -583,7 +583,7 @@
     "Defence": 5,
     "Agility": 5,
     "Id": 44,
-    "MinLevel": 1,
+    "MinLevel": 5,
     "Magic": 5
   },
   {
@@ -596,7 +596,7 @@
     "Defence": 5,
     "Agility": 5,
     "Id": 45,
-    "MinLevel": 1,
+    "MinLevel": 10,
     "Magic": 5
   },
   {
@@ -612,7 +612,7 @@
     "Defence": 5,
     "Agility": 5,
     "Id": 46,
-    "MinLevel": 1,
+    "MinLevel": 20,
     "Magic": 5
   },
   {
@@ -625,7 +625,7 @@
     "Defence": 5,
     "Agility": 5,
     "Id": 47,
-    "MinLevel": 1,
+    "MinLevel": 10,
     "Magic": 5
   }
 ]

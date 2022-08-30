@@ -7,7 +7,7 @@
 
     public class BuyItemsWindow : SelectWindow<Item>
     {
-        public BuyItemsWindow(UiSystem ui) : base(ui, null, new Point(20, 20), 700)
+        public BuyItemsWindow(UiSystem ui) : base(ui, null, new Point(20, 20), 700, 48)
         {
         }
 

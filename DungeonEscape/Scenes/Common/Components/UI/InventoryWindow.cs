@@ -17,7 +17,7 @@ namespace Redpoint.DungeonEscape.Scenes.Common.Components.UI
             _heroes = heroes;
         }
         
-        public InventoryWindow(UiSystem ui, Point position) : base(ui, "Inventory", position, 650)
+        public InventoryWindow(UiSystem ui, Point position) : base(ui, "Inventory", position, 650, 48)
         {
         }
         

@@ -8,17 +8,19 @@
 
     public class SelectWindow<T> : BasicWindow where T : class
     {
+        private readonly int _buttonHeight;
         private Action<T> _done;
         private readonly ButtonList _list;
         private readonly ScrollPane _scrollPane;
         private IEnumerable<T> _items;
 
 
-        public SelectWindow(UiSystem ui, string title, Point position, int width = 180,
-            int height = 150) : base(ui, title, position, width, height)
+        public SelectWindow(UiSystem ui, string title, Point position, int width = 180, int buttonHeight = ButtonHeight)
+            : base(ui, title, position, width, 150)
         {
+            this._buttonHeight = buttonHeight;
             this._list = new ButtonList(ui.Sounds);
-            this._scrollPane = new ScrollPane(this._list, Skin) {FillParent = true};
+            this._scrollPane = new ScrollPane(this._list, Skin) { FillParent = true };
         }
 
         public override void CloseWindow(bool remove = true)
@@ -51,10 +53,10 @@
             {
                 var button = this.CreateButton(item);
                 button.UserData = item;
-                this._list.Add(button).Width(itemWidth - margin * 2).Height(ButtonHeight);
+                this._list.Add(button).Width(itemWidth - margin * 2).Height(this._buttonHeight);
             }
 
-            this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count * ButtonHeight, 400));
+            this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count * this._buttonHeight, 400));
             this._scrollPane.Validate();
         }
 

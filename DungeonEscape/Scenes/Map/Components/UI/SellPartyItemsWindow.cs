@@ -12,7 +12,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
     {
         private readonly List<Hero> _heroes;
 
-        public SellPartyItemsWindow(UiSystem ui, List<Hero> heroes) : base(ui, null, new Point(20, 20), 700)
+        public SellPartyItemsWindow(UiSystem ui, List<Hero> heroes) : base(ui, null, new Point(20, 20), 700, 48)
         {
             _heroes = heroes;
         }

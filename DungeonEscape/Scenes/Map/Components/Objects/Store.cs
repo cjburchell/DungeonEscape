@@ -36,7 +36,7 @@
             }
             else
             {
-                var level = this.GameState.Party.Members.Max(item => item.Level);
+                var level = this.GameState.Party.AliveMembers.Max(item => item.Level);
                 this.SpriteState.Items ??= new List<Item>();
                 var missing = MinItems - this.SpriteState.Items.Count;
                 for (var i = 0; i < missing; i++)
@@ -91,7 +91,7 @@
                                 return;
                             }
                         
-                            var selectedMember = party.Members.FirstOrDefault(partyMember => partyMember.Items.Count < Party.MaxItems);
+                            var selectedMember = party.AliveMembers.FirstOrDefault(partyMember => partyMember.Items.Count < Party.MaxItems);
                             if (selectedMember == null)
                             {
                                 new TalkWindow(this._ui).Show($"You do not have enough space in your inventory for {item.Name}", Done);
@@ -113,13 +113,13 @@
                         });
                         break;
                     }
-                    case StoreAction.Sell when party.Members.All(partyMember => partyMember.Items.Count == 0):
+                    case StoreAction.Sell when party.AliveMembers.All(partyMember => partyMember.Items.Count == 0):
                         new TalkWindow(this._ui).Show("You do not have any items that I would like to buy.", Done);
                         return;
                     case StoreAction.Sell:
                     {
                         var selectHero = new SelectHeroWindow(this._ui);
-                        selectHero.Show(this.GameState.Party.Members,
+                        selectHero.Show(this.GameState.Party.AliveMembers,
                         hero =>
                         {
                             var inventoryWindow = new SellPartyItemsWindow(this._ui, party.Members);

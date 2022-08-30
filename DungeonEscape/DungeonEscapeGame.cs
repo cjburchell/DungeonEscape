@@ -89,7 +89,7 @@
         {
             this.Party = saveGame.Party;
             this.MapStates = saveGame.MapStates;
-            var tileSet = LoadTileSet("Content/items.tsx");
+            var tileSet = LoadTileSet("Content/items2.tsx");
             foreach (var partyItem in this.Party.Members.SelectMany(partyMember => partyMember.Items))
             {
                 partyItem.Item.Setup(tileSet);
@@ -189,7 +189,7 @@
             this.StatNames = JsonConvert.DeserializeObject<List<StatName>>(File.ReadAllText("Content/data/statnames.json"));
             this.ItemDefinitions = JsonConvert.DeserializeObject<List<ItemDefinition>>(File.ReadAllText("Content/data/itemdef.json"));
             
-            var tileSet = LoadTileSet("Content/items.tsx");
+            var tileSet = LoadTileSet("Content/items2.tsx");
             var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/data/customitems.json"));
             if (items != null)
             {
@@ -200,13 +200,13 @@
                 }
             }
             
-            
+            var spellTiles = LoadTileSet("Content/items.tsx");
             var spells = JsonConvert.DeserializeObject<List<Spell>>(File.ReadAllText("Content/data/spells.json"));
             if (spells != null)
             {
                 foreach (var spell in spells)
                 {
-                    spell.Setup(tileSet);
+                    spell.Setup(spellTiles);
                     this.Spells.Add(spell);
                 }
             }

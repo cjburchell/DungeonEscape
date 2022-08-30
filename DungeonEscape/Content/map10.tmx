@@ -340,7 +340,7 @@ north</property>
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text">the strange old man
+    <property name="Text">The strange old man
 knows the way</property>
    </properties>
   </object>
@@ -365,21 +365,21 @@ the southern desert</property>
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="this is the walled city"/>
+    <property name="Text" value="This is the walled city"/>
    </properties>
   </object>
   <object id="20" name="npc" type="Npc" gid="18" x="1088" y="1088" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="garding the wall is fun"/>
+    <property name="Text" value="Garding the wall is fun"/>
    </properties>
   </object>
   <object id="21" name="npc" type="Npc" gid="18" x="1088" y="192" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text">do not under estmate the
+    <property name="Text">Do not under estmate the
 power of dragons</property>
    </properties>
   </object>

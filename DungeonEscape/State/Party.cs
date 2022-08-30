@@ -1,5 +1,7 @@
-﻿namespace Redpoint.DungeonEscape.State
+﻿
+namespace Redpoint.DungeonEscape.State
 {
+    using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.Xna.Framework;
@@ -15,6 +17,9 @@
         public bool HasShip { get; set; }
         public List<Hero> Members { get; } = new();
         
+        [JsonIgnore]
+        public IEnumerable<Hero> AliveMembers => this.Members.Where(member => !member.IsDead);
+
         // ReSharper disable once UnusedMember.Global
         public List<ActiveQuest> ActiveQuests { get; } = new();
         
@@ -28,7 +33,7 @@
 
         public ItemInstance GetItem(string itemId)
         {
-            return this.Members.Select(member => member.Items.FirstOrDefault(i => i.Id == itemId)).FirstOrDefault(item => item != null);
+            return this.AliveMembers.Select(member =>  member.Items.FirstOrDefault(i => i.Id == itemId)).FirstOrDefault(item => item != null);
         }
 
         public void RemoveItem(string itemId)
@@ -46,7 +51,7 @@
 
         public Hero AddItem(ItemInstance item)
         {
-            var selectedMember = this.Members.FirstOrDefault(partyMember => partyMember.Items.Count < MaxItems);
+            var selectedMember = this.AliveMembers.FirstOrDefault(partyMember => partyMember.Items.Count < MaxItems);
             if (selectedMember == null)
             {
                 return null;
@@ -58,14 +63,14 @@
 
         public bool CanOpenChest(int level)
         {
-            return this.Members.Any(item => item.Level >= level);
+            return this.AliveMembers.Any(item => item.Level >= level);
         }
         
         public bool CanOpenDoor(int doorLevel)
         {
             ItemInstance key = null;
             Hero itemMember = null;
-            foreach (var member in Members)
+            foreach (var member in AliveMembers)
             {
                 key = member.Items.FirstOrDefault(item => item.Type == ItemType.Key && item.MinLevel == doorLevel);
                 if (key != null)

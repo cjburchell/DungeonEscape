@@ -7,7 +7,7 @@
     "Attack": 0,
     "Agility": 0,
     "Cost": 16,
-    "ImageId": 144,
+    "ImageId": 923,
     "Id": 1,
     "MinLevel": 0
   },
@@ -19,43 +19,43 @@
     "Attack": 0,
     "Agility": 0,
     "Cost": 100,
-    "ImageId": 308,
+    "ImageId": 912,
     "Id": 14,
     "MinLevel": 6
   },
   {
     "Type": "OneUse",
-    "Name": "Elixir of Strength",
+    "Name": "Scroll of Strength",
     "Defence": 0,
     "Health": 0,
     "Attack": 1,
     "Agility": 0,
     "Cost": 5000,
-    "ImageId": 150,
+    "ImageId": 815,
     "Id": 23,
     "MinLevel": 18
   },
   {
     "Type": "OneUse",
-    "Name": "Elixir of Defence",
+    "Name": "Scroll of Defence",
     "Defence": 1,
     "Health": 0,
     "Attack": 0,
     "Agility": 0,
     "Cost": 5000,
-    "ImageId": 149,
+    "ImageId": 816,
     "Id": 24,
     "MinLevel": 18
   },
   {
     "Type": "OneUse",
-    "Name": "Elixir of Agility",
+    "Name": "Scroll of Agility",
     "Defence": 0,
     "Health": 0,
     "Attack": 0,
     "Agility": 1,
     "Cost": 5000,
-    "ImageId": 151,
+    "ImageId": 822,
     "Id": 25,
     "MinLevel": 18
   },
@@ -64,7 +64,7 @@
     "Name": "Iron Key",
     "Cost": 250,
     "Id": 26,
-    "ImageId": 185,
+    "ImageId": 909,
     "MinLevel": 0
   }
 ]

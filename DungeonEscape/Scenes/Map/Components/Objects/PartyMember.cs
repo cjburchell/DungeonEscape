@@ -23,9 +23,12 @@
                 this.SpriteState.Name = tmxObject.Name;
                 if (this.SpriteState.Name == "random")
                 {
-                    this.SpriteState.Name = this._gender == Gender.Male
-                        ? gameState.Names.Male[Nez.Random.NextInt(gameState.Names.Male.Count)]
-                        : gameState.Names.Female[Nez.Random.NextInt(gameState.Names.Male.Count)];
+                    do
+                    {
+                        this.SpriteState.Name = this._gender == Gender.Male
+                            ? gameState.Names.Male[Nez.Random.NextInt(gameState.Names.Male.Count)]
+                            : gameState.Names.Female[Nez.Random.NextInt(gameState.Names.Male.Count)];
+                    } while (gameState.Party.Members.Any(i => i.Name == this.SpriteState.Name));
                 }
             }
             
@@ -112,9 +115,9 @@
             
             var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
             hero.SetupImage(texture);
-            var lastEntity = this.Entity.Scene.FindEntity(lastMember.Name);
-            var player = this.Entity.Scene.FindEntity(this.GameState.Party.Members.First().Name).GetComponent<PlayerComponent>();
-            var followerEntity = this.Entity.Scene.CreateEntity(hero.Name, this.Entity.Position);
+            var lastEntity = this.Entity.Scene.FindEntity(lastMember.Id);
+            var player = this.Entity.Scene.FindEntity(this.GameState.Party.Members.First().Id).GetComponent<PlayerComponent>();
+            var followerEntity = this.Entity.Scene.CreateEntity(hero.Id, this.Entity.Position);
             followerEntity.AddComponent(new Follower( hero, lastEntity, player, this.GameState));
         }
     }

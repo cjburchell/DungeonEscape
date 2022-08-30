@@ -41,7 +41,7 @@ namespace Redpoint.DungeonEscape.State
             };
             
             // gold Image
-            var tileSet = Game.LoadTileSet("Content/items.tsx");
+            var tileSet = Game.LoadTileSet("Content/items2.tsx");
             item.Setup(tileSet);
 
             return item;
@@ -187,7 +187,7 @@ namespace Redpoint.DungeonEscape.State
                 return item;
             }
 
-            var tileSet = Game.LoadTileSet("Content/items.tsx");
+            var tileSet = Game.LoadTileSet("Content/items2.tsx");
             item.Setup(tileSet);
             return item;
         }

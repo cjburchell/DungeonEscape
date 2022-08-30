@@ -304,7 +304,7 @@
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text">the way to defeat the Leviathan
+    <property name="Text">The way to defeat the Leviathan
 is to hit it fast</property>
    </properties>
   </object>
@@ -312,7 +312,7 @@ is to hit it fast</property>
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="Welcome to oases"/>
+    <property name="Text" value="Welcome to Oasis"/>
    </properties>
   </object>
  </objectgroup>

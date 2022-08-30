@@ -169,7 +169,7 @@
         {
             this._round++;
             this._roundActions.Clear();
-            this._heroes = this._game.Party.Members.ToList();
+            this._heroes = this._game.Party.AliveMembers.ToList();
             foreach (var monster in this._monsters.Where(item=> !item.IsDead && !item.RanAway))
             {
                 var action = this.ChooseAction(monster);
@@ -314,7 +314,7 @@
                     return;
                 }
 
-                if (this._game.Party.Members.Count(member => !member.IsDead) == 1)
+                if (this._game.Party.AliveMembers.Count() == 1)
                 {
                     var newAction = new RoundAction
                     {
@@ -330,7 +330,7 @@
 
                 var selectTarget = new SelectHeroWindow(this._ui,
                     new Point(10, MapScene.ScreenHeight / 3 * 2));
-                selectTarget.Show(this._game.Party.Members.Where(member => !member.IsDead), target =>
+                selectTarget.Show(this._game.Party.AliveMembers, target =>
                 {
                     if (target == null)
                     {
@@ -397,7 +397,7 @@
 
                 if (spell.Targets == Target.Single)
                 {
-                    if (this._game.Party.Members.Count(member => !member.IsDead) == 1)
+                    if (this._game.Party.AliveMembers.Count() == 1)
                     {
                         newAction.Targets = new[] {hero};
                         done(newAction);
@@ -406,7 +406,7 @@
 
                     var selectTarget = new SelectHeroWindow(this._ui,
                         new Point(10, MapScene.ScreenHeight / 3 * 2));
-                    selectTarget.Show(this._game.Party.Members.Where(member => !member.IsDead), target =>
+                    selectTarget.Show(this._game.Party.AliveMembers, target =>
                     {
                         if (target == null)
                         {
@@ -420,7 +420,7 @@
                     return;
                 }
 
-                newAction.Targets = this._game.Party.Members.Where(item => !item.IsDead);
+                newAction.Targets = this._game.Party.AliveMembers;
                 done(newAction);
             });
         }
@@ -715,7 +715,7 @@
         private void EndEncounter()
         {
             var talkWindow = new FightTalkWindow(this._ui, "");
-            if (this._game.Party.Members.Count(CanBeAttacked) == 0)
+            if (!_game.Party.Members.Any(CanBeAttacked))
             {
                 talkWindow.Show("Everyone has died!", this._game.ShowMainMenu);
             }
@@ -724,7 +724,7 @@
                 this._game.Sounds.StopMusic();
                 this._game.Sounds.PlaySoundEffect("victory", true);
                 this._game.Sounds.PlayMusic(EndFightSong);
-                var xp = this._monsters.Where(monster=> monster.IsDead).Sum(monster => (int)monster.Xp) / this._game.Party.Members.Count(member => !member.IsDead);
+                var xp = this._monsters.Where(monster=> monster.IsDead).Sum(monster => (int)monster.Xp) / this._game.Party.AliveMembers.Count();
                 if (xp == 0)
                 {
                     xp = 1;
@@ -736,7 +736,7 @@
                 var monsterName = this._monsters.Count == 1 ?$"the {this._monsters.First().Name}"  : "all the enemies";
                 var levelUpMessage =$"You have defeated {monsterName},\nEach party member has gained {xp}XP\nand the party got {gold} gold\n";
                 var leveledUp = false;
-                foreach (var member in this._game.Party.Members.Where(member => !member.IsDead))
+                foreach (var member in this._game.Party.AliveMembers)
                 {
                     member.Xp += (ulong)xp;
                         while (member.CheckLevelUp(this._game.ClassLevelStats,this._game.Spells, out var message))

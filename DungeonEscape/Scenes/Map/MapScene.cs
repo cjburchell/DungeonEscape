@@ -159,14 +159,14 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                     continue;
                 }
                 
-                var itemEntity = this.CreateEntity(item.Name);
+                var itemEntity = this.CreateEntity($"item-{item.Id}");
                 itemEntity.AddComponent(MapObject.Create(item, state,
                     map, this._ui, this._gameState));
             }
 
             var graph = CreateGraph(map);
             var sprites = map.GetObjectGroup("sprites");
-            var tileSet = Game.LoadTileSet("Content/items.tsx");
+            var tileSet = Game.LoadTileSet("Content/items2.tsx");
             foreach (var item in sprites.Objects)
             {
                 var state = mapState.Sprites.FirstOrDefault(i => item.Id == i.Id);
@@ -190,7 +190,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                     continue;
                 }
 
-                var spriteEntity = this.CreateEntity(item.Name);
+                var spriteEntity = this.CreateEntity($"sprite-{item.Id}");
                 spriteEntity.AddComponent(Sprite.Create(item, state, map, this._ui, this._gameState, graph));
             }
             
@@ -233,7 +233,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             {
                 if (first)
                 {
-                    var playerEntity = this.CreateEntity(hero.Name, spawn);
+                    var playerEntity = this.CreateEntity(hero.Id, spawn);
                     player = playerEntity.AddComponent(new PlayerComponent( hero, this._gameState, map, this._debugText, this._randomMonsters, this._ui)).GetComponent<PlayerComponent>();
                     this.Camera.Entity.AddComponent(new FollowCamera(playerEntity, FollowCamera.CameraStyle.CameraWindow));
                     first = false;
@@ -241,7 +241,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                 }
                 else
                 {
-                    var followerEntity = this.CreateEntity(hero.Name, spawn);
+                    var followerEntity = this.CreateEntity(hero.Id, spawn);
                     followerEntity.AddComponent(new Follower( hero, lastEntity, player, this._gameState));
                     lastEntity = followerEntity;
                 }
@@ -351,12 +351,12 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             if (this._showCommandWindowInput.IsReleased)
             {
                 var menuItems = new List<string> {"Status"};
-                if (_gameState.Party.Members.Any(member => member.GetSpells(this._gameState.Spells).Count() != 0))
+                if (_gameState.Party.AliveMembers.Any(member => member.GetSpells(this._gameState.Spells).Count() != 0))
                 {
                     menuItems.Add("Spells");
                 }
 
-                if (this._gameState.Party.Members.Any(i => i.Items.Count != 0))
+                if (this._gameState.Party.AliveMembers.Any(member => member.Items.Count != 0))
                 {
                     menuItems.Add("Items");
                 }
@@ -481,9 +481,9 @@ namespace Redpoint.DungeonEscape.Scenes.Map
 
         private void ShowSpell(Action done)
         {
-            if (this._gameState.Party.Members.Count == 1)
+            if (this._gameState.Party.AliveMembers.Count() == 1)
             {
-                var hero = this._gameState.Party.Members.First();
+                var hero = this._gameState.Party.AliveMembers.First();
                 var spellWindow = new SpellWindow(this._ui, hero);
                 spellWindow.Show(hero.GetSpells(this._gameState.Spells).Where(item => item.IsNonEncounterSpell), spell=>
                 {
@@ -493,14 +493,14 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                         return;
                     }
 
-                    this.CastSpell(this._gameState.Party.Members.First(), spell, done);
+                    this.CastSpell(hero, spell, done);
 
                 });
             }
             else
             {
                 var selectWindow = new SelectHeroWindow(this._ui);
-                selectWindow.Show(this._gameState.Party.Members.Where(item => item.GetSpells(this._gameState.Spells).Count() != 0), hero =>
+                selectWindow.Show(this._gameState.Party.AliveMembers.Where(item => item.GetSpells(_gameState.Spells).Any()), hero =>
                 {
                     if (hero == null)
                     {
@@ -525,7 +525,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
 
         private void ShowItems(Action done)
         {
-            if (this._gameState.Party.Members.All(i => i.Items.Count == 0))
+            if (this._gameState.Party.AliveMembers.All(i => i.Items.Count == 0))
             {
                 new TalkWindow(this._ui).Show("The party has no items", done);
             }
@@ -549,12 +549,12 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                         }
 
                         var menuItems = new List<string>();
-                        if (_gameState.Party.Members.Any(hero => hero.CanUseItem(item)))
+                        if (selectedHero.CanUseItem(item))
                         {
                             menuItems.Add(item.IsEquippable ? "Equip" : "Use");
                         }
                         
-                        if (this._gameState.Party.Members.Count != 1 && this._gameState.Party.Members.Any(hero => hero.Items.Count < Party.MaxItems && hero != selectedHero) )
+                        if (this._gameState.Party.AliveMembers.Count() != 1 && this._gameState.Party.AliveMembers.Any(hero => hero.Items.Count < Party.MaxItems && hero != selectedHero) )
                         {
                             menuItems.Add("Transfer");
                         }
@@ -569,7 +569,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                                 case "Transfer":
                                 {
                                     var selectHero = new SelectHeroWindow(this._ui);
-                                    selectHero.Show(this._gameState.Party.Members.Where(hero => hero.Items.Count < Party.MaxItems && hero != selectedHero),
+                                    selectHero.Show(this._gameState.Party.AliveMembers.Where(hero => hero.Items.Count < Party.MaxItems && hero != selectedHero),
                                         hero =>
                                         {
                                             if (hero == null)
@@ -604,9 +604,9 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                                     break;
                                 }
                                 case "Use":
-                                    if (this._gameState.Party.Members.Count == 1)
+                                    if (this._gameState.Party.AliveMembers.Count() == 1)
                                     {
-                                        var result = UseItem(selectedHero,this._gameState.Party.Members.First(), item, this._gameState.Party);
+                                        var result = UseItem(selectedHero,this._gameState.Party.AliveMembers.First(), item, this._gameState.Party);
                                         if (string.IsNullOrEmpty(result))
                                         {
                                             done();
@@ -619,7 +619,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                                     else
                                     {
                                         var selectHero = new SelectHeroWindow(this._ui);
-                                        selectHero.Show(this._gameState.Party.Members.Where(hero => hero.CanUseItem(item)),
+                                        selectHero.Show(this._gameState.Party.AliveMembers.Where(hero => hero.CanUseItem(item)),
                                             hero =>
                                             {
                                                 if (hero == null)
@@ -660,15 +660,15 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                     });
                 }
                 
-                if (_gameState.Party.Members.Count == 1)
+                if (_gameState.Party.AliveMembers.Count() == 1)
                 {
-                    var hero = _gameState.Party.Members.First();
+                    var hero = _gameState.Party.AliveMembers.First();
                     SelectItems(hero);
                 }
                 else
                 {
                     var selectHero = new SelectHeroWindow(this._ui);
-                    selectHero.Show(this._gameState.Party.Members.Where(hero => hero.Items.Count != 0 && !hero.IsDead),
+                    selectHero.Show(this._gameState.Party.AliveMembers.Where(hero => hero.Items.Count != 0),
                         SelectItems
                     );
                 }

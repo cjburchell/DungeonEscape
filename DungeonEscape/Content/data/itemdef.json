@@ -10,23 +10,23 @@
     "Names": [
       {
         "Name": "Buckler",
-        "ImageId": 96
+        "ImageId": 174
       },
       {
         "Name": "Small Shield",
-        "ImageId": 96
+        "ImageId": 175
       },
       {
         "Name": "Large Shield",
-        "ImageId": 97
+        "ImageId": 181
       },
       {
         "Name": "Kite Shield",
-        "ImageId": 97
+        "ImageId": 190
       },
       {
         "Name": "Tower Shield",
-        "ImageId": 98
+        "ImageId": 201
       }
     ]
   },
@@ -37,19 +37,19 @@
     "Names": [
       {
         "Name": "Circlet",
-        "ImageId": 132
+        "ImageId": 223
       },
       {
         "Name": "Coronet",
-        "ImageId": 132
+        "ImageId": 222
       },
       {
         "Name": "Tiara",
-        "ImageId": 132
+        "ImageId": 237
       },
       {
         "Name": "Diadem",
-        "ImageId": 132
+        "ImageId": 247
       }
     ]
   },
@@ -65,23 +65,23 @@
     "Names": [
       {
         "Name": "Cap",
-        "ImageId": 112
+        "ImageId": 235
       },
       {
         "Name": "Skull Cap",
-        "ImageId": 114
+        "ImageId": 213
       },
       {
         "Name": "Helm",
-        "ImageId": 113
+        "ImageId": 214
       },
       {
         "Name": "Full Helm",
-        "ImageId": 113
+        "ImageId": 220
       },
       {
         "Name": "Great Helm",
-        "ImageId": 115
+        "ImageId": 230
       }
     ]
   },
@@ -99,23 +99,23 @@
     "Names": [
       {
         "Name": "Quilted Armor",
-        "ImageId": 118
+        "ImageId": 311
       },
       {
         "Name": "Leather Armor",
-        "ImageId": 118
+        "ImageId": 278
       },
       {
         "Name": "Hard Leather Armor",
-        "ImageId": 118
+        "ImageId": 281
       },
       {
         "Name": "Studded Leather",
-        "ImageId": 118
+        "ImageId": 285
       },
       {
         "Name": "Light Plate",
-        "ImageId": 118
+        "ImageId": 289
       }
     ]
   },
@@ -130,27 +130,27 @@
     "Names": [
       {
         "Name": "Ring Mail",
-        "ImageId": 119
+        "ImageId": 280
       },
       {
         "Name": "Chain Mail",
-        "ImageId": 119
+        "ImageId": 284
       },
       {
         "Name": "Splint Mail",
-        "ImageId": 119
+        "ImageId": 298
       },
       {
         "Name": "Field Plate",
-        "ImageId": 117
+        "ImageId": 296
       },
       {
         "Name": "Gothic Plate",
-        "ImageId": 117
+        "ImageId": 294
       },
       {
         "Name": "Ancient Armor",
-        "ImageId": 117
+        "ImageId": 310
       }
     ]
   },
@@ -163,15 +163,15 @@
     "Names": [
       {
         "Name": "Scale Mail",
-        "ImageId": 116
+        "ImageId": 279
       },
       {
         "Name": "Plate Mail",
-        "ImageId": 116
+        "ImageId": 283
       },
       {
         "Name": "Full Plate",
-        "ImageId": 116
+        "ImageId": 303
       }
     ]
   },
@@ -182,15 +182,15 @@
     "Names": [
       {
         "Name": "Robe",
-        "ImageId": 121
+        "ImageId": 312
       },
       {
         "Name": "Robe",
-        "ImageId": 120
+        "ImageId": 332
       },
       {
         "Name": "Robe",
-        "ImageId": 126
+        "ImageId": 376
       }
     ]
   },
@@ -208,23 +208,23 @@
     "Names": [
       {
         "Name": "Leather Gloves",
-        "ImageId": 129
+        "ImageId": 411
       },
       {
         "Name": "Heavy Gloves",
-        "ImageId": 129
+        "ImageId": 388
       },
       {
         "Name": "Chain Gloves",
-        "ImageId": 130
+        "ImageId": 395
       },
       {
         "Name": "Light Gauntlets",
-        "ImageId": 130
+        "ImageId": 389
       },
       {
         "Name": "Gauntlets",
-        "ImageId": 130
+        "ImageId": 402
       }
     ]
   },
@@ -242,23 +242,23 @@
     "Names": [
       {
         "Name": "Leather Boots",
-        "ImageId": 130
+        "ImageId": 477
       },
       {
         "Name": "Heavy Boots",
-        "ImageId": 130
+        "ImageId": 480
       },
       {
         "Name": "Chain Boots",
-        "ImageId": 131
+        "ImageId": 486
       },
       {
         "Name": "Light Plated Boots",
-        "ImageId": 131
+        "ImageId": 494
       },
       {
         "Name": "Greaves",
-        "ImageId": 131
+        "ImageId": 503
       }
     ]
   },
@@ -269,7 +269,7 @@
     "Names": [
       {
         "Name": "Ring",
-        "ImageId": 133
+        "ImageId": 719
       }
     ]
   },
@@ -284,23 +284,23 @@
     "Names": [
       {
         "Name": "Axe",
-        "ImageId": 90
+        "ImageId": 127
       },
       {
         "Name": "Broad Axe",
-        "ImageId": 90
+        "ImageId": 128
       },
       {
         "Name": "Battle Axe",
-        "ImageId": 91
+        "ImageId": 129
       },
       {
         "Name": "Great Axe",
-        "ImageId": 91
+        "ImageId": 131
       },
       {
         "Name": "Giant Axe",
-        "ImageId": 91
+        "ImageId": 136
       }
     ]
   },
@@ -316,27 +316,27 @@
     "Names": [
       {
         "Name": "Short Sword",
-        "ImageId": 80
+        "ImageId": 1
       },
       {
         "Name": "Scimitar",
-        "ImageId": 85
+        "ImageId": 8
       },
       {
         "Name": "Sabre",
-        "ImageId": 83
+        "ImageId": 2
       },
       {
         "Name": "Falchion",
-        "ImageId": 84
+        "ImageId": 3
       },
       {
         "Name": "Broad Sword",
-        "ImageId": 81
+        "ImageId": 9
       },
       {
         "Name": "Long Sword",
-        "ImageId": 82
+        "ImageId": 12
       }
     ]
   },
@@ -352,19 +352,19 @@
     "Names": [
       {
         "Name": "Club",
-        "ImageId": 93
+        "ImageId": 138
       },
       {
         "Name": "Mace",
-        "ImageId": 93
+        "ImageId": 145
       },
       {
-        "Name": "Morning Star",
-        "ImageId": 92
+        "Name": "Hammer",
+        "ImageId": 146
       },
       {
-        "Name": "Flail",
-        "ImageId": 92
+        "Name": "Great Hammer",
+        "ImageId": 150
       }
     ]
   },
@@ -382,19 +382,19 @@
     "Names": [
       {
         "Name": "Dagger",
-        "ImageId": 86
+        "ImageId": 37
       },
       {
         "Name": "Dirk",
-        "ImageId": 87
+        "ImageId": 38
       },
       {
         "Name": "Kris",
-        "ImageId": 88
+        "ImageId": 40
       },
       {
         "Name": "Blade",
-        "ImageId": 89
+        "ImageId": 46
       }
     ]
   },
@@ -413,23 +413,23 @@
     "Names": [
       {
         "Name": "Short Staff",
-        "ImageId": 103
+        "ImageId": 19
       },
       {
         "Name": "Long Staff",
-        "ImageId": 104
+        "ImageId": 49
       },
       {
         "Name": "Gnarled Staff",
-        "ImageId": 105
+        "ImageId": 57
       },
       {
         "Name": "Battle Staff",
-        "ImageId": 106
+        "ImageId": 51
       },
       {
         "Name": "War Staff",
-        "ImageId": 107
+        "ImageId": 64
       }
     ]
   }

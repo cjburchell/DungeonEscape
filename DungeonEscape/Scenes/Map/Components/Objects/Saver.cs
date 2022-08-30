@@ -33,14 +33,16 @@
                                 this.GameState.IsPaused = false;
                                 return;
                             }
+
                             this.GameState.Save(save);
-                            new TalkWindow(this._ui).Show($"It has been recorded\nYou have {party.Members.First().NextLevel} xp\nto the next level",
-                                () =>
-                                {
-                                    this.GameState.IsPaused = false;
-                                });
+                            var levelText = party.AliveMembers.Aggregate("",
+                                (current, member) =>
+                                    current +
+                                    $"{member.Name} needs {member.NextLevel - member.Xp} xp to get to next level\n");
+                            new TalkWindow(this._ui).Show($"It has been recorded\n{levelText}",
+                                () => { this.GameState.IsPaused = false; });
                         }
-                        );
+                    );
                     
                 }
                 else

@@ -358,7 +358,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="welcome to coste"/>
+    <property name="Text" value="Welcome to Coast"/>
    </properties>
   </object>
   <object id="57" name="npc" type="Npc" gid="27" x="960" y="448" width="32" height="48">

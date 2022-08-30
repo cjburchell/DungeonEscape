@@ -87,6 +87,22 @@
             };
             Skin.Add("big_label", bigLabelStyle);
             
+            var redLabelStyle = new LabelStyle
+            {
+                FontScale = FontScale,
+                Font = font,
+                FontColor = Color.Red
+            };
+            Skin.Add("red_label", redLabelStyle);
+            
+            var orangeLabelStyle = new LabelStyle
+            {
+                FontScale = FontScale,
+                Font = font,
+                FontColor = Color.Orange
+            };
+            Skin.Add("orange_label", orangeLabelStyle);
+            
             var textFieldStyle = Skin.Get<TextFieldStyle>();
             textFieldStyle.Font = font;
             textFieldStyle.Background =new BorderPrimitiveDrawable(Color.Black, Color.White, 1);

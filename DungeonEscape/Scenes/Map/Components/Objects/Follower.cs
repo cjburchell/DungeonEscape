@@ -63,6 +63,32 @@
                 sprites[animationBaseIndex + 7]
             });
 
+            const int deadAnimationIndex = 144;
+            
+            animator.AddAnimation("WalkDownDead", new[]
+            {
+                sprites[deadAnimationIndex + 4],
+                sprites[deadAnimationIndex + 5]
+            });
+
+            animator.AddAnimation("WalkUpDead", new[]
+            {
+                sprites[deadAnimationIndex + 0],
+                sprites[deadAnimationIndex + 1]
+            });
+
+            animator.AddAnimation("WalkRightDead", new[]
+            {
+                sprites[deadAnimationIndex + 2],
+                sprites[deadAnimationIndex + 3]
+            });
+
+            animator.AddAnimation("WalkLeftDead", new[]
+            {
+                sprites[deadAnimationIndex + 6],
+                sprites[deadAnimationIndex + 7]
+            });
+
             this._animation = animator;
             this._animation.SetEnabled(false);
             
@@ -102,25 +128,26 @@
 
             if (Math.Abs(vector.X) > Math.Abs(vector.Y))
             {
-                if (vector.X < 0)
+                animation = vector.X switch
                 {
-                    animation = "WalkLeft";
-                }
-                else if (vector.X > 0)
-                {
-                    animation = "WalkRight";
-                }
+                    < 0 => "WalkLeft",
+                    > 0 => "WalkRight",
+                    _ => animation
+                };
             }
             else
             {
-                if (vector.Y < 0)
+                animation = vector.Y switch
                 {
-                    animation = "WalkUp";
-                }
-                else if (vector.Y > 0)
-                {
-                    animation = "WalkDown";
-                }
+                    < 0 => "WalkUp",
+                    > 0 => "WalkDown",
+                    _ => animation
+                };
+            }
+
+            if (this._hero.IsDead)
+            {
+                animation += "Dead";
             }
 
             if (!this._animation.IsAnimationActive(animation))

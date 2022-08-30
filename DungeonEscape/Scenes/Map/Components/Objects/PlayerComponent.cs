@@ -80,6 +80,32 @@
                     sprites[animationBaseIndex + 6],
                     sprites[animationBaseIndex + 7]
                 });
+                
+                const int deadAnimationIndex = 144;
+            
+                animator.AddAnimation("WalkDownDead", new[]
+                {
+                    sprites[deadAnimationIndex + 4],
+                    sprites[deadAnimationIndex + 5]
+                });
+
+                animator.AddAnimation("WalkUpDead", new[]
+                {
+                    sprites[deadAnimationIndex + 0],
+                    sprites[deadAnimationIndex + 1]
+                });
+
+                animator.AddAnimation("WalkRightDead", new[]
+                {
+                    sprites[deadAnimationIndex + 2],
+                    sprites[deadAnimationIndex + 3]
+                });
+
+                animator.AddAnimation("WalkLeftDead", new[]
+                {
+                    sprites[deadAnimationIndex + 6],
+                    sprites[deadAnimationIndex + 7]
+                });
 
                 this._playerAnimation = animator;
                 this._playerAnimation.SetEnabled(false);
@@ -217,6 +243,12 @@
             {
                 animation = "WalkDown";
             }
+
+            var waterAnimation = animation;
+            if (this._hero.IsDead)
+            {
+                animation += "Dead";
+            }
             
             var movement = moveDir * (overWater?MoveSpeed*1.5f:MoveSpeed) * Time.DeltaTime;
             var newPoint = movement + this.Entity.Position;
@@ -262,9 +294,9 @@
                 this._playerAnimation.UnPause();
             }
 
-            if (!this._shipAnimator.IsAnimationActive(animation))
+            if (!this._shipAnimator.IsAnimationActive(waterAnimation))
             {
-                this._shipAnimator.Play(animation);
+                this._shipAnimator.Play(waterAnimation);
             }
             else
             {
@@ -349,7 +381,7 @@
                 new TalkWindow(this._ui).Show(message, () =>
                 {
                     this._gameState.IsPaused = false;
-                    if (this._gameState.Party.Members.Count(i => !i.IsDead) == 0)
+                    if (!this._gameState.Party.AliveMembers.Any())
                     {
                         this._gameState.ShowMainMenu();
                     }
@@ -357,7 +389,7 @@
                 return;
             }
 
-            if (this._gameState.Party.Members.Count(i => !i.IsDead) == 0)
+            if (!this._gameState.Party.AliveMembers.Any())
             {
                 this._gameState.ShowMainMenu();
             }
@@ -374,7 +406,7 @@
 
             var message = "";
             var damage = int.Parse(tile.TilesetTile.Properties["damage"]);
-            foreach (var member in this._gameState.Party.Members.FindAll(i => !i.IsDead))
+            foreach (var member in this._gameState.Party.AliveMembers)
             {
                 member.Health -= damage;
                 this._gameState.Sounds.PlaySoundEffect("receive-damage");
@@ -393,7 +425,7 @@
         private string CheckStatusEffects()
         {
             var message = "";
-            foreach (var member in this._gameState.Party.Members.FindAll(i => !i.IsDead))
+            foreach (var member in this._gameState.Party.AliveMembers)
             {
                 member.UpdateStatusEffects(this._gameState.Party.StepCount, DurationType.Distance, this._gameState);
                 if (member.IsDead)
@@ -410,7 +442,7 @@
             var currentBiome = MapScene.GetCurrentBiome(this._map, this.Entity.Position);
             var availableMonsters = new List<Monster>();
             
-            var level = this._gameState.Party.Members.Select(hero => hero.Level).Max();
+            var level = this._gameState.Party.AliveMembers.Select(hero => hero.Level).Max();
             foreach (var monster in this._randomMonsters.Where(item =>
                 (item.Biome == currentBiome || item.Biome == Biome.All) && item.Data.MinLevel <= level))
             {
@@ -426,7 +458,7 @@
             }
             
             const int maxMonstersToFight = 10;
-            var maxMonsters = level / 4 + this._gameState.Party.Members.Count;
+            var maxMonsters = level / 4 + this._gameState.Party.AliveMembers.Count();
             if (maxMonsters > maxMonstersToFight)
             {
                 maxMonsters = maxMonstersToFight;

@@ -329,28 +329,28 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="beware of the leviathan"/>
+    <property name="Text" value="Beware of the leviathan"/>
    </properties>
   </object>
   <object id="31" name="npc" type="Npc" gid="146" x="608" y="1088" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="welcome to Isis"/>
+    <property name="Text" value="Welcome to Isis"/>
    </properties>
   </object>
   <object id="32" name="npc" type="Npc" gid="103" x="416" y="896" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="dragons are very powerful"/>
+    <property name="Text" value="Dragons are very powerful"/>
    </properties>
   </object>
   <object id="33" name="npc" type="Npc" gid="27" x="960" y="992" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text">the sea is very dangerus
+    <property name="Text">The sea is very dangerus
 do not veture there until
 you are experencd</property>
    </properties>
@@ -359,14 +359,14 @@ you are experencd</property>
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="run if you are unshure"/>
+    <property name="Text" value="You can allways run away if the enemy is to powerfull"/>
    </properties>
   </object>
   <object id="35" name="npc" type="Npc" gid="188" x="704" y="704" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="hello"/>
+    <property name="Text" value="Hello"/>
    </properties>
   </object>
   <object id="4" name="Norok" type="NpcPartyMember" gid="3135" x="384" y="384" width="32" height="48">

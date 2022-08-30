@@ -31,7 +31,7 @@
             this._openImageName = tmxObject.Properties.ContainsKey("OpenImage") ? tmxObject.Properties["OpenImage"] : "ochest.png";
             if(this.State.Item != null)
             {
-                var tileSet = Game.LoadTileSet("Content/items.tsx");
+                var tileSet = Game.LoadTileSet("Content/items2.tsx");
                 this.State.Item.Setup(tileSet);
                 return;
             }

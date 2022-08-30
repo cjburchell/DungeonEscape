@@ -178,14 +178,14 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="beware of the leviathan"/>
+    <property name="Text" value="Beware of the leviathan"/>
    </properties>
   </object>
   <object id="95" name="npc" type="Npc" gid="18" x="736" y="1152" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="beware of the leviathan"/>
+    <property name="Text" value="Beware of the leviathan"/>
    </properties>
   </object>
  </objectgroup>

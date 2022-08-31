@@ -1,4 +1,7 @@
 ﻿{
   "NoMonsters": false,
-  "MapDebugInfo": false
+  "MapDebugInfo": false,
+  "SoundEffectsVolume": 0.5,
+  "MusicVolume": 0.5,
+  "IsFullScreen": false
 }

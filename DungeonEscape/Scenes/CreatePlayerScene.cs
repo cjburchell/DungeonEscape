@@ -53,6 +53,9 @@
             var imageTable = canvas.Stage.AddElement(new Table());
             imageTable.SetFillParent(true);
             imageTable.Top().PadLeft(10).PadTop(50);
+            imageTable.Add(new Label("New Quest", BasicWindow.Skin, "medium_label")).SetColspan(2);
+            imageTable.Row().SetPadTop(20);
+            
             var texture = this.Content.LoadTexture("Content/images/sprites/hero.png");
             
             this._hero.SetupImage(texture);

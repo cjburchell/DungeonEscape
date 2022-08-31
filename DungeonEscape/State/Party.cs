@@ -25,7 +25,7 @@ namespace Redpoint.DungeonEscape.State
         
         public int Gold { get; set; }
 
-        public Vector2 CurrentPosition { get; set; }
+        public Vector2? CurrentPosition { get; set; }
         public int CurrentMapId { get; set; }
         public bool CurrentMapIsOverWorld { get; set; }
 

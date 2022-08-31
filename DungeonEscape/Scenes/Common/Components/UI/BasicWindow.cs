@@ -87,6 +87,13 @@
             };
             Skin.Add("big_label", bigLabelStyle);
             
+            var mediumLabelStyle = new LabelStyle
+            {
+                FontScale = FontScale,
+                Font = new NezSpriteFont(Core.Content.Load<SpriteFont>("fonts/Arial_bold_medium"))
+            };
+            Skin.Add("medium_label", mediumLabelStyle);
+            
             var redLabelStyle = new LabelStyle
             {
                 FontScale = FontScale,

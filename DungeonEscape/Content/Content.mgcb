@@ -34,6 +34,13 @@
 /processorParam:TextureFormat=Compressed
 /build:fonts/Arial_bold_big.spritefont
 
+#begin fonts/Arial_bold_medium.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:fonts/Arial_bold_medium.spritefont
+
 #begin fonts/Segoeui.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

@@ -282,7 +282,7 @@
             this._gameState.Party.CurrentPosition = this.Entity.Position;
             if (this._gameState.Party.CurrentMapIsOverWorld)
             {
-                this._gameState.Party.OverWorldPosition = this._gameState.Party.CurrentPosition;
+                this._gameState.Party.OverWorldPosition = this._gameState.Party.CurrentPosition.Value;
             }
 
             if (! this._playerAnimation.IsAnimationActive(animation))

@@ -56,6 +56,9 @@
             var table = canvas.Stage.AddElement(new Table());
             table.SetFillParent(true);
             table.Top().PadLeft(10).PadTop(50);
+            table.Add(new Label("Continue Quest", BasicWindow.Skin, "medium_label"));
+            table.Row().SetPadTop(20);
+            
             var backButton = new TextButton("Back", BasicWindow.Skin);
             backButton.GamepadDownElement = backButton;
             backButton.GamepadUpElement = backButton;

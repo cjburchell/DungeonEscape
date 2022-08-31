@@ -32,7 +32,7 @@
             this._table.Top().PadLeft(10).PadTop(50);
             this._table.Add(new Label("Dungeon Escape", BasicWindow.Skin, "big_label"));
             this._table.Row().SetPadTop(20);
-            var playButton = this._table.Add(new TextButton("Start new quest", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(250).GetElement<TextButton>();
+            var playButton = this._table.Add(new TextButton("New quest", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(250).GetElement<TextButton>();
             playButton.OnClicked += _ =>
             {
                 this._sounds.PlaySoundEffect("confirm");
@@ -57,13 +57,38 @@
                 }, TransformTransition.TransformTransitionType.SlideLeft){Duration = 0.25f});
             };
             
+            this._table.Row().SetPadTop(20);
+            var settingsButton = this._table.Add(new TextButton("Settings", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(250).GetElement<TextButton>();
+            settingsButton.OnClicked += _ =>
+            {
+                this._sounds.PlaySoundEffect("confirm");
+                Core.StartSceneTransition(new TransformTransition(() =>
+                {
+                    var scene = new SettingsScene(this._sounds);
+                    scene.Initialize();
+                    return scene;
+                }, TransformTransition.TransformTransitionType.SlideLeft){Duration = 0.25f});
+            };
+            
+            this._table.Row().SetPadTop(20);
+            var quitButton = this._table.Add(new TextButton("Quit", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(250).GetElement<TextButton>();
+            quitButton.OnClicked += _ =>
+            {
+                this._sounds.PlaySoundEffect("confirm");
+                Core.Exit();
+            };
+            
             loadButton.ShouldUseExplicitFocusableControl = true;
             canvas.Stage.SetGamepadFocusElement(playButton);
             canvas.Stage.GamepadActionButton = Buttons.A;
             playButton.GamepadDownElement = loadButton;
-            playButton.GamepadUpElement = loadButton;
-            loadButton.GamepadDownElement = playButton;
+            loadButton.GamepadDownElement = settingsButton;
+            settingsButton.GamepadDownElement = quitButton;
+            quitButton.GamepadDownElement = playButton;
+            playButton.GamepadUpElement = quitButton;
             loadButton.GamepadUpElement = playButton;
+            settingsButton.GamepadUpElement = loadButton;
+            quitButton.GamepadUpElement = settingsButton;
 
             base.Initialize();
             this._sounds.PlayMusic(@"first-story");

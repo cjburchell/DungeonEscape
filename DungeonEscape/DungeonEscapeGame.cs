@@ -17,6 +17,7 @@
 
     public class Game : Core, IGame
     {
+        private const string GameName = "Dungeon Escape";
         private const string SaveFile = "save.json";
         private const int MaxSaveSlots = 5;
         private bool _isPaused;
@@ -51,6 +52,10 @@
         }
         
         private List<GameSave> _saveSlots;
+
+        public Game() : base(MapScene.ScreenWidth, MapScene.ScreenHeight, false, GameName)
+        {
+        }
         
         public void Save(GameSave save, bool isQuick = false)
         {
@@ -173,6 +178,16 @@
             }));
         }
 
+        public void ShowSettings()
+        {
+            StartSceneTransition(new FadeTransition(() =>
+            {
+                var splash = new SettingsScene(this.Sounds);
+                splash.Initialize();
+                return splash;
+            }));
+        }
+
         protected override void Initialize()
         {
             base.Initialize();
@@ -180,7 +195,12 @@
             PauseOnFocusLost = true;
             
             this.Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText("Content/data/gameSettings.json"));
-            
+            if (this.Settings != null)
+            {
+                this.Sounds.MusicVolume = this.Settings.MusicVolume;
+                this.Sounds.SoundEffectsVolume = this.Settings.SoundEffectsVolume;
+            }
+
             this.ReloadSaveGames();
             
             this.Names = JsonConvert.DeserializeObject<Names>(File.ReadAllText("Content/data/names.json"));
@@ -230,7 +250,17 @@
 
             DebugRenderEnabled = false;
             this.Window.AllowUserResizing = true;
-            Screen.SetSize(MapScene.ScreenWidth, MapScene.ScreenHeight);
+            this.Window.Title = GameName;
+            if (this.Settings.IsFullScreen)
+            {
+                Screen.IsFullscreen = true;
+                Screen.SetSize(Screen.MonitorWidth, Screen.MonitorHeight);
+            }
+            else
+            {
+                Screen.SetSize(MapScene.ScreenWidth, MapScene.ScreenHeight);
+            }
+            
             Scene = new EmptyScene();
             StartSceneTransition(new FadeTransition(() =>
             {

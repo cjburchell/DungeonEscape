@@ -55,5 +55,7 @@ namespace Redpoint.DungeonEscape
         void ShowLoadQuest();
 
         void StartFight(IEnumerable<Monster> monsters, Biome biome);
+        
+        void ShowSettings();
     }
 }

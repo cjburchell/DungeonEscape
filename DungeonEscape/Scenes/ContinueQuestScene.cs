@@ -20,13 +20,20 @@
         {
             var button = new Button(BasicWindow.Skin);
             var itemName = new Label(item.Name, BasicWindow.Skin).SetAlignment(Align.Left);
-            if (item.Level.HasValue && item.Time.HasValue)
+            if (!item.IsEmpty)
             {
                 button.Add(itemName).Left().Width(125);
-                var level = new Label($"LV: {item.Level.Value}", BasicWindow.Skin).SetAlignment(Align.Left);
-                var time = new Label(item.Time.Value.ToString("g"), BasicWindow.Skin).SetAlignment(Align.Left);
-                button.Add(level).Width(100).Left();
-                button.Add(time).Width(225).Left();
+                if (item.Level != null)
+                {
+                    var level = new Label($"LV: {item.Level.Value}", BasicWindow.Skin).SetAlignment(Align.Left);
+                    button.Add(level).Width(100).Left();
+                }
+                
+                if (item.Time != null)
+                {
+                    var time = new Label(item.Time.Value.ToString("g"), BasicWindow.Skin).SetAlignment(Align.Left);
+                    button.Add(time).Width(225).Left();
+                }
             }
             else
             {

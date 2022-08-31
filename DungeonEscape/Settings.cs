@@ -8,11 +8,12 @@ namespace Redpoint.DungeonEscape
     {
         public bool NoMonsters { get; set; }
         public bool MapDebugInfo { get; set; }
+
+        public float MusicVolume { get; set; } = 0.5f;
         
-        public float MusicVolume { get; set; }
-        
-        public float SoundEffectsVolume { get; set; }
+        public float SoundEffectsVolume { get; set; } = 0.5f;
 
         public bool IsFullScreen { get; set; }
+        public string Version { get; set; }
     }
 }

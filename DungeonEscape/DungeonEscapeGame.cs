@@ -13,12 +13,17 @@
     using Scenes.Fight;
     using Scenes.Map;
     using State;
-
-
+    
     public class Game : Core, IGame
     {
         private const string GameName = "Dungeon Escape";
-        private const string SaveFile = "save.json";
+
+        public static readonly string SavePath =
+            $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\Redpoint\\DungeonEscape";
+        private static readonly string SaveFile = $"{SavePath}\\save.json";
+        private const string SaveFileVersion = "1.0";
+        public static readonly string SettingsFile =  $"{SavePath}\\settings.json";
+        private const string SettingsFileVersion = "1.0";
         private const int MaxSaveSlots = 5;
         private bool _isPaused;
         private bool _deferredPause;
@@ -34,8 +39,8 @@
         
         public List<Dialog> Dialogs { get; private set; } = new();
         
-        public IEnumerable<GameSave> GameSaveSlots => this._saveSlots.Where(i=> !i.IsQuick);
-        public IEnumerable<GameSave> LoadableGameSaves => this._saveSlots;
+        public IEnumerable<GameSave> GameSaveSlots => this._gameFile.Saves.Where(i=> !i.IsQuick);
+        public IEnumerable<GameSave> LoadableGameSaves => this._gameFile.Saves;
         public bool InGame { get; private set; }
         public bool IsPaused
         {
@@ -51,7 +56,7 @@
             }
         }
         
-        private List<GameSave> _saveSlots;
+        private GameFile _gameFile;
 
         public Game() : base(MapScene.ScreenWidth, MapScene.ScreenHeight, false, GameName)
         {
@@ -62,11 +67,11 @@
             if (save == null)
             {
                 this.ReloadSaveGames();
-                save = this._saveSlots.FirstOrDefault(i => i.IsQuick == isQuick);
+                save = this._gameFile.Saves.FirstOrDefault(i => i.IsQuick == isQuick);
                 if (save == null)
                 {
                     save = new GameSave();
-                    this._saveSlots.Add(save);
+                    this._gameFile.Saves.Add(save);
                 }
             }
 
@@ -80,9 +85,14 @@
             save.MapStates = this.MapStates;
             save.Time = DateTime.Now;
             save.IsQuick = isQuick;
+
+            if (!Directory.Exists(SavePath))
+            {
+                Directory.CreateDirectory(SavePath);
+            }
             
             File.WriteAllText(SaveFile,
-                JsonConvert.SerializeObject(this._saveSlots, Formatting.Indented,
+                JsonConvert.SerializeObject(this._gameFile, Formatting.Indented,
                     new JsonSerializerSettings
                     {
                         NullValueHandling = NullValueHandling.Ignore
@@ -168,6 +178,16 @@
             }));
         }
 
+        public void ShowNewQuest()
+        {
+            StartSceneTransition(new FadeTransition(() =>
+            {
+                var splash = new CreatePlayerScene(this.Sounds);
+                splash.Initialize();
+                return splash;
+            }));
+        }
+
         public void StartFight(IEnumerable<Monster> monsters, Biome biome)
         {
             StartSceneTransition(new FadeTransition(() =>
@@ -193,14 +213,25 @@
             base.Initialize();
             ExitOnEscapeKeypress = false;
             PauseOnFocusLost = true;
-            
-            this.Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText("Content/data/gameSettings.json"));
-            if (this.Settings != null)
-            {
-                this.Sounds.MusicVolume = this.Settings.MusicVolume;
-                this.Sounds.SoundEffectsVolume = this.Settings.SoundEffectsVolume;
-            }
 
+            if (File.Exists(SettingsFile))
+            {
+                this.Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(SettingsFile));
+                if (this.Settings is not { Version: SettingsFileVersion })
+                {
+                    this.Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText("Content/data/default_settings.json"));
+                }
+                
+            }
+            else
+            {
+                this.Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText("Content/data/default_settings.json"));
+            }
+            
+            this.Settings ??= new Settings {Version = SettingsFileVersion};
+            this.Sounds.MusicVolume = this.Settings.MusicVolume;
+            this.Sounds.SoundEffectsVolume = this.Settings.SoundEffectsVolume;
+            
             this.ReloadSaveGames();
             
             this.Names = JsonConvert.DeserializeObject<Names>(File.ReadAllText("Content/data/names.json"));
@@ -280,25 +311,30 @@
 
         public void ReloadSaveGames()
         {
-            this._saveSlots = LoadSaveGames(SaveFile);
+            this._gameFile = LoadSaveGames(SaveFile);
         }
 
         public ISounds Sounds { get; } = new Sounds();
 
-        private static List<GameSave> LoadSaveGames(string fileName)
+        private static GameFile LoadSaveGames(string fileName)
         {
-            var saves = new List<GameSave>();
+            GameFile file = null;
             if (File.Exists(fileName))
             {
-                saves = JsonConvert.DeserializeObject<List<GameSave>>(File.ReadAllText(fileName)) ?? new List<GameSave>();
+                file = JsonConvert.DeserializeObject<GameFile>(File.ReadAllText(fileName));
             }
 
-            for (var i = saves.Count(i => !i.IsQuick); i < MaxSaveSlots; i++)
+            if (file is not { Version: SaveFileVersion })
             {
-                saves.Add(new GameSave()); 
+                file = new GameFile { Version = SaveFileVersion };
             }
 
-            return saves;
+            for (var i = file.Saves.Count(i => !i.IsQuick); i < MaxSaveSlots; i++)
+            {
+                file.Saves.Add(new GameSave()); 
+            }
+
+            return file;
         }
 
         public static TmxTileset LoadTileSet(string path)

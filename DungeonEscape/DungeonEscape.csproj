@@ -789,7 +789,7 @@
         <None Update="Content\data\statnames.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\gameSettings.json">
+        <None Update="Content\data\default_settings.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\images\items\items2.png">

@@ -20,6 +20,10 @@
         [JsonIgnore]
         public int? Level => this.Party?.Members.FirstOrDefault()?.Level;
         public DateTime? Time { get; set; }
+
+        [JsonIgnore] 
+        public bool IsEmpty => !(this.Level.HasValue && this.Time.HasValue);
+        
         public Party Party { get; set; }
 
         public bool IsQuick { get; set; }

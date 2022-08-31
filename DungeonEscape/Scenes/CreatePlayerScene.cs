@@ -153,12 +153,19 @@
             backButton.OnClicked += _ =>
             {
                 this._sounds.PlaySoundEffect("confirm");
-                Core.StartSceneTransition(new TransformTransition(() =>
+                if (game.InGame)
                 {
-                    var scene = new MainMenu(this._sounds);
-                    scene.Initialize();
-                    return scene;
-                }, TransformTransition.TransformTransitionType.SlideRight){Duration = 0.25f});
+                    game.ResumeGame();
+                }
+                else
+                {
+                    Core.StartSceneTransition(new TransformTransition(() =>
+                    {
+                        var scene = new MainMenu(this._sounds);
+                        scene.Initialize();
+                        return scene;
+                    }, TransformTransition.TransformTransitionType.SlideRight){Duration = 0.25f});
+                }
             };
             
             backButton.ShouldUseExplicitFocusableControl = true;

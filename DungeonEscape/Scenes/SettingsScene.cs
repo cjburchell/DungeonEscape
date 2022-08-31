@@ -98,7 +98,12 @@ namespace Redpoint.DungeonEscape.Scenes
             table.Add(backButton).SetPadTop(5).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).SetColspan(2).GetElement<TextButton>();
             backButton.OnClicked += _ =>
             {
-                File.WriteAllText("Content/data/gameSettings.json",
+                if (!Directory.Exists(DungeonEscape.Game.SavePath))
+                {
+                    Directory.CreateDirectory(DungeonEscape.Game.SavePath);
+                }
+                
+                File.WriteAllText(DungeonEscape.Game.SettingsFile,
                     JsonConvert.SerializeObject(game.Settings, Formatting.Indented,
                         new JsonSerializerSettings
                         {

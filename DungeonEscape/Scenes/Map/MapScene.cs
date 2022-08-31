@@ -392,12 +392,21 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                 this._ui.Input.HandledHide = true;
                 this._gameState.IsPaused = true;
                 var commandMenu = new SelectWindow<string>(this._ui, null, new Point(20,20), 200);
-                commandMenu.Show(new []{"Main Menu", "Load Quest", "Settings", "Quit"}, result =>
+                var options = new List<string> { "New Quest" };
+                if (this._gameState.LoadableGameSaves.Any(item => !item.IsEmpty))
+                {
+                    options.Add("Load Quest");
+                }
+                
+                options.Add("Settings");
+                options.Add("Quit");
+                
+                commandMenu.Show(options, result =>
                 {
                     switch (result)
                     {
-                        case "Main Menu":
-                            this._gameState.ShowMainMenu();
+                        case "New Quest":
+                            this._gameState.ShowNewQuest();
                             break;
                         case "Load Quest":
                             this._gameState.ShowLoadQuest();

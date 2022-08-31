@@ -54,6 +54,8 @@ namespace Redpoint.DungeonEscape
         void SetMap(int? mapId = null, int? spawnId = null, Vector2? point = null);
         void ShowLoadQuest();
 
+        void ShowNewQuest();
+
         void StartFight(IEnumerable<Monster> monsters, Biome biome);
         
         void ShowSettings();

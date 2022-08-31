@@ -1,5 +1,6 @@
 ﻿namespace Redpoint.DungeonEscape.Scenes
 {
+    using System.Linq;
     using Common.Components.UI;
     using Map;
     using Microsoft.Xna.Framework;
@@ -17,6 +18,14 @@
             this._sounds = sounds;
         }
 
+        private TextButton AddButton(string text)
+        {
+            this._table.Row().SetPadTop(20);
+            var button = this._table.Add(new TextButton(text, BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(250).GetElement<TextButton>();
+            button.ShouldUseExplicitFocusableControl = true;
+            return button;
+        }
+
         public override void Initialize()
         {
             this.ClearColor = Color.Black;
@@ -26,13 +35,16 @@
             this.AddRenderer(new DefaultRenderer());
             var canvas = this.CreateEntity("ui-canvas").AddComponent(new UICanvas());
             canvas.SetRenderLayer(999);
+            if (!(Core.Instance is IGame game))
+            {
+                return;
+            }
             
             this._table = canvas.Stage.AddElement(new Table());
             this._table.SetFillParent(true);
             this._table.Top().PadLeft(10).PadTop(50);
             this._table.Add(new Label("Dungeon Escape", BasicWindow.Skin, "big_label"));
-            this._table.Row().SetPadTop(20);
-            var playButton = this._table.Add(new TextButton("New quest", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(250).GetElement<TextButton>();
+            var playButton = this.AddButton("New quest");
             playButton.OnClicked += _ =>
             {
                 this._sounds.PlaySoundEffect("confirm");
@@ -43,22 +55,24 @@
                     return scene;
                 }, TransformTransition.TransformTransitionType.SlideLeft){Duration = 0.25f});
             };
-            playButton.ShouldUseExplicitFocusableControl = true;
-            this._table.Row().SetPadTop(20);
-            var loadButton = this._table.Add(new TextButton("Continue quest", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(250).GetElement<TextButton>();
-            loadButton.OnClicked += _ =>
+
+            TextButton loadButton = null;
+            if (game.LoadableGameSaves.Any(item => !item.IsEmpty))
             {
-                this._sounds.PlaySoundEffect("confirm");
-                Core.StartSceneTransition(new TransformTransition(() =>
+                loadButton = this.AddButton("Continue quest");
+                loadButton.OnClicked += _ =>
                 {
-                    var scene = new ContinueQuestScene(this._sounds);
-                    scene.Initialize();
-                    return scene;
-                }, TransformTransition.TransformTransitionType.SlideLeft){Duration = 0.25f});
-            };
-            
-            this._table.Row().SetPadTop(20);
-            var settingsButton = this._table.Add(new TextButton("Settings", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(250).GetElement<TextButton>();
+                    this._sounds.PlaySoundEffect("confirm");
+                    Core.StartSceneTransition(new TransformTransition(() =>
+                    {
+                        var scene = new ContinueQuestScene(this._sounds);
+                        scene.Initialize();
+                        return scene;
+                    }, TransformTransition.TransformTransitionType.SlideLeft) { Duration = 0.25f });
+                };
+            }
+
+            var settingsButton = this.AddButton("Settings");
             settingsButton.OnClicked += _ =>
             {
                 this._sounds.PlaySoundEffect("confirm");
@@ -71,23 +85,32 @@
             };
             
             this._table.Row().SetPadTop(20);
-            var quitButton = this._table.Add(new TextButton("Quit", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(250).GetElement<TextButton>();
+            var quitButton = this.AddButton("Quit");
             quitButton.OnClicked += _ =>
             {
                 this._sounds.PlaySoundEffect("confirm");
                 Core.Exit();
             };
             
-            loadButton.ShouldUseExplicitFocusableControl = true;
             canvas.Stage.SetGamepadFocusElement(playButton);
             canvas.Stage.GamepadActionButton = Buttons.A;
-            playButton.GamepadDownElement = loadButton;
-            loadButton.GamepadDownElement = settingsButton;
+
+            if (loadButton != null)
+            {
+                playButton.GamepadDownElement = loadButton;
+                loadButton.GamepadDownElement = settingsButton;
+                loadButton.GamepadUpElement = playButton;
+                settingsButton.GamepadUpElement = loadButton;
+            }
+            else
+            {
+                playButton.GamepadDownElement = settingsButton;
+                settingsButton.GamepadUpElement = playButton;
+            }
+            
             settingsButton.GamepadDownElement = quitButton;
             quitButton.GamepadDownElement = playButton;
             playButton.GamepadUpElement = quitButton;
-            loadButton.GamepadUpElement = playButton;
-            settingsButton.GamepadUpElement = loadButton;
             quitButton.GamepadUpElement = settingsButton;
 
             base.Initialize();

@@ -195,7 +195,6 @@
             var nextHero = this._heroes.FirstOrDefault(member => !member.IsDead);
             if (nextHero == null)
             {
-                this.OrderActions();
                 this._state = EncounterRoundState.StartDoingActions;
             }
             else
@@ -554,14 +553,9 @@
             };
         }
 
-        private void OrderActions()
-        {
-            this._roundActions.Sort((x, y) => x.Source.Agility - y.Source.Agility);
-        }
-
         private void DoActions()
         {
-            var action = this._roundActions.FirstOrDefault(item =>
+            var action = this._roundActions.OrderByDescending(i => i.Source.Agility).FirstOrDefault(item =>
                 CanBeAttacked(item.Source) && (item.Targets == null || item.Targets.Any(CanBeAttacked)));
             if (action == null)
             {
@@ -653,33 +647,46 @@
             {
                 message += $"{source.Name} Attacks {target.Name}.\n";
                 int damage;
-                if (Random.NextInt(Math.Max(30 - source.Agility / 2, 2)) == 0)
+                // Can the source hit the target?
+
+                var defence = (100 - Math.Min(target.Defence, 99)) / 100f;
+                
+
+                // check for critical hit
+                if (source.CanCriticalHit(target))
                 {
-                    damage = Random.NextInt(source.Attack + 20 * source.Level) + 10;
+                    var attack = Random.NextInt(source.Attack + (20 * source.Level));
+                    damage = Math.Max((int)(attack * defence), 10);
                     message += "Heroic maneuver!\n";
+                    message += $"{target.Name}";
+                }
+                else if (source.CanHit(target))
+                {
+                    var attack = Random.NextInt(source.Attack);
+                    damage = attack != 0 ? Math.Max((int)(attack * defence), 1) : 0;
+                    message += $"{target.Name}";
                 }
                 else
                 {
-                    var defence = (100 - Math.Min(target.Defence, 99)) / 100f;
-                    var attack = Random.NextInt(source.Attack);
-                    damage = attack != 0 ? Math.Max((int) ( attack * defence), 1) : 0;
+                    damage = 0;
+                    message += $"{target.Name} dodges the attack and";
                 }
-                
+
                 if (damage <= 0)
                 {
                     damage = 0;
                 }
-                    
+
                 totalDamage += damage;
                 target.Health -= damage;
                 if (damage == 0)
                 {
-                    message += $"{target.Name} was unharmed\n";
+                    message += $" was unharmed\n";
                 }
                 else
                 {
                     target.PlayDamageAnimation();
-                    message += $"{target.Name} took {damage} points of damage\n";
+                    message += $" took {damage} points of damage\n";
                 }
 
                 if (target.Health <= 0)

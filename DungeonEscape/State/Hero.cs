@@ -72,6 +72,7 @@ namespace Redpoint.DungeonEscape.State
             this.MaxHealth = classStats.Stats.First( item=> item.Type == StatType.Health).RollStartValue();
             this.Attack = classStats.Stats.First( item=> item.Type == StatType.Attack).RollStartValue();
             this.Defence = classStats.Stats.First(item => item.Type == StatType.Defence).RollStartValue();
+            this.MagicDefence = classStats.Stats.First(item => item.Type == StatType.MagicDefence).RollStartValue();
             this.MaxMagic = classStats.Stats.First( item=> item.Type == StatType.Magic).RollStartValue();
             this.Agility = classStats.Stats.First( item=> item.Type == StatType.Agility).RollStartValue();
 
@@ -115,6 +116,13 @@ namespace Redpoint.DungeonEscape.State
             {
                 levelUpMessage += $"Defence +{defence}\n";
             }
+            
+            var magicDefence = classStats.Stats.First(item => item.Type == StatType.MagicDefence).RollNextValue();
+            if (magicDefence != 0)
+            {
+                levelUpMessage += $"Defence +{magicDefence}\n";
+            }
+            
             var magic = classStats.Stats.First( item=> item.Type == StatType.Magic).RollNextValue();
             if (magic != 0)
             {
@@ -129,6 +137,7 @@ namespace Redpoint.DungeonEscape.State
             this.MaxHealth += health;
             this.Attack += attack;
             this.Defence += defence;
+            this.MagicDefence += magicDefence;
             this.MaxMagic += magic;
             this.Agility += agility;
 
@@ -207,6 +216,7 @@ namespace Redpoint.DungeonEscape.State
             this.Agility -= item.Agility;
             this.Attack -= item.Attack;
             this.Defence -= item.Defence;
+            this.MagicDefence -= item.MagicDefence;
             this.MaxHealth -= item.Health;
 
             if (this.Health > this.MaxHealth)
@@ -228,10 +238,11 @@ namespace Redpoint.DungeonEscape.State
             }
             item.IsEquipped = true;
             item.EquippedTo = this.Id;
-            this.Agility += this.Agility;
-            this.Attack += this.Attack;
-            this.Defence += this.Defence;
-            this.MaxHealth += this.Health;
+            this.Agility += item.Agility;
+            this.Attack += item.Attack;
+            this.Defence += item.Defence;
+            this.MagicDefence += item.MagicDefence;
+            this.MaxHealth += item.Health;
         }
     }
 }

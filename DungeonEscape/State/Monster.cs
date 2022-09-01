@@ -83,5 +83,6 @@ namespace Redpoint.DungeonEscape.State
         public int Attack { get;  set;}
 
         public string Name { get;  set;}
+        public int MagicDefence { get; set; }
     }
 }

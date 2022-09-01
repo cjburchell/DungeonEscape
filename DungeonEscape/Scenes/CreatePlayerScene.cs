@@ -194,6 +194,9 @@
             this._statusTable.Add(new Label("Defence:",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(LabelColumnWidth);
             this._statusTable.Add(new Label($"{this._hero.Defence}",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(DataColumnWidth);
             this._statusTable.Row();
+            this._statusTable.Add(new Label("Magic Defence:",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(LabelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.MagicDefence}",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(DataColumnWidth);
+            this._statusTable.Row();
             this._statusTable.Add(new Label("Agility:",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(LabelColumnWidth);
             this._statusTable.Add(new Label($"{this._hero.Agility}", BasicWindow. Skin).SetAlignment(Align.Left)).Width(DataColumnWidth);
 

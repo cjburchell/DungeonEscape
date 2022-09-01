@@ -19,5 +19,15 @@
 
             return value;
         }
+        
+        public static int RollD100()
+        {
+            return Random.NextInt(100) + 1;
+        }
+        
+        public static int RollD20()
+        {
+            return Random.NextInt(20) + 1;
+        }
     }
 }

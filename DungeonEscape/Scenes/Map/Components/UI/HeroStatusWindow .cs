@@ -71,6 +71,9 @@
             this._statusTable.Add(new Label("Defence:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
             this._statusTable.Add(new Label($"{this._hero.Defence}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
             this._statusTable.Row();
+            this._statusTable.Add(new Label("Magic Defence:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.MagicDefence}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
+            this._statusTable.Row();
             this._statusTable.Add(new Label("Agility:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
             this._statusTable.Add(new Label($"{this._hero.Agility}", Skin).SetAlignment(Align.Left)).Width(dataColumnWidth);
             this._statusTable.Row();

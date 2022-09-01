@@ -13,17 +13,21 @@
         bool IsDead { get; }
         int Level { get; }
         int MaxHealth { get; set; }
+        public IEnumerable<StatValue> Stats { get; }
         bool RanAway { get; }
         IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells);
 
         List<StatusEffect> Status { get; }
         List<ItemInstance> Items { get; }
+        int MagicDefence { get; set; }
         void AddEffect(StatusEffect effect);
         void RemoveEffect(StatusEffect effect);
-        void Use(ItemInstance item);
+        string Use(ItemInstance item);
         void Equip(ItemInstance item);
         List<string> GetEquipmentId(IEnumerable<Slot> slots);
         string UpdateStatusEffects(int round, DurationType durationType, IGame game);
         void PlayDamageAnimation();
+        bool CanHit(IFighter target);
+        bool CanCriticalHit(IFighter target);
     }
 }

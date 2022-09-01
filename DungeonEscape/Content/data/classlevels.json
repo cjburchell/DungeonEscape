@@ -22,6 +22,12 @@
         "RollConst": 1
       },
       {
+        "Type": "MagicDefence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollConst": 1
+      },
+      {
         "Type": "Agility",
         "StartConst": 1,
         "Roll": 3,
@@ -53,6 +59,12 @@
       },
       {
         "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollConst": 1
+      },
+      {
+        "Type": "MagicDefence",
         "StartConst": 1,
         "Roll": 4,
         "RollConst": 1
@@ -94,6 +106,12 @@
         "RollConst": 1
       },
       {
+        "Type": "MagicDefence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollConst": 1
+      },
+      {
         "Type": "Agility",
         "StartConst": 1,
         "Roll": 3,
@@ -125,6 +143,12 @@
       },
       {
         "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollConst": 1
+      },
+      {
+        "Type": "MagicDefence",
         "StartConst": 1,
         "Roll": 4,
         "RollConst": 1
@@ -166,6 +190,12 @@
         "RollConst": 1
       },
       {
+        "Type": "MagicDefence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollConst": 1
+      },
+      {
         "Type": "Agility",
         "StartConst": 1,
         "Roll": 3,
@@ -197,6 +227,12 @@
       },
       {
         "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollConst": 1
+      },
+      {
+        "Type": "MagicDefence",
         "StartConst": 1,
         "Roll": 4,
         "RollConst": 1
@@ -238,6 +274,12 @@
         "RollConst": 1
       },
       {
+        "Type": "MagicDefence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollConst": 1
+      },
+      {
         "Type": "Agility",
         "StartConst": 1,
         "Roll": 3,
@@ -269,6 +311,12 @@
       },
       {
         "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollConst": 1
+      },
+      {
+        "Type": "MagicDefence",
         "StartConst": 1,
         "Roll": 4,
         "RollConst": 1

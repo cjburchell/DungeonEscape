@@ -57,6 +57,9 @@ namespace Redpoint.DungeonEscape.State
         
         [JsonIgnore]
         public int Defence => this.Item.GetAttribute(StatType.Defence);
+        
+        [JsonIgnore]
+        public int MagicDefence => this.Item.GetAttribute(StatType.MagicDefence);
 
         [JsonIgnore]
         public int Health => this.Item.GetAttribute(StatType.Health);

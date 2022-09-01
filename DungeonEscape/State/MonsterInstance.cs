@@ -21,6 +21,7 @@ namespace Redpoint.DungeonEscape.State
             this.MaxMagic = this.Magic;
             this.Attack = info.Attack;
             this.Defence = info.Defence;
+            this.MagicDefence = info.MagicDefence;
             this.Agility = info.Agility;
             this.Name = info.Name;
             this.Level = info.MinLevel;

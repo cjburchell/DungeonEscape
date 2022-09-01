@@ -7,6 +7,7 @@
         Agility = 2,
         Attack = 3,
         Defence = 4,
-        None = 5
+        MagicDefence = 5,
+        None = 6
     }
 }

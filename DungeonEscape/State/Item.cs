@@ -108,7 +108,7 @@ namespace Redpoint.DungeonEscape.State
                 case ItemType.Armor:
                 {
                     availableStats = new List<StatType>
-                        { StatType.Agility, StatType.Defence, StatType.Health, StatType.Magic };
+                        { StatType.Agility, StatType.Defence, StatType.Health, StatType.Magic, StatType.MagicDefence };
                     itemDefinition =
                         definitions.Where(i => i.Type == ItemType.Armor).ToArray()[
                             Nez.Random.NextInt(definitions.Count(i => i.Type == ItemType.Armor))];
@@ -269,6 +269,7 @@ namespace Redpoint.DungeonEscape.State
                         StatType.Agility => "Ag",
                         StatType.Attack => "At",
                         StatType.Defence => "D",
+                        StatType.MagicDefence => "Md",
                         _ => ""
                     };
                     

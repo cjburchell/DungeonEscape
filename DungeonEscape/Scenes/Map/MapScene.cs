@@ -693,13 +693,14 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             switch (item.Type)
             {
                 case ItemType.OneUse:
-                    target.Use(item);
+                    var result = target.Use(item);
                     source.Items.Remove(item);
-                    return source != target ? $"{source.Name} used {item.Name} on {target.Name}" : $"{source.Name} used {item.Name}";
+                    return source != target ? $"{source.Name} used {item.Name} on {target.Name}{result}" : $"{source.Name} used {item.Name}{result}";
                     
                 case ItemType.Armor:
                 case ItemType.Weapon:
                     var oldItems = target.Items.Where(i => target.GetEquipmentId(item.Slots).Contains(i.Id)).ToList();
+                    var oldStats = target.Stats.ToList();
                     foreach (var oldItem in oldItems)
                     {
                         oldItem.UnEquip(party.Members);
@@ -707,25 +708,27 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                     
                     item.UnEquip(party.Members);
                     target.Equip(item);
-                    if (oldItems.Count == 0)
+                    var results = "";
+                    foreach (var newStat in target.Stats.ToList())
                     {
-                        return $"{target.Name} put on the {item.Name}";
-                    }
-
-                    var itemList = "";
-                    foreach (var oldItem in oldItems)
-                    {
-                        if (string.IsNullOrEmpty(itemList))
+                        var oldStat = oldStats.FirstOrDefault(i => i.Type == newStat.Type);
+                        if (oldStat == null || oldStat.Value == newStat.Value)
                         {
-                            itemList = $" {oldItem.Name}";
+                            continue;
                         }
-                        else
-                        {
-                            itemList += $" and {oldItem.Name}";
-                        }
+                        
+                        var value = newStat.Value - oldStat.Value;
+                        var direction = value > 0 ? "Increased" : "Decreased";
+                        results += $"\n{oldStat.Type} {direction} by {Math.Abs(value)}";
                     }
                     
-                    return  $"{target.Name} took off{itemList}, and put on the {item.Name}";
+                    if (oldItems.Count == 0)
+                    {
+                        return $"{target.Name} put on the {item.Name}{results}";
+                    }
+
+                    var itemList = oldItems.Aggregate("", (current, oldItem) => current + (string.IsNullOrEmpty(current) ? $" {oldItem.Name}" : $" and {oldItem.Name}"));
+                    return  $"{target.Name} took off{itemList}, and put on the {item.Name}{results}";
                     
                 default:
                     return $"{target.Name} is unable to use {item.Name}";

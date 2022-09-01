@@ -1,6 +1,9 @@
 ﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+
+using System;
+
 namespace Redpoint.DungeonEscape.State
 {
     using System.Collections.Generic;
@@ -61,32 +64,39 @@ namespace Redpoint.DungeonEscape.State
 
             return message;
         }
-        
+
         private string CastDot(IEnumerable<IFighter> targets, IFighter caster, IGame gameState, int round)
         {
             gameState.Sounds.PlaySoundEffect("spell", true);
             var message = $"{caster.Name} casts {this.Name}\n";
-            foreach (var target in targets.Where(i=> !i.IsDead && !i.RanAway ))
+            foreach (var target in targets.Where(i => !i.IsDead && !i.RanAway))
             {
-                var buff = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
-                if (buff == 0)
+                if (caster.CanHit(target))
                 {
-                    message += $"{target.Name} was not effected\n";
+                    var buff = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
+                    if (buff == 0)
+                    {
+                        message += $"{target.Name} was not effected\n";
+                    }
+                    else
+                    {
+                        target.AddEffect(new StatusEffect
+                        {
+                            Name = this.EffectName,
+                            Type = EffectType.OverTime,
+                            StatType = this.StatType,
+                            StatValue = -buff,
+                            Duration = Dice.Roll(this.DurationRandom, this.DurationTimes, this.DurationConst),
+                            DurationType = this.DurationType,
+                            StartTime = this.DurationType == DurationType.Rounds ? round : gameState.Party.StepCount
+                        });
+
+                        message += $"{target.Name} is {this.EffectName}\n";
+                    }
                 }
                 else
                 {
-                    target.AddEffect(new StatusEffect
-                    {
-                        Name = this.EffectName,
-                        Type = EffectType.OverTime,
-                        StatType = this.StatType,
-                        StatValue =  -buff,
-                        Duration = Dice.Roll(this.DurationRandom, this.DurationTimes, this.DurationConst),
-                        DurationType = this.DurationType,
-                        StartTime = this.DurationType == DurationType.Rounds? round:gameState.Party.StepCount 
-                    });
-                    
-                    message += $"{target.Name} is {this.EffectName}\n";
+                    message += $"{target.Name} dodges the spell\n";
                 }
             }
 
@@ -99,16 +109,23 @@ namespace Redpoint.DungeonEscape.State
             var message = $"{caster.Name} casts {this.Name}\n";
             foreach (var target in targets.Where(i=> !i.IsDead && !i.RanAway ))
             {
-                target.AddEffect(new StatusEffect
+                if (caster.CanHit(target))
                 {
-                    Name = this.EffectName,
-                    Type = EffectType.StopSpell,
-                    Duration = Dice.Roll(this.DurationRandom, this.DurationTimes, this.DurationConst),
-                    DurationType = this.DurationType,
-                    StartTime = this.DurationType == DurationType.Rounds? round: gameState.Party.StepCount
-                });
-                
-                message += $"{target.Name} is {this.EffectName}\n";
+                    target.AddEffect(new StatusEffect
+                    {
+                        Name = this.EffectName,
+                        Type = EffectType.StopSpell,
+                        Duration = Dice.Roll(this.DurationRandom, this.DurationTimes, this.DurationConst),
+                        DurationType = this.DurationType,
+                        StartTime = this.DurationType == DurationType.Rounds ? round : gameState.Party.StepCount
+                    });
+
+                    message += $"{target.Name} is {this.EffectName}\n";
+                }
+                else
+                {
+                    message += $"{target.Name} dodges the spell\n";
+                }
             }
 
             return message;
@@ -120,16 +137,24 @@ namespace Redpoint.DungeonEscape.State
             var message = $"{caster.Name} casts {this.Name}\n";
             foreach (var target in targets.Where(i=> !i.IsDead && !i.RanAway ))
             {
-                target.AddEffect(new StatusEffect
+                if (caster.CanHit(target))
                 {
-                    Name = this.EffectName,
-                    Type = EffectType.Confusion,
-                    Duration = Dice.Roll(this.DurationRandom, this.DurationTimes, this.DurationConst),
-                    DurationType = this.DurationType,
-                    StartTime = this.DurationType == DurationType.Rounds? round: gameState.Party.StepCount
-                });
-                
-                message += $"{target.Name} is {this.EffectName}\n";
+                    target.AddEffect(new StatusEffect
+                    {
+                        Name = this.EffectName,
+                        Type = EffectType.Confusion,
+                        Duration = Dice.Roll(this.DurationRandom, this.DurationTimes, this.DurationConst),
+                        DurationType = this.DurationType,
+                        StartTime = this.DurationType == DurationType.Rounds ? round : gameState.Party.StepCount
+                    });
+
+                    message += $"{target.Name} is {this.EffectName}\n";
+                }
+                else
+                {
+                    message += $"{target.Name} dodges the spell\n";
+                }
+               
             }
 
             return message;
@@ -141,16 +166,24 @@ namespace Redpoint.DungeonEscape.State
             var message = $"{caster.Name} casts {this.Name}\n";
             foreach (var target in targets.Where(i=> !i.IsDead && !i.RanAway ))
             {
-                target.AddEffect(new StatusEffect
+                if (caster.CanHit(target))
                 {
-                    Name = this.EffectName,
-                    Type = EffectType.Sleep,
-                    Duration = Dice.Roll(this.DurationRandom, this.DurationTimes, this.DurationConst),
-                    DurationType = this.DurationType,
-                    StartTime = this.DurationType == DurationType.Rounds? round: gameState.Party.StepCount
-                });
+                    target.AddEffect(new StatusEffect
+                    {
+                        Name = this.EffectName,
+                        Type = EffectType.Sleep,
+                        Duration = Dice.Roll(this.DurationRandom, this.DurationTimes, this.DurationConst),
+                        DurationType = this.DurationType,
+                        StartTime = this.DurationType == DurationType.Rounds ? round : gameState.Party.StepCount
+                    });
+
+                    message += $"{target.Name} is put to sleep\n";
+                }
+                else
+                {
+                    message += $"{target.Name} dodges the spell\n";
+                }
                 
-                message += $"{target.Name} is put to sleep\n";
             }
 
             return message;
@@ -162,26 +195,33 @@ namespace Redpoint.DungeonEscape.State
             var message = $"{caster.Name} casts {this.Name}\n";
             foreach (var target in targets.Where(i=> !i.IsDead && !i.RanAway ))
             {
-                var buff = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
-                if (buff == 0)
+                if (caster.CanHit(target))
                 {
-                    message += $"{target.Name} was not effected by {this.Name}\n";
+                    var buff = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
+                    if (buff == 0)
+                    {
+                        message += $"{target.Name} was not effected by {this.Name}\n";
+                    }
+                    else
+                    {
+                        target.AddEffect(new StatusEffect
+                        {
+                            Name = this.EffectName,
+                            Type = EffectType.Buff,
+                            StatType = this.StatType,
+                            StatValue = increase? buff: -buff,
+                            Duration = Dice.Roll(this.DurationRandom, this.DurationTimes, this.DurationConst),
+                            DurationType = this.DurationType,
+                            StartTime = this.DurationType == DurationType.Rounds? round: gameState.Party.StepCount
+                        });
+
+                        var changed = increase ? "increased" : "decreased";
+                        message += $"{target.Name} {changed} {this.StatType.ToString()} {buff} points\n";
+                    }
                 }
                 else
                 {
-                    target.AddEffect(new StatusEffect
-                    {
-                        Name = this.EffectName,
-                        Type = EffectType.Buff,
-                        StatType = this.StatType,
-                        StatValue = increase? buff: -buff,
-                        Duration = Dice.Roll(this.DurationRandom, this.DurationTimes, this.DurationConst),
-                        DurationType = this.DurationType,
-                        StartTime = this.DurationType == DurationType.Rounds? round: gameState.Party.StepCount
-                    });
-
-                    var changed = increase ? "increased" : "decreased";
-                    message += $"{target.Name} {changed} {this.StatType.ToString()} {buff} points\n";
+                    message += $"{target.Name} dodges the spell\n";
                 }
             }
 
@@ -195,17 +235,29 @@ namespace Redpoint.DungeonEscape.State
             var totalDamage = 0;
             foreach (var target in targets.Where(i=> !i.IsDead && !i.RanAway ))
             {
-                var damage = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
+                var damage = 0;
+                
+                if (caster.CanHit(target))
+                {
+                    var defence = (100 - Math.Min(target.MagicDefence, 99)) / 100f;
+                    var attack = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
+                    damage = attack != 0 ? Math.Max((int) ( attack * defence), 1) : 0;
+                }
+                else
+                {
+                    message += " dodges the spell and";
+                }
+                
                 totalDamage += damage;
                 target.Health -= damage;
                 if (damage == 0)
                 {
-                    message += $"{target.Name} was unharmed\n";
+                    message += $" was unharmed\n";
                 }
                 else
                 {
                     target.PlayDamageAnimation();
-                    message += $"{target.Name} took {damage} points of damage\n";
+                    message += $" took {damage} points of damage\n";
                 }
 
                 if (target.Health <= 0)

@@ -18,12 +18,52 @@ namespace Redpoint.DungeonEscape.State
         }
         
         public string Name { get; set; }
+        
         public int Health { get; set; }
         public int Magic { get; set; }
         public int Attack { get; set; }
         public int Defence { get; set; }
+        public int MagicDefence { get; set; }
         public int Agility { get; set; }
+
+        [JsonIgnore]
+        public IEnumerable<StatValue> Stats =>
+            new List<StatValue>
+            {
+                new()
+                {
+                    Value = this.MaxHealth,
+                    Type = StatType.Health
+                },
+                new()
+                {
+                    Value = this.MaxMagic,
+                    Type = StatType.Magic
+                },
+                new()
+                {
+                    Value = this.Attack,
+                    Type = StatType.Attack
+                },
+                new()
+                {
+                    Value = this.Defence,
+                    Type = StatType.Defence
+                },
+                new()
+                {
+                    Value = this.MagicDefence,
+                    Type = StatType.MagicDefence
+                },
+                new()
+                {
+                    Value = this.Agility,
+                    Type = StatType.Agility
+                }
+            };
+
         public int MaxMagic { get; set; }
+        public int MaxHealth { get; set; }
         
         public ulong Xp { get; set; }
         
@@ -31,8 +71,7 @@ namespace Redpoint.DungeonEscape.State
         public bool IsDead => this.Health <= 0;
         
         public int Level { get; set; }
-        public int MaxHealth { get; set; }
-        
+
         [JsonIgnore]
         public bool RanAway { get; set; }
 
@@ -59,6 +98,9 @@ namespace Redpoint.DungeonEscape.State
                         break;
                     case StatType.Defence:
                         this.Defence -= effect.StatValue;
+                        break;
+                    case StatType.MagicDefence:
+                        this.MagicDefence -= effect.StatValue;
                         break;
                     case StatType.Agility:
                         this.Agility -= effect.StatValue;
@@ -95,6 +137,9 @@ namespace Redpoint.DungeonEscape.State
                     case StatType.Defence:
                         this.Defence += effect.StatValue;
                         break;
+                    case StatType.MagicDefence:
+                        this.MagicDefence += effect.StatValue;
+                        break;
                     case StatType.Agility:
                         this.Agility += effect.StatValue;
                         break;
@@ -111,7 +156,8 @@ namespace Redpoint.DungeonEscape.State
             this.Status.Add(effect);
         }
 
-        public virtual void Equip(ItemInstance item){}
+        public virtual void Equip(ItemInstance item) { }
+        
         public virtual List<string> GetEquipmentId(IEnumerable<Slot> slots)
         {
             return new List<string>();
@@ -203,6 +249,18 @@ namespace Redpoint.DungeonEscape.State
             this.Animator.Play("Damage", SpriteAnimator.LoopMode.Once);
         }
 
+        public bool CanHit(IFighter target)
+        {
+            var roll = Dice.RollD20();
+            return roll == 20 || (this.Agility-target.Agility)/100 * 10 + roll > 4;
+        }
+
+        public bool CanCriticalHit(IFighter target)
+        {
+            var roll = Dice.RollD100();
+            return roll >= 95 || (this.Agility-target.Agility)/100 * 50 + roll > 90;
+        }
+
         public void Update()
         {
             this.Animator?.Update();
@@ -212,21 +270,60 @@ namespace Redpoint.DungeonEscape.State
             }
         }
 
-        public void Use(ItemInstance item)
+        public string Use(ItemInstance item)
         {
-            this.Agility += item.Agility;
-            this.Attack += item.Attack;
-            this.Defence += item.Defence;
-            this.Health += item.Health;
-            if (this.Health > this.MaxHealth)
+            var message = "";
+            foreach (var stat in item.Item.Stats.Where(i => i.Value != 0).Select(o => o.Type).Distinct()
+                         .OrderBy(i => i))
             {
-                this.Health = this.MaxHealth;
+                var value = item.Item.GetAttribute(stat);
+                if (value == 0) continue;
+                
+                switch (stat)
+                {
+                    case StatType.Health:
+                        if (this.Health+value > this.MaxHealth)
+                        {
+                            this.Health = this.MaxHealth;
+                            value = this.MaxHealth - this.Health;
+                        }
+                        else
+                        {
+                            this.Health += value;
+                        }
+                        break;
+                    case StatType.Magic:
+                        if (this.Magic+value > this.MaxMagic)
+                        {
+                            this.Magic = this.MaxMagic;
+                            value = this.MaxMagic - this.Magic;
+                        }
+                        else
+                        {
+                            this.Magic += value;
+                        }
+
+                        break;
+                    case StatType.Agility:
+                        this.Agility += value;
+                        break;
+                    case StatType.Attack:
+                        this.Attack += value;
+                        break;
+                    case StatType.Defence:
+                        this.Defence += value;
+                        break;
+                    case StatType.MagicDefence:
+                        this.MagicDefence += value;
+                        break;
+                }
+
+                if (value == 0) continue;
+                var direction = value > 0 ? "Increased" : "Decreased";
+                message += $"\n{stat} {direction} by {value}";
             }
-            this.Magic += item.Magic;
-            if (this.Magic > this.MaxMagic)
-            {
-                this.Magic = this.MaxMagic;
-            }
+
+            return message;
         }
     }
 }

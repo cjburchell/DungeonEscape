@@ -4,6 +4,7 @@
 
 namespace Redpoint.DungeonEscape.State
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Newtonsoft.Json;
@@ -192,20 +193,24 @@ namespace Redpoint.DungeonEscape.State
                         if (effect.StatValue > 0)
                         {
                             message += $"{this.Name} gained {effect.StatValue} points of health\n";
+                            this.Health += effect.StatValue;
                         }
                         else
                         {
-                            message += $"{this.Name} took {-effect.StatValue} points of damage\n";
+                            var defence = (100 - Math.Min(this.MagicDefence, 99)) / 100f;
+                            var damage = Math.Min((int)(effect.StatValue * defence), -1);
+                            message += $"{this.Name} took {-damage} points of damage\n";
+                            this.Health += damage;
                             this.PlayDamageAnimation();
                             game.Sounds.PlaySoundEffect("receive-damage");
                         }
                         
-                        this.Health += effect.StatValue;
                         if (this.IsDead)
                         {
                             message += "and has died!\n";
                             this.Health = 0;
                         }
+                        
                         if (this.Health > this.MaxHealth)
                         {
                             this.Health = this.MaxHealth;
@@ -216,19 +221,24 @@ namespace Redpoint.DungeonEscape.State
                         if (effect.StatValue > 0)
                         {
                             message += $"{this.Name} gained {effect.StatValue} points of magic\n";
+                            this.Magic += effect.StatValue;
                         }
                         else
                         {
-                            message += $"{this.Name} lost {-effect.StatValue} points of magic\n";
+                            
+                            var defence = (100 - Math.Min(this.MagicDefence, 99)) / 100f;
+                            var damage = Math.Min((int)(effect.StatValue * defence), -1);
+                            message += $"{this.Name} lost {-damage} points of magic\n";
+                            this.Magic += damage;
                             this.PlayDamageAnimation();
                             game.Sounds.PlaySoundEffect("receive-damage");
                         }
                         
-                        this.Magic += effect.StatValue;
                         if (this.Magic <= 0)
                         {
                             this.Magic = 0;
                         }
+                        
                         if (this.Magic > this.MaxMagic)
                         {
                             this.Magic = this.MaxMagic;

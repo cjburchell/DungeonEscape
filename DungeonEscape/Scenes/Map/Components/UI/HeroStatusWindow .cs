@@ -27,9 +27,11 @@
             var table = this.Window.AddElement(new Table());
             this._statusTable = new Table();
             this._itemTable = new Table();
-            this._closeButton = new TextButton("Close", Skin);
-            this._closeButton.GetLabel();    
-            this._closeButton.ShouldUseExplicitFocusableControl = true;
+            this._closeButton = new TextButton("Close", Skin)
+            {
+                ShouldUseExplicitFocusableControl = true
+            };
+            
             this._closeButton.OnClicked += _ =>
             {
                 this.Ui.Sounds.PlaySoundEffect("confirm");

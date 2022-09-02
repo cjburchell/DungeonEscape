@@ -44,7 +44,7 @@
             this._table.SetFillParent(true);
             this._table.Top().PadLeft(10).PadTop(50);
             this._table.Add(new Label("Dungeon Escape", BasicWindow.Skin, "big_label"));
-            var playButton = this.AddButton("New quest");
+            var playButton = this.AddButton("New game");
             playButton.OnClicked += _ =>
             {
                 this._sounds.PlaySoundEffect("confirm");
@@ -59,7 +59,7 @@
             TextButton loadButton = null;
             if (game.LoadableGameSaves.Any(item => !item.IsEmpty))
             {
-                loadButton = this.AddButton("Continue quest");
+                loadButton = this.AddButton("Load game");
                 loadButton.OnClicked += _ =>
                 {
                     this._sounds.PlaySoundEffect("confirm");
@@ -114,7 +114,7 @@
             quitButton.GamepadUpElement = settingsButton;
 
             base.Initialize();
-            this._sounds.PlayMusic(@"first-story");
+            this._sounds.PlayMusic(new [] {"first-story"});
         }
     }
 }

@@ -107,7 +107,7 @@
                 }
             };
             
-            this._sounds.PlayMusic(@"first-story");
+            this._sounds.PlayMusic(new [] {"first-story"});
         }
     }
 }

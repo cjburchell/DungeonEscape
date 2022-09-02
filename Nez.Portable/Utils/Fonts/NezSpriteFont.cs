@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using System.Text;
-
 
 namespace Nez
 {
@@ -15,7 +15,7 @@ namespace Nez
 		public float LineSpacing => _font.LineSpacing;
 		public Padding Padding { get; } = new Padding();
 
-		SpriteFont _font;
+		private readonly SpriteFont _font;
 		readonly Dictionary<char, SpriteFont.Glyph> _glyphs;
 
 		/// <summary>
@@ -43,8 +43,7 @@ namespace Nez
 		public Vector2 MeasureString(string text)
 		{
 			var source = new FontCharacterSource(text);
-			Vector2 size;
-			MeasureString(ref source, out size);
+			MeasureString(ref source, out var size);
 			return size;
 		}
 
@@ -59,8 +58,7 @@ namespace Nez
 		public Vector2 MeasureString(StringBuilder text)
 		{
 			var source = new FontCharacterSource(text);
-			Vector2 size;
-			MeasureString(ref source, out size);
+			MeasureString(ref source, out var size);
 			return size;
 		}
 
@@ -198,7 +196,12 @@ namespace Nez
 
 		public float GetXAdvance(char c)
 		{
-			return 0;
+			float Selector(SpriteFont.Glyph i)
+			{
+				return i.WidthIncludingBearings;
+			}
+
+			return this._font.Glyphs.Where(i => i.Character == c).Select( Selector ).FirstOrDefault();
 		}
 
 		public float DefaultCharacterWidth => this.MeasureString(this._font.DefaultCharacter.ToString()).X;

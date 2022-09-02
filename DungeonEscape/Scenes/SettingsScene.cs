@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 
 namespace Redpoint.DungeonEscape.Scenes
@@ -45,6 +46,7 @@ namespace Redpoint.DungeonEscape.Scenes
             
             table.Add(new Label("Full Screen", BasicWindow.Skin).SetAlignment(Align.Left)).Width(LabelColumnWidth);
             var fullScreenCheckbox = table.Add(new CheckBox("Full Screen", BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(DataColumnWidth).SetAlign(Align.Left).GetElement<TextButton>();
+            fullScreenCheckbox.ShouldUseExplicitFocusableControl = true;
             fullScreenCheckbox.IsChecked = game.Settings.IsFullScreen;
             fullScreenCheckbox.OnChanged += isChecked =>
             {
@@ -65,6 +67,7 @@ namespace Redpoint.DungeonEscape.Scenes
             
             table.Add(new Label("Music Volume", BasicWindow.Skin).SetAlignment(Align.Left)).Width(LabelColumnWidth);
             var musicSlider = table.Add(new Slider(0.0f, 1.0f,0.1f,false,BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(DataColumnWidth).GetElement<Slider>();
+            musicSlider.ShouldUseExplicitFocusableControl = true;
             musicSlider.Value = game.Settings.MusicVolume;
             musicSlider.OnChanged += volume =>
             {
@@ -77,6 +80,7 @@ namespace Redpoint.DungeonEscape.Scenes
             
             table.Add(new Label("Sound Effect Volume", BasicWindow.Skin).SetAlignment(Align.Left)).Width(LabelColumnWidth);
             var fxSlider = table.Add(new Slider(0.0f, 1.0f,0.1f,false,BasicWindow.Skin)).Height(BasicWindow.ButtonHeight).Width(DataColumnWidth).GetElement<Slider>();
+            fxSlider.ShouldUseExplicitFocusableControl = true;
             fxSlider.Value = game.Settings.SoundEffectsVolume;
             fxSlider.OnChanged += volume =>
             {
@@ -89,11 +93,8 @@ namespace Redpoint.DungeonEscape.Scenes
             
             
             var backButton = new TextButton("Done", BasicWindow.Skin);
-            backButton.GamepadDownElement = backButton;
-            backButton.GamepadUpElement = backButton;
             backButton.ShouldUseExplicitFocusableControl = true;
-            canvas.Stage.SetGamepadFocusElement(backButton);
-            
+
             table.Row();
             table.Add(backButton).SetPadTop(5).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).SetColspan(2).GetElement<TextButton>();
             backButton.OnClicked += _ =>
@@ -127,7 +128,20 @@ namespace Redpoint.DungeonEscape.Scenes
                 }
             };
             
-            this._sounds.PlayMusic(@"first-story");
+            canvas.Stage.SetGamepadFocusElement(backButton);
+            canvas.Stage.GamepadActionButton = Buttons.A;
+
+            backButton.GamepadDownElement = fullScreenCheckbox;
+            fullScreenCheckbox.GamepadDownElement = musicSlider;
+            musicSlider.GamepadDownElement = fxSlider;
+            fxSlider.GamepadDownElement = backButton;
+            
+            backButton.GamepadUpElement = fxSlider;
+            fullScreenCheckbox.GamepadUpElement = backButton;
+            musicSlider.GamepadUpElement = fullScreenCheckbox;
+            fxSlider.GamepadUpElement = musicSlider;
+            
+            this._sounds.PlayMusic(new [] {"first-story"});
         }
     }
 }

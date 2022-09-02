@@ -483,7 +483,14 @@ namespace Nez.UI
 			}
 			else
 			{
-				this.SetGamepadFocusElement(nextElement);
+				if (this._gamepadFocusElement.CanUnfocus())
+				{
+					this.SetGamepadFocusElement(nextElement);
+				}
+				else
+				{
+					this._gamepadFocusElement.OnUnhandledDirectionPressed(direction);
+				}
 			}
 		}
 

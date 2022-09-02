@@ -22,7 +22,7 @@ namespace Nez.UI
 	/// The desktop keyboard is a stub, as a softkeyboard is not needed on the desktop. The Android {@link OnscreenKeyboard}
 	/// implementation will bring up the default IME.
 	/// </summary>
-	public class TextField : Element, IInputListener, IKeyboardListener
+	public class TextField : Element, IInputListener, IKeyboardListener, IGamepadFocusable
 	{
 		public event Action<TextField, string> OnTextChanged;
 		public event Action<TextField> OnEnterPressed = delegate { };
@@ -1299,6 +1299,58 @@ namespace Nez.UI
 		public interface ITextFieldFilter
 		{
 			bool AcceptChar(TextField textField, char c);
+		}
+
+		public bool ShouldUseExplicitFocusableControl { get; set; }
+		public IGamepadFocusable GamepadUpElement { get; set; }
+		public IGamepadFocusable GamepadDownElement { get; set; }
+		public IGamepadFocusable GamepadLeftElement { get; set; }
+		public IGamepadFocusable GamepadRightElement { get; set; }
+		public bool GetDisabled()
+		{
+			return IsDisabled();
+		}
+
+		public void EnableExplicitFocusableControl(IGamepadFocusable upEle, IGamepadFocusable downEle, IGamepadFocusable leftEle,
+			IGamepadFocusable rightEle)
+		{
+			ShouldUseExplicitFocusableControl = true;
+			GamepadUpElement = upEle;
+			GamepadDownElement = downEle;
+			GamepadLeftElement = leftEle;
+			GamepadRightElement = rightEle;
+		}
+
+		public void OnUnhandledDirectionPressed(Direction direction)
+		{
+		}
+
+		public void OnFocused()
+		{
+			lastBlink = 0;
+			cursorOn = false;
+			cursor = glyphPositions.Count == 0?0:glyphPositions.Count-1;
+			selectionStart = cursor;
+			hasSelection = true;
+			GetStage()?.SetKeyboardFocus(this as IKeyboardListener);
+		}
+
+		public void OnUnfocused()
+		{
+			GetStage()?.SetKeyboardFocus(null);
+		}
+
+		public void OnActionButtonPressed()
+		{
+		}
+
+		public void OnActionButtonReleased()
+		{
+		}
+
+		public bool CanUnfocus()
+		{
+			return true;
 		}
 	}
 

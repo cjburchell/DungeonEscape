@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Nez.UI
 {
-	public class SelectBox<T> : Element, IInputListener where T : class
+	public class SelectBox<T> : Element, IInputListener, IGamepadFocusable where T : class
 	{
 		public Action<T> OnChanged;
 
@@ -448,6 +448,84 @@ namespace Nez.UI
 		}
 
 		#endregion
+
+		public bool ShouldUseExplicitFocusableControl { get; set; }
+		public IGamepadFocusable GamepadUpElement { get; set; }
+		public IGamepadFocusable GamepadDownElement { get; set; }
+		public IGamepadFocusable GamepadLeftElement { get; set; }
+		public IGamepadFocusable GamepadRightElement { get; set; }
+		
+		public bool GetDisabled()
+		{
+			return IsDisabled();
+		}
+
+		public void EnableExplicitFocusableControl(IGamepadFocusable upEle, IGamepadFocusable downEle, IGamepadFocusable leftEle,
+			IGamepadFocusable rightEle)
+		{
+			ShouldUseExplicitFocusableControl = true;
+			GamepadUpElement = upEle;
+			GamepadDownElement = downEle;
+			GamepadLeftElement = leftEle;
+			GamepadRightElement = rightEle;
+		}
+
+		public void OnUnhandledDirectionPressed(Direction direction)
+		{
+			if (direction == Direction.Down || direction == Direction.Up)
+			{
+				var index = GetSelectedIndex();
+				if (direction == Direction.Down)
+				{
+					index++;
+					if (index >= this._items.Count)
+					{
+						index = 0;
+					}
+				} else
+				{
+					index--;
+					if (index < 0)
+					{
+						index = this._items.Count-1;
+					}
+				}
+				
+				this._selectBoxList.ListBox.SetSelectedIndex(index);
+				var item = this._items[index];
+				this.GetSelection().Choose(item);
+				this.OnChanged?.Invoke(item);
+			}
+			
+		}
+
+		public void OnFocused()
+		{
+			this._isMouseOver = true;
+		}
+
+		public void OnUnfocused()
+		{
+			this._isMouseOver = false;
+			HideList();
+		}
+
+		public void OnActionButtonPressed()
+		{
+		}
+
+		public void OnActionButtonReleased()
+		{
+			if (_selectBoxList.HasParent())
+				HideList();
+			else
+				ShowList();
+		}
+
+		public bool CanUnfocus()
+		{
+			return !_selectBoxList.HasParent();
+		}
 	}
 
 

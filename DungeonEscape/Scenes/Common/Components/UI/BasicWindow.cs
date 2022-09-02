@@ -143,20 +143,43 @@
                 FontColor = Color.Purple
             };
             Skin.Add("epic_label", epicLabelStyle);
+
+            var scrollPaneStyle = Skin.Get<ScrollPaneStyle>();
+            scrollPaneStyle.VScrollKnob = new PrimitiveDrawable(6, 50, Color.White);
+            scrollPaneStyle.HScrollKnob = new PrimitiveDrawable(50, 6,  Color.White);
+            Skin.Add("default", scrollPaneStyle);
             
             var textFieldStyle = Skin.Get<TextFieldStyle>();
             textFieldStyle.Font = font;
             textFieldStyle.Background =new BorderPrimitiveDrawable(Color.Black, Color.White, 1);
-            
+
             var selectBoxStyle = Skin.Get<SelectBoxStyle>();
             selectBoxStyle.Font = font;
-            selectBoxStyle.Background =new BorderPrimitiveDrawable(Color.Black, Color.White, 1);
+            selectBoxStyle.Background = new BorderPrimitiveDrawable(Color.Black, Color.White, 1);
+            selectBoxStyle.BackgroundOpen = new BorderPrimitiveDrawable(Color.LightGray, Color.White, 1);
+            selectBoxStyle.BackgroundOver = new BorderPrimitiveDrawable(Color.Gray, Color.White, 1);
+            selectBoxStyle.ListStyle.Selection = new BorderPrimitiveDrawable(Color.LightGray);
+            selectBoxStyle.ListStyle.FontColorSelected = Color.White;
+            selectBoxStyle.ListStyle.HoverSelection = new BorderPrimitiveDrawable(Color.Gray);
             Skin.Add("default", selectBoxStyle);
             
             var listBoxStyle = Skin.Get<ListBoxStyle>();
             listBoxStyle.Font = font;
             listBoxStyle.Background =new BorderPrimitiveDrawable(Color.Black, Color.White, 1);
             Skin.Add("default", selectBoxStyle);
+            
+            var sliderStyle  = Skin.Get<SliderStyle>();
+            sliderStyle.Knob = new PrimitiveDrawable(14, Color.White);
+            sliderStyle.KnobDown = new PrimitiveDrawable(14, Color.LightGray);
+            sliderStyle.KnobOver = new PrimitiveDrawable(14, Color.Gray);
+            Skin.Add("default", sliderStyle);
+            
+            var checkBoxStyle  = Skin.Get<CheckBoxStyle>();
+            checkBoxStyle.CheckboxOff = new BorderPrimitiveDrawable(30, Color.Black, Color.White, 1);
+            checkBoxStyle.CheckboxOn = new SelectDrawable(4, 30, Color.Black, Color.White, Color.White, 1);
+            checkBoxStyle.CheckboxOver = new BorderPrimitiveDrawable(30, Color.LightGray, Color.White, 1);
+            checkBoxStyle.CheckboxOnOver = new SelectDrawable(4, 30, Color.Black, Color.LightGray, Color.White, 1);
+            Skin.Add("default", checkBoxStyle);
         }
 
         protected BasicWindow(UiSystem ui, string title, Point position, int width, int height, bool focasable = true)

@@ -164,6 +164,11 @@ namespace Nez.UI
 			OnActionButtonReleased();
 		}
 
+		public bool CanUnfocus()
+		{
+			return true;
+		}
+
 		#endregion
 
 

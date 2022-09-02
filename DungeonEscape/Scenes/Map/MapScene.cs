@@ -34,8 +34,10 @@ namespace Redpoint.DungeonEscape.Scenes.Map
         private readonly Vector2? _start;
         private readonly IGame _gameState;
         private Label _debugText;
-        private List<RandomMonster> _randomMonsters = new List<RandomMonster>();
+        private List<RandomMonster> _randomMonsters = new();
         private VirtualButton _showCommandWindowInput;
+        private VirtualButton _showInventoryWindowInput;
+        private VirtualButton _showSpellWindowInput;
         private VirtualButton _showExitWindowInput;
         private UiSystem _ui;
         private readonly int? _spawnId;
@@ -101,7 +103,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             var isOverWorld = map.Properties != null && map.Properties.ContainsKey("overworld") && bool.Parse(map.Properties["overworld"]);
 
             var songPath = map.Properties != null && map.Properties.ContainsKey("song")?map.Properties["song"]:@"not-in-vain";
-            this._gameState.Sounds.PlayMusic(songPath);
+            this._gameState.Sounds.PlayMusic(new []{songPath});
             
             this._randomMonsters = this.LoadRandomMonsters();
 
@@ -251,9 +253,17 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             this._showCommandWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.E));
             this._showCommandWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.X));
             
+            this._showInventoryWindowInput = new VirtualButton();
+            this._showInventoryWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.I));
+            this._showInventoryWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.Y));
+            
+            this._showSpellWindowInput = new VirtualButton();
+            this._showSpellWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.P));
+            this._showSpellWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.RightShoulder));
+            
             this._showExitWindowInput = new VirtualButton();
             this._showExitWindowInput.Nodes.Add(new VirtualButton.KeyboardKey(Keys.Escape));
-            this._showExitWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.Y));
+            this._showExitWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.Start));
         }
         
         public static Biome GetCurrentBiome(TmxMap map, Vector2 pos)
@@ -348,10 +358,15 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                 return;
             }
             
+            void UnPause()
+            {
+                this._gameState.IsPaused = false;
+            }
+            
             if (this._showCommandWindowInput.IsReleased)
             {
                 var menuItems = new List<string> {"Status"};
-                if (_gameState.Party.AliveMembers.Any(member => member.GetSpells(this._gameState.Spells).Count() != 0))
+                if (_gameState.Party.AliveMembers.Any(member => member.GetSpells(_gameState.Spells).Any()))
                 {
                     menuItems.Add("Spells");
                 }
@@ -361,12 +376,12 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                     menuItems.Add("Items");
                 }
                 
-                this._gameState.IsPaused = true;
-                void UnPause()
+                if (this._gameState.Party.ActiveQuests.Any())
                 {
-                    this._gameState.IsPaused = false;
+                    menuItems.Add("Quests");
                 }
                 
+                this._gameState.IsPaused = true;
                 var commandMenu = new CommandMenu(this._ui);
                 commandMenu.Show(menuItems, result =>
                 {
@@ -381,21 +396,38 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                         case "Items":
                             this.ShowItems(UnPause);
                             break;
+                        case "Quests":
+                            this.ShowQuests(UnPause);
+                            break;
                         default:
                             UnPause();
                             break;
                     }   
                 });
+            } else if (_showInventoryWindowInput.IsReleased)
+            {
+                if (this._gameState.Party.AliveMembers.Any(member => member.Items.Count != 0))
+                {
+                    this._gameState.IsPaused = true;
+                    this.ShowItems(UnPause);
+                }
+            } else if (_showSpellWindowInput.IsReleased)
+            {
+                if (_gameState.Party.AliveMembers.Any(member => member.GetSpells(_gameState.Spells).Any()))
+                {
+                    this._gameState.IsPaused = true;
+                    this.ShowSpell(UnPause);
+                }
             }
             else if(this._showExitWindowInput.IsReleased)
             {
                 this._ui.Input.HandledHide = true;
                 this._gameState.IsPaused = true;
                 var commandMenu = new SelectWindow<string>(this._ui, null, new Point(20,20), 200);
-                var options = new List<string> { "New Quest" };
+                var options = new List<string> { "New Game" };
                 if (this._gameState.LoadableGameSaves.Any(item => !item.IsEmpty))
                 {
-                    options.Add("Load Quest");
+                    options.Add("Load Game");
                 }
                 
                 options.Add("Settings");
@@ -405,10 +437,10 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                 {
                     switch (result)
                     {
-                        case "New Quest":
+                        case "New Game":
                             this._gameState.ShowNewQuest();
                             break;
-                        case "Load Quest":
+                        case "Load Game":
                             this._gameState.ShowLoadQuest();
                             break;
                         case "Settings":
@@ -418,13 +450,18 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                             Core.Exit();
                             break;
                         default:
-                            this._gameState.IsPaused = false;
+                            UnPause();
                             break;
                     }
                 });
             }
             
             base.Update();
+        }
+
+        private void ShowQuests(Action done)
+        {
+            new QuestWindow(this._ui).Show(this._gameState.Party.ActiveQuests, this._gameState.Quests, done);
         }
 
         private void ShowHeroStatus(Action done)
@@ -493,9 +530,9 @@ namespace Redpoint.DungeonEscape.Scenes.Map
 
         private void ShowSpell(Action done)
         {
-            if (this._gameState.Party.AliveMembers.Count() == 1)
+            if (this._gameState.Party.AliveMembers.Count(member => member.GetSpells(this._gameState.Spells).Any()) == 1)
             {
-                var hero = this._gameState.Party.AliveMembers.First();
+                var hero = this._gameState.Party.AliveMembers.First(member => member.GetSpells(this._gameState.Spells).Any());
                 var spellWindow = new SpellWindow(this._ui, hero);
                 spellWindow.Show(hero.GetSpells(this._gameState.Spells).Where(item => item.IsNonEncounterSpell), spell=>
                 {

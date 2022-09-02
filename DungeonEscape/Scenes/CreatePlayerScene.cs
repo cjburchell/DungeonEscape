@@ -15,7 +15,7 @@
         private Hero _hero;
         private Table _statusTable;
 
-        private const int LabelColumnWidth = 125;
+        private const int LabelColumnWidth = 150;
         private const int DataColumnWidth = 75;
 
         public CreatePlayerScene(ISounds sounds)
@@ -169,13 +169,39 @@
             };
             
             backButton.ShouldUseExplicitFocusableControl = true;
+            nameField.ShouldUseExplicitFocusableControl = true;
+            nameButton.ShouldUseExplicitFocusableControl = true;
+            genderField.ShouldUseExplicitFocusableControl = true;
+            classField.ShouldUseExplicitFocusableControl = true;
+            rollButton.ShouldUseExplicitFocusableControl = true;
+            backButton.ShouldUseExplicitFocusableControl = true;
+            playButton.ShouldUseExplicitFocusableControl = true;
+            
             canvas.Stage.SetGamepadFocusElement(playButton);
+            
+            nameField.GamepadDownElement = nameButton;
+            nameButton.GamepadDownElement = genderField;
+            genderField.GamepadDownElement = classField;
+            classField.GamepadDownElement = rollButton;
+            rollButton.GamepadDownElement = playButton;
+            playButton.GamepadDownElement = nameField;
+            backButton.GamepadDownElement = nameField;
+            
+            nameField.GamepadUpElement = playButton;
+            nameButton.GamepadUpElement = nameField;
+            genderField.GamepadUpElement = nameButton;
+            classField.GamepadUpElement = genderField;
+            rollButton.GamepadUpElement = classField;
+            playButton.GamepadUpElement = rollButton;
+            backButton.GamepadUpElement = rollButton;
+            
             backButton.GamepadLeftElement = playButton;
             backButton.GamepadRightElement = playButton;
             playButton.GamepadRightElement = backButton;
             playButton.GamepadLeftElement = backButton;
+            
             this.UpdateStatus();
-            this._sounds.PlayMusic(@"first-story");
+            this._sounds.PlayMusic(new [] {"first-story"});
         }
         
          private void UpdateStatus()

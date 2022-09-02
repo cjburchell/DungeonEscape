@@ -1,4 +1,6 @@
-﻿namespace Redpoint.DungeonEscape.Scenes
+﻿using System.Collections.Generic;
+
+namespace Redpoint.DungeonEscape.Scenes
 {
     using Map;
     using Microsoft.Xna.Framework;
@@ -24,7 +26,7 @@
             var renderer = new SpriteRenderer(new Sprite(texture)) {Origin = Vector2.Zero};
             splash.AddComponent(renderer);
             base.Initialize();
-            this._sounds.PlayMusic(@"first-story");
+            this._sounds.PlayMusic(new [] {"first-story"});
         }
 
         public override void Update()

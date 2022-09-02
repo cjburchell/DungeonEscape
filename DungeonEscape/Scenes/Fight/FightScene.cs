@@ -134,7 +134,7 @@
             
             new FightTalkWindow(this._ui, "").Show(message, ()=> this._state = EncounterRoundState.StartRound);
             
-            this._game.Sounds.PlayMusic(Songs[Random.NextInt(Songs.Count)]);
+            this._game.Sounds.PlayMusic(new [] {Songs[Random.NextInt(Songs.Count)]});
         }
 
         public override void Update()
@@ -714,7 +714,7 @@
             switch (fighter)
             {
                 case Hero _:
-                    this._game.Sounds.PlayMusic(EndFightSong);
+                    this._game.Sounds.PlayMusic(new []{EndFightSong});
                     endFight = true;
                     break;
                 case MonsterInstance monster:
@@ -761,7 +761,7 @@
             {
                 this._game.Sounds.StopMusic();
                 this._game.Sounds.PlaySoundEffect("victory", true);
-                this._game.Sounds.PlayMusic(EndFightSong);
+                this._game.Sounds.PlayMusic(new []{EndFightSong});
                 var xp = this._monsters.Where(monster=> monster.IsDead).Sum(monster => (int)monster.Xp) / this._game.Party.AliveMembers.Count();
                 if (xp == 0)
                 {

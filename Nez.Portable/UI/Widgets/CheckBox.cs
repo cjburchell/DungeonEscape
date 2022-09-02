@@ -63,7 +63,9 @@ namespace Nez.UI
 
 			if (checkbox == null)
 			{
-				if (IsChecked && style.CheckboxOn != null)
+				if (_mouseOver && IsChecked && style.CheckboxOnOver != null && !_isDisabled)
+					checkbox = style.CheckboxOnOver;
+				else if (IsChecked && style.CheckboxOn != null)
 					checkbox = style.CheckboxOn;
 				else if (_mouseOver && style.CheckboxOver != null && !_isDisabled)
 					checkbox = style.CheckboxOver;
@@ -97,7 +99,7 @@ namespace Nez.UI
 		public IDrawable CheckboxOn, CheckboxOff;
 
 		/** Optional. */
-		public IDrawable CheckboxOver, CheckboxOnDisabled, CheckboxOffDisabled;
+		public IDrawable CheckboxOver, CheckboxOnDisabled, CheckboxOffDisabled, CheckboxOnOver;
 
 
 		public CheckBoxStyle()

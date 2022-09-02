@@ -55,5 +55,7 @@
 		/// called when the action button is released while the Element is focused
 		/// </summary>
 		void OnActionButtonReleased();
+
+		bool CanUnfocus();
 	}
 }

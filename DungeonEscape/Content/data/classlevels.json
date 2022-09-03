@@ -77,9 +77,9 @@
       },
       {
         "Type": "Magic",
-        "StartConst": 5,
-        "Roll": 6,
-        "RollConst": 5
+        "StartConst": 0,
+        "Roll": 0,
+        "RollConst": 0
       }
     ]
   },
@@ -203,9 +203,9 @@
       },
       {
         "Type": "Magic",
-        "StartConst": 5,
-        "Roll": 6,
-        "RollConst": 5
+        "StartConst": 0,
+        "Roll": 0,
+        "RollConst": 0
       }
     ]
   },
@@ -287,9 +287,9 @@
       },
       {
         "Type": "Magic",
-        "StartConst": 5,
-        "Roll": 6,
-        "RollConst": 5
+        "StartConst": 0,
+        "Roll": 0,
+        "RollConst": 0
       }
     ]
   },

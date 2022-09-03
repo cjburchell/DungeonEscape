@@ -56,6 +56,6 @@
 		/// </summary>
 		void OnActionButtonReleased();
 
-		bool CanUnfocus();
+		bool CanUnfocus(Direction direction);
 	}
 }

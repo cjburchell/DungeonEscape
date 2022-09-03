@@ -211,7 +211,7 @@ namespace Nez.UI
 			OnActionButtonReleased();
 		}
 
-		public bool CanUnfocus()
+		public bool CanUnfocus(Direction direction)
 		{
 			return true;
 		}

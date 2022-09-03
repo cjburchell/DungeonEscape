@@ -522,9 +522,9 @@ namespace Nez.UI
 				ShowList();
 		}
 
-		public bool CanUnfocus()
+		public bool CanUnfocus(Direction direction)
 		{
-			return !_selectBoxList.HasParent();
+			return direction != Direction.Up && direction != Direction.Down || !_selectBoxList.HasParent();
 		}
 	}
 

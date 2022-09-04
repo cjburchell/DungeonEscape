@@ -170,6 +170,9 @@
   {
     "Class": "Fighter",
     "FirstLevel": 29,
+    "Skills": [
+      "Swipe"
+    ],
     "Stats": [
       {
         "Type": "Health",
@@ -254,6 +257,9 @@
   {
     "Class": "Thief",
     "FirstLevel": 14,
+    "Skills": [
+      "Steal"
+    ],
     "Stats": [
       {
         "Type": "Health",

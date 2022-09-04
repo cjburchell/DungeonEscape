@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Redpoint.DungeonEscape.Scenes.Common.Components.UI
+﻿namespace Redpoint.DungeonEscape.Scenes.Common.Components.UI
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -17,7 +15,7 @@ namespace Redpoint.DungeonEscape.Scenes.Common.Components.UI
             _heroes = heroes;
         }
         
-        public InventoryWindow(UiSystem ui, Point position) : base(ui, "Inventory", position, 650, 48)
+        public InventoryWindow(UiSystem ui, Point position) : base(ui, "Inventory", position, 700, 48)
         {
         }
         

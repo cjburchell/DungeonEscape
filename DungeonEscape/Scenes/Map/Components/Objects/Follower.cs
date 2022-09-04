@@ -35,7 +35,8 @@
             var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, heroHeight);
                 
             var animationBaseIndex = (int) this._hero.Class * 16 + (int) this._hero.Gender * 8;
-            var animator = this.Entity.AddComponent(new SpriteAnimator(sprites[animationBaseIndex + 4]));
+            const int deadAnimationIndex = 144;
+            var animator = this.Entity.AddComponent(new SpriteAnimator(sprites[(this._hero.IsDead?deadAnimationIndex:animationBaseIndex) + 4]));
             animator.Speed = 0.5f;
             animator.RenderLayer = 10;
 
@@ -62,8 +63,6 @@
                 sprites[animationBaseIndex + 6],
                 sprites[animationBaseIndex + 7]
             });
-
-            const int deadAnimationIndex = 144;
             
             animator.AddAnimation("WalkDownDead", new[]
             {

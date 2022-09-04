@@ -7,6 +7,8 @@
         Armor,
         Key,
         Gold,
-        Unknown
+        Quest,
+        Unknown,
+        RepeatableUse
     }
 }

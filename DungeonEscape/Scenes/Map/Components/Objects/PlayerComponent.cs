@@ -442,7 +442,7 @@
             var currentBiome = MapScene.GetCurrentBiome(this._map, this.Entity.Position);
             var availableMonsters = new List<Monster>();
             
-            var level = this._gameState.Party.AliveMembers.Select(hero => hero.Level).Max();
+            var level = this._gameState.Party.MaxLevel();
             foreach (var monster in this._randomMonsters.Where(item =>
                 (item.Biome == currentBiome || item.Biome == Biome.All) && item.Data.MinLevel <= level))
             {

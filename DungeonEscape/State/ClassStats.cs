@@ -14,5 +14,7 @@ namespace Redpoint.DungeonEscape.State
         public Class Class { get; set; }
         public List<Stats> Stats { get; set; } = new();
         public ulong FirstLevel { get; set; }
+
+        public List<string> Skills { get; set; } = new();
     }
 }

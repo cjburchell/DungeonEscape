@@ -1,0 +1,138 @@
+﻿[
+  {
+    "Name": "Poison",
+    "Type": "Dot",
+    "EffectName": "poisoned",
+    "DurationType": "Distance",
+    "IsPiercing": true,
+    "DoAttack": true,
+    "DurationConst": 2,
+    "DurationRandom": 8,
+    "StatType": "Health",
+    "StatRandom": 10,
+    "StatConst": 5
+  },
+  {
+    "Name": "Poison Breath",
+    "Type": "Dot",
+    "EffectName": "poisoned",
+    "Targets": "Group",
+    "DurationType": "Distance",
+    "IsPiercing": true,
+    "DurationConst": 2,
+    "DurationRandom": 8,
+    "StatType": "Health",
+    "StatRandom": 10,
+    "StatConst": 5
+  },
+  {
+    "Name": "Paralysis",
+    "Type": "Sleep",
+    "DoAttack": true,
+    "EffectName": "paralyzed",
+    "DurationType": "Distance",
+    "DurationConst": 100,
+    "DurationRandom": 5
+  },
+  {
+    "Name": "Sleep",
+    "Type": "Sleep",
+    "DoAttack": true,
+    "EffectName": "sleep",
+    "DurationType": "Rounds",
+    "DurationConst": 2,
+    "DurationRandom": 2
+  },
+  {
+    "Name": "Disruptive Wave",
+    "Type": "StopSpell",
+    "Targets": "Group",
+    "EffectName": "silenced",
+    "DurationType": "Rounds",
+    "DurationConst": 2,
+    "DurationRandom": 3
+  },
+  {
+    "Name": "Swipe",
+    "Type": "Damage",
+    "Targets": "Group",
+    "EffectName": "Swipe",
+    "StatType": "Health",
+    "StatRandom": 20,
+    "MaxTargets": 4
+  },
+  {
+    "Name": "Steal",
+    "Type": "Steal",
+    "EffectName": "steals"
+  },
+  {
+    "Name": "Flee",
+    "Type": "Flee"
+  },
+  {
+    "Name": "Double Attack",
+    "Type": "Attack",
+    "Targets": "Group",
+    "MaxTargets": 2
+  },
+  {
+    "Name": "Triple Attack",
+    "Type": "Attack",
+    "Targets": "Group",
+    "MaxTargets": 3
+  },
+  {
+    "Name": "Assesses",
+    "EffectName": "assesses the situation",
+    "Type": "None"
+  },
+  {
+    "Name": "Fire",
+    "Type": "Damage",
+    "EffectName": "Fire",
+    "Targets": "Single",
+    "StatType": "Health",
+    "StatRandom": 10,
+    "StatConst": 5
+  },
+  {
+    "Name": "Weird Dance",
+    "Type": "Damage",
+    "IsPiercing": true,
+    "EffectName": "Weird Dance",
+    "Targets": "Single",
+    "StatType": "Magic",
+    "StatRandom": 10,
+    "StatConst": 5
+  },
+  {
+    "Name": "Fire Breath",
+    "Type": "Damage",
+    "Targets": "Group",
+    "EffectName": "Fire Breath",
+    "StatType": "Health",
+    "StatRandom": 10,
+    "StatConst": 5
+  },
+  {
+    "Name": "Lighting",
+    "Type": "Damage",
+    "IsPiercing": true,
+    "EffectName": "Lighting",
+    "StatType": "Health",
+    "Targets": "Single",
+    "StatRandom": 10,
+    "StatConst": 5
+  },
+  {
+    "Name": "Lighting Breath",
+    "Type": "Damage",
+    "IsPiercing": true,
+    "EffectName": "Lighting Breath",
+    "StatType": "Health",
+    "Targets": "Group",
+    "StatRandom": 10,
+    "StatConst": 5
+  }
+]

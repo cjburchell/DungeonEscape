@@ -77,8 +77,11 @@ namespace Redpoint.DungeonEscape.State
         public bool RanAway { get; set; }
 
         public abstract IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells);
+        
+        public abstract IEnumerable<Skill> GetSkills(IEnumerable<Skill> skills);
 
         public List<StatusEffect> Status { get; set; } = new();
+        
         public List<ItemInstance> Items { get; set; } = new();
 
         public void RemoveEffect(StatusEffect effect)
@@ -118,6 +121,8 @@ namespace Redpoint.DungeonEscape.State
             
             this.Status.Remove(effect);
         }
+
+        [JsonIgnore] public int CriticalAttack => this.Attack + (20 * this.Level);
 
         public void AddEffect(StatusEffect effect)
         {
@@ -271,6 +276,17 @@ namespace Redpoint.DungeonEscape.State
             return roll >= 95 || (this.Agility-target.Agility)/100 * 50 + roll > 90;
         }
 
+        public int CalculateDamage(int attack, bool isPiercing = false)
+        {
+            if (isPiercing)
+            {
+                return attack;
+            }
+            
+            var defence = (100 - Math.Min(this.Defence, 99)) / 100f;
+            return attack != 0 ? Math.Max((int)(attack * defence), 10): 0;
+        }
+
         public void Update()
         {
             this.Animator?.Update();
@@ -282,6 +298,16 @@ namespace Redpoint.DungeonEscape.State
 
         public string Use(ItemInstance item)
         {
+            if (item.MaxCharges != 0)
+            {
+                if (item.Charges <= 0)
+                {
+                    return "\nbut the item has no charges";
+                }
+                
+                item.Charges--;
+            }
+            
             var message = "";
             foreach (var stat in item.Item.Stats.Where(i => i.Value != 0).Select(o => o.Type).Distinct()
                          .OrderBy(i => i))

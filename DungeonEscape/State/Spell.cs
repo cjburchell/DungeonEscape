@@ -1,9 +1,6 @@
 ﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
-
-using System;
-
 namespace Redpoint.DungeonEscape.State
 {
     using System.Collections.Generic;
@@ -13,8 +10,42 @@ namespace Redpoint.DungeonEscape.State
     using Nez.Textures;
     using Nez.Tiled;
 
-    public class Spell
+    public class Spell : SkillBase
     {
+        private static readonly List<SkillType> AttackSpells = new() {SkillType.Damage, SkillType.Dot, SkillType.Sleep, SkillType.Confusion, SkillType.StopSpell, SkillType.Decrease};
+
+        private static readonly List<SkillType> EncounterSpells = new() {SkillType.Heal, SkillType.Damage, SkillType.Revive, SkillType.Dot, SkillType.Sleep, SkillType.Confusion, SkillType.StopSpell, SkillType.Buff, SkillType.Decrease, SkillType.Clear};
+
+        private static readonly List<SkillType> NonEncounterSpells = new() {SkillType.Heal, SkillType.Outside, SkillType.Return, SkillType.Revive, SkillType.Clear};
+        
+        public int ImageId { get; set; }
+
+        public void Setup(TmxTileset tileset)
+        {
+            this.Image = tileset.Image != null ? new Sprite(tileset.Image.Texture, tileset.TileRegions[this.ImageId]) : new Sprite(tileset.Tiles[this.ImageId].Image.Texture);
+        }
+
+        [JsonIgnore]
+        public bool IsNonEncounterSpell => NonEncounterSpells.Contains(this.Type);
+
+        [JsonIgnore]
+        public bool IsEncounterSpell => EncounterSpells.Contains(this.Type);
+
+        [JsonIgnore]
+        public bool IsAttackSpell => AttackSpells.Contains(this.Type);
+        
+        
+        public int Cost { get; set; }
+
+        public int MinLevel { get; set; }
+        
+        
+        [JsonProperty("Classes", ItemConverterType=typeof(StringEnumConverter))]
+        public List<Class> Classes { get; set; }
+        
+        [JsonIgnore]
+        public Sprite Image { get; private set; }
+        
         public string Cast(IEnumerable<IFighter> targets, IFighter caster, IGame game, int round = 0)
         {
             if (caster.Magic < this.Cost)
@@ -26,18 +57,18 @@ namespace Redpoint.DungeonEscape.State
 
             return this.Type switch
             {
-                SpellType.Heal => this.CastHeal(targets, caster, false, game),
-                SpellType.Outside => this.CastOutside(caster as Hero, game),
-                SpellType.Damage => this.CastDamage(targets, caster, game),
-                SpellType.Return => this.CastReturn(caster as Hero, game),
-                SpellType.Revive => this.CastHeal(targets, caster, true, game),
-                SpellType.Buff => this.CastBuff(targets, caster, game, round,true),
-                SpellType.Decrease => this.CastBuff(targets, caster, game, round,false),
-                SpellType.StopSpell => this.CastStopSpell(targets, caster, game, round),
-                SpellType.Sleep => this.CastSleep(targets, caster, game, round),
-                SpellType.Confusion => this.CastConfusion(targets, caster, game, round),
-                SpellType.Dot =>this.CastDot(targets, caster, game, round),
-                SpellType.Clear =>this.CastClearEffects(targets, caster, game),
+                SkillType.Heal => this.CastHeal(targets, caster, false, game),
+                SkillType.Outside => this.CastOutside(caster as Hero, game),
+                SkillType.Damage => this.CastDamage(targets, caster, game),
+                SkillType.Return => this.CastReturn(caster as Hero, game),
+                SkillType.Revive => this.CastHeal(targets, caster, true, game),
+                SkillType.Buff => this.CastBuff(targets, caster, game, round,true),
+                SkillType.Decrease => this.CastBuff(targets, caster, game, round,false),
+                SkillType.StopSpell => this.CastStopSpell(targets, caster, game, round),
+                SkillType.Sleep => this.CastSleep(targets, caster, game, round),
+                SkillType.Confusion => this.CastConfusion(targets, caster, game, round),
+                SkillType.Dot =>this.CastDot(targets, caster, game, round),
+                SkillType.Clear =>this.CastClearEffects(targets, caster, game),
                 _ => $"{caster.Name} casts {this.Name} but it did not work"
             };
         }
@@ -73,10 +104,10 @@ namespace Redpoint.DungeonEscape.State
             {
                 if (caster.CanHit(target))
                 {
-                    var buff = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
+                    var buff = target.CalculateDamage(Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst), this.IsPiercing);
                     if (buff == 0)
                     {
-                        message += $"{target.Name} was not effected\n";
+                        message += $"{target.Name} was not affected\n";
                     }
                     else
                     {
@@ -197,10 +228,11 @@ namespace Redpoint.DungeonEscape.State
             {
                 if (caster.CanHit(target))
                 {
-                    var buff = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
+                    var roll = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
+                    var buff = increase ?  roll : target.CalculateDamage(roll, this.IsPiercing);
                     if (buff == 0)
                     {
-                        message += $"{target.Name} was not effected by {this.Name}\n";
+                        message += $"{target.Name} was not affected by {this.Name}\n";
                     }
                     else
                     {
@@ -232,32 +264,42 @@ namespace Redpoint.DungeonEscape.State
         {
             gameState.Sounds.PlaySoundEffect("spell", true);
             var message = $"{caster.Name} casts {this.Name}\n";
-            var totalDamage = 0;
+            var hit = false;
             foreach (var target in targets.Where(i=> !i.IsDead && !i.RanAway ))
             {
                 var damage = 0;
-                
                 if (caster.CanHit(target))
                 {
-                    var defence = (100 - Math.Min(target.MagicDefence, 99)) / 100f;
-                    var attack = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
-                    damage = attack != 0 ? Math.Max((int) ( attack * defence), 1) : 0;
+                    damage = target.CalculateDamage(Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst), this.IsPiercing);
                 }
                 else
                 {
                     message += " dodges the spell and";
                 }
                 
-                totalDamage += damage;
-                target.Health -= damage;
+                
                 if (damage == 0)
                 {
-                    message += $" was unharmed\n";
+                    message += " was unharmed\n";
                 }
                 else
                 {
+                    hit = true;
                     target.PlayDamageAnimation();
-                    message += $" took {damage} points of damage\n";
+                    if (this.StatType == StatType.Health)
+                    {
+                        target.Health -= damage;
+                        message += $" took {damage} points of damage\n";
+                    }
+                    else if (this.StatType == StatType.Magic)
+                    {
+                        target.Magic -= damage;
+                        message += $" lost {damage} points of magic\n";
+                        if (target.Magic < 0)
+                        {
+                            target.Magic = 0;
+                        }
+                    }
                 }
 
                 if (target.Health <= 0)
@@ -266,7 +308,7 @@ namespace Redpoint.DungeonEscape.State
                 }
             }
 
-            gameState.Sounds.PlaySoundEffect(totalDamage == 0 ? "miss" : "receive-damage");
+            gameState.Sounds.PlaySoundEffect(hit? "receive-damage" : "miss" );
 
             return message;
         }
@@ -333,74 +375,5 @@ namespace Redpoint.DungeonEscape.State
             gameState.SetMap(gameState.Party.SavedMapId, null, gameState.Party.SavedPoint);
             return null;
         }
-
-        private static readonly List<SpellType> AttackSpells = new List<SpellType> {SpellType.Damage, SpellType.Dot, SpellType.Sleep, SpellType.Confusion, SpellType.StopSpell, SpellType.Decrease};
-
-        private static readonly List<SpellType> EncounterSpells = new List<SpellType>
-            {SpellType.Heal, SpellType.Damage, SpellType.Revive, SpellType.Dot, SpellType.Sleep, SpellType.Confusion, SpellType.StopSpell, SpellType.Buff, SpellType.Decrease, SpellType.Clear};
-
-        private static readonly List<SpellType> NonEncounterSpells = new List<SpellType>
-            {SpellType.Heal, SpellType.Outside, SpellType.Return, SpellType.Revive, SpellType.Clear};
-
-        public override string ToString()
-        {
-            return this.Name;
-        }
-
-        public int DurationTimes { get; set; } = 1;
-        
-        public int DurationRandom { get; set; }
-
-        public int DurationConst { get; set; }
-        
-        public int ImageId { get; set; }
-        
-        public int Id { get; set; }
-
-        public void Setup(TmxTileset tileset)
-        {
-            this.Image = tileset.Image != null ? new Sprite(tileset.Image.Texture, tileset.TileRegions[this.ImageId]) : new Sprite(tileset.Tiles[this.ImageId].Image.Texture);
-        }
-
-        [JsonIgnore]
-        public bool IsNonEncounterSpell => NonEncounterSpells.Contains(this.Type);
-
-        [JsonIgnore]
-        public bool IsEncounterSpell => EncounterSpells.Contains(this.Type);
-
-        [JsonIgnore]
-        public bool IsAttackSpell => AttackSpells.Contains(this.Type);
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        public Target Targets { get; set; }
-        
-        [JsonConverter(typeof(StringEnumConverter))]
-        public DurationType DurationType { get; set; }
-        
-        public string EffectName { get; set; }
-
-        public int Cost { get; set; }
-
-        public int MinLevel { get; set; }
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        public SpellType Type { get; set; }
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        public StatType StatType { get; set; } = StatType.None;
-        
-        [JsonProperty("Classes", ItemConverterType=typeof(StringEnumConverter))]
-        public List<Class> Classes { get; set; }
-
-        public int StatTimes { get; set; } = 1;
-        
-        public int StatRandom { get; set; }
-
-        public int StatConst { get; set; }
-
-        public string Name { get; set; }
-        
-        [JsonIgnore]
-        public Sprite Image { get; private set; }
     }
 }

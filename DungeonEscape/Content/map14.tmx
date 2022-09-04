@@ -226,7 +226,7 @@ and travel to the forest continent</property>
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="Text">The leviathan must
+    <property name="Text">Estark must
 be defeted</property>
    </properties>
   </object>

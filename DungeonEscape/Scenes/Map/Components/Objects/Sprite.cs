@@ -121,7 +121,7 @@
                 Height = (int) this._tmxObject.Height
             };
 
-            var collider = this.Entity.AddComponent(new ObjectBoxCollider(this,fullArea));
+            var collider = this.Entity.AddComponent(new ObjectBoxCollider(this, fullArea));
             collider.IsTrigger = true;
 
             if (!this._collideable)
@@ -200,6 +200,7 @@
                     this._path = this._graph.Search(
                         MapScene.ToMapGrid(pos, this.Map),
                         MapScene.ToMapGrid(toPos, this.Map));
+                    
 
                     if (this._path == null)
                     {
@@ -207,6 +208,11 @@
                     }
                     else
                     {
+                        if (_path.Count > 6)
+                        {
+                            _path = _path.GetRange(0, 6);
+                        }
+                        
                         this._currentPathIndex = 0;
                         this._state = MoveState.Moving;
                     }

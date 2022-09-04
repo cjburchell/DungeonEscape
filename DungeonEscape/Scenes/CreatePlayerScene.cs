@@ -141,6 +141,7 @@
             {
                 this._sounds.PlaySoundEffect("confirm");
                 var party = new Party();
+                party.PlayerName = this._hero.Name;
                 party.Members.Add(this._hero);
                 game.LoadGame(new GameSave {Party = party});
             };

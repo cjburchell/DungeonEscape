@@ -42,7 +42,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
             var equip = new Label(equipSymbol, Skin).SetAlignment(Align.Left);
             var itemName = new Label(item.NameWithStats, Skin, style).SetAlignment(Align.Left);
             var cost = new Label($"{item.Gold * 3 / 4}", Skin).SetAlignment(Align.Right);
-            table.Add(image).Width(32);
+            table.Add(image).Width(48);
             table.Add(itemName).Width(500);
             table.Add(equip).Width(100);
             table.Add(cost).Width(32);

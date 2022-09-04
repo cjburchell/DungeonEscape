@@ -1,6 +1,6 @@
 ﻿namespace Redpoint.DungeonEscape.State
 {
-    public enum SpellType
+    public enum SkillType
     {
         Heal,
         Outside,
@@ -14,5 +14,9 @@
         Buff,
         Decrease,
         Clear,
+        Steal,
+        Flee,
+        Attack,
+        None
     }
 }

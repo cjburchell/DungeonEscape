@@ -15,6 +15,8 @@ namespace Redpoint.DungeonEscape.State
         public int? SavedMapId { get; set; }
         
         public bool HasShip { get; set; }
+        
+        public string PlayerName { get; set; }
         public List<Hero> Members { get; } = new();
         
         [JsonIgnore]
@@ -87,6 +89,11 @@ namespace Redpoint.DungeonEscape.State
 
             itemMember.Items.Remove(key);
             return  true;
+        }
+
+        public int MaxLevel()
+        {
+            return this.AliveMembers.Max(item => item.Level);
         }
     }
 }

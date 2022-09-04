@@ -46,7 +46,7 @@
             
             this._list.SetFillParent(true);
             const int margin = 10;
-            this._list.Top().PadLeft(margin).PadTop(margin).PadRight(margin);
+            this._list.Top().PadLeft(margin).PadTop(margin).PadRight(margin).PadBottom(margin);
             var itemWidth = this.Window.GetWidth();
             var itemList = this._items.ToList();
             foreach (var item in itemList)
@@ -56,7 +56,7 @@
                 this._list.Add(button).Width(itemWidth - margin * 2).Height(this._buttonHeight);
             }
 
-            this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count * this._buttonHeight, 400));
+            this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count * this._buttonHeight, 500));
             this._scrollPane.Validate();
         }
 

@@ -1,7 +1,7 @@
 [
   {
     "Type": "OneUse",
-    "Name": "Herb of Health",
+    "Name": "Herb",
     "Stats": [
       {
         "Type": "Health",
@@ -10,12 +10,25 @@
     ],
     "Cost": 16,
     "ImageId": 916,
-    "Id": 1,
+    "MinLevel": 0
+  },
+  {
+    "Type": "RepeatableUse",
+    "Name": "Bag of Herbs",
+    "Stats": [
+      {
+        "Type": "Health",
+        "Value": 40
+      }
+    ],
+    "Charges": 10,
+    "Cost": 160,
+    "ImageId": 754,
     "MinLevel": 0
   },
   {
     "Type": "OneUse",
-    "Name": "Potent Herb of Health",
+    "Name": "Potent Herb",
     "Stats": [
       {
         "Type": "Health",
@@ -25,8 +38,20 @@
     "Rarity": "Uncommon",
     "Cost": 100,
     "ImageId": 913,
-    "Id": 14,
     "MinLevel": 6
+  },
+  {
+    "Type": "RepeatableUse",
+    "Name": "Rod of Healing",
+    "Stats": [
+      {
+        "Type": "Health",
+        "Value": 40
+      }
+    ],
+    "Cost": 44000,
+    "ImageId": 785,
+    "MinLevel": 15
   },
   {
     "Type": "OneUse",
@@ -39,7 +64,6 @@
     ],
     "Cost": 16,
     "ImageId": 923,
-    "Id": 21,
     "MinLevel": 5
   },
   {
@@ -54,7 +78,6 @@
     "Rarity": "Uncommon",
     "Cost": 100,
     "ImageId": 917,
-    "Id": 22,
     "MinLevel": 10
   },
   {
@@ -69,7 +92,6 @@
     "Rarity": "Epic",
     "Cost": 5000,
     "ImageId": 815,
-    "Id": 23,
     "MinLevel": 18
   },
   {
@@ -84,7 +106,6 @@
     "Rarity": "Epic",
     "Cost": 5000,
     "ImageId": 816,
-    "Id": 24,
     "MinLevel": 18
   },
   {
@@ -99,14 +120,12 @@
     "Rarity": "Epic",
     "Cost": 5000,
     "ImageId": 822,
-    "Id": 25,
     "MinLevel": 18
   },
   {
     "Type": "Key",
     "Name": "Iron Key",
     "Cost": 250,
-    "Id": 26,
     "ImageId": 909,
     "MinLevel": 0
   },
@@ -114,7 +133,6 @@
     "Type": "Key",
     "Name": "Silver Key",
     "Cost": 250,
-    "Id": 27,
     "ImageId": 894,
     "Rarity": "Uncommon",
     "MinLevel": 5
@@ -123,7 +141,6 @@
     "Type": "Key",
     "Name": "Gold Key",
     "Cost": 250,
-    "Id": 28,
     "ImageId": 899,
     "Rarity": "Rare",
     "MinLevel": 10
@@ -132,10 +149,8 @@
     "Type": "Key",
     "Name": "Jeweled Key",
     "Cost": 250,
-    "Id": 29,
     "ImageId": 895,
     "Rarity": "Epic",
     "MinLevel": 20
   }
-  
 ]

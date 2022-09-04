@@ -41,6 +41,7 @@
         
         public IEnumerable<GameSave> GameSaveSlots => this._gameFile.Saves.Where(i=> !i.IsQuick);
         public IEnumerable<GameSave> LoadableGameSaves => this._gameFile.Saves;
+        public List<Skill> Skills { get; private set; } = new ();
         public bool InGame { get; private set; }
         public bool IsPaused
         {
@@ -243,6 +244,7 @@
             
             this.StatNames = JsonConvert.DeserializeObject<List<StatName>>(File.ReadAllText("Content/data/statnames.json"));
             this.ItemDefinitions = JsonConvert.DeserializeObject<List<ItemDefinition>>(File.ReadAllText("Content/data/itemdef.json"));
+            this.Skills = JsonConvert.DeserializeObject<List<Skill>>(File.ReadAllText("Content/data/skills.json"));
             
             var tileSet = LoadTileSet("Content/items2.tsx");
             var items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/data/customitems.json"));
@@ -250,6 +252,11 @@
             {
                 foreach (var item in items)
                 {
+                    if (string.IsNullOrEmpty(item.Id))
+                    {
+                        item.Id = item.Name;
+                    }
+                    
                     item.Setup(tileSet);
                     this.CustomItems.Add(item);
                 }

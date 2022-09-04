@@ -21,6 +21,7 @@
             Spell,
             Item,
             Nothing,
+            Skill
         }
         
         private class RoundAction
@@ -30,6 +31,7 @@
             public Spell Spell { get; init; }
             public ItemInstance Item { get; init; }
             public List<IFighter> Targets { get; set; }
+            public Skill Skill { get; set; }
         }
 
         private enum EncounterRoundState
@@ -63,7 +65,7 @@
                 var monsterId = 'A';
                 foreach (var monster  in monsterGroup)
                 {
-                    var instance = new MonsterInstance(monster);
+                    var instance = new MonsterInstance(monster, game.CustomItems);
                     if (monsterGroup.Count() != 1)
                     {
                         instance.Name = $"{instance.Name} {monsterId}";
@@ -262,7 +264,10 @@
                 options.Add("Spell");
             }
             
-            var availableItems = hero.Items.Where(item => item.Type == ItemType.OneUse).ToList();
+            var skills = hero.GetSkills(this._game.Skills).ToList();
+            options.AddRange(skills.Select(skill => skill.Name));
+
+            var availableItems = hero.Items.Where(item => item.Type is ItemType.OneUse or ItemType.RepeatableUse).ToList();
             if (availableItems.Count != 0)
             {
                 options.Add("Item");
@@ -297,20 +302,97 @@
                     }
                     case "Run":
                     {
-                        ChooseRun(hero, done);
+                        this.ChooseRun(hero, done);
+                        return;
+                    }
+                    default:
+                    {
+                        ChooseSkill(hero, selection, skills, done);
                         return;
                     }
                 }
 
             });
         }
+        
+        List<IFighter> GetTargets(SkillBase skill, List<IFighter> availableTargets)
+        {
+            if (skill.Targets != Target.Group)
+            {
+                return new List<IFighter>
+                {
+                    availableTargets.ToArray()[Random.NextInt(availableTargets.Count)]
+                };
+            }
 
-        private static void ChooseRun(IFighter hero, Action<RoundAction> done)
+            if (skill.MaxTargets == 0)
+            {
+                return availableTargets.ToList();
+            }
+
+            var targets = new List<IFighter>();
+            for (var i = 0; i < skill.MaxTargets; i++)
+            {
+                targets.Add(availableTargets.ToArray()[Random.NextInt(availableTargets.Count)]);
+            }
+
+            return targets;
+        }
+
+        // ReSharper disable once UnusedParameter.Local
+        private void ChooseSkill(IFighter hero, string selection, List<Skill> skills, Action<RoundAction> done)
+        {
+            var skill = skills.FirstOrDefault(i => i.Name == selection);
+            if (skill == null)
+            {
+                done(null);
+                return;
+            }
+
+            var newAction = new RoundAction
+            {
+                Source = hero,
+                State = RoundActionState.Skill,
+                Skill = skill
+            };
+
+            if (skill.Targets != Target.Single)
+            {
+                newAction.Targets = GetTargets(skill, this.AliveMonsters.Cast<IFighter>().ToList());
+                done(newAction);
+                return;
+            }
+
+            if (this.AliveMonsters.Count() == 1)
+            {
+                var monster = this.AliveMonsters.First();
+                newAction.Targets = new List<IFighter> { monster };
+                done(newAction);
+                return;
+            }
+
+            var selectTarget = new SelectWindow<MonsterInstance>(this._ui, "SelectMonster",
+                new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
+            selectTarget.Show(this.AliveMonsters, monster =>
+            {
+                if (monster == null)
+                {
+                    done(null);
+                    return;
+                }
+
+                newAction.Targets = new List<IFighter> { monster };
+                done(newAction);
+            });
+        }
+
+        private  void ChooseRun(IFighter hero, Action<RoundAction> done)
         {
             done(new RoundAction
             {
                 Source = hero,
-                State = RoundActionState.Run
+                State = RoundActionState.Run,
+                Targets = this.AliveMonsters.OfType<IFighter>().ToList()
             });
         }
 
@@ -382,39 +464,45 @@
 
                 if (spell.IsAttackSpell)
                 {
-                    if (spell.Targets == Target.Single)
+                    if (spell.Targets != Target.Single)
                     {
-                        if (this.AliveMonsters.Count() == 1)
-                        {
-                            var monster = this.AliveMonsters.First();
-                            newAction.Targets = new List<IFighter> { monster };
-                            done(newAction);
-                            return;
-                        }
-                        
-                        var selectTarget = new SelectWindow<MonsterInstance>(this._ui, "SelectMonster",
-                            new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
-                        selectTarget.Show(this.AliveMonsters, monster =>
-                        {
-                            if (monster == null)
-                            {
-                                done(null);
-                                return;
-                            }
-
-                            newAction.Targets = new List<IFighter> { monster };
-                            done(newAction);
-                        });
+                        newAction.Targets = GetTargets(spell, this.AliveMonsters.Cast<IFighter>().ToList());
+                        done(newAction);
                         return;
                     }
 
-                    newAction.Targets = this.AliveMonsters.Cast<IFighter>().ToList();
-                    done(newAction);
+                    if (this.AliveMonsters.Count() == 1)
+                    {
+                        var monster = this.AliveMonsters.First();
+                        newAction.Targets = new List<IFighter> { monster };
+                        done(newAction);
+                        return;
+                    }
+                        
+                    var selectTarget = new SelectWindow<MonsterInstance>(this._ui, "SelectMonster",
+                        new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
+                    selectTarget.Show(this.AliveMonsters, monster =>
+                    {
+                        if (monster == null)
+                        {
+                            done(null);
+                            return;
+                        }
+
+                        newAction.Targets = new List<IFighter> { monster };
+                        done(newAction);
+                    });
                     return;
 
                 }
 
-                if (spell.Targets == Target.Single)
+                if (spell.Targets != Target.Single)
+                {
+                    newAction.Targets = GetTargets( spell,this._game.Party.AliveMembers.Cast<IFighter>().ToList());
+                    done(newAction);
+                    return;
+                }
+
                 {
                     if (this._game.Party.AliveMembers.Count() == 1)
                     {
@@ -436,11 +524,7 @@
                         newAction.Targets = new List<IFighter> { target };
                         done(newAction);
                     });
-                    return;
                 }
-
-                newAction.Targets = this._game.Party.AliveMembers.Cast<IFighter>().ToList();
-                done(newAction);
             });
         }
 
@@ -483,7 +567,7 @@
 
         private RoundAction ChooseAction(IFighter fighter)
         {
-            if (fighter.Status.Count(i => i.Type == EffectType.Sleep) != 0)
+            if (fighter.Status.Any(i => i.Type == EffectType.Sleep))
             {
                 return new RoundAction
                 {
@@ -493,21 +577,19 @@
             }
 
             var availableTargets = this._game.Party.Members.OfType<IFighter>().Where(CanBeAttacked).ToList();
-            if (fighter.Status.Count(i => i.Type == EffectType.Confusion) != 0)
+            if (fighter.Status.Any(i => i.Type == EffectType.Confusion))
             {
                 availableTargets.AddRange(this.AliveMonsters);
             }
 
-            var target = availableTargets.ToArray()[Random.NextInt(availableTargets.Count)];
-            
-            if (fighter.Status.Count(i => i.Type == EffectType.StopSpell) == 0)
+            if (fighter.Status.Any(i => i.Type == EffectType.StopSpell))
             {
                 // check to cast heal spell
-                if ( fighter.GetSpells(this._game.Spells).Count(item => item.Type == SpellType.Heal && item.Cost <= fighter.Magic) != 0 
+                if (fighter.GetSpells(_game.Spells).Any(item => item.Type == SkillType.Heal && item.Cost <= fighter.Magic)
                      && (float) fighter.Health / fighter.MaxHealth * 100f < 10)
                 {
                     var healSpells =
-                        fighter.GetSpells(this._game.Spells).Where(item => item.Type == SpellType.Heal && item.Cost <= fighter.Magic)
+                        fighter.GetSpells(this._game.Spells).Where(item => item.Type == SkillType.Heal && item.Cost <= fighter.Magic)
                             .ToArray();
 
                     var spell = healSpells[Random.NextInt(healSpells.Length)];
@@ -520,28 +602,43 @@
                 }
 
                 // check to cast offencive spells
-                if (fighter.GetSpells(this._game.Spells).Count(item => item.IsAttackSpell && item.Cost <= fighter.Magic) != 0) // has spells
+                if (fighter.GetSpells(_game.Spells).Any(item => item.IsAttackSpell && item.Cost <= fighter.Magic)) // has spells
                 {
                     var attackSpells =
                         fighter.GetSpells(this._game.Spells).Where(item => item.IsAttackSpell && item.Cost <= fighter.Magic).ToArray();
 
                     var spell = attackSpells[Random.NextInt(attackSpells.Length)];
-
-                    var targets = spell.Targets == Target.Group
-                        ? this._game.Party.Members.Where(CanBeAttacked).OfType<IFighter>().ToList()
-                        : new List<IFighter>
-                        {
-                            target
-                        };
-                    
                     return new RoundAction
                     {
                         Source = fighter,
                         State = RoundActionState.Spell,
                         Spell = spell,
-                        Targets = targets
+                        Targets =  GetTargets(spell, availableTargets)
                     };
                 }
+            }
+
+            var skills = fighter.GetSkills(_game.Skills).ToArray();
+            if (skills.Any() && Dice.RollD100() > 75) // has skills
+            {
+                var skill = skills[Random.NextInt(skills.Length)];
+                if (skill.Type == SkillType.Flee)
+                {
+                    return new RoundAction
+                    {
+                        Source = fighter,
+                        State = RoundActionState.Run,
+                        Targets = this._game.Party.Members.Where(CanBeAttacked).OfType<IFighter>().ToList()
+                    };
+                }
+                
+                return new RoundAction
+                {
+                    Source = fighter,
+                    State = RoundActionState.Skill,
+                    Skill = skill,
+                    Targets = GetTargets(skill, availableTargets)
+                };
             }
 
             // do attack
@@ -549,7 +646,7 @@
             {
                 Source = fighter,
                 State = RoundActionState.Fight,
-                Targets = new List<IFighter> { target }
+                Targets = new List<IFighter> { availableTargets.ToArray()[Random.NextInt(availableTargets.Count)] }
             };
         }
 
@@ -591,7 +688,7 @@
             {
                 case RoundActionState.Run:
                     string m;
-                    (m, endFight) = this.Run(action.Source);
+                    (m, endFight) = this.Run(action.Source, action.Targets);
                     message += m;
                     break;
                 case RoundActionState.Fight:
@@ -608,12 +705,12 @@
                         if (target != action.Source)
                         {
                             message += $"{action.Source.Name} Uses {action.Item.Name} on {target.Name}";
-                            UseItem(action.Source, target, action.Item);
+                            message += UseItem(action.Source, target, action.Item);
                         }
                         else
                         {
                             message += $"{action.Source.Name} Uses {action.Item.Name}";
-                            UseItem(action.Source, target, action.Item);
+                            message += UseItem(action.Source, target, action.Item);
                         }
                     }
 
@@ -621,6 +718,9 @@
                 }
                 case RoundActionState.Nothing:
                     message += $"{action.Source.Name} doesn't do anything";
+                    break;
+                case RoundActionState.Skill:
+                    message += this.DoSkill(action.Skill, action.Targets, action.Source);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -638,6 +738,85 @@
                 DoneAction);
         }
 
+        private string DoSkill(Skill skill, List<IFighter> targets, IFighter source)
+        {
+            var message = "";
+            this._game.Sounds.PlaySoundEffect("prepare-attack", true);
+
+            var hit = false;
+            foreach (var target in targets)
+            {
+                if (skill.DoAttack || skill.Type == SkillType.Attack)
+                {
+                    message += Fight(source, target, out var damage);
+                    if (damage != 0)
+                    {
+                        hit = true;
+                    }
+                }
+
+                if (target.IsDead) continue;
+                if (!source.CanHit(target)) continue;
+                
+                
+                var result= skill.Do(target, source, this._game, this._round);
+                if(string.IsNullOrEmpty(result)) continue;
+                hit = true;
+                message += result;
+            }
+
+            this._game.Sounds.PlaySoundEffect(hit ? "receive-damage" : "miss");
+            return message;
+        }
+
+        private static string Fight(IFighter source, IFighter target, out int damage)
+        {
+            var message = $"{source.Name} Attacks {target.Name}.\n";
+            damage = 0;
+            if (source.CanCriticalHit(target))  // check for critical hit
+            {
+                var attack = Random.NextInt(source.CriticalAttack);
+                damage = target.CalculateDamage(attack);
+                message += "Heroic maneuver!\n";
+                message += $"{target.Name}";
+            }
+            else if (source.CanHit(target)) // Can the source hit the target?
+            {
+                var attack = Random.NextInt(source.Attack);
+                damage = target.CalculateDamage(attack);
+                message += $"{target.Name}";
+            }
+            else
+            {
+                damage = 0;
+                message += $"{target.Name} dodges the attack and";
+            }
+
+            if (damage <= 0)
+            {
+                damage = 0;
+            }
+            
+            target.Health -= damage;
+            if (damage == 0)
+            {
+                message += $" was unharmed\n";
+            }
+            else
+            {
+                target.PlayDamageAnimation();
+                message += $" took {damage} points of damage\n";
+            }
+
+            if (target.Health <= 0)
+            {
+                message += "and has died!\n";
+                target.Health = 0;
+            }
+
+            return message;
+        }
+
         private string Fight(IFighter source, IEnumerable<IFighter> targets)
         {
             var message = "";
@@ -645,65 +824,18 @@
             var totalDamage = 0;
             foreach (var target in targets)
             {
-                message += $"{source.Name} Attacks {target.Name}.\n";
-                int damage;
-                // Can the source hit the target?
-
-                var defence = (100 - Math.Min(target.Defence, 99)) / 100f;
-                
-
-                // check for critical hit
-                if (source.CanCriticalHit(target))
-                {
-                    var attack = Random.NextInt(source.Attack + (20 * source.Level));
-                    damage = Math.Max((int)(attack * defence), 10);
-                    message += "Heroic maneuver!\n";
-                    message += $"{target.Name}";
-                }
-                else if (source.CanHit(target))
-                {
-                    var attack = Random.NextInt(source.Attack);
-                    damage = attack != 0 ? Math.Max((int)(attack * defence), 1) : 0;
-                    message += $"{target.Name}";
-                }
-                else
-                {
-                    damage = 0;
-                    message += $"{target.Name} dodges the attack and";
-                }
-
-                if (damage <= 0)
-                {
-                    damage = 0;
-                }
-
+                message = Fight(source, target, out var damage);
                 totalDamage += damage;
-                target.Health -= damage;
-                if (damage == 0)
-                {
-                    message += $" was unharmed\n";
-                }
-                else
-                {
-                    target.PlayDamageAnimation();
-                    message += $" took {damage} points of damage\n";
-                }
-
-                if (target.Health <= 0)
-                {
-                    message += "and has died!\n";
-                    target.Health = 0;
-                }
             }
 
             this._game.Sounds.PlaySoundEffect(totalDamage == 0 ? "miss" : "receive-damage");
             return message;
         }
 
-        private (string message, bool endFight) Run(IFighter fighter)
+        private (string message, bool endFight) Run(IFighter fighter, IEnumerable<IFighter> targets)
         {
             var message = $"{fighter.Name} Tried to run\n";
-            if (Random.NextInt(5) == 1)
+            if (!fighter.CanHit(targets.OrderByDescending(item => item.Agility).First()))
             {
                 return (message, false);
             }
@@ -713,7 +845,7 @@
             message += "And got away\n";
             switch (fighter)
             {
-                case Hero _:
+                case Hero:
                     this._game.Sounds.PlayMusic(new []{EndFightSong});
                     endFight = true;
                     break;
@@ -726,18 +858,27 @@
             return (message, endFight);
         }
 
-        private static void UseItem(IFighter source, IFighter hero, ItemInstance item)
+        private static string UseItem(IFighter source, IFighter hero, ItemInstance item)
         {
             if (hero == null)
             {
-                return;
+                return "";
             }
-            
+
+            var result = "";
             switch (item.Type)
             {
                 case ItemType.OneUse:
-                    hero.Use(item);
+                    result = hero.Use(item);
                     source.Items.Remove(item);
+                    break;
+                case ItemType.RepeatableUse:
+                    result = hero.Use(item);
+                    if (!item.HasCharges)
+                    {
+                        source.Items.Remove(item);
+                        result += " and has been destroyed.";
+                    }
                     break;
                 case ItemType.Armor:
                 case ItemType.Weapon:
@@ -748,6 +889,8 @@
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            return result;
         }
         
         private void EndEncounter()
@@ -771,8 +914,46 @@
                 var gold = this._monsters.Where(monster=> monster.IsDead).Sum(monster => monster.Gold);
                 this._game.Party.Gold += gold;
 
+                var foundItems = new List<Item>();
+                foreach (var monster in _monsters)
+                {
+                    foundItems.AddRange(monster.Items.Select(item => item.Item));
+                }
+
                 var monsterName = this._monsters.Count(i => i.IsDead) == 1 ?$"the {this._monsters.First(i => i.IsDead).Name}"  : "all the enemies";
-                var levelUpMessage =$"You have defeated {monsterName},\nEach party member has gained {xp}XP\nand the party got {gold} gold\n";
+                var endFightMessage =$"You have defeated {monsterName},\nEach party member has gained {xp}XP\nand the party got {gold} gold\n";
+                if (Dice.RollD20() > 18)
+                {
+                    foundItems.Add(Item.CreateChestItem(this._game.ItemDefinitions, this._game.CustomItems, this._game.StatNames, this._game.Party.MaxLevel()));
+                }
+
+                if (foundItems.Any())
+                {
+                    var foundItemMessage = "";
+                    foreach (var foundItem in foundItems)
+                    {
+                        if (foundItem.Type == ItemType.Gold)
+                        {
+                            foundItemMessage += $"You found {foundItem.Cost} Gold";
+                            this._game.Party.Gold += foundItem.Cost;
+                        }
+                        else
+                        {
+                            var member = this._game.Party.AddItem(new ItemInstance(foundItem));
+                            if (member != null)
+                            {
+                                foundItemMessage += $"{member.Name} found a {foundItem.Name}\n";
+                            }
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(foundItemMessage))
+                    {
+                        this._game.Sounds.PlaySoundEffect("treasure");
+                        endFightMessage +=  $"You found a chest and opened it!\n"+foundItemMessage;
+                    }
+                }
+                
                 var leveledUp = false;
                 foreach (var member in this._game.Party.AliveMembers)
                 {
@@ -780,7 +961,7 @@
                         while (member.CheckLevelUp(this._game.ClassLevelStats,this._game.Spells, out var message))
                         {
                             leveledUp = true;
-                            levelUpMessage += message;
+                            endFightMessage += message;
                         }
                 }
 
@@ -798,7 +979,7 @@
                     }
                 }
                     
-                talkWindow.Show(levelUpMessage, this._game.ResumeGame);
+                talkWindow.Show(endFightMessage, this._game.ResumeGame);
             }
         }
         

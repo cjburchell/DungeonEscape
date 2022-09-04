@@ -16,10 +16,12 @@
         public IEnumerable<StatValue> Stats { get; }
         bool RanAway { get; }
         IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells);
+        IEnumerable<Skill> GetSkills(IEnumerable<Skill> availableSkills);
 
         List<StatusEffect> Status { get; }
         List<ItemInstance> Items { get; }
         int MagicDefence { get; set; }
+        int CriticalAttack { get;  }
         void AddEffect(StatusEffect effect);
         void RemoveEffect(StatusEffect effect);
         string Use(ItemInstance item);
@@ -29,5 +31,6 @@
         void PlayDamageAnimation();
         bool CanHit(IFighter target);
         bool CanCriticalHit(IFighter target);
+        int CalculateDamage(int attack, bool isPiercing = false);
     }
 }

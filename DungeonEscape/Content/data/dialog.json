@@ -33,7 +33,7 @@
           {
             "Text": "Yes",
             "Action": "LookingForItem",
-            "ItemId": 3,
+            "ItemId": "Bucket",
             "NextQuestStage": 2,
             "Dialogs": [
               {

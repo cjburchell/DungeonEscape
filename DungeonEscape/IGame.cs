@@ -47,6 +47,7 @@ namespace Redpoint.DungeonEscape
         
         ISounds Sounds { get; }
         IEnumerable<GameSave> LoadableGameSaves { get; }
+        List<Skill> Skills { get; }
 
         void LoadGame(GameSave saveGame);
         void ResumeGame();

@@ -67,8 +67,13 @@
                 return true;
             }
             
-            new TalkWindow(this._ui).Show($"What services do you require?", () =>
+            new QuestionWindow(this._ui).Show("Do you require my services as a healer?", result => 
             {
+                if (!result)
+                {
+                    Done();
+                }
+                
                 new SelectWindow<string>(this._ui, null, new Point(20, 20)).Show( options, selection =>
                 {
                     if (selection == null)
@@ -140,7 +145,7 @@
                                         return;
                                     }
                                     
-                                    party.Gold -= healAllCost;
+                                    party.Gold -= reviveCost;
                                     hero.Health = 1;
                                     this.GameState.Sounds.PlaySoundEffect("spell", true);
                                     new TalkWindow(this._ui).Show($"{hero.Name} has been revived.\nThank you come again!", Done);

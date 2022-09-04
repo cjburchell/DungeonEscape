@@ -12,13 +12,13 @@
         {
             get
             {
-                var name = this.Party?.Members.FirstOrDefault()?.Name ?? "Empty";
+                var name = this.Party?.PlayerName ?? "Empty";
                 return this.IsQuick ? $"Quick ({name})" : name;
             }
         }
 
         [JsonIgnore]
-        public int? Level => this.Party?.Members.FirstOrDefault()?.Level;
+        public int? Level => this.Party?.Members.Max(i => i.Level);
         public DateTime? Time { get; set; }
 
         [JsonIgnore] 

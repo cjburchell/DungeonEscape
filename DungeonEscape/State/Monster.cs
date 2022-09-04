@@ -66,7 +66,12 @@ namespace Redpoint.DungeonEscape.State
         
         
         [JsonProperty("Spells")]
-        public List<int> SpellList { get; set; } = new List<int>();
+        public List<string> SpellList { get; set; } = new();
+        
+        [JsonProperty("Skills")]
+        public List<string> SkillList { get; set; } = new();
+        
+        public List<string> Items { get; set; } = new();
 
         public int Agility { get; set;}
 

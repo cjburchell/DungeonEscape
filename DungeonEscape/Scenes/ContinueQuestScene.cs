@@ -22,7 +22,7 @@
             var itemName = new Label(item.Name, BasicWindow.Skin).SetAlignment(Align.Left);
             if (!item.IsEmpty)
             {
-                button.Add(itemName).Left().Width(125);
+                button.Add(itemName).Left().Width(200);
                 if (item.Level != null)
                 {
                     var level = new Label($"LV: {item.Level.Value}", BasicWindow.Skin).SetAlignment(Align.Left);
@@ -32,12 +32,12 @@
                 if (item.Time != null)
                 {
                     var time = new Label(item.Time.Value.ToString("g"), BasicWindow.Skin).SetAlignment(Align.Left);
-                    button.Add(time).Width(225).Left();
+                    button.Add(time).Width(250).Left();
                 }
             }
             else
             {
-                button.Add(itemName).Left().Width(450);
+                button.Add(itemName).Left().Width(550);
                 button.SetDisabled(true);
             }
             
@@ -84,7 +84,7 @@
             {
                 var button = CreateButton(save);
                 button.UserData = save;
-                buttonList.Add(button, 5).Width(470).Height(BasicWindow.ButtonHeight);
+                buttonList.Add(button, 5).Width(570).Height(BasicWindow.ButtonHeight);
             }
             
             table.Row();

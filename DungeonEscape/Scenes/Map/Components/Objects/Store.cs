@@ -36,7 +36,7 @@
             }
             else
             {
-                var level = this.GameState.Party.AliveMembers.Max(item => item.Level);
+                var level = this.GameState.Party.MaxLevel();
                 this.SpriteState.Items ??= new List<Item>();
                 var missing = MinItems - this.SpriteState.Items.Count;
                 for (var i = 0; i < missing; i++)

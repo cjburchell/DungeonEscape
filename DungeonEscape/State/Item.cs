@@ -39,7 +39,7 @@ namespace Redpoint.DungeonEscape.State
                 MinLevel = 0,
                 Type = ItemType.Gold,
                 ImageId = 202,
-                Id = null
+                Id = "Gold"
             };
 
             // gold Image
@@ -63,10 +63,9 @@ namespace Redpoint.DungeonEscape.State
             if (Nez.Random.Chance(0.25f))
             {
                 var staticItemsList = staticItems.ToList();
-                return staticItemsList.Where(i => i.Type == ItemType.OneUse && i.MinLevel < maxLevel).ToArray()[
-                    Nez.Random.NextInt(staticItemsList.Count(i => i.Type == ItemType.OneUse && i.MinLevel < maxLevel))];
+                return staticItemsList.Where(i => i.Type is ItemType.OneUse or ItemType.RepeatableUse && i.MinLevel < maxLevel).ToArray()[
+                    Nez.Random.NextInt(staticItemsList.Count(i => i.Type is ItemType.OneUse or ItemType.RepeatableUse && i.MinLevel < maxLevel))];
             }
-
 
             var itemRarity = Nez.Random.NextInt(100);
             rarity ??= itemRarity > 75
@@ -94,8 +93,8 @@ namespace Redpoint.DungeonEscape.State
                     availableStats = new List<StatType>
                         { StatType.Agility, StatType.Attack, StatType.Health, StatType.Magic };
                     itemDefinition =
-                        definitions.Where(i => i.Type == ItemType.Weapon).ToArray()[
-                            Nez.Random.NextInt(definitions.Count(i => i.Type == ItemType.Weapon))];
+                        definitions.Where(i => i.Type == type).ToArray()[
+                            Nez.Random.NextInt(definitions.Count(i => i.Type == type))];
                     item.MinLevel = Nez.Random.NextInt(maxLevel - minLevel) + minLevel;
                     item.Stats.Add(new StatValue
                     {
@@ -110,8 +109,8 @@ namespace Redpoint.DungeonEscape.State
                     availableStats = new List<StatType>
                         { StatType.Agility, StatType.Defence, StatType.Health, StatType.Magic, StatType.MagicDefence };
                     itemDefinition =
-                        definitions.Where(i => i.Type == ItemType.Armor).ToArray()[
-                            Nez.Random.NextInt(definitions.Count(i => i.Type == ItemType.Armor))];
+                        definitions.Where(i => i.Type == type).ToArray()[
+                            Nez.Random.NextInt(definitions.Count(i => i.Type == type))];
                     item.MinLevel = Nez.Random.NextInt(maxLevel - minLevel) + minLevel;
                     item.Stats.Add(new StatValue
                     {
@@ -242,8 +241,20 @@ namespace Redpoint.DungeonEscape.State
         {
             get
             {
-                var stats = string.IsNullOrEmpty(this.StatString) ? "" : $" ({this.StatString})";
-                return $"{this.Name}{stats}";
+                var stats = this.StatString;
+                if (Charges != 0)
+                {
+                    if (string.IsNullOrEmpty(stats))
+                    {
+                        stats = $"C{this.Charges}";
+                    }
+                    else
+                    {
+                        stats += $", C{this.Charges}";
+                    }
+                }
+                
+                return $"{this.Name} {stats}";
             }
         }
         
@@ -282,8 +293,22 @@ namespace Redpoint.DungeonEscape.State
                         stats += $", {valueString}{shotStat}";
                     }
                 }
-
+                
                 return stats;
+            }
+        }
+
+        public int Charges { get; set; }
+
+        public static Item CreateChestItem(IEnumerable<ItemDefinition> items, IEnumerable<Item> customItems, List<StatName> statNames, int level)
+        {
+            if (Nez.Random.Chance(0.25f))
+            {
+                return CreateRandomItem(items, customItems, statNames, level);
+            }
+            else
+            {
+                return CreateGold(Dice.Roll(5, level*3, 1));
             }
         }
     }

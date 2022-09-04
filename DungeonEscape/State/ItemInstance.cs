@@ -14,6 +14,7 @@ namespace Redpoint.DungeonEscape.State
         {
             this.Id = Guid.NewGuid().ToString();
             this.Item = item;
+            this.Charges = item.Charges;
         }
 
         // ReSharper disable once UnusedMember.Global
@@ -25,6 +26,8 @@ namespace Redpoint.DungeonEscape.State
         public string Id { get; set; }
         public string EquippedTo { get; set; }
         public bool IsEquipped { get; set; }
+        
+        public int Charges { get; set; }
 
         [JsonIgnore]
         public Nez.Textures.Sprite Image => this.Item.Image;
@@ -44,8 +47,27 @@ namespace Redpoint.DungeonEscape.State
         [JsonIgnore]
         public string Name => this.Item.Name;
 
-        [JsonIgnore] public string NameWithStats => this.Item.NameWithStats;
-        
+        [JsonIgnore] public string NameWithStats
+        {
+            get
+            {
+                var stats = this.Item.StatString;
+                if (this.MaxCharges != 0)
+                {
+                    if (string.IsNullOrEmpty(stats))
+                    {
+                        stats = $"C{this.Charges}/{this.MaxCharges}";
+                    }
+                    else
+                    {
+                        stats += $", C{this.Charges}/{this.MaxCharges}";
+                    }
+                }
+                
+                return $"{this.Name} {stats}";
+            }
+        }
+
         [JsonIgnore]
         public int Gold => this.Item.Cost;
         
@@ -71,7 +93,13 @@ namespace Redpoint.DungeonEscape.State
         
         [JsonIgnore]
         public bool IsEquippable => Item.EquippableItems.Contains(this.Type);
-        
+
+        [JsonIgnore]
+        public int MaxCharges => Item.Charges;
+
+        [JsonIgnore]
+        public bool HasCharges => this.MaxCharges == 0 || this.Charges != 0; 
+
         public void UnEquip(IEnumerable<Hero> heroes)
         {
             if (!this.IsEquipped || string.IsNullOrEmpty(this.EquippedTo))

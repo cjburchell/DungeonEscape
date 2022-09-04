@@ -231,7 +231,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             var first = true;
             Entity lastEntity = null;
             PlayerComponent player = null;
-            foreach (var hero in this._gameState.Party.Members)
+            foreach (var hero in this._gameState.Party.Members.OrderBy(i => i.IsDead))
             {
                 if (first)
                 {
@@ -504,12 +504,12 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             }
 
             Func<Hero,bool> filter = hero => !hero.IsDead;
-            if (spell.Type == SpellType.Revive)
+            if (spell.Type == SkillType.Revive)
             {
                 filter = hero => hero.IsDead;
             }
                 
-            if(this._gameState.Party.Members.Count(filter) == 1 && spell.Type != SpellType.Revive)
+            if(this._gameState.Party.Members.Count(filter) == 1 && spell.Type != SkillType.Revive)
             {
                 var result = spell.Cast(this._gameState.Party.Members.Where(filter), caster, this._gameState);
                 new TalkWindow(this._ui).Show(result, done);
@@ -730,10 +730,26 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             switch (item.Type)
             {
                 case ItemType.OneUse:
+                {
                     var result = target.Use(item);
                     source.Items.Remove(item);
-                    return source != target ? $"{source.Name} used {item.Name} on {target.Name}{result}" : $"{source.Name} used {item.Name}{result}";
+                    return source != target
+                        ? $"{source.Name} used {item.Name} on {target.Name}{result}"
+                        : $"{source.Name} used {item.Name}{result}";
+                }
+                case ItemType.RepeatableUse:
+                {
+                    var result = target.Use(item);
+                    if (!item.HasCharges)
+                    {
+                        source.Items.Remove(item);
+                        result += " and has been destroyed.";
+                    }
                     
+                    return source != target
+                        ? $"{source.Name} used {item.Name} on {target.Name}{result}"
+                        : $"{source.Name} used {item.Name}{result}";
+                }
                 case ItemType.Armor:
                 case ItemType.Weapon:
                     var oldItems = target.Items.Where(i => target.GetEquipmentId(item.Slots).Contains(i.Id)).ToList();

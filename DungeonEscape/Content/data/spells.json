@@ -7,6 +7,7 @@
     "Targets": "Single",
     "Cost": 3,
     "MinLevel": 2,
+    "StatType": "Health",
     "StatRandom": 10,
     "StatConst": 40,
     "Classes": [
@@ -36,6 +37,7 @@
     "Targets": "Single",
     "Cost": 2,
     "MinLevel": 2,
+    "StatType": "Health",
     "StatRandom": 10,
     "StatConst": 5,
     "Classes": [
@@ -50,8 +52,10 @@
     "ImageId": 8,
     "Type": "Damage",
     "Targets": "Single",
+    "IsPiercing": true,
     "Cost": 15,
     "MinLevel": 8,
+    "StatType": "Health",
     "StatRandom": 20,
     "StatConst": 5,
     "Classes": [
@@ -68,6 +72,7 @@
     "Targets": "Group",
     "Cost": 25,
     "MinLevel": 10,
+    "StatType": "Health",
     "StatRandom": 10,
     "StatConst": 5,
     "Classes": [
@@ -81,8 +86,10 @@
     "ImageId": 50,
     "Type": "Damage",
     "Targets": "Group",
+    "IsPiercing": true,
     "Cost": 30,
     "MinLevel": 12,
+    "StatType": "Health",
     "StatRandom": 20,
     "StatConst": 5,
     "Classes": [
@@ -112,6 +119,7 @@
     "Targets": "Single",
     "Cost": 25,
     "MinLevel": 20,
+    "StatType": "Health",
     "StatRandom": 0,
     "StatConst": 1,
     "Classes": [
@@ -127,6 +135,7 @@
     "Type": "Revive",
     "Targets": "Single",
     "Cost": 40,
+    "StatType": "Health",
     "MinLevel": 27,
     "Classes": [
       "Cleric",
@@ -140,6 +149,7 @@
     "Type": "Heal",
     "Targets": "Single",
     "Cost": 7,
+    "StatType": "Health",
     "MinLevel": 30,
     "Classes": [
       "Hero",
@@ -155,6 +165,7 @@
     "Targets": "Group",
     "Cost": 18,
     "MinLevel": 34,
+    "StatType": "Health",
     "StatRandom": 10,
     "StatConst": 40,
     "Classes": [
@@ -168,6 +179,7 @@
     "ImageId": 54,
     "Type": "Heal",
     "Targets": "Group",
+    "StatType": "Health",
     "Cost": 62,
     "MinLevel": 38,
     "Classes": [
@@ -277,7 +289,7 @@
     "Targets": "Group",
     "DurationType": "Rounds",
     "DurationConst": 2,
-    "DurationRandom": 10,
+    "DurationRandom": 2,
     "Cost": 3,
     "MinLevel": 8,
     "Classes": [

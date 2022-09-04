@@ -25,6 +25,12 @@ namespace Redpoint.DungeonEscape.State
         {
             return availableSpells.Where(spell => spell.MinLevel <= this.Level && spell.Classes.Contains(this.Class));
         }
+        
+        public override IEnumerable<Skill> GetSkills(IEnumerable<Skill> availableSkills)
+        {
+            return this.Skills.Select(id => availableSkills.FirstOrDefault(item => item.Name == id))
+                .Where(skill => skill != null).ToList();
+        }
 
         public Dictionary<Slot, string> Slots = new();
         
@@ -75,6 +81,7 @@ namespace Redpoint.DungeonEscape.State
             this.MagicDefence = classStats.Stats.First(item => item.Type == StatType.MagicDefence).RollStartValue();
             this.MaxMagic = classStats.Stats.First( item=> item.Type == StatType.Magic).RollStartValue();
             this.Agility = classStats.Stats.First( item=> item.Type == StatType.Agility).RollStartValue();
+            this.Skills = classStats.Skills.ToList();
 
             this.Health = this.MaxHealth;
             this.Magic = this.MaxMagic;
@@ -84,6 +91,8 @@ namespace Redpoint.DungeonEscape.State
                 this.CheckLevelUp(classStatList, null, out _);
             }
         }
+
+        public List<string> Skills { get; set; }
 
         public bool CheckLevelUp(IEnumerable<ClassStats> classLevels, IEnumerable<Spell> availableSpells, out string levelUpMessage)
         {
@@ -190,7 +199,7 @@ namespace Redpoint.DungeonEscape.State
 
         public bool CanUseItem(ItemInstance item)
         {
-            return !this.IsDead && !item.IsEquipped && (item.Type == ItemType.OneUse || item.IsEquippable) &&
+            return !this.IsDead && !item.IsEquipped && (item.Type is ItemType.OneUse or ItemType.RepeatableUse || item.IsEquippable) &&
                    (!item.IsEquippable || item.Classes == null || item.Classes.Contains(this.Class));
         }
         

@@ -50,17 +50,11 @@
 
             if (tmxObject.Name == "Key Chest")
             {
-                this.State.Item = gameState.CustomItems.First(item => item.Id == "26");
-                return;
-            }
-
-            if (Random.Chance(0.25f))
-            {
-                this.State.Item =  Item.CreateRandomItem(this.GameState.ItemDefinitions, this.GameState.CustomItems, this.GameState.StatNames, this._level);
+                this.State.Item = gameState.CustomItems.First(item => item.Id == "Iron Key");
                 return;
             }
             
-            this.State.Item = Item.CreateGold(Dice.Roll(5, 20));
+            this.State.Item = Item.CreateRandomItem(this.GameState.ItemDefinitions, this.GameState.CustomItems, this.GameState.StatNames, this._level == 0 ? this.GameState.Party.MaxLevel() : this._level);
         }
         
         public override void Initialize()

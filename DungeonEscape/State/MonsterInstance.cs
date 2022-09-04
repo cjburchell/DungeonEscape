@@ -12,7 +12,7 @@ namespace Redpoint.DungeonEscape.State
     {
         private readonly Monster _info;
         
-        public MonsterInstance(Monster info)
+        public MonsterInstance(Monster info, IReadOnlyCollection<Item> customItems)
         {
             this._info = info;
             this.Health = Dice.Roll(8,info.Health, info.HealthConst);
@@ -27,6 +27,11 @@ namespace Redpoint.DungeonEscape.State
             this.Level = info.MinLevel;
             this.Xp = info.Xp;
             this.Gold = info.Gold;
+
+            foreach (var item in info.Items.Select(itemId => customItems.FirstOrDefault(i => i.Id == itemId)).Where(item => item != null))
+            {
+                this.Items.Add(new ItemInstance(item));
+            }
             
             var spriteImage = new Sprite(this._info.Image);
             var spriteFlash = new Sprite(this._info.Flash);
@@ -48,12 +53,18 @@ namespace Redpoint.DungeonEscape.State
             });
         }
 
-        public int Gold { get; }
+        public int Gold { get; set; }
 
         public override IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells)
         {
-            return this._info.SpellList.Select(spellId => availableSpells.FirstOrDefault(item => item.Id == spellId))
+            return this._info.SpellList.Select(spellId => availableSpells.FirstOrDefault(item => item.Name == spellId))
                 .Where(spell => spell != null).ToList();
+        }
+        
+        public override IEnumerable<Skill> GetSkills(IEnumerable<Skill> availableSkills)
+        {
+            return this._info.SkillList.Select(id => availableSkills.FirstOrDefault(item => item.Name == id))
+                .Where(skill => skill != null).ToList();
         }
     }
 }

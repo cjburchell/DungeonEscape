@@ -65,7 +65,7 @@
                 var monsterId = 'A';
                 foreach (var monster  in monsterGroup)
                 {
-                    var instance = new MonsterInstance(monster, game.CustomItems);
+                    var instance = new MonsterInstance(monster, game);
                     if (monsterGroup.Count() != 1)
                     {
                         instance.Name = $"{instance.Name} {monsterId}";
@@ -924,17 +924,18 @@
                 var endFightMessage =$"You have defeated {monsterName},\nEach party member has gained {xp}XP\nand the party got {gold} gold\n";
                 if (Dice.RollD20() > 18)
                 {
-                    foundItems.Add(Item.CreateChestItem(this._game.ItemDefinitions, this._game.CustomItems, this._game.StatNames, this._game.Party.MaxLevel()));
+                    foundItems.Add(_game.CreateChestItem(this._game.Party.MaxLevel()));
                 }
 
                 if (foundItems.Any())
                 {
                     var foundItemMessage = "";
+                    var questMessage = "";
                     foreach (var foundItem in foundItems)
                     {
                         if (foundItem.Type == ItemType.Gold)
                         {
-                            foundItemMessage += $"You found {foundItem.Cost} Gold";
+                            foundItemMessage += $"You found {foundItem.Cost} Gold\n";
                             this._game.Party.Gold += foundItem.Cost;
                         }
                         else
@@ -943,6 +944,7 @@
                             if (member != null)
                             {
                                 foundItemMessage += $"{member.Name} found a {foundItem.Name}\n";
+                                questMessage += this._game.CheckQuest(foundItem, false);
                             }
                         }
                     }
@@ -950,7 +952,7 @@
                     if (!string.IsNullOrEmpty(foundItemMessage))
                     {
                         this._game.Sounds.PlaySoundEffect("treasure");
-                        endFightMessage +=  $"You found a chest and opened it!\n"+foundItemMessage;
+                        endFightMessage +=  $"You found a chest and opened it!\n"+foundItemMessage+questMessage;
                     }
                 }
                 

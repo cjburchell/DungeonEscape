@@ -1,18 +1,14 @@
 ﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 {
+    using System.Linq;
     using Common.Components.UI;
-    using Microsoft.Xna.Framework.Graphics;
-    using Nez;
-    using Nez.Sprites;
     using Nez.Tiled;
     using State;
 
-    public class Chest : MapObject
+    public class HiddenItem : MapObject
     {
         private readonly UiSystem _ui;
         private readonly int _level;
-        private SpriteAnimator _openImage;
-        private readonly string _openImageName;
         
         private bool IsOpen
         {
@@ -20,18 +16,13 @@
             set => this.State.IsOpen = value;
         }
 
-        public Chest(TmxObject tmxObject, ObjectState state, TmxMap map, UiSystem ui, IGame gameState) : base(tmxObject, state, map, gameState)
+        public HiddenItem(TmxObject tmxObject, ObjectState state, TmxMap map, UiSystem ui, IGame gameState) : base(tmxObject, state, map, gameState)
         {
-            this.State.IsOpen ??= this.TmxObject.Properties.ContainsKey("IsOpen") &&
-                                  bool.Parse(this.TmxObject.Properties["IsOpen"]);
-            
             this._ui = ui;
-            this._level = tmxObject.Properties.ContainsKey("ChestLevel") ? int.Parse(tmxObject.Properties["ChestLevel"]) : 0;
-            this._openImageName = tmxObject.Properties.ContainsKey("OpenImage") ? tmxObject.Properties["OpenImage"] : "ochest.png";
+            this._level = tmxObject.Properties.ContainsKey("Level") ? int.Parse(tmxObject.Properties["Level"]) : 0;
             if(this.State.Item != null)
             {
-                var tileSet = Game.LoadTileSet("Content/items2.tsx");
-                this.State.Item.Setup(tileSet);
+                this.State.Item.Setup(Game.LoadTileSet("Content/items2.tsx"));
                 return;
             }
             
@@ -46,21 +37,8 @@
                 this.State.Item = GameState.CreateGold(int.Parse(tmxObject.Properties["Gold"]));
                 return;
             }
-            
-            
-            this.State.Item = GameState.CreateRandomItem(this._level == 0 ? this.GameState.Party.MaxLevel() : this._level);
-        }
-        
-        public override void Initialize()
-        {
-            base.Initialize();
-            this.DisplayVisual(!this.IsOpen);
-            var texture = Texture2D.FromFile(Core.GraphicsDevice, $"Content/images/sprites/{this._openImageName}");
-            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, MapScene.DefaultTileSize, MapScene.DefaultTileSize);
-            this._openImage = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
-            this._openImage.RenderLayer = 15;
-            this._openImage.LayerDepth = 15;
-            this._openImage.SetEnabled(this.IsOpen);
+
+            this.State.Item = GameState.CreateRandomItem( this._level == 0 ? this.GameState.Party.MaxLevel() : this._level);
         }
 
         public override bool OnAction(Party party)
@@ -71,15 +49,8 @@
                 this.GameState.IsPaused = false;
             }
 
-            if (this.IsOpen)
+            if (this.IsOpen || !this.GameState.Party.CanOpenChest(this._level))
             {
-                new TalkWindow(this._ui).Show("You found nothing", Done);
-                return true;
-            }
-
-            if (!this.GameState.Party.CanOpenChest(this._level))
-            {
-                new TalkWindow(this._ui).Show("Unable to open chest", Done);
                 return true;
             }
             
@@ -96,16 +67,13 @@
                     new TalkWindow(this._ui).Show($"You found {this.State.Item.Name} but your party did not have enough space in your inventory it", Done);
                     return true;
                 }
-
+                
                 var questMessage = GameState.CheckQuest(this.State.Item);
 
                 new TalkWindow(this._ui).Show($"{selectedMember.Name} found a {this.State.Item.Name}\n{questMessage}", Done);
             }
             this.GameState.Sounds.PlaySoundEffect("treasure");
             this.IsOpen = true;
-            this.DisplayVisual(!this.IsOpen);
-            this._openImage.SetEnabled(this.IsOpen);
-
             return true;
         }
     }

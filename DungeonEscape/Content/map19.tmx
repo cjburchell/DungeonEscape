@@ -430,7 +430,7 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="sprites">
-  <object id="3" name="random" type="NpcPartyMember" gid="1255" x="896" y="160" width="32" height="48">
+  <object id="3" name="#Random#" type="NpcPartyMember" gid="1255" x="896" y="160" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Class" value="Wizard"/>

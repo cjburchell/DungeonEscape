@@ -21,15 +21,16 @@
             if (string.IsNullOrEmpty(this.SpriteState.Name))
             {
                 this.SpriteState.Name = tmxObject.Name;
-                if (this.SpriteState.Name == "random")
+            }
+            
+            if ((tmxObject.Name == "#Random#" && this.SpriteState.Name == "#Random#" ) || string.IsNullOrEmpty(this.SpriteState.Name))
+            {
+                do
                 {
-                    do
-                    {
-                        this.SpriteState.Name = this._gender == Gender.Male
-                            ? gameState.Names.Male[Nez.Random.NextInt(gameState.Names.Male.Count)]
-                            : gameState.Names.Female[Nez.Random.NextInt(gameState.Names.Male.Count)];
-                    } while (gameState.Party.Members.Any(i => i.Name == this.SpriteState.Name));
-                }
+                    this.SpriteState.Name = this._gender == Gender.Male
+                        ? gameState.Names.Male[Nez.Random.NextInt(gameState.Names.Male.Count)]
+                        : gameState.Names.Female[Nez.Random.NextInt(gameState.Names.Male.Count)];
+                } while (gameState.Party.Members.Any(i => i.Name == this.SpriteState.Name));
             }
             
             this._memberClass = tmxObject.Properties.ContainsKey("Class") ? Enum.Parse<Class>(tmxObject.Properties["Class"]) : Class.Fighter;
@@ -38,28 +39,20 @@
             var text = tmxObject.Properties.ContainsKey("Text") ? tmxObject.Properties["Text"] : null;
             if (!string.IsNullOrEmpty(text))
             {
-                this.Dialog = new Dialog
+                this.Dialog = new()
                 {
-                    Dialogs = new List<DialogText>
+                    Dialogs = new()
                     {
-                        new DialogText
+                        new()
                         {
                             Text = $"{this.SpriteState.Name}: {text}",
                             Choices = new List<Choice>
                             {
-                                new Choice
+                                new()
                                 {
-                                    Text = "Yes", Action = QuestAction.Join,
-                                    Dialogs = new List<DialogText>
-                                    {
-                                        new DialogText
-                                        {
-                                            Text = $"{this.SpriteState.Name} Joined the party",
-                                            Choices = new List<Choice> {new Choice {Text = "OK"}}
-                                        }
-                                    }
+                                    Text = "Yes", Action = QuestAction.Join
                                 },
-                                new Choice {Text = "No"}
+                                new() {Text = "No"}
                             }
                         }
                     }

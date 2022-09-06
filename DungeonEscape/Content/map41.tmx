@@ -177,6 +177,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
+    <property name="ItemId" type="string" value="Iron Key"/>
    </properties>
   </object>
   <object id="4" name="Chest" type="Chest" gid="7" x="480" y="160" width="32" height="32">

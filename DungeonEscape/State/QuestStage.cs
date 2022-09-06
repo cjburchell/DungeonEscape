@@ -8,5 +8,7 @@ namespace Redpoint.DungeonEscape.State
     {
         public int Number { get; set; }
         public string Description { get; set; }
+        
+        public bool CompleteQuest { get; set; }
     }
 }

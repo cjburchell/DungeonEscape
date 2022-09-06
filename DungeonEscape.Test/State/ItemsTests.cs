@@ -1,4 +1,6 @@
-﻿namespace DungeonEscape.Test.State
+﻿using Redpoint.DungeonEscape;
+
+namespace DungeonEscape.Test.State
 {
     using System.Collections.Generic;
     using System.IO;
@@ -19,11 +21,15 @@
         [Fact]
         public void CreateRandomItem()
         {
-            var statNames = JsonConvert.DeserializeObject<List<StatName>>(File.ReadAllText("Content/data/statnames.json"));
-            var itemDefinitions = JsonConvert.DeserializeObject<List<ItemDefinition>>(File.ReadAllText("Content/data/itemdef.json"));
-            var customItems = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/data/customitems.json"));
+            using var game = new Game();
+            game.StatNames =
+                JsonConvert.DeserializeObject<List<StatName>>(File.ReadAllText("Content/data/statnames.json"));
+            game.ItemDefinitions =
+                JsonConvert.DeserializeObject<List<ItemDefinition>>(File.ReadAllText("Content/data/itemdef.json"));;
+            game.CustomItems =
+                JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/data/customitems.json"));
             
-            var item = Item.CreateRandomItem(itemDefinitions, customItems, statNames, 30);
+            var item = game.CreateRandomItem(30);
 
             this._testOutputHelper.WriteLine($"Name: {item.Name}");
             this._testOutputHelper.WriteLine($"Level: {item.MinLevel}");
@@ -36,13 +42,17 @@
         [Fact]
         public void Create100RandomItems()
         {
-            var statNames = JsonConvert.DeserializeObject<List<StatName>>(File.ReadAllText("Content/data/statnames.json"));
-            var itemDefinitions = JsonConvert.DeserializeObject<List<ItemDefinition>>(File.ReadAllText("Content/data/itemdef.json"));
-            var customItems = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/data/customitems.json"));
+            using var game = new Game();
+            game.StatNames =
+                JsonConvert.DeserializeObject<List<StatName>>(File.ReadAllText("Content/data/statnames.json"));
+            game.ItemDefinitions =
+                JsonConvert.DeserializeObject<List<ItemDefinition>>(File.ReadAllText("Content/data/itemdef.json"));;
+            game.CustomItems =
+                JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/data/customitems.json"));
             
             for (var i = 0; i < 100; i++)
             {
-                var item = Item.CreateRandomItem(itemDefinitions,customItems, statNames, 30);
+                var item = game.CreateRandomItem(30);
                 this._testOutputHelper.WriteLine($"{item.MinLevel}{item.Rarity.ToString()[0]}: {item.Name}");
                 Assert.NotNull(item);
             }

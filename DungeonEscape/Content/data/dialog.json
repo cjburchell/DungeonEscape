@@ -1,12 +1,12 @@
 ﻿[
   {
-    "Id": 1,
-    "Quest": 1,
+    "Id": "Find Sea Shell",
+    "Quest": "Lost_Sea_Shell",
     "Dialogs": [
       {
-        "ForQuestStage": 0,
-        "Text": "I lost my bucket can you find it?",
-        "Choice": [
+        "ForQuestStage": [0],
+        "Text": "I lost my sea shell can you find it?",
+        "Choices": [
           {
             "Text": "Yes",
             "NextQuestStage": 1,
@@ -27,19 +27,21 @@
         ]
       },
       {
-        "ForQuestStage": 1,
-        "Text": "Did you find my bucket?",
-        "Choice": [
+        "ForQuestStage": [1],
+        "Text": "Have you found my sea shell yet?",
+        "Choices": [{
+          "Text": "No"
+        }]
+      },
+      {
+        "ForQuestStage": [2],
+        "Text": "Did you find my sea shell?",
+        "Choices": [
           {
             "Text": "Yes",
-            "Action": "LookingForItem",
-            "ItemId": "Bucket",
-            "NextQuestStage": 2,
-            "Dialogs": [
-              {
-                "Text": "Thank you."
-              }
-            ]
+            "Action": "TakeItem",
+            "ItemId": "Boy's Sea Shell",
+            "NextQuestStage": 3
           },
           {
             "Text": "No",
@@ -52,8 +54,8 @@
         ]
       },
       {
-        "ForQuestStage": 2,
-        "Text": "Thank you for finding my bucket"
+        "ForQuestStage": [3],
+        "Text": "Thank you for finding my sea shell"
       }
     ]
   }

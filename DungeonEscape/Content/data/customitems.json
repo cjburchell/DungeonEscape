@@ -152,5 +152,21 @@
     "ImageId": 895,
     "Rarity": "Epic",
     "MinLevel": 20
+  },
+  {
+    "Type": "Quest",
+    "Name": "Boy's Sea Shell",
+    "ImageId": 866,
+    "QuestId": "Lost_Sea_Shell",
+    "ForStage": 1,
+    "NextStage": 2
+  },
+  {
+    "Type": "Quest",
+    "Name": "Old Man's Key",
+    "QuestId": "Find_Ship",
+    "ForStage": 2,
+    "NextStage": 3,
+    "ImageId": 909
   }
 ]

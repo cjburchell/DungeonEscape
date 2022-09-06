@@ -24,6 +24,8 @@
         
         public void Show(string text, IEnumerable<Choice> choices , Action<Choice> doneAction)
         {
+            choices ??= new[] { new Choice { Text = "OK" } };
+            
             var enumerable = choices.ToList();
             base.Show(text, result =>  doneAction.Invoke(enumerable.FirstOrDefault(i=> i.Text == result)), enumerable.Select( i => i.Text) );
         }

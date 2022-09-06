@@ -16,6 +16,8 @@ namespace Redpoint.DungeonEscape.State
         [JsonConverter(typeof(StringEnumConverter))]
         public QuestAction Action { get; set; } = QuestAction.None;
 
+        public List<string> Items { get; set; }
+        
         public string ItemId { get; set; }
         
         public int? MonsterId { get; set; }

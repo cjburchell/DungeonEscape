@@ -57,13 +57,13 @@ namespace Redpoint.DungeonEscape.State
 
                     if (goldToSteal != 0)
                     {
-                        item = Item.CreateGold(goldToSteal);
+                        item = game.CreateGold(goldToSteal);
                     }
                 }
             }
             else if( target is MonsterInstance )
             {
-                item = Item.CreateChestItem(game.ItemDefinitions, game.CustomItems, game.StatNames, source.Level);
+                item = game.CreateChestItem(source.Level);
             }
 
             if (item == null)
@@ -167,7 +167,7 @@ namespace Redpoint.DungeonEscape.State
         {
             var roll = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
             var buff = increase ?  roll : target.CalculateDamage(roll, this.IsPiercing);
-            if (buff == 0)
+            if (buff == 0 || target.Status.Any(i => i.Type == EffectType.Buff && i.Name == this.EffectName))
             {
                 return this.DoAttack?"":$"{target.Name} was not affected by {this.Name}\n";
             }
@@ -189,6 +189,11 @@ namespace Redpoint.DungeonEscape.State
 
         private string DoSleep(IFighter target, IGame gameState, int round)
         {
+            if (target.Status.Any(i => i.Type == EffectType.Sleep))
+            {
+                return this.DoAttack?"":$"{target.Name} was not affected by {this.Name}\n";
+            }
+            
             target.AddEffect(new StatusEffect
             {
                 Name = this.EffectName,
@@ -203,6 +208,11 @@ namespace Redpoint.DungeonEscape.State
 
         private string DoConfusion(IFighter target, IGame gameState, int round)
         {
+            if (target.Status.Any(i => i.Type == EffectType.Confusion))
+            {
+                return this.DoAttack?"":$"{target.Name} was not affected by {this.Name}\n";
+            }
+            
             target.AddEffect(new StatusEffect
             {
                 Name = this.EffectName,
@@ -218,11 +228,11 @@ namespace Redpoint.DungeonEscape.State
         private string DoDot(IFighter target, IGame gameState, int round)
         {
             var buff = target.CalculateDamage(Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst));
-            if (buff == 0)
+            if (buff == 0 || target.Status.Any(i => i.Type == EffectType.OverTime && i.Name == this.EffectName))
             {
                 return this.DoAttack?"":$"{target.Name} was not affected by {this.Name}\n";
             }
-            
+
             target.AddEffect(new StatusEffect
             {
                 Name = this.EffectName,

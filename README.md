@@ -8,6 +8,10 @@ Download Latest Version [Here](https://gitlab.com/cjburchell/DungeonEscape/-/job
  - Create More Quests
  - Scalable monsters
  - Party Order
+ - Initial Equipment for party members
+ - Hire Party members
+ - Antidote Item
+ - Hits have a chance of waking up sleeping fighters
  
  ### Improvements
  - Balance pass

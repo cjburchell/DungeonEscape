@@ -40,6 +40,11 @@
                 Rarity.Common => "common_label",
                 _ => null
             };
+            
+            if (item.Type == ItemType.Quest)
+            {
+                style = "quest_label";
+            }
 
             var equip = new Label(equipSymbol, Skin).SetAlignment(Align.Left);
             var itemName = new Label(item.NameWithStats, Skin, style).SetAlignment(Align.Left);

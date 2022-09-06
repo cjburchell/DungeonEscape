@@ -12,7 +12,7 @@ namespace Redpoint.DungeonEscape.State
     {
         private readonly Monster _info;
         
-        public MonsterInstance(Monster info, IReadOnlyCollection<Item> customItems)
+        public MonsterInstance(Monster info, IGame gameState)
         {
             this._info = info;
             this.Health = Dice.Roll(8,info.Health, info.HealthConst);
@@ -27,8 +27,9 @@ namespace Redpoint.DungeonEscape.State
             this.Level = info.MinLevel;
             this.Xp = info.Xp;
             this.Gold = info.Gold;
-
-            foreach (var item in info.Items.Select(itemId => customItems.FirstOrDefault(i => i.Id == itemId)).Where(item => item != null))
+            
+            
+            foreach (var item in info.Items.Select(gameState.GetCustomItem).Where(item => item != null))
             {
                 this.Items.Add(new ItemInstance(item));
             }

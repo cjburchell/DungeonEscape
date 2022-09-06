@@ -4,7 +4,7 @@
     {
         None,
         GiveItem,
-        LookingForItem,
+        TakeItem,
         Fight,
         Warp,
         Join

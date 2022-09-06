@@ -8,9 +8,8 @@ namespace Redpoint.DungeonEscape.State
 
     public class Dialog
     {
-
-        public int? Id { get; set; }
-        public int? Quest { get; set; }
+        public string Id { get; set; }
+        public string Quest { get; set; }
         public List<DialogText> Dialogs { get; set; }
     }
 }

@@ -31,7 +31,7 @@
             if (itemListString != null)
             {
                 this.SpriteState.Items = itemListString.Split(",")
-                    .Select(itemId => gameState.CustomItems.FirstOrDefault(i => i.Id == itemId))
+                    .Select(gameState.GetCustomItem)
                     .Where(item => item != null).OrderBy(i => i.Cost).ToList();
             }
             else
@@ -41,7 +41,7 @@
                 var missing = MinItems - this.SpriteState.Items.Count;
                 for (var i = 0; i < missing; i++)
                 {
-                    var item = Item.CreateRandomItem(this.GameState.ItemDefinitions, this.GameState.CustomItems, this.GameState.StatNames, level);
+                    var item = gameState.CreateRandomItem(level);
                     this.SpriteState.Items.Add(item);
                 }
 
@@ -123,7 +123,7 @@
                         hero =>
                         {
                             var inventoryWindow = new SellPartyItemsWindow(this._ui, party.Members);
-                            inventoryWindow.Show(hero.Items.Where(i => i.Gold != 0), item =>
+                            inventoryWindow.Show(hero.Items.Where(i => i.Gold != 0 && i.Type != ItemType.Quest), item =>
                             {
                                 if (item == null)
                                 {

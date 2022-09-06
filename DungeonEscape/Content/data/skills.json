@@ -40,7 +40,7 @@
     "DoAttack": true,
     "EffectName": "sleep",
     "DurationType": "Rounds",
-    "DurationConst": 2,
+    "DurationConst": 1,
     "DurationRandom": 2
   },
   {

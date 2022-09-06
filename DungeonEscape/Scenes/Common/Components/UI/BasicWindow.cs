@@ -143,6 +143,16 @@
                 FontColor = Color.Purple
             };
             Skin.Add("epic_label", epicLabelStyle);
+            
+            
+            var questLabelStyle = new LabelStyle
+            {
+                FontScale = FontScale,
+                Font = font,
+                FontColor = Color.Gold
+            };
+            Skin.Add("quest_label", questLabelStyle);
+            
 
             var scrollPaneStyle = Skin.Get<ScrollPaneStyle>();
             scrollPaneStyle.VScrollKnob = new PrimitiveDrawable(6, 50, Color.White);

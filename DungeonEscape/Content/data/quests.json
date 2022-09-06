@@ -1,65 +1,69 @@
 ﻿[
   {
-    "Id": 1,
-    "Name": "Find my bucket",
+    "Id": "Lost_Sea_Shell",
+    "Name": "The lost seashell",
+    "Description": "The Boy in the village is looking for a lost seashell.",
     "Xp": 100,
+    "Items": ["#Random#"],
     "Stages": [
       {
-        "Id": 1,
-        "Description": "Talked to the villager"
+        "Number": 1,
+        "Description": "You should search the area for the seashell."
       },
       {
-        "Id": 2,
-        "Description": "Found the bucket"
+        "Number": 2,
+        "Description": "You found the shell you should return it to the boy."
       },
       {
-        "Id": 3,
-        "Description": "Returned The bucket"
+        "Number": 3,
+        "Description": "You returned the seashell.",
+        "CompleteQuest": true
       }
     ]
   },
   {
-    "Id": 2,
+    "Id": "Lost_Dog",
     "Name": "Lost Dog",
     "Xp": 100,
     "Stages": [
       {
-        "Id": 1,
+        "Number": 1,
         "Description": "Talked to the villager"
       },
       {
-        "Id": 2,
+        "Number": 2,
         "Description": "Found the dog"
       },
       {
-        "Id": 3,
+        "Number": 3,
         "Description": "Returned The dog"
       }
     ]
   },
   {
-    "Id": 3,
+    "Id": "Find_Ship",
     "Name": "Get a ship",
+    "Description": "To cross the sea you need to find a boat",
     "Xp": 100,
     "Stages": [
       {
-        "Id": 1,
+        "Number": 1,
         "Description": "Talked to priest"
       },
       {
-        "Id": 2,
+        "Number": 2,
         "Description": "Talked to the old man"
       },
       {
-        "Id": 3,
+        "Number": 3,
         "Description": "Found the key"
       },
       {
-        "Id": 4,
+        "Number": 4,
         "Description": "Opened the door"
       },
       {
-        "Id": 4,
+        "Number": 4,
         "Description": "Got the ship"
       }
     ]

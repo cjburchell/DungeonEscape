@@ -254,18 +254,21 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
+    <property name="ItemId" type="string" value="Iron Key"/>
    </properties>
   </object>
   <object id="5" name="Key Chest" type="Chest" gid="228" x="288" y="384" width="32" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
+    <property name="ItemId" type="string" value="Iron Key"/>
    </properties>
   </object>
   <object id="6" name="Key Chest" type="Chest" gid="228" x="352" y="384" width="32" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
+    <property name="ItemId" type="string" value="Iron Key"/>
    </properties>
   </object>
   <object id="7" name="Exit 0" type="Warp" x="160" y="608" width="32" height="96">

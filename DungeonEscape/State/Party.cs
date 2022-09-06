@@ -35,20 +35,20 @@ namespace Redpoint.DungeonEscape.State
 
         public ItemInstance GetItem(string itemId)
         {
-            return this.AliveMembers.Select(member =>  member.Items.FirstOrDefault(i => i.Id == itemId)).FirstOrDefault(item => item != null);
+            return this.AliveMembers.Select(member =>  member.Items.FirstOrDefault(i => i.Item.Id == itemId)).FirstOrDefault(item => item != null);
         }
 
-        public void RemoveItem(string itemId)
+        public (Item, Hero) RemoveItem(string itemId)
         {
             foreach (var member in this.Members)
             {
-                var item = member.Items.FirstOrDefault(i => i.Id == itemId);
-                if (item != null)
-                {
-                    member.Items.Remove(item);
-                    break;
-                }
+                var item = member.Items.FirstOrDefault(i => i.Item.Id == itemId);
+                if (item == null) continue;
+                member.Items.Remove(item);
+                return (item.Item, member);
             }
+
+            return (null, null);
         }
 
         public Hero AddItem(ItemInstance item)
@@ -56,7 +56,12 @@ namespace Redpoint.DungeonEscape.State
             var selectedMember = this.AliveMembers.FirstOrDefault(partyMember => partyMember.Items.Count < MaxItems);
             if (selectedMember == null)
             {
-                return null;
+                if (item.Type != ItemType.Quest)
+                {
+                    return null;
+                }
+
+                selectedMember = this.AliveMembers.First();
             }
             
             selectedMember.Items.Add(item);

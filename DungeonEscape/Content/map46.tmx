@@ -232,6 +232,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
+    <property name="ItemId" type="string" value="Iron Key"/>
    </properties>
   </object>
  </objectgroup>

@@ -8,7 +8,7 @@ namespace Redpoint.DungeonEscape.State
 {
     public class DialogText
     {
-        public int? ForQuestStage { get; set; }
+        public List<int> ForQuestStage { get; set; }
         public string Text { get; set; }
         public List<Choice> Choices { get; set; }
     }

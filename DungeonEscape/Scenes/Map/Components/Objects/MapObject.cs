@@ -29,6 +29,7 @@
                 SpriteType.Ship => new Ship(tmxObject, state, map, gameState),
                 SpriteType.Warp => new Warp(tmxObject, state, map, gameState),
                 SpriteType.Chest => new Chest(tmxObject, state, map, ui, gameState),
+                SpriteType.HiddenItem => new HiddenItem(tmxObject, state, map, ui, gameState),
                 SpriteType.Door => new Door(tmxObject, state, map, ui, gameState),
                 _ => new MapObject(tmxObject, state, map, gameState)
             };

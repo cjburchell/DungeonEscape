@@ -38,7 +38,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
                 Rarity.Common => "common_label",
                 _ => null
             };
-            
+
             var equip = new Label(equipSymbol, Skin).SetAlignment(Align.Left);
             var itemName = new Label(item.NameWithStats, Skin, style).SetAlignment(Align.Left);
             var cost = new Label($"{item.Gold * 3 / 4}", Skin).SetAlignment(Align.Right);

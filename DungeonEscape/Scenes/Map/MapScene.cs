@@ -608,7 +608,17 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                             menuItems.Add("Transfer");
                         }
 
-                        menuItems.Add("Drop");
+                        if (item.Type != ItemType.Quest)
+                        {
+                            menuItems.Add("Drop");
+                        }
+
+                        if (!menuItems.Any())
+                        {
+                            done();
+                            return;
+                        }
+                        
                         
                         var selectWindow = new SelectWindow<string>(this._ui, "Select", new Point(20, 20));
                         selectWindow.Show(menuItems, action =>

@@ -33,7 +33,7 @@
         public List<ClassStats> ClassLevelStats { get; private set; } = new();
         public List<MapState> MapStates { get; private set; } = new();
         public List<Monster> Monsters { get; } = new();
-        public List<Item> CustomItems { get; } = new();
+        public List<Item> CustomItems { get; set; } = new();
         public List<Spell> Spells { get; } = new();
         public List<Quest> Quests { get; private set; } = new();
         
@@ -310,9 +310,9 @@
 
         public Settings Settings { get; private set; }
 
-        public List<ItemDefinition> ItemDefinitions { get; private set; }
+        public List<ItemDefinition> ItemDefinitions { get; set; }
 
-        public List<StatName> StatNames { get; private set; }
+        public List<StatName> StatNames { get; set; }
 
         public Names Names { get; private set; }
 
@@ -364,6 +364,299 @@
         public TmxMap GetMap(int mapId)
         {
             return Content.LoadTiledMap($"Content/map{mapId}.tmx");
+        }
+        
+        public string AdvanceQuest(string questId, int forStage, int? nextStage, bool checkLevelUp = true)
+        {
+            var quest = this.Quests.FirstOrDefault(i => i.Id == questId);
+            if (quest == null)
+            {
+                return "";
+            }
+
+            var activeQuest =
+                Party.ActiveQuests.FirstOrDefault(i => i.Id == quest.Id);
+            if (activeQuest == null)
+            {
+                activeQuest = new ActiveQuest
+                {
+                    Id = quest.Id, CurrentStage = forStage,
+                    Stages = quest.Stages.Select(i => new QuestStageState { Number = i.Number }).ToList()
+                };
+                Party.ActiveQuests.Add(activeQuest);
+            }
+            
+            if (nextStage.HasValue)
+            {
+                activeQuest.CurrentStage = nextStage.Value;
+            }
+            
+            var activeStage = activeQuest.Stages.FirstOrDefault(i => i.Number == activeQuest.CurrentStage);
+            if (activeStage != null)
+            {
+                activeStage.Completed = true;
+            }
+            
+            var currentStage = quest.Stages.FirstOrDefault(i => i.Number == activeQuest.CurrentStage);
+            if (currentStage is not { CompleteQuest: true } || activeQuest.Completed )
+            {
+                return "";
+            }
+            
+            activeQuest.Completed = true;
+            var message = $"You have completed the quest {quest.Name}\n";
+            if (quest.Xp != 0)
+            {
+                message += $"Each party member has gained {quest.Xp}XP\n";
+            }
+
+            if (quest.Gold != 0)
+            {
+                message += $"and the party got {quest.Gold} gold\n\n";
+                Party.Gold += quest.Gold;
+            }
+            
+            var questMessage = "";
+            if (quest.Items != null)
+            {
+                foreach (var questItem in quest.Items)
+                {
+                    var item = this.GetCustomItem(questItem);
+                    if (item != null)
+                    {
+                        var member = Party.AddItem(new ItemInstance(item));
+                        if (member != null)
+                        {
+                            message += $"and {member.Name} got {item.Name}\n";
+                            questMessage += this.CheckQuest(item, false);
+                        }
+                    }
+                }
+            }
+
+            if (quest.Xp == 0 && string.IsNullOrEmpty(questMessage))
+            {
+                return message;
+            }
+
+            message += questMessage;
+
+            if (!checkLevelUp)
+            {
+                return message;
+            }
+            
+            var leveledUp = false;
+            foreach (var member in Party.AliveMembers)
+            {
+                member.Xp += (ulong)quest.Xp;
+                while (member.CheckLevelUp(this.ClassLevelStats, this.Spells, out var result))
+                {
+                    leveledUp = true;
+                    message += result;
+                }
+            }
+
+            if (leveledUp)
+            {
+                this.Sounds.PlaySoundEffect("level-up");
+            }
+            
+            return message;
+        }
+
+        public string CheckQuest(Item item, bool checkLevelUp = true)
+        {
+            return string.IsNullOrEmpty(item.QuestId) ? "" : this.AdvanceQuest(item.QuestId, item.ForStage, item.NextStage, checkLevelUp);
+        }
+        
+        public Item CreateChestItem(int level)
+        {
+            if (Nez.Random.Chance(0.25f))
+            {
+                return CreateRandomItem(level);
+            }
+            else
+            {
+                return CreateGold(Dice.Roll(5, level*3, 1));
+            }
+        }
+        
+        public Item CreateGold(int gold)
+        {
+            var item = new Item
+            {
+                Name = "Gold",
+                Cost = gold,
+                MinLevel = 0,
+                Type = ItemType.Gold,
+                ImageId = 788,
+                Id = "Gold"
+            };
+
+            // gold Image
+            var tileSet = Game.LoadTileSet("Content/items2.tsx");
+            item.Setup(tileSet);
+
+            return item;
+        }
+
+        public Item GetCustomItem(string itemId)
+        {
+            return itemId == "#Random#" ? this.CreateRandomItem(this.Party.MaxLevel()) : this.CustomItems.FirstOrDefault(i => i.Id == itemId);
+        }
+
+        public Item CreateRandomItem(int maxLevel, int minLevel = 1, Rarity? rarity = null)
+        {
+            maxLevel = Math.Max(maxLevel, 1);
+            if (Nez.Random.Chance(0.25f))
+            {
+                var staticItemsList = CustomItems.ToList();
+                return staticItemsList.Where(i => i.Type is ItemType.OneUse or ItemType.RepeatableUse && i.MinLevel < maxLevel).ToArray()[
+                    Nez.Random.NextInt(staticItemsList.Count(i => i.Type is ItemType.OneUse or ItemType.RepeatableUse && i.MinLevel < maxLevel))];
+            }
+
+            var itemRarity = Nez.Random.NextInt(100);
+            rarity ??= itemRarity > 75
+                ? itemRarity > 90 ? itemRarity > 98 ? Rarity.Epic : Rarity.Rare : Rarity.Uncommon
+                : Rarity.Common;
+
+            var type = Item.EquippableItems.ToArray()[Nez.Random.NextInt(Item.EquippableItems.Count)];
+
+            var item = new Item
+            {
+                Rarity = rarity.Value,
+                Type = type,
+                ImageId = 202,
+                Id = Guid.NewGuid().ToString()
+            };
+
+
+            List<StatType> availableStats;
+            ItemDefinition itemDefinition;
+            var definitions = ItemDefinitions.ToList();
+            switch (type)
+            {
+                case ItemType.Weapon:
+                {
+                    availableStats = new List<StatType>
+                        { StatType.Agility, StatType.Attack, StatType.Health, StatType.Magic };
+                    itemDefinition =
+                        definitions.Where(i => i.Type == type).ToArray()[
+                            Nez.Random.NextInt(definitions.Count(i => i.Type == type))];
+                    item.MinLevel = Nez.Random.NextInt(maxLevel - minLevel) + minLevel;
+                    item.Stats.Add(new StatValue
+                    {
+                        Type = StatType.Attack,
+                        Value = Math.Max(item.MinLevel - 5 + Nez.Random.NextInt(6), 1)
+                    });
+
+                    break;
+                }
+                case ItemType.Armor:
+                {
+                    availableStats = new List<StatType>
+                        { StatType.Agility, StatType.Defence, StatType.Health, StatType.Magic, StatType.MagicDefence };
+                    itemDefinition =
+                        definitions.Where(i => i.Type == type).ToArray()[
+                            Nez.Random.NextInt(definitions.Count(i => i.Type == type))];
+                    item.MinLevel = Nez.Random.NextInt(maxLevel - minLevel) + minLevel;
+                    item.Stats.Add(new StatValue
+                    {
+                        Type = StatType.Defence,
+                        Value = Math.Max(item.MinLevel - 5 + Nez.Random.NextInt(6), 1)
+                    });
+
+                    break;
+                }
+                default:
+                    throw new ArgumentOutOfRangeException(type.ToString());
+            }
+
+            var baseStatLevel = Math.Min((int)(item.MinLevel / 25.0f * itemDefinition.Names.Count),
+                itemDefinition.Names.Count - 1);
+            var baseName = itemDefinition.Names[baseStatLevel];
+            if (itemDefinition.Classes != null)
+            {
+                item.Classes = itemDefinition.Classes.ToList();
+            }
+
+            item.ImageId = baseName.ImageId;
+            item.Slots = itemDefinition.Slots;
+
+            var prefix = string.Empty;
+            var suffix = string.Empty;
+
+            var statCount = Math.Min((int)rarity.Value, availableStats.Count);
+            var chosenStats = new List<StatType>();
+            for (var i = 0; i < statCount; i++)
+            {
+                var index = Nez.Random.NextInt(availableStats.Count);
+                var stat = availableStats.ToArray()[index];
+                availableStats.Remove(stat);
+                chosenStats.Add(stat);
+            }
+
+            foreach (var stat in chosenStats.OrderBy(i => (int)i))
+            {
+                var itemLevel = Nez.Random.NextInt(maxLevel - minLevel) + minLevel;
+                item.MinLevel = Math.Max(itemLevel, item.MinLevel);
+                var statValue = Math.Max(itemLevel - 5 + Nez.Random.NextInt(6), 1);
+                item.Stats.Add(new StatValue()
+                {
+                    Type = stat,
+                    Value = statValue
+                });
+
+                var statName = StatNames.FirstOrDefault(i => i.Type == stat);
+                if (statName != null)
+                {
+                    if (string.IsNullOrEmpty(suffix) && statName.Suffix != null)
+                    {
+                        var statLevel = Math.Min((int)(itemLevel / 25.0f * statName.Suffix.Count),
+                            statName.Suffix.Count - 1);
+                        suffix = statName.Suffix[statLevel];
+                    }
+                    else if (statName.Prefix != null)
+                    {
+                        var statLevel = Math.Min((int)(itemLevel / 25.0f * statName.Prefix.Count),
+                            statName.Prefix.Count - 1);
+                        if (string.IsNullOrEmpty(prefix))
+                        {
+                            prefix = statName.Prefix[statLevel];
+                        }
+                        else
+                        {
+                            prefix += " " + statName.Prefix[statLevel];
+                        }
+                    }
+                }
+            }
+
+            var name = baseName.Name;
+            if (!string.IsNullOrWhiteSpace(prefix))
+            {
+                name = $@"{prefix} {name}";
+            }
+
+            if (!string.IsNullOrWhiteSpace(suffix))
+            {
+                name = $@"{name} of {suffix}";
+            }
+
+            item.Name = name;
+            item.Cost = item.MinLevel * ((int)rarity.Value + 1) * 100;
+            item.Cost += Nez.Random.NextInt(item.Cost / 3);
+
+
+            if (Core.GraphicsDevice == null)
+            {
+                return item;
+            }
+
+            var tileSet = Game.LoadTileSet("Content/items2.tsx");
+            item.Setup(tileSet);
+            return item;
         }
     }
 }

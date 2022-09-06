@@ -63,6 +63,7 @@
             this.BaseId = tmxObject.Tile.Gid - this._tilSet.FirstGid;
             this._canMove = bool.Parse(this._tmxObject.Properties["CanMove"]);
             this._collideable = bool.Parse(this._tmxObject.Properties["Collideable"]);
+            this.SpriteState.Name = tmxObject.Name;
         }
 
         protected virtual void SetupAnimation(List<Nez.Textures.Sprite> sprites)

@@ -140,6 +140,7 @@ namespace Redpoint.DungeonEscape.State
                 {
                     target.Health -= damage;
                     message += $" took {damage} points of damage from {this.EffectName}\n";
+                    message += target.HitCheck();
                 }
                 else if (this.StatType == StatType.Magic)
                 {

@@ -797,18 +797,19 @@
                 damage = 0;
             }
             
-            target.Health -= damage;
             if (damage == 0)
             {
                 message += $" was unharmed\n";
             }
             else
             {
+                target.Health -= damage;
                 target.PlayDamageAnimation();
                 message += $" took {damage} points of damage\n";
+                message += target.HitCheck();
             }
 
-            if (target.Health <= 0)
+            if (target.IsDead)
             {
                 message += "and has died!\n";
                 target.Health = 0;

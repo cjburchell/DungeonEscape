@@ -287,6 +287,24 @@ namespace Redpoint.DungeonEscape.State
             return attack != 0 ? Math.Max((int)(attack * defence), 10): 0;
         }
 
+        public string HitCheck()
+        {
+            if (this.IsDead)
+            {
+                return "";
+            }
+            
+            var message = "";
+            var sleepEffect = this.Status.FirstOrDefault(i => i.Type == EffectType.Sleep);
+            if (sleepEffect != null && Dice.RollD20() > 15)
+            {
+                message += $"{sleepEffect.Name} on {this.Name} has worn off\n";
+                this.RemoveEffect(sleepEffect);
+            }
+
+            return message;
+        }
+
         public void Update()
         {
             this.Animator?.Update();

@@ -32,5 +32,6 @@
         bool CanHit(IFighter target);
         bool CanCriticalHit(IFighter target);
         int CalculateDamage(int attack, bool isPiercing = false);
+        string HitCheck();
     }
 }

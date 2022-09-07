@@ -66,21 +66,21 @@ namespace Redpoint.DungeonEscape.State
             });
         }
 
-        public void RollStats(IEnumerable<ClassStats> classLevels, int level = 1)
+        public void Setup(IGame game, int level = 1, bool generateItems = true)
         {
             this.Level = 1;
-            var classStatList = classLevels.ToList();
+            var classStatList = game.ClassLevelStats.ToList();
             var classStats = classStatList.First(stats => stats.Class == this.Class);
             this.Xp = 0;
             this.NextLevel = classStats.FirstLevel;
-            
+
             // Roll starting stats
-            this.MaxHealth = classStats.Stats.First( item=> item.Type == StatType.Health).RollStartValue();
-            this.Attack = classStats.Stats.First( item=> item.Type == StatType.Attack).RollStartValue();
+            this.MaxHealth = classStats.Stats.First(item => item.Type == StatType.Health).RollStartValue();
+            this.Attack = classStats.Stats.First(item => item.Type == StatType.Attack).RollStartValue();
             this.Defence = classStats.Stats.First(item => item.Type == StatType.Defence).RollStartValue();
             this.MagicDefence = classStats.Stats.First(item => item.Type == StatType.MagicDefence).RollStartValue();
-            this.MaxMagic = classStats.Stats.First( item=> item.Type == StatType.Magic).RollStartValue();
-            this.Agility = classStats.Stats.First( item=> item.Type == StatType.Agility).RollStartValue();
+            this.MaxMagic = classStats.Stats.First(item => item.Type == StatType.Magic).RollStartValue();
+            this.Agility = classStats.Stats.First(item => item.Type == StatType.Agility).RollStartValue();
             this.Skills = classStats.Skills.ToList();
 
             this.Health = this.MaxHealth;
@@ -89,6 +89,30 @@ namespace Redpoint.DungeonEscape.State
             {
                 this.Xp = this.NextLevel;
                 this.CheckLevelUp(classStatList, null, out _);
+            }
+
+            if (!generateItems) return;
+
+            this.Items = new List<ItemInstance>();
+
+            var armor = game.CreateRandomEquipment(this.Level, Math.Max(this.Level - 5, 1), Rarity.Common,
+                ItemType.Armor,
+                this.Class, Slot.Chest);
+            if (armor != null)
+            {
+                var item = new ItemInstance(armor);
+                this.Items.Add(item);
+                this.Equip(item);
+            }
+
+            var weapon = game.CreateRandomEquipment(this.Level, Math.Max(this.Level - 5, 1), Rarity.Common,
+                ItemType.Weapon,
+                this.Class);
+            if (weapon != null)
+            {
+                var item = new ItemInstance(weapon);
+                this.Items.Add(item);
+                this.Equip(item);
             }
         }
 

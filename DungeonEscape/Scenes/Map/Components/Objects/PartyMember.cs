@@ -97,7 +97,7 @@
                 Gender = this._gender
             };
                 
-            hero.RollStats(this.GameState.ClassLevelStats, this._level);
+            hero.Setup(this.GameState, this._level);
                     
             var lastMember = this.GameState.Party.Members.Last();
             this.GameState.Party.Members.Add(hero);

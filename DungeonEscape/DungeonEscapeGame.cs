@@ -506,44 +506,67 @@
             return itemId == "#Random#" ? this.CreateRandomItem(this.Party.MaxLevel()) : this.CustomItems.FirstOrDefault(i => i.Id == itemId);
         }
 
-        public Item CreateRandomItem(int maxLevel, int minLevel = 1, Rarity? rarity = null)
+        public Item CreateRandomEquipment(int maxLevel, int minLevel = 1, Rarity? rarity = null,
+            ItemType? type = null, Class? itemClass = null, Slot? slot = null)
         {
-            maxLevel = Math.Max(maxLevel, 1);
-            if (Nez.Random.Chance(0.25f))
-            {
-                var staticItemsList = CustomItems.ToList();
-                return staticItemsList.Where(i => i.Type is ItemType.OneUse or ItemType.RepeatableUse && i.MinLevel < maxLevel).ToArray()[
-                    Nez.Random.NextInt(staticItemsList.Count(i => i.Type is ItemType.OneUse or ItemType.RepeatableUse && i.MinLevel < maxLevel))];
-            }
-
             var itemRarity = Nez.Random.NextInt(100);
             rarity ??= itemRarity > 75
                 ? itemRarity > 90 ? itemRarity > 98 ? Rarity.Epic : Rarity.Rare : Rarity.Uncommon
                 : Rarity.Common;
-
-            var type = Item.EquippableItems.ToArray()[Nez.Random.NextInt(Item.EquippableItems.Count)];
-
+            
+            if (type == null)
+            {
+                var types = Item.EquippableItems;
+                type = types.ToArray()[Nez.Random.NextInt(types.Count)];
+            }
+             
             var item = new Item
             {
                 Rarity = rarity.Value,
-                Type = type,
+                Type = type.Value,
                 ImageId = 202,
                 Id = Guid.NewGuid().ToString()
             };
-
-
+            
             List<StatType> availableStats;
-            ItemDefinition itemDefinition;
-            var definitions = ItemDefinitions.ToList();
+            var availableItemDefinitions = ItemDefinitions.Where(i =>
+            {
+                if (itemClass.HasValue && slot.HasValue)
+                {
+                    return i.Slots != null && 
+                           i.Classes != null && 
+                           i.Type == type &&
+                           i.Classes.Contains(itemClass.Value) && 
+                           i.Slots.Contains(slot.Value);
+                }
+
+                if (itemClass.HasValue)
+                {
+                    return i.Classes != null && i.Type == type &&  i.Classes.Contains(itemClass.Value);
+                }
+                
+                if (slot.HasValue)
+                {
+                    return i.Slots != null && i.Type == type && i.Slots.Contains(slot.Value);
+                }
+                
+                return i.Type == type;
+            }).ToArray();
+
+            if (!availableItemDefinitions.Any())
+            {
+                return null;
+            }
+            
+            var itemDefinition = availableItemDefinitions[
+                Nez.Random.NextInt(availableItemDefinitions.Length)];
+            
             switch (type)
             {
                 case ItemType.Weapon:
                 {
                     availableStats = new List<StatType>
                         { StatType.Agility, StatType.Attack, StatType.Health, StatType.Magic };
-                    itemDefinition =
-                        definitions.Where(i => i.Type == type).ToArray()[
-                            Nez.Random.NextInt(definitions.Count(i => i.Type == type))];
                     item.MinLevel = Nez.Random.NextInt(maxLevel - minLevel) + minLevel;
                     item.Stats.Add(new StatValue
                     {
@@ -557,9 +580,6 @@
                 {
                     availableStats = new List<StatType>
                         { StatType.Agility, StatType.Defence, StatType.Health, StatType.Magic, StatType.MagicDefence };
-                    itemDefinition =
-                        definitions.Where(i => i.Type == type).ToArray()[
-                            Nez.Random.NextInt(definitions.Count(i => i.Type == type))];
                     item.MinLevel = Nez.Random.NextInt(maxLevel - minLevel) + minLevel;
                     item.Stats.Add(new StatValue
                     {
@@ -649,7 +669,7 @@
             item.Cost += Nez.Random.NextInt(item.Cost / 3);
 
 
-            if (Core.GraphicsDevice == null)
+            if (GraphicsDevice == null)
             {
                 return item;
             }
@@ -657,6 +677,19 @@
             var tileSet = Game.LoadTileSet("Content/items2.tsx");
             item.Setup(tileSet, this.Skills);
             return item;
+        }
+
+        public Item CreateRandomItem(int maxLevel, int minLevel = 1, Rarity? rarity = null)
+        {
+            maxLevel = Math.Max(maxLevel, 1);
+            if (Nez.Random.Chance(0.25f))
+            {
+                var staticItemsList = CustomItems.ToList();
+                return staticItemsList.Where(i => i.Type is ItemType.OneUse or ItemType.RepeatableUse && i.MinLevel < maxLevel).ToArray()[
+                    Nez.Random.NextInt(staticItemsList.Count(i => i.Type is ItemType.OneUse or ItemType.RepeatableUse && i.MinLevel < maxLevel))];
+            }
+
+            return CreateRandomEquipment(maxLevel, minLevel, rarity);
         }
     }
 }

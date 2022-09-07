@@ -56,6 +56,7 @@ namespace Redpoint.DungeonEscape
         void ShowLoadQuest();
 
         void ShowNewQuest();
+        
 
         void StartFight(IEnumerable<Monster> monsters, Biome biome);
         
@@ -64,6 +65,9 @@ namespace Redpoint.DungeonEscape
         string CheckQuest(Item item, bool checkLevelUp = true);
 
         Item CreateRandomItem(int maxLevel, int minLevel = 1, Rarity? rarity = null);
+        Item CreateRandomEquipment(int maxLevel, int minLevel = 1, Rarity? rarity = null,
+            ItemType? type = null, Class? itemClass = null, Slot? slot = null);
+        
         Item CreateChestItem(int level);
         Item CreateGold(int gold);
         Item GetCustomItem(string itemId);

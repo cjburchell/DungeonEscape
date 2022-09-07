@@ -39,7 +39,7 @@
                 Gender = Gender.Male
             };
             
-            this._hero.RollStats(game.ClassLevelStats);
+            this._hero.Setup(game);
             
             this.ClearColor = Color.Black;
             this.SetDesignResolution(MapScene.ScreenWidth, MapScene.ScreenHeight,
@@ -112,7 +112,7 @@
             classField.OnChanged += _ =>
             {
                 this._hero.Class = Enum.Parse<Class>(classField.GetSelected());
-                this._hero.RollStats(game.ClassLevelStats);
+                this._hero.Setup(game);
                 this.UpdateStatus();
                 this._hero.SetupImage(texture);
             };
@@ -121,7 +121,7 @@
             contentTable.Add(rollButton).Width(BasicWindow.ButtonWidth).Height(BasicWindow.ButtonHeight).SetPadLeft(5);
             rollButton.OnClicked += _ =>
             {
-                this._hero.RollStats(game.ClassLevelStats);
+                this._hero.Setup(game);
                 this.UpdateStatus();
             };
 

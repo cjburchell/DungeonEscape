@@ -8,11 +8,11 @@
 
     public class InventoryWindow : SelectWindow<ItemInstance>
     {
-        private readonly List<Hero> _heroes;
+        private readonly Hero _hero;
 
-        public InventoryWindow(UiSystem ui, List<Hero> heroes) : this(ui, new Point(20, 20))
+        public InventoryWindow(UiSystem ui, Hero hero) : this(ui, new Point(20, 20))
         {
-            _heroes = heroes;
+            _hero = hero;
         }
         
         public InventoryWindow(UiSystem ui, Point position) : base(ui, "Inventory", position, 700, 48)
@@ -26,9 +26,13 @@
             var equipSymbol = string.Empty;
             if (item.IsEquipped)
             {
-                if (this._heroes.Any(hero => hero.Id == item.EquippedTo))
+                equipSymbol = "(E)";
+            }
+            else
+            {
+                if (item.IsEquippable && !item.Item.Classes.Contains(this._hero.Class))
                 {
-                    equipSymbol = "(E)";
+                    equipSymbol = "!";
                 }
             }
 

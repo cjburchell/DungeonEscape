@@ -345,7 +345,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             
             foreach (var member in game.Party.Members)
             {
-                member.RollStats(game.ClassLevelStats, level);
+                member.Setup(game, level, false);
             }
         }
 
@@ -588,7 +588,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                         return;
                     }
                     
-                    var inventoryWindow = new InventoryWindow(this._ui, this._gameState.Party.Members);
+                    var inventoryWindow = new InventoryWindow(this._ui, selectedHero);
                     inventoryWindow.Show(selectedHero.Items, item =>
                     {
                         if (item == null)

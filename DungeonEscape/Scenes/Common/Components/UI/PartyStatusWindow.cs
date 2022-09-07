@@ -72,6 +72,11 @@
                     memberStatus.Add( new Label($"{member.Magic}", Skin, textStyle).SetAlignment(Align.Right)).Width(statusItemWidth).SetPadRight(5);
                     memberStatus.Row().SetPadTop(padding);
                 }
+                else
+                {
+                    memberStatus.Add( new Label(" ", Skin, textStyle).SetAlignment(Align.Left)).Width(statusItemWidth);
+                    memberStatus.Row().SetPadTop(padding);
+                }
                 memberStatus.Add(new Label($"{member.Class.ToString()[..3]}:", Skin, textStyle).SetAlignment(Align.Left)).Width(statusItemWidth).SetPadRight(5);
                 memberStatus.Add(new Label($"{member.Level}", Skin, textStyle).SetAlignment(Align.Right)).Width(statusItemWidth).SetPadRight(5);
                 this._statusTable.Add(memberStatus).Width(statusWidth);

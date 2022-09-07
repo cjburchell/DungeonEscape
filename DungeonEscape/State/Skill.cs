@@ -81,7 +81,7 @@ namespace Redpoint.DungeonEscape.State
                 StartTime = this.DurationType == DurationType.Rounds ? round : game.Party.StepCount
             });
 
-            return ($"{source.Name} is {this.EffectName}\n", true);
+            return ($"Enemies are {this.EffectName}\n", true);
         }
 
         private (string, bool) DoStopSpell(IFighter target, IGame game, int round)
@@ -127,14 +127,13 @@ namespace Redpoint.DungeonEscape.State
 
         private (string, bool) DoClearEffects(IFighter target)
         {
-            
-            if (target.Status.Count == 0)
+            if (target.Status.Count(i => i.IsNegativeEffect) == 0)
             {
                 return ($"{target.Name} is unaffected by {this.Name}\n", false);
             }
 
             var message = "";
-            foreach (var effect in target.Status.ToList())
+            foreach (var effect in target.Status.Where(i => i.IsNegativeEffect).ToList())
             {
                 message += $"{target.Name} {effect.Name} has ended\n";
                 target.RemoveEffect(effect);

@@ -22,5 +22,9 @@ namespace Redpoint.DungeonEscape.State
         public int Duration { get; set; }
         public string Name { get; set; }
         public int StartTime { get; set; }
+
+        public bool IsNegativeEffect =>
+            Type is EffectType.Buff or EffectType.OverTime && StatValue <= 0 ||
+            Type is EffectType.Confusion or EffectType.Sleep or EffectType.StopSpell;
     }
 }

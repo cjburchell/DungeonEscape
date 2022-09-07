@@ -169,23 +169,37 @@ namespace Redpoint.DungeonEscape.State
             return new List<string>();
         }
 
-        public string UpdateStatusEffects(int round, DurationType durationType, IGame game)
+        public string CheckForExpiredStates(int round, DurationType durationType)
         {
             var message = "";
             var expiredList =
                 this.Status.FindAll(i => i.DurationType == durationType && i.Duration <= round - i.StartTime);
             foreach (var expired in expiredList)
             {
-                message += $"{expired.Name} on {this.Name} has worn off\n";
+                if (expired.Type != EffectType.Repel)
+                {
+                    message += $"{expired.Name} on {this.Name} has worn off\n";
+                }
+                else
+                {
+                    message += $"{expired.Name} has worn off\n";
+                }
+               
                 this.RemoveEffect(expired);
             }
 
-            if (this.Status.Count(i => i.Type == EffectType.Sleep) != 0)
+            return message;
+        }
+
+        public string UpdateStatusEffects(IGame game)
+        {
+            var message = "";
+            if (Status.Any(i => i.Type == EffectType.Sleep))
             {
                 message += $"{this.Name} is asleep\n";
             }
             
-            if (this.Status.Count(i => i.Type == EffectType.Confusion) != 0)
+            if (Status.Any(i => i.Type == EffectType.Confusion))
             {
                 message += $"{this.Name} is confused\n";
             }

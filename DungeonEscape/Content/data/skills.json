@@ -65,6 +65,7 @@
     "Name": "Repel",
     "Type": "Repel",
     "Targets": "Group",
+    "EffectName": "repelled",
     "DurationType": "Distance",
     "DurationConst": 127,
     "DurationRandom": 10

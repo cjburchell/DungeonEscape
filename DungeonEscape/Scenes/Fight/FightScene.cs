@@ -662,7 +662,8 @@
 
             this._roundActions.Remove(action);
             this._state = EncounterRoundState.DoingActions;
-            var message = action.Source.UpdateStatusEffects(this._round, DurationType.Rounds, this._game);
+            var message = action.Source.CheckForExpiredStates(this._round, DurationType.Rounds);
+            message += action.Source.UpdateStatusEffects(this._game);
             var endFight = false;
             void DoneAction()
             {

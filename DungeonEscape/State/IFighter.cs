@@ -17,7 +17,6 @@
         bool RanAway { get; }
         IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells);
         IEnumerable<Skill> GetSkills(IEnumerable<Skill> availableSkills);
-
         List<StatusEffect> Status { get; }
         List<ItemInstance> Items { get; }
         int MagicDefence { get; set; }
@@ -27,7 +26,8 @@
         void RemoveEffect(StatusEffect effect);
         void Equip(ItemInstance item);
         List<string> GetEquipmentId(IEnumerable<Slot> slots);
-        string UpdateStatusEffects(int round, DurationType durationType, IGame game);
+        string UpdateStatusEffects(IGame game);
+        string CheckForExpiredStates(int round, DurationType durationType);
         void PlayDamageAnimation();
         bool CanHit(IFighter target);
         bool CanCriticalHit(IFighter target);

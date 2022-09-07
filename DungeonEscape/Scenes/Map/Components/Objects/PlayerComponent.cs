@@ -427,7 +427,8 @@
             var message = "";
             foreach (var member in this._gameState.Party.AliveMembers)
             {
-                member.UpdateStatusEffects(this._gameState.Party.StepCount, DurationType.Distance, this._gameState);
+                message += member.CheckForExpiredStates(this._gameState.Party.StepCount, DurationType.Distance);
+                member.UpdateStatusEffects(this._gameState);
                 if (member.IsDead)
                 {
                     message += $"{member.Name} has died!\n"; 

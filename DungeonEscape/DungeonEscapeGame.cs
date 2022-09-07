@@ -112,7 +112,7 @@
             var tileSet = LoadTileSet("Content/items2.tsx");
             foreach (var partyItem in this.Party.Members.SelectMany(partyMember => partyMember.Items))
             {
-                partyItem.Item.Setup(tileSet);
+                partyItem.Item.Setup(tileSet, Skills);
             }
             
             this.InGame = true;
@@ -257,7 +257,7 @@
                         item.Id = item.Name;
                     }
                     
-                    item.Setup(tileSet);
+                    item.Setup(tileSet, this.Skills);
                     this.CustomItems.Add(item);
                 }
             }
@@ -268,7 +268,7 @@
             {
                 foreach (var spell in spells)
                 {
-                    spell.Setup(spellTiles);
+                    spell.Setup(spellTiles, this.Skills);
                     this.Spells.Add(spell);
                 }
             }
@@ -496,7 +496,7 @@
 
             // gold Image
             var tileSet = Game.LoadTileSet("Content/items2.tsx");
-            item.Setup(tileSet);
+            item.Setup(tileSet, this.Skills);
 
             return item;
         }
@@ -548,7 +548,7 @@
                     item.Stats.Add(new StatValue
                     {
                         Type = StatType.Attack,
-                        Value = Math.Max(item.MinLevel - 5 + Nez.Random.NextInt(6), 1)
+                        Value = Math.Max(item.MinLevel - 5 + Nez.Random.NextInt(6) + itemDefinition.BaseStat, Math.Max(itemDefinition.BaseStat, 1))
                     });
 
                     break;
@@ -564,7 +564,7 @@
                     item.Stats.Add(new StatValue
                     {
                         Type = StatType.Defence,
-                        Value = Math.Max(item.MinLevel - 5 + Nez.Random.NextInt(6), 1)
+                        Value = Math.Max(item.MinLevel - 5 + Nez.Random.NextInt(6) + itemDefinition.BaseStat, Math.Max(itemDefinition.BaseStat, 1))
                     });
 
                     break;
@@ -655,7 +655,7 @@
             }
 
             var tileSet = Game.LoadTileSet("Content/items2.tsx");
-            item.Setup(tileSet);
+            item.Setup(tileSet, this.Skills);
             return item;
         }
     }

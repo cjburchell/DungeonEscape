@@ -20,6 +20,8 @@ namespace Redpoint.DungeonEscape.State
         [JsonProperty("Classes", ItemConverterType=typeof(StringEnumConverter))]
         public List<Class> Classes { get; set; }
         public List<ItemName> Names { get; set; }
+
+        public int BaseStat { get; set; }
         
     }
 }

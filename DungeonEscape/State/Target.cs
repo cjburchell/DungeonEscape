@@ -3,6 +3,7 @@
     public enum Target
     {
         Single,
-        Group
+        Group,
+        None
     }
 }

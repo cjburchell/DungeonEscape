@@ -1,15 +1,10 @@
 [
   {
     "Name": "Heal",
-    "Id": 1,
     "ImageId": 54,
-    "Type": "Heal",
-    "Targets": "Single",
+    "Skill": "Heal",
     "Cost": 3,
     "MinLevel": 2,
-    "StatType": "Health",
-    "StatRandom": 10,
-    "StatConst": 40,
     "Classes": [
       "Hero",
       "Cleric",
@@ -18,10 +13,8 @@
   },
   {
     "Name": "Outside",
-    "Id": 2,
     "ImageId": 344,
-    "Type": "Outside",
-    "Targets": "Group",
+    "Skill": "Outside",
     "Cost": 6,
     "MinLevel": 10,
     "Classes": [
@@ -31,15 +24,10 @@
   },
   {
     "Name": "Blaze",
-    "Id": 3,
     "ImageId": 1,
-    "Type": "Damage",
-    "Targets": "Single",
+    "Skill": "Fire",
     "Cost": 2,
     "MinLevel": 2,
-    "StatType": "Health",
-    "StatRandom": 10,
-    "StatConst": 5,
     "Classes": [
       "Wizard",
       "Hero",
@@ -48,16 +36,10 @@
   },
   {
     "Name": "Lightning",
-    "Id": 4,
     "ImageId": 8,
-    "Type": "Damage",
-    "Targets": "Single",
-    "IsPiercing": true,
+    "Skill": "Lighting",
     "Cost": 15,
     "MinLevel": 8,
-    "StatType": "Health",
-    "StatRandom": 20,
-    "StatConst": 5,
     "Classes": [
       "Wizard",
       "Hero",
@@ -66,15 +48,10 @@
   },
   {
     "Name": "Fire Blast",
-    "Id": 5,
     "ImageId": 57,
-    "Type": "Damage",
-    "Targets": "Group",
+    "Skill": "Fire Breath",
     "Cost": 25,
     "MinLevel": 10,
-    "StatType": "Health",
-    "StatRandom": 10,
-    "StatConst": 5,
     "Classes": [
       "Wizard",
       "Sage"
@@ -82,16 +59,10 @@
   },
   {
     "Name": "Lightning Storm",
-    "Id": 6,
     "ImageId": 50,
-    "Type": "Damage",
-    "Targets": "Group",
-    "IsPiercing": true,
+    "Skill": "Lighting Breath",
     "Cost": 30,
     "MinLevel": 12,
-    "StatType": "Health",
-    "StatRandom": 20,
-    "StatConst": 5,
     "Classes": [
       "Wizard",
       "Sage"
@@ -99,10 +70,8 @@
   },
   {
     "Name": "Return",
-    "Id": 7,
     "ImageId": 220,
-    "Type": "Return",
-    "Targets": "Group",
+    "Skill": "Return",
     "Cost": 6,
     "MinLevel": 12,
     "Classes": [
@@ -113,15 +82,10 @@
   },
   {
     "Name": "Revive",
-    "Id": 8,
     "ImageId": 53,
-    "Type": "Revive",
-    "Targets": "Single",
+    "Skill": "Revive",
     "Cost": 25,
     "MinLevel": 20,
-    "StatType": "Health",
-    "StatRandom": 0,
-    "StatConst": 1,
     "Classes": [
       "Hero",
       "Cleric",
@@ -130,10 +94,8 @@
   },
   {
     "Name": "Vivify",
-    "Id": 9,
     "ImageId": 53,
-    "Type": "Revive",
-    "Targets": "Single",
+    "Skill": "Vivify",
     "Cost": 40,
     "StatType": "Health",
     "MinLevel": 27,
@@ -144,12 +106,9 @@
   },
   {
     "Name": "Heal All",
-    "Id": 10,
     "ImageId": 54,
-    "Type": "Heal",
-    "Targets": "Single",
+    "Skill": "Heal All",
     "Cost": 7,
-    "StatType": "Health",
     "MinLevel": 30,
     "Classes": [
       "Hero",
@@ -159,15 +118,10 @@
   },
   {
     "Name": "Heal Us",
-    "Id": 11,
     "ImageId": 54,
-    "Type": "Heal",
-    "Targets": "Group",
+    "Skill": "Heal Us",
     "Cost": 18,
     "MinLevel": 34,
-    "StatType": "Health",
-    "StatRandom": 10,
-    "StatConst": 40,
     "Classes": [
       "Cleric",
       "Sage"
@@ -175,11 +129,8 @@
   },
   {
     "Name": "Heal Us All",
-    "Id": 12,
     "ImageId": 54,
-    "Type": "Heal",
-    "Targets": "Group",
-    "StatType": "Health",
+    "Type": "Heal Us All",
     "Cost": 62,
     "MinLevel": 38,
     "Classes": [
@@ -189,10 +140,8 @@
   },
   {
     "Name": "Antidote",
-    "Id": 13,
     "ImageId": 54,
-    "Type": "Clear",
-    "Targets": "Single",
+    "Skill": "Antidote",
     "Cost": 3,
     "MinLevel": 11,
     "Classes": [
@@ -202,17 +151,8 @@
   },
   {
     "Name": "Speed Up",
-    "Id": 14,
     "ImageId": 60,
-    "Type": "Buff",
-    "EffectName": "sped up",
-    "Targets": "Group",
-    "DurationType": "Rounds",
-    "DurationConst": 2,
-    "DurationRandom": 10,
-    "StatType": "Agility",
-    "StatRandom": 10,
-    "StatConst": 20,
+    "Skill": "Speed Up",
     "Cost": 3,
     "MinLevel": 5,
     "Classes": [
@@ -222,17 +162,8 @@
   },
   {
     "Name": "Upper",
-    "Id": 15,
     "ImageId": 56,
-    "Type": "Buff",
-    "EffectName": "defence increased",
-    "Targets": "Single",
-    "DurationType": "Rounds",
-    "DurationConst": 2,
-    "DurationRandom": 10,
-    "StatType": "Defence",
-    "StatRandom": 10,
-    "StatConst": 20,
+    "Skill": "Upper",
     "Cost": 3,
     "MinLevel": 4,
     "Classes": [
@@ -242,17 +173,8 @@
   },
   {
     "Name": "Increase",
-    "Id": 16,
     "ImageId": 56,
-    "Type": "Buff",
-    "EffectName": "defence increased",
-    "Targets": "Group",
-    "DurationType": "Rounds",
-    "DurationConst": 2,
-    "DurationRandom": 10,
-    "StatType": "Defence",
-    "StatRandom": 10,
-    "StatConst": 20,
+    "Skill": "Increase",
     "Cost": 4,
     "MinLevel": 10,
     "Classes": [
@@ -262,17 +184,8 @@
   },
   {
     "Name": "Sap",
-    "Id": 17,
     "ImageId": 58,
-    "Type": "Decrease",
-    "EffectName": "defence decreased",
-    "Targets": "Single",
-    "DurationType": "Rounds",
-    "DurationConst": 2,
-    "DurationRandom": 10,
-    "StatType": "Defence",
-    "StatRandom": 10,
-    "StatConst": 20,
+    "Skill": "Sap",
     "Cost": 3,
     "MinLevel": 8,
     "Classes": [
@@ -282,14 +195,8 @@
   },
   {
     "Name": "Sleep",
-    "Id": 7,
     "ImageId": 56,
-    "Type": "Sleep",
-    "EffectName": "sleep",
-    "Targets": "Single",
-    "DurationType": "Rounds",
-    "DurationConst": 1,
-    "DurationRandom": 2,
+    "Skill": "Sleep",
     "Cost": 3,
     "MinLevel": 8,
     "Classes": [
@@ -300,14 +207,8 @@
   },
   {
     "Name": "Stop Spell",
-    "Id": 19,
     "ImageId": 5,
-    "Type": "StopSpell",
-    "EffectName": "silenced",
-    "Targets": "Group",
-    "DurationType": "Rounds",
-    "DurationConst": 2,
-    "DurationRandom": 10,
+    "Skill": "Disruptive Wave",
     "Cost": 3,
     "MinLevel": 13,
     "Classes": [
@@ -318,17 +219,8 @@
   },
   {
     "Name": "Slow",
-    "Id": 20,
     "ImageId": 61,
-    "Type": "Decrease",
-    "EffectName": "slowed",
-    "Targets": "Group",
-    "DurationType": "Rounds",
-    "DurationConst": 2,
-    "DurationRandom": 10,
-    "StatType": "Agility",
-    "StatRandom": 10,
-    "StatConst": 20,
+    "Skill": "Slow",
     "Cost": 3,
     "MinLevel": 12,
     "Classes": [
@@ -338,18 +230,24 @@
   },
   {
     "Name": "Chaos",
-    "Id": 21,
     "ImageId": 62,
-    "Type": "Confusion",
-    "EffectName": "confused",
-    "Targets": "Single",
-    "DurationType": "Rounds",
-    "DurationConst": 2,
-    "DurationRandom": 10,
+    "Skill": "Chaos",
     "Cost": 5,
     "MinLevel": 27,
     "Classes": [
       "Wizard",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Repel",
+    "ImageId": 220,
+    "Skill": "Repel",
+    "Cost": 2,
+    "MinLevel": 12,
+    "Classes": [
+      "Hero",
+      "Thief",
       "Sage"
     ]
   }

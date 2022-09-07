@@ -110,5 +110,87 @@ namespace Redpoint.DungeonEscape.State
             var equippedHero = heroes.FirstOrDefault(hero => hero.Id == this.EquippedTo);
             equippedHero?.UnEquip(this);
         }
+        
+        public (string, bool) Use(IFighter source, IFighter target, IGame game, int round)
+        {
+            var message = source != target
+                ? $"{source.Name} used {this.Name} on {target.Name}"
+                : $"{source.Name} used {this.Name}";
+            
+            if (this.MaxCharges != 0)
+            {
+                if (this.Charges <= 0)
+                {
+                    return (message+"\nbut the item has no charges", false);
+                }
+            }
+
+            if (this.Item.Skill != null)
+            {
+                var (result, worked)  = this.Item.Skill.Do(source, target, game, round);
+                if (worked && this.MaxCharges != 0)
+                {
+                    this.Charges--;
+                }
+                
+                return ($"{message}\n{result}", worked);
+            }
+            
+            foreach (var stat in this.Item.Stats.Where(i => i.Value != 0).Select(o => o.Type).Distinct()
+                         .OrderBy(i => i))
+            {
+                var value = this.Item.GetAttribute(stat);
+                if (value == 0) continue;
+                
+                switch (stat)
+                {
+                    case StatType.Health:
+                        if (target.Health+value > target.MaxHealth)
+                        {
+                            target.Health = target.MaxHealth;
+                            value = target.MaxHealth - this.Health;
+                        }
+                        else
+                        {
+                            target.Health += value;
+                        }
+                        break;
+                    case StatType.Magic:
+                        if (target.Magic+value > target.MaxMagic)
+                        {
+                            target.Magic = target.MaxMagic;
+                            value = target.MaxMagic - target.Magic;
+                        }
+                        else
+                        {
+                            target.Magic += value;
+                        }
+
+                        break;
+                    case StatType.Agility:
+                        target.Agility += value;
+                        break;
+                    case StatType.Attack:
+                        target.Attack += value;
+                        break;
+                    case StatType.Defence:
+                        target.Defence += value;
+                        break;
+                    case StatType.MagicDefence:
+                        target.MagicDefence += value;
+                        break;
+                }
+
+                if (value == 0) continue;
+                var direction = value > 0 ? "Increased" : "Decreased";
+                message += $"\n{target.Name} {stat} {direction} by {value}";
+            }
+
+            if (this.MaxCharges != 0)
+            {
+                this.Charges--;
+            }
+            return (message, true);
+        }
     }
 }

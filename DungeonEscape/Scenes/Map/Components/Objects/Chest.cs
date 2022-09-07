@@ -31,7 +31,7 @@
             if(this.State.Item != null)
             {
                 var tileSet = Game.LoadTileSet("Content/items2.tsx");
-                this.State.Item.Setup(tileSet);
+                this.State.Item.Setup(tileSet, gameState.Skills);
                 return;
             }
             

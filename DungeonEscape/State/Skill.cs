@@ -3,36 +3,151 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable MemberCanBeProtected.Global
 
+using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Redpoint.DungeonEscape.State
 {
     using Nez;
     // ReSharper disable once ClassNeverInstantiated.Global
-    public class Skill : SkillBase
+    public class Skill
     {
+        public string Name { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))] public Target Targets { get; set; }
+        public int MaxTargets { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))] public SkillType Type { get; set; }
+        public bool IsPiercing { get; set; }
+        public int StatConst { get; set; }
+        public int StatTimes { get; set; } = 1;
+        public int StatRandom { get; set; }
+        public int DurationConst { get; set; }
+        public int DurationTimes { get; set; } = 1;
+        public int DurationRandom { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))] public DurationType DurationType { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))] public StatType StatType { get; set; } = StatType.None;
+        public string EffectName { get; set; }
+        
+        public override string ToString()
+        {
+            return this.Name;
+        }
         public bool DoAttack { get; set; }
         
-        public string Do(IFighter target, IFighter source, IGame game, int round)
+        private static readonly List<SkillType> AttackSkill = new() {SkillType.Damage, SkillType.Dot, SkillType.Sleep, SkillType.Confusion, SkillType.StopSpell, SkillType.Decrease};
+        
+        [JsonIgnore]
+        public bool IsAttackSkill => AttackSkill.Contains(this.Type);
+        
+        public (string, bool) Do(IFighter target, IFighter source, IGame game, int round, bool isMagic = false)
         {
             return this.Type switch
             {
-                SkillType.Damage => this.DoDamage(target, source),
+                SkillType.Heal => this.DoHeal(target),
+                SkillType.Outside => DoOutside(game),
+                SkillType.Damage => this.DoDamage(target, source, isMagic),
+                SkillType.Repel => this.DoRepel(source, game, round),
+                SkillType.Return => DoReturn(game),
+                SkillType.Revive => this.DoHeal(target),
+                SkillType.Buff => this.DoBuff(target, game, round,true),
                 SkillType.Decrease => this.DoBuff(target, game, round,false),
+                SkillType.StopSpell => this.DoStopSpell(target, game, round),
                 SkillType.Sleep => this.DoSleep(target, game, round),
                 SkillType.Confusion => this.DoConfusion(target, game, round),
                 SkillType.Dot =>this.DoDot(target, game, round),
                 SkillType.Steal => this.DoSteal(target, source, game),
-                SkillType.None => $"{source.Name} {this.EffectName}",
-                _ => ""
+                SkillType.Clear =>this.DoClearEffects(target),
+                SkillType.StatDecrease => this.DoStat(target,false),
+                SkillType.StatIncrease => this.DoStat(target,true),
+                SkillType.None => ($"{source.Name} {this.EffectName}", false),
+                _ => ("", false)
             };
         }
 
-        private string DoSteal(IFighter target, IFighter source, IGame game)
+        private (string, bool) DoRepel(IFighter source, IGame game, int round)
+        {
+            if (game.Party.Members.Any(partyMember => partyMember.Status.Any(i => i.Type == EffectType.Repel)))
+            {
+                return ($"{source.Name} was not affected\n", false);
+            }
+
+            source.AddEffect(new StatusEffect
+            {
+                Name = this.EffectName,
+                Type = EffectType.Repel,
+                Duration = Dice.Roll(this.DurationRandom, this.DurationTimes, this.DurationConst),
+                DurationType = this.DurationType,
+                StartTime = this.DurationType == DurationType.Rounds ? round : game.Party.StepCount
+            });
+
+            return ($"{source.Name} is {this.EffectName}\n", true);
+        }
+
+        private (string, bool) DoStopSpell(IFighter target, IGame game, int round)
+        {
+            if (target.Status.Any(i => i.Type == EffectType.StopSpell))
+            {
+                return ($"{target.Name} was not affected\n", false);
+            }
+
+            target.AddEffect(new StatusEffect
+            {
+                Name = this.EffectName,
+                Type = EffectType.StopSpell,
+                Duration = Dice.Roll(this.DurationRandom, this.DurationTimes, this.DurationConst),
+                DurationType = this.DurationType,
+                StartTime = this.DurationType == DurationType.Rounds ? round : game.Party.StepCount
+            });
+
+            return ($"{target.Name} is {this.EffectName}\n", true);
+        }
+
+        private (string, bool) DoHeal(IFighter target)
+        {
+            var oldHeath = target.Health;
+            if (this.StatRandom != 0)
+            {
+                target.Health += Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
+            }
+            else
+            {
+                target.Health = target.MaxHealth;
+            }
+
+            if (target.MaxHealth < target.Health)
+            {
+                target.Health = target.MaxHealth;
+            }
+
+            return (oldHeath == 0
+                ? $"{target.Name} is revived and gains {target.Health} health\n"
+                : $"{target.Name} gains {target.Health - oldHeath} health\n", true);
+        }
+
+        private (string, bool) DoClearEffects(IFighter target)
+        {
+            
+            if (target.Status.Count == 0)
+            {
+                return ($"{target.Name} is unaffected by {this.Name}\n", false);
+            }
+
+            var message = "";
+            foreach (var effect in target.Status.ToList())
+            {
+                message += $"{target.Name} {effect.Name} has ended\n";
+                target.RemoveEffect(effect);
+            }
+
+            return (message, true);
+        }
+
+        private (string, bool) DoSteal(IFighter target, IFighter source, IGame game)
         {
             var message = this.DoAttack ?"and " : "";
             if (!source.CanHit(target)) 
-                return this.DoAttack ? "" : $"{source.Name} tried to steal from {target.Name} but did not find anything\n";
+                return ($"{source.Name} tried to steal from {target.Name} but did not find anything\n", false);
             Item item = null;
             if (target is Hero)
             {
@@ -68,7 +183,7 @@ namespace Redpoint.DungeonEscape.State
 
             if (item == null)
             {
-                return this.DoAttack ? "" : $"{source.Name} tried to steal from {target.Name} but did not find anything\n";
+                return  ($"{source.Name} tried to steal from {target.Name} but did not find anything\n", false);
             }
             
             if (item.Type == ItemType.Gold)
@@ -83,11 +198,11 @@ namespace Redpoint.DungeonEscape.State
                 }
                 else
                 {
-                    return this.DoAttack ? "" : $"{source.Name} tried to steal from {target.Name} but did not find anything\n";
+                    return  ($"{source.Name} tried to steal from {target.Name} but did not find anything\n", false);
                 }
                 
                 game.Sounds.PlaySoundEffect("treasure");
-                return message + $"{source.Name} stole {item.Cost} Gold from {target.Name}.\n";
+                return (message + $"{source.Name} stole {item.Cost} Gold from {target.Name}.\n", true);
             }
 
             if (source is Hero)
@@ -95,7 +210,7 @@ namespace Redpoint.DungeonEscape.State
                 var hero = game.Party.AddItem(new ItemInstance(item));
                 if (hero == null)
                 {
-                    return this.DoAttack ? "" : $"{source.Name} tried to steal from {target.Name} but did not find anything\n";
+                    return ( $"{source.Name} tried to steal from {target.Name} but did not find anything\n", false);
                 }
             }
             else
@@ -103,24 +218,14 @@ namespace Redpoint.DungeonEscape.State
                 source.Items.Add(new ItemInstance(item));
             }
 
-            return message + $"{source.Name} stole {item.Name} from {target.Name}.\n";
+            return ( message + $"{source.Name} stole {item.Name} from {target.Name}.\n", true);
         }
 
-        private string DoDamage(IFighter target, IFighter source)
+        private (string, bool) DoDamage(IFighter target, IFighter source, bool isMagic)
         {
-            var message = this.DoAttack?"": $"{source.Name} attacks {target.Name} with {this.EffectName}.\n";
-            var damage = 0;
-            if (source.CanHit(target))
-            {
-                var attack = Random.NextInt(source.Attack);
-                damage = target.CalculateDamage(attack);
-                message += $"{target.Name}";
-            }
-            else
-            {
-                message += $"{target.Name} dodges the {this.EffectName} attack and";
-            }
-
+            var damage = target.CalculateDamage(Random.NextInt(source.Attack), IsPiercing, isMagic);
+            var message = $"{target.Name}";
+            
             if (damage <= 0)
             {
                 damage = 0;
@@ -129,48 +234,41 @@ namespace Redpoint.DungeonEscape.State
             if (damage == 0)
             {
                 message += " was unharmed\n";
-                if (this.DoAttack)
+                return (message, false);
+            }
+
+            if (this.StatType == StatType.Health)
+            {
+                target.Health -= damage;
+                message += $" took {damage} points of damage from {this.EffectName}\n";
+                message += target.HitCheck();
+                if (target.Health <= 0)
                 {
-                    return "";
+                    message += "and has died!\n";
+                    target.Health = 0;
                 }
             }
-            else
+            else if (this.StatType == StatType.Magic)
             {
-                if (this.StatType == StatType.Health)
+                target.Magic -= damage;
+                message += $" lost {damage} points of magic from {this.EffectName}\n";
+                if (target.Magic < 0)
                 {
-                    target.Health -= damage;
-                    message += $" took {damage} points of damage from {this.EffectName}\n";
-                    message += target.HitCheck();
+                    target.Magic = 0;
                 }
-                else if (this.StatType == StatType.Magic)
-                {
-                    target.Magic -= damage;
-                    message += $" lost {damage} points of magic from {this.EffectName}\n";
-                    if (target.Magic < 0)
-                    {
-                        target.Magic = 0;
-                    }
-                }
+            }
                 
-                target.PlayDamageAnimation();
-            }
-
-            if (target.Health <= 0)
-            {
-                message += "and has died!\n";
-                target.Health = 0;
-            }
-
-            return message;
+            target.PlayDamageAnimation();
+            return (message, true);
         }
 
-        private string DoBuff(IFighter target, IGame gameState, int round, bool increase)
+        private (string, bool) DoBuff(IFighter target, IGame gameState, int round, bool increase)
         {
             var roll = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
             var buff = increase ?  roll : target.CalculateDamage(roll, this.IsPiercing);
             if (buff == 0 || target.Status.Any(i => i.Type == EffectType.Buff && i.Name == this.EffectName))
             {
-                return this.DoAttack?"":$"{target.Name} was not affected by {this.Name}\n";
+                return ($"{target.Name} was not affected by {this.Name}\n", false);
             }
 
             target.AddEffect(new StatusEffect
@@ -185,14 +283,54 @@ namespace Redpoint.DungeonEscape.State
             });
 
             var changed = increase ? "increased" : "decreased";
-            return $"{target.Name} {changed} {this.StatType.ToString()} {buff} points\n";
+            return ($"{target.Name} {changed} {this.StatType.ToString()} {buff} points\n", true);
         }
 
-        private string DoSleep(IFighter target, IGame gameState, int round)
+        private (string, bool) DoStat(IFighter target, bool increase)
+        {
+            var roll = Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst);
+            var buff = increase ?  roll : target.CalculateDamage(roll, this.IsPiercing);
+            var statValue = increase ? buff : -buff;
+            
+            switch (this.StatType)
+            {
+                case StatType.Health:
+                    target.MaxHealth += statValue;
+                    if (target.Health > target.MaxHealth)
+                    {
+                        target.Health = target.MaxHealth;
+                    }
+                    break;
+                case StatType.Attack:
+                    target.Attack += statValue;
+                    break;
+                case StatType.Defence:
+                    target.Defence += statValue;
+                    break;
+                case StatType.MagicDefence:
+                    target.MagicDefence += statValue;
+                    break;
+                case StatType.Agility:
+                    target.Agility += statValue;
+                    break;
+                case StatType.Magic:
+                    target.MaxMagic += statValue;
+                    if (target.Magic > target.MaxMagic)
+                    {
+                        target.Magic = target.MaxMagic;
+                    }
+                    break;
+            }
+            
+            var changed = increase ? "increased" : "decreased";
+            return ($"{target.Name} permanently {changed} {this.StatType.ToString()} {buff} points\n", true);
+        }
+
+        private (string, bool) DoSleep(IFighter target, IGame gameState, int round)
         {
             if (target.Status.Any(i => i.Type == EffectType.Sleep))
             {
-                return this.DoAttack?"":$"{target.Name} was not affected by {this.Name}\n";
+                return ($"{target.Name} was not affected by {this.Name}\n", false);
             }
             
             target.AddEffect(new StatusEffect
@@ -204,14 +342,14 @@ namespace Redpoint.DungeonEscape.State
                 StartTime = this.DurationType == DurationType.Rounds ? round : gameState.Party.StepCount
             });
 
-            return $"{target.Name} is put to sleep\n";
+            return ($"{target.Name} is put to sleep\n", true);
         }
 
-        private string DoConfusion(IFighter target, IGame gameState, int round)
+        private (string, bool) DoConfusion(IFighter target, IGame gameState, int round)
         {
             if (target.Status.Any(i => i.Type == EffectType.Confusion))
             {
-                return this.DoAttack?"":$"{target.Name} was not affected by {this.Name}\n";
+                return ($"{target.Name} was not affected by {this.Name}\n", false);
             }
             
             target.AddEffect(new StatusEffect
@@ -223,15 +361,15 @@ namespace Redpoint.DungeonEscape.State
                 StartTime = this.DurationType == DurationType.Rounds ? round : gameState.Party.StepCount
             });
 
-            return $"{target.Name} is {this.EffectName}\n";
+            return ($"{target.Name} is {this.EffectName}\n", true);
         }
 
-        private string DoDot(IFighter target, IGame gameState, int round)
+        private (string, bool) DoDot(IFighter target, IGame gameState, int round)
         {
             var buff = target.CalculateDamage(Dice.Roll(this.StatRandom, this.StatTimes, this.StatConst));
             if (buff == 0 || target.Status.Any(i => i.Type == EffectType.OverTime && i.Name == this.EffectName))
             {
-                return this.DoAttack?"":$"{target.Name} was not affected by {this.Name}\n";
+                return ($"{target.Name} was not affected by {this.Name}\n", false);
             }
 
             target.AddEffect(new StatusEffect
@@ -245,7 +383,34 @@ namespace Redpoint.DungeonEscape.State
                 StartTime = this.DurationType == DurationType.Rounds ? round : gameState.Party.StepCount
             });
             
-            return $"{target.Name} is {this.EffectName}\n";
+            return ($"{target.Name} is {this.EffectName}\n", true);
+        }
+        
+        private (string, bool) DoOutside(IGame gameState)
+        {
+            if (gameState.Party.CurrentMapIsOverWorld)
+            {
+                return ("but you are already outside\n", false);
+            }
+            
+            gameState.SetMap();
+            return (null, true);
+        }
+
+        private (string, bool) DoReturn(IGame gameState)
+        {
+            if (!gameState.Party.CurrentMapIsOverWorld)
+            {
+                return ("but you are not outside\n", false);
+            }
+
+            if (!gameState.Party.SavedMapId.HasValue)
+            {
+                return ("but you have never saved your game\n", false);
+            }
+            
+            gameState.SetMap(gameState.Party.SavedMapId, null, gameState.Party.SavedPoint);
+            return (null, true);
         }
     }
 }

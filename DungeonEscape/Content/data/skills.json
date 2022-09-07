@@ -53,6 +53,23 @@
     "DurationRandom": 3
   },
   {
+    "Name": "Stop Spell",
+    "Type": "StopSpell",
+    "Targets": "Single",
+    "EffectName": "silenced",
+    "DurationType": "Rounds",
+    "DurationConst": 2,
+    "DurationRandom": 3
+  },
+  {
+    "Name": "Repel",
+    "Type": "Repel",
+    "Targets": "Group",
+    "DurationType": "Distance",
+    "DurationConst": 127,
+    "DurationRandom": 10
+  },
+  {
     "Name": "Swipe",
     "Type": "Damage",
     "Targets": "Group",
@@ -110,7 +127,16 @@
     "Name": "Fire Breath",
     "Type": "Damage",
     "Targets": "Group",
-    "EffectName": "Fire Breath",
+    "EffectName": "Fire",
+    "StatType": "Health",
+    "StatRandom": 10,
+    "StatConst": 5
+  },
+  {
+    "Name": "Fire Blast",
+    "Type": "Damage",
+    "Targets": "Group",
+    "EffectName": "Fire",
     "StatType": "Health",
     "StatRandom": 10,
     "StatConst": 5
@@ -122,17 +148,192 @@
     "EffectName": "Lighting",
     "StatType": "Health",
     "Targets": "Single",
-    "StatRandom": 10,
+    "StatRandom": 20,
     "StatConst": 5
   },
   {
     "Name": "Lighting Breath",
     "Type": "Damage",
     "IsPiercing": true,
-    "EffectName": "Lighting Breath",
+    "EffectName": "Lighting",
     "StatType": "Health",
     "Targets": "Group",
     "StatRandom": 10,
     "StatConst": 5
+  },
+  {
+    "Name": "Heal",
+    "Type": "Heal",
+    "EffectName": "Heal",
+    "StatType": "Health",
+    "Targets": "Single",
+    "StatRandom": 10,
+    "StatConst": 40
+  },
+  {
+    "Name": "Outside",
+    "Type": "Outside",
+    "EffectName": "Outside",
+    "Targets": "Group"
+  },
+  {
+    "Name": "Return",
+    "Type": "Return",
+    "EffectName": "Return",
+    "Targets": "Group"
+  },
+  {
+    "Name": "Revive",
+    "Type": "Revive",
+    "EffectName": "Revive",
+    "StatType": "Health",
+    "Targets": "Single",
+    "StatRandom": 0,
+    "StatConst": 1
+  },
+  {
+    "Name": "Vivify",
+    "Type": "Revive",
+    "EffectName": "Vivify",
+    "StatType": "Health",
+    "Targets": "Single"
+  },
+  {
+    "Name": "Heal All",
+    "Type": "Heal",
+    "EffectName": "Heal",
+    "StatType": "Health",
+    "Targets": "Single"
+  },
+  {
+    "Name": "Heal Us",
+    "Type": "Heal",
+    "EffectName": "Heal",
+    "StatType": "Health",
+    "Targets": "Group",
+    "StatRandom": 10,
+    "StatConst": 40
+  },
+  {
+    "Name": "Heal Us All",
+    "Type": "Heal",
+    "EffectName": "Heal",
+    "StatType": "Health",
+    "Targets": "Group"
+  },
+  {
+    "Name": "Antidote",
+    "Type": "Clear",
+    "EffectName": "cure",
+    "Targets": "Single"
+  },
+  {
+    "Name": "Speed Up",
+    "Type": "Buff",
+    "EffectName": "sped up",
+    "Targets": "Group",
+    "DurationType": "Rounds",
+    "DurationConst": 2,
+    "DurationRandom": 10,
+    "StatType": "Agility",
+    "StatRandom": 10,
+    "StatConst": 20
+  },
+  {
+    "Name": "Upper",
+    "Type": "Buff",
+    "EffectName": "defence increased",
+    "Targets": "Single",
+    "DurationType": "Rounds",
+    "DurationConst": 2,
+    "DurationRandom": 10,
+    "StatType": "Defence",
+    "StatRandom": 10,
+    "StatConst": 20
+  },
+  {
+    "Name": "Increase",
+    "Type": "Buff",
+    "EffectName": "defence increased",
+    "Targets": "Group",
+    "DurationType": "Rounds",
+    "DurationConst": 2,
+    "DurationRandom": 10,
+    "StatType": "Defence",
+    "StatRandom": 10,
+    "StatConst": 20
+  },
+  {
+    "Name": "Sap",
+    "Type": "Decrease",
+    "EffectName": "defence decreased",
+    "Targets": "Single",
+    "DurationType": "Rounds",
+    "DurationConst": 2,
+    "DurationRandom": 10,
+    "StatType": "Defence",
+    "StatRandom": 10,
+    "StatConst": 20
+  },
+  {
+    "Name": "Slow",
+    "Type": "Decrease",
+    "EffectName": "slowed",
+    "Targets": "Group",
+    "DurationType": "Rounds",
+    "DurationConst": 2,
+    "DurationRandom": 10,
+    "StatType": "Agility",
+    "StatRandom": 10,
+    "StatConst": 20
+  },
+  {
+    "Name": "Chaos",
+    "Type": "Confusion",
+    "EffectName": "confused",
+    "Targets": "Single",
+    "DurationType": "Rounds",
+    "DurationConst": 2,
+    "DurationRandom": 10
+  },
+  {
+    "Name": "Energise",
+    "Type": "Heal",
+    "EffectName": "energise",
+    "StatType": "Magic",
+    "Targets": "Single",
+    "StatRandom": 10,
+    "StatConst": 40
+  },
+  {
+    "Name": "Full Energise",
+    "Type": "Heal",
+    "EffectName": "energise",
+    "StatType": "Magic",
+    "Targets": "Single"
+  },
+  {
+    "Name": "Defence Up",
+    "Type": "StatIncrease",
+    "EffectName": "Defence Up",
+    "StatType": "Defence",
+    "Targets": "Single",
+    "StatConst": 1
+  },
+  {
+    "Name": "Agility Up",
+    "Type": "StatIncrease",
+    "EffectName": "Agility Up",
+    "StatType": "Agility",
+    "Targets": "Single",
+    "StatConst": 1
+  },
+  {
+    "Name": "Attack Up",
+    "Type": "StatIncrease",
+    "EffectName": "Attack Up",
+    "StatType": "Attack",
+    "Targets": "Single",
+    "StatConst": 1
   }
 ]

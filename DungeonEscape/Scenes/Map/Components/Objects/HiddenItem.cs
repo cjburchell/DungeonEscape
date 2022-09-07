@@ -22,7 +22,7 @@
             this._level = tmxObject.Properties.ContainsKey("Level") ? int.Parse(tmxObject.Properties["Level"]) : 0;
             if(this.State.Item != null)
             {
-                this.State.Item.Setup(Game.LoadTileSet("Content/items2.tsx"));
+                this.State.Item.Setup(Game.LoadTileSet("Content/items2.tsx"), gameState.Skills);
                 return;
             }
             

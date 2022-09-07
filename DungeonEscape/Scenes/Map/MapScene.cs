@@ -182,7 +182,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                 {
                     foreach (var spriteItem in state.Items)
                     {
-                        spriteItem.Setup(tileSet);
+                        spriteItem.Setup(tileSet, _gameState.Skills);
                     }
                 }
                 
@@ -651,7 +651,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                                 }
                                 case "Equip":
                                 {
-                                    var result = UseItem(selectedHero, selectedHero, item, this._gameState.Party);
+                                    var result = UseItem(selectedHero, selectedHero, item);
                                     if (string.IsNullOrEmpty(result))
                                     {
                                         done();
@@ -665,7 +665,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                                 case "Use":
                                     if (this._gameState.Party.AliveMembers.Count() == 1)
                                     {
-                                        var result = UseItem(selectedHero,this._gameState.Party.AliveMembers.First(), item, this._gameState.Party);
+                                        var result = this.UseItem(selectedHero,this._gameState.Party.AliveMembers.First(), item);
                                         if (string.IsNullOrEmpty(result))
                                         {
                                             done();
@@ -687,7 +687,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                                                     return;
                                                 }
 
-                                                var result = UseItem(selectedHero,hero, item, this._gameState.Party);
+                                                var result = this.UseItem(selectedHero,hero, item);
                                                 if (string.IsNullOrEmpty(result))
                                                 {
                                                     done();
@@ -734,31 +734,31 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             }
         }
         
-        private static string UseItem(IFighter source, IFighter target, ItemInstance item, Party party)
+        private string UseItem(IFighter source, IFighter target, ItemInstance item, int round = 0)
         {
             // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
             switch (item.Type)
             {
                 case ItemType.OneUse:
                 {
-                    var result = target.Use(item);
-                    source.Items.Remove(item);
-                    return source != target
-                        ? $"{source.Name} used {item.Name} on {target.Name}{result}"
-                        : $"{source.Name} used {item.Name}{result}";
+                    var result = item.Use(source, target, this._gameState, round);
+                    if (result.Item2)
+                    {
+                        source.Items.Remove(item);
+                    }
+                    
+                    return result.Item1;
                 }
                 case ItemType.RepeatableUse:
                 {
-                    var result = target.Use(item);
+                    var result = item.Use(source, target, this._gameState, round);
                     if (!item.HasCharges)
                     {
                         source.Items.Remove(item);
-                        result += " and has been destroyed.";
+                        result.Item1 += " and has been destroyed.";
                     }
-                    
-                    return source != target
-                        ? $"{source.Name} used {item.Name} on {target.Name}{result}"
-                        : $"{source.Name} used {item.Name}{result}";
+
+                    return result.Item1;
                 }
                 case ItemType.Armor:
                 case ItemType.Weapon:
@@ -766,10 +766,10 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                     var oldStats = target.Stats.ToList();
                     foreach (var oldItem in oldItems)
                     {
-                        oldItem.UnEquip(party.Members);
+                        oldItem.UnEquip(this._gameState.Party.Members);
                     }
                     
-                    item.UnEquip(party.Members);
+                    item.UnEquip(this._gameState.Party.Members);
                     target.Equip(item);
                     var results = "";
                     foreach (var newStat in target.Stats.ToList())

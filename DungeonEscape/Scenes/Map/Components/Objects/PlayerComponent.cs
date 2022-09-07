@@ -499,7 +499,27 @@
                     monsters.Add(monster);
                 }
             }
-            
+
+            var repelActive =
+                this._gameState.Party.Members.Any(
+                    partyMember => partyMember.Status.Any(i => i.Type == EffectType.Repel));
+            if (repelActive)
+            {
+                var maxHealth = this._gameState.Party.Members.Max(i => i.MaxHealth);
+                foreach (var monster in monsters.ToList())
+                {
+                    var monsterHealth = Dice.Roll(8, monster.Health, monster.HealthConst);
+                    if (monsterHealth < maxHealth)
+                    {
+                        monsters.Remove(monster);
+                    }
+                }
+
+                if (!monsters.Any())
+                {
+                    return;
+                }
+            }
             
             this._gameState.StartFight(monsters, currentBiome);
         }

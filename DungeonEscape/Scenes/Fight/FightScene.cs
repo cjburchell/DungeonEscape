@@ -315,9 +315,9 @@
             });
         }
         
-        List<IFighter> GetTargets(SkillBase skill, List<IFighter> availableTargets)
+        List<IFighter> GetTargets(Target targetType, int maxTargets, List<IFighter> availableTargets)
         {
-            if (skill.Targets != Target.Group)
+            if (targetType != Target.Group)
             {
                 return new List<IFighter>
                 {
@@ -325,13 +325,13 @@
                 };
             }
 
-            if (skill.MaxTargets == 0)
+            if (maxTargets == 0)
             {
                 return availableTargets.ToList();
             }
 
             var targets = new List<IFighter>();
-            for (var i = 0; i < skill.MaxTargets; i++)
+            for (var i = 0; i < maxTargets; i++)
             {
                 targets.Add(availableTargets.ToArray()[Random.NextInt(availableTargets.Count)]);
             }
@@ -358,7 +358,7 @@
 
             if (skill.Targets != Target.Single)
             {
-                newAction.Targets = GetTargets(skill, this.AliveMonsters.Cast<IFighter>().ToList());
+                newAction.Targets = GetTargets(skill.Targets, skill.MaxTargets, this.AliveMonsters.Cast<IFighter>().ToList());
                 done(newAction);
                 return;
             }
@@ -466,7 +466,7 @@
                 {
                     if (spell.Targets != Target.Single)
                     {
-                        newAction.Targets = GetTargets(spell, this.AliveMonsters.Cast<IFighter>().ToList());
+                        newAction.Targets = GetTargets(spell.Targets, spell.MaxTargets, this.AliveMonsters.Cast<IFighter>().ToList());
                         done(newAction);
                         return;
                     }
@@ -498,7 +498,7 @@
 
                 if (spell.Targets != Target.Single)
                 {
-                    newAction.Targets = GetTargets( spell,this._game.Party.AliveMembers.Cast<IFighter>().ToList());
+                    newAction.Targets = GetTargets( spell.Targets, spell.MaxTargets,this._game.Party.AliveMembers.Cast<IFighter>().ToList());
                     done(newAction);
                     return;
                 }
@@ -613,7 +613,7 @@
                         Source = fighter,
                         State = RoundActionState.Spell,
                         Spell = spell,
-                        Targets =  GetTargets(spell, availableTargets)
+                        Targets =  GetTargets(spell.Targets, spell.MaxTargets, availableTargets)
                     };
                 }
             }
@@ -637,7 +637,7 @@
                     Source = fighter,
                     State = RoundActionState.Skill,
                     Skill = skill,
-                    Targets = GetTargets(skill, availableTargets)
+                    Targets = GetTargets(skill.Targets, skill.MaxTargets, availableTargets)
                 };
             }
 
@@ -741,8 +741,11 @@
         private string DoSkill(Skill skill, List<IFighter> targets, IFighter source)
         {
             var message = "";
-            this._game.Sounds.PlaySoundEffect("prepare-attack", true);
-
+            if (skill.IsAttackSkill)
+            {
+                this._game.Sounds.PlaySoundEffect("prepare-attack", true);
+            }
+            
             var hit = false;
             foreach (var target in targets)
             {
@@ -756,16 +759,37 @@
                 }
 
                 if (target.IsDead) continue;
-                if (!source.CanHit(target)) continue;
-                
-                
-                var result= skill.Do(target, source, this._game, this._round);
-                if(string.IsNullOrEmpty(result)) continue;
-                hit = true;
-                message += result;
+                if (skill.IsAttackSkill)
+                {
+                    message += skill.Type == SkillType.Attack && !skill.DoAttack
+                        ? $"{source.Name} attacks {target.Name} with {skill.EffectName}.\n"
+                        : "";
+                    
+                    if (!source.CanHit(target))
+                    {
+                        message += !skill.DoAttack ? $"{target.Name} dodges the {skill.EffectName}" : "";
+                        continue;
+                    }
+                }
+
+                var result = skill.Do(target, source, this._game, this._round);
+                if (skill.IsAttackSkill)
+                {
+                    if (result.Item2)
+                    {
+                        continue;
+                    }
+                    hit = true;
+                }
+
+                message += result.Item1;
             }
 
-            this._game.Sounds.PlaySoundEffect(hit ? "receive-damage" : "miss");
+            if (skill.IsAttackSkill || skill.DoAttack)
+            {
+                this._game.Sounds.PlaySoundEffect(hit ? "receive-damage" : "miss");
+            }
+
             return message;
         }
 
@@ -859,22 +883,26 @@
             return (message, endFight);
         }
 
-        private static string UseItem(IFighter source, IFighter hero, ItemInstance item)
+        private string UseItem(IFighter source, IFighter target, ItemInstance item)
         {
-            if (hero == null)
+            if (target == null)
             {
                 return "";
             }
 
             var result = "";
+            bool worked;
             switch (item.Type)
             {
                 case ItemType.OneUse:
-                    result = hero.Use(item);
-                    source.Items.Remove(item);
+                    (result, worked) = item.Use(source, target, this._game, this._round);
+                    if (!worked)
+                    {
+                        source.Items.Remove(item);
+                    }
                     break;
                 case ItemType.RepeatableUse:
-                    result = hero.Use(item);
+                    (result, _) = item.Use(source, target, this._game, this._round);
                     if (!item.HasCharges)
                     {
                         source.Items.Remove(item);

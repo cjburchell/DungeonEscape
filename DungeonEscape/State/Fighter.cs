@@ -276,14 +276,14 @@ namespace Redpoint.DungeonEscape.State
             return roll >= 95 || (this.Agility-target.Agility)/100 * 50 + roll > 90;
         }
 
-        public int CalculateDamage(int attack, bool isPiercing = false)
+        public int CalculateDamage(int attack, bool isPiercing = false, bool isMagic = false)
         {
             if (isPiercing)
             {
                 return attack;
             }
             
-            var defence = (100 - Math.Min(this.Defence, 99)) / 100f;
+            var defence = (100 - Math.Min(isMagic?this.MagicDefence:this.Defence, 99)) / 100f;
             return attack != 0 ? Math.Max((int)(attack * defence), 10): 0;
         }
 
@@ -312,72 +312,6 @@ namespace Redpoint.DungeonEscape.State
             {
                 this.Image?.SetSprite(this.Animator.Sprite);
             }
-        }
-
-        public string Use(ItemInstance item)
-        {
-            if (item.MaxCharges != 0)
-            {
-                if (item.Charges <= 0)
-                {
-                    return "\nbut the item has no charges";
-                }
-                
-                item.Charges--;
-            }
-            
-            var message = "";
-            foreach (var stat in item.Item.Stats.Where(i => i.Value != 0).Select(o => o.Type).Distinct()
-                         .OrderBy(i => i))
-            {
-                var value = item.Item.GetAttribute(stat);
-                if (value == 0) continue;
-                
-                switch (stat)
-                {
-                    case StatType.Health:
-                        if (this.Health+value > this.MaxHealth)
-                        {
-                            this.Health = this.MaxHealth;
-                            value = this.MaxHealth - this.Health;
-                        }
-                        else
-                        {
-                            this.Health += value;
-                        }
-                        break;
-                    case StatType.Magic:
-                        if (this.Magic+value > this.MaxMagic)
-                        {
-                            this.Magic = this.MaxMagic;
-                            value = this.MaxMagic - this.Magic;
-                        }
-                        else
-                        {
-                            this.Magic += value;
-                        }
-
-                        break;
-                    case StatType.Agility:
-                        this.Agility += value;
-                        break;
-                    case StatType.Attack:
-                        this.Attack += value;
-                        break;
-                    case StatType.Defence:
-                        this.Defence += value;
-                        break;
-                    case StatType.MagicDefence:
-                        this.MagicDefence += value;
-                        break;
-                }
-
-                if (value == 0) continue;
-                var direction = value > 0 ? "Increased" : "Decreased";
-                message += $"\n{stat} {direction} by {value}";
-            }
-
-            return message;
         }
     }
 }

@@ -22,16 +22,16 @@
         List<ItemInstance> Items { get; }
         int MagicDefence { get; set; }
         int CriticalAttack { get;  }
+        int MaxMagic { get; set; }
         void AddEffect(StatusEffect effect);
         void RemoveEffect(StatusEffect effect);
-        string Use(ItemInstance item);
         void Equip(ItemInstance item);
         List<string> GetEquipmentId(IEnumerable<Slot> slots);
         string UpdateStatusEffects(int round, DurationType durationType, IGame game);
         void PlayDamageAnimation();
         bool CanHit(IFighter target);
         bool CanCriticalHit(IFighter target);
-        int CalculateDamage(int attack, bool isPiercing = false);
+        int CalculateDamage(int attack, bool isPiercing = false, bool isMagic = false);
         string HitCheck();
     }
 }

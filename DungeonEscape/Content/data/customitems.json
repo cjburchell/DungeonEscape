@@ -1,13 +1,8 @@
 [
   {
     "Type": "OneUse",
-    "Name": "Herb",
-    "Stats": [
-      {
-        "Type": "Health",
-        "Value": 40
-      }
-    ],
+    "Name": "Medical Herb",
+    "Skill": "Heal",
     "Cost": 16,
     "ImageId": 916,
     "MinLevel": 0
@@ -15,12 +10,7 @@
   {
     "Type": "RepeatableUse",
     "Name": "Bag of Herbs",
-    "Stats": [
-      {
-        "Type": "Health",
-        "Value": 40
-      }
-    ],
+    "Skill": "Heal",
     "Charges": 10,
     "Cost": 160,
     "ImageId": 754,
@@ -29,12 +19,7 @@
   {
     "Type": "OneUse",
     "Name": "Potent Herb",
-    "Stats": [
-      {
-        "Type": "Health",
-        "Value": 100
-      }
-    ],
+    "Skill": "Heal All",
     "Rarity": "Uncommon",
     "Cost": 100,
     "ImageId": 913,
@@ -43,12 +28,7 @@
   {
     "Type": "RepeatableUse",
     "Name": "Rod of Healing",
-    "Stats": [
-      {
-        "Type": "Health",
-        "Value": 40
-      }
-    ],
+    "Skill": "Heal",
     "Cost": 44000,
     "ImageId": 785,
     "MinLevel": 15
@@ -56,12 +36,7 @@
   {
     "Type": "OneUse",
     "Name": "Potion of Magic",
-    "Stats": [
-      {
-        "Type": "Magic",
-        "Value": 40
-      }
-    ],
+    "Skill": "Energise",
     "Cost": 16,
     "ImageId": 923,
     "MinLevel": 5
@@ -69,12 +44,7 @@
   {
     "Type": "OneUse",
     "Name": "Elixir of Magic",
-    "Stats": [
-      {
-        "Type": "Magic",
-        "Value": 100
-      }
-    ],
+    "Skill": "Full Energise",
     "Rarity": "Uncommon",
     "Cost": 100,
     "ImageId": 917,
@@ -83,12 +53,7 @@
   {
     "Type": "OneUse",
     "Name": "Scroll of Strength",
-    "Stats": [
-      {
-        "Type": "Attack",
-        "Value": 1
-      }
-    ],
+    "Skill": "Attack Up",
     "Rarity": "Epic",
     "Cost": 5000,
     "ImageId": 815,
@@ -97,12 +62,7 @@
   {
     "Type": "OneUse",
     "Name": "Scroll of Defence",
-    "Stats": [
-      {
-        "Type": "Defence",
-        "Value": 1
-      }
-    ],
+    "Skill": "Defence Up",
     "Rarity": "Epic",
     "Cost": 5000,
     "ImageId": 816,
@@ -111,12 +71,7 @@
   {
     "Type": "OneUse",
     "Name": "Scroll of Agility",
-    "Stats": [
-      {
-        "Type": "Agility",
-        "Value": 1
-      }
-    ],
+    "Skill": "Agility Up",
     "Rarity": "Epic",
     "Cost": 5000,
     "ImageId": 822,
@@ -168,5 +123,38 @@
     "ForStage": 2,
     "NextStage": 3,
     "ImageId": 909
+  },
+  {
+    "Type": "Quest",
+    "Name": "Old Man's Key",
+    "QuestId": "Find_Ship",
+    "ForStage": 2,
+    "NextStage": 3,
+    "ImageId": 909
+  },
+  {
+    "Type": "OneUse",
+    "Name": "Wings",
+    "Skill": "Return",
+    "Cost": 25,
+    "ImageId": 768,
+    "MinLevel": 0
+  },
+  {
+    "Type": "OneUse",
+    "Name": "Antidote",
+    "Skill": "Antidote",
+    "Cost": 10,
+    "ImageId": 749,
+    "MinLevel": 0
+  },
+  {
+    "Type": "OneUse",
+    "Name": "Fairy Water",
+    "Skill": "Repel",
+    "EffectName": "Repel",
+    "Cost": 20,
+    "ImageId": 774,
+    "MinLevel": 0
   }
 ]

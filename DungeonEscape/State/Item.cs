@@ -18,11 +18,13 @@ namespace Redpoint.DungeonEscape.State
             return this.Name;
         }
 
-        public void Setup(TmxTileset tileset)
+        public void Setup(TmxTileset tileset, IEnumerable<Skill> skills)
         {
             this.Image = tileset.Image != null
                 ? new Sprite(tileset.Image.Texture, tileset.TileRegions[this.ImageId])
                 : new Sprite(tileset.Tiles[this.ImageId].Image.Texture);
+
+            this.Skill = skills.FirstOrDefault(i => i.Name == this.SkillId);
         }
 
         public string Id { get; set; }
@@ -31,6 +33,10 @@ namespace Redpoint.DungeonEscape.State
         public string QuestId { get; set; }
         public int ForStage { get; set; }
         public int? NextStage { get; set; }
+        
+        [JsonProperty("Skill")] public string SkillId { get; set; }
+        
+        [JsonIgnore] public Skill Skill { get; set; }
 
         public static readonly List<ItemType> EquippableItems = new()
         {

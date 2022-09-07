@@ -17,6 +17,9 @@
         Steal,
         Flee,
         Attack,
-        None
+        None,
+        StatDecrease,
+        StatIncrease,
+        Repel
     }
 }

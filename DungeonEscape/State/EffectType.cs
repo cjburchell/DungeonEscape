@@ -6,6 +6,7 @@
         Sleep,
         Confusion,
         StopSpell,
-        Buff
+        Buff,
+        Repel
     }
 }

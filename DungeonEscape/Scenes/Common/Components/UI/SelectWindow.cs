@@ -9,18 +9,19 @@
     public class SelectWindow<T> : BasicWindow where T : class
     {
         private readonly int _buttonHeight;
+        private readonly int _maxHeight;
         private Action<T> _done;
         private readonly ButtonList _list;
-        private readonly ScrollPane _scrollPane;
         private IEnumerable<T> _items;
 
 
-        public SelectWindow(UiSystem ui, string title, Point position, int width = 180, int buttonHeight = ButtonHeight)
+        public SelectWindow(UiSystem ui, string title, Point position, int width = 180, int buttonHeight = ButtonHeight, int maxHeight = 500)
             : base(ui, title, position, width, 150)
         {
             this._buttonHeight = buttonHeight;
+            _maxHeight = maxHeight;
             this._list = new ButtonList(ui.Sounds);
-            this._scrollPane = new ScrollPane(this._list, Skin) { FillParent = true };
+            
         }
 
         public override void CloseWindow(bool remove = true)
@@ -37,18 +38,21 @@
         public override void OnAddedToEntity()
         {
             base.OnAddedToEntity();
-            this.Window.AddElement(this._scrollPane);
+            var itemWidth = this.Window.GetWidth();
+            const int margin = 10;
+            var table = new Table().SetFillParent(true);
+            var scrollPane = new ScrollPane(this._list, Skin);
+            var itemList = this._items.ToList();
+            table.Add(scrollPane).Width(itemWidth- margin * 2).Height(Math.Min( itemList.Count * this._buttonHeight, _maxHeight - margin * 3));
+
+            this.Window.AddElement(table);
             this._list.OnClicked += button =>
             {
                 this.Ui.Sounds.PlaySoundEffect("confirm");
                 this.CloseWindow(button?.UserData as T);
             };
-            
+            this._list.Top().Right();
             this._list.SetFillParent(true);
-            const int margin = 10;
-            this._list.Top().PadLeft(margin).PadTop(margin).PadRight(margin).PadBottom(margin);
-            var itemWidth = this.Window.GetWidth();
-            var itemList = this._items.ToList();
             foreach (var item in itemList)
             {
                 var button = this.CreateButton(item);
@@ -56,8 +60,10 @@
                 this._list.Add(button).Width(itemWidth - margin * 2).Height(this._buttonHeight);
             }
 
-            this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count * this._buttonHeight, 500));
-            this._scrollPane.Validate();
+            
+            this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count * this._buttonHeight, _maxHeight));
+            
+            scrollPane.Validate();
         }
 
         public override void DoAction()

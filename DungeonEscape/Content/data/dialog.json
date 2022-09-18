@@ -1,61 +1,188 @@
 ﻿[
   {
-    "Id": "Find Sea Shell",
-    "Quest": "Lost_Sea_Shell",
+    "Id": "Find_Ship_Start_Dialog",
     "Dialogs": [
       {
-        "ForQuestStage": [0],
-        "Text": "I lost my sea shell can you find it?",
+        "Quest":"Find_Ship",
+        "StartQuest": true,
+        "Text": "You must find a ship and travel to the forest continent\nThere is a man in Isis who might know where a ship is.",
         "Choices": [
           {
-            "Text": "Yes",
-            "NextQuestStage": 1,
-            "Dialogs": [
-              {
-                "Text": "Come back here when you find it."
-              }
-            ]
-          },
-          {
-            "Text": "No",
-            "Dialogs": [
-              {
-                "Text": "I guess I will have to find someone else"
-              }
-            ]
+            "Text": "OK",
+            "NextQuestStage": 1
           }
         ]
       },
       {
-        "ForQuestStage": [1],
+        "Text": "Did you ever find a ship?",
+        "Choices": [
+          {
+            "Text": "OK"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Id": "Find_Ship_Man_In_Isis",
+    "Dialogs": [
+      {
+        "Quest": "Find_Ship",
+        "QuestStage": [1],
+        "Text": "Are you looking for a ship?",
+        "Choices": [
+          {
+            "Text": "Yes",
+            "NextQuestStage": 2,
+            "Dialog":
+              {
+                "Text": "My Uncle has a ship you can borrow he lives in Coast.",
+                "Choices": [
+                  {
+                    "Text": "OK"
+                  }
+                ]
+              }
+          },
+          {
+            "Text": "No"
+          }
+        ]
+      },
+      {
+        "Text": "Hello",
+        "Choices": [
+          {
+            "Text": "OK"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Id": "Find_Ship_Old_Man",
+    "Dialogs": [
+      {
+        "Quest": "Find_Ship",
+        "QuestStage": [2],
+        "Text": "Are you looking for a ship?",
+        "Choices": [
+          {
+            "Text": "Yes",
+            "Dialog":
+              {
+                "Text": "I would give it to you but someone has stolen my key!\nCan you find it for me?",
+                "Choices": [
+                  {
+                    "Text": "Yes",
+                    "NextQuestStage": 3
+                  },
+                  {
+                    "Text": "No"
+                  }
+                ]
+              }
+          },
+          {
+            "Text": "No"
+          }
+        ]
+      },
+      {
+        "Quest": "Find_Ship",
+        "QuestStage": [3, 4],
+        "Text": "Did You Find my key?",
+        "Choices": [
+          {
+            "Text": "Yes",
+            "Dialog":
+            {
+              "Text": "Thank you! I will open the door to the ship for you.",
+              "Choices": [
+                {
+                  "Text": "Ok",
+                  "Actions": ["TakeItem", "OpenDoor"],
+                  "ItemId": "Old Man's Key",
+                  "ObjectId": 29,
+                  "NextQuestStage": 5
+                }
+              ]
+            }
+          },
+          {
+            "Text": "No"
+          }
+        ]
+      },
+      {
+        "Text": "Hello",
+        "Choices": [
+          {
+            "Text": "OK"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Id": "Boy_Looking_For_Shell",
+    "Dialogs": [
+      {
+        "Quest": "Lost_Sea_Shell",
+        "ForQuestStage": [0],
+        "StartQuest": true,
+        "Text": "I lost my sea shell can you find it?",
+        "Choices": [
+          {
+            "Text": "Yes",
+            "Quest": "Lost_Sea_Shell",
+            "NextQuestStage": 1,
+            "Dialog":
+              {
+                "Text": "Come back here when you find it."
+              }
+          },
+          {
+            "Text": "No",
+            "Dialog":
+              {
+                "Text": "I guess I will have to find someone else!"
+              }
+          }
+        ]
+      },
+      {
+        "Quest": "Lost_Sea_Shell",
+        "QuestStage": [1],
         "Text": "Have you found my sea shell yet?",
         "Choices": [{
           "Text": "No"
         }]
       },
       {
-        "ForQuestStage": [2],
+        "Quest": "Lost_Sea_Shell",
+        "QuestStage": [2],
         "Text": "Did you find my sea shell?",
         "Choices": [
           {
             "Text": "Yes",
-            "Action": "TakeItem",
+            "Actions": ["TakeItem"],
             "ItemId": "Boy's Sea Shell",
             "NextQuestStage": 3
           },
           {
             "Text": "No",
-            "Dialogs": [
+            "Dialog":
               {
                 "Text": "Keep trying!"
               }
-            ]
           }
         ]
       },
       {
-        "ForQuestStage": [3],
-        "Text": "Thank you for finding my sea shell"
+        "Quest": "Lost_Sea_Shell",
+        "QuestStage": [3],
+        "Text": "Thank you for finding my sea shell."
       }
     ]
   }

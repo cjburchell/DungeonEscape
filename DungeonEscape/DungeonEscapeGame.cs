@@ -366,7 +366,7 @@
             return Content.LoadTiledMap($"Content/map{mapId}.tmx");
         }
         
-        public string AdvanceQuest(string questId, int forStage, int? nextStage, bool checkLevelUp = true)
+        public string AdvanceQuest(string questId,  int? nextStage, bool checkLevelUp = true)
         {
             var quest = this.Quests.FirstOrDefault(i => i.Id == questId);
             if (quest == null)
@@ -380,7 +380,7 @@
             {
                 activeQuest = new ActiveQuest
                 {
-                    Id = quest.Id, CurrentStage = forStage,
+                    Id = quest.Id,
                     Stages = quest.Stages.Select(i => new QuestStageState { Number = i.Number }).ToList()
                 };
                 Party.ActiveQuests.Add(activeQuest);
@@ -467,7 +467,7 @@
 
         public string CheckQuest(Item item, bool checkLevelUp = true)
         {
-            return string.IsNullOrEmpty(item.QuestId) ? "" : this.AdvanceQuest(item.QuestId, item.ForStage, item.NextStage, checkLevelUp);
+            return string.IsNullOrEmpty(item.QuestId) ? "" : this.AdvanceQuest(item.QuestId, item.NextStage, checkLevelUp);
         }
         
         public Item CreateChestItem(int level)

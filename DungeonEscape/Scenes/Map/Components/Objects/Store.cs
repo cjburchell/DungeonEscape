@@ -25,7 +25,7 @@
             this._ui = ui;
             this._willBuyItems = !tmxObject.Properties.ContainsKey("WillBuyItems") ||
                                  bool.Parse(tmxObject.Properties["WillBuyItems"]);
-            this._text = tmxObject.Properties.ContainsKey("Text") ? tmxObject.Properties["Text"] : null;
+            this._text = tmxObject.Properties.ContainsKey("Text") ? tmxObject.Properties["Text"] : "Welcome to my store.\nI buy and sell items. What can I do for you?";
 
             var itemListString = tmxObject.Properties.ContainsKey("Items") ? tmxObject.Properties["Items"] : null;
             if (itemListString != null)
@@ -72,7 +72,7 @@
                 this.GameState.IsPaused = false;
             }
 
-            var storeWindow = new StoreWindow(this._ui, this._willBuyItems, this._text);
+            var storeWindow = new StoreWindow(this._ui, this._willBuyItems, $"{this.SpriteState.Name}: {this._text}");
             storeWindow.Show(action =>
             {
                 switch (action)
@@ -94,27 +94,27 @@
                             var selectedMember = party.AliveMembers.FirstOrDefault(partyMember => partyMember.Items.Count < Party.MaxItems);
                             if (selectedMember == null)
                             {
-                                new TalkWindow(this._ui).Show($"You do not have enough space in your inventory for {item.Name}", Done);
+                                new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: You do not have enough space in your inventory for {item.Name}", Done);
                             }
                             else
                             {
                                 if (this.GameState.Party.Gold >= item.Cost)
                                 {
-                                    new TalkWindow(this._ui).Show($"{selectedMember.Name} got the {item.Name}", Done);
+                                    new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: {selectedMember.Name} got the {item.Name}", Done);
                                     selectedMember.Items.Add(new ItemInstance(item));
                                     this.GameState.Party.Gold -= item.Cost;
                                     this.SpriteState.Items.Remove(item);
                                 }
                                 else
                                 {
-                                    new TalkWindow(this._ui).Show($"You do not have enough gold for the {item.Name}", Done);
+                                    new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: You do not have enough gold for the {item.Name}", Done);
                                 }
                             }
                         });
                         break;
                     }
                     case StoreAction.Sell when party.AliveMembers.All(partyMember => partyMember.Items.Count == 0):
-                        new TalkWindow(this._ui).Show("You do not have any items that I would like to buy.", Done);
+                        new TalkWindow(this._ui).Show("{this.SpriteState.Name}: You do not have any items that I would like to buy.", Done);
                         return;
                     case StoreAction.Sell:
                     {
@@ -133,7 +133,7 @@
 
                                 var questionWindow = new QuestionWindow(this._ui);
                                 questionWindow.Show(
-                                    $"You can sell the {item.Name} to me for {item.Gold * 3 / 4} gold",
+                                    $"{this.SpriteState.Name}: You can sell the {item.Name} to me for {item.Gold * 3 / 4} gold",
                                     result =>
                                     {
                                         if (!result)

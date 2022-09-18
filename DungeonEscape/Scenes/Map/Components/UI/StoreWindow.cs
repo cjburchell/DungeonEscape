@@ -15,10 +15,10 @@
         private readonly bool _sell;
         private readonly string _text;
 
-        public StoreWindow(UiSystem ui, bool sell = true, string text = null) : base(ui, null, new Point(10, MapScene.ScreenHeight / 3 * 2))
+        public StoreWindow(UiSystem ui, bool sell, string text) : base(ui, null, new Point(10, MapScene.ScreenHeight / 3 * 2))
         {
             this._sell = sell;
-            this._text = text ?? "Welcome to my store.\nI buy and sell items what can I do for you?";
+            this._text = text;
         }
 
         public void Show(Action<StoreAction?> doneAction)

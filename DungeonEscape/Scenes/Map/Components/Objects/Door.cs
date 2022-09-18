@@ -1,4 +1,6 @@
-﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
+﻿using Nez;
+
+namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 {
     using Common.Components.UI;
     using Nez.Tiled;
@@ -48,11 +50,19 @@
                 return true;
             }
             this.GameState.Sounds.PlaySoundEffect("door");
+            this.IsOpen = true;
             this.SetEnableCollider(false);
             this.DisplayVisual(false);
-            this.IsOpen = true;
             this.Collideable = false;
             return true;
+        }
+
+        public override void Update()
+        {
+            this.SetEnableCollider(!this.IsOpen);
+            this.DisplayVisual(!this.IsOpen);
+            this.Collideable = !this.IsOpen;
+            base.Update();
         }
     }
 }

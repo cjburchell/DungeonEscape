@@ -7,6 +7,7 @@
         TakeItem,
         Fight,
         Warp,
-        Join
+        Join,
+        OpenDoor
     }
 }

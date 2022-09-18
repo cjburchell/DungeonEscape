@@ -51,6 +51,8 @@ namespace Nez.Tiled
         /// </summary>
         public bool RequiresLargeTileCulling => MaxTileWidth > TileWidth || MaxTileHeight > TileHeight;
 
+        public string Class;
+
         /// <summary>
         /// currently only used to tick all the Tilesets so they can update their animated tiles
         /// </summary>

@@ -13,9 +13,16 @@ namespace Redpoint.DungeonEscape.State
 
         public Vector2? SavedPoint { get; set; }
         public int? SavedMapId { get; set; }
-        
-        public bool HasShip { get; set; }
-        
+
+
+        [JsonIgnore] public bool HasShip
+        {
+            get
+            {
+                return this.Members.Any(i => i.Items.Any(j => j.Name == "Deed to the ship"));
+            }
+        }
+
         public string PlayerName { get; set; }
         public List<Hero> Members { get; } = new();
         

@@ -31,7 +31,8 @@ namespace Redpoint.DungeonEscape.State
         public int ImageId { get; set; }
         
         public string QuestId { get; set; }
-        public int ForStage { get; set; }
+        public bool StartQuest { get; set; }
+        public List<int> ForStage { get; set; }
         public int? NextStage { get; set; }
         
         [JsonProperty("Skill")] public string SkillId { get; set; }

@@ -558,7 +558,7 @@
                 return;
             }
 
-            if (!(other is ObjectBoxCollider objCollider))
+            if (other is not ObjectBoxCollider objCollider)
             {
                 return;
             }
@@ -575,7 +575,7 @@
                 return;
             }
 
-            if (!(other is ObjectBoxCollider objCollider))
+            if (other is not ObjectBoxCollider objCollider)
             {
                 return;
             }

@@ -30,7 +30,7 @@
             }
             else
             {
-                if (item.IsEquippable && !item.Item.Classes.Contains(this._hero.Class))
+                if (item.IsEquippable && item.Item.Classes != null && !item.Item.Classes.Contains(this._hero.Class))
                 {
                     equipSymbol = "!";
                 }

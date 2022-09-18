@@ -50,7 +50,7 @@
                             {
                                 new()
                                 {
-                                    Text = "Yes", Action = QuestAction.Join
+                                    Text = "Yes", Actions = new List<QuestAction> { QuestAction.Join }
                                 },
                                 new() {Text = "No"}
                             }
@@ -58,34 +58,6 @@
                     }
                 };
             }
-        }
-
-        protected override void SetupAnimation(List<Nez.Textures.Sprite> sprites)
-        {
-            const int offset = 4;
-            this.Animator.AddAnimation("WalkUp", new[]
-            {
-                sprites[this.BaseId + 0 - offset],
-                sprites[this.BaseId + 1 - offset]
-            });
-
-            this.Animator.AddAnimation("WalkRight", new[]
-            {
-                sprites[this.BaseId + 2 - offset],
-                sprites[this.BaseId + 3 - offset]
-            });
-
-            this.Animator.AddAnimation("WalkDown", new[]
-            {
-                sprites[this.BaseId + 4 - offset],
-                sprites[this.BaseId + 5 - offset]
-            });
-
-            this.Animator.AddAnimation("WalkLeft", new[]
-            {
-                sprites[this.BaseId + 6 - offset],
-                sprites[this.BaseId + 7 - offset]
-            });
         }
 
         protected override void JoinParty()

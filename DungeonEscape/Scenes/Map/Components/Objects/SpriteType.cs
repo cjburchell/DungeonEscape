@@ -3,7 +3,6 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 {
     public enum SpriteType
     {
-        Ship,
         Door,
         Chest,
         Warp,

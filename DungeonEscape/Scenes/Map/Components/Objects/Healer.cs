@@ -63,11 +63,11 @@
             
             if (!options.Any())
             {
-                new TalkWindow(this._ui).Show("You do not require any of my services.", Done);
+                new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: You do not require any of my services.", Done);
                 return true;
             }
             
-            new QuestionWindow(this._ui).Show("Do you require my services as a healer?", result => 
+            new QuestionWindow(this._ui).Show($"{this.SpriteState.Name}: Do you require my services as a healer?", result => 
             {
                 if (!result)
                 {
@@ -98,7 +98,7 @@
                                     party.Gold -= healAllCost;
                                     hero.Health = hero.MaxHealth;
                                     this.GameState.Sounds.PlaySoundEffect("spell", true);
-                                    new TalkWindow(this._ui).Show($"{hero.Name} has been fully healed.\nThank you come again!", Done);
+                                    new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: {hero.Name} has been fully healed.\nThank you come again!", Done);
                                 }
                             
                                 if (party.AliveMembers.Count(member => member.Health != member.MaxHealth) == 1)
@@ -113,7 +113,7 @@
                             }
                             else
                             {
-                                new TalkWindow(this._ui).Show($"You do not have {this._cost} gold", Done);
+                                new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: You do not have {this._cost} gold", Done);
                             }
                             break;
                             
@@ -131,7 +131,7 @@
                             }
                             else
                             {
-                                new TalkWindow(this._ui).Show($"You do not have {magicCost} gold", Done);
+                                new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: You do not have {magicCost} gold", Done);
                             }
                             break;
                         case "Revive":
@@ -148,7 +148,7 @@
                                     party.Gold -= reviveCost;
                                     hero.Health = 1;
                                     this.GameState.Sounds.PlaySoundEffect("spell", true);
-                                    new TalkWindow(this._ui).Show($"{hero.Name} has been revived.\nThank you come again!", Done);
+                                    new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: {hero.Name} has been revived.\nThank you come again!", Done);
                                 }
                             
                                 if (party.Members.Count(member => member.IsDead) == 1)
@@ -163,7 +163,7 @@
                             }
                             else
                             {
-                                new TalkWindow(this._ui).Show($"You do not have {reviveCost} gold", Done);
+                                new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: You do not have {reviveCost} gold", Done);
                             }
                             break;
                         case "Cure":
@@ -179,7 +179,7 @@
                                     }
 
                                     this.GameState.Sounds.PlaySoundEffect("spell", true);
-                                    new TalkWindow(this._ui).Show($"{message}Thank you come again!", Done);
+                                    new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: {message}Thank you come again!", Done);
                                 }
                                 
                                 if (party.AliveMembers.Count(member => member.Status.Count != 0) == 1)
@@ -194,7 +194,7 @@
                             }
                             else
                             {
-                                new TalkWindow(this._ui).Show($"You do not have {cureCost} gold", Done);
+                                new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: You do not have {cureCost} gold", Done);
                             }
                             break;
                         case "Heal All":
@@ -207,11 +207,11 @@
                                 }
                         
                                 this.GameState.Sounds.PlaySoundEffect("spell", true);
-                                new TalkWindow(this._ui).Show("All party members have been healed.\nThank you come again!", Done);
+                                new TalkWindow(this._ui).Show("{this.SpriteState.Name}: All party members have been healed.\nThank you come again!", Done);
                             }
                             else
                             {
-                                new TalkWindow(this._ui).Show($"You do not have {healAllCost} gold", Done);
+                                new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: You do not have {healAllCost} gold", Done);
                             }
                             break;
                     }

@@ -8,8 +8,14 @@ namespace Redpoint.DungeonEscape.State
 {
     public class DialogText
     {
-        public List<int> ForQuestStage { get; set; }
         public string Text { get; set; }
         public List<Choice> Choices { get; set; }
+    }
+    
+    public class DialogHead : DialogText
+    {
+        public string Quest { get; set; }
+        public List<int> QuestStage { get; set; }
+        public bool StartQuest { get; set; }
     }
 }

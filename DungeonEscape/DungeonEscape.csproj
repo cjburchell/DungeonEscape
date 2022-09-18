@@ -624,9 +624,6 @@
         <None Update="Content\npc.tsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\objects.tsx">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
         <None Update="Content\outdoors.tsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
@@ -805,6 +802,18 @@
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Content\data\skills.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\sprites\npc-monsters-animals.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\images\sprites\tiles.png">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\animals.tsx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\tiles_small.tsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>

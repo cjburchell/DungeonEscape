@@ -11,10 +11,11 @@ namespace Redpoint.DungeonEscape.State
     public class Choice
     {
         public string Text { get; set; }
-        public List<DialogText> Dialogs { get; set; }
+        
+        public DialogText Dialog { get; set; }
 
-        [JsonConverter(typeof(StringEnumConverter))]
-        public QuestAction Action { get; set; } = QuestAction.None;
+        [JsonProperty("Actions", ItemConverterType = typeof(StringEnumConverter))]
+        public List<QuestAction> Actions { get; set; } = new();
 
         public List<string> Items { get; set; }
         
@@ -24,5 +25,6 @@ namespace Redpoint.DungeonEscape.State
         public int? NextQuestStage { get; set; }
         public int? MapId { get; set; }
         public int? SpawnId { get; set; }
+        public int? ObjectId { get; set; }
     }
 }

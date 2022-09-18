@@ -1,4 +1,6 @@
-﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
+﻿using System.Linq;
+
+namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 {
     using System;
     using Common.Components.UI;
@@ -8,25 +10,25 @@
     using Nez.Tiled;
     using State;
 
-    public class MapObject: Component, ICollidable
+    public class MapObject: Component, ICollidable, IUpdatable
     {
         protected readonly TmxObject TmxObject;
         protected readonly ObjectState State;
         private readonly TmxTilesetTile _mapTile;
         private SpriteAnimator _animator;
         protected readonly IGame GameState;
-        private readonly TmxTileset _tileSet;
+        protected readonly TmxTileset _tileSet;
+        private string currentAnimanion;
 
         public static MapObject Create(TmxObject tmxObject, ObjectState state, TmxMap map, UiSystem ui, IGame gameState)
         {
-            if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
+            if (!Enum.TryParse(tmxObject.Class, out SpriteType spriteType))
             {
                 return null;
             }
 
             return spriteType switch
             {
-                SpriteType.Ship => new Ship(tmxObject, state, map, gameState),
                 SpriteType.Warp => new Warp(tmxObject, state, map, gameState),
                 SpriteType.Chest => new Chest(tmxObject, state, map, ui, gameState),
                 SpriteType.HiddenItem => new HiddenItem(tmxObject, state, map, ui, gameState),
@@ -55,11 +57,29 @@
             
             if (this._mapTile != null)
             {
-                var texture = this._mapTile.Image.Texture;
-                var sprites =
-                    Nez.Textures.Sprite.SpritesFromAtlas(this._mapTile.Image.Texture, texture.Width, texture.Height);
-                this._animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
-                this._animator.RenderLayer = 20;
+                if (this._mapTile.Image != null)
+                {
+                    var texture = this._mapTile.Image.Texture;
+                    var sprites =
+                        Nez.Textures.Sprite.SpritesFromAtlas(this._mapTile.Image.Texture, texture.Width, texture.Height);
+                    this._animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
+                    this._animator.RenderLayer = 20;
+                }
+                else if(this._mapTile.AnimationFrames != null)
+                {
+                    var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this._tileSet.Image.Texture,
+                        (int) this.TmxObject.Width, (int) this.TmxObject.Height);
+                    this._animator =
+                        this.Entity.AddComponent(
+                            new SpriteAnimator(sprites[this._mapTile.AnimationFrames[0].Gid]));
+
+                    var animation = this._mapTile.AnimationFrames.Select(i => sprites[i.Gid]).ToArray();
+                    currentAnimanion = "animate";
+                    this._animator.AddAnimation(currentAnimanion, animation);
+                    this._animator.Speed = this._mapTile.AnimationFrames[0].Duration*10f;
+                    this._animator.RenderLayer = 20;
+                }
+               
             }
             else if (this._tileSet != null)
             {
@@ -123,6 +143,28 @@
         public virtual bool OnAction(Party party)
         {
             return false;
+        }
+
+        public virtual void Update()
+        {
+            if (this.GameState.IsPaused)
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(currentAnimanion))
+            {
+                return;
+            }
+            
+            if (!this._animator.IsAnimationActive(currentAnimanion))
+            {
+                this._animator.Play(currentAnimanion);
+            }
+            else
+            {
+                this._animator.UnPause();
+            }
         }
     }
 }

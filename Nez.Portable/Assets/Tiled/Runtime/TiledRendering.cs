@@ -269,7 +269,7 @@ namespace Nez.Tiled
 						goto default;
 					default:
                         if (Core.DebugRenderEnabled)
-                            batcher.DrawString(Graphics.Instance.BitmapFont, $"{obj.Name} ({obj.Type})", pos - new Vector2(0, 15), Color.Black);
+                            batcher.DrawString(Graphics.Instance.BitmapFont, $"{obj.Name} ({obj.Class})", pos - new Vector2(0, 15), Color.Black);
 						break;
 				}
 			}

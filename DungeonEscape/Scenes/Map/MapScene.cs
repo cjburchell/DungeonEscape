@@ -79,7 +79,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
 
             foreach (var item in itemObjects.Objects)
             {
-                if (!bool.Parse(item.Properties["Collideable"]) && item.Type != SpriteType.Warp.ToString())
+                if (!bool.Parse(item.Properties["Collideable"]) && item.Class != SpriteType.Warp.ToString())
                 {
                     continue;
                 }
@@ -124,7 +124,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                 var tiledMapRenderer = tiledEntity.AddComponent(new TiledMapRenderer(map,
                     this._gameState.Party.HasShip && this._gameState.Party.CurrentMapIsOverWorld ? new[] {"wall"} : new[] {"wall", "water"}));
                 tiledMapRenderer.RenderLayer = 50;
-                tiledMapRenderer.SetLayersToRender("wall", "wall2", "water", "floor", "floor2");
+                tiledMapRenderer.SetLayersToRender("wall", "wall2", "water", "floor", "floor2", "floor3");
                 
                 var topLeft = new Vector2(0, 0);
                 var bottomRight = new Vector2(map.TileWidth * map.Width,

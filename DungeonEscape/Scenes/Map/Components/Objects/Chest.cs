@@ -1,8 +1,6 @@
 ﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 {
     using Common.Components.UI;
-    using Microsoft.Xna.Framework.Graphics;
-    using Nez;
     using Nez.Sprites;
     using Nez.Tiled;
     using State;
@@ -12,7 +10,7 @@
         private readonly UiSystem _ui;
         private readonly int _level;
         private SpriteAnimator _openImage;
-        private readonly string _openImageName;
+        private readonly int _openImageId;
         
         private bool IsOpen
         {
@@ -27,7 +25,7 @@
             
             this._ui = ui;
             this._level = tmxObject.Properties.ContainsKey("ChestLevel") ? int.Parse(tmxObject.Properties["ChestLevel"]) : 0;
-            this._openImageName = tmxObject.Properties.ContainsKey("OpenImage") ? tmxObject.Properties["OpenImage"] : "ochest.png";
+            this._openImageId = tmxObject.Properties.ContainsKey("OpenImage") ? int.Parse(tmxObject.Properties["OpenImage"]) : 135;
             if(this.State.Item != null)
             {
                 var tileSet = Game.LoadTileSet("Content/items2.tsx");
@@ -55,9 +53,11 @@
         {
             base.Initialize();
             this.DisplayVisual(!this.IsOpen);
-            var texture = Texture2D.FromFile(Core.GraphicsDevice, $"Content/images/sprites/{this._openImageName}");
-            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, MapScene.DefaultTileSize, MapScene.DefaultTileSize);
-            this._openImage = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
+            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this._tileSet.Image.Texture,
+                (int) this.TmxObject.Width, (int) this.TmxObject.Height);
+            this._openImage =
+                this.Entity.AddComponent(
+                    new SpriteAnimator(sprites[this._openImageId]));
             this._openImage.RenderLayer = 15;
             this._openImage.LayerDepth = 15;
             this._openImage.SetEnabled(this.IsOpen);

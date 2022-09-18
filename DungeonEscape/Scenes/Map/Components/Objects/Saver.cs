@@ -20,7 +20,7 @@
         {
             this.GameState.IsPaused = true;
             var questionWindow = new QuestionWindow(this._ui);
-            questionWindow.Show("Would you like me to record your deeds?", accepted =>
+            questionWindow.Show($"{this.SpriteState.Name}: Would you like me to record your deeds?", accepted =>
             {
                 if (accepted)
                 {
@@ -39,7 +39,7 @@
                                 (current, member) =>
                                     current +
                                     $"{member.Name} needs {member.NextLevel - member.Xp} xp to get to next level\n");
-                            new TalkWindow(this._ui).Show($"It has been recorded\n{levelText}",
+                            new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: It has been recorded\n{levelText}",
                                 () => { this.GameState.IsPaused = false; });
                         }
                     );

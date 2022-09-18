@@ -21,7 +21,7 @@
             {
                 this.Dialog = new Dialog
                 {
-                    Dialogs = new List<DialogText> { new DialogText {Text = text, Choices = new List<Choice> { new Choice {Text = "OK"}}}}
+                    Dialogs = new List<DialogHead> { new() {Text = text, Choices = new List<Choice> { new() {Text = "OK"}}}}
                 };
                 
                 return;
@@ -39,8 +39,7 @@
             }
             
             this.GameState.IsPaused = true;
-            var quest = !string.IsNullOrEmpty(this.Dialog.Quest) ? this.GameState.Quests.FirstOrDefault(i => i.Id == this.Dialog.Quest) : null;
-            this.ShowDialog(this.Dialog.Dialogs, quest,() =>
+            this.StartDialog(this.Dialog.Dialogs,() =>
             {
                 this.GameState.IsPaused = false;
             });
@@ -48,43 +47,55 @@
 
         }
 
-        private void ShowDialog(IReadOnlyCollection<DialogText> dialogs, Quest quest, Action done)
+        private void StartDialog(IReadOnlyCollection<DialogHead> dialogs, Action done)
         {
-            // Choose the dialog based on the correct quest state.
-            DialogText dialog;
-            ActiveQuest activeQuest;
-            if (quest == null)
+            var dialog = dialogs.FirstOrDefault(i => i.StartQuest && this.GameState.Party.ActiveQuests.All(q => i.Quest != q.Id));
+            Quest quest = null;
+            if (dialog != null)
             {
-                dialog = dialogs.First();
-            }
-            else
-            {
-                activeQuest =
-                    this.GameState.Party.ActiveQuests.FirstOrDefault(i => i.Id == quest.Id);
-                if (activeQuest == null)
+                quest = this.GameState.Quests.FirstOrDefault(i => i.Id == dialog.Quest);
+                if (quest != null)
                 {
-                    activeQuest = new ActiveQuest
+                    var activeQuest = new ActiveQuest
                     {
                         Id = quest.Id, CurrentStage = 0,
                         Stages = quest.Stages.Select(i => new QuestStageState {Number = i.Number}).ToList()
                     };
                     this.GameState.Party.ActiveQuests.Add(activeQuest);
                 }
-
-                dialog = dialogs.FirstOrDefault(d => d.ForQuestStage != null &&
-                    d.ForQuestStage.Contains(activeQuest.CurrentStage) 
-                ) ?? dialogs.FirstOrDefault();
             }
+            else
+            {
+                foreach (var activeQuest in this.GameState.Party.ActiveQuests)
+                {
+                    dialog = dialogs.FirstOrDefault(
+                        i => i.Quest == activeQuest.Id && i.QuestStage != null && i.QuestStage.Contains(activeQuest.CurrentStage));
+                    if (dialog == null) continue;
 
+                    quest = this.GameState.Quests.FirstOrDefault(i => i.Id == dialog.Quest);
+                    if (quest != null)
+                    {
+                        break;
+                    }
+                }
+            }
+            
+            dialog ??= dialogs.FirstOrDefault();
             if (dialog == null)
             {
                 done();
                 return;
             }
             
-            new TalkWindow(this._ui).Show(dialog.Text, dialog.Choices?.Where(choice =>
+            ShowDialog(dialog, done, quest);
+        }
+
+        private void ShowDialog(DialogText dialog, Action done, Quest quest)
+        {
+            // Choose the dialog based on the correct quest state.
+             new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: {dialog.Text}", dialog.Choices?.Where(choice =>
             {
-                if (choice.Action == QuestAction.TakeItem && choice.ItemId != null)
+                if (choice.Actions.Contains(QuestAction.TakeItem) && choice.ItemId != null)
                 {
                     // if the action is looking for an item
                     return this.GameState.Party.GetItem(choice.ItemId) != null;
@@ -104,66 +115,80 @@
                 var completedQuestMessage = "";
                 if (quest != null)
                 {
-                    completedQuestMessage = this.GameState.AdvanceQuest(quest.Id, 0, choice.NextQuestStage);
+                    completedQuestMessage = this.GameState.AdvanceQuest(quest.Id, choice.NextQuestStage);
                 }
-
+                
                 void DoneAction()
                 {
-                    if (choice.Dialogs != null)
+                    if (choice.Dialog != null)
                     {
-                        this.ShowDialog(choice.Dialogs, quest, done);
+                        this.ShowDialog(choice.Dialog, done, quest);
                     }
                     else
                     {
                         done();
                     }
                 }
-
-                switch (choice.Action)
+                
+                bool ProcessActions(ICollection<QuestAction> actions)
                 {
-                    case QuestAction.GiveItem:
-                        var questMessage = "";
-                        var itemMessage = "";
-                        foreach (var itemId in choice.Items)
-                        {
-                            var item = this.GameState.GetCustomItem(itemId);
-                            if (item != null)
-                            {
-                                var member = this.GameState.Party.AddItem(new ItemInstance(item));
-                                if (member != null)
-                                {
-                                    itemMessage += $"{member.Name} got {item.Name}\n";
-                                    questMessage += this.GameState.CheckQuest(item, false);
-                                }
-                            }
-                            
-                            this.GameState.Party.AddItem(new ItemInstance(item));
-                        }
-                        
-                        if (!string.IsNullOrEmpty(itemMessage))
-                        {
-                            new TalkWindow(this._ui).Show($"{itemMessage}{questMessage}{completedQuestMessage}",
-                                DoneAction);
-                            return;
-                        }
-                        
-                        break;
-                    case QuestAction.TakeItem:
+                    if (!actions.Any())
                     {
-                        var (item, member) = this.GameState.Party.RemoveItem(choice.ItemId);
-                        if (item != null)
-                        {
-                            new TalkWindow(this._ui).Show($"{member.Name} gave {item.Name} to {this.SpriteState.Name}\n{completedQuestMessage}",
-                                DoneAction);
-                            return;
-                        }
-
-                        break;
+                        return true;
                     }
-                    case QuestAction.Fight:
-                        var monster = this.GameState.Monsters.FirstOrDefault(m => m.Id == choice.MonsterId);
-                        if (monster != null)
+                    
+                    var action = actions.FirstOrDefault();
+                    actions.Remove(action);
+                    
+                    void DoneProcessAction()
+                    {
+                        if(!ProcessActions(actions)) return;
+                        DoneAction();
+                    }
+                    
+                    switch (action)
+                    {
+                        case QuestAction.GiveItem:
+                            var questMessage = "";
+                            var itemMessage = "";
+                            foreach (var itemId in choice.Items)
+                            {
+                                var item = this.GameState.GetCustomItem(itemId);
+                                if (item != null)
+                                {
+                                    var member = this.GameState.Party.AddItem(new ItemInstance(item));
+                                    if (member != null)
+                                    {
+                                        itemMessage += $"{member.Name} got {item.Name}\n";
+                                        questMessage += this.GameState.CheckQuest(item, false);
+                                    }
+                                }
+
+                                this.GameState.Party.AddItem(new ItemInstance(item));
+                            }
+
+                            if (string.IsNullOrEmpty(itemMessage)) break;
+
+                            new TalkWindow(this._ui).Show($"{itemMessage}{questMessage}{completedQuestMessage}",
+                                DoneProcessAction);
+                            return false;
+                        case QuestAction.TakeItem:
                         {
+                            var (item, member) = this.GameState.Party.RemoveItem(choice.ItemId);
+                            if (item == null) break;
+
+                            new TalkWindow(this._ui).Show(
+                                $"{member.Name} gave {item.Name} to {this.SpriteState.Name}\n{completedQuestMessage}",
+                                DoneProcessAction);
+                            return false;
+                        }
+                        case QuestAction.Fight:
+                            var monster = this.GameState.Monsters.FirstOrDefault(m => m.Id == choice.MonsterId);
+                            if (monster == null)
+                            {
+                                break;
+                            }
+
                             if (!string.IsNullOrEmpty(completedQuestMessage))
                             {
                                 new TalkWindow(this._ui).Show(completedQuestMessage,
@@ -178,37 +203,52 @@
                                 this.GameState.StartFight(new[] { monster },
                                     MapScene.GetCurrentBiome(this.Map, this.Entity.Position));
                             }
-                            return;
-                        }
-                        break;
-                    case QuestAction.Warp:
-                        if (choice.MapId.HasValue)
-                        {
+
+                            return false;
+                        case QuestAction.Warp:
+                            if (!choice.MapId.HasValue)
+                            {
+                                break;
+                            }
+
                             if (!string.IsNullOrEmpty(completedQuestMessage))
                             {
                                 new TalkWindow(this._ui).Show(completedQuestMessage,
-                                    () =>
-                                    {
-                                        this.GameState.SetMap(choice.MapId,  choice.SpawnId);
-                                    });
+                                    () => { this.GameState.SetMap(choice.MapId, choice.SpawnId); });
                             }
                             else
                             {
-                                this.GameState.SetMap(choice.MapId,  choice.SpawnId);
+                                this.GameState.SetMap(choice.MapId, choice.SpawnId);
                             }
-                            return;
+
+                            return false;
+                        case QuestAction.Join:
+                            this.JoinParty();
+                            new TalkWindow(this._ui).Show(
+                                $"{this.SpriteState.Name} Joined the party\n{completedQuestMessage}",
+                                DoneProcessAction);
+                            return false;
+                        case QuestAction.OpenDoor:
+                        {
+                            var mapId = choice.MapId ?? this.GameState.Party.CurrentMapId;
+                            var mapState = this.GameState.MapStates.FirstOrDefault(item => item.Id == mapId);
+                            var door = mapState?.Objects.FirstOrDefault(i => i.Id == choice.ObjectId);
+                            if (door != null)
+                            {
+                                this.GameState.Sounds.PlaySoundEffect("door");
+                                door.IsOpen = true;
+                            }
+                            break;
                         }
-                        break;
-                    case QuestAction.Join:
-                        this.JoinParty();
-                        new TalkWindow(this._ui).Show($"{this.SpriteState.Name} Joined the party\n{completedQuestMessage}",
-                            DoneAction);
-                        return;
-                    case QuestAction.None:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                        case QuestAction.None:
+                        default:
+                            break;
+                    }
+
+                    return true;
                 }
+
+                if (!ProcessActions(choice.Actions)) return;
 
                 if (!string.IsNullOrEmpty(completedQuestMessage))
                 {
@@ -218,7 +258,6 @@
                 }
                 
                 DoneAction();
-
             });
         }
 

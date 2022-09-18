@@ -113,23 +113,16 @@
     "Name": "Boy's Sea Shell",
     "ImageId": 866,
     "QuestId": "Lost_Sea_Shell",
-    "ForStage": 1,
+    "StartQuest": true,
+    "ForStage": [1],
     "NextStage": 2
   },
   {
     "Type": "Quest",
     "Name": "Old Man's Key",
     "QuestId": "Find_Ship",
-    "ForStage": 2,
-    "NextStage": 3,
-    "ImageId": 909
-  },
-  {
-    "Type": "Quest",
-    "Name": "Old Man's Key",
-    "QuestId": "Find_Ship",
-    "ForStage": 2,
-    "NextStage": 3,
+    "ForStage": [3],
+    "NextStage": 4,
     "ImageId": 909
   },
   {
@@ -156,5 +149,13 @@
     "Cost": 20,
     "ImageId": 774,
     "MinLevel": 0
+  },
+  {
+    "Type": "Quest",
+    "Name": "Deed to the ship",
+    "QuestId": "Find_Ship",
+    "ForStage": [5],
+    "NextStage": 6,
+    "ImageId": 951
   }
 ]

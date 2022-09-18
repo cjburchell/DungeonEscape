@@ -9,7 +9,7 @@ namespace Nez.Tiled
 		public int Id;
 		public TmxTerrain[] TerrainEdges;
 		public double Probability;
-		public string Type;
+		public string Class;
 
 		public Dictionary<string, string> Properties;
 		public TmxImage Image;

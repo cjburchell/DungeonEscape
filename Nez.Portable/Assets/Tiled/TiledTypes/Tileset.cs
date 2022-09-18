@@ -19,6 +19,7 @@ namespace Nez.Tiled
 		public Dictionary<string, string> Properties;
 		public TmxImage Image;
 		public TmxList<TmxTerrain> Terrains;
+		public string Class;
 
 		/// <summary>
 		/// cache of the source rectangles for each tile

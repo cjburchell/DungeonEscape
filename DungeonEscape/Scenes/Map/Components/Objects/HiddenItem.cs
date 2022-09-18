@@ -43,15 +43,23 @@
 
         public override bool OnAction(Party party)
         {
+            if (this.IsOpen || !this.GameState.Party.CanOpenChest(this._level))
+            {
+                return true;
+            }
+
+            if (this.State.Item.Type == ItemType.Quest && !this.State.Item.StartQuest)
+            {
+                if (!this.GameState.Party.ActiveQuests.Any(i => i.Id == this.State.Item.QuestId && this.State.Item.ForStage.Contains(i.CurrentStage)))
+                {
+                    return true;
+                }
+            }
+            
             this.GameState.IsPaused = true;
             void Done()
             {
                 this.GameState.IsPaused = false;
-            }
-
-            if (this.IsOpen || !this.GameState.Party.CanOpenChest(this._level))
-            {
-                return true;
             }
             
             if (this.State.Item.Type == ItemType.Gold)

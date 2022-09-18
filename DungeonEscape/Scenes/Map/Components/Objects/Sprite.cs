@@ -17,7 +17,7 @@
         private readonly TmxObject _tmxObject;
         protected readonly TmxMap Map;
         protected readonly IGame GameState;
-        protected SpriteAnimator Animator;
+        private SpriteAnimator _animator;
         private Mover _mover;
         private readonly bool _canMove;
         private MoveState _state = MoveState.Stopped;
@@ -30,12 +30,12 @@
         private float _elapsedTime;
         private float _nextElapsedTime = Random.NextInt(5) + 1;
         private readonly TmxTileset _tilSet;
-        protected readonly int BaseId;
+        private readonly int _baseId;
         private readonly bool _collideable;
 
         public static Sprite Create(TmxObject tmxObject, SpriteState state, TmxMap map, UiSystem ui, IGame gameState, AstarGridGraph graph)
         {
-            if (!Enum.TryParse(tmxObject.Type, out SpriteType spriteType))
+            if (!Enum.TryParse(tmxObject.Class, out SpriteType spriteType))
             {
                 return null;
             }
@@ -60,37 +60,94 @@
             this.Map = map;
             this.GameState = gameState;
             this._tilSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
-            this.BaseId = tmxObject.Tile.Gid - this._tilSet.FirstGid;
+            this._baseId = tmxObject.Tile.Gid - this._tilSet.FirstGid;
             this._canMove = bool.Parse(this._tmxObject.Properties["CanMove"]);
             this._collideable = bool.Parse(this._tmxObject.Properties["Collideable"]);
             this.SpriteState.Name = tmxObject.Name;
         }
 
-        protected virtual void SetupAnimation(List<Nez.Textures.Sprite> sprites)
+        private void SetupAnimation(IReadOnlyList<Nez.Textures.Sprite> sprites, string tilesetName)
         {
-            this.Animator.AddAnimation("WalkDown", new[]
+            switch (tilesetName)
             {
-                sprites[this.BaseId + 0],
-                sprites[this.BaseId + 1]
-            });
+                case "npc":
+                    this._animator.AddAnimation("WalkDown", new[]
+                    {
+                        sprites[this._baseId + 0],
+                        sprites[this._baseId + 1]
+                    });
 
-            this.Animator.AddAnimation("WalkUp", new[]
-            {
-                sprites[this.BaseId + 6],
-                sprites[this.BaseId + 7]
-            });
+                    this._animator.AddAnimation("WalkUp", new[]
+                    {
+                        sprites[this._baseId + 6],
+                        sprites[this._baseId + 7]
+                    });
 
-            this.Animator.AddAnimation("WalkRight", new[]
-            {
-                sprites[this.BaseId + 2],
-                sprites[this.BaseId + 3]
-            });
+                    this._animator.AddAnimation("WalkRight", new[]
+                    {
+                        sprites[this._baseId + 2],
+                        sprites[this._baseId + 3]
+                    });
 
-            this.Animator.AddAnimation("WalkLeft", new[]
-            {
-                sprites[this.BaseId + 4],
-                sprites[this.BaseId + 5]
-            });
+                    this._animator.AddAnimation("WalkLeft", new[]
+                    {
+                        sprites[this._baseId + 4],
+                        sprites[this._baseId + 5]
+                    });
+                    break;
+                case "hero":
+                    const int offset = 4;
+                    this._animator.AddAnimation("WalkUp", new[]
+                    {
+                        sprites[this._baseId + 0 - offset],
+                        sprites[this._baseId + 1 - offset]
+                    });
+
+                    this._animator.AddAnimation("WalkRight", new[]
+                    {
+                        sprites[this._baseId + 2 - offset],
+                        sprites[this._baseId + 3 - offset]
+                    });
+
+                    this._animator.AddAnimation("WalkDown", new[]
+                    {
+                        sprites[this._baseId + 4 - offset],
+                        sprites[this._baseId + 5 - offset]
+                    });
+
+                    this._animator.AddAnimation("WalkLeft", new[]
+                    {
+                        sprites[this._baseId + 6 - offset],
+                        sprites[this._baseId + 7 - offset]
+                    });
+                    break;
+                case "animal":
+                    const int row = 12;
+                    this._animator.AddAnimation("WalkDown", new[]
+                    {
+                        sprites[this._baseId + 0],
+                        sprites[this._baseId + 1]
+                    });
+
+                    this._animator.AddAnimation("WalkRight", new[]
+                    {
+                        sprites[this._baseId - row + 0],
+                        sprites[this._baseId - row + 1]
+                    });
+
+                    this._animator.AddAnimation("WalkUp", new[]
+                    {
+                        sprites[this._baseId - row * 2 + 0],
+                        sprites[this._baseId - row * 2 + 1]
+                    });
+
+                    this._animator.AddAnimation("WalkLeft", new[]
+                    {
+                        sprites[this._baseId + row + 0],
+                        sprites[this._baseId + row + 1]
+                    });
+                    break;
+            }
         }
 
         public override void OnAddedToEntity()
@@ -105,14 +162,14 @@
 
             this.Entity.SetPosition(pos);
             var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this._tilSet.Image.Texture, this._tilSet.TileWidth, this._tilSet.TileHeight,  this._tilSet.Spacing);
-            this.Animator = this.Entity.AddComponent(new SpriteAnimator(sprites[this.BaseId]));
-            this.Animator.Speed = 0.5f;
-            this.Animator.RenderLayer = 10;
+            this._animator = this.Entity.AddComponent(new SpriteAnimator(sprites[this._baseId]));
+            this._animator.Speed = 0.5f;
+            this._animator.RenderLayer = 10;
 
-            this.SetupAnimation(sprites);
+            this.SetupAnimation(sprites, this._tilSet.Name);
             
             this._mover = this.Entity.AddComponent(new Mover());
-            this.Animator.RenderLayer = 15;
+            this._animator.RenderLayer = 15;
 
             var fullArea = new Rectangle
             {
@@ -222,7 +279,7 @@
                 }
                 case MoveState.Moving when this._path == null:
                     this._state = MoveState.Stopped;
-                    this.Animator.Pause();
+                    this._animator.Pause();
                     break;
                 case MoveState.Moving:
                 {
@@ -234,7 +291,7 @@
                         if (this._currentPathIndex >= this._path.Count)
                         {
                             this._state = MoveState.Stopped;
-                            this.Animator.Pause();
+                            this._animator.Pause();
                             return;
                         }
                     }
@@ -266,20 +323,20 @@
                         }
                     }
 
-                    if (!this.Animator.IsAnimationActive(animation))
+                    if (!this._animator.IsAnimationActive(animation))
                     {
-                        this.Animator.Play(animation);
+                        this._animator.Play(animation);
                     }
                     else
                     {
-                        this.Animator.UnPause();
+                        this._animator.UnPause();
                     }
 
                     var movement = vector * MoveSpeed * Time.DeltaTime;
                     if (this._mover.CalculateMovement(ref movement, out _))
                     {
                         this._state = MoveState.Stopped;
-                        this.Animator.Pause();
+                        this._animator.Pause();
                         return;
                     }
 

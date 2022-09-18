@@ -3,7 +3,7 @@
     "Id": "Lost_Sea_Shell",
     "Name": "The lost seashell",
     "Description": "The Boy in the village is looking for a lost seashell.",
-    "Xp": 100,
+    "Xp": 10,
     "Items": ["#Random#"],
     "Stages": [
       {
@@ -36,7 +36,8 @@
       },
       {
         "Number": 3,
-        "Description": "Returned The dog"
+        "Description": "Returned The dog",
+        "CompleteQuest": true
       }
     ]
   },
@@ -48,23 +49,28 @@
     "Stages": [
       {
         "Number": 1,
-        "Description": "Talked to priest"
+        "Description": "Go to Isis and find the man"
       },
       {
         "Number": 2,
-        "Description": "Talked to the old man"
+        "Description": "Travel to Coast and find the man's uncle"
       },
       {
         "Number": 3,
-        "Description": "Found the key"
+        "Description": "Find the old man's key"
       },
       {
         "Number": 4,
+        "Description": "You have found the key and should return it to the old man"
+      },
+      {
+        "Number": 5,
         "Description": "Opened the door"
       },
       {
-        "Number": 4,
-        "Description": "Got the ship"
+        "Number": 6,
+        "Description": "Got the ship",
+        "CompleteQuest": true
       }
     ]
   }

@@ -36,6 +36,7 @@ namespace Nez.Tiled
 			map.TileWidth = (int)xMap.Attribute("tilewidth");
 			map.TileHeight = (int)xMap.Attribute("tileheight");
 			map.HexSideLength = (int?)xMap.Attribute("hexsidelength");
+			map.Class = (string)xMap.Attribute("class");
 
 			// enum parsing
 			map.Orientation = ParseOrientationType((string)xMap.Attribute("orientation"));
@@ -414,7 +415,7 @@ namespace Nez.Tiled
 			obj.Y = (float)xObject.Attribute("y");
 			obj.Width = (float?)xObject.Attribute("width") ?? 0.0f;
 			obj.Height = (float?)xObject.Attribute("height") ?? 0.0f;
-			obj.Type = (string)xObject.Attribute("type") ?? string.Empty;
+			obj.Class = (string)xObject.Attribute("class") ?? string.Empty;
 			obj.Visible = (bool?)xObject.Attribute("visible") ?? true;
 			obj.Rotation = (float?)xObject.Attribute("rotation") ?? 0.0f;
 
@@ -559,6 +560,7 @@ namespace Nez.Tiled
 			tileset.Columns = (int?)xTileset.Attribute("columns");
 			tileset.TileCount = (int?)xTileset.Attribute("tilecount");
 			tileset.TileOffset = ParseTmxTileOffset(xTileset.Element("tileoffset"));
+			tileset.Class = (string)xTileset.Attribute("class");
 
 			var xImage = xTileset.Element("image");
 			if (xImage != null)
@@ -632,7 +634,7 @@ namespace Nez.Tiled
 			}
 
 			tile.Probability = (double?)xTile.Attribute("probability") ?? 1.0;
-			tile.Type = (string)xTile.Attribute("type");
+			tile.Class = (string)xTile.Attribute("class");
 			var xImage = xTile.Element("image");
 			if (xImage != null)
 				tile.Image = new TmxImage().LoadTmxImage(xImage, tmxDir);

@@ -27,7 +27,7 @@ namespace Nez.Tiled
 		public int Id;
 		public string Name { get; set; }
 		public TmxObjectType ObjectType;
-		public string Type;
+		public string Class;
 		public float X;
 		public float Y;
 		public float Width;

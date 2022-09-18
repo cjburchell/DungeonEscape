@@ -5,6 +5,7 @@ Download Latest Version [Here](https://gitlab.com/cjburchell/DungeonEscape/-/job
 ## Todo
 ### Features
  - Escort Quests
+ - Kill monster quests
  - Create More Quests
  - Scalable monsters
  - Party Order

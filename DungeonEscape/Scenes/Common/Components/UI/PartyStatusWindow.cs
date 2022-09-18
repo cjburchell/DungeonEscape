@@ -63,12 +63,12 @@
                 memberStatus.Row().SetPadTop(padding);
                 memberStatus.Add(new Label(member.Name.Length < 10 ? member.Name : member.Name[..10], Skin, textStyle).SetAlignment(Align.Left)).Width(statusWidth).SetColspan(2).SetPadRight(5);
                 memberStatus.Row().SetPadTop(padding);
-                memberStatus.Add(new Label("HP", Skin, textStyle).SetAlignment(Align.Left)).Width(statusItemWidth);
+                memberStatus.Add(new Label("HP:", Skin, textStyle).SetAlignment(Align.Left)).Width(statusItemWidth);
                 memberStatus.Add(new Label($"{member.Health}", Skin, textStyle).SetAlignment(Align.Right)).Width(statusItemWidth).SetPadRight(5);
                 memberStatus.Row().SetPadTop(padding);
                 if (member.MaxMagic != 0)
                 {
-                    memberStatus.Add( new Label("MP", Skin, textStyle).SetAlignment(Align.Left)).Width(statusItemWidth);
+                    memberStatus.Add( new Label("MP:", Skin, textStyle).SetAlignment(Align.Left)).Width(statusItemWidth);
                     memberStatus.Add( new Label($"{member.Magic}", Skin, textStyle).SetAlignment(Align.Right)).Width(statusItemWidth).SetPadRight(5);
                     memberStatus.Row().SetPadTop(padding);
                 }

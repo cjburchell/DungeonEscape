@@ -13,11 +13,13 @@
         private Action<T> _done;
         private readonly ButtonList _list;
         private IEnumerable<T> _items;
+        private readonly bool _isTitleSet;
 
 
         public SelectWindow(UiSystem ui, string title, Point position, int width = 180, int buttonHeight = ButtonHeight, int maxHeight = 500)
             : base(ui, title, position, width, 150)
         {
+            this._isTitleSet = !string.IsNullOrEmpty(title);
             this._buttonHeight = buttonHeight;
             _maxHeight = maxHeight;
             this._list = new ButtonList(ui.Sounds);
@@ -43,7 +45,7 @@
             var table = new Table().SetFillParent(true);
             var scrollPane = new ScrollPane(this._list, Skin);
             var itemList = this._items.ToList();
-            table.Add(scrollPane).Width(itemWidth- margin * 2).Height(Math.Min( itemList.Count * this._buttonHeight, _maxHeight - margin * 3));
+            table.Add(scrollPane).Width(itemWidth- margin * 2).Height(Math.Min( itemList.Count * this._buttonHeight, _maxHeight - margin * 3 - (this._isTitleSet?this._buttonHeight:0)));
 
             this.Window.AddElement(table);
             this._list.OnClicked += button =>
@@ -61,7 +63,7 @@
             }
 
             
-            this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count * this._buttonHeight, _maxHeight));
+            this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count * this._buttonHeight + (this._isTitleSet?this._buttonHeight:0), _maxHeight));
             
             scrollPane.Validate();
         }

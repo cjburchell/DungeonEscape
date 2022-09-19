@@ -9,7 +9,7 @@ namespace Redpoint.DungeonEscape
 
     public interface IGame
     {
-        TmxMap GetMap(int mapId);
+        TmxMap GetMap(string mapId);
 
         void Save(GameSave save, bool isQuick = false);
 
@@ -52,7 +52,7 @@ namespace Redpoint.DungeonEscape
         void LoadGame(GameSave saveGame);
         void ResumeGame();
         void ShowMainMenu();
-        void SetMap(int? mapId = null, int? spawnId = null, Vector2? point = null);
+        void SetMap(string mapId = null, string spawnId = null, Vector2? point = null);
         void ShowLoadQuest();
 
         void ShowNewQuest();

@@ -4,8 +4,8 @@
   <property name="biome" value="Tower"/>
   <property name="song" value="like-totally-rad"/>
  </properties>
- <tileset firstgid="1" source="tower.tsx"/>
- <tileset firstgid="481" source="tiles_small.tsx"/>
+ <tileset firstgid="1" source="../../tower.tsx"/>
+ <tileset firstgid="481" source="../../tiles_small.tsx"/>
  <layer id="1" name="floor" width="32" height="26">
   <data encoding="csv">
 253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,
@@ -161,16 +161,16 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="int" value="4"/>
-    <property name="WarpMap" type="int" value="40"/>
+    <property name="SpawnId" type="string" value="spawn4"/>
+    <property name="WarpMap" type="string" value="maps/forest_tower/floor2"/>
    </properties>
   </object>
   <object id="2" name="Stairs down to 40" class="Warp" gid="619" x="736" y="256" width="32" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="int" value="5"/>
-    <property name="WarpMap" type="int" value="40"/>
+    <property name="SpawnId" type="string" value="spawn5"/>
+    <property name="WarpMap" type="string" value="maps/forest_tower/floor2"/>
    </properties>
   </object>
   <object id="3" name="Key Chest" class="Chest" gid="592" x="480" y="128" width="32" height="32">
@@ -214,16 +214,16 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="int" value="1"/>
-    <property name="WarpMap" type="int" value="42"/>
+    <property name="SpawnId" type="string" value="spawn1"/>
+    <property name="WarpMap" type="string" value="maps/forest_tower/floor4"/>
    </properties>
   </object>
   <object id="10" name="Stairs down to 40" class="Warp" gid="619" x="448" y="576" width="32" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="int" value="6"/>
-    <property name="WarpMap" type="int" value="40"/>
+    <property name="SpawnId" type="string" value="spawn6"/>
+    <property name="WarpMap" type="string" value="maps/forest_tower/floor2"/>
    </properties>
   </object>
   <object id="11" name="Chest" class="Chest" gid="592" x="512" y="576" width="32" height="32">

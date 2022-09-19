@@ -7,7 +7,7 @@ namespace Redpoint.DungeonEscape.State
 
     public class MapState
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public List<ObjectState> Objects { get; set; } = new();
         
         public List<SpriteState> Sprites { get; set; } = new();

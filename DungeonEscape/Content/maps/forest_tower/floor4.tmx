@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="32" height="25" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="2">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="32" height="25" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="3">
  <properties>
   <property name="biome" value="Tower"/>
   <property name="song" value="like-totally-rad"/>
  </properties>
- <tileset firstgid="1" source="tower.tsx"/>
- <tileset firstgid="481" source="tiles_small.tsx"/>
+ <tileset firstgid="1" source="../../tower.tsx"/>
+ <tileset firstgid="481" source="../../tiles_small.tsx"/>
  <layer id="1" name="floor" width="32" height="25">
   <data encoding="csv">
 253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,
@@ -200,15 +200,17 @@
     <property name="Collideable" type="bool" value="false"/>
    </properties>
   </object>
-  <object id="9" name="Stairs down to 41" class="Warp" gid="619" x="320" y="320" width="32" height="32">
+  <object id="9" name="Stairs down to floor3" class="Warp" gid="619" x="320" y="320" width="32" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="int" value="1"/>
-    <property name="WarpMap" type="int" value="41"/>
+    <property name="SpawnId" type="string" value="spawn4"/>
+    <property name="WarpMap" value="maps/forest_tower/floor3"/>
    </properties>
   </object>
  </objectgroup>
  <objectgroup id="5" name="sprites"/>
- <objectgroup id="6" name="objects"/>
+ <objectgroup id="6" name="objects">
+  <object id="2" name="spawn1" class="Spawn" x="352" y="288" width="32" height="32"/>
+ </objectgroup>
 </map>

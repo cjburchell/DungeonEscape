@@ -4,13 +4,13 @@
   <property name="biome" value="Town"/>
   <property name="song" value="in-the-city"/>
  </properties>
- <tileset firstgid="1" source="npc.tsx"/>
- <tileset firstgid="222" source="outdoors.tsx"/>
- <tileset firstgid="702" source="castle.tsx"/>
- <tileset firstgid="1182" source="indoor.tsx"/>
- <tileset firstgid="1662" source="town.tsx"/>
- <tileset firstgid="2142" source="overworld.tsx"/>
- <tileset firstgid="2622" source="castle2.tsx"/>
+ <tileset firstgid="1" source="../../npc.tsx"/>
+ <tileset firstgid="222" source="../../outdoors.tsx"/>
+ <tileset firstgid="702" source="../../castle.tsx"/>
+ <tileset firstgid="1182" source="../../indoor.tsx"/>
+ <tileset firstgid="1662" source="../../town.tsx"/>
+ <tileset firstgid="2142" source="../../overworld.tsx"/>
+ <tileset firstgid="2622" source="../../castle2.tsx"/>
  <layer id="2" name="water" width="50" height="50">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1662,822,822,822,822,822,822,822,822,822,822,822,822,822,1782,
@@ -286,28 +286,28 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" type="string" value="overworld"/>
    </properties>
   </object>
   <object id="8" name="Exit 0" class="Warp" x="256" y="480" width="32" height="1024">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" type="string" value="overworld"/>
    </properties>
   </object>
   <object id="39" name="Exit 0" class="Warp" x="1344" y="800" width="32" height="704">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" type="string" value="overworld"/>
    </properties>
   </object>
   <object id="60" name="Exit 0" class="Warp" x="288" y="1472" width="1056" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" type="string" value="overworld"/>
    </properties>
   </object>
  </objectgroup>

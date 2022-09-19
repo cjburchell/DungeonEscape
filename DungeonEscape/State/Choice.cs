@@ -17,14 +17,15 @@ namespace Redpoint.DungeonEscape.State
         [JsonProperty("Actions", ItemConverterType = typeof(StringEnumConverter))]
         public List<QuestAction> Actions { get; set; } = new();
 
+        // ReSharper disable once CollectionNeverUpdated.Global
         public List<string> Items { get; set; }
         
         public string ItemId { get; set; }
         
         public int? MonsterId { get; set; }
         public int? NextQuestStage { get; set; }
-        public int? MapId { get; set; }
-        public int? SpawnId { get; set; }
+        public string MapId { get; set; }
+        public string SpawnId { get; set; }
         public int? ObjectId { get; set; }
     }
 }

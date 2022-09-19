@@ -403,7 +403,7 @@ namespace Redpoint.DungeonEscape.State
                 return ("but you are not outside\n", false);
             }
 
-            if (!gameState.Party.SavedMapId.HasValue)
+            if (string.IsNullOrEmpty(gameState.Party.SavedMapId))
             {
                 return ("but you have never saved your game\n", false);
             }

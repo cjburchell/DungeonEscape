@@ -5,19 +5,19 @@
 
     public class Warp : MapObject
     {
-        private readonly int _mapId;
-        private readonly int? _spawnId;
+        private readonly string _mapId;
+        private readonly string _spawnId;
 
         public Warp(TmxObject tmxObject, ObjectState state, TmxMap map, IGame gameState) : base(tmxObject, state,  map, gameState)
         {
             if (tmxObject.Properties.ContainsKey("WarpMap"))
             {
-                this._mapId = int.Parse(tmxObject.Properties["WarpMap"]);
+                this._mapId = tmxObject.Properties["WarpMap"];
             }
             
             if (tmxObject.Properties.ContainsKey("SpawnId"))
             {
-                this._spawnId = int.Parse(tmxObject.Properties["SpawnId"]);
+                this._spawnId = tmxObject.Properties["SpawnId"];
             }
         }
 

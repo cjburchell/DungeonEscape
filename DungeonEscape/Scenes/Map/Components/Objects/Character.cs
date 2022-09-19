@@ -206,7 +206,7 @@
 
                             return false;
                         case QuestAction.Warp:
-                            if (!choice.MapId.HasValue)
+                            if (string.IsNullOrEmpty(choice.MapId))
                             {
                                 break;
                             }

@@ -4,8 +4,8 @@
   <property name="biome" value="Tower"/>
   <property name="song" value="like-totally-rad"/>
  </properties>
- <tileset firstgid="1" source="tower.tsx"/>
- <tileset firstgid="481" source="tiles_small.tsx"/>
+ <tileset firstgid="1" source="../../tower.tsx"/>
+ <tileset firstgid="481" source="../../tiles_small.tsx"/>
  <layer id="1" name="floor" width="35" height="35">
   <data encoding="csv">
 253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,
@@ -206,8 +206,8 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="int" value="1"/>
-    <property name="WarpMap" type="int" value="45"/>
+    <property name="SpawnId" type="string" value="spawn1"/>
+    <property name="WarpMap" type="string" value="maps/island_tower/floor4"/>
    </properties>
   </object>
   <object id="6" name="Chest" class="Chest" gid="592" x="384" y="320" width="32" height="32">

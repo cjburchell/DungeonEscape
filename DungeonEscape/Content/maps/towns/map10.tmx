@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="3">
+<map version="1.9" tiledversion="1.9.2" class="Town" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="3">
  <properties>
   <property name="biome" value="Town"/>
   <property name="song" value="in-the-city"/>
  </properties>
- <tileset firstgid="1" source="npc.tsx"/>
- <tileset firstgid="222" source="castle.tsx"/>
- <tileset firstgid="702" source="indoor.tsx"/>
- <tileset firstgid="1182" source="outdoors.tsx"/>
- <tileset firstgid="1662" source="tiles_small.tsx"/>
- <tileset firstgid="1854" source="tiles.tsx"/>
+ <tileset firstgid="1" source="../../npc.tsx"/>
+ <tileset firstgid="222" source="../../castle.tsx"/>
+ <tileset firstgid="702" source="../../indoor.tsx"/>
+ <tileset firstgid="1182" source="../../outdoors.tsx"/>
+ <tileset firstgid="1662" source="../../tiles_small.tsx"/>
+ <tileset firstgid="1854" source="../../tiles.tsx"/>
  <layer id="2" name="water" width="40" height="40">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -235,7 +235,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" value="overworld"/>
    </properties>
   </object>
   <object id="2" name="Key Chest" class="Chest" gid="1773" x="288" y="352" width="32" height="32">
@@ -248,7 +248,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" value="overworld"/>
    </properties>
   </object>
   <object id="4" name="Key Chest" class="Chest" gid="1773" x="352" y="352" width="32" height="32">
@@ -276,14 +276,14 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" value="overworld"/>
    </properties>
   </object>
-  <object id="8" name="Exit 0" class="Warp" x="1152" y="608" width="32" height="96">
+  <object id="8" name="Exit 0" class="Warp" x="1216" y="576" width="32" height="96">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" value="overworld"/>
    </properties>
   </object>
   <object id="9" name="Door" class="Door" gid="1880" x="320" y="768" width="32" height="64">
@@ -296,7 +296,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" value="overworld"/>
    </properties>
   </object>
  </objectgroup>
@@ -325,7 +325,7 @@
     <property name="Collideable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="14" name="Mayor" class="NpcSave" gid="1" x="896" y="352" width="32" height="48">
+  <object id="14" name="Mayor" class="NpcSave" gid="1" x="896" y="416" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>

@@ -4,9 +4,9 @@
   <property name="biome" value="Cave"/>
   <property name="song" value="underground-town"/>
  </properties>
- <tileset firstgid="1" source="dungeon.tsx"/>
- <tileset firstgid="481" source="outdoors.tsx"/>
- <tileset firstgid="961" source="tiles_small.tsx"/>
+ <tileset firstgid="1" source="../../dungeon.tsx"/>
+ <tileset firstgid="481" source="../../outdoors.tsx"/>
+ <tileset firstgid="961" source="../../tiles_small.tsx"/>
  <layer id="1" name="floor" width="40" height="40">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -144,16 +144,16 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="int" value="2"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="SpawnId" type="string" value="spawn2"/>
+    <property name="WarpMap" type="string" value="overworld"/>
    </properties>
   </object>
   <object id="2" name="Stairs up to 17" class="Warp" gid="2147484723" x="1120" y="256" width="32" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="int" value="1"/>
-    <property name="WarpMap" type="int" value="17"/>
+    <property name="SpawnId" type="string" value="spawn1"/>
+    <property name="WarpMap" type="string" value="maps/tunnel/area1"/>
    </properties>
   </object>
   <object id="3" name="Chest" class="Chest" gid="1072" x="768" y="928" width="32" height="32">

@@ -4,12 +4,12 @@
   <property name="biome" value="Town"/>
   <property name="song" value="in-the-city"/>
  </properties>
- <tileset firstgid="1" source="npc.tsx"/>
- <tileset firstgid="222" source="ship.tsx"/>
- <tileset firstgid="230" source="town.tsx"/>
- <tileset firstgid="710" source="outdoors.tsx"/>
- <tileset firstgid="1190" source="castle.tsx"/>
- <tileset firstgid="1670" source="tiles_small.tsx"/>
+ <tileset firstgid="1" source="../../npc.tsx"/>
+ <tileset firstgid="222" source="../../ship.tsx"/>
+ <tileset firstgid="230" source="../../town.tsx"/>
+ <tileset firstgid="710" source="../../outdoors.tsx"/>
+ <tileset firstgid="1190" source="../../castle.tsx"/>
+ <tileset firstgid="1670" source="../../tiles_small.tsx"/>
  <layer id="2" name="water" width="32" height="30">
   <data encoding="csv">
 382,382,350,0,261,382,382,382,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -185,7 +185,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" type="string" value="overworld"/>
    </properties>
   </object>
   <object id="7" name="Chest" class="Chest" gid="1781" x="608.667" y="158.667" width="32" height="32">
@@ -228,14 +228,14 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" type="string" value="overworld"/>
    </properties>
   </object>
   <object id="31" name="Exit 0" class="Warp" x="256" y="928" width="768" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" type="string" value="overworld"/>
    </properties>
   </object>
   <object id="41" name="Chest" class="Chest" gid="1781" x="32" y="768" width="32" height="32">

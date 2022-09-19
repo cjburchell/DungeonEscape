@@ -197,7 +197,7 @@
         public bool IsOverWater()
         {
             var (x, y) = MapScene.ToMapGrid(this.Entity.Position, this._map);
-            var tile = this._map.GetLayer<TmxLayer>("water").GetTile(x, y);
+            var tile = this._map.GetLayer<TmxLayer>("water")?.GetTile(x, y);
             return tile != null && tile.Gid != 0;
         }
 

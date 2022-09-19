@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="32" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="11">
+<map version="1.9" tiledversion="1.9.2" class="Shrine" orientation="orthogonal" renderorder="right-down" width="32" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="11">
  <properties>
   <property name="biome" value="Town"/>
   <property name="song" value="in-the-city"/>
  </properties>
- <tileset firstgid="1" source="npc.tsx"/>
- <tileset firstgid="222" source="outdoors.tsx"/>
- <tileset firstgid="702" source="indoor.tsx"/>
- <tileset firstgid="1182" source="town.tsx"/>
- <tileset firstgid="1662" source="tiles_small.tsx"/>
+ <tileset firstgid="1" source="../../npc.tsx"/>
+ <tileset firstgid="222" source="../../outdoors.tsx"/>
+ <tileset firstgid="702" source="../../indoor.tsx"/>
+ <tileset firstgid="1182" source="../../town.tsx"/>
+ <tileset firstgid="1662" source="../../tiles_small.tsx"/>
  <layer id="2" name="water" width="32" height="20">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -134,14 +134,14 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" type="string" value="overworld"/>
    </properties>
   </object>
   <object id="5" name="Exit 0" class="Warp" x="0" y="32" width="32" height="576">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" type="string" value="overworld"/>
    </properties>
   </object>
   <object id="29" name="Chest" class="Chest" gid="1773" x="288" y="416" width="32" height="32">
@@ -202,14 +202,14 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" type="string" value="overworld"/>
    </properties>
   </object>
   <object id="7" name="Exit 0" class="Warp" x="0" y="0" width="1024" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" type="string" value="overworld"/>
    </properties>
   </object>
   <object id="8" name="Hidden sea shell" class="HiddenItem" gid="1533" x="736" y="416" width="32" height="32">

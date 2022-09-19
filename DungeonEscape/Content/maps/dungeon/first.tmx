@@ -4,11 +4,11 @@
   <property name="biome" value="Cave"/>
   <property name="song" value="underground-town"/>
  </properties>
- <tileset firstgid="1" source="npc.tsx"/>
- <tileset firstgid="222" source="dungeon.tsx"/>
- <tileset firstgid="702" source="tower.tsx"/>
- <tileset firstgid="1182" source="hero.tsx"/>
- <tileset firstgid="1342" source="tiles_small.tsx"/>
+ <tileset firstgid="1" source="../../npc.tsx"/>
+ <tileset firstgid="222" source="../../dungeon.tsx"/>
+ <tileset firstgid="702" source="../../tower.tsx"/>
+ <tileset firstgid="1182" source="../../hero.tsx"/>
+ <tileset firstgid="1342" source="../../tiles_small.tsx"/>
  <layer id="2" name="water" width="35" height="35">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -407,7 +407,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" type="string" value="overworld"/>
    </properties>
   </object>
   <object id="22" name="Chest" class="Chest" gid="1453" x="608" y="1024" width="32" height="32">

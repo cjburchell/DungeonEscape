@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="5">
+<map version="1.9" tiledversion="1.9.2" class="Shrine" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="5">
  <properties>
   <property name="biome" value="Town"/>
   <property name="song" value="in-the-city"/>
  </properties>
- <tileset firstgid="1" source="npc.tsx"/>
- <tileset firstgid="222" source="indoor.tsx"/>
- <tileset firstgid="702" source="outdoors.tsx"/>
- <tileset firstgid="1182" source="edge.tsx"/>
- <tileset firstgid="1245" source="overworld.tsx"/>
- <tileset firstgid="1725" source="hero.tsx"/>
- <tileset firstgid="1885" source="castle2.tsx"/>
- <tileset firstgid="2365" source="castle.tsx"/>
- <tileset firstgid="2845" source="tiles_small.tsx"/>
+ <tileset firstgid="1" source="../../npc.tsx"/>
+ <tileset firstgid="222" source="../../indoor.tsx"/>
+ <tileset firstgid="702" source="../../outdoors.tsx"/>
+ <tileset firstgid="1182" source="../../edge.tsx"/>
+ <tileset firstgid="1245" source="../../overworld.tsx"/>
+ <tileset firstgid="1725" source="../../hero.tsx"/>
+ <tileset firstgid="1885" source="../../castle2.tsx"/>
+ <tileset firstgid="2365" source="../../castle.tsx"/>
+ <tileset firstgid="2845" source="../../tiles_small.tsx"/>
  <layer id="2" name="water" width="50" height="50">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -288,15 +288,15 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="int" value="1"/>
-    <property name="WarpMap" type="int" value="6"/>
+    <property name="SpawnId" type="string" value="spawn1"/>
+    <property name="WarpMap" type="string" value="maps/towns/isis"/>
    </properties>
   </object>
   <object id="21" name="Exit 0" class="Warp" x="480" y="960" width="172.667" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" type="string" value="maps/overworld"/>
    </properties>
   </object>
  </objectgroup>

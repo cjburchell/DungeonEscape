@@ -30,7 +30,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
         public const int ScreenHeight = ScreenTileHeight * DefaultTileSize;
         public const SceneResolutionPolicy SceneResolution = SceneResolutionPolicy.ShowAll;
         
-        private readonly int _mapId;
+        private readonly string _mapId;
         private readonly Vector2? _start;
         private readonly IGame _gameState;
         private Label _debugText;
@@ -40,9 +40,9 @@ namespace Redpoint.DungeonEscape.Scenes.Map
         private VirtualButton _showSpellWindowInput;
         private VirtualButton _showExitWindowInput;
         private UiSystem _ui;
-        private readonly int? _spawnId;
+        private readonly string _spawnId;
 
-        public MapScene(IGame game, int mapId, int? spawnId, Vector2? start = null)
+        public MapScene(IGame game, string mapId, string spawnId, Vector2? start = null)
         {
             this._mapId = mapId;
             this._start = start;
@@ -199,11 +199,10 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             var spawn = new Vector2();
             if (this._start == null)
             {
-                if (this._spawnId.HasValue)
+                if (!string.IsNullOrEmpty(this._spawnId))
                 {
-                    var key = $"spawn{this._spawnId.Value}";
                     if (map.GetObjectGroup("objects") != null &&
-                        map.GetObjectGroup("objects").Objects.TryGetValue(key, out var spawnObject))
+                        map.GetObjectGroup("objects").Objects.TryGetValue(this._spawnId, out var spawnObject))
                     {
                         spawn.X = spawnObject.X + spawnObject.Width / 2.0f;
                         spawn.Y = spawnObject.Y + spawnObject.Height / 2.0f;
@@ -288,7 +287,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
 
         private List<RandomMonster> LoadRandomMonsters()
         {
-            var fileName = $"Content/data/monsters{this._mapId}.json";
+            var fileName = $"Content/data/{this._mapId}_monsters.json";
             if (!File.Exists(fileName))
             {
                 return new List<RandomMonster>();
@@ -316,7 +315,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
 
         [Command("map", "switches to map")]
         // ReSharper disable once UnusedMember.Global
-        public static void SetMap(int mapId = 0)
+        public static void SetMap(string mapId = null)
         {
             var game = Core.Instance as IGame;
             game?.SetMap(mapId);

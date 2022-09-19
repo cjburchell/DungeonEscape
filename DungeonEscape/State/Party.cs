@@ -12,7 +12,7 @@ namespace Redpoint.DungeonEscape.State
         public Vector2 OverWorldPosition { get; set; } = Vector2.Zero;
 
         public Vector2? SavedPoint { get; set; }
-        public int? SavedMapId { get; set; }
+        public string SavedMapId { get; set; }
 
 
         [JsonIgnore] public bool HasShip
@@ -35,7 +35,7 @@ namespace Redpoint.DungeonEscape.State
         public int Gold { get; set; }
 
         public Vector2? CurrentPosition { get; set; }
-        public int CurrentMapId { get; set; }
+        public string CurrentMapId { get; set; }
         public bool CurrentMapIsOverWorld { get; set; }
 
         public int StepCount { get; set; }

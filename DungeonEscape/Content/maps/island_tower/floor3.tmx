@@ -4,9 +4,9 @@
   <property name="biome" value="Tower"/>
   <property name="song" value="like-totally-rad"/>
  </properties>
- <tileset firstgid="1" source="tower.tsx"/>
- <tileset firstgid="481" source="tiles_small.tsx"/>
- <layer id="7" name="water" width="35" height="35">
+ <tileset firstgid="1" source="../../tower.tsx"/>
+ <tileset firstgid="481" source="../../tiles_small.tsx"/>
+ <layer id="7" name="water" width="35" height="35" visible="0">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -245,16 +245,16 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="int" value="2"/>
-    <property name="WarpMap" type="int" value="43"/>
+    <property name="SpawnId" type="string" value="spawn2"/>
+    <property name="WarpMap" value="maps/island_tower/floor2"/>
    </properties>
   </object>
   <object id="8" name="Stairs up to 45" class="Warp" gid="595" x="576" y="736" width="32" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="int" value="1"/>
-    <property name="WarpMap" type="int" value="45"/>
+    <property name="SpawnId" type="string" value="spawn1"/>
+    <property name="WarpMap" value="maps/island_tower/floor4"/>
    </properties>
   </object>
  </objectgroup>

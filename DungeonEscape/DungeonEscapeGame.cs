@@ -135,9 +135,9 @@
             }));
         }
 
-        public void SetMap(int? mapId, int? spawnId , Vector2? point)
+        public void SetMap(string mapId, string spawnId , Vector2? point)
         {
-            mapId ??= 0;
+            mapId ??= "maps/overworld";
             this.IsPaused = true;
             if (this.Party.CurrentMapId != mapId)
             {
@@ -147,7 +147,7 @@
                 }
                 else
                 {
-                    var mapFile = this.GetMap(mapId.Value);
+                    var mapFile = this.GetMap(mapId);
                     var isNewMapOverworld = mapFile.Properties != null && mapFile.Properties.ContainsKey("overworld") &&
                                             bool.Parse(mapFile.Properties["overworld"]);
                     if (isNewMapOverworld)
@@ -158,7 +158,7 @@
                 }
             }
             
-            var map = new MapScene(this, mapId.Value, spawnId, point);
+            var map = new MapScene(this, mapId, spawnId, point);
             var transition = new FadeTransition(() =>
             {
                 map.Initialize();
@@ -361,9 +361,14 @@
             return tileSet;
         }
 
-        public TmxMap GetMap(int mapId)
+        public TmxMap GetMap(string mapId)
         {
-            return Content.LoadTiledMap($"Content/map{mapId}.tmx");
+            if (!File.Exists($"Content/{mapId}.tmx"))
+            {
+                mapId = "maps/overworld";
+            }
+            
+            return Content.LoadTiledMap($"Content/{mapId}.tmx");
         }
         
         public string AdvanceQuest(string questId,  int? nextStage, bool checkLevelUp = true)

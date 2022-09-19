@@ -1,6 +1,7 @@
 ﻿using Nez.Tiled;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Linq;
 
 
 namespace Nez
@@ -35,7 +36,10 @@ namespace Nez
 				CollisionLayers = new List<TmxLayer>();
 				foreach (var layerName in collisionLayerNames)
 				{
-					CollisionLayers.Add(tiledMap.TileLayers[layerName]);
+					if (tiledMap.TileLayers.Any(i => i.Name == layerName))
+					{
+						CollisionLayers.Add(tiledMap.TileLayers[layerName]);
+					}
 				}
 			}
 				

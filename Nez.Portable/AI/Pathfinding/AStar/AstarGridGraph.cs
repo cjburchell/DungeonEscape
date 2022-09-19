@@ -49,7 +49,7 @@ namespace Nez.AI.Pathfinding
 			{
 				for (var x = 0; x < tiledLayers[0].Map.Width; x++)
 				{
-					if (tiledLayers.Any(layer => layer.GetTile(x, y) != null))
+					if (tiledLayers.Any(layer => layer?.GetTile(x, y) != null))
 					{
 						this.Walls.Add(new Point(x, y));
 					}

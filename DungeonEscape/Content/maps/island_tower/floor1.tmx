@@ -4,16 +4,16 @@
   <property name="biome" value="Tower"/>
   <property name="song" value="like-totally-rad"/>
  </properties>
- <tileset firstgid="1" source="npc.tsx"/>
- <tileset firstgid="222" source="ship.tsx"/>
- <tileset firstgid="230" source="tower.tsx"/>
- <tileset firstgid="710" source="outdoors.tsx"/>
- <tileset firstgid="1190" source="indoor.tsx"/>
- <tileset firstgid="1670" source="castle.tsx"/>
- <tileset firstgid="2150" source="town.tsx"/>
- <tileset firstgid="2630" source="dungeon.tsx"/>
- <tileset firstgid="3110" source="tiles_small.tsx"/>
- <tileset firstgid="3302" source="tiles.tsx"/>
+ <tileset firstgid="1" source="../../npc.tsx"/>
+ <tileset firstgid="222" source="../../ship.tsx"/>
+ <tileset firstgid="230" source="../../tower.tsx"/>
+ <tileset firstgid="710" source="../../outdoors.tsx"/>
+ <tileset firstgid="1190" source="../../indoor.tsx"/>
+ <tileset firstgid="1670" source="../../castle.tsx"/>
+ <tileset firstgid="2150" source="../../town.tsx"/>
+ <tileset firstgid="2630" source="../../dungeon.tsx"/>
+ <tileset firstgid="3110" source="../../tiles_small.tsx"/>
+ <tileset firstgid="3302" source="../../tiles.tsx"/>
  <layer id="2" name="water" width="35" height="35">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1670,1670,1670,1670,1670,1670,1670,1670,1670,1670,
@@ -292,7 +292,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="int" value="0"/>
+    <property name="WarpMap" type="string" value="overworld"/>
    </properties>
   </object>
   <object id="24" name="Chest" class="Chest" gid="3221" x="352" y="704" width="32" height="32">
@@ -330,8 +330,8 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="int" value="1"/>
-    <property name="WarpMap" type="int" value="43"/>
+    <property name="SpawnId" type="string" value="spawn1"/>
+    <property name="WarpMap" type="string" value="maps/island_tower/floor2"/>
    </properties>
   </object>
  </objectgroup>

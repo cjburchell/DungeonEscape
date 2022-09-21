@@ -134,14 +134,14 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="overworld"/>
+    <property name="WarpMap" type="string" value="maps/overworld"/>
    </properties>
   </object>
   <object id="5" name="Exit 0" class="Warp" x="0" y="32" width="32" height="576">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="overworld"/>
+    <property name="WarpMap" type="string" value="maps/overworld"/>
    </properties>
   </object>
   <object id="29" name="Chest" class="Chest" gid="1773" x="288" y="416" width="32" height="32">
@@ -202,14 +202,14 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="overworld"/>
+    <property name="WarpMap" type="string" value="maps/overworld"/>
    </properties>
   </object>
   <object id="7" name="Exit 0" class="Warp" x="0" y="0" width="1024" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="overworld"/>
+    <property name="WarpMap" type="string" value="maps/overworld"/>
    </properties>
   </object>
   <object id="8" name="Hidden sea shell" class="HiddenItem" gid="1533" x="736" y="416" width="32" height="32">

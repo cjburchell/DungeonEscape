@@ -38,7 +38,7 @@
                 return;
             }
 
-            this.State.Item = GameState.CreateRandomItem( this._level == 0 ? this.GameState.Party.MaxLevel() : this._level);
+            this.State.Item = GameState.CreateChestItem( this._level == 0 ? this.GameState.Party.MaxLevel() : this._level);
         }
 
         public override bool OnAction(Party party)

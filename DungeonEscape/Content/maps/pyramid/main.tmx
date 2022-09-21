@@ -155,21 +155,21 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="overworld"/>
+    <property name="WarpMap" type="string" value="maps/overworld"/>
    </properties>
   </object>
   <object id="79" name="Exit 0" class="Warp" x="544" y="1248" width="256" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="overworld"/>
+    <property name="WarpMap" type="string" value="maps/overworld"/>
    </properties>
   </object>
   <object id="80" name="Exit 0" class="Warp" x="768" y="1120" width="32" height="128">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="overworld"/>
+    <property name="WarpMap" type="string" value="maps/overworld"/>
    </properties>
   </object>
  </objectgroup>

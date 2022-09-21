@@ -31,7 +31,7 @@
             public Spell Spell { get; init; }
             public ItemInstance Item { get; init; }
             public List<IFighter> Targets { get; set; }
-            public Skill Skill { get; set; }
+            public Skill Skill { get; init; }
         }
 
         private enum EncounterRoundState
@@ -314,14 +314,42 @@
 
             });
         }
-        
-        List<IFighter> GetTargets(Target targetType, int maxTargets, List<IFighter> availableTargets)
+
+
+        private static IFighter ChooseFighter(IReadOnlyCollection<IFighter> availableTargets)
+        {
+            if (!availableTargets.Any())
+            {
+                return null;
+            }
+            
+            if (availableTargets.Count == 1)
+            {
+                return availableTargets.First();
+            }
+            
+            var roll = Dice.RollD100();
+            var totalHealth = availableTargets.Sum(i => i.MaxHealth);
+            var maxRoll = 0.0f;
+            foreach (var target in availableTargets.OrderByDescending(i => i.MaxHealth))
+            {
+                maxRoll += (float)target.MaxHealth / totalHealth * 100.0f;
+                if (roll <= maxRoll)
+                {
+                    return target;
+                }
+            }
+            
+            return availableTargets.First(); 
+        }
+
+        private static List<IFighter> GetTargets(Target targetType, int maxTargets, IReadOnlyCollection<IFighter> availableTargets)
         {
             if (targetType != Target.Group)
             {
                 return new List<IFighter>
                 {
-                    availableTargets.ToArray()[Random.NextInt(availableTargets.Count)]
+                    ChooseFighter(availableTargets)
                 };
             }
 
@@ -333,7 +361,7 @@
             var targets = new List<IFighter>();
             for (var i = 0; i < maxTargets; i++)
             {
-                targets.Add(availableTargets.ToArray()[Random.NextInt(availableTargets.Count)]);
+                targets.Add(ChooseFighter(availableTargets));
             }
 
             return targets;
@@ -892,10 +920,10 @@
             }
 
             var result = "";
-            bool worked;
             switch (item.Type)
             {
                 case ItemType.OneUse:
+                    bool worked;
                     (result, worked) = item.Use(source, target, this._game, this._round);
                     if (!worked)
                     {
@@ -917,7 +945,7 @@
                 case ItemType.Unknown:
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(item));
             }
 
             return result;

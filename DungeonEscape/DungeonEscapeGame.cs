@@ -363,12 +363,7 @@
 
         public TmxMap GetMap(string mapId)
         {
-            if (!File.Exists($"Content/{mapId}.tmx"))
-            {
-                mapId = "maps/overworld";
-            }
-            
-            return Content.LoadTiledMap($"Content/{mapId}.tmx");
+            return !File.Exists($"Content/{mapId}.tmx") ? null : Content.LoadTiledMap($"Content/{mapId}.tmx");
         }
         
         public string AdvanceQuest(string questId,  int? nextStage, bool checkLevelUp = true)
@@ -481,10 +476,8 @@
             {
                 return CreateRandomItem(level);
             }
-            else
-            {
-                return CreateGold(Dice.Roll(5, level*3, 1));
-            }
+
+            return CreateGold(Dice.Roll(5, level*3, 1));
         }
         
         public Item CreateGold(int gold)

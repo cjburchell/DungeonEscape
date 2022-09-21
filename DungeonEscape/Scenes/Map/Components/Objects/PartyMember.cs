@@ -39,13 +39,13 @@
             var text = tmxObject.Properties.ContainsKey("Text") ? tmxObject.Properties["Text"] : null;
             if (!string.IsNullOrEmpty(text))
             {
-                this.Dialog = new()
+                this.Dialog = new Dialog
                 {
-                    Dialogs = new()
+                    Dialogs = new List<DialogHead>
                     {
-                        new()
+                        new DialogHead
                         {
-                            Text = $"{this.SpriteState.Name}: {text}",
+                            Text = text,
                             Choices = new List<Choice>
                             {
                                 new()

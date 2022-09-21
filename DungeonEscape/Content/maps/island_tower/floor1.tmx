@@ -292,7 +292,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="overworld"/>
+    <property name="WarpMap" type="string" value="maps/overworld"/>
    </properties>
   </object>
   <object id="24" name="Chest" class="Chest" gid="3221" x="352" y="704" width="32" height="32">

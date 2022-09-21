@@ -235,7 +235,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="overworld"/>
+    <property name="WarpMap" type="string" value="maps/overworld"/>
    </properties>
   </object>
   <object id="2" name="Key Chest" class="Chest" gid="1773" x="288" y="352" width="32" height="32">
@@ -248,7 +248,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="overworld"/>
+    <property name="WarpMap" type="string" value="maps/overworld"/>
    </properties>
   </object>
   <object id="4" name="Key Chest" class="Chest" gid="1773" x="352" y="352" width="32" height="32">
@@ -276,14 +276,14 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="overworld"/>
+    <property name="WarpMap" type="string" value="maps/overworld"/>
    </properties>
   </object>
   <object id="8" name="Exit 0" class="Warp" x="1152" y="608" width="32" height="96">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="overworld"/>
+    <property name="WarpMap" type="string" value="maps/overworld"/>
    </properties>
   </object>
   <object id="9" name="Door" class="Door" gid="1880" x="320" y="768" width="32" height="64">
@@ -296,7 +296,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="overworld"/>
+    <property name="WarpMap" type="string" value="maps/overworld"/>
    </properties>
   </object>
  </objectgroup>

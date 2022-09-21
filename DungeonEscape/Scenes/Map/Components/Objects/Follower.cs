@@ -12,16 +12,18 @@
         private readonly Entity _toFollow;
         private readonly PlayerComponent _player;
         private readonly IGame _gameState;
+        private readonly int _renderOffset;
         private SpriteAnimator _animation;
         private Mover _mover;
         private const float MoveSpeed = 150;
 
-        public Follower(Hero hero, Entity toFollow, PlayerComponent player, IGame gameState)
+        public Follower(Hero hero, Entity toFollow, PlayerComponent player, IGame gameState, int renderOffset)
         {
             this._hero = hero;
             this._toFollow = toFollow;
             this._player = player;
             this._gameState = gameState;
+            _renderOffset = renderOffset;
         }
 
         public override void OnAddedToEntity()
@@ -36,9 +38,8 @@
                 
             var animationBaseIndex = (int) this._hero.Class * 16 + (int) this._hero.Gender * 8;
             const int deadAnimationIndex = 144;
-            var animator = this.Entity.AddComponent(new SpriteAnimator(sprites[(this._hero.IsDead?deadAnimationIndex:animationBaseIndex) + 4]));
+            var animator = this.Entity.AddComponent(new SpriteAnimator(sprites[(this._hero.IsDead ? deadAnimationIndex : animationBaseIndex) + 4]));
             animator.Speed = 0.5f;
-            animator.RenderLayer = 10;
 
             animator.AddAnimation("WalkDown", new[]
             {
@@ -94,6 +95,7 @@
             var overWater = this._player.IsOverWater();
             this._animation.SetEnabled(!overWater);
             this._mover = this.Entity.AddComponent(new Mover());
+            _animation.RenderLayer = (int)(_renderOffset - this.Entity.Position.Y + 12);
         }
 
         public void Update()
@@ -166,6 +168,12 @@
             }
 
             this._mover.ApplyMovement(movement);
+
+            if (_animation != null)
+            {
+                _animation.RenderLayer = (int)(_renderOffset - this.Entity.Position.Y + 12);
+            }
+            
         }
     }
 }

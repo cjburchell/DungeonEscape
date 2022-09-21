@@ -19,13 +19,14 @@
         private readonly Label _debugText;
         private readonly List<RandomMonster> _randomMonsters;
         private readonly UiSystem _ui;
+        private readonly int _renderOffset;
         private const float MoveSpeed = 150;
         private SpriteAnimator _playerAnimation;
         private SpriteAnimator _shipAnimator;
         private VirtualIntegerAxis _xAxisInput;
         private VirtualIntegerAxis _yAxisInput;
         private readonly IGame _gameState;
-        private readonly List<ICollidable> _currentlyOverObjects = new List<ICollidable>();
+        private readonly List<ICollidable> _currentlyOverObjects = new();
         private PartyStatusWindow _statusWindow;
         private GoldWindow _goldWindow;
         private Mover _mover;
@@ -33,12 +34,13 @@
         private float _distance;
         private readonly Hero _hero;
 
-        public PlayerComponent(Hero hero, IGame gameState, TmxMap map, Label debugText, List<RandomMonster> randomMonsters, UiSystem ui)
+        public PlayerComponent(Hero hero, IGame gameState, TmxMap map, Label debugText, List<RandomMonster> randomMonsters, UiSystem ui, int renderOffset)
         {
             this._map = map;
             this._debugText = debugText;
             this._randomMonsters = randomMonsters;
             this._ui = ui;
+            _renderOffset = renderOffset;
             this._gameState = gameState;
             this._hero = hero;
         }
@@ -55,7 +57,6 @@
                 var animationBaseIndex = (int) this._hero.Class * 16 + (int) this._hero.Gender * 8;
                 var animator = this.Entity.AddComponent(new SpriteAnimator(sprites[animationBaseIndex + 4]));
                 animator.Speed = 0.5f;
-                animator.RenderLayer = 10;
 
                 animator.AddAnimation("WalkDown", new[]
                 {
@@ -116,7 +117,6 @@
                 var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, 56);
                 this._shipAnimator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
                 this._shipAnimator.Speed = 0.5f;
-                this._shipAnimator.RenderLayer = 10;
                 this._shipAnimator.AddAnimation("WalkDown", new[]
                 {
                     sprites[0],
@@ -183,6 +183,8 @@
             var overWater = this.IsOverWater();
             this._shipAnimator.SetEnabled(overWater);
             this._playerAnimation.SetEnabled(!overWater);
+            _shipAnimator.RenderLayer = (int)(_renderOffset - this.Entity.Position.Y + 12);
+            _playerAnimation.RenderLayer = (int)(_renderOffset - this.Entity.Position.Y + 12);
 
             //this.Entity.AddComponent(new SpriteTrail());
         }
@@ -310,6 +312,17 @@
 
             this._distance += movement.Length();
             this._mover.ApplyMovement(movement);
+            
+            if (_playerAnimation is { IsVisible: true })
+            {
+                _playerAnimation.RenderLayer = (int)(_renderOffset - this.Entity.Position.Y + 12);
+            }
+            
+            if (_shipAnimator is { IsVisible: true })
+            {
+                _shipAnimator.RenderLayer = (int)(_renderOffset - this.Entity.Position.Y + 12);
+            }
+            
             return true;
         }
 
@@ -546,8 +559,7 @@
             
             var currentBiome = MapScene.GetCurrentBiome(this._map, this.Entity.Position);
             var hasRandomMonsters = this._randomMonsters.Any(item => item.Biome == currentBiome || item.Biome == Biome.All);
-
-            //  Todo: use parties agility to calculate encounters
+            
             return  hasRandomMonsters && Random.Chance(0.1f);
         }
         
@@ -562,8 +574,11 @@
             {
                 return;
             }
-            
-            this._currentlyOverObjects.Add(objCollider.Object);
+
+            if (!this._currentlyOverObjects.Contains(objCollider.Object))
+            {
+                this._currentlyOverObjects.Add(objCollider.Object);
+            }
             
             objCollider.Object.OnHit(this._gameState.Party);
         }

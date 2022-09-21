@@ -60,6 +60,7 @@
         {
             this._game = game;
             this._biome = biome;
+            var monsterList = "";
             foreach (var monsterGroup in monsters.OrderBy(i => i.MinLevel).GroupBy(i => i.Id))
             {
                 var monsterId = 'A';
@@ -70,11 +71,15 @@
                     {
                         instance.Name = $"{instance.Name} {monsterId}";
                         monsterId++;
+                        
                     }
-                    
+
+                    monsterList += $"{instance.Name }";
                     this._monsters.Add(instance);
                 }
             }
+            
+            Debug.Info($"Fight Starting fight: {monsterList}");
         }
         
         // list of songs that can play during a battle

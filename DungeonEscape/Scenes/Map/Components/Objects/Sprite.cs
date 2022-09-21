@@ -32,6 +32,7 @@
         private readonly TmxTileset _tilSet;
         private readonly int _baseId;
         private readonly bool _collideable;
+        protected readonly int RenderOffset;
 
         public static Sprite Create(TmxObject tmxObject, SpriteState state, TmxMap map, UiSystem ui, IGame gameState, AstarGridGraph graph)
         {
@@ -54,6 +55,7 @@
         
         protected Sprite(TmxObject tmxObject, SpriteState state, TmxMap map, IGame gameState, AstarGridGraph graph)
         {
+            this.RenderOffset = (map.Height * map.TileHeight);
             this.SpriteState = state;
             this._graph = graph;
             this._tmxObject = tmxObject;
@@ -164,12 +166,10 @@
             var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this._tilSet.Image.Texture, this._tilSet.TileWidth, this._tilSet.TileHeight,  this._tilSet.Spacing);
             this._animator = this.Entity.AddComponent(new SpriteAnimator(sprites[this._baseId]));
             this._animator.Speed = 0.5f;
-            this._animator.RenderLayer = 10;
 
             this.SetupAnimation(sprites, this._tilSet.Name);
             
             this._mover = this.Entity.AddComponent(new Mover());
-            this._animator.RenderLayer = 15;
 
             var fullArea = new Rectangle
             {
@@ -198,6 +198,7 @@
             };
             
             this.Entity.AddComponent(new BoxCollider(box));
+            _animator.RenderLayer = (int)(RenderOffset - this.Entity.Position.Y + 12);
         }
 
         void IUpdatable.Update()
@@ -341,6 +342,11 @@
                     }
 
                     this._mover.ApplyMovement(movement);
+                    
+                    if (_animator != null)
+                    {
+                        _animator.RenderLayer = (int)(RenderOffset - this.Entity.Position.Y + 12);
+                    }
                     break;
                 }
                 default:
@@ -356,5 +362,7 @@
         {
             return false;
         }
+
+        public string Name => this.SpriteState.Name;
     }
 }

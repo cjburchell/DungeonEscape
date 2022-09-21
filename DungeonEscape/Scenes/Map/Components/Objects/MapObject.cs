@@ -17,8 +17,9 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
         private readonly TmxTilesetTile _mapTile;
         private SpriteAnimator _animator;
         protected readonly IGame GameState;
-        protected readonly TmxTileset _tileSet;
-        private string currentAnimanion;
+        protected readonly TmxTileset TileSet;
+        private string _currentAnimation;
+        protected readonly int RenderLevel;
 
         public static MapObject Create(TmxObject tmxObject, ObjectState state, TmxMap map, UiSystem ui, IGame gameState)
         {
@@ -39,6 +40,8 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 
         protected MapObject(TmxObject tmxObject, ObjectState state, TmxMap map, IGame gameState)
         {
+            this.RenderLevel = map.Height * map.TileHeight + 15;
+            this.Name = $"{tmxObject.Name} {state.Id}";
             this.GameState = gameState;
             this.TmxObject = tmxObject;
             this.State = state;
@@ -48,7 +51,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
             }
 
             this._mapTile = map.GetTilesetTile(tmxObject.Tile.Gid);
-            this._tileSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
+            this.TileSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
         }
 
         public override void Initialize()
@@ -63,32 +66,29 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
                     var sprites =
                         Nez.Textures.Sprite.SpritesFromAtlas(this._mapTile.Image.Texture, texture.Width, texture.Height);
                     this._animator = this.Entity.AddComponent(new SpriteAnimator(sprites[0]));
-                    this._animator.RenderLayer = 20;
                 }
                 else if(this._mapTile.AnimationFrames != null)
                 {
-                    var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this._tileSet.Image.Texture,
+                    var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this.TileSet.Image.Texture,
                         (int) this.TmxObject.Width, (int) this.TmxObject.Height);
                     this._animator =
                         this.Entity.AddComponent(
                             new SpriteAnimator(sprites[this._mapTile.AnimationFrames[0].Gid]));
 
                     var animation = this._mapTile.AnimationFrames.Select(i => sprites[i.Gid]).ToArray();
-                    currentAnimanion = "animate";
-                    this._animator.AddAnimation(currentAnimanion, animation);
+                    _currentAnimation = "animate";
+                    this._animator.AddAnimation(_currentAnimation, animation);
                     this._animator.Speed = this._mapTile.AnimationFrames[0].Duration*10f;
-                    this._animator.RenderLayer = 20;
                 }
                
             }
-            else if (this._tileSet != null)
+            else if (this.TileSet != null)
             {
-                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this._tileSet.Image.Texture,
+                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this.TileSet.Image.Texture,
                     (int) this.TmxObject.Width, (int) this.TmxObject.Height);
                 this._animator =
                     this.Entity.AddComponent(
-                        new SpriteAnimator(sprites[this.TmxObject.Tile.Gid - this._tileSet.FirstGid]));
-                this._animator.RenderLayer = 20;
+                        new SpriteAnimator(sprites[this.TmxObject.Tile.Gid - this.TileSet.FirstGid]));
             }
 
             Rectangle box;
@@ -111,6 +111,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
             }
             else
             {
+                this._animator.RenderLayer = this.RenderLevel;
                 pos = new Vector2
                 {
                     X = this.TmxObject.X + (int) (this.TmxObject.Width / 2.0),
@@ -145,6 +146,8 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
             return false;
         }
 
+        public string Name { get; init; }
+        
         public virtual void Update()
         {
             if (this.GameState.IsPaused)
@@ -152,14 +155,14 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
                 return;
             }
 
-            if (string.IsNullOrEmpty(currentAnimanion))
+            if (string.IsNullOrEmpty(_currentAnimation))
             {
                 return;
             }
             
-            if (!this._animator.IsAnimationActive(currentAnimanion))
+            if (!this._animator.IsAnimationActive(_currentAnimation))
             {
-                this._animator.Play(currentAnimanion);
+                this._animator.Play(_currentAnimation);
             }
             else
             {

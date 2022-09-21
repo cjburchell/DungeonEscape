@@ -83,7 +83,7 @@
             var lastEntity = this.Entity.Scene.FindEntity(lastMember.Id);
             var player = this.Entity.Scene.FindEntity(this.GameState.Party.Members.First().Id).GetComponent<PlayerComponent>();
             var followerEntity = this.Entity.Scene.CreateEntity(hero.Id, this.Entity.Position);
-            followerEntity.AddComponent(new Follower( hero, lastEntity, player, this.GameState));
+            followerEntity.AddComponent(new Follower( hero, lastEntity, player, this.GameState, this.RenderOffset));
         }
     }
 }

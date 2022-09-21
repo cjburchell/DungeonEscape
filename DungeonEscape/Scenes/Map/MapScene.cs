@@ -95,7 +95,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
         public override void Initialize()
         {
             base.Initialize();
-            
+            Debug.Log($"loading map {this._mapId}");
             var map = this._gameState.GetMap(this._mapId);
             this.SetDesignResolution(ScreenTileWidth * map.TileWidth, ScreenTileHeight * map.TileHeight,
                 SceneResolution);
@@ -123,7 +123,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                 var tiledEntity = this.CreateEntity("map");
                 var tiledMapRenderer = tiledEntity.AddComponent(new TiledMapRenderer(map,
                     this._gameState.Party.HasShip && this._gameState.Party.CurrentMapIsOverWorld ? new[] {"wall"} : new[] {"wall", "water"}));
-                tiledMapRenderer.RenderLayer = 50;
+                tiledMapRenderer.RenderLayer = map.Height*map.TileHeight + 20;
                 tiledMapRenderer.SetLayersToRender("wall", "wall2", "water", "floor", "floor2", "floor3");
                 
                 var topLeft = new Vector2(0, 0);
@@ -226,16 +226,17 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             {
                 spawn = this._start.Value;
             }
-
+            
             var first = true;
             Entity lastEntity = null;
             PlayerComponent player = null;
+            var renderOffset = (map.Height * map.TileHeight);
             foreach (var hero in this._gameState.Party.Members.OrderBy(i => i.IsDead))
             {
                 if (first)
                 {
                     var playerEntity = this.CreateEntity(hero.Id, spawn);
-                    player = playerEntity.AddComponent(new PlayerComponent( hero, this._gameState, map, this._debugText, this._randomMonsters, this._ui)).GetComponent<PlayerComponent>();
+                    player = playerEntity.AddComponent(new PlayerComponent( hero, this._gameState, map, this._debugText, this._randomMonsters, this._ui, renderOffset)).GetComponent<PlayerComponent>();
                     this.Camera.Entity.AddComponent(new FollowCamera(playerEntity, FollowCamera.CameraStyle.CameraWindow));
                     first = false;
                     lastEntity = playerEntity;
@@ -243,7 +244,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                 else
                 {
                     var followerEntity = this.CreateEntity(hero.Id, spawn);
-                    followerEntity.AddComponent(new Follower( hero, lastEntity, player, this._gameState));
+                    followerEntity.AddComponent(new Follower( hero, lastEntity, player, this._gameState, renderOffset));
                     lastEntity = followerEntity;
                 }
             }
@@ -290,6 +291,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             var fileName = $"Content/data/{this._mapId}_monsters.json";
             if (!File.Exists(fileName))
             {
+                Debug.Warn($"{fileName} not found");
                 return new List<RandomMonster>();
             }
 

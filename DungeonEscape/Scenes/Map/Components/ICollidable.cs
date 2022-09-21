@@ -6,5 +6,7 @@
     {
         void OnHit(Party party);
         bool OnAction(Party party);
+
+        string Name { get; }
     }
 }

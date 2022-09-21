@@ -346,9 +346,14 @@
 
         public static TmxTileset LoadTileSet(string path)
         {
+            if (string.IsNullOrEmpty(path))
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+            
             if (!File.Exists(path))
             {
-                return null;
+                throw new FileNotFoundException(path);
             }
             
             using var stream = TitleContainer.OpenStream(path);
@@ -363,7 +368,17 @@
 
         public TmxMap GetMap(string mapId)
         {
-            return !File.Exists($"Content/{mapId}.tmx") ? null : Content.LoadTiledMap($"Content/{mapId}.tmx");
+            if (string.IsNullOrEmpty(mapId))
+            {
+                throw new ArgumentNullException(nameof(mapId));
+            }
+            
+            if (!File.Exists($"Content/{mapId}.tmx"))
+            {
+                throw new FileNotFoundException($"Content/{mapId}.tmx");
+            }
+            
+            return Content.LoadTiledMap($"Content/{mapId}.tmx");
         }
         
         public string AdvanceQuest(string questId,  int? nextStage, bool checkLevelUp = true)

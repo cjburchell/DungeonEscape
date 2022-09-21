@@ -53,13 +53,12 @@
         {
             base.Initialize();
             this.DisplayVisual(!this.IsOpen);
-            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this._tileSet.Image.Texture,
+            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(this.TileSet.Image.Texture,
                 (int) this.TmxObject.Width, (int) this.TmxObject.Height);
             this._openImage =
                 this.Entity.AddComponent(
                     new SpriteAnimator(sprites[this._openImageId]));
-            this._openImage.RenderLayer = 15;
-            this._openImage.LayerDepth = 15;
+            this._openImage.RenderLayer = this.RenderLevel;
             this._openImage.SetEnabled(this.IsOpen);
         }
 

@@ -708,7 +708,7 @@ namespace Nez.Console
 						                    " is marked as a command, but has an invalid parameter type. Allowed types are: string, int, float, and bool");
 
 					// no System.DBNull in PCL so we fake it
-					if (p.DefaultValue.GetType().FullName == "System.DBNull")
+					if (p.DefaultValue != null && p.DefaultValue.GetType().FullName == "System.DBNull")
 					{
 						defaults[i] = null;
 					}

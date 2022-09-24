@@ -9,7 +9,7 @@
             base.Show(text, _ => doneAction.Invoke(), new []{"OK"} );
         }
 
-        public FightTalkWindow(UiSystem ui, string title = "Talk") : base(ui, title)
+        public FightTalkWindow(UiSystem ui) : base(ui)
         {
         }
     }

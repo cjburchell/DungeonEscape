@@ -9,20 +9,20 @@
     public class InventoryWindow : SelectWindow<ItemInstance>
     {
         private readonly Hero _hero;
-
-        public InventoryWindow(UiSystem ui, Hero hero) : this(ui, new Point(20, 20))
+        
+        public InventoryWindow(UiSystem ui, Hero hero) : this(ui, hero, new Point(20, 20))
         {
-            _hero = hero;
         }
         
-        public InventoryWindow(UiSystem ui, Point position) : base(ui, "Inventory", position, 700, 48)
+        public InventoryWindow(UiSystem ui, Hero hero, Point point) : base(ui, $"{hero.Name}'s Inventory" ,point, 700, 48)
         {
+            _hero = hero;
         }
         
         protected override Button CreateButton(ItemInstance item)
         {
             var table = new Table();
-            var image = new Image(item.Image).SetAlignment(Align.Left);
+            var image = new Image(item.Image);
             var equipSymbol = string.Empty;
             if (item.IsEquipped)
             {
@@ -50,11 +50,11 @@
                 style = "quest_label";
             }
 
-            var equip = new Label(equipSymbol, Skin).SetAlignment(Align.Left);
-            var itemName = new Label(item.NameWithStats, Skin, style).SetAlignment(Align.Left);
-            table.Add(image).Width(48);
-            table.Add(itemName).Width(500);
-            table.Add(equip).Width(100);
+            var equip = new Label(equipSymbol, Skin);
+            var itemName = new Label(item.NameWithStats, Skin, style);
+            table.Add(image).Width(48).Left();
+            table.Add(itemName).Width(500).Left();
+            table.Add(equip).Width(100).Left();
 
             var button = new Button(Skin, "no_border");
             button.Add(table);

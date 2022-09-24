@@ -19,7 +19,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
         private IEnumerable<ActiveQuest> _activeQuests;
         private IEnumerable<Quest> _quests;
 
-        public QuestWindow(UiSystem ui) : base(ui, null,
+        public QuestWindow(UiSystem ui) : base(ui,
             new Point(20, 20), 1000, 500)
         {
         }
@@ -55,16 +55,15 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
 
                 var questItem = new Table().SetBackground(new BorderPrimitiveDrawable(Color.Black, Color.White, 1));
                 var competed = activeQuest.Completed ? "(Finished)" : "";
-                questItem.Add(new Label($"{quest.Name}{competed}", Skin).SetAlignment(Align.Left)).Width(cellWidth)
+                questItem.Add(new Label($"{quest.Name}{competed}", Skin)).Left().Width(cellWidth)
                     .SetPadBottom(5);
                 questItem.Row();
-                questItem.Add(new Label($"{quest.Description}", Skin).SetAlignment(Align.Left)).Width(cellWidth);
+                questItem.Add(new Label($"{quest.Description}", Skin)).Left().Width(cellWidth);
                 questItem.Row();
                 var currentStage = quest.Stages.FirstOrDefault(i => i.Number == activeQuest.CurrentStage);
                 if (currentStage != null)
                 {
-                    questItem.Add(new Label($"{currentStage.Description}", Skin).SetAlignment(Align.Left))
-                        .Width(cellWidth);
+                    questItem.Add(new Label($"{currentStage.Description}", Skin)).Left().Width(cellWidth);
                 }
 
                 questTable.Add(questItem).Width(itemWidth).Height(itemHeight).SetPadTop(margin);

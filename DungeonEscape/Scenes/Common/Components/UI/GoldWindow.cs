@@ -16,7 +16,7 @@
         {
         }
 
-        public GoldWindow(Party party, UICanvas canvas, ISounds sounds, Point position) : base(new UiSystem(canvas, sounds, true), null,
+        public GoldWindow(Party party, UICanvas canvas, ISounds sounds, Point position) : base(new UiSystem(canvas, sounds, true),
             position, 150, 50, false)
         {
             this._party = party;

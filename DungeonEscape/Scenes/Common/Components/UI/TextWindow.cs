@@ -16,8 +16,8 @@
         private Action<string> _done;
         private int _textIndex;
 
-        protected TextWindow(UiSystem ui, string title, Point position, int width = MapScene.ScreenWidth - 20,
-            int height = MapScene.ScreenHeight / 3 - 10) : base(ui, title, position, width, height)
+        protected TextWindow(UiSystem ui, Point position, int width = MapScene.ScreenWidth - 20,
+            int height = MapScene.ScreenHeight / 3 - 10) : base(ui, position, width, height)
         {
         }
 

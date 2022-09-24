@@ -185,7 +185,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="string" value="spawn1"/>
+    <property name="SpawnId" value="spawn1"/>
     <property name="WarpMap" value="maps/forest_tower/floor3"/>
    </properties>
   </object>
@@ -193,7 +193,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="string" value="spawn1"/>
+    <property name="SpawnId" value="spawn1"/>
     <property name="WarpMap" value="maps/forest_tower/floor1"/>
    </properties>
   </object>
@@ -201,7 +201,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="string" value="spawn2"/>
+    <property name="SpawnId" value="spawn2"/>
     <property name="WarpMap" value="maps/forest_tower/floor3"/>
    </properties>
   </object>
@@ -209,7 +209,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="string" value="spawn2"/>
+    <property name="SpawnId" value="spawn2"/>
     <property name="WarpMap" value="maps/forest_tower/floor1"/>
    </properties>
   </object>
@@ -217,7 +217,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="string" value="spawn3"/>
+    <property name="SpawnId" value="spawn3"/>
     <property name="WarpMap" value="maps/forest_tower/floor1"/>
    </properties>
   </object>
@@ -225,7 +225,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="string" value="spawn3"/>
+    <property name="SpawnId" value="spawn3"/>
     <property name="WarpMap" value="maps/forest_tower/floor3"/>
    </properties>
   </object>

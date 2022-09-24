@@ -139,7 +139,7 @@
             var monsterName = this._monsters.Count == 1 ?$"a {this._monsters.First().Name}"  : $"{this._monsters.Count} enemies";
             var message =$"You have encountered {monsterName}!";
             
-            new FightTalkWindow(this._ui, "").Show(message, ()=> this._state = EncounterRoundState.StartRound);
+            new FightTalkWindow(this._ui).Show(message, ()=> this._state = EncounterRoundState.StartRound);
             
             this._game.Sounds.PlayMusic(new [] {Songs[Random.NextInt(Songs.Count)]});
         }
@@ -239,9 +239,9 @@
             this.EndEncounter();
         }
 
-        private void ChooseAction(IFighter hero, Action<RoundAction> done)
+        private void ChooseAction(Hero hero, Action<RoundAction> done)
         {
-            if (hero.Status.Count(i => i.Type == EffectType.Sleep) != 0)
+            if (hero.Status.Any(i => i.Type == EffectType.Sleep))
             {
                 done(new RoundAction
                 {
@@ -252,14 +252,14 @@
                 return;
             }
             
-            if (hero.Status.Count(i => i.Type == EffectType.Confusion) != 0)
+            if (hero.Status.Any(i => i.Type == EffectType.Confusion))
             {
                 done(this.ChooseAction(hero));
                 return;
             }
             
             var selectAction =
-                new SelectWindow<string>(this._ui, hero.Name, new Point(10, MapScene.ScreenHeight / 3 * 2));
+                new SelectWindow<string>(this._ui, $"{hero.Name} Action", new Point(10, MapScene.ScreenHeight / 3 * 2));
             
             var options = new List<string> {"Fight"};
             var spells = hero.GetSpells(this._game.Spells).ToList();
@@ -404,7 +404,7 @@
                 return;
             }
 
-            var selectTarget = new SelectWindow<MonsterInstance>(this._ui, "SelectMonster",
+            var selectTarget = new SelectWindow<MonsterInstance>(this._ui, null,
                 new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
             selectTarget.Show(this.AliveMonsters, monster =>
             {
@@ -429,9 +429,9 @@
             });
         }
 
-        private void ChooseItem(IFighter hero, IEnumerable<ItemInstance> availableItems, Action<RoundAction> done)
+        private void ChooseItem(Hero hero, IEnumerable<ItemInstance> availableItems, Action<RoundAction> done)
         {
-            var selectItem = new InventoryWindow(this._ui, new Point(10, MapScene.ScreenHeight / 3 * 2));
+            var selectItem = new InventoryWindow(this._ui, hero, new Point(10, MapScene.ScreenHeight / 3 * 2));
             selectItem.Show(availableItems, item =>
             {
                 if (item == null)
@@ -512,7 +512,7 @@
                         return;
                     }
                         
-                    var selectTarget = new SelectWindow<MonsterInstance>(this._ui, "SelectMonster",
+                    var selectTarget = new SelectWindow<MonsterInstance>(this._ui, null,
                         new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
                     selectTarget.Show(this.AliveMonsters, monster =>
                     {
@@ -577,7 +577,7 @@
                 return;
             }
 
-            var selectTarget = new SelectWindow<MonsterInstance>(this._ui, "SelectMonster",
+            var selectTarget = new SelectWindow<MonsterInstance>(this._ui, null,
                 new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
             selectTarget.Show(this.AliveMonsters, monster =>
             {
@@ -713,7 +713,7 @@
             
             if (action.Source.IsDead)
             {
-                new FightTalkWindow(this._ui, "").Show(message,
+                new FightTalkWindow(this._ui).Show(message,
                     DoneAction);
                 return;
             }
@@ -768,7 +768,7 @@
                 }
             }
 
-            new FightTalkWindow(this._ui, "").Show(message,
+            new FightTalkWindow(this._ui).Show(message,
                 DoneAction);
         }
 
@@ -958,7 +958,7 @@
         
         private void EndEncounter()
         {
-            var talkWindow = new FightTalkWindow(this._ui, "");
+            var talkWindow = new FightTalkWindow(this._ui);
             if (!_game.Party.Members.Any(CanBeAttacked))
             {
                 talkWindow.Show("Everyone has died!", this._game.ShowMainMenu);

@@ -241,6 +241,7 @@ namespace Nez.Tiled
 			var terrain = new TmxTerrain();
 
 			terrain.Name = (string)xTerrain.Attribute("name");
+			terrain.Class = (string)xTerrain.Attribute("class");
 			terrain.Tile = (int)xTerrain.Attribute("tile");
 			terrain.Properties = ParsePropertyDict(xTerrain.Element("properties"));
 
@@ -310,6 +311,7 @@ namespace Nez.Tiled
 		{
 			layer.Map = map;
 			layer.Name = (string)xLayer.Attribute("name");
+			layer.Class = (string)xLayer.Attribute("class");
 			layer.Opacity = (float?)xLayer.Attribute("opacity") ?? 1.0f;
 			layer.Visible = (bool?)xLayer.Attribute("visible") ?? true;
 			layer.OffsetX = (float?)xLayer.Attribute("offsetx") ?? 0.0f;
@@ -504,7 +506,7 @@ namespace Nez.Tiled
 		{
 			layer.Map = map;
 			layer.Name = (string)xImageLayer.Attribute("name");
-
+			layer.Class = (string)xImageLayer.Attribute("class") ?? string.Empty;
 			layer.Width = (int?)xImageLayer.Attribute("width");
 			layer.Height = (int?)xImageLayer.Attribute("height");
 			layer.Visible = (bool?)xImageLayer.Attribute("visible") ?? true;
@@ -527,6 +529,7 @@ namespace Nez.Tiled
 		{
 			group.map = map;
 			group.Name = (string)xGroup.Attribute("name") ?? string.Empty;
+			group.Class = (string)xGroup.Attribute("class") ?? string.Empty;
 			group.Opacity = (float?)xGroup.Attribute("opacity") ?? 1.0f;
 			group.Visible = (bool?)xGroup.Attribute("visible") ?? true;
 			group.OffsetX = (float?)xGroup.Attribute("offsetx") ?? 0.0f;

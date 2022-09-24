@@ -9,11 +9,11 @@
 
     public class TalkWindow : TextWindow
     {
-        public TalkWindow(UiSystem ui, string title = null) : this(ui, title, new Point(10, MapScene.ScreenHeight / 3 * 2))
+        public TalkWindow(UiSystem ui) : this(ui, new Point(10, MapScene.ScreenHeight / 3 * 2))
         {
         }
 
-        private TalkWindow(UiSystem ui, string title, Point position, int width = MapScene.ScreenWidth - 20, int height = MapScene.ScreenHeight / 3 - 10) : base(ui, title, position, width, height)
+        private TalkWindow(UiSystem ui, Point position, int width = MapScene.ScreenWidth - 20, int height = MapScene.ScreenHeight / 3 - 10) : base(ui, position, width, height)
         {
         }
 

@@ -206,7 +206,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="string" value="spawn1"/>
+    <property name="SpawnId" value="spawn1"/>
     <property name="WarpMap" value="maps/island_tower/floor5"/>
    </properties>
   </object>
@@ -238,7 +238,7 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="string" value="spawn2"/>
+    <property name="SpawnId" value="spawn2"/>
     <property name="WarpMap" value="maps/island_tower/floor3"/>
    </properties>
   </object>

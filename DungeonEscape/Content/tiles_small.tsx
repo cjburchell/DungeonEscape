@@ -9,4 +9,12 @@
    <frame tileid="189" duration="80"/>
   </animation>
  </tile>
+ <tile id="118">
+  <animation>
+   <frame tileid="118" duration="80"/>
+   <frame tileid="142" duration="80"/>
+   <frame tileid="166" duration="80"/>
+   <frame tileid="190" duration="80"/>
+  </animation>
+ </tile>
 </tileset>

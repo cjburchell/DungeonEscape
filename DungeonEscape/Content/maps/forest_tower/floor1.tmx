@@ -23,7 +23,7 @@
 2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,
 2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,
 2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,
-2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,0,0,0,1694,2142,0,0,0,0,0,0,0,0,1694,2142,0,0,0,0,0,0,0,0,
+2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,0,0,0,2175,2142,0,0,0,0,0,0,0,0,2175,2142,0,0,0,0,0,0,0,0,
 2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 2142,2142,2142,2142,2142,2142,2142,2142,2142,2142,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -211,45 +211,45 @@
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="string" value="spawn1"/>
-    <property name="WarpMap" type="string" value="maps/forest_tower/floor2"/>
+    <property name="SpawnId" value="spawn1"/>
+    <property name="WarpMap" value="maps/forest_tower/floor2"/>
    </properties>
   </object>
   <object id="30" name="Stairs up to 40" class="Warp" gid="2147486384" x="736" y="608" width="32" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="string" value="spawn3"/>
-    <property name="WarpMap" type="string" value="maps/forest_tower/floor2"/>
+    <property name="SpawnId" value="spawn3"/>
+    <property name="WarpMap" value="maps/forest_tower/floor2"/>
    </properties>
   </object>
   <object id="31" name="Stairs up to 40" class="Warp" gid="2736" x="448" y="736" width="32" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="string" value="spawn2"/>
-    <property name="WarpMap" type="string" value="maps/forest_tower/floor2"/>
+    <property name="SpawnId" value="spawn2"/>
+    <property name="WarpMap" value="maps/forest_tower/floor2"/>
    </properties>
   </object>
   <object id="35" name="Exit 0" class="Warp" x="768" y="896" width="32" height="160">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="maps/overworld"/>
+    <property name="WarpMap" value="maps/overworld"/>
    </properties>
   </object>
   <object id="80" name="Exit 0" class="Warp" x="384" y="1056" width="416" height="32">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="maps/overworld"/>
+    <property name="WarpMap" value="maps/overworld"/>
    </properties>
   </object>
   <object id="81" name="Exit 0" class="Warp" x="384" y="896" width="32" height="160">
    <properties>
     <property name="CanMove" type="bool" value="false"/>
     <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="maps/overworld"/>
+    <property name="WarpMap" value="maps/overworld"/>
    </properties>
   </object>
  </objectgroup>

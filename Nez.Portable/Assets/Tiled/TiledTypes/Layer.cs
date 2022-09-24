@@ -17,6 +17,7 @@ namespace Nez.Tiled
 		public Vector2 ParallaxFactor => new Vector2(ParallaxFactorX, ParallaxFactorY);
 
 		public Dictionary<string, string> Properties { get; set; }
+		public string Class { get; set; }
 
 		/// <summary>
 		/// width in tiles for this layer. Always the same as the map width for fixed-size maps.

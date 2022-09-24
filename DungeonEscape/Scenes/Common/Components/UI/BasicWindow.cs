@@ -9,7 +9,6 @@
     {
         protected Window Window { get; private set; }
         protected readonly UiSystem Ui;
-        private readonly string _title;
         private readonly Point _position;
         protected readonly int Width;
         protected readonly int Height;
@@ -192,10 +191,9 @@
             Skin.Add("default", checkBoxStyle);
         }
 
-        protected BasicWindow(UiSystem ui, string title, Point position, int width, int height, bool focasable = true)
+        protected BasicWindow(UiSystem ui, Point position, int width, int height, bool focasable = true)
         {
             this.Ui = ui;
-            this._title = title;
             this._position = position;
             this.Width = width;
             this.Height = height;
@@ -205,7 +203,7 @@
 
         public override void OnAddedToEntity()
         {
-            this.Window = new Window(this._title, Skin);
+            this.Window = new Window(null, Skin);
             this.Ui.Canvas.Stage.AddElement(this.Window);
             this.Window.SetPosition(this._position.X, this._position.Y);
             this.Window.SetWidth(this.Width);

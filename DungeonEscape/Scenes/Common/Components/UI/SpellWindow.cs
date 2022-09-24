@@ -7,7 +7,7 @@
 
     public class SpellWindow : SelectWindow<Spell>
     {
-        public SpellWindow(UiSystem ui, Point point, IFighter hero) : base(ui, $"{hero.Name} Spells", point, 250)
+        public SpellWindow(UiSystem ui, Point point, IFighter hero) : base(ui, $"{hero.Name}'s Spells", point, 250)
         {
         }
         
@@ -18,12 +18,12 @@
         protected override Button CreateButton(Spell spell)
         {
             var table = new Table();
-            var image = new Image(spell.Image).SetAlignment(Align.Left);
-            var itemName = new Label(spell.Name, Skin).SetAlignment(Align.Left);
-            table.Add(image).Width(32);
-            table.Add(itemName).Width(100);
+            var image = new Image(spell.Image);
+            var itemName = new Label(spell.Name, Skin);
+            table.Add(image).Left().Width(32);
+            table.Add(itemName).Left().Width(200);
             var button = new Button(Skin, "no_border");
-            button.Add(table);
+            button.Add(table).Left();
             return button;
         }
     }

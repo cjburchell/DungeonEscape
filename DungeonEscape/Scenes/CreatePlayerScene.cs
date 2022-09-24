@@ -59,8 +59,8 @@
             var texture = this.Content.LoadTexture("Content/images/sprites/hero.png");
 
             var contentTable = mainTable.Add(new Table()).GetElement<Table>();
-            contentTable.Add(new Label("Name:", BasicWindow.Skin).SetAlignment(Align.Left)).Height(BasicWindow.ButtonHeight).Width(75);
-            var nameField = contentTable.Add(new TextField(this._hero.Name, BasicWindow.Skin).SetAlignment(Align.Left)).Height(BasicWindow.ButtonHeight).Width(DataColumnWidth).GetElement<TextField>();
+            contentTable.Add(new Label("Name:", BasicWindow.Skin)).Left().Height(BasicWindow.ButtonHeight).Width(75);
+            var nameField = contentTable.Add(new TextField(this._hero.Name, BasicWindow.Skin)).Left().Height(BasicWindow.ButtonHeight).Width(DataColumnWidth).GetElement<TextField>();
             var nameChanged = false;
             nameField.OnTextChanged += (_, s) =>
             {
@@ -79,7 +79,7 @@
             
             contentTable.Row().SetPadTop(3);
             
-            contentTable.Add(new Label("Gender:", BasicWindow.Skin).SetAlignment(Align.Left)).Height(BasicWindow.ButtonHeight).Width(75);
+            contentTable.Add(new Label("Gender:", BasicWindow.Skin)).Left().Height(BasicWindow.ButtonHeight).Width(75);
             var genderField =
                 new SelectBox<string>(BasicWindow.Skin).SetItems(Gender.Male.ToString(), Gender.Female.ToString());
             contentTable.Add(genderField).Height(BasicWindow.ButtonHeight).Width(DataColumnWidth);
@@ -209,30 +209,29 @@
         {
             this._statusTable.Clear();
             this._statusTable.Row();
-            this._statusTable.Add(new Label("Health:",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(LabelColumnWidth);
-            this._statusTable.Add(new Label($"{this._hero.MaxHealth}",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(DataColumnWidth);
+            this._statusTable.Add(new Label("Health:",  BasicWindow.Skin)).Left().Width(LabelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.MaxHealth}",  BasicWindow.Skin)).Left().Width(DataColumnWidth);
             this._statusTable.Row();
-            this._statusTable.Add(new Label("Magic:", BasicWindow.Skin).SetAlignment(Align.Left))
+            this._statusTable.Add(new Label("Magic:", BasicWindow.Skin)).Left()
                 .Width(LabelColumnWidth);
             if (this._hero.MaxMagic != 0)
             {
                 this._statusTable
-                    .Add(new Label($"{this._hero.MaxMagic}", BasicWindow.Skin).SetAlignment(
-                        Align.Left)).Width(DataColumnWidth);
+                    .Add(new Label($"{this._hero.MaxMagic}", BasicWindow.Skin)).Left().Width(DataColumnWidth);
             }
             this._statusTable.Row();
 
-            this._statusTable.Add(new Label("Attack:",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(LabelColumnWidth);
-            this._statusTable.Add(new Label($"{this._hero.Attack}",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(DataColumnWidth);
+            this._statusTable.Add(new Label("Attack:",  BasicWindow.Skin)).Left().Width(LabelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Attack}",  BasicWindow.Skin)).Left().Width(DataColumnWidth);
             this._statusTable.Row();
-            this._statusTable.Add(new Label("Defence:",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(LabelColumnWidth);
-            this._statusTable.Add(new Label($"{this._hero.Defence}",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(DataColumnWidth);
+            this._statusTable.Add(new Label("Defence:",  BasicWindow.Skin)).Left().Width(LabelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Defence}",  BasicWindow.Skin)).Left().Width(DataColumnWidth);
             this._statusTable.Row();
-            this._statusTable.Add(new Label("Magic Defence:",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(LabelColumnWidth);
-            this._statusTable.Add(new Label($"{this._hero.MagicDefence}",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(DataColumnWidth);
+            this._statusTable.Add(new Label("Magic Defence:",  BasicWindow.Skin)).Left().Width(LabelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.MagicDefence}",  BasicWindow.Skin)).Left().Width(DataColumnWidth);
             this._statusTable.Row();
-            this._statusTable.Add(new Label("Agility:",  BasicWindow.Skin).SetAlignment(Align.Left)).Width(LabelColumnWidth);
-            this._statusTable.Add(new Label($"{this._hero.Agility}", BasicWindow. Skin).SetAlignment(Align.Left)).Width(DataColumnWidth);
+            this._statusTable.Add(new Label("Agility:",  BasicWindow.Skin)).Left().Width(LabelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Agility}", BasicWindow. Skin)).Left().Width(DataColumnWidth);
 
             this._statusTable.Validate();
         }

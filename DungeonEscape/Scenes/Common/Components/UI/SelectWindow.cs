@@ -13,13 +13,13 @@
         private Action<T> _done;
         private readonly ButtonList _list;
         private IEnumerable<T> _items;
-        private readonly bool _isTitleSet;
+        private readonly string _title;
 
 
         public SelectWindow(UiSystem ui, string title, Point position, int width = 180, int buttonHeight = ButtonHeight, int maxHeight = 500)
-            : base(ui, title, position, width, 150)
+            : base(ui, position, width, 150)
         {
-            this._isTitleSet = !string.IsNullOrEmpty(title);
+            this._title = title;
             this._buttonHeight = buttonHeight;
             _maxHeight = maxHeight;
             this._list = new ButtonList(ui.Sounds);
@@ -42,28 +42,39 @@
             base.OnAddedToEntity();
             var itemWidth = this.Window.GetWidth();
             const int margin = 10;
-            var table = new Table().SetFillParent(true);
-            var scrollPane = new ScrollPane(this._list, Skin);
             var itemList = this._items.ToList();
-            table.Add(scrollPane).Width(itemWidth- margin * 2).Height(Math.Min( itemList.Count * this._buttonHeight, _maxHeight - margin * 3 - (this._isTitleSet?this._buttonHeight:0)));
-
-            this.Window.AddElement(table);
             this._list.OnClicked += button =>
             {
                 this.Ui.Sounds.PlaySoundEffect("confirm");
                 this.CloseWindow(button?.UserData as T);
             };
-            this._list.Top().Right();
-            this._list.SetFillParent(true);
+            
+            var scrollPane = new ScrollPane(this._list, Skin);
+            var table = new Table();
+
+            if (!string.IsNullOrEmpty(this._title))
+            {
+                table.Add(new Label(_title, Skin)).Left();
+                table.Row();
+            }
+            
+            table.Add(scrollPane);
+            table.SetFillParent(true);
+            this.Window.AddElement(table);
+            
+            //this._list.Top().Right();
+            //this._list.SetFillParent(true);
             foreach (var item in itemList)
             {
                 var button = this.CreateButton(item);
                 button.UserData = item;
                 this._list.Add(button).Width(itemWidth - margin * 2).Height(this._buttonHeight);
             }
+            
 
             
-            this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count * this._buttonHeight + (this._isTitleSet?this._buttonHeight:0), _maxHeight));
+            //this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count * this._buttonHeight + (this._isTitleSet?this._buttonHeight:0), _maxHeight));
+            this.Window.SetHeight(Math.Min( margin * 2 + itemList.Count*this._buttonHeight + ( !string.IsNullOrEmpty(this._title)? 12 : 0 ), _maxHeight));
             
             scrollPane.Validate();
         }

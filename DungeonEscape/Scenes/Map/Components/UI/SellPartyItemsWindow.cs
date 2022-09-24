@@ -20,7 +20,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
         protected override Button CreateButton(ItemInstance item)
         {
             var table = new Table();
-            var image = new Image(item.Image).SetAlignment(Align.Left);
+            var image = new Image(item.Image);
             var equipSymbol = string.Empty;
             if (item.IsEquipped)
             {
@@ -39,16 +39,16 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
                 _ => null
             };
 
-            var equip = new Label(equipSymbol, Skin).SetAlignment(Align.Left);
-            var itemName = new Label(item.NameWithStats, Skin, style).SetAlignment(Align.Left);
-            var cost = new Label($"{item.Gold * 3 / 4}", Skin).SetAlignment(Align.Right);
-            table.Add(image).Width(48);
-            table.Add(itemName).Width(500);
-            table.Add(equip).Width(100);
-            table.Add(cost).Width(32);
+            var equip = new Label(equipSymbol, Skin);
+            var itemName = new Label(item.NameWithStats, Skin, style);
+            var cost = new Label($"{item.Gold * 3 / 4}", Skin);
+            table.Add(image).Width(48).Left();
+            table.Add(itemName).Width(500).Left();
+            table.Add(equip).Width(100).Left();
+            table.Add(cost).Width(32).Right();
 
             var button = new Button(Skin, "no_border");
-            button.Add(table);
+            button.Add(table).Left();
             return button;
         }
     }

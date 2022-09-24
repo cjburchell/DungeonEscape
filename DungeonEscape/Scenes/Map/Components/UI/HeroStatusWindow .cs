@@ -1,6 +1,5 @@
 ﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
 {
-    using System.Collections.Generic;
     using System.Linq;
     using System;
     using Common.Components.UI;
@@ -16,7 +15,7 @@
         private Hero _hero;
         private Table _itemTable;
 
-        public HeroStatusWindow(UiSystem ui) : base(ui, null,
+        public HeroStatusWindow(UiSystem ui) : base(ui,
             new Point(20, 20), 1000, 300)
         {
         }
@@ -57,50 +56,38 @@
             const int labelColumnWidth = 125;
             const int dataColumnWidth = 75;
             this._statusTable.Row().SetPadTop(5);
-            this._statusTable.Add(new Label(this._hero.Name, Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
+            this._statusTable.Add(new Label(this._hero.Name, Skin)).Width(labelColumnWidth).Left();
             this._statusTable.Row();
-            this._statusTable.Add(new Label("Level:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-            this._statusTable.Add(new Label($"{this._hero.Level}", Skin).SetAlignment(Align.Left))
-                .Width(dataColumnWidth);
+            this._statusTable.Add(new Label("Level:", Skin)).Left().Width(labelColumnWidth).Left();
+            this._statusTable.Add(new Label($"{this._hero.Level}", Skin)).Left().Width(dataColumnWidth);
             this._statusTable.Row();
-            this._statusTable.Add(new Label("Health:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-            this._statusTable
-                .Add(new Label($"{this._hero.Health}/{this._hero.MaxHealth}", Skin).SetAlignment(Align.Left))
-                .Width(dataColumnWidth);
+            this._statusTable.Add(new Label("Health:", Skin)).Left().Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Health}/{this._hero.MaxHealth}", Skin)).Left().Width(dataColumnWidth);
             this._statusTable.Row();
             if (this._hero.MaxMagic != 0)
             {
-                this._statusTable.Add(new Label("Magic:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-                this._statusTable
-                    .Add(new Label($"{this._hero.Magic}/{this._hero.MaxMagic}", Skin).SetAlignment(Align.Left))
-                    .Width(dataColumnWidth);
+                this._statusTable.Add(new Label("Magic:", Skin)).Left().Width(labelColumnWidth);
+                this._statusTable.Add(new Label($"{this._hero.Magic}/{this._hero.MaxMagic}", Skin)).Left().Width(dataColumnWidth);
                 this._statusTable.Row();
             }
 
-            this._statusTable.Add(new Label("Attack:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-            this._statusTable.Add(new Label($"{this._hero.Attack}", Skin).SetAlignment(Align.Left))
-                .Width(dataColumnWidth);
+            this._statusTable.Add(new Label("Attack:", Skin)).Left().Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Attack}", Skin)).Left().Width(dataColumnWidth);
             this._statusTable.Row();
-            this._statusTable.Add(new Label("Defence:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-            this._statusTable.Add(new Label($"{this._hero.Defence}", Skin).SetAlignment(Align.Left))
-                .Width(dataColumnWidth);
+            this._statusTable.Add(new Label("Defence:", Skin)).Left().Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Defence}", Skin)).Left().Width(dataColumnWidth);
             this._statusTable.Row();
-            this._statusTable.Add(new Label("Magic Defence:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-            this._statusTable.Add(new Label($"{this._hero.MagicDefence}", Skin).SetAlignment(Align.Left))
-                .Width(dataColumnWidth);
+            this._statusTable.Add(new Label("Magic Defence:", Skin)).Left().Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.MagicDefence}", Skin)).Left().Width(dataColumnWidth);
             this._statusTable.Row();
-            this._statusTable.Add(new Label("Agility:", Skin).SetAlignment(Align.Left)).Width(labelColumnWidth);
-            this._statusTable.Add(new Label($"{this._hero.Agility}", Skin).SetAlignment(Align.Left))
-                .Width(dataColumnWidth);
+            this._statusTable.Add(new Label("Agility:", Skin)).Left().Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Agility}", Skin)).Left().Width(dataColumnWidth);
             this._statusTable.Row();
-            this._statusTable.Add(new Label("XP:", Skin).SetAlignment(Align.TopLeft)).Width(labelColumnWidth);
-            this._statusTable.Add(new Label($"{this._hero.Xp}", Skin).SetAlignment(Align.TopLeft))
-                .Width(dataColumnWidth);
+            this._statusTable.Add(new Label("XP:", Skin)).Left().Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.Xp}", Skin)).Left().Width(dataColumnWidth);
             this._statusTable.Row();
-            this._statusTable.Add(new Label("Next Level:", Skin).SetAlignment(Align.TopLeft)).Width(labelColumnWidth);
-            this._statusTable
-                .Add(new Label($"{this._hero.NextLevel - this._hero.Xp}XP", Skin).SetAlignment(Align.TopLeft))
-                .Width(dataColumnWidth);
+            this._statusTable.Add(new Label("Next Level:", Skin)).Left().Width(labelColumnWidth);
+            this._statusTable.Add(new Label($"{this._hero.NextLevel - this._hero.Xp}XP", Skin)).Left().Width(dataColumnWidth);
 
             this._statusTable.Validate();
 
@@ -108,7 +95,7 @@
             const int itemLabelColumnWidth = 125;
             const int itemColumnWidth = 500;
             this._itemTable.Row().SetPadTop(5);
-            this._itemTable.Add(new Label("Equipment", Skin).SetAlignment(Align.Left)).Width(itemLabelColumnWidth);
+            this._itemTable.Add(new Label("Equipment", Skin)).Left().Width(itemLabelColumnWidth);
             this._itemTable.Row();
             var slots = Enum.GetValues(typeof(Slot))
                 .Cast<Slot>()
@@ -116,13 +103,12 @@
 
             foreach (var slot in slots)
             {
-                this._itemTable.Add(new Label($"{slot}:", Skin).SetAlignment(Align.Left)).Width(itemLabelColumnWidth);
+                this._itemTable.Add(new Label($"{slot}:", Skin)).Left().Width(itemLabelColumnWidth);
                 var itemId = this._hero.GetEquipmentId(new[] { slot }).FirstOrDefault();
                 var item = this._hero.Items.FirstOrDefault(i => i.Id == itemId);
                 if (item != null)
                 {
-                    var image = new Image(item.Image).SetAlignment(Align.Left);
-                    this._itemTable.Add(image).Width(48);
+                    var image = this._itemTable.Add(new Image(item.Image)).Width(48).Left().GetElement<Image>();
                     var style = item.Rarity switch
                     {
                         Rarity.Uncommon => "uncommon_label",
@@ -131,8 +117,10 @@
                         Rarity.Common => "common_label",
                         _ => null
                     };
-                    this._itemTable.Add(new Label($"{item.NameWithStats}", Skin, style).SetAlignment(Align.Left))
-                        .Width(itemColumnWidth);
+                    var tooltip = new Tooltip(new Label(item.NameWithStats, Skin, style),image);
+                    this.Window.Add(tooltip);
+                    
+                    this._itemTable.Add(new Label($"{item.NameWithStats}", Skin, style)).Left().Width(itemColumnWidth);
                 }
 
                 this._itemTable.Row();

@@ -19,5 +19,6 @@ namespace Nez.Tiled
 		public TmxImage Image;
 
 		public Dictionary<string, string> Properties { get; set; }
+		public string Class { get; set; }
 	}
 }

@@ -340,7 +340,7 @@
             {
                 var currentBiome = MapScene.GetCurrentBiome(this._map, this.Entity.Position);
                 this._debugText.SetText(
-                    $"B: {currentBiome}, G: {MapScene.ToMapGrid(this.Entity.Position, this._map)}, R: {this.Entity.Position} d: {this._distance}");
+                    $"B: {currentBiome}, G: {MapScene.ToMapGrid(this.Entity.Position, this._map)}, R: {this.Entity.Position.X:F2}:{this.Entity.Position.Y:F2}  d: {this._distance:F2}");
             }
             
             if (this._actionButton.IsReleased)

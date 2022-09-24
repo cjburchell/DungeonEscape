@@ -67,6 +67,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
         {
             var wall = map.GetLayer<TmxLayer>("wall");
             var water = map.GetLayer<TmxLayer>("water");
+            var water2 = map.GetLayer<TmxLayer>("water2");
 
             var itemObjects = map.GetObjectGroup("items");
             var itemLayer = new TmxLayer
@@ -89,7 +90,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                 itemLayer.SetTile(new TmxLayerTile(map, 1, x, y));
             }
 
-            return new AstarGridGraph(new[] {wall, water, itemLayer});
+            return new AstarGridGraph(new[] {wall, water, water2, itemLayer});
         }
 
         public override void Initialize()
@@ -116,15 +117,15 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             this._ui.Canvas.Stage.GamepadActionButton = null;
             
             this._debugText = this._ui.Canvas.Stage.AddElement(new Label("", BasicWindow.Skin));
-            this._debugText.SetPosition(10, 20);
+            this._debugText.SetPosition(10, ScreenTileWidth * map.TileWidth/2.0f);
             this._debugText.SetIsVisible(this._gameState.Settings.MapDebugInfo);
 
             {
                 var tiledEntity = this.CreateEntity("map");
                 var tiledMapRenderer = tiledEntity.AddComponent(new TiledMapRenderer(map,
-                    this._gameState.Party.HasShip && this._gameState.Party.CurrentMapIsOverWorld ? new[] {"wall"} : new[] {"wall", "water"}));
+                    this._gameState.Party.HasShip && this._gameState.Party.CurrentMapIsOverWorld ? new[] {"wall", "water2"} : new[] {"wall", "water2", "water"}));
                 tiledMapRenderer.RenderLayer = map.Height*map.TileHeight + 20;
-                tiledMapRenderer.SetLayersToRender("wall", "wall2", "water", "floor", "floor2", "floor3");
+                tiledMapRenderer.SetLayersToRender("wall", "wall2", "water", "water2", "floor", "floor2", "floor3");
                 
                 var topLeft = new Vector2(0, 0);
                 var bottomRight = new Vector2(map.TileWidth * map.Width,
@@ -277,13 +278,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
 
             var (x, y) = MapScene.ToMapGrid(pos, map);
             var tile = map.GetLayer<TmxLayer>("biomes")?.GetTile(x, y);
-            if (tile == null)
-            {
-                return Biome.None;
-            }
-
-            var tileset = tile.Tileset;
-            return (Biome) (tile.Gid - tileset.FirstGid);
+            return tile == null ? Biome.None : Enum.Parse<Biome>(tile.TilesetTile.Class);
         }
 
         private List<RandomMonster> LoadRandomMonsters()
@@ -621,7 +616,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                         }
                         
                         
-                        var selectWindow = new SelectWindow<string>(this._ui, "Select", new Point(20, 20));
+                        var selectWindow = new SelectWindow<string>(this._ui, null, new Point(20, 20));
                         selectWindow.Show(menuItems, action =>
                         {
                             switch (action)

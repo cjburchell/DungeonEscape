@@ -19,19 +19,19 @@
         private static Button CreateButton(GameSave item)
         {
             var button = new Button(BasicWindow.Skin);
-            var itemName = new Label(item.Name, BasicWindow.Skin).SetAlignment(Align.Left);
+            var itemName = new Label(item.Name, BasicWindow.Skin);
             if (!item.IsEmpty)
             {
                 button.Add(itemName).Left().Width(200);
                 if (item.Level != null)
                 {
-                    var level = new Label($"LV: {item.Level.Value}", BasicWindow.Skin).SetAlignment(Align.Left);
+                    var level = new Label($"LV: {item.Level.Value}", BasicWindow.Skin);
                     button.Add(level).Width(100).Left();
                 }
                 
                 if (item.Time != null)
                 {
-                    var time = new Label(item.Time.Value.ToString("g"), BasicWindow.Skin).SetAlignment(Align.Left);
+                    var time = new Label(item.Time.Value.ToString("g"), BasicWindow.Skin);
                     button.Add(time).Width(250).Left();
                 }
             }

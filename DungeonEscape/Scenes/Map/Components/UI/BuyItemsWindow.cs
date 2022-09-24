@@ -7,14 +7,14 @@
 
     public class BuyItemsWindow : SelectWindow<Item>
     {
-        public BuyItemsWindow(UiSystem ui) : base(ui, null, new Point(20, 20), 700, 48)
+        public BuyItemsWindow(UiSystem ui) : base(ui, null, new Point(20, 20), 620, 48)
         {
         }
 
         protected override Button CreateButton(Item item)
         {
             var table = new Table();
-            var image = new Image(item.Image).SetAlignment(Align.Left);
+            var image = new Image(item.Image);
             
             var style = item.Rarity switch
             {
@@ -25,14 +25,14 @@
                 _ => null
             };
             
-            var itemName = new Label(item.NameWithStats, Skin, style).SetAlignment(Align.Left);
-            var cost = new Label($"{item.Cost}", Skin).SetAlignment(Align.Right);
-            table.Add(image).Width(48);
-            table.Add(itemName).Width(500);
-            table.Add(cost).Width(30);
+            var itemName = new Label(item.NameWithStats, Skin, style);
+            var cost = new Label($"{item.Cost}", Skin);
+            table.Add(image).Left().Width(48);
+            table.Add(itemName).Left().Width(500);
+            table.Add(cost).Right().Width(30);
 
             var button = new Button(Skin, "no_border");
-            button.Add(table);
+            button.Add(table).Left();
             return button;
         }
         

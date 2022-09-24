@@ -18,7 +18,7 @@ namespace Redpoint.DungeonEscape.Scenes
         {
             this._sounds = sounds;
         }
-        
+
         private const int LabelColumnWidth = 200;
         private const int DataColumnWidth = 200;
 
@@ -44,9 +44,9 @@ namespace Redpoint.DungeonEscape.Scenes
             table.Add(new Label("Settings", BasicWindow.Skin, "medium_label")).SetColspan(2);
             table.Row().SetPadTop(20);
 
-            table.Add(new Label("Full Screen", BasicWindow.Skin).SetAlignment(Align.Left)).Width(LabelColumnWidth);
+            table.Add(new Label("Full Screen", BasicWindow.Skin)).Left().Width(LabelColumnWidth);
             var fullScreenCheckbox = table.Add(new CheckBox("Full Screen", BasicWindow.Skin))
-                .Height(BasicWindow.ButtonHeight).Width(DataColumnWidth).SetAlign(Align.Left).GetElement<TextButton>();
+                .Height(BasicWindow.ButtonHeight).Width(DataColumnWidth).Left().GetElement<TextButton>();
             fullScreenCheckbox.ShouldUseExplicitFocusableControl = true;
             fullScreenCheckbox.IsChecked = game.Settings.IsFullScreen;
             fullScreenCheckbox.OnChanged += isChecked =>
@@ -66,7 +66,7 @@ namespace Redpoint.DungeonEscape.Scenes
 
             table.Row().SetPadTop(20);
 
-            table.Add(new Label("Music Volume", BasicWindow.Skin).SetAlignment(Align.Left)).Width(LabelColumnWidth);
+            table.Add(new Label("Music Volume", BasicWindow.Skin)).Left().Width(LabelColumnWidth);
             var musicSlider = table.Add(new Slider(0.0f, 1.0f, 0.1f, false, BasicWindow.Skin))
                 .Height(BasicWindow.ButtonHeight).Width(DataColumnWidth).GetElement<Slider>();
             musicSlider.ShouldUseExplicitFocusableControl = true;
@@ -80,7 +80,7 @@ namespace Redpoint.DungeonEscape.Scenes
 
             table.Row().SetPadTop(20);
 
-            table.Add(new Label("Sound Effect Volume", BasicWindow.Skin).SetAlignment(Align.Left))
+            table.Add(new Label("Sound Effect Volume", BasicWindow.Skin)).Left()
                 .Width(LabelColumnWidth);
             var fxSlider = table.Add(new Slider(0.0f, 1.0f, 0.1f, false, BasicWindow.Skin))
                 .Height(BasicWindow.ButtonHeight).Width(DataColumnWidth).GetElement<Slider>();
@@ -96,9 +96,9 @@ namespace Redpoint.DungeonEscape.Scenes
             table.Row().SetPadTop(20);
 
 #if DEBUG
-            table.Add(new Label("No Monsters", BasicWindow.Skin).SetAlignment(Align.Left)).Width(LabelColumnWidth);
+            table.Add(new Label("No Monsters", BasicWindow.Skin)).Left().Width(LabelColumnWidth);
             var noMonstersCheckbox = table.Add(new CheckBox("No Monsters", BasicWindow.Skin))
-                .Height(BasicWindow.ButtonHeight).Width(DataColumnWidth).SetAlign(Align.Left).GetElement<TextButton>();
+                .Height(BasicWindow.ButtonHeight).Width(DataColumnWidth).Left().GetElement<TextButton>();
             noMonstersCheckbox.ShouldUseExplicitFocusableControl = true;
             noMonstersCheckbox.IsChecked = game.Settings.NoMonsters;
             noMonstersCheckbox.OnChanged += isChecked =>
@@ -106,10 +106,21 @@ namespace Redpoint.DungeonEscape.Scenes
                 this._sounds.PlaySoundEffect("confirm");
                 game.Settings.NoMonsters = isChecked;
             };
-#endif
 
             table.Row().SetPadTop(20);
 
+            table.Add(new Label("Map Debug Info", BasicWindow.Skin)).Left().Width(LabelColumnWidth);
+            var debugInfoCheckbox = table.Add(new CheckBox("Debug Info", BasicWindow.Skin))
+                .Height(BasicWindow.ButtonHeight).Width(DataColumnWidth).Left().GetElement<TextButton>();
+            debugInfoCheckbox.ShouldUseExplicitFocusableControl = true;
+            debugInfoCheckbox.IsChecked = game.Settings.MapDebugInfo;
+            debugInfoCheckbox.OnChanged += isChecked =>
+            {
+                this._sounds.PlaySoundEffect("confirm");
+                game.Settings.MapDebugInfo = isChecked;
+            };
+            table.Row().SetPadTop(20);
+#endif
 
             var backButton = new TextButton("Done", BasicWindow.Skin);
             backButton.ShouldUseExplicitFocusableControl = true;
@@ -156,18 +167,20 @@ namespace Redpoint.DungeonEscape.Scenes
             musicSlider.GamepadDownElement = fxSlider;
 #if DEBUG
             fxSlider.GamepadDownElement = noMonstersCheckbox;
-            noMonstersCheckbox.GamepadDownElement = backButton;
+            noMonstersCheckbox.GamepadDownElement = debugInfoCheckbox;
+            debugInfoCheckbox.GamepadDownElement = backButton;
 #else
             fxSlider.GamepadDownElement = backButton;
 #endif
 
-            
+
             fullScreenCheckbox.GamepadUpElement = backButton;
             musicSlider.GamepadUpElement = fullScreenCheckbox;
             fxSlider.GamepadUpElement = musicSlider;
 #if DEBUG
             noMonstersCheckbox.GamepadUpElement = fxSlider;
-            backButton.GamepadUpElement = noMonstersCheckbox;
+            debugInfoCheckbox.GamepadUpElement = noMonstersCheckbox;
+            backButton.GamepadUpElement = debugInfoCheckbox;
 #else
             backButton.GamepadUpElement = fxSlider;
 #endif

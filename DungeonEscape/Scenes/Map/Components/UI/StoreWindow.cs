@@ -15,7 +15,7 @@
         private readonly bool _sell;
         private readonly string _text;
 
-        public StoreWindow(UiSystem ui, bool sell, string text) : base(ui, null, new Point(10, MapScene.ScreenHeight / 3 * 2))
+        public StoreWindow(UiSystem ui, bool sell, string text) : base(ui, new Point(10, MapScene.ScreenHeight / 3 * 2))
         {
             this._sell = sell;
             this._text = text;

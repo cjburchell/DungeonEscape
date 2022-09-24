@@ -15,7 +15,7 @@
         {
         }
 
-        private PartyStatusWindow(Party party, UICanvas canvas, ISounds sounds, Point position) : base(new UiSystem(canvas, sounds,true), null,
+        private PartyStatusWindow(Party party, UICanvas canvas, ISounds sounds, Point position) : base(new UiSystem(canvas, sounds,true),
             position, 90, 110, false)
         {
             this._party = party;
@@ -57,28 +57,27 @@
                     textStyle = "orange_label";
                 }
                 
-                member.Image.SetAlignment(Align.Center);
-                this._statusTable.Add(member.Image).Width(heroWidth).SetPadLeft(5).SetPadRight(5);
+                this._statusTable.Add(member.Image).Width(heroWidth).SetPadLeft(5).SetPadRight(5).Center();
                 var memberStatus = new Table();
                 memberStatus.Row().SetPadTop(padding);
-                memberStatus.Add(new Label(member.Name.Length < 10 ? member.Name : member.Name[..10], Skin, textStyle).SetAlignment(Align.Left)).Width(statusWidth).SetColspan(2).SetPadRight(5);
+                memberStatus.Add(new Label(member.Name.Length < 10 ? member.Name : member.Name[..10], Skin, textStyle)).Left().Width(statusWidth).SetColspan(2).SetPadRight(5);
                 memberStatus.Row().SetPadTop(padding);
-                memberStatus.Add(new Label("HP:", Skin, textStyle).SetAlignment(Align.Left)).Width(statusItemWidth);
-                memberStatus.Add(new Label($"{member.Health}", Skin, textStyle).SetAlignment(Align.Right)).Width(statusItemWidth).SetPadRight(5);
+                memberStatus.Add(new Label("HP:", Skin, textStyle)).Left().Width(statusItemWidth);
+                memberStatus.Add(new Label($"{member.Health}", Skin, textStyle)).Right().Width(statusItemWidth).SetPadRight(5);
                 memberStatus.Row().SetPadTop(padding);
                 if (member.MaxMagic != 0)
                 {
-                    memberStatus.Add( new Label("MP:", Skin, textStyle).SetAlignment(Align.Left)).Width(statusItemWidth);
-                    memberStatus.Add( new Label($"{member.Magic}", Skin, textStyle).SetAlignment(Align.Right)).Width(statusItemWidth).SetPadRight(5);
+                    memberStatus.Add( new Label("MP:", Skin, textStyle)).Left().Width(statusItemWidth);
+                    memberStatus.Add( new Label($"{member.Magic}", Skin, textStyle)).Right().Width(statusItemWidth).SetPadRight(5);
                     memberStatus.Row().SetPadTop(padding);
                 }
                 else
                 {
-                    memberStatus.Add( new Label(" ", Skin, textStyle).SetAlignment(Align.Left)).Width(statusItemWidth);
+                    memberStatus.Add( new Label(" ", Skin, textStyle)).Left().Width(statusItemWidth);
                     memberStatus.Row().SetPadTop(padding);
                 }
-                memberStatus.Add(new Label($"{member.Class.ToString()[..3]}:", Skin, textStyle).SetAlignment(Align.Left)).Width(statusItemWidth).SetPadRight(5);
-                memberStatus.Add(new Label($"{member.Level}", Skin, textStyle).SetAlignment(Align.Right)).Width(statusItemWidth).SetPadRight(5);
+                memberStatus.Add(new Label($"{member.Class.ToString()[..3]}:", Skin, textStyle)).Left().Width(statusItemWidth).SetPadRight(5);
+                memberStatus.Add(new Label($"{member.Level}", Skin, textStyle)).Right().Width(statusItemWidth).SetPadRight(5);
                 this._statusTable.Add(memberStatus).Width(statusWidth);
             }
             this._statusTable.Invalidate();

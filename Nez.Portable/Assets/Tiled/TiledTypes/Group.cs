@@ -21,5 +21,6 @@ namespace Nez.Tiled
 		public TmxList<TmxGroup> Groups;
 
 		public Dictionary<string, string> Properties { get; set; }
+		public string Class { get; set; }
 	}
 }

@@ -272,7 +272,7 @@
             var skills = hero.GetSkills(this._game.Skills).ToList();
             options.AddRange(skills.Select(skill => skill.Name));
 
-            var availableItems = hero.Items.Where(item => item.Type is ItemType.OneUse or ItemType.RepeatableUse).ToList();
+            var availableItems = hero.Items.Where(item => item.Item.Skill is { IsEncounterSkill: true }).ToList();
             if (availableItems.Count != 0)
             {
                 options.Add("Item");
@@ -439,24 +439,67 @@
                     done(null);
                     return;
                 }
+                var newAction = new RoundAction
+                {
+                    Source = hero,
+                    State = RoundActionState.Item,
+                    Item = item
+                };
+                
+                if (item.Item.Skill.IsAttackSkill)
+                {
+                    if (item.Target == Target.Group)
+                    {
+                        newAction.Targets = GetTargets(item.Item.Skill.Targets, item.Item.Skill.MaxTargets,
+                            this.AliveMonsters.Cast<IFighter>().ToList());
+
+                        done(newAction);
+                        return;
+                    } 
+
+                    if (this.AliveMonsters.Count() == 1)
+                    {
+                        var monster = this.AliveMonsters.First();
+                        newAction.Targets = new List<IFighter> { monster };
+                        done(newAction);
+                        return;
+                    }
+                        
+                    var selectMonsterTarget = new SelectWindow<MonsterInstance>(this._ui, null,
+                        new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
+                    selectMonsterTarget.Show(this.AliveMonsters, monster =>
+                    {
+                        if (monster == null)
+                        {
+                            done(null);
+                            return;
+                        }
+
+                        newAction.Targets = new List<IFighter> { monster };
+                        done(newAction);
+                    });
+                    return;
+                }
+
+                if (item.Target == Target.Group)
+                {
+                    newAction.Targets = item.Item.Skill.Type == SkillType.Revive
+                        ? this._game.Party.DeadMembers.Cast<IFighter>().ToList()
+                        : this._game.Party.AliveMembers.Cast<IFighter>().ToList();
+                    done(newAction);
+                    return;
+                } 
 
                 if (this._game.Party.AliveMembers.Count() == 1)
                 {
-                    var newAction = new RoundAction
-                    {
-                        Source = hero,
-                        State = RoundActionState.Item,
-                        Targets = new List<IFighter> { hero },
-                        Item = item
-                    };
-
+                    newAction.Targets = new List<IFighter> { hero };
                     done(newAction);
                     return;
                 }
 
                 var selectTarget = new SelectHeroWindow(this._ui,
                     new Point(10, MapScene.ScreenHeight / 3 * 2));
-                selectTarget.Show(this._game.Party.AliveMembers, target =>
+                selectTarget.Show(item.Item.Skill.Type == SkillType.Revive? this._game.Party.DeadMembers:this._game.Party.AliveMembers, target =>
                 {
                     if (target == null)
                     {
@@ -464,14 +507,7 @@
                         return;
                     }
 
-                    var newAction = new RoundAction
-                    {
-                        Source = hero,
-                        State = RoundActionState.Item,
-                        Targets = new List<IFighter> { target },
-                        Item = item
-                    };
-
+                    newAction.Targets = new List<IFighter> { target };
                     done(newAction);
                 });
             });
@@ -531,7 +567,7 @@
 
                 if (spell.Targets != Target.Single)
                 {
-                    newAction.Targets = GetTargets( spell.Targets, spell.MaxTargets,this._game.Party.AliveMembers.Cast<IFighter>().ToList());
+                    newAction.Targets = GetTargets( spell.Targets, spell.MaxTargets, spell.Type == SkillType.Revive? this._game.Party.DeadMembers.Cast<IFighter>().ToList(): this._game.Party.AliveMembers.Cast<IFighter>().ToList());
                     done(newAction);
                     return;
                 }
@@ -546,7 +582,7 @@
 
                     var selectTarget = new SelectHeroWindow(this._ui,
                         new Point(10, MapScene.ScreenHeight / 3 * 2));
-                    selectTarget.Show(this._game.Party.AliveMembers, target =>
+                    selectTarget.Show(spell.Type == SkillType.Revive? this._game.Party.DeadMembers: this._game.Party.AliveMembers, target =>
                     {
                         if (target == null)
                         {
@@ -729,27 +765,11 @@
                     message += this.Fight(action.Source, action.Targets);
                     break;
                 case RoundActionState.Spell:
-                    message += action.Spell.Cast(action.Targets, action.Source, this._game, this._round);
+                    message += action.Spell.Cast(action.Targets, null, action.Source, this._game, this._round);
                     break;
                 case RoundActionState.Item:
-                {
-                    var target = action.Targets.FirstOrDefault();
-                    if (target != null)
-                    {
-                        if (target != action.Source)
-                        {
-                            message += $"{action.Source.Name} Uses {action.Item.Name} on {target.Name}";
-                            message += UseItem(action.Source, target, action.Item);
-                        }
-                        else
-                        {
-                            message += $"{action.Source.Name} Uses {action.Item.Name}";
-                            message += UseItem(action.Source, target, action.Item);
-                        }
-                    }
-
+                    message += UseItem(action.Source, action.Targets, action.Item);
                     break;
-                }
                 case RoundActionState.Nothing:
                     message += $"{action.Source.Name} doesn't do anything";
                     break;
@@ -806,7 +826,7 @@
                     }
                 }
 
-                var result = skill.Do(target, source, this._game, this._round);
+                var result = skill.Do(target, source, null, this._game, this._round);
                 if (skill.IsAttackSkill)
                 {
                     if (result.Item2)
@@ -917,45 +937,89 @@
             return (message, endFight);
         }
 
-        private string UseItem(IFighter source, IFighter target, ItemInstance item)
+        private string UseItem(IFighter source, List<IFighter> targets, ItemInstance item)
         {
-            if (target == null)
+            if (targets == null || !targets.Any())
             {
                 return "";
             }
 
-            var result = "";
             switch (item.Type)
             {
                 case ItemType.OneUse:
-                    bool worked;
-                    (result, worked) = item.Use(source, target, this._game, this._round);
+                {
+                    var worked = false;
+                    var message = "";
+                    foreach (var target in targets)
+                    {
+                        if (target != source)
+                        {
+                            message += $"{source.Name} Uses {item.Name} on {target.Name}";
+                        }
+                        else
+                        {
+                            message += $"{source.Name} Uses {item.Name}";
+                        }
+                        
+                        var (messageResult, result) = item.Use(source, target, null, this._game, this._round);
+                        if (result)
+                        {
+                            worked = true;
+                        }
+
+                        if (!string.IsNullOrEmpty(messageResult))
+                        {
+                            message += $"{messageResult}\n";
+                        }
+                    }
+
                     if (!worked)
                     {
                         source.Items.Remove(item);
                     }
-                    break;
+
+                    return message;
+                }
                 case ItemType.RepeatableUse:
-                    (result, _) = item.Use(source, target, this._game, this._round);
+                {
+                    var message = "";
+                    foreach (var target in targets)
+                    {
+                        if (target != source)
+                        {
+                            message += $"{source.Name} Uses {item.Name} on {target.Name}";
+                        }
+                        else
+                        {
+                            message += $"{source.Name} Uses {item.Name}";
+                        }
+                        
+                        var (messageResult, _) = item.Use(source, target, null, this._game, this._round);
+
+                        if (!string.IsNullOrEmpty(messageResult))
+                        {
+                            message += $"{messageResult}\n";
+                        }
+                    }
+
                     if (!item.HasCharges)
                     {
                         source.Items.Remove(item);
-                        result += " and has been destroyed.";
+                        message += " and has been destroyed.";
                     }
-                    break;
+
+                    return message;
+                }
                 case ItemType.Armor:
                 case ItemType.Weapon:
-                case ItemType.Key:
                 case ItemType.Gold:
                 case ItemType.Unknown:
-                    break;
+                    return "";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(item));
             }
-
-            return result;
         }
-        
+
         private void EndEncounter()
         {
             var talkWindow = new FightTalkWindow(this._ui);

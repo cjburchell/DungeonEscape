@@ -41,12 +41,14 @@
                 return null;
             }
 
+            state.Type = SpriteType.Npc;
+
             return spriteType switch
             {
                 SpriteType.NpcHeal => new Healer(tmxObject, state, map, gameState, graph, ui),
                 SpriteType.NpcStore => new Store(tmxObject, state, map, gameState, graph, ui),
                 SpriteType.NpcSave => new Saver(tmxObject, state, map, gameState, graph, ui),
-                SpriteType.NpcKey => new Store(tmxObject, state, map, gameState, graph, ui, gameState.CustomItems.Where(i=> i.Type == ItemType.Key).ToList(), "Would you like to buy a key?", false),
+                SpriteType.NpcKey => new Store(tmxObject, state, map, gameState, graph, ui, gameState.CustomItems.Where(i=> i.Skill?.Type == SkillType.Open).ToList(), "Would you like to buy a key?", false),
                 SpriteType.Npc => new Character(tmxObject, state, map, ui, gameState, graph),
                 SpriteType.NpcPartyMember => new PartyMember(tmxObject, state, map, ui, gameState, graph),
                 _ => new Sprite(tmxObject, state, map, gameState, graph)
@@ -354,15 +356,21 @@
             }
         }
 
-        public virtual void OnHit(Party party)
+        public virtual void OnHit()
         {
         }
 
-        public virtual bool OnAction(Party party)
+        public virtual void OnAction(Action done)
+        {
+            done();
+        }
+        
+
+        public virtual bool CanDoAction()
         {
             return false;
         }
 
-        public string Name => this.SpriteState.Name;
+        public BaseState State => this.SpriteState;
     }
 }

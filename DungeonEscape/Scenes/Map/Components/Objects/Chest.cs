@@ -1,4 +1,8 @@
-﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 {
     using Common.Components.UI;
     using Nez.Sprites;
@@ -14,39 +18,39 @@
         
         private bool IsOpen
         {
-            get => this.State.IsOpen != null && this.State.IsOpen.Value;
-            set => this.State.IsOpen = value;
+            get => this.ObjectState.IsOpen != null && this.ObjectState.IsOpen.Value;
+            set => this.ObjectState.IsOpen = value;
         }
 
         public Chest(TmxObject tmxObject, ObjectState state, TmxMap map, UiSystem ui, IGame gameState) : base(tmxObject, state, map, gameState)
         {
-            this.State.IsOpen ??= this.TmxObject.Properties.ContainsKey("IsOpen") &&
-                                  bool.Parse(this.TmxObject.Properties["IsOpen"]);
-            
             this._ui = ui;
             this._level = tmxObject.Properties.ContainsKey("ChestLevel") ? int.Parse(tmxObject.Properties["ChestLevel"]) : 0;
             this._openImageId = tmxObject.Properties.ContainsKey("OpenImage") ? int.Parse(tmxObject.Properties["OpenImage"]) : 135;
-            if(this.State.Item != null)
+            if(this.State.Items != null)
             {
                 var tileSet = Game.LoadTileSet("Content/items2.tsx");
-                this.State.Item.Setup(tileSet, gameState.Skills);
+                foreach (var item in this.State.Items)
+                {
+                    item.Setup(tileSet, gameState.Skills);
+                }
                 return;
             }
-            
+
             if (this.TmxObject.Properties.ContainsKey("ItemId"))
             {
-                this.State.Item = this.GameState.GetCustomItem(tmxObject.Properties["ItemId"]);
+                this.State.Items = new List<Item> { this.GameState.GetCustomItem(tmxObject.Properties["ItemId"]) };
                 return;
             }
 
             if (this.TmxObject.Properties.ContainsKey("Gold"))
             {
-                this.State.Item = GameState.CreateGold(int.Parse(tmxObject.Properties["Gold"]));
+                this.State.Items = new List<Item> {GameState.CreateGold(int.Parse(tmxObject.Properties["Gold"]))};
                 return;
             }
             
             
-            this.State.Item = GameState.CreateChestItem(this._level == 0 ? this.GameState.Party.MaxLevel() : this._level);
+            this.State.Items = new List<Item> {GameState.CreateChestItem(this._level == 0 ? this.GameState.Party.MaxLevel() : this._level)};
         }
         
         public override void Initialize()
@@ -62,50 +66,79 @@
             this._openImage.SetEnabled(this.IsOpen);
         }
 
-        public override bool OnAction(Party party)
+        public override bool CanDoAction()
         {
-            this.GameState.IsPaused = true;
-            void Done()
-            {
-                this.GameState.IsPaused = false;
-            }
+            return !this.IsOpen && this.GameState.Party.CanOpenChest(this._level);
+        }
 
+        public override void OnAction(Action done)
+        {
             if (this.IsOpen)
             {
-                new TalkWindow(this._ui).Show("You found nothing", Done);
-                return true;
+                new TalkWindow(this._ui).Show("You found nothing", done);
+                return;
             }
 
             if (!this.GameState.Party.CanOpenChest(this._level))
             {
-                new TalkWindow(this._ui).Show("Unable to open chest", Done);
-                return true;
+                new TalkWindow(this._ui).Show("Unable to open chest", done);
+                return;
             }
-            
-            if (this.State.Item.Type == ItemType.Gold)
+
+            var message = "";
+            var gotItem = false;
+            foreach (var item in this.State.Items.ToList())
             {
-                new TalkWindow(this._ui).Show($"You found {this.State.Item.Cost} Gold", Done);
-                party.Gold += this.State.Item.Cost;
+                if (item.Type == ItemType.Quest && !item.StartQuest)
+                {
+                    if (!this.GameState.Party.ActiveQuests.Any(i => i.Id == item.QuestId && item.ForStage.Contains(i.CurrentStage)))
+                    {
+                        continue;
+                    }
+                }
+                
+                if (item.Type == ItemType.Gold)
+                {
+                    message += $"You found {item.Cost} Gold\n";
+                    this.GameState.Party.Gold += item.Cost;
+                    gotItem = true;
+                    this.State.Items.Remove(item);
+                }
+                else
+                {
+                    var selectedMember = this.GameState.Party.AddItem(new ItemInstance(item));
+                    if (selectedMember == null)
+                    {
+                        message +=
+                            $"You found {item.Name} but your party did not have enough space in your inventory it\n";
+                    }
+                    else
+                    {
+                        this.State.Items.Remove(item);
+                        gotItem = true;
+                        var questMessage = GameState.CheckQuest(item);
+                        message += $"{selectedMember.Name} found a {item.Name}\n{questMessage}\n";
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(message))
+            {
+                done();
             }
             else
             {
-                var selectedMember = party.AddItem(new ItemInstance(this.State.Item));
-                if (selectedMember == null)
-                {
-                    new TalkWindow(this._ui).Show($"You found {this.State.Item.Name} but your party did not have enough space in your inventory it", Done);
-                    return true;
-                }
-
-                var questMessage = GameState.CheckQuest(this.State.Item);
-
-                new TalkWindow(this._ui).Show($"{selectedMember.Name} found a {this.State.Item.Name}\n{questMessage}", Done);
+                new TalkWindow(this._ui).Show(message, done);
             }
-            this.GameState.Sounds.PlaySoundEffect("treasure");
-            this.IsOpen = true;
+            
+            if (gotItem)
+            {
+                this.GameState.Sounds.PlaySoundEffect("treasure");
+            }
+
+            this.IsOpen = !this.State.Items.Any();
             this.DisplayVisual(!this.IsOpen);
             this._openImage.SetEnabled(this.IsOpen);
-
-            return true;
         }
     }
 }

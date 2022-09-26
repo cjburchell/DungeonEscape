@@ -60,16 +60,14 @@
         }
 
 
-        public override bool OnAction(Party party)
+        public override void OnAction(Action done)
         {
-            this.GameState.IsPaused = true;
-            
-            var goldWindow = new GoldWindow(party, this._ui.Canvas, this._ui.Sounds, new Point(MapScene.ScreenWidth - 155, MapScene.ScreenHeight / 3 * 2 - 55));
+            var goldWindow = new GoldWindow(this.GameState.Party, this._ui.Canvas, this._ui.Sounds, new Point(MapScene.ScreenWidth - 155, MapScene.ScreenHeight / 3 * 2 - 55));
             goldWindow.ShowWindow();
             void Done()
             {
                 goldWindow.CloseWindow();
-                this.GameState.IsPaused = false;
+                done();
             }
 
             var storeWindow = new StoreWindow(this._ui, this._willBuyItems, $"{this.SpriteState.Name}: {this._text}");
@@ -91,7 +89,7 @@
                                 return;
                             }
                         
-                            var selectedMember = party.AliveMembers.FirstOrDefault(partyMember => partyMember.Items.Count < Party.MaxItems);
+                            var selectedMember = this.GameState.Party.AliveMembers.FirstOrDefault(partyMember => partyMember.Items.Count < Party.MaxItems);
                             if (selectedMember == null)
                             {
                                 new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: You do not have enough space in your inventory for {item.Name}", Done);
@@ -113,7 +111,7 @@
                         });
                         break;
                     }
-                    case StoreAction.Sell when party.AliveMembers.All(partyMember => partyMember.Items.Count == 0):
+                    case StoreAction.Sell when this.GameState.Party.AliveMembers.All(partyMember => partyMember.Items.Count == 0):
                         new TalkWindow(this._ui).Show("{this.SpriteState.Name}: You do not have any items that I would like to buy.", Done);
                         return;
                     case StoreAction.Sell:
@@ -122,7 +120,7 @@
                         selectHero.Show(this.GameState.Party.AliveMembers,
                         hero =>
                         {
-                            var inventoryWindow = new SellPartyItemsWindow(this._ui, party.Members);
+                            var inventoryWindow = new SellPartyItemsWindow(this._ui, this.GameState.Party.Members);
                             inventoryWindow.Show(hero.Items.Where(i => i.Gold != 0 && i.Type != ItemType.Quest), item =>
                             {
                                 if (item == null)
@@ -164,7 +162,6 @@
                         throw new ArgumentOutOfRangeException(nameof(action), action, null);
                 }
             });
-            return true;
         }
     }
 }

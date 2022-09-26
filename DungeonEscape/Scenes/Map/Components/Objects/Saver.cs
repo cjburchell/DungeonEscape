@@ -1,4 +1,6 @@
-﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
+﻿using System;
+
+namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 {
     using System.Linq;
     using Common.Components.UI;
@@ -16,9 +18,8 @@
             this._ui = ui;
         }
         
-        public override bool OnAction(Party party)
+        public override void OnAction(Action done)
         {
-            this.GameState.IsPaused = true;
             var questionWindow = new QuestionWindow(this._ui);
             questionWindow.Show($"{this.SpriteState.Name}: Would you like me to record your deeds?", accepted =>
             {
@@ -30,28 +31,26 @@
                         {
                             if (save == null)
                             {
-                                this.GameState.IsPaused = false;
+                                done();
                                 return;
                             }
 
                             this.GameState.Save(save);
-                            var levelText = party.AliveMembers.Aggregate("",
+                            var levelText = this.GameState.Party.AliveMembers.Aggregate("",
                                 (current, member) =>
                                     current +
                                     $"{member.Name} needs {member.NextLevel - member.Xp} xp to get to next level\n");
                             new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: It has been recorded\n{levelText}",
-                                () => { this.GameState.IsPaused = false; });
+                                done);
                         }
                     );
                     
                 }
                 else
                 {
-                    this.GameState.IsPaused = false;
+                    done();
                 }
             });
-            
-            return true;
         }
     }
 }

@@ -223,8 +223,12 @@ namespace Redpoint.DungeonEscape.State
 
         public bool CanUseItem(ItemInstance item)
         {
-            return !this.IsDead && !item.IsEquipped && (item.Type is ItemType.OneUse or ItemType.RepeatableUse || item.IsEquippable) &&
-                   (!item.IsEquippable || item.Classes == null || item.Classes.Contains(this.Class));
+            return !this.IsDead && item.Item.Skill is { IsNonEncounterSkill: true } && (item.Classes == null || item.Classes.Contains(this.Class));
+        }
+        
+        public bool CanEquipItem(ItemInstance item)
+        {
+            return !this.IsDead && item.IsEquippable && !item.IsEquipped && (item.Classes == null || item.Classes.Contains(this.Class));
         }
         
         public void UnEquip(ItemInstance item)

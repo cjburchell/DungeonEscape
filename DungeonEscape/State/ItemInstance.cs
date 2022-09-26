@@ -98,7 +98,9 @@ namespace Redpoint.DungeonEscape.State
         public int MaxCharges => Item.Charges;
 
         [JsonIgnore]
-        public bool HasCharges => this.MaxCharges == 0 || this.Charges != 0; 
+        public bool HasCharges => this.MaxCharges == 0 || this.Charges != 0;
+
+        [JsonIgnore] public Target Target => this.Item.Target;
 
         public void UnEquip(IEnumerable<Hero> heroes)
         {
@@ -111,13 +113,13 @@ namespace Redpoint.DungeonEscape.State
             equippedHero?.UnEquip(this);
         }
         
-        public (string, bool) Use(IFighter source, IFighter target, IGame game, int round)
+        public (string, bool) Use(IFighter source, IFighter target, BaseState targetObject, IGame game, int round, bool ignoreCharges = false)
         {
             var message = source != target
                 ? $"{source.Name} used {this.Name} on {target.Name}"
                 : $"{source.Name} used {this.Name}";
             
-            if (this.MaxCharges != 0)
+            if (this.MaxCharges != 0 && !ignoreCharges)
             {
                 if (this.Charges <= 0)
                 {
@@ -127,7 +129,7 @@ namespace Redpoint.DungeonEscape.State
 
             if (this.Item.Skill != null)
             {
-                var (result, worked)  = this.Item.Skill.Do(source, target, game, round);
+                var (result, worked)  = this.Item.Skill.Do(source, target, targetObject, game, round);
                 if (worked && this.MaxCharges != 0)
                 {
                     this.Charges--;
@@ -186,7 +188,7 @@ namespace Redpoint.DungeonEscape.State
                 message += $"\n{target.Name} {stat} {direction} by {value}";
             }
 
-            if (this.MaxCharges != 0)
+            if (this.MaxCharges != 0 && this.Charges != 0)
             {
                 this.Charges--;
             }

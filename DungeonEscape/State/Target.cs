@@ -4,6 +4,7 @@
     {
         Single,
         Group,
+        Object,
         None
     }
 }

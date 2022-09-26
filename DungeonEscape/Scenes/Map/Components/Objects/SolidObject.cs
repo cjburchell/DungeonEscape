@@ -12,8 +12,8 @@
         
         protected bool Collideable
         {
-            get => this.State.Collideable != null && this.State.Collideable.Value;
-            set => this.State.Collideable = value;
+            get => this.ObjectState.Collideable != null && this.ObjectState.Collideable.Value;
+            set => this.ObjectState.Collideable = value;
         }
         
         protected SolidObject(TmxObject tmxObject, ObjectState state, TmxMap map, IGame gameState) : base(tmxObject, state, map, gameState)

@@ -78,31 +78,35 @@
     "MinLevel": 18
   },
   {
-    "Type": "Key",
+    "Type": "OneUse",
     "Name": "Iron Key",
+    "Skill": "Open",
     "Cost": 250,
     "ImageId": 909,
     "MinLevel": 0
   },
   {
-    "Type": "Key",
+    "Type": "OneUse",
     "Name": "Silver Key",
+    "Skill": "Open",
     "Cost": 250,
     "ImageId": 894,
     "Rarity": "Uncommon",
     "MinLevel": 5
   },
   {
-    "Type": "Key",
+    "Type": "OneUse",
     "Name": "Gold Key",
+    "Skill": "Open",
     "Cost": 250,
     "ImageId": 899,
     "Rarity": "Rare",
     "MinLevel": 10
   },
   {
-    "Type": "Key",
+    "Type": "OneUse",
     "Name": "Jeweled Key",
+    "Skill": "Open",
     "Cost": 250,
     "ImageId": 895,
     "Rarity": "Epic",

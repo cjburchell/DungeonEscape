@@ -13,7 +13,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
     public class MapObject: Component, ICollidable, IUpdatable
     {
         protected readonly TmxObject TmxObject;
-        protected readonly ObjectState State;
+        public ObjectState ObjectState { get; }
         private readonly TmxTilesetTile _mapTile;
         private SpriteAnimator _animator;
         protected readonly IGame GameState;
@@ -27,6 +27,8 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
             {
                 return null;
             }
+            
+            state.Type = spriteType;
 
             return spriteType switch
             {
@@ -41,10 +43,9 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
         protected MapObject(TmxObject tmxObject, ObjectState state, TmxMap map, IGame gameState)
         {
             this.RenderLevel = map.Height * map.TileHeight + 15;
-            this.Name = $"{tmxObject.Name} {state.Id}";
             this.GameState = gameState;
             this.TmxObject = tmxObject;
-            this.State = state;
+            this.ObjectState = state;
             if (tmxObject.Tile == null)
             {
                 return;
@@ -52,6 +53,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 
             this._mapTile = map.GetTilesetTile(tmxObject.Tile.Gid);
             this.TileSet = map.GetTilesetForTileGid(tmxObject.Tile.Gid);
+            this.State.Name = tmxObject.Name;
         }
 
         public override void Initialize()
@@ -137,17 +139,22 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
             this._animator?.SetEnabled(display);
         }
 
-        public virtual void OnHit(Party party)
+        public virtual void OnHit()
         {
         }
 
-        public virtual bool OnAction(Party party)
+        public virtual void OnAction(Action done)
+        {
+            done();
+        }
+
+        public virtual bool CanDoAction()
         {
             return false;
         }
 
-        public string Name { get; init; }
-        
+        public BaseState State => this.ObjectState;
+
         public virtual void Update()
         {
             if (this.GameState.IsPaused)

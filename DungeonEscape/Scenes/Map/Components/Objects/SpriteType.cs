@@ -12,6 +12,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
         NpcSave,
         NpcKey,
         NpcPartyMember,
+        Monster,
         Static,
         HiddenItem
     }

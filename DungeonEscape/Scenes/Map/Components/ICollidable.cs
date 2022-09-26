@@ -1,12 +1,16 @@
-﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components
+﻿using System;
+
+namespace Redpoint.DungeonEscape.Scenes.Map.Components
 {
     using State;
 
     public interface ICollidable
     {
-        void OnHit(Party party);
-        bool OnAction(Party party);
+        void OnHit();
+        void OnAction(Action done);
 
-        string Name { get; }
+        bool CanDoAction();
+        
+        BaseState State { get; }
     }
 }

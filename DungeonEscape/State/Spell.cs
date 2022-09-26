@@ -2,6 +2,9 @@
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
+using System;
+using Redpoint.DungeonEscape.Scenes.Map.Components;
+
 namespace Redpoint.DungeonEscape.State
 {
     using System.Collections.Generic;
@@ -13,15 +16,10 @@ namespace Redpoint.DungeonEscape.State
 
     public class Spell
     {
-        private static readonly List<SkillType> EncounterSpells = new() {SkillType.Heal, SkillType.Damage, SkillType.Revive, SkillType.Dot, SkillType.Sleep, SkillType.Confusion, SkillType.StopSpell, SkillType.Buff, SkillType.Decrease, SkillType.Clear, SkillType.StatDecrease, SkillType.Steal};
-
-        private static readonly List<SkillType> NonEncounterSpells = new() {SkillType.Heal, SkillType.Outside, SkillType.Return, SkillType.Revive, SkillType.Clear, SkillType.Repel, SkillType.StatIncrease};
-        
         [JsonIgnore]
-        public bool IsNonEncounterSpell => NonEncounterSpells.Contains(this.Skill.Type);
+        public bool IsNonEncounterSpell => this.Skill.IsNonEncounterSkill;
 
-        [JsonIgnore]
-        public bool IsEncounterSpell => EncounterSpells.Contains(this.Skill.Type);
+        [JsonIgnore] public bool IsEncounterSpell => this.Skill.IsEncounterSkill;
         
         [JsonIgnore]
         public bool IsAttackSpell => this.Skill.IsAttackSkill;
@@ -54,7 +52,7 @@ namespace Redpoint.DungeonEscape.State
         }
 
 
-        public string Cast(IEnumerable<IFighter> targets, IFighter caster, IGame game, int round = 0)
+        public string Cast(IEnumerable<IFighter> targets, IEnumerable<BaseState> targetObjects, IFighter caster, IGame game, int round = 0)
         {
             if (caster.Magic < this.Cost)
             {
@@ -73,32 +71,63 @@ namespace Redpoint.DungeonEscape.State
             }
 
             var hit = false;
-            foreach (var target in targets.Where(i => (this.Skill.Type == SkillType.Revive || !i.IsDead) && !i.RanAway))
+            switch (Targets)
             {
-                if (IsAttackSpell && !caster.CanHit(target))
-                {
-                    message += $"{target.Name} dodges the spell\n";
-                    continue;
-                }
-                
-                var result = ("", false);
-                if (this.Skill != null)
-                {
-                    result = this.Skill.Do(target, caster, game, round, true);
-                }
+                case Target.Single:
+                case Target.Group:
+                    foreach (var target in targets.Where(i =>
+                                 (this.Skill.Type == SkillType.Revive || !i.IsDead) && !i.RanAway))
+                    {
+                        if (IsAttackSpell && !caster.CanHit(target))
+                        {
+                            message += $"{target.Name} dodges the spell\n";
+                            continue;
+                        }
 
-                if (string.IsNullOrEmpty(result.Item1))
-                {
-                    result.Item1 = "but it did not work\n";
-                }
+                        var result = ("", false);
+                        if (this.Skill != null)
+                        {
+                            result = this.Skill.Do(target, caster, null, game, round, true);
+                        }
 
-                message += result.Item1;
-                if (result.Item2)
+                        if (string.IsNullOrEmpty(result.Item1))
+                        {
+                            result.Item1 = "but it did not work\n";
+                        }
+
+                        message += result.Item1;
+                        if (result.Item2)
+                        {
+                            hit = true;
+                        }
+                    }
+                    break;
+                case Target.Object:
+                    foreach (var targetObject in targetObjects)
+                    {
+                        var result = this.Skill.Do(null, caster, targetObject, game, round, true);
+                        if (string.IsNullOrEmpty(result.Item1))
+                        {
+                            result.Item1 = "but it did not work\n";
+                            message += result.Item1;
+                        }
+                    }
+                    break;
+                case Target.None:
                 {
-                    hit = true;
+                    var result = this.Skill.Do(null, caster, null, game, round, true);
+                    if (string.IsNullOrEmpty(result.Item1))
+                    {
+                        result.Item1 = "but it did not work\n";
+                        message += result.Item1;
+                    }
+
+                    break;
                 }
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-
+            
             if (IsAttackSpell)
             {
                 game.Sounds.PlaySoundEffect(hit? "receive-damage" : "miss" );

@@ -1,4 +1,6 @@
-﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
+﻿using System;
+
+namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -19,52 +21,53 @@
             this._cost = tmxObject.Properties.ContainsKey("Cost") ? int.Parse(tmxObject.Properties["Cost"]) : 25;
         }
         
-        public override bool OnAction(Party party)
+        public override void OnAction(Action done)
         {
-            this.GameState.IsPaused = true;
-            var goldWindow = new GoldWindow(party, this._ui.Canvas, this._ui.Sounds);
+            var goldWindow = new GoldWindow(this.GameState.Party, this._ui.Canvas, this._ui.Sounds);
             goldWindow.ShowWindow();
 
-            var healAllCost = party.AliveMembers.Where(member => member.Health != member.MaxHealth).Sum(_ => this._cost);
+            var healAllCost = this.GameState.Party.AliveMembers.Where(member => member.Health != member.MaxHealth).Sum(_ => this._cost);
             var cureCost = this._cost * 2;
             var reviveCost = this._cost * 10;
-            var magicCost = party.AliveMembers.Where(member => member.Magic != member.MaxMagic).Sum(_ => this._cost*2);
+            var magicCost = this.GameState.Party.AliveMembers.Where(member => member.Magic != member.MaxMagic).Sum(_ => this._cost*2);
             
             var options = new List<string>();
-            if (party.AliveMembers.Any(member => member.Health != member.MaxHealth))
+            if (this.GameState.Party.AliveMembers.Any(member => member.Health != member.MaxHealth))
             {
                 options.Add($"Heal {this._cost}");
-                if (party.AliveMembers.Count(member => member.Health != member.MaxHealth) != 1)
+                if (this.GameState.Party.AliveMembers.Count(member => member.Health != member.MaxHealth) != 1)
                 {
                     options.Add($"Heal All {healAllCost}");
                 }
             }
             
-            if (party.AliveMembers.Any(member => member.Magic != member.MaxMagic))
+            if (this.GameState.Party.AliveMembers.Any(member => member.Magic != member.MaxMagic))
             {
                 options.Add($"Renew Magic {magicCost}");
             }
             
-            if (party.AliveMembers.Any(member => member.Status.Count != 0))
+            if (this.GameState.Party.AliveMembers.Any(member => member.Status.Count != 0))
             {
                 options.Add($"Cure {cureCost}");
             }
             
-            if (party.Members.Any(member => member.IsDead))
+            if (this.GameState.Party.Members.Any(member => member.IsDead))
             {
                 options.Add($"Revive {reviveCost}");
             }
 
+            var party = this.GameState.Party;
+
             void Done()
             {
                 goldWindow.CloseWindow();
-                this.GameState.IsPaused = false;
+                done();
             }
             
             if (!options.Any())
             {
                 new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: You do not require any of my services.", Done);
-                return true;
+                return;
             }
             
             new QuestionWindow(this._ui).Show($"{this.SpriteState.Name}: Do you require my services as a healer?", result => 
@@ -218,8 +221,6 @@
                     
                 });
             });
-            
-            return true;
         }
     }
 }

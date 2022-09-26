@@ -31,20 +31,20 @@
             this.Dialog = gameState.Dialogs.FirstOrDefault(i => i.Id == dialogId);
         }
 
-        public override bool OnAction(Party party)
+        public override void OnAction(Action done)
         {
-            if (this.Dialog == null)
+            if (!CanDoAction())
             {
-                return false;
+                done();
+                return;
             }
             
-            this.GameState.IsPaused = true;
-            this.StartDialog(this.Dialog.Dialogs,() =>
-            {
-                this.GameState.IsPaused = false;
-            });
-            return true;
+            this.StartDialog(this.Dialog.Dialogs,done);
+        }
 
+        public override bool CanDoAction()
+        {
+            return this.Dialog != null;
         }
 
         private void StartDialog(IReadOnlyCollection<DialogHead> dialogs, Action done)

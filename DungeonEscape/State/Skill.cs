@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Redpoint.DungeonEscape.Scenes.Map.Components.Objects;
 
 namespace Redpoint.DungeonEscape.State
 {
@@ -39,11 +40,23 @@ namespace Redpoint.DungeonEscape.State
         
         [JsonIgnore]
         public bool IsAttackSkill => AttackSkill.Contains(this.Type);
+
+        private static readonly List<SkillType> NonEncounterSkill = new() {SkillType.Heal, SkillType.Outside, SkillType.Return, SkillType.Revive, SkillType.Clear, SkillType.Repel, SkillType.StatIncrease, SkillType.Open};
         
-        public (string, bool) Do(IFighter target, IFighter source, IGame game, int round, bool isMagic = false)
+        [JsonIgnore]
+        public bool IsEncounterSkill => EncounterSkill.Contains(this.Type);
+        
+        private static readonly List<SkillType> EncounterSkill = new() {SkillType.Heal, SkillType.Damage, SkillType.Revive, SkillType.Dot, SkillType.Sleep, SkillType.Confusion, SkillType.StopSpell, SkillType.Buff, SkillType.Decrease, SkillType.Clear, SkillType.StatDecrease, SkillType.Steal};
+
+        
+        [JsonIgnore]
+        public bool IsNonEncounterSkill => NonEncounterSkill.Contains(this.Type);
+
+        public (string, bool) Do(IFighter target, IFighter source, BaseState targetObject, IGame game, int round, bool isMagic = false)
         {
             return this.Type switch
             {
+                SkillType.Open => this.DoOpen(source, targetObject, game),
                 SkillType.Heal => this.DoHeal(target),
                 SkillType.Outside => DoOutside(game),
                 SkillType.Damage => this.DoDamage(target, source, isMagic),
@@ -63,6 +76,26 @@ namespace Redpoint.DungeonEscape.State
                 SkillType.None => ($"{source.Name} {this.EffectName}", false),
                 _ => ("", false)
             };
+        }
+
+        private (string, bool) DoOpen(IFighter source, BaseState targetObject, IGame game)
+        {
+            if (targetObject.Type != SpriteType.Door)
+            {
+                return ("This is not a door", false);
+            }
+
+            var door = targetObject as ObjectState;
+
+            if (door.IsOpen is true)
+            {
+                return ("The Door is already open", false);
+            }
+
+            game.Sounds.PlaySoundEffect("door");
+            door.IsOpen = true;
+            
+            return ($"{source.Name} Is unable to Open Door\n", false);
         }
 
         private (string, bool) DoRepel(IFighter source, IGame game, int round)

@@ -5,7 +5,6 @@
         OneUse,
         Weapon,
         Armor,
-        Key,
         Gold,
         Quest,
         Unknown,

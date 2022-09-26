@@ -26,7 +26,7 @@
         private VirtualIntegerAxis _xAxisInput;
         private VirtualIntegerAxis _yAxisInput;
         private readonly IGame _gameState;
-        private readonly List<ICollidable> _currentlyOverObjects = new();
+        public List<ICollidable> CurrentlyOverObjects { get; } = new();
         private PartyStatusWindow _statusWindow;
         private GoldWindow _goldWindow;
         private Mover _mover;
@@ -339,15 +339,40 @@
             if (this._debugText.IsVisible())
             {
                 var currentBiome = MapScene.GetCurrentBiome(this._map, this.Entity.Position);
+
+                var objectList = CurrentlyOverObjects.Aggregate("", (current, overObject) => current + $"{overObject.State.Name},");
+
                 this._debugText.SetText(
-                    $"B: {currentBiome}, G: {MapScene.ToMapGrid(this.Entity.Position, this._map)}, R: {this.Entity.Position.X:F2}:{this.Entity.Position.Y:F2}  d: {this._distance:F2}");
+                    $"B: {currentBiome}, G: {MapScene.ToMapGrid(this.Entity.Position, this._map)}, R: {this.Entity.Position.X:F2}:{this.Entity.Position.Y:F2}  d: {this._distance:F2} over: {objectList}");
             }
             
-            if (this._actionButton.IsReleased)
+            var actionItems = this.CurrentlyOverObjects.Where(i=> i.CanDoAction()).ToList();
+            if (this._actionButton.IsReleased && actionItems.Any())
             {
-                foreach (var unused in this._currentlyOverObjects.Where(overObject => overObject.OnAction(this._gameState.Party)))
+                void Done()
                 {
-                    break;
+                    this._gameState.IsPaused = false;
+                }
+                this._gameState.IsPaused = true;
+                
+                if (this.CurrentlyOverObjects.Count == 1)
+                {
+                    actionItems.First().OnAction(Done);
+                }
+                else
+                {
+                    new SelectWindow<string>(this._ui, null, new Point(20, 20)).Show(actionItems.Select(i => i.State.Name),
+                        selection =>
+                        {
+                            if (selection == null)
+                            {
+                                this._gameState.IsPaused = false;
+                                return;
+                            }
+
+                            var overObject = actionItems.FirstOrDefault(i => i.State.Name == selection);
+                            overObject?.OnAction(Done);
+                        });
                 }
             }
 
@@ -575,12 +600,12 @@
                 return;
             }
 
-            if (!this._currentlyOverObjects.Contains(objCollider.Object))
+            if (!this.CurrentlyOverObjects.Contains(objCollider.Object))
             {
-                this._currentlyOverObjects.Add(objCollider.Object);
+                this.CurrentlyOverObjects.Add(objCollider.Object);
             }
             
-            objCollider.Object.OnHit(this._gameState.Party);
+            objCollider.Object.OnHit();
         }
 
         public void OnTriggerExit(Collider other, Collider local)
@@ -595,7 +620,7 @@
                 return;
             }
             
-            this._currentlyOverObjects.Remove(objCollider.Object);
+            this.CurrentlyOverObjects.Remove(objCollider.Object);
         }
     }
 }    

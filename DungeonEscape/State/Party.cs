@@ -1,4 +1,6 @@
 ﻿
+using Redpoint.DungeonEscape.Scenes.Map;
+
 namespace Redpoint.DungeonEscape.State
 {
     using Newtonsoft.Json;
@@ -39,6 +41,7 @@ namespace Redpoint.DungeonEscape.State
         public bool CurrentMapIsOverWorld { get; set; }
 
         public int StepCount { get; set; }
+        public IEnumerable<Hero> DeadMembers => this.Members.Where(member => member.IsDead);
 
         public ItemInstance GetItem(string itemId)
         {
@@ -80,27 +83,26 @@ namespace Redpoint.DungeonEscape.State
             return this.AliveMembers.Any(item => item.Level >= level);
         }
         
-        public bool CanOpenDoor(int doorLevel)
+        public string OpenDoor(ObjectState door, IGame game)
         {
             ItemInstance key = null;
             Hero itemMember = null;
             foreach (var member in AliveMembers)
             {
-                key = member.Items.FirstOrDefault(item => item.Type == ItemType.Key && item.MinLevel == doorLevel);
+                key = member.Items.FirstOrDefault(item => item.Item.Skill?.Type == SkillType.Open && item.MinLevel == door.Level);
                 if (key != null)
                 {
                     itemMember = member;
                     break;
                 }
             }
-
+            
             if (key == null)
             {
-                return false;
+                return "You do not have a key for this door";
             }
 
-            itemMember.Items.Remove(key);
-            return  true;
+            return MapScene.UseItem(game, itemMember, null, door, key).Item1;
         }
 
         public int MaxLevel()

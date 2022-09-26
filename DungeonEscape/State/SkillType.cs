@@ -20,6 +20,7 @@
         None,
         StatDecrease,
         StatIncrease,
-        Repel
+        Repel,
+        Open
     }
 }

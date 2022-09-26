@@ -68,7 +68,6 @@ namespace Redpoint.DungeonEscape.State
 
         [JsonIgnore]
         public bool CanBeSoldInStore => this.Type != ItemType.Gold &&
-                                        this.Type != ItemType.Key &&
                                         this.Type != ItemType.Unknown;
 
         [JsonIgnore]
@@ -134,5 +133,6 @@ namespace Redpoint.DungeonEscape.State
         }
 
         public int Charges { get; set; }
+        public Target Target { get; set; } = Target.Single;
     }
 }

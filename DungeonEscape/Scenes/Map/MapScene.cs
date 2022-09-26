@@ -41,6 +41,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
         private VirtualButton _showExitWindowInput;
         private UiSystem _ui;
         private readonly string _spawnId;
+        private PlayerComponent _player;
 
         public MapScene(IGame game, string mapId, string spawnId, Vector2? start = null)
         {
@@ -230,14 +231,14 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             
             var first = true;
             Entity lastEntity = null;
-            PlayerComponent player = null;
+            _player = null;
             var renderOffset = (map.Height * map.TileHeight);
             foreach (var hero in this._gameState.Party.Members.OrderBy(i => i.IsDead))
             {
                 if (first)
                 {
                     var playerEntity = this.CreateEntity(hero.Id, spawn);
-                    player = playerEntity.AddComponent(new PlayerComponent( hero, this._gameState, map, this._debugText, this._randomMonsters, this._ui, renderOffset)).GetComponent<PlayerComponent>();
+                    _player = playerEntity.AddComponent(new PlayerComponent( hero, this._gameState, map, this._debugText, this._randomMonsters, this._ui, renderOffset)).GetComponent<PlayerComponent>();
                     this.Camera.Entity.AddComponent(new FollowCamera(playerEntity, FollowCamera.CameraStyle.CameraWindow));
                     first = false;
                     lastEntity = playerEntity;
@@ -245,7 +246,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                 else
                 {
                     var followerEntity = this.CreateEntity(hero.Id, spawn);
-                    followerEntity.AddComponent(new Follower( hero, lastEntity, player, this._gameState, renderOffset));
+                    followerEntity.AddComponent(new Follower( hero, lastEntity, _player, this._gameState, renderOffset));
                     lastEntity = followerEntity;
                 }
             }
@@ -361,7 +362,23 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             
             if (this._showCommandWindowInput.IsReleased)
             {
-                var menuItems = new List<string> {"Status"};
+                var menuItems = new List<string>();
+                if (this._player.CurrentlyOverObjects.Any(i => i.State.Type == SpriteType.Npc && i.CanDoAction()))
+                {
+                    menuItems.Add("Talk");
+                }
+                
+                if (this._player.CurrentlyOverObjects.Any(i => i.State.Type is SpriteType.Door && i.CanDoAction()))
+                {
+                    menuItems.Add("Open");
+                }
+                
+                if (this._player.CurrentlyOverObjects.Any(i => i.State.Type is SpriteType.HiddenItem or SpriteType.Chest && i.CanDoAction()))
+                {
+                    menuItems.Add("Search");
+                }
+                
+                menuItems.Add("Status");
                 if (_gameState.Party.AliveMembers.Any(member => member.GetSpells(_gameState.Spells).Any()))
                 {
                     menuItems.Add("Spells");
@@ -394,6 +411,15 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                             break;
                         case "Quests":
                             this.ShowQuests(UnPause);
+                            break;
+                        case "Talk":
+                            this.DoTalk(UnPause);
+                            break;
+                        case "Search":
+                            this.DoSearch(UnPause);
+                            break;
+                        case "Open":
+                            this.DoOpen(UnPause);
                             break;
                         default:
                             UnPause();
@@ -455,6 +481,58 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             base.Update();
         }
 
+        private void DoOpen(Action done)
+        {
+            var doors = this._player.CurrentlyOverObjects.Where(i => i.State.Type == SpriteType.Door && i.CanDoAction()).ToList();
+            if (!doors.Any())
+            {
+                done();
+                return;
+            }
+
+            if (doors.Count != 1)
+            {
+                Debug.Warn("found more than one door");
+            }
+
+            doors.First().OnAction(done);
+        }
+
+        private void DoSearch(Action done)
+        {
+            var chests = this._player.CurrentlyOverObjects.Where(i => i.State.Type is SpriteType.Chest or SpriteType.HiddenItem && i.CanDoAction()).ToList();
+            if (!chests.Any())
+            {
+                done();
+                return;
+            }
+
+            if (chests.Count != 1)
+            {
+                Debug.Warn("found more than one chest");
+            }
+
+            chests.First().OnAction(done);
+        }
+
+        private void DoTalk(Action done)
+        {
+            var npc = this._player.CurrentlyOverObjects.Where(i => i.State.Type == SpriteType.Npc && i.CanDoAction()).ToList();
+            if (!npc.Any())
+            {
+                done();
+                return;
+            }
+
+            if (npc.Count != 1)
+            {
+                Debug.Warn("found more than one npc");
+            }
+
+            npc.First().OnAction(done);
+
+        }
+
         private void ShowQuests(Action done)
         {
             new QuestWindow(this._ui).Show(this._gameState.Party.ActiveQuests, this._gameState.Quests, done);
@@ -486,42 +564,74 @@ namespace Redpoint.DungeonEscape.Scenes.Map
 
         private void CastSpell(IFighter caster, Spell spell, Action done)
         {
-            if (spell.Targets == Target.Group)
+            switch (spell.Targets)
             {
-                var result = spell.Cast(this._gameState.Party.Members, caster, this._gameState);
-                if (string.IsNullOrEmpty(result))
+                case Target.Group:
                 {
-                    done();
+                    var result = spell.Cast(this._gameState.Party.Members,null, caster, this._gameState);
+                    if (string.IsNullOrEmpty(result))
+                    {
+                        done();
+                        return;
+                    }
+                
+                    new TalkWindow(this._ui).Show(result, done);
                     return;
                 }
-                
-                new TalkWindow(this._ui).Show(result, done);
-                return;
-            }
-
-            Func<Hero,bool> filter = hero => !hero.IsDead;
-            if (spell.Type == SkillType.Revive)
-            {
-                filter = hero => hero.IsDead;
-            }
-                
-            if(this._gameState.Party.Members.Count(filter) == 1 && spell.Type != SkillType.Revive)
-            {
-                var result = spell.Cast(this._gameState.Party.Members.Where(filter), caster, this._gameState);
-                new TalkWindow(this._ui).Show(result, done);
-                return;
-            }
-                
-            new SelectHeroWindow(this._ui).Show(this._gameState.Party.Members.Where(filter), target =>
-            {
-                if (target == null)
+                case Target.Object:
                 {
-                    done();
+                    var result = spell.Cast(null, _player.CurrentlyOverObjects.Select(i => i.State) , caster, this._gameState);
+                    if (string.IsNullOrEmpty(result))
+                    {
+                        done();
+                        return;
+                    }
+                
+                    new TalkWindow(this._ui).Show(result, done);
+                    break;
+                }
+                case Target.Single:
+                {
+                    Func<Hero, bool> filter = hero => !hero.IsDead;
+                    if (spell.Type == SkillType.Revive)
+                    {
+                        filter = hero => hero.IsDead;
+                    }
+
+                    if (this._gameState.Party.Members.Count(filter) == 1 && spell.Type != SkillType.Revive)
+                    {
+                        var result = spell.Cast(this._gameState.Party.Members.Where(filter), null, caster, this._gameState);
+                        new TalkWindow(this._ui).Show(result, done);
+                        return;
+                    }
+
+                    new SelectHeroWindow(this._ui).Show(this._gameState.Party.Members.Where(filter), target =>
+                    {
+                        if (target == null)
+                        {
+                            done();
+                            return;
+                        }
+
+                        new TalkWindow(this._ui).Show(spell.Cast(new[] { target }, null, caster, this._gameState), done);
+                    });
                     return;
                 }
+                case Target.None:
+                {
+                    var result = spell.Cast(null,null, caster, this._gameState);
+                    if (string.IsNullOrEmpty(result))
+                    {
+                        done();
+                        return;
+                    }
 
-                new TalkWindow(this._ui).Show(spell.Cast(new[] {target}, caster, this._gameState), done);
-            });
+                    new TalkWindow(this._ui).Show(result, done);
+                    break;
+                }
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private void ShowSpell(Action done)
@@ -583,7 +693,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                         done();
                         return;
                     }
-                    
+
                     var inventoryWindow = new InventoryWindow(this._ui, selectedHero);
                     inventoryWindow.Show(selectedHero.Items, item =>
                     {
@@ -596,10 +706,17 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                         var menuItems = new List<string>();
                         if (selectedHero.CanUseItem(item))
                         {
-                            menuItems.Add(item.IsEquippable ? "Equip" : "Use");
+                            menuItems.Add("Use");
                         }
-                        
-                        if (this._gameState.Party.AliveMembers.Count() != 1 && this._gameState.Party.AliveMembers.Any(hero => hero.Items.Count < Party.MaxItems && hero != selectedHero) )
+
+                        if (selectedHero.CanEquipItem(item))
+                        {
+                            menuItems.Add("Equip");
+                        }
+
+                        if (this._gameState.Party.AliveMembers.Count() != 1 &&
+                            this._gameState.Party.AliveMembers.Any(hero =>
+                                hero.Items.Count < Party.MaxItems && hero != selectedHero))
                         {
                             menuItems.Add("Transfer");
                         }
@@ -614,8 +731,8 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                             done();
                             return;
                         }
-                        
-                        
+
+
                         var selectWindow = new SelectWindow<string>(this._ui, null, new Point(20, 20));
                         selectWindow.Show(menuItems, action =>
                         {
@@ -624,7 +741,9 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                                 case "Transfer":
                                 {
                                     var selectHero = new SelectHeroWindow(this._ui);
-                                    selectHero.Show(this._gameState.Party.AliveMembers.Where(hero => hero.Items.Count < Party.MaxItems && hero != selectedHero),
+                                    selectHero.Show(
+                                        this._gameState.Party.AliveMembers.Where(hero =>
+                                            hero.Items.Count < Party.MaxItems && hero != selectedHero),
                                         hero =>
                                         {
                                             if (hero == null)
@@ -632,69 +751,153 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                                                 done();
                                                 return;
                                             }
+
                                             if (item.IsEquipped)
                                             {
                                                 item.UnEquip(this._gameState.Party.Members);
                                             }
-                                            
+
                                             selectedHero.Items.Remove(item);
                                             hero.Items.Add(item);
-                                            
-                                            new TalkWindow(this._ui).Show($"{selectedHero.Name} gave {item.Name} {hero.Name}", done);
-                                            
+
+                                            new TalkWindow(this._ui).Show(
+                                                $"{selectedHero.Name} gave {item.Name} {hero.Name}", done);
+
                                         });
                                     break;
                                 }
                                 case "Equip":
                                 {
-                                    var result = UseItem(selectedHero, selectedHero, item);
-                                    if (string.IsNullOrEmpty(result))
+                                    var (message, _) = UseItem(_gameState, selectedHero, selectedHero, null, item);
+                                    if (string.IsNullOrEmpty(message))
                                     {
                                         done();
                                     }
                                     else
                                     {
-                                        new TalkWindow(this._ui).Show(result, done);
+                                        new TalkWindow(this._ui).Show(message, done);
                                     }
+
                                     break;
                                 }
                                 case "Use":
-                                    if (this._gameState.Party.AliveMembers.Count() == 1)
+                                    switch (item.Target)
                                     {
-                                        var result = this.UseItem(selectedHero,this._gameState.Party.AliveMembers.First(), item);
-                                        if (string.IsNullOrEmpty(result))
-                                        {
-                                            done();
-                                        }
-                                        else
-                                        {
-                                            new TalkWindow(this._ui).Show(result, done);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        var selectHero = new SelectHeroWindow(this._ui);
-                                        selectHero.Show(this._gameState.Party.AliveMembers.Where(hero => hero.CanUseItem(item)),
-                                            hero =>
+                                        case Target.Single:
+                                            if (this._gameState.Party.AliveMembers.Count() == 1)
                                             {
-                                                if (hero == null)
-                                                {
-                                                    done();
-                                                    return;
-                                                }
-
-                                                var result = this.UseItem(selectedHero,hero, item);
-                                                if (string.IsNullOrEmpty(result))
+                                                var (message, _) = UseItem(_gameState, selectedHero,
+                                                    this._gameState.Party.AliveMembers.First(), null, item);
+                                                if (string.IsNullOrEmpty(message))
                                                 {
                                                     done();
                                                 }
                                                 else
                                                 {
-                                                    new TalkWindow(this._ui).Show(result, done);
+                                                    new TalkWindow(this._ui).Show(message, done);
                                                 }
-                                            });
-                                    }
+                                            }
+                                            else
+                                            {
+                                                var selectHero = new SelectHeroWindow(this._ui);
+                                                selectHero.Show(
+                                                    this._gameState.Party.AliveMembers.Where(hero =>
+                                                        hero.CanUseItem(item)),
+                                                    hero =>
+                                                    {
+                                                        if (hero == null)
+                                                        {
+                                                            done();
+                                                            return;
+                                                        }
 
+                                                        var (message, _) = UseItem(this._gameState, selectedHero, hero, null,
+                                                            item);
+                                                        if (string.IsNullOrEmpty(message))
+                                                        {
+                                                            done();
+                                                        }
+                                                        else
+                                                        {
+                                                            new TalkWindow(this._ui).Show(message, done);
+                                                        }
+                                                    });
+                                            }
+
+                                            break;
+                                        case Target.Group:
+                                        {
+                                            var firstTime = true;
+                                            var message = "";
+                                            foreach (var member in this._gameState.Party.AliveMembers.Cast<IFighter>())
+                                            {
+                                                var (resultMessage, result) = UseItem(_gameState, selectedHero, member
+                                                    , null, item, firstTime);
+                                                if (result)
+                                                {
+                                                    firstTime = false;
+                                                }
+                                                
+                                                message += $"{resultMessage}\n";
+                                            }
+
+                                            if (string.IsNullOrEmpty(message))
+                                            {
+                                                done();
+                                            }
+                                            else
+                                            {
+                                                new TalkWindow(this._ui).Show(message, done);
+                                            }
+
+                                        }
+                                            break;
+                                        case Target.Object:
+                                        {
+                                            var firstTime = true;
+                                            var message = "";
+                                            foreach (var overObject in this._player.CurrentlyOverObjects)
+                                            {
+                                                var (resultMessage, result) = UseItem(_gameState, selectedHero, null
+                                                    , overObject.State, item, firstTime);
+
+                                                if (result)
+                                                {
+                                                    firstTime = false;
+                                                }
+                                                
+                                                message += $"{resultMessage}\n";
+                                            }
+
+                                            if (string.IsNullOrEmpty(message))
+                                            {
+                                                done();
+                                            }
+                                            else
+                                            {
+                                                new TalkWindow(this._ui).Show(message, done);
+                                            }
+
+                                            break;
+                                        }
+                                        case Target.None:
+                                        {
+                                            var (message,_) = UseItem(_gameState, selectedHero,
+                                                null, null, item);
+                                            if (string.IsNullOrEmpty(message))
+                                            {
+                                                done();
+                                            }
+                                            else
+                                            {
+                                                new TalkWindow(this._ui).Show(message, done);
+                                            }
+
+                                            break;
+                                        }
+                                        default:
+                                            throw new ArgumentOutOfRangeException();
+                                    }
                                     break;
                                 case "Drop":
                                 {
@@ -714,7 +917,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                         });
                     });
                 }
-                
+
                 if (_gameState.Party.AliveMembers.Count() == 1)
                 {
                     var hero = _gameState.Party.AliveMembers.First();
@@ -729,32 +932,32 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                 }
             }
         }
-        
-        private string UseItem(IFighter source, IFighter target, ItemInstance item, int round = 0)
+
+        public static (string, bool) UseItem(IGame game, IFighter source, IFighter target, BaseState targetObject, ItemInstance item, bool ignoreCharges = false)
         {
             // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
             switch (item.Type)
             {
                 case ItemType.OneUse:
                 {
-                    var result = item.Use(source, target, this._gameState, round);
-                    if (result.Item2)
+                    var (message ,result) = item.Use(source, target, targetObject, game, 0);
+                    if (result)
                     {
                         source.Items.Remove(item);
                     }
                     
-                    return result.Item1;
+                    return (message, result);
                 }
                 case ItemType.RepeatableUse:
                 {
-                    var result = item.Use(source, target, this._gameState, round);
+                    var (message, result) = item.Use(source, target, targetObject, game, 0, ignoreCharges);
                     if (!item.HasCharges)
                     {
                         source.Items.Remove(item);
-                        result.Item1 += " and has been destroyed.";
+                        message += " and has been destroyed.";
                     }
 
-                    return result.Item1;
+                    return (message, result);
                 }
                 case ItemType.Armor:
                 case ItemType.Weapon:
@@ -762,10 +965,10 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                     var oldStats = target.Stats.ToList();
                     foreach (var oldItem in oldItems)
                     {
-                        oldItem.UnEquip(this._gameState.Party.Members);
+                        oldItem.UnEquip(game.Party.Members);
                     }
                     
-                    item.UnEquip(this._gameState.Party.Members);
+                    item.UnEquip(game.Party.Members);
                     target.Equip(item);
                     var results = "";
                     foreach (var newStat in target.Stats.ToList())
@@ -783,14 +986,14 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                     
                     if (oldItems.Count == 0)
                     {
-                        return $"{target.Name} put on the {item.Name}{results}";
+                        return ($"{target.Name} put on the {item.Name}{results}", true);
                     }
 
                     var itemList = oldItems.Aggregate("", (current, oldItem) => current + (string.IsNullOrEmpty(current) ? $" {oldItem.Name}" : $" and {oldItem.Name}"));
-                    return  $"{target.Name} took off{itemList}, and put on the {item.Name}{results}";
+                    return  ($"{target.Name} took off{itemList}, and put on the {item.Name}{results}", true);
                     
                 default:
-                    return $"{target.Name} is unable to use {item.Name}";
+                    return ($"{target.Name} is unable to use {item.Name}", false);
             }
         }
     }

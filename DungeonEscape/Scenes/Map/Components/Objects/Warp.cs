@@ -21,7 +21,7 @@
             }
         }
 
-        public override void OnHit(Party party)
+        public override void OnHit()
         {
             this.GameState.Sounds.PlaySoundEffect("stairs-up");
             this.GameState.IsPaused = true;

@@ -58,6 +58,11 @@
             this._willBuyItems = willBuyItems;
             this.SpriteState.Items = items.OrderBy(i=> i.Cost).ToList();
         }
+        
+        public override bool CanDoAction()
+        {
+            return true;
+        }
 
 
         public override void OnAction(Action done)

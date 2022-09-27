@@ -53,7 +53,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 
         public override bool CanDoAction()
         {
-            return !this.IsOpen && !this.GameState.Party.CanOpenChest(this._level);
+            return !this.IsOpen && this.GameState.Party.CanOpenChest(this._level);
         }
 
         public override void OnAction(Action done)

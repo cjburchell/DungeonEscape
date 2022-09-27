@@ -89,7 +89,7 @@ namespace Redpoint.DungeonEscape.State
             Hero itemMember = null;
             foreach (var member in AliveMembers)
             {
-                key = member.Items.FirstOrDefault(item => item.Item.Skill?.Type == SkillType.Open && item.MinLevel == door.Level);
+                key = member.Items.FirstOrDefault(item => item.Item.IsKey && item.MinLevel == door.Level);
                 if (key != null)
                 {
                     itemMember = member;

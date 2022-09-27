@@ -14,8 +14,8 @@ namespace Redpoint.DungeonEscape
         void Save(GameSave save, bool isQuick = false);
 
         Party Party { get; }
-        
-        Names Names { get; }
+
+        string GenerateName(Gender gender);
 
         bool IsPaused { get; set; }
     
@@ -57,7 +57,6 @@ namespace Redpoint.DungeonEscape
 
         void ShowNewQuest();
         
-
         void StartFight(IEnumerable<Monster> monsters, Biome biome);
         
         void ShowSettings();

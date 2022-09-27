@@ -355,7 +355,7 @@
                 }
                 this._gameState.IsPaused = true;
                 
-                if (this.CurrentlyOverObjects.Count == 1)
+                if (actionItems.Count == 1)
                 {
                     actionItems.First().OnAction(Done);
                 }

@@ -18,6 +18,11 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
             this._ui = ui;
         }
         
+        public override bool CanDoAction()
+        {
+            return true;
+        }
+        
         public override void OnAction(Action done)
         {
             var questionWindow = new QuestionWindow(this._ui);

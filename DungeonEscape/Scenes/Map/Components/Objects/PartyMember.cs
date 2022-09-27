@@ -27,9 +27,7 @@
             {
                 do
                 {
-                    this.SpriteState.Name = this._gender == Gender.Male
-                        ? gameState.Names.Male[Nez.Random.NextInt(gameState.Names.Male.Count)]
-                        : gameState.Names.Female[Nez.Random.NextInt(gameState.Names.Male.Count)];
+                    this.SpriteState.Name = gameState.GenerateName(this._gender);
                 } while (gameState.Party.Members.Any(i => i.Name == this.SpriteState.Name));
             }
             

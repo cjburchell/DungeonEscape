@@ -341,5 +341,17 @@
     "StatType": "Attack",
     "Targets": "Single",
     "StatConst": 1
+  },
+  {
+    "Name": "Play Song",
+    "Type": "Buff",
+    "EffectName": "defence increased",
+    "Targets": "Group",
+    "DurationType": "Rounds",
+    "DurationConst": 1,
+    "DurationRandom": 0,
+    "StatType": "Defence",
+    "StatRandom": 10,
+    "StatConst": 20
   }
 ]

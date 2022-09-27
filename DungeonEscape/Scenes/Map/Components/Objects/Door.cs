@@ -37,7 +37,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
             
             foreach (var member in this.GameState.Party.AliveMembers)
             {
-                var key = member.Items.FirstOrDefault(item => item.Item.Skill?.Type == SkillType.Open && item.MinLevel == this.ObjectState.Level);
+                var key = member.Items.FirstOrDefault(item => item.Item.IsKey && item.MinLevel == this.ObjectState.Level);
                 if (key != null)
                 {
                     return true;

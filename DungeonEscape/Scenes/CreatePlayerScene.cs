@@ -7,7 +7,6 @@
     using Nez;
     using Nez.UI;
     using State;
-    using Random = Nez.Random;
 
     public class CreatePlayerScene : Scene
     {
@@ -34,7 +33,7 @@
 
             this._hero = new Hero
             {
-                Name = game.Names.Male[Random.NextInt(game.Names.Male.Count)],
+                Name = game.GenerateName(Gender.Male),
                 Class = Class.Hero,
                 Gender = Gender.Male
             };
@@ -72,7 +71,7 @@
             contentTable.Add(nameButton).Width(BasicWindow.ButtonWidth * 2).Height(BasicWindow.ButtonHeight).SetPadLeft(5);
             nameButton.OnClicked += _ =>
             {
-                this._hero.Name =  this._hero.Gender == Gender.Male ? game.Names.Male[Random.NextInt(game.Names.Male.Count)] : game.Names.Female[Random.NextInt(game.Names.Female.Count)];
+                this._hero.Name =  game.GenerateName(this._hero.Gender);
                 nameField.SetText(this._hero.Name);
                 nameChanged = false;
             };
@@ -88,7 +87,7 @@
                 this._hero.Gender = Enum.Parse<Gender>(genderField.GetSelected());
                 if (!nameChanged)
                 {
-                    this._hero.Name =  this._hero.Gender == Gender.Male ? game.Names.Male[Random.NextInt(game.Names.Male.Count)] : game.Names.Female[Random.NextInt(game.Names.Female.Count)];
+                    this._hero.Name = game.GenerateName(this._hero.Gender);
                     nameField.SetText(this._hero.Name);
                     nameChanged = false;
                 }
@@ -107,7 +106,8 @@
                 Class.Fighter.ToString(),
                 Class.Merchant.ToString(),
                 Class.Thief.ToString(),
-                Class.Sage.ToString());
+                Class.Sage.ToString(),
+                Class.Bard.ToString());
             contentTable.Add(classField).Height(BasicWindow.ButtonHeight).Width(DataColumnWidth);
             classField.OnChanged += _ =>
             {
@@ -140,8 +140,10 @@
             playButton.OnClicked += _ =>
             {
                 this._sounds.PlaySoundEffect("confirm");
-                var party = new Party();
-                party.PlayerName = this._hero.Name;
+                var party = new Party
+                {
+                    PlayerName = this._hero.Name
+                };
                 party.Members.Add(this._hero);
                 game.LoadGame(new GameSave {Party = party});
             };

@@ -1,4 +1,6 @@
-﻿namespace Redpoint.DungeonEscape
+﻿using Redpoint.DungeonEscape.Tools;
+
+namespace Redpoint.DungeonEscape
 {
     using System;
     using System.Collections.Generic;
@@ -43,6 +45,14 @@
         public IEnumerable<GameSave> LoadableGameSaves => this._gameFile.Saves;
         public List<Skill> Skills { get; private set; } = new ();
         public bool InGame { get; private set; }
+
+        private NameGenerator _nameGenerator;
+        
+        public string GenerateName(Gender gender)
+        {
+            return _nameGenerator.Generate(gender);
+        }
+
         public bool IsPaused
         {
             get => this._isPaused;
@@ -234,8 +244,9 @@
             this.Sounds.SoundEffectsVolume = this.Settings.SoundEffectsVolume;
             
             this.ReloadSaveGames();
-            
-            this.Names = JsonConvert.DeserializeObject<Names>(File.ReadAllText("Content/data/names.json"));
+
+            this._nameGenerator =
+                new NameGenerator(JsonConvert.DeserializeObject<Names>(File.ReadAllText("Content/data/names.json")));
             
             this.Quests = JsonConvert.DeserializeObject<List<Quest>>(File.ReadAllText("Content/data/quests.json"));
             this.Dialogs = JsonConvert.DeserializeObject<List<Dialog>>(File.ReadAllText("Content/data/dialog.json"));
@@ -313,8 +324,6 @@
         public List<ItemDefinition> ItemDefinitions { get; set; }
 
         public List<StatName> StatNames { get; set; }
-
-        public Names Names { get; private set; }
 
         public void ReloadSaveGames()
         {
@@ -695,11 +704,16 @@
         public Item CreateRandomItem(int maxLevel, int minLevel = 1, Rarity? rarity = null)
         {
             maxLevel = Math.Max(maxLevel, 1);
-            if (Nez.Random.Chance(0.25f))
+            if (Nez.Random.Chance(0.50f))
             {
+                bool Filter(Item item)
+                {
+                    return item.Type is ItemType.OneUse or ItemType.RepeatableUse && !item.IsKey && item.MinLevel < maxLevel;
+                }
+                
                 var staticItemsList = CustomItems.ToList();
-                return staticItemsList.Where(i => i.Type is ItemType.OneUse or ItemType.RepeatableUse && i.MinLevel < maxLevel).ToArray()[
-                    Nez.Random.NextInt(staticItemsList.Count(i => i.Type is ItemType.OneUse or ItemType.RepeatableUse && i.MinLevel < maxLevel))];
+                return staticItemsList.Where(Filter).ToArray()[
+                    Nez.Random.NextInt(staticItemsList.Count(Filter))];
             }
 
             return CreateRandomEquipment(maxLevel, minLevel, rarity);

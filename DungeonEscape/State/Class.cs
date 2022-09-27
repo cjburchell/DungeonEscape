@@ -9,7 +9,8 @@ namespace Redpoint.DungeonEscape.State
         Wizard = 3,
         Fighter = 4,
         Merchant = 5,
+        Bard = 6,
         Thief = 7,
-        Sage = 8
+        Sage = 8,
     }
 }

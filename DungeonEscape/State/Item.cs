@@ -35,6 +35,9 @@ namespace Redpoint.DungeonEscape.State
         public List<int> ForStage { get; set; }
         public int? NextStage { get; set; }
         
+        [JsonIgnore]
+        public bool IsKey => Skill is { Type: SkillType.Open };
+
         [JsonProperty("Skill")] public string SkillId { get; set; }
         
         [JsonIgnore] public Skill Skill { get; set; }

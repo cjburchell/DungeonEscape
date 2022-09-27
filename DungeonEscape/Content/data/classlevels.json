@@ -340,5 +340,51 @@
         "RollConst": 5
       }
     ]
+  },
+  {
+    "Class": "Bard",
+    "Skills": [
+      "Weird Dance",
+      "Play Song"
+    ],
+    "FirstLevel": 29,
+    "Stats": [
+      {
+        "Type": "Health",
+        "StartConst": 40,
+        "Roll": 7,
+        "RollConst": 3
+      },
+      {
+        "Type": "Attack",
+        "StartConst": 1,
+        "Roll": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollConst": 1
+      },
+      {
+        "Type": "MagicDefence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollConst": 1
+      },
+      {
+        "Type": "Agility",
+        "StartConst": 1,
+        "Roll": 3,
+        "RollConst": 1
+      },
+      {
+        "Type": "Magic",
+        "StartConst": 5,
+        "Roll": 6,
+        "RollConst": 5
+      }
+    ]
   }
 ]

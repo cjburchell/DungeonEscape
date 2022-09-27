@@ -20,7 +20,12 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
             this._ui = ui;
             this._cost = tmxObject.Properties.ContainsKey("Cost") ? int.Parse(tmxObject.Properties["Cost"]) : 25;
         }
-        
+
+        public override bool CanDoAction()
+        {
+            return true;
+        }
+
         public override void OnAction(Action done)
         {
             var goldWindow = new GoldWindow(this.GameState.Party, this._ui.Canvas, this._ui.Sounds);

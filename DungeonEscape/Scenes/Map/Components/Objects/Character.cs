@@ -195,13 +195,13 @@
                                     () =>
                                     {
                                         this.GameState.StartFight(new[] { monster },
-                                            MapScene.GetCurrentBiome(this.Map, this.Entity.Position));
+                                            MapScene.GetCurrentBiome(this.Map, this.Entity.Position).Type);
                                     });
                             }
                             else
                             {
                                 this.GameState.StartFight(new[] { monster },
-                                    MapScene.GetCurrentBiome(this.Map, this.Entity.Position));
+                                    MapScene.GetCurrentBiome(this.Map, this.Entity.Position).Type);
                             }
 
                             return false;

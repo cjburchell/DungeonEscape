@@ -15,7 +15,7 @@ namespace Redpoint.DungeonEscape.State
     {
         public override string ToString()
         {
-            return this.Name;
+            return $"{this.Name} L:{this.Level} H: {this.Health}/{this.MaxHealth} A:{this.Attack} D:{this.Defence}";
         }
         
         public string Name { get; set; }

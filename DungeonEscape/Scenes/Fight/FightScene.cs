@@ -130,7 +130,12 @@
             table.Center();
             foreach (var monster in this._monsters)
             {
-                table.Add(monster.Image).Pad(10);
+                var monsterTable = new Table();
+                monsterTable.Add(monster.Image);
+                monsterTable.Row();
+                monsterTable.Add(new Label(monster.ToString(), BasicWindow.Skin));
+                monsterTable.Center();
+                table.Add(monsterTable).Pad(10);
             }
             
             var partyWindow = new PartyStatusWindow(this._game.Party, this._ui.Canvas, this._game.Sounds);
@@ -373,7 +378,7 @@
         }
 
         // ReSharper disable once UnusedParameter.Local
-        private void ChooseSkill(IFighter hero, string selection, List<Skill> skills, Action<RoundAction> done)
+        private void ChooseSkill(IFighter hero, string selection, IEnumerable<Skill> skills, Action<RoundAction> done)
         {
             var skill = skills.FirstOrDefault(i => i.Name == selection);
             if (skill == null)
@@ -389,34 +394,72 @@
                 Skill = skill
             };
 
+            if (skill.IsAttackSkill)
+            {
+                if (skill.Targets == Target.Single)
+                {
+                    if (this.AliveMonsters.Count() == 1)
+                    {
+                        var monster = this.AliveMonsters.First();
+                        newAction.Targets = new List<IFighter> { monster };
+                        done(newAction);
+                        return;
+                    }
+
+                    var selectTarget = new SelectWindow<MonsterInstance>(this._ui, null,
+                        new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
+                    selectTarget.Show(this.AliveMonsters, monster =>
+                    {
+                        if (monster == null)
+                        {
+                            done(null);
+                            return;
+                        }
+
+                        newAction.Targets = new List<IFighter> { monster };
+                        done(newAction);
+                    });
+                }
+                else
+                {
+                    newAction.Targets = GetTargets(skill.Targets, skill.MaxTargets,
+                        this.AliveMonsters.Cast<IFighter>().ToList());
+                    done(newAction);
+                    return;
+                }
+            }
+            
+
             if (skill.Targets != Target.Single)
             {
-                newAction.Targets = GetTargets(skill.Targets, skill.MaxTargets, this.AliveMonsters.Cast<IFighter>().ToList());
+                newAction.Targets = GetTargets( skill.Targets, skill.MaxTargets, skill.Type == SkillType.Revive? this._game.Party.DeadMembers.Cast<IFighter>().ToList(): this._game.Party.AliveMembers.Cast<IFighter>().ToList());
                 done(newAction);
                 return;
             }
 
-            if (this.AliveMonsters.Count() == 1)
             {
-                var monster = this.AliveMonsters.First();
-                newAction.Targets = new List<IFighter> { monster };
-                done(newAction);
-                return;
-            }
-
-            var selectTarget = new SelectWindow<MonsterInstance>(this._ui, null,
-                new Point(10, MapScene.ScreenHeight / 3 * 2), 250);
-            selectTarget.Show(this.AliveMonsters, monster =>
-            {
-                if (monster == null)
+                if (this._game.Party.AliveMembers.Count() == 1)
                 {
-                    done(null);
+                    newAction.Targets = new List<IFighter> { hero };
+                    done(newAction);
                     return;
                 }
 
-                newAction.Targets = new List<IFighter> { monster };
-                done(newAction);
-            });
+                var selectTarget = new SelectHeroWindow(this._ui,
+                    new Point(10, MapScene.ScreenHeight / 3 * 2));
+                selectTarget.Show(skill.Type == SkillType.Revive? this._game.Party.DeadMembers: this._game.Party.AliveMembers, target =>
+                {
+                    if (target == null)
+                    {
+                        done(null);
+                        return;
+                    }
+
+                    newAction.Targets = new List<IFighter> { target };
+                    done(newAction);
+                });
+            }
+            
         }
 
         private  void ChooseRun(IFighter hero, Action<RoundAction> done)

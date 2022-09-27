@@ -119,7 +119,7 @@
   },
   {
     "Health": 1,
-    "HealthConst": 5,
+    "HealthConst": 1,
     "Attack": 4,
     "Xp": 4,
     "Gold": 8,

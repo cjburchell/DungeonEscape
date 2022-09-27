@@ -9,12 +9,13 @@
  <tileset firstgid="702" source="../../indoor.tsx"/>
  <tileset firstgid="1182" source="../../town.tsx"/>
  <tileset firstgid="1662" source="../../tiles_small.tsx"/>
+ <tileset firstgid="1854" source="../../castle.tsx"/>
  <layer id="2" name="water" width="32" height="20">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,2290,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -221,14 +222,14 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="sprites">
-  <object id="66" name="Lady" class="Npc" gid="120" x="256" y="320" width="32" height="48">
+  <object id="66" name="Burgiua" class="Npc" gid="120" x="256" y="320" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Dialog" value="Find_Ship_Start_Dialog"/>
    </properties>
   </object>
-  <object id="67" name="Lady" class="Npc" gid="120" x="320" y="384" width="32" height="48">
+  <object id="67" name="Eanswild" class="Npc" gid="120" x="320" y="384" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>
@@ -236,7 +237,7 @@
 be defeted</property>
    </properties>
   </object>
-  <object id="10" name="Boy" class="Npc" gid="78" x="384" y="160" width="32" height="48">
+  <object id="10" name="Adric" class="Npc" gid="78" x="384" y="160" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>
     <property name="Collideable" type="bool" value="true"/>

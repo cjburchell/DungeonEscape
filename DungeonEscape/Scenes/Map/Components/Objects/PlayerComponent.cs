@@ -343,7 +343,7 @@
                 var objectList = CurrentlyOverObjects.Aggregate("", (current, overObject) => current + $"{overObject.State.Name},");
 
                 this._debugText.SetText(
-                    $"B: {currentBiome}, G: {MapScene.ToMapGrid(this.Entity.Position, this._map)}, R: {this.Entity.Position.X:F2}:{this.Entity.Position.Y:F2}  d: {this._distance:F2} over: {objectList}");
+                    $"B: {currentBiome.Type}{currentBiome.MaxMonsterLevel}, G: {MapScene.ToMapGrid(this.Entity.Position, this._map)}, R: {this.Entity.Position.X:F2}:{this.Entity.Position.Y:F2}  d: {this._distance:F2} over: {objectList}");
             }
             
             var actionItems = this.CurrentlyOverObjects.Where(i=> i.CanDoAction()).ToList();
@@ -483,7 +483,7 @@
             
             var level = this._gameState.Party.MaxLevel();
             foreach (var monster in this._randomMonsters.Where(item =>
-                (item.Biome == currentBiome || item.Biome == Biome.All) && item.Data.MinLevel <= level))
+                (item.Biome == currentBiome.Type || item.Biome == Biome.All) && (currentBiome.MaxMonsterLevel == 0 || item.Data.MinLevel < currentBiome.MaxMonsterLevel) && item.Data.MinLevel >= currentBiome.MinMonsterLevel ))
             {
                 for (var i = 0; i < monster.Probability; i++)
                 {
@@ -560,7 +560,7 @@
                 }
             }
             
-            this._gameState.StartFight(monsters, currentBiome);
+            this._gameState.StartFight(monsters, currentBiome.Type);
         }
 
         private bool CheckForFullStep()
@@ -582,7 +582,7 @@
                 return false;
             }
             
-            var currentBiome = MapScene.GetCurrentBiome(this._map, this.Entity.Position);
+            var currentBiome = MapScene.GetCurrentBiome(this._map, this.Entity.Position).Type;
             var hasRandomMonsters = this._randomMonsters.Any(item => item.Biome == currentBiome || item.Biome == Biome.All);
             
             return  hasRandomMonsters && Random.Chance(0.1f);

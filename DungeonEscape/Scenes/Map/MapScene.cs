@@ -268,18 +268,32 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             this._showExitWindowInput.Nodes.Add(new VirtualButton.GamePadButton(0, Buttons.Start));
         }
         
-        public static Biome GetCurrentBiome(TmxMap map, Vector2 pos)
+        public static BiomeInfo GetCurrentBiome(TmxMap map, Vector2 pos)
         {
             var isOverWorld = map.Properties != null && map.Properties.ContainsKey("overworld") && bool.Parse(map.Properties["overworld"]);
             if (!isOverWorld)
             {
                 var biome = map.Properties != null && map.Properties.ContainsKey("biome")? Enum.Parse<Biome>(map.Properties["biome"]):Biome.None;
-                return biome;
+                return new BiomeInfo {Type = biome};
             }
 
             var (x, y) = MapScene.ToMapGrid(pos, map);
             var tile = map.GetLayer<TmxLayer>("biomes")?.GetTile(x, y);
-            return tile == null ? Biome.None : Enum.Parse<Biome>(tile.TilesetTile.Class);
+            if (tile == null)
+            {
+                return new BiomeInfo {Type = Biome.None};
+            }
+
+            return new BiomeInfo()
+            {
+                Type = Enum.Parse<Biome>(tile.TilesetTile.Class),
+                MaxMonsterLevel = tile.TilesetTile.Properties.ContainsKey("MaxMonsterLevel")
+                    ? int.Parse(tile.TilesetTile.Properties["MaxMonsterLevel"])
+                    : 0,
+                MinMonsterLevel = tile.TilesetTile.Properties.ContainsKey("MinMonsterLevel")
+                    ? int.Parse(tile.TilesetTile.Properties["MinMonsterLevel"])
+                    : 0,
+            };
         }
 
         private List<RandomMonster> LoadRandomMonsters()

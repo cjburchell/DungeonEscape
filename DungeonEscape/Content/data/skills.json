@@ -348,7 +348,7 @@
     "EffectName": "defence increased",
     "Targets": "Group",
     "DurationType": "Rounds",
-    "DurationConst": 1,
+    "DurationConst": 2,
     "DurationRandom": 0,
     "StatType": "Defence",
     "StatRandom": 10,

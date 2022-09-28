@@ -1,6 +1,10 @@
 ﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+
+using System.Linq;
+using Newtonsoft.Json.Converters;
+
 namespace Redpoint.DungeonEscape.State
 {
     using System.Collections.Generic;
@@ -51,14 +55,10 @@ namespace Redpoint.DungeonEscape.State
             this.Setup(tile);
         }
 
-        public int Id { get; set; }
+        public int ImageId { get; set; }
         
-        public int Magic { get; set; }
-
         public int MinLevel { get; set;}
-        
-        public int MagicConst { get; set;}
-        
+
         public int GroupSize { get; set; }
 
         [JsonIgnore] public Texture2D Image { get; private set; }
@@ -78,16 +78,32 @@ namespace Redpoint.DungeonEscape.State
         public int Defence { get; set;}
 
         public ulong Xp { get; set;}
-
-        public int HealthConst { get; set;}
         
         public int Gold { get;  set;}
 
-        public int Health { get;  set;}
+        public int HealthConst { get; set; } = 1;
+        public int HealthRandom { get; set; } = 0;
+
+        public int HealthTimes { get; set; } = 1;
+        
+        public int MagicTimes { get; set; } = 1;
+        public int MagicConst { get; set; } = 0;
+
+        public int MagicRandom { get; set; } = 0;
 
         public int Attack { get;  set;}
 
         public string Name { get;  set;}
         public int MagicDefence { get; set; }
+        
+        [JsonProperty("Biomes", ItemConverterType = typeof(StringEnumConverter))]
+        public List<Biome> Biomes { get; set; }
+
+        public bool InBiome(Biome biome)
+        {
+            return this.Biomes != null && this.Biomes.Any() && this.Biomes.Contains(biome);
+        }
+
+        public int Probability { get; set; } = 1;
     }
 }

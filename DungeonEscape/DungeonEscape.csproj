@@ -708,9 +708,6 @@
         <None Update="Content\tiles_small.tsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Content\data\maps\overworld_monsters.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
         <None Update="Content\maps\overworld.tmx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>

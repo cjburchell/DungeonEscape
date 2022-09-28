@@ -12,7 +12,6 @@ namespace Redpoint.DungeonEscape.State
         Swamp = 6,
         Cave = 7,
         Town = 8,
-        Tower = 9,
-        All = 10
+        Tower = 9
     }
 }

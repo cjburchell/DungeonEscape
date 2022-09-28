@@ -1,12 +1,8 @@
 [
   {
-    "Id": 47,
-    "Probability": 1,
-    "Biome": "All"
+    "Name": "GrayBear"
   },
   {
-    "Id": 11,
-    "Probability": 1,
-    "Biome": "All"
+    "Name": "Metal Slime"
   }
 ]

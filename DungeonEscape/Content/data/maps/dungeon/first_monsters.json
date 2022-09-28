@@ -1,22 +1,16 @@
 [
   {
-    "Id": 2,
-    "Probability": 1,
-    "Biome": "All"
+    "Name": "Bodkin Archer"
   },
   {
-    "Id": 8,
-    "Probability": 4,
-    "Biome": "All"
+    "Name": "Slime",
+    "Probability": 4
   },
   {
-    "Id": 31,
-    "Probability": 1,
-    "Biome": "All"
+    "Name": "Troll"
   },
   {
-    "Id": 40,
-    "Probability": 4,
-    "Biome": "All"
+    "Name": "Ratscal",
+    "Probability": 4
   }
 ]

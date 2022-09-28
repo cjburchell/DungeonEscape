@@ -1,12 +1,10 @@
 [
   {
-    "Id": 31,
-    "Probability": 7,
-    "Biome": "All"
+    "Name": "Troll",
+    "Probability": 7
   },
   {
-    "Id": 39,
-    "Probability": 6,
-    "Biome": "All"
+    "Name": "Great troll",
+    "Probability": 6
   }
 ]

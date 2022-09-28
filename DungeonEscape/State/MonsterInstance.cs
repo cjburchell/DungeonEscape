@@ -15,9 +15,9 @@ namespace Redpoint.DungeonEscape.State
         public MonsterInstance(Monster info, IGame gameState)
         {
             this._info = info;
-            this.Health = Dice.Roll(8,info.Health, info.HealthConst);
+            this.Health = Dice.Roll(info.HealthRandom,info.HealthTimes, info.HealthConst);
             this.MaxHealth = this.Health;
-            this.Magic = Dice.Roll(8, info.Magic, info.MagicConst);
+            this.Magic = Dice.Roll(info.MagicRandom, info.MagicTimes, info.MagicConst);
             this.MaxMagic = this.Magic;
             this.Attack = info.Attack;
             this.Defence = info.Defence;

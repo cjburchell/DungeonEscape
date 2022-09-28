@@ -1,32 +1,23 @@
 [
   {
-    "Id": 2,
-    "Probability": 2,
-    "Biome": "All"
+    "Name": "Bodkin Archer",
+    "Probability": 2
   },
   {
-    "Id": 31,
-    "Probability": 3,
-    "Biome": "All"
+    "Name": "Troll",
+    "Probability": 3
   },
   {
-    "Id": 39,
-    "Probability": 1,
-    "Biome": "All"
+    "Name": "Great troll"
   },
   {
-    "Id": 40,
-    "Probability": 1,
-    "Biome": "All"
+    "Name": "Ratscal"
   },
   {
-    "Id": 41,
-    "Probability": 1,
-    "Biome": "All"
+    "Name": "Walking stick"
   },
   {
-    "Id": 42,
-    "Probability": 2,
-    "Biome": "All"
+    "Name": "Bullmustiff",
+    "Probability": 2
   }
 ]

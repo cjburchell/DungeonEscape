@@ -290,7 +290,7 @@ namespace Redpoint.DungeonEscape
             {
                 foreach (var monster in monsters)
                 {
-                    var tile = monsterTileSet.Tiles.FirstOrDefault(item => item.Value.Id == monster.Id).Value;
+                    var tile = monsterTileSet.Tiles.FirstOrDefault(item => item.Value.Id == monster.ImageId).Value;
                     monster.Setup(tile);
                     this.Monsters.Add(monster);
                 }

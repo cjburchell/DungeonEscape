@@ -183,7 +183,7 @@
                             return false;
                         }
                         case QuestAction.Fight:
-                            var monster = this.GameState.Monsters.FirstOrDefault(m => m.Id == choice.MonsterId);
+                            var monster = this.GameState.Monsters.FirstOrDefault(m => m.Name == choice.Monster);
                             if (monster == null)
                             {
                                 break;

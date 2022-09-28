@@ -22,7 +22,7 @@ namespace Redpoint.DungeonEscape.State
         
         public string ItemId { get; set; }
         
-        public int? MonsterId { get; set; }
+        public string Monster { get; set; }
         public int? NextQuestStage { get; set; }
         public string MapId { get; set; }
         public string SpawnId { get; set; }

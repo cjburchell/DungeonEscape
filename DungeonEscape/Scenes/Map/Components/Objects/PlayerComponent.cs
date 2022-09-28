@@ -482,8 +482,10 @@
             var availableMonsters = new List<Monster>();
             
             var level = this._gameState.Party.MaxLevel();
-            foreach (var monster in this._randomMonsters.Where(item =>
-                (item.Biome == currentBiome.Type || item.Biome == Biome.All) && (currentBiome.MaxMonsterLevel == 0 || item.Data.MinLevel < currentBiome.MaxMonsterLevel) && item.Data.MinLevel >= currentBiome.MinMonsterLevel ))
+            foreach (var monster in this._randomMonsters.Where(item => item.InBiome(currentBiome.Type) &&
+                                                                       (currentBiome.MaxMonsterLevel == 0 ||
+                                                                        item.Data.MinLevel < currentBiome.MaxMonsterLevel) &&
+                                                                       item.Data.MinLevel >= currentBiome.MinMonsterLevel))
             {
                 for (var i = 0; i < monster.Probability; i++)
                 {
@@ -507,13 +509,13 @@
             var numberOfMonsters = Random.NextInt(maxMonsters) + 1;
             var monsters = new List<Monster>();
             var totalMonsters = 0;
-            var usedMonsters = new List<int>();
+            var usedMonsters = new List<string>();
             for (var group = 0; group < maxMonsterGroups-1; group++)
             {
-                var availableMonstersList = availableMonsters.Where(i => !usedMonsters.Contains(i.Id)).ToArray();
+                var availableMonstersList = availableMonsters.Where(i => !usedMonsters.Contains(i.Name)).ToArray();
                 var monsterNub = Random.NextInt(availableMonstersList.Length);
                 var monster = availableMonstersList[monsterNub];
-                usedMonsters.Add(monster.Id);
+                usedMonsters.Add(monster.Name);
                 var numberInGroup = Random.NextInt(Math.Min(numberOfMonsters-totalMonsters, monster.GroupSize))+1;
                 for (var i = 0; i < numberInGroup; i++)
                 {
@@ -529,7 +531,7 @@
 
             if (totalMonsters < numberOfMonsters)
             {
-                var availableMonstersList = availableMonsters.Where(i => !usedMonsters.Contains(i.Id)).ToArray();
+                var availableMonstersList = availableMonsters.Where(i => !usedMonsters.Contains(i.Name)).ToArray();
                 var monsterNub = Random.NextInt(availableMonstersList.Length);
                 var monster = availableMonstersList[monsterNub];
                 var numberInGroup = Math.Min(numberOfMonsters-totalMonsters, monster.GroupSize);
@@ -547,7 +549,7 @@
                 var maxHealth = this._gameState.Party.Members.Max(i => i.MaxHealth);
                 foreach (var monster in monsters.ToList())
                 {
-                    var monsterHealth = Dice.Roll(8, monster.Health, monster.HealthConst);
+                    var monsterHealth = Dice.Roll(monster.HealthRandom, monster.HealthTimes, monster.HealthConst);
                     if (monsterHealth < maxHealth)
                     {
                         monsters.Remove(monster);
@@ -582,9 +584,9 @@
                 return false;
             }
             
-            var currentBiome = MapScene.GetCurrentBiome(this._map, this.Entity.Position).Type;
-            var hasRandomMonsters = this._randomMonsters.Any(item => item.Biome == currentBiome || item.Biome == Biome.All);
             
+            var currentBiome = MapScene.GetCurrentBiome(this._map, this.Entity.Position).Type;
+            var hasRandomMonsters = this._randomMonsters.Any(item => item.InBiome(currentBiome));
             return  hasRandomMonsters && Random.Chance(0.1f);
         }
         

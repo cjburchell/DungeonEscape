@@ -33,5 +33,6 @@
         bool CanCriticalHit(IFighter target);
         int CalculateDamage(int attack, bool isPiercing = false, bool isMagic = false);
         string HitCheck();
+        string GetStats();
     }
 }

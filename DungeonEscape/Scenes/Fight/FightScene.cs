@@ -61,7 +61,7 @@
             this._game = game;
             this._biome = biome;
             var monsterList = "";
-            foreach (var monsterGroup in monsters.OrderBy(i => i.MinLevel).GroupBy(i => i.Id))
+            foreach (var monsterGroup in monsters.OrderBy(i => i.MinLevel).GroupBy(i => i.Name))
             {
                 var monsterId = 'A';
                 foreach (var monster  in monsterGroup)
@@ -130,12 +130,19 @@
             table.Center();
             foreach (var monster in this._monsters)
             {
-                var monsterTable = new Table();
-                monsterTable.Add(monster.Image);
-                monsterTable.Row();
-                monsterTable.Add(new Label(monster.ToString(), BasicWindow.Skin));
-                monsterTable.Center();
-                table.Add(monsterTable).Pad(10);
+                if (this._game.Settings.MapDebugInfo)
+                {
+                    var monsterTable = new Table();
+                    monsterTable.Add(monster.Image);
+                    monsterTable.Row();
+                    monsterTable.Add(new Label(monster.GetStats(), BasicWindow.Skin));
+                    monsterTable.Center();
+                    table.Add(monsterTable).Pad(10);
+                }
+                else
+                {
+                    table.Add(monster.Image).Pad(10);
+                }
             }
             
             var partyWindow = new PartyStatusWindow(this._game.Party, this._ui.Canvas, this._game.Sounds);

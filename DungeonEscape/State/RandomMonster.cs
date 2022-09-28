@@ -4,21 +4,27 @@
 // ReSharper disable CollectionNeverUpdated.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable ClassNeverInstantiated.Global
+
 namespace Redpoint.DungeonEscape.State
 {
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
 
 
     public class RandomMonster
     {
-        public int Id { get; set; }
+        public string Name { get; set; }
         
         [JsonIgnore]
         public Monster Data { get; set; }
         
-        [JsonConverter(typeof(StringEnumConverter))]
-        public Biome Biome { get; set; }
-        public int Probability { get; set; }
+        [JsonIgnore]
+        public bool IsOverworld { get; set; }
+        
+        public int Probability { get; set; } = 1;
+
+        public bool InBiome(Biome biome)
+        {
+            return !IsOverworld || Data.InBiome(biome);
+        }
     }
 }

@@ -42,6 +42,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
         private UiSystem _ui;
         private readonly string _spawnId;
         private PlayerComponent _player;
+        private bool _isOverWorld;
 
         public MapScene(IGame game, string mapId, string spawnId, Vector2? start = null)
         {
@@ -102,7 +103,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             this.SetDesignResolution(ScreenTileWidth * map.TileWidth, ScreenTileHeight * map.TileHeight,
                 SceneResolution);
             
-            var isOverWorld = map.Properties != null && map.Properties.ContainsKey("overworld") && bool.Parse(map.Properties["overworld"]);
+            this._isOverWorld = map.Properties != null && map.Properties.ContainsKey("overworld") && bool.Parse(map.Properties["overworld"]);
 
             var songPath = map.Properties != null && map.Properties.ContainsKey("song")?map.Properties["song"]:@"not-in-vain";
             this._gameState.Sounds.PlayMusic(new []{songPath});
@@ -110,7 +111,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             this._randomMonsters = this.LoadRandomMonsters();
 
             this._gameState.Party.CurrentMapId = this._mapId;
-            this._gameState.Party.CurrentMapIsOverWorld = isOverWorld;
+            this._gameState.Party.CurrentMapIsOverWorld = _isOverWorld;
 
             this.AddRenderer(new ScreenSpaceRenderer(100, ScreenSpaceRenderLayer));
             this._ui = new UiSystem(this.CreateEntity("ui-canvas").AddComponent(new UICanvas()), this._gameState.Sounds);
@@ -298,6 +299,11 @@ namespace Redpoint.DungeonEscape.Scenes.Map
 
         private List<RandomMonster> LoadRandomMonsters()
         {
+            if (_isOverWorld)
+            {
+                return this._gameState.Monsters.Where(i => i.Biomes != null && i.Biomes.Any()).Select(monster => new RandomMonster { Data = monster, Probability = monster.Probability, Name = monster.Name, IsOverworld = true}).ToList();
+            }
+            
             var fileName = $"Content/data/{this._mapId}_monsters.json";
             if (!File.Exists(fileName))
             {
@@ -314,7 +320,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             var list = new List<RandomMonster>();
             foreach (var monster in random)
             {
-                monster.Data = this._gameState.Monsters.FirstOrDefault(item => item.Id == monster.Id);
+                monster.Data = this._gameState.Monsters.FirstOrDefault(item => item.Name == monster.Name);
                 if (monster.Data != null)
                 {
                     list.Add(monster);
@@ -322,7 +328,6 @@ namespace Redpoint.DungeonEscape.Scenes.Map
             }
 
             return list;
-
         }
 
         [Command("map", "switches to map")]
@@ -335,10 +340,10 @@ namespace Redpoint.DungeonEscape.Scenes.Map
         
         [Command("fight", "fights a monster")]
         // ReSharper disable once UnusedMember.Global
-        public static void StartFight(int monsterId = 0)
+        public static void StartFight(string monsterId = "")
         {
             var game = Core.Instance as IGame;
-            var monster = game?.Monsters.FirstOrDefault(m => m.Id == monsterId);
+            var monster = game?.Monsters.FirstOrDefault(m => m.Name == monsterId);
             if (monster != null)
             {
                 game.StartFight(new[]{monster}, Biome.Grassland);

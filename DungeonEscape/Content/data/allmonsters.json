@@ -1,7 +1,6 @@
 [
   {
     "Name": "Killerpillar",
-    "Health": 1,
     "HealthConst": 35,
     "Attack": 27,
     "Xp": 31,
@@ -10,17 +9,17 @@
     "Defence": 25,
     "MagicDefence": 25,
     "Agility": 11,
-    "Id": 1,
+    "ImageId": 1,
     "MinLevel": 5,
-    "Magic": 25,
     "Skills": [
       "Poison",
       "Paralysis"
-    ]
+    ],
+    "Probability": 1,
+    "Biomes": ["Grassland", "Hills"]
   },
   {
     "Name": "Bodkin Archer",
-    "Health": 1,
     "HealthConst": 13,
     "Attack": 26,
     "Xp": 15,
@@ -29,14 +28,15 @@
     "Defence": 20,
     "MagicDefence": 20,
     "Agility": 20,
-    "Id": 2,
-    "MinLevel": 5,
-    "Magic": 4,
-    "Spells": ["Increase"]
+    "ImageId": 2,
+    "MinLevel": 1,
+    "MagicConst": 4,
+    "Spells": ["Increase"],
+    "Probability": 1,
+    "Biomes": ["Grassland", "Hills", "Forest"]
   },
   {
     "Name": "Hell hornet",
-    "Health": 1,
     "HealthConst": 30,
     "Attack": 38,
     "Xp": 26,
@@ -45,14 +45,14 @@
     "Defence": 35,
     "MagicDefence": 35,
     "Agility": 12,
-    "Id": 3,
+    "ImageId": 3,
     "MinLevel": 5,
-    "Magic": 0,
-    "Skills": ["Paralysis"]
+    "Skills": ["Paralysis"],
+    "Probability": 2,
+    "Biomes": ["Grassland", "Hills"]
   },
   {
     "Name": "Scissor beetle",
-    "Health": 1,
     "HealthConst": 5,
     "Attack": 9,
     "Xp": 1,
@@ -61,13 +61,13 @@
     "MagicDefence": 5,
     "GroupSize": 8,
     "Agility": 3,
-    "Id": 4,
+    "ImageId": 4,
     "MinLevel": 1,
-    "Magic": 0
+    "Probability": 2,
+    "Biomes": ["Grassland", "Hills"]
   },
   {
     "Name": "Ram raider",
-    "Health": 1,
     "HealthConst": 55,
     "Attack": 65,
     "Xp": 162,
@@ -76,15 +76,16 @@
     "Defence": 49,
     "MagicDefence": 49,
     "Agility": 28,
-    "Id": 5,
+    "ImageId": 5,
     "MinLevel": 10,
-    "Magic": 12,
+    "MagicConst": 12,
+    "Probability": 2,
     "Skills": ["Flee"],
-    "Spells": ["Blaze"]
+    "Spells": ["Blaze"],
+    "Biomes": ["Grassland", "Hills", "Forest"]
   },
   {
     "Name": "Bodkin bowyer",
-    "Health": 1,
     "HealthConst": 25,
     "Attack": 46,
     "Xp": 47,
@@ -93,13 +94,15 @@
     "Defence": 36,
     "MagicDefence": 36,
     "Agility": 21,
-    "Id": 6,
+    "ImageId": 6,
     "MinLevel": 10,
-    "Magic": 5,
-    "Skills": ["Sleep"]
+    "MagicConst": 5,
+    "Skills": ["Sleep"],
+    "Probability": 2,
+    "Biomes": ["Grassland", "Hills"]
   },
   {
-    "Health": 2,
+    "HealthTimes": 2,
     "HealthConst": 80,
     "Attack": 93,
     "Xp": 96,
@@ -109,16 +112,17 @@
     "Defence": 80,
     "MagicDefence": 80,
     "Agility": 87,
-    "Id": 7,
+    "ImageId": 7,
     "MinLevel": 10,
-    "Magic": 0,
     "Skills": [
       "Poison",
       "Paralysis"
-    ]
+    ],
+    "Probability": 2,
+    "Biomes": ["Grassland", "Hills"]
   },
   {
-    "Health": 1,
+    
     "HealthConst": 1,
     "Attack": 4,
     "Xp": 4,
@@ -128,12 +132,13 @@
     "Defence": 5,
     "MagicDefence": 5,
     "Agility": 9,
-    "Id": 8,
+    "ImageId": 8,
     "MinLevel": 1,
-    "Magic": 5
+    "Probability": 20,
+    "Biomes": ["Grassland", "Hills"]
   },
   {
-    "Health": 1,
+    
     "HealthConst": 10,
     "Attack": 19,
     "Xp": 4,
@@ -143,12 +148,13 @@
     "Defence": 13,
     "MagicDefence": 13,
     "Agility": 8,
-    "Id": 9,
+    "ImageId": 9,
     "MinLevel": 1,
-    "Magic": 0
+    "Probability": 2,
+    "Biomes": ["Grassland", "Desert", "Hills"]
   },
   {
-    "Health": 1,
+    
     "HealthConst": 20,
     "Attack": 70,
     "Xp": 45,
@@ -158,16 +164,17 @@
     "Defence": 20,
     "MagicDefence": 20,
     "Agility": 42,
-    "Id": 10,
-    "MinLevel": 10,
-    "Magic": 5,
+    "ImageId": 10,
+    "MinLevel": 1,
     "Skills": [
       "Double Attack"
-    ]
+    ],
+    "Probability": 2,
+    "Biomes": ["Grassland", "Hills"]
   },
   {
-    "Health": 1,
     "HealthConst": 1,
+    "HealthRandom": 3,
     "Attack": 1,
     "Xp": 4140,
     "Gold": 5,
@@ -176,14 +183,16 @@
     "Defence": 1023,
     "MagicDefence": 95,
     "Agility": 47,
-    "Id": 11,
+    "ImageId": 11,
     "MinLevel": 1,
-    "Magic": 5,
+    "MagicConst": 2,
     "Skills": ["Flee"],
-    "Spells": ["Blaze"]
+    "Spells": ["Blaze"],
+    "Probability": 1,
+    "Biomes": ["Grassland", "Hills"]
   },
   {
-    "Health": 10,
+    "HealthTimes": 10,
     "HealthConst": 500,
     "Attack": 310,
     "Xp": 420,
@@ -193,13 +202,14 @@
     "Defence": 150,
     "MagicDefence": 150,
     "Agility": 100,
-    "Id": 12,
+    "ImageId": 12,
     "MinLevel": 20,
-    "Magic": 0,
-    "Skills": ["Fire", "Fire Breath"]
+    "Probability": 1,
+    "Skills": ["Fire", "Fire Breath"],
+    "Biomes": ["Grassland", "Desert", "Hills"]
   },
   {
-    "Health": 3,
+    "HealthTimes": 3,
     "HealthConst": 120,
     "Attack": 107,
     "Xp": 117,
@@ -209,13 +219,14 @@
     "Defence": 80,
     "MagicDefence": 80,
     "Agility": 65,
-    "Id": 13,
+    "ImageId": 13,
     "MinLevel": 10,
-    "Magic": 0,
-    "Skills": ["Poison"]
+    "Skills": ["Poison"],
+    "Probability": 4,
+    "Biomes": ["Water"]
   },
   {
-    "Health": 1,
+    
     "HealthConst": 80,
     "Attack": 95,
     "Xp": 138,
@@ -225,11 +236,13 @@
     "Defence": 80,
     "MagicDefence": 80,
     "Agility": 54,
-    "Id": 14,
-    "MinLevel": 1
+    "ImageId": 14,
+    "MinLevel": 1,
+    "Probability": 4,
+    "Biomes": ["Water"]
   },
   {
-    "Health": 2,
+    "HealthTimes": 2,
     "HealthConst": 90,
     "Attack": 123,
     "Xp": 151,
@@ -239,12 +252,14 @@
     "Defence": 94,
     "MagicDefence": 94,
     "Agility": 99,
-    "Id": 15,
+    "ImageId": 15,
     "MinLevel": 10,
-    "Skills": ["Poison", "Double Attack"]
+    "Skills": ["Poison", "Double Attack"],
+    "Probability": 4,
+    "Biomes": ["Water"]
   },
   {
-    "Health": 5,
+    "HealthTimes": 5,
     "HealthConst": 140,
     "Attack": 120,
     "Xp": 200,
@@ -254,12 +269,14 @@
     "Defence": 110,
     "MagicDefence": 110,
     "Agility": 44,
-    "Id": 16,
+    "ImageId": 16,
     "MinLevel": 15,
-    "Skills": ["Fire Breath"]
+    "Probability": 1,
+    "Skills": ["Fire Breath"],
+    "Biomes": ["Water"]
   },
   {
-    "Health": 4,
+    "HealthTimes": 4,
     "HealthConst": 110,
     "Attack": 105,
     "Xp": 162,
@@ -269,11 +286,13 @@
     "Defence": 58,
     "MagicDefence": 58,
     "Agility": 91,
-    "Id": 17,
-    "MinLevel": 10
+    "ImageId": 17,
+    "MinLevel": 10,
+    "Probability": 1,
+    "Biomes": ["Water"]
   },
   {
-    "Health": 2,
+    "HealthTimes": 2,
     "HealthConst": 73,
     "Attack": 75,
     "Xp": 95,
@@ -283,11 +302,13 @@
     "Defence": 55,
     "MagicDefence": 55,
     "Agility": 55,
-    "Id": 18,
-    "MinLevel": 10
+    "ImageId": 18,
+    "MinLevel": 10,
+    "Probability": 1,
+    "Biomes": ["Water"]
   },
   {
-    "Health": 10,
+    "HealthTimes": 10,
     "HealthConst": 60,
     "Attack": 74,
     "Xp": 118,
@@ -297,11 +318,13 @@
     "Defence": 22,
     "MagicDefence": 22,
     "Agility": 55,
-    "Id": 19,
-    "MinLevel": 10
+    "ImageId": 19,
+    "MinLevel": 10,
+    "Probability": 2,
+    "Biomes": ["Water"]
   },
   {
-    "Health": 10,
+    "HealthTimes": 10,
     "HealthConst": 450,
     "Attack": 150,
     "Xp": 2090,
@@ -311,12 +334,14 @@
     "Defence": 10,
     "MagicDefence": 10,
     "Agility": 52,
-    "Id": 20,
+    "ImageId": 20,
     "MinLevel": 20,
-    "Skills": ["Flee", "Triple Attack"]
+    "Probability": 1,
+    "Skills": ["Flee", "Triple Attack"],
+    "Biomes": ["Water"]
   },
   {
-    "Health": 8,
+    "HealthTimes": 8,
     "HealthConst": 80,
     "Attack": 80,
     "Xp": 800,
@@ -330,11 +355,13 @@
     "Defence": 60,
     "MagicDefence": 60,
     "Agility": 40,
-    "Id": 21,
-    "MinLevel": 20
+    "ImageId": 21,
+    "MinLevel": 20,
+    "Probability": 1,
+    "Biomes": ["Water"]
   },
   {
-    "Health": 10,
+    "HealthTimes": 10,
     "HealthConst": 135,
     "Attack": 85,
     "Xp": 355,
@@ -344,11 +371,13 @@
     "Defence": 40,
     "MagicDefence": 5,
     "Agility": 32,
-    "Id": 22,
-    "MinLevel": 15
+    "ImageId": 22,
+    "MinLevel": 15,
+    "Probability": 1,
+    "Biomes": ["Water"]
   },
   {
-    "Health": 20,
+    "HealthTimes": 20,
     "HealthConst": 190,
     "Attack": 105,
     "Xp": 210,
@@ -358,11 +387,13 @@
     "Defence": 100,
     "MagicDefence": 5,
     "Agility": 45,
-    "Id": 23,
-    "MinLevel": 20
+    "ImageId": 23,
+    "MinLevel": 20,
+    "Probability": 1,
+    "Biomes": ["Water"]
   },
   {
-    "Health": 3,
+    "HealthTimes": 3,
     "HealthConst": 200,
     "Attack": 157,
     "Xp": 285,
@@ -372,11 +403,13 @@
     "Defence": 87,
     "MagicDefence": 87,
     "Agility": 92,
-    "Id": 24,
-    "MinLevel": 10
+    "ImageId": 24,
+    "MinLevel": 10,
+    "Probability": 1,
+    "Biomes": ["Desert"]
   },
   {
-    "Health": 2,
+    "HealthRandom": 8,
     "HealthConst": 12,
     "Attack": 24,
     "Xp": 9,
@@ -386,12 +419,14 @@
     "Defence": 10,
     "MagicDefence": 10,
     "Agility": 11,
-    "Id": 25,
+    "ImageId": 25,
     "MinLevel": 1,
-    "Skills": ["Poison"]
+    "Probability": 2,
+    "Skills": ["Poison"],
+    "Biomes": ["Desert"]
   },
   {
-    "Health": 4,
+    "HealthRandom": 10,
     "HealthConst": 38,
     "Attack": 75,
     "Xp": 125,
@@ -401,12 +436,14 @@
     "Defence": 25,
     "MagicDefence": 25,
     "Agility": 41,
-    "Id": 26,
-    "MinLevel": 1,
-    "Skills": ["Poison"]
+    "ImageId": 26,
+    "MinLevel": 5,
+    "Probability": 1,
+    "Skills": ["Poison"],
+    "Biomes": ["Desert"]
   },
   {
-    "Health": 4,
+    "HealthTimes": 4,
     "HealthConst": 70,
     "Attack": 63,
     "Xp": 743,
@@ -416,13 +453,15 @@
     "Defence": 65,
     "MagicDefence": 65,
     "Agility": 50,
-    "Id": 27,
+    "ImageId": 27,
     "MinLevel": 1,
-    "Magic": 18,
-    "Spells": ["Lightning"]
+    "MagicConst": 30,
+    "Probability": 1,
+    "Spells": ["Lightning"],
+    "Biomes": ["Desert"]
   },
   {
-    "Health": 1,
+    
     "HealthConst": 40,
     "Attack": 33,
     "Xp": 38,
@@ -432,13 +471,14 @@
     "Defence": 42,
     "MagicDefence": 42,
     "Agility": 9,
-    "Id": 28,
+    "ImageId": 28,
     "MinLevel": 1,
-    "Magic": 5
+    "Probability": 2,
+    "Biomes": ["Desert"]
   },
   {
-    "Health": 45,
-    "HealthConst": 1,
+    "HealthTimes": 10,
+    "HealthConst": 45,
     "Attack": 6,
     "Xp": 35,
     "Gold": 15,
@@ -447,14 +487,16 @@
     "Defence": 5,
     "MagicDefence": 5,
     "Agility": 5,
-    "Id": 29,
+    "ImageId": 29,
     "MinLevel": 1,
-    "Magic": 3,
+    "Probability": 1,
+    "MagicConst": 6,
     "Skills": ["Assesses", "Double Attack"],
-    "Spells": ["Sleep"]
+    "Spells": ["Sleep"],
+    "Biomes": ["Desert"]
   },
   {
-    "Health": 10,
+    "HealthTimes": 10,
     "HealthConst": 80,
     "Attack": 69,
     "Xp": 367,
@@ -467,12 +509,14 @@
     "Defence": 60,
     "MagicDefence": 40,
     "Agility": 33,
-    "Id": 30,
+    "ImageId": 30,
     "MinLevel": 10,
-    "Magic": 28
+    "MagicConst": 60,
+    "Probability": 2,
+    "Biomes": ["Desert", "Forest"]
   },
   {
-    "Health": 10,
+    "HealthTimes": 10,
     "HealthConst": 100,
     "Attack": 75,
     "Xp": 200,
@@ -482,11 +526,13 @@
     "Defence": 32,
     "MagicDefence": 32,
     "Agility": 42,
-    "Id": 31,
-    "MinLevel": 5
+    "ImageId": 31,
+    "MinLevel": 5,
+    "Probability": 3,
+    "Biomes": ["Desert"]
   },
   {
-    "Health": 10,
+    "HealthTimes": 10,
     "HealthConst": 200,
     "Attack": 70,
     "Xp": 200,
@@ -496,11 +542,13 @@
     "Defence": 93,
     "MagicDefence": 93,
     "Agility": 115,
-    "Id": 32,
-    "MinLevel": 15
+    "ImageId": 32,
+    "MinLevel": 15,
+    "Probability": 1,
+    "Biomes": ["Desert"]
   },
   {
-    "Health": 10,
+    "HealthTimes": 10,
     "HealthConst": 160,
     "Attack": 145,
     "Xp": 300,
@@ -510,13 +558,15 @@
     "Defence": 60,
     "MagicDefence": 60,
     "Agility": 78,
-    "Id": 33,
+    "ImageId": 33,
     "MinLevel": 10,
-    "Magic": 50,
-    "Spells": ["Lightning", "Heal All"]
+    "Probability": 1,
+    "MagicConst": 60,
+    "Spells": ["Lightning", "Heal All"],
+    "Biomes": ["Desert"]
   },
   {
-    "Health": 50,
+    "HealthTimes": 50,
     "HealthConst": 400,
     "Attack": 250,
     "Xp": 3000,
@@ -526,13 +576,15 @@
     "Defence": 90,
     "MagicDefence": 90,
     "Agility": 105,
-    "Id": 34,
+    "ImageId": 34,
     "MinLevel": 20,
-    "Magic": 100,
-    "Spells": ["Lightning", "Lightning Storm"]
+    "MagicConst": 100,
+    "Probability": 1,
+    "Spells": ["Lightning", "Lightning Storm"],
+    "Biomes": ["Desert", "Forest"]
   },
   {
-    "Health": 60,
+    "HealthTimes": 60,
     "HealthConst": 900,
     "Attack": 220,
     "Xp": 15000,
@@ -542,13 +594,14 @@
     "Defence": 99,
     "MagicDefence": 80,
     "Agility": 55,
-    "Id": 35,
+    "ImageId": 35,
     "MinLevel": 20,
-    "Magic": 255,
+    "MagicConst": 255,
+    "Spells": ["Heal"],
     "Skills": ["Lighting Breath", "Disruptive Wave", "Double Attack"]
   },
   {
-    "Health": 2,
+    "HealthTimes": 2,
     "HealthConst": 50,
     "Attack": 55,
     "Xp": 60,
@@ -558,12 +611,13 @@
     "Defence": 25,
     "MagicDefence": 25,
     "Agility": 21,
-    "Id": 36,
+    "ImageId": 36,
     "MinLevel": 10,
-    "Magic": 0
+    "Probability": 1,
+    "Biomes": ["Forest"]
   },
   {
-    "Health": 2,
+    "HealthTimes": 2,
     "HealthConst": 35,
     "Attack": 40,
     "Xp": 33,
@@ -573,12 +627,13 @@
     "Defence": 12,
     "MagicDefence": 12,
     "Agility": 18,
-    "Id": 37,
+    "ImageId": 37,
     "MinLevel": 10,
-    "Magic": 5
+    "Probability": 1,
+    "Biomes": ["Forest"]
   },
   {
-    "Health": 5,
+    "HealthTimes": 5,
     "HealthConst": 90,
     "Attack": 95,
     "Xp": 440,
@@ -588,11 +643,13 @@
     "Defence": 40,
     "MagicDefence": 40,
     "Agility": 30,
-    "Id": 38,
-    "MinLevel": 1
+    "ImageId": 38,
+    "MinLevel": 1,
+    "Probability": 1,
+    "Biomes": ["Forest"]
   },
   {
-    "Health": 10,
+    "HealthTimes": 10,
     "HealthConst": 250,
     "Attack": 135,
     "Xp": 15,
@@ -602,11 +659,12 @@
     "Defence": 78,
     "MagicDefence": 78,
     "Agility": 67,
-    "Id": 39,
-    "MinLevel": 10
+    "ImageId": 39,
+    "MinLevel": 10,
+    "Probability": 1,
+    "Biomes": ["Forest"]
   },
   {
-    "Health": 1,
     "HealthConst": 10,
     "Attack": 14,
     "Xp": 3,
@@ -616,11 +674,13 @@
     "Defence": 11,
     "MagicDefence": 11,
     "Agility": 7,
-    "Id": 40,
-    "MinLevel": 1
+    "ImageId": 40,
+    "MinLevel": 1,
+    "Probability": 1,
+    "Biomes": ["Forest"]
   },
   {
-    "Health": 2,
+    "HealthTimes": 2,
     "HealthConst": 8,
     "Attack": 8,
     "Xp": 1,
@@ -630,11 +690,13 @@
     "Defence": 5,
     "MagicDefence": 5,
     "Agility": 8,
-    "Id": 41,
-    "MinLevel": 1
+    "ImageId": 41,
+    "MinLevel": 1,
+    "Probability": 1,
+    "Biomes": ["Forest"]
   },
   {
-    "Health": 5,
+    "HealthTimes": 5,
     "HealthConst": 35,
     "Attack": 42,
     "Xp": 71,
@@ -644,11 +706,13 @@
     "Defence": 22,
     "MagicDefence": 22,
     "Agility": 16,
-    "Id": 42,
-    "MinLevel": 1
+    "ImageId": 42,
+    "MinLevel": 1,
+    "Probability": 2,
+    "Biomes": ["Forest"]
   },
   {
-    "Health": 5,
+    "HealthTimes": 5,
     "HealthConst": 60,
     "Attack": 65,
     "Xp": 220,
@@ -658,13 +722,15 @@
     "Defence": 60,
     "MagicDefence": 40,
     "Agility": 30,
-    "Id": 43,
+    "ImageId": 43,
     "MinLevel": 5,
-    "Magic": 12,
-    "Spells": ["Lightning"]
+    "MagicConst": 30,
+    "Probability": 1,
+    "Spells": ["Lightning"],
+    "Biomes": ["Forest"]
   },
   {
-    "Health": 5,
+    "HealthTimes": 5,
     "HealthConst": 110,
     "Attack": 140,
     "Xp": 523,
@@ -674,11 +740,13 @@
     "Defence": 90,
     "MagicDefence": 90,
     "Agility": 33,
-    "Id": 44,
-    "MinLevel": 5
+    "ImageId": 44,
+    "MinLevel": 5,
+    "Probability": 1,
+    "Biomes": ["Forest"]
   },
   {
-    "Health": 6,
+    "HealthTimes": 6,
     "HealthConst": 80,
     "Attack": 95,
     "Xp": 81,
@@ -688,11 +756,13 @@
     "Defence": 76,
     "MagicDefence": 76,
     "Agility": 71,
-    "Id": 45,
-    "MinLevel": 10
+    "ImageId": 45,
+    "MinLevel": 10,
+    "Probability": 1,
+    "Biomes": ["Forest"]
   },
   {
-    "Health": 10,
+    "HealthTimes": 10,
     "HealthConst": 65,
     "Attack": 88,
     "Xp": 45,
@@ -702,12 +772,14 @@
     "Defence": 74,
     "MagicDefence": 74,
     "Agility": 47,
-    "Id": 46,
+    "ImageId": 46,
     "MinLevel": 10,
-    "Skills": ["Fire", "Fire Breath"]
+    "Probability": 1,
+    "Skills": ["Fire", "Fire Breath"],
+    "Biomes": ["Forest"]
   },
   {
-    "Health": 10,
+    "HealthTimes": 10,
     "HealthConst": 350,
     "Attack": 230,
     "Xp": 2500,
@@ -717,7 +789,7 @@
     "Defence": 90,
     "MagicDefence": 90,
     "Agility": 90,
-    "Id": 47,
+    "ImageId": 47,
     "MinLevel": 10
   }
 ]

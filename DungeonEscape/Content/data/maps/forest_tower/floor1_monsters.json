@@ -1,37 +1,23 @@
 [
   {
-    "Id": 9,
-    "Probability": 1,
-    "Biome": "All"
+    "Name": "Army ant"
   },
   {
-    "Id": 29,
-    "Probability": 1,
-    "Biome": "All"
+    "Name": "Fuddlestick"
   },
   {
-    "Id": 4,
-    "Probability": 1,
-    "Biome": "All"
+    "Name": "Ratscal"
   },
   {
-    "Id": 39,
-    "Probability": 1,
-    "Biome": "All"
+    "Name": "Great troll"
   },
   {
-    "Id": 41,
-    "Probability": 1,
-    "Biome": "All"
+    "Name": "Walking stick"
   },
   {
-    "Id": 32,
-    "Probability": 1,
-    "Biome": "All"
+    "Name": "Dreadful drackal"
   },
   {
-    "Id": 44,
-    "Probability": 1,
-    "Biome": "All"
+    "Name": "Ursa major"
   }
 ]

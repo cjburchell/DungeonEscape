@@ -100,7 +100,7 @@ namespace Redpoint.DungeonEscape.State
 
         private (string, bool) DoRepel(IFighter source, IGame game, int round)
         {
-            if (game.Party.Members.Any(partyMember => partyMember.Status.Any(i => i.Type == EffectType.Repel)))
+            if (game.Party.AliveMembers.Any(partyMember => partyMember.Status.Any(i => i.Type == EffectType.Repel)))
             {
                 return ($"{source.Name} was not affected\n", false);
             }
@@ -189,7 +189,7 @@ namespace Redpoint.DungeonEscape.State
                     item = instance.Item;
                     if (instance.IsEquipped)
                     {
-                        instance.UnEquip(game.Party.Members);
+                        instance.UnEquip(game.Party.ActiveMembers);
                     }
                     target.Items.Remove(instance);
                 }

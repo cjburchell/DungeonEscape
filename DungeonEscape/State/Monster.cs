@@ -104,6 +104,7 @@ namespace Redpoint.DungeonEscape.State
             return this.Biomes != null && this.Biomes.Any() && this.Biomes.Contains(biome);
         }
 
-        public int Probability { get; set; } = 1;
+        [JsonConverter(typeof(StringEnumConverter))]
+        public Rarity Rarity { get; set; } = Rarity.Common;
     }
 }

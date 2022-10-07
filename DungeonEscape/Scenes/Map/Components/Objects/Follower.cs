@@ -1,4 +1,7 @@
-﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 {
     using System;
     using Microsoft.Xna.Framework;
@@ -8,22 +11,65 @@
 
     public class Follower : Component, IUpdatable
     {
-        private readonly Hero _hero;
+        //private readonly Hero _hero;
+        private readonly int _order;
         private readonly Entity _toFollow;
         private readonly PlayerComponent _player;
         private readonly IGame _gameState;
         private readonly int _renderOffset;
         private SpriteAnimator _animation;
         private Mover _mover;
+        private Hero _lastHero;
+        private List<Nez.Textures.Sprite> _sprites;
+        private SpriteAnimator _animator;
         private const float MoveSpeed = 150;
+        private const int DeadAnimationIndex = 144;
 
-        public Follower(Hero hero, Entity toFollow, PlayerComponent player, IGame gameState, int renderOffset)
+        public Follower(int order, Entity toFollow, PlayerComponent player, IGame gameState, int renderOffset)
         {
-            this._hero = hero;
+            _order = order;
             this._toFollow = toFollow;
             this._player = player;
             this._gameState = gameState;
             _renderOffset = renderOffset;
+        }
+        
+        private void UpdateAnimation()
+        {
+            var hero = this._gameState.Party.ActiveMembers.First(i => i.Order == this._order);
+            if (_lastHero == hero)
+            {
+                return;    
+            }
+
+            _lastHero = hero;
+            
+            var animationBaseIndex = (int) hero.Class * 16 + (int) hero.Gender * 8;
+            _animator.AddAnimation("WalkDown", new[]
+            {
+                _sprites[animationBaseIndex + 4],
+                _sprites[animationBaseIndex + 5]
+            });
+
+            _animator.AddAnimation("WalkUp", new[]
+            {
+                _sprites[animationBaseIndex + 0],
+                _sprites[animationBaseIndex + 1]
+            });
+
+            _animator.AddAnimation("WalkRight", new[]
+            {
+                _sprites[animationBaseIndex + 2],
+                _sprites[animationBaseIndex + 3]
+            });
+
+            _animator.AddAnimation("WalkLeft", new[]
+            {
+                _sprites[animationBaseIndex + 6],
+                _sprites[animationBaseIndex + 7]
+            });
+            
+            _animator.SetSprite(_sprites[(hero.IsDead ? DeadAnimationIndex : animationBaseIndex) + 4]);
         }
 
         public override void OnAddedToEntity()
@@ -34,62 +80,39 @@
             base.OnAddedToEntity();
             
             var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
-            var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, heroHeight);
-                
-            var animationBaseIndex = (int) this._hero.Class * 16 + (int) this._hero.Gender * 8;
-            const int deadAnimationIndex = 144;
-            var animator = this.Entity.AddComponent(new SpriteAnimator(sprites[(this._hero.IsDead ? deadAnimationIndex : animationBaseIndex) + 4]));
-            animator.Speed = 0.5f;
+            _sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, heroHeight);
+            var hero = this._gameState.Party.ActiveMembers.First(i => i.Order == this._order);
+            var animationBaseIndex = (int) hero.Class * 16 + (int) hero.Gender * 8;
+            _animator = this.Entity.AddComponent(new SpriteAnimator(_sprites[(hero.IsDead ? DeadAnimationIndex : animationBaseIndex) + 4]));
+            _animator.Speed = 0.5f;
 
-            animator.AddAnimation("WalkDown", new[]
-            {
-                sprites[animationBaseIndex + 4],
-                sprites[animationBaseIndex + 5]
-            });
-
-            animator.AddAnimation("WalkUp", new[]
-            {
-                sprites[animationBaseIndex + 0],
-                sprites[animationBaseIndex + 1]
-            });
-
-            animator.AddAnimation("WalkRight", new[]
-            {
-                sprites[animationBaseIndex + 2],
-                sprites[animationBaseIndex + 3]
-            });
-
-            animator.AddAnimation("WalkLeft", new[]
-            {
-                sprites[animationBaseIndex + 6],
-                sprites[animationBaseIndex + 7]
-            });
+            UpdateAnimation();
             
-            animator.AddAnimation("WalkDownDead", new[]
+            _animator.AddAnimation("WalkDownDead", new[]
             {
-                sprites[deadAnimationIndex + 4],
-                sprites[deadAnimationIndex + 5]
+                _sprites[DeadAnimationIndex + 4],
+                _sprites[DeadAnimationIndex + 5]
             });
 
-            animator.AddAnimation("WalkUpDead", new[]
+            _animator.AddAnimation("WalkUpDead", new[]
             {
-                sprites[deadAnimationIndex + 0],
-                sprites[deadAnimationIndex + 1]
+                _sprites[DeadAnimationIndex + 0],
+                _sprites[DeadAnimationIndex + 1]
             });
 
-            animator.AddAnimation("WalkRightDead", new[]
+            _animator.AddAnimation("WalkRightDead", new[]
             {
-                sprites[deadAnimationIndex + 2],
-                sprites[deadAnimationIndex + 3]
+                _sprites[DeadAnimationIndex + 2],
+                _sprites[DeadAnimationIndex + 3]
             });
 
-            animator.AddAnimation("WalkLeftDead", new[]
+            _animator.AddAnimation("WalkLeftDead", new[]
             {
-                sprites[deadAnimationIndex + 6],
-                sprites[deadAnimationIndex + 7]
+                _sprites[DeadAnimationIndex + 6],
+                _sprites[DeadAnimationIndex + 7]
             });
 
-            this._animation = animator;
+            this._animation = _animator;
             this._animation.SetEnabled(false);
             
             var overWater = this._player.IsOverWater();
@@ -100,6 +123,7 @@
 
         public void Update()
         {
+            UpdateAnimation();
             if (this._gameState.IsPaused)
             {
                 return;
@@ -146,7 +170,8 @@
                 };
             }
 
-            if (this._hero.IsDead)
+            var hero = this._gameState.Party.ActiveMembers.First(i => i.Order == this._order);
+            if (hero.IsDead)
             {
                 animation += "Dead";
             }

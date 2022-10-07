@@ -109,7 +109,7 @@ namespace Redpoint.DungeonEscape.State
                 return;
             }
 
-            var equippedHero = heroes.FirstOrDefault(hero => hero.Id == this.EquippedTo);
+            var equippedHero = heroes.FirstOrDefault(hero => hero.Name == this.EquippedTo);
             equippedHero?.UnEquip(this);
         }
         

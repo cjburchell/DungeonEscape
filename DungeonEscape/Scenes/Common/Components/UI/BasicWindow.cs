@@ -143,6 +143,14 @@
             };
             Skin.Add("epic_label", epicLabelStyle);
             
+            var legendaryLabelStyle = new LabelStyle
+            {
+                FontScale = FontScale,
+                Font = font,
+                FontColor = Color.Orange
+            };
+            Skin.Add("legendary_label", legendaryLabelStyle);
+            
             
             var questLabelStyle = new LabelStyle
             {

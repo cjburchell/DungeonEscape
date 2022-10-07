@@ -125,7 +125,7 @@
                         selectHero.Show(this.GameState.Party.AliveMembers,
                         hero =>
                         {
-                            var inventoryWindow = new SellPartyItemsWindow(this._ui, this.GameState.Party.Members);
+                            var inventoryWindow = new SellPartyItemsWindow(this._ui, this.GameState.Party.AliveMembers);
                             inventoryWindow.Show(hero.Items.Where(i => i.Gold != 0 && i.Type != ItemType.Quest), item =>
                             {
                                 if (item == null)
@@ -148,7 +148,7 @@
                                         this.GameState.Party.Gold += item.Gold * 3 / 4;
                                         if (item.IsEquipped)
                                         {
-                                            item.UnEquip(this.GameState.Party.Members);
+                                            item.UnEquip(this.GameState.Party.AliveMembers);
                                         }
 
                                         hero.Items.Remove(item);

@@ -163,7 +163,7 @@
                 monster.Update();
             }
             
-            foreach (var member in this._game.Party.Members)
+            foreach (var member in this._game.Party.ActiveMembers)
             {
                 member.Update();
             }
@@ -240,7 +240,7 @@
 
         private void EndRound()
         {
-            if (_game.Party.Members.Any(CanBeAttacked) &&
+            if (_game.Party.AliveMembers.Any(CanBeAttacked) &&
                 AliveMonsters.Any())
             {
                 this._state = EncounterRoundState.StartRound;
@@ -695,7 +695,7 @@
                 };
             }
 
-            var availableTargets = this._game.Party.Members.OfType<IFighter>().Where(CanBeAttacked).ToList();
+            var availableTargets = this._game.Party.AliveMembers.OfType<IFighter>().Where(CanBeAttacked).ToList();
             if (fighter.Status.Any(i => i.Type == EffectType.Confusion))
             {
                 availableTargets.AddRange(this.AliveMonsters);
@@ -747,7 +747,7 @@
                     {
                         Source = fighter,
                         State = RoundActionState.Run,
-                        Targets = this._game.Party.Members.Where(CanBeAttacked).OfType<IFighter>().ToList()
+                        Targets = this._game.Party.AliveMembers.Where(CanBeAttacked).OfType<IFighter>().ToList()
                     };
                 }
                 
@@ -1073,7 +1073,7 @@
         private void EndEncounter()
         {
             var talkWindow = new FightTalkWindow(this._ui);
-            if (!_game.Party.Members.Any(CanBeAttacked))
+            if (!_game.Party.AliveMembers.Any(CanBeAttacked))
             {
                 talkWindow.Show("Everyone has died!", this._game.ShowMainMenu);
             }
@@ -1099,9 +1099,11 @@
 
                 var monsterName = this._monsters.Count(i => i.IsDead) == 1 ?$"the {this._monsters.First(i => i.IsDead).Name}"  : "all the enemies";
                 var endFightMessage =$"You have defeated {monsterName},\nEach party member has gained {xp}XP\nand the party got {gold} gold\n";
+                
                 if (Dice.RollD20() > 18)
                 {
-                    foundItems.Add(_game.CreateChestItem(this._game.Party.MaxLevel()));
+                    var rarity = this._monsters.Where(i => i.IsDead).Max(i => i.Rarity);
+                    foundItems.Add(_game.CreateChestItem(this._game.Party.MaxLevel(), rarity));
                 }
 
                 if (foundItems.Any())

@@ -15,7 +15,7 @@
       "Poison",
       "Paralysis"
     ],
-    "Probability": 1,
+    "Rarity": "Common",
     "Biomes": ["Grassland", "Hills"]
   },
   {
@@ -32,7 +32,7 @@
     "MinLevel": 1,
     "MagicConst": 4,
     "Spells": ["Increase"],
-    "Probability": 1,
+    "Rarity": "Common",
     "Biomes": ["Grassland", "Hills", "Forest"]
   },
   {
@@ -48,7 +48,7 @@
     "ImageId": 3,
     "MinLevel": 5,
     "Skills": ["Paralysis"],
-    "Probability": 2,
+    "Rarity": "Uncommon",
     "Biomes": ["Grassland", "Hills"]
   },
   {
@@ -63,7 +63,7 @@
     "Agility": 3,
     "ImageId": 4,
     "MinLevel": 1,
-    "Probability": 2,
+    "Rarity": "Common",
     "Biomes": ["Grassland", "Hills"]
   },
   {
@@ -79,7 +79,7 @@
     "ImageId": 5,
     "MinLevel": 10,
     "MagicConst": 12,
-    "Probability": 2,
+    "Rarity": "Uncommon",
     "Skills": ["Flee"],
     "Spells": ["Blaze"],
     "Biomes": ["Grassland", "Hills", "Forest"]
@@ -95,10 +95,9 @@
     "MagicDefence": 36,
     "Agility": 21,
     "ImageId": 6,
-    "MinLevel": 10,
-    "MagicConst": 5,
+    "MinLevel": 5,
     "Skills": ["Sleep"],
-    "Probability": 2,
+    "Rarity": "Common",
     "Biomes": ["Grassland", "Hills"]
   },
   {
@@ -118,11 +117,10 @@
       "Poison",
       "Paralysis"
     ],
-    "Probability": 2,
+    "Rarity": "Uncommon",
     "Biomes": ["Grassland", "Hills"]
   },
   {
-    
     "HealthConst": 1,
     "Attack": 4,
     "Xp": 4,
@@ -134,7 +132,7 @@
     "Agility": 9,
     "ImageId": 8,
     "MinLevel": 1,
-    "Probability": 20,
+    "Rarity": "Common",
     "Biomes": ["Grassland", "Hills"]
   },
   {
@@ -150,7 +148,7 @@
     "Agility": 8,
     "ImageId": 9,
     "MinLevel": 1,
-    "Probability": 2,
+    "Rarity": "Common",
     "Biomes": ["Grassland", "Desert", "Hills"]
   },
   {
@@ -165,11 +163,11 @@
     "MagicDefence": 20,
     "Agility": 42,
     "ImageId": 10,
-    "MinLevel": 1,
+    "MinLevel": 10,
     "Skills": [
       "Double Attack"
     ],
-    "Probability": 2,
+    "Rarity": "Rare",
     "Biomes": ["Grassland", "Hills"]
   },
   {
@@ -188,7 +186,7 @@
     "MagicConst": 2,
     "Skills": ["Flee"],
     "Spells": ["Blaze"],
-    "Probability": 1,
+    "Rarity": "Epic",
     "Biomes": ["Grassland", "Hills"]
   },
   {
@@ -204,7 +202,7 @@
     "Agility": 100,
     "ImageId": 12,
     "MinLevel": 20,
-    "Probability": 1,
+    "Rarity": "Epic",
     "Skills": ["Fire", "Fire Breath"],
     "Biomes": ["Grassland", "Desert", "Hills"]
   },
@@ -220,9 +218,9 @@
     "MagicDefence": 80,
     "Agility": 65,
     "ImageId": 13,
-    "MinLevel": 10,
+    "MinLevel": 15,
     "Skills": ["Poison"],
-    "Probability": 4,
+    "Rarity": "Common",
     "Biomes": ["Water"]
   },
   {
@@ -237,8 +235,8 @@
     "MagicDefence": 80,
     "Agility": 54,
     "ImageId": 14,
-    "MinLevel": 1,
-    "Probability": 4,
+    "MinLevel": 10,
+    "Rarity": "Common",
     "Biomes": ["Water"]
   },
   {
@@ -253,9 +251,8 @@
     "MagicDefence": 94,
     "Agility": 99,
     "ImageId": 15,
-    "MinLevel": 10,
+    "Rarity": "Uncommon",
     "Skills": ["Poison", "Double Attack"],
-    "Probability": 4,
     "Biomes": ["Water"]
   },
   {
@@ -271,7 +268,7 @@
     "Agility": 44,
     "ImageId": 16,
     "MinLevel": 15,
-    "Probability": 1,
+    "Rarity": "Rare",
     "Skills": ["Fire Breath"],
     "Biomes": ["Water"]
   },
@@ -287,8 +284,8 @@
     "MagicDefence": 58,
     "Agility": 91,
     "ImageId": 17,
-    "MinLevel": 10,
-    "Probability": 1,
+    "MinLevel": 15,
+    "Rarity": "Rare",
     "Biomes": ["Water"]
   },
   {
@@ -304,7 +301,7 @@
     "Agility": 55,
     "ImageId": 18,
     "MinLevel": 10,
-    "Probability": 1,
+    "Rarity": "Common",
     "Biomes": ["Water"]
   },
   {
@@ -320,7 +317,7 @@
     "Agility": 55,
     "ImageId": 19,
     "MinLevel": 10,
-    "Probability": 2,
+    "Rarity": "Uncommon",
     "Biomes": ["Water"]
   },
   {
@@ -336,7 +333,7 @@
     "Agility": 52,
     "ImageId": 20,
     "MinLevel": 20,
-    "Probability": 1,
+    "Rarity": "Uncommon",
     "Skills": ["Flee", "Triple Attack"],
     "Biomes": ["Water"]
   },
@@ -356,8 +353,8 @@
     "MagicDefence": 60,
     "Agility": 40,
     "ImageId": 21,
-    "MinLevel": 20,
-    "Probability": 1,
+    "MinLevel": 10,
+    "Rarity": "Rare",
     "Biomes": ["Water"]
   },
   {
@@ -373,7 +370,7 @@
     "Agility": 32,
     "ImageId": 22,
     "MinLevel": 15,
-    "Probability": 1,
+    "Rarity": "Rare",
     "Biomes": ["Water"]
   },
   {
@@ -389,7 +386,7 @@
     "Agility": 45,
     "ImageId": 23,
     "MinLevel": 20,
-    "Probability": 1,
+    "Rarity": "Epic",
     "Biomes": ["Water"]
   },
   {
@@ -404,8 +401,8 @@
     "MagicDefence": 87,
     "Agility": 92,
     "ImageId": 24,
-    "MinLevel": 10,
-    "Probability": 1,
+    "MinLevel": 15,
+    "Rarity": "Common",
     "Biomes": ["Desert"]
   },
   {
@@ -421,7 +418,7 @@
     "Agility": 11,
     "ImageId": 25,
     "MinLevel": 1,
-    "Probability": 2,
+    "Rarity": "Common",
     "Skills": ["Poison"],
     "Biomes": ["Desert"]
   },
@@ -437,8 +434,8 @@
     "MagicDefence": 25,
     "Agility": 41,
     "ImageId": 26,
-    "MinLevel": 5,
-    "Probability": 1,
+    "MinLevel": 10,
+    "Rarity": "Uncommon",
     "Skills": ["Poison"],
     "Biomes": ["Desert"]
   },
@@ -454,9 +451,9 @@
     "MagicDefence": 65,
     "Agility": 50,
     "ImageId": 27,
-    "MinLevel": 1,
+    "MinLevel": 10,
     "MagicConst": 30,
-    "Probability": 1,
+    "Rarity": "Uncommon",
     "Spells": ["Lightning"],
     "Biomes": ["Desert"]
   },
@@ -472,8 +469,8 @@
     "MagicDefence": 42,
     "Agility": 9,
     "ImageId": 28,
-    "MinLevel": 1,
-    "Probability": 2,
+    "MinLevel": 5,
+    "Rarity": "Uncommon",
     "Biomes": ["Desert"]
   },
   {
@@ -489,7 +486,7 @@
     "Agility": 5,
     "ImageId": 29,
     "MinLevel": 1,
-    "Probability": 1,
+    "Rarity": "Uncommon",
     "MagicConst": 6,
     "Skills": ["Assesses", "Double Attack"],
     "Spells": ["Sleep"],
@@ -512,7 +509,7 @@
     "ImageId": 30,
     "MinLevel": 10,
     "MagicConst": 60,
-    "Probability": 2,
+    "Rarity": "Common",
     "Biomes": ["Desert", "Forest"]
   },
   {
@@ -527,8 +524,8 @@
     "MagicDefence": 32,
     "Agility": 42,
     "ImageId": 31,
-    "MinLevel": 5,
-    "Probability": 3,
+    "MinLevel": 15,
+    "Rarity": "Common",
     "Biomes": ["Desert"]
   },
   {
@@ -543,8 +540,8 @@
     "MagicDefence": 93,
     "Agility": 115,
     "ImageId": 32,
-    "MinLevel": 15,
-    "Probability": 1,
+    "MinLevel": 20,
+    "Rarity": "Uncommon",
     "Biomes": ["Desert"]
   },
   {
@@ -559,9 +556,9 @@
     "MagicDefence": 60,
     "Agility": 78,
     "ImageId": 33,
-    "MinLevel": 10,
-    "Probability": 1,
+    "MinLevel": 15,
     "MagicConst": 60,
+    "Rarity": "Rare",
     "Spells": ["Lightning", "Heal All"],
     "Biomes": ["Desert"]
   },
@@ -579,7 +576,7 @@
     "ImageId": 34,
     "MinLevel": 20,
     "MagicConst": 100,
-    "Probability": 1,
+    "Rarity": "Epic",
     "Spells": ["Lightning", "Lightning Storm"],
     "Biomes": ["Desert", "Forest"]
   },
@@ -597,6 +594,7 @@
     "ImageId": 35,
     "MinLevel": 20,
     "MagicConst": 255,
+    "Rarity": "Epic",
     "Spells": ["Heal"],
     "Skills": ["Lighting Breath", "Disruptive Wave", "Double Attack"]
   },
@@ -612,8 +610,8 @@
     "MagicDefence": 25,
     "Agility": 21,
     "ImageId": 36,
-    "MinLevel": 10,
-    "Probability": 1,
+    "MinLevel": 5,
+    "Rarity": "Common",
     "Biomes": ["Forest"]
   },
   {
@@ -628,8 +626,8 @@
     "MagicDefence": 12,
     "Agility": 18,
     "ImageId": 37,
-    "MinLevel": 10,
-    "Probability": 1,
+    "MinLevel": 5,
+    "Rarity": "Common",
     "Biomes": ["Forest"]
   },
   {
@@ -644,8 +642,8 @@
     "MagicDefence": 40,
     "Agility": 30,
     "ImageId": 38,
-    "MinLevel": 1,
-    "Probability": 1,
+    "MinLevel": 10,
+    "Rarity": "Common",
     "Biomes": ["Forest"]
   },
   {
@@ -660,8 +658,8 @@
     "MagicDefence": 78,
     "Agility": 67,
     "ImageId": 39,
-    "MinLevel": 10,
-    "Probability": 1,
+    "MinLevel": 15,
+    "Rarity": "Uncommon",
     "Biomes": ["Forest"]
   },
   {
@@ -676,7 +674,7 @@
     "Agility": 7,
     "ImageId": 40,
     "MinLevel": 1,
-    "Probability": 1,
+    "Rarity": "Common",
     "Biomes": ["Forest"]
   },
   {
@@ -692,7 +690,7 @@
     "Agility": 8,
     "ImageId": 41,
     "MinLevel": 1,
-    "Probability": 1,
+    "Rarity": "Common",
     "Biomes": ["Forest"]
   },
   {
@@ -707,8 +705,8 @@
     "MagicDefence": 22,
     "Agility": 16,
     "ImageId": 42,
-    "MinLevel": 1,
-    "Probability": 2,
+    "MinLevel": 5,
+    "Rarity": "Uncommon",
     "Biomes": ["Forest"]
   },
   {
@@ -723,9 +721,9 @@
     "MagicDefence": 40,
     "Agility": 30,
     "ImageId": 43,
-    "MinLevel": 5,
+    "MinLevel": 10,
     "MagicConst": 30,
-    "Probability": 1,
+    "Rarity": "Rare",
     "Spells": ["Lightning"],
     "Biomes": ["Forest"]
   },
@@ -741,8 +739,8 @@
     "MagicDefence": 90,
     "Agility": 33,
     "ImageId": 44,
-    "MinLevel": 5,
-    "Probability": 1,
+    "MinLevel": 15,
+    "Rarity": "Uncommon",
     "Biomes": ["Forest"]
   },
   {
@@ -758,7 +756,7 @@
     "Agility": 71,
     "ImageId": 45,
     "MinLevel": 10,
-    "Probability": 1,
+    "Rarity": "Uncommon",
     "Biomes": ["Forest"]
   },
   {
@@ -774,7 +772,7 @@
     "Agility": 47,
     "ImageId": 46,
     "MinLevel": 10,
-    "Probability": 1,
+    "Rarity": "Epic",
     "Skills": ["Fire", "Fire Breath"],
     "Biomes": ["Forest"]
   },
@@ -790,6 +788,59 @@
     "MagicDefence": 90,
     "Agility": 90,
     "ImageId": 47,
-    "MinLevel": 10
-  }
+    "Rarity": "Rare",
+    "MinLevel": 20
+  },
+  {
+    "HealthConst": 28,
+    "Attack": 32,
+    "Xp": 35,
+    "Gold": 12,
+    "Name": "Crabid",
+    "GroupSize": 10,
+    "Defence": 60,
+    "MagicDefence": 60,
+    "Agility": 12,
+    "ImageId": 48,
+    "MinLevel": 1,
+    "Rarity": "Common",
+    "Biomes": [
+      "Water"
+    ]
+  },
+  {
+    "HealthConst": 20,
+    "Attack": 23,
+    "Xp": 210,
+    "Gold": 28,
+    "Name": "Shell Slime",
+    "GroupSize": 10,
+    "Defence": 200,
+    "MagicDefence": 5,
+    "Agility": 35,
+    "ImageId": 49,
+    "MinLevel": 1,
+    "Skills": ["Flee"],
+    "Rarity": "Common",
+    "Biomes": [
+      "Water"
+    ]
+  },{
+  "HealthConst": 38,
+  "Attack": 47,
+  "Xp": 197,
+  "Gold": 45,
+  "Name": "Sea Slime",
+  "GroupSize": 10,
+  "Defence": 100,
+  "MagicDefence": 5,
+  "Agility": 28,
+  "ImageId": 50,
+  "MinLevel": 5,
+  "Rarity": "Uncommon",
+  "Skills": ["Flee"],
+  "Biomes": [
+    "Water"
+  ]
+}
 ]

@@ -1,16 +1,18 @@
 [
   {
-    "Name": "Bodkin Archer"
+    "Name": "Bodkin Archer",
+    "Rarity": "Uncommon"
   },
   {
     "Name": "Slime",
-    "Probability": 4
+    "Rarity": "Common"
   },
   {
-    "Name": "Troll"
+    "Name": "Troll",
+    "Rarity": "Uncommon"
   },
   {
     "Name": "Ratscal",
-    "Probability": 4
+    "Rarity": "Common"
   }
 ]

@@ -58,30 +58,42 @@
             }
         }
 
-        protected override void JoinParty()
+        protected override bool JoinParty()
         {
             var hero = new Hero
             {
                 Name = this.SpriteState.Name,
                 Class = this._memberClass,
-                Gender = this._gender
+                Gender = this._gender,
+                IsActive = false,
+                Order = 0,
             };
                 
             hero.Setup(this.GameState, this._level);
-                    
-            var lastMember = this.GameState.Party.Members.Last();
-            this.GameState.Party.Members.Add(hero);
-            this.SpriteState.IsActive = false;
+            var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
+            hero.SetupImage(texture);
+
+            var maxOrder = this.GameState.Party.ActiveMembers.Max(i => i.Order);
+            var lastEntity = this.Entity.Scene.FindEntity($"hero_{maxOrder}");
+            var player = this.Entity.Scene.FindEntity("hero_0").GetComponent<PlayerComponent>();
 
             this.Entity.SetEnabled(false);
             this.Entity.Scene.Entities.Remove(this.Entity);
+            this.SpriteState.IsActive = false;
             
-            var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
-            hero.SetupImage(texture);
-            var lastEntity = this.Entity.Scene.FindEntity(lastMember.Id);
-            var player = this.Entity.Scene.FindEntity(this.GameState.Party.Members.First().Id).GetComponent<PlayerComponent>();
-            var followerEntity = this.Entity.Scene.CreateEntity(hero.Id, this.Entity.Position);
-            followerEntity.AddComponent(new Follower( hero, lastEntity, player, this.GameState, this.RenderOffset));
+            this.GameState.Party.Members.Add(hero);
+            if (this.GameState.Party.ActiveMembers.Count() >= this.GameState.Settings.MaxPartyMembers)
+            {
+                return false;
+            }
+            
+            hero.IsActive = true;
+            hero.Order = maxOrder + 1;
+            var followerEntity = this.Entity.Scene.CreateEntity($"hero_{hero.Order}", this.Entity.Position);
+            followerEntity.AddComponent(new Follower( hero.Order, lastEntity, player, this.GameState, this.RenderOffset));
+            return true;
+
+
         }
     }
 }

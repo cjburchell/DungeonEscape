@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.9" tiledversion="1.9.2" name="allmonsters" tilewidth="258" tileheight="196" tilecount="47" columns="0">
- <grid orientation="orthogonal" width="0" height="0"/>
+<tileset version="1.9" tiledversion="1.9.2" name="allmonsters" tilewidth="258" tileheight="196" tilecount="50" columns="0">
  <tile id="1" class="Giant Centipede">
   <image width="80" height="74" source="images/monsters/peed.png"/>
  </tile>
@@ -141,5 +140,14 @@
  </tile>
  <tile id="47" class="Polar Bear">
   <image width="128" height="90" source="images/monsters/polerb.png"/>
+ </tile>
+ <tile id="48">
+  <image width="100" height="70" source="images/monsters/crab.png"/>
+ </tile>
+ <tile id="49" class="shell slime">
+  <image width="48" height="42" source="images/monsters/shellSlime.png"/>
+ </tile>
+ <tile id="50" class="sea slime">
+  <image width="48" height="42" source="images/monsters/seaSlime.png"/>
  </tile>
 </tileset>

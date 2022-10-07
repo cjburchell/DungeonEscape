@@ -56,7 +56,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
                 options.Add($"Cure {cureCost}");
             }
             
-            if (this.GameState.Party.Members.Any(member => member.IsDead))
+            if (this.GameState.Party.DeadMembers.Any())
             {
                 options.Add($"Revive {reviveCost}");
             }
@@ -159,13 +159,13 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
                                     new TalkWindow(this._ui).Show($"{this.SpriteState.Name}: {hero.Name} has been revived.\nThank you come again!", Done);
                                 }
                             
-                                if (party.Members.Count(member => member.IsDead) == 1)
+                                if (party.DeadMembers.Count() == 1)
                                 {
-                                    Revive(party.Members.First(member => member.IsDead));
+                                    Revive(party.DeadMembers.First());
                                 }
                                 else
                                 {
-                                    new SelectHeroWindow(this._ui).Show(party.Members.Where(member => member.IsDead),
+                                    new SelectHeroWindow(this._ui).Show(party.DeadMembers,
                                         Revive);
                                 }
                             }

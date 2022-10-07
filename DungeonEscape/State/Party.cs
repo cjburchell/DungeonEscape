@@ -29,10 +29,21 @@ namespace Redpoint.DungeonEscape.State
         public List<Hero> Members { get; } = new();
         
         [JsonIgnore]
-        public IEnumerable<Hero> AliveMembers => this.Members.Where(member => !member.IsDead);
+        public IEnumerable<Hero> ActiveMembers => this.Members.Where(member => member.IsActive).OrderBy(i => i.Order);
+        
+        [JsonIgnore]
+        public IEnumerable<Hero> InactiveMembers => this.Members.Where(member => !member.IsActive);
+
+        [JsonIgnore]
+        public IEnumerable<Hero> AliveMembers => this.ActiveMembers.Where(member => !member.IsDead);
+        
+        [JsonIgnore]
+        public IEnumerable<Hero> DeadMembers => this.ActiveMembers.Where(member => member.IsDead && member.IsActive);
 
         // ReSharper disable once UnusedMember.Global
-        public List<ActiveQuest> ActiveQuests { get; } = new();
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+        public List<ActiveQuest> ActiveQuests { get; set; } = new();
+        
         
         public int Gold { get; set; }
 
@@ -41,7 +52,8 @@ namespace Redpoint.DungeonEscape.State
         public bool CurrentMapIsOverWorld { get; set; }
 
         public int StepCount { get; set; }
-        public IEnumerable<Hero> DeadMembers => this.Members.Where(member => member.IsDead);
+        
+
 
         public ItemInstance GetItem(string itemId)
         {
@@ -50,7 +62,7 @@ namespace Redpoint.DungeonEscape.State
 
         public (Item, Hero) RemoveItem(string itemId)
         {
-            foreach (var member in this.Members)
+            foreach (var member in this.ActiveMembers)
             {
                 var item = member.Items.FirstOrDefault(i => i.Item.Id == itemId);
                 if (item == null) continue;
@@ -102,7 +114,7 @@ namespace Redpoint.DungeonEscape.State
                 return "You do not have a key for this door";
             }
 
-            return MapScene.UseItem(game, itemMember, null, door, key).Item1;
+            return MapInput.UseItem(game, itemMember, null, door, key).Item1;
         }
 
         public int MaxLevel()

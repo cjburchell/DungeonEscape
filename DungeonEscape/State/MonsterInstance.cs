@@ -54,6 +54,8 @@ namespace Redpoint.DungeonEscape.State
             });
         }
 
+        public Rarity Rarity => _info.Rarity;
+
         public int Gold { get; set; }
 
         public override IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells)

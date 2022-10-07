@@ -13,7 +13,7 @@
     using State;
     using Random = Nez.Random;
 
-    public class PlayerComponent : Component, IUpdatable, ITriggerListener
+    public class PlayerComponent : Component, IUpdatable, ITriggerListener, IPlayer
     {
         private readonly TmxMap _map;
         private readonly Label _debugText;
@@ -32,9 +32,12 @@
         private Mover _mover;
         private VirtualButton _actionButton;
         private float _distance;
-        private readonly Hero _hero;
 
-        public PlayerComponent(Hero hero, IGame gameState, TmxMap map, Label debugText, List<RandomMonster> randomMonsters, UiSystem ui, int renderOffset)
+        private SpriteAnimator _animator;
+        private List<Nez.Textures.Sprite> _sprites;
+        private Hero _lastHero;
+
+        public PlayerComponent(IGame gameState, TmxMap map, Label debugText, List<RandomMonster> randomMonsters, UiSystem ui, int renderOffset)
         {
             this._map = map;
             this._debugText = debugText;
@@ -42,7 +45,44 @@
             this._ui = ui;
             _renderOffset = renderOffset;
             this._gameState = gameState;
-            this._hero = hero;
+        }
+
+        private void UpdateAnimation()
+        {
+            var hero = this._gameState.Party.ActiveMembers.First(i => i.Order == 0);
+            if (_lastHero == hero)
+            {
+                return;    
+            }
+
+            _lastHero = hero;
+            
+            var animationBaseIndex = (int) hero.Class * 16 + (int) hero.Gender * 8;
+            _animator.AddAnimation("WalkDown", new[]
+            {
+                _sprites[animationBaseIndex + 4],
+                _sprites[animationBaseIndex + 5]
+            });
+
+            _animator.AddAnimation("WalkUp", new[]
+            {
+                _sprites[animationBaseIndex + 0],
+                _sprites[animationBaseIndex + 1]
+            });
+
+            _animator.AddAnimation("WalkRight", new[]
+            {
+                _sprites[animationBaseIndex + 2],
+                _sprites[animationBaseIndex + 3]
+            });
+
+            _animator.AddAnimation("WalkLeft", new[]
+            {
+                _sprites[animationBaseIndex + 6],
+                _sprites[animationBaseIndex + 7]
+            });
+
+            _animator.SetSprite(_sprites[animationBaseIndex + 4]);
         }
         
         public override void OnAddedToEntity()
@@ -52,63 +92,41 @@
             this._mover = this.Entity.AddComponent(new Mover());
             {
                 var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
-                var sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, heroHeight);
-                
-                var animationBaseIndex = (int) this._hero.Class * 16 + (int) this._hero.Gender * 8;
-                var animator = this.Entity.AddComponent(new SpriteAnimator(sprites[animationBaseIndex + 4]));
-                animator.Speed = 0.5f;
+                _sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, heroHeight);
 
-                animator.AddAnimation("WalkDown", new[]
-                {
-                    sprites[animationBaseIndex + 4],
-                    sprites[animationBaseIndex + 5]
-                });
-
-                animator.AddAnimation("WalkUp", new[]
-                {
-                    sprites[animationBaseIndex + 0],
-                    sprites[animationBaseIndex + 1]
-                });
-
-                animator.AddAnimation("WalkRight", new[]
-                {
-                    sprites[animationBaseIndex + 2],
-                    sprites[animationBaseIndex + 3]
-                });
-
-                animator.AddAnimation("WalkLeft", new[]
-                {
-                    sprites[animationBaseIndex + 6],
-                    sprites[animationBaseIndex + 7]
-                });
+                var hero = this._gameState.Party.ActiveMembers.First(i => i.Order == 0);
+                var animationBaseIndex = (int) hero.Class * 16 + (int) hero.Gender * 8;
+                _animator = this.Entity.AddComponent(new SpriteAnimator(_sprites[animationBaseIndex + 4]));
+                _animator.Speed = 0.5f;
                 
                 const int deadAnimationIndex = 144;
+                UpdateAnimation();
             
-                animator.AddAnimation("WalkDownDead", new[]
+                _animator.AddAnimation("WalkDownDead", new[]
                 {
-                    sprites[deadAnimationIndex + 4],
-                    sprites[deadAnimationIndex + 5]
+                    _sprites[deadAnimationIndex + 4],
+                    _sprites[deadAnimationIndex + 5]
                 });
 
-                animator.AddAnimation("WalkUpDead", new[]
+                _animator.AddAnimation("WalkUpDead", new[]
                 {
-                    sprites[deadAnimationIndex + 0],
-                    sprites[deadAnimationIndex + 1]
+                    _sprites[deadAnimationIndex + 0],
+                    _sprites[deadAnimationIndex + 1]
                 });
 
-                animator.AddAnimation("WalkRightDead", new[]
+                _animator.AddAnimation("WalkRightDead", new[]
                 {
-                    sprites[deadAnimationIndex + 2],
-                    sprites[deadAnimationIndex + 3]
+                    _sprites[deadAnimationIndex + 2],
+                    _sprites[deadAnimationIndex + 3]
                 });
 
-                animator.AddAnimation("WalkLeftDead", new[]
+                _animator.AddAnimation("WalkLeftDead", new[]
                 {
-                    sprites[deadAnimationIndex + 6],
-                    sprites[deadAnimationIndex + 7]
+                    _sprites[deadAnimationIndex + 6],
+                    _sprites[deadAnimationIndex + 7]
                 });
 
-                this._playerAnimation = animator;
+                this._playerAnimation = _animator;
                 this._playerAnimation.SetEnabled(false);
             }
 
@@ -210,7 +228,7 @@
             this._playerAnimation.SetEnabled(!overWater);
             // handle movement and animations    
             var moveDir = new Vector2(this._xAxisInput.Value, this._yAxisInput.Value);
-            
+
             if (moveDir == Vector2.Zero)
             {
                 this._shipAnimator.Pause();
@@ -247,7 +265,8 @@
             }
 
             var waterAnimation = animation;
-            if (this._hero.IsDead)
+            var hero = this._gameState.Party.ActiveMembers.First(i => i.Order == 0);
+            if (hero.IsDead)
             {
                 animation += "Dead";
             }
@@ -328,6 +347,7 @@
 
         void IUpdatable.Update()
         {
+            UpdateAnimation();
             if (this._gameState.IsPaused)
             {
                 this._gameState.UpdatePauseState();
@@ -480,14 +500,27 @@
         {
             var currentBiome = MapScene.GetCurrentBiome(this._map, this.Entity.Position);
             var availableMonsters = new List<Monster>();
-            
+
             var level = this._gameState.Party.MaxLevel();
-            foreach (var monster in this._randomMonsters.Where(item => item.InBiome(currentBiome.Type) &&
-                                                                       (currentBiome.MaxMonsterLevel == 0 ||
-                                                                        item.Data.MinLevel < currentBiome.MaxMonsterLevel) &&
-                                                                       item.Data.MinLevel >= currentBiome.MinMonsterLevel))
+
+            var monsterList = this._randomMonsters.Where(item => item.InBiome(currentBiome.Type) &&
+                                                                 (currentBiome.MaxMonsterLevel == 0 ||
+                                                                  item.Data.MinLevel < currentBiome.MaxMonsterLevel) &&
+                                                                 item.Data.MinLevel >= currentBiome.MinMonsterLevel);
+
+            foreach (var monster in monsterList)
             {
-                for (var i = 0; i < monster.Probability; i++)
+                var probability = monster.Rarity switch
+                {
+                    Rarity.Common => 20,
+                    Rarity.Uncommon => 5,
+                    Rarity.Rare => 2,
+                    Rarity.Epic => 1,
+                    Rarity.Legendary => Dice.RollD20() > 14 ? 1 : 0 ,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+
+                for (var i = 0; i < probability; i++)
                 {
                     availableMonsters.Add(monster.Data);
                 }
@@ -497,7 +530,7 @@
             {
                 return;
             }
-            
+
             const int maxMonstersToFight = 10;
             const int maxMonsterGroups = 3;
             var maxMonsters = level / 4 + this._gameState.Party.AliveMembers.Count();
@@ -505,18 +538,23 @@
             {
                 maxMonsters = maxMonstersToFight;
             }
-            
+
             var numberOfMonsters = Random.NextInt(maxMonsters) + 1;
             var monsters = new List<Monster>();
             var totalMonsters = 0;
             var usedMonsters = new List<string>();
-            for (var group = 0; group < maxMonsterGroups-1; group++)
+            for (var group = 0; group < maxMonsterGroups - 1; group++)
             {
                 var availableMonstersList = availableMonsters.Where(i => !usedMonsters.Contains(i.Name)).ToArray();
+                if (!availableMonsters.Any())
+                {
+                    break;
+                }
+                
                 var monsterNub = Random.NextInt(availableMonstersList.Length);
                 var monster = availableMonstersList[monsterNub];
                 usedMonsters.Add(monster.Name);
-                var numberInGroup = Random.NextInt(Math.Min(numberOfMonsters-totalMonsters, monster.GroupSize))+1;
+                var numberInGroup = Random.NextInt(Math.Min(numberOfMonsters - totalMonsters, monster.GroupSize)) + 1;
                 for (var i = 0; i < numberInGroup; i++)
                 {
                     monsters.Add(monster);
@@ -532,21 +570,24 @@
             if (totalMonsters < numberOfMonsters)
             {
                 var availableMonstersList = availableMonsters.Where(i => !usedMonsters.Contains(i.Name)).ToArray();
-                var monsterNub = Random.NextInt(availableMonstersList.Length);
-                var monster = availableMonstersList[monsterNub];
-                var numberInGroup = Math.Min(numberOfMonsters-totalMonsters, monster.GroupSize);
-                for (var i = 0; i < numberInGroup; i++)
+                if (availableMonsters.Any())
                 {
-                    monsters.Add(monster);
+                    var monsterNub = Random.NextInt(availableMonstersList.Length);
+                    var monster = availableMonstersList[monsterNub];
+                    var numberInGroup = Math.Min(numberOfMonsters - totalMonsters, monster.GroupSize);
+                    for (var i = 0; i < numberInGroup; i++)
+                    {
+                        monsters.Add(monster);
+                    }
                 }
             }
 
             var repelActive =
-                this._gameState.Party.Members.Any(
+                this._gameState.Party.AliveMembers.Any(
                     partyMember => partyMember.Status.Any(i => i.Type == EffectType.Repel));
             if (repelActive)
             {
-                var maxHealth = this._gameState.Party.Members.Max(i => i.MaxHealth);
+                var maxHealth = this._gameState.Party.AliveMembers.Max(i => i.MaxHealth);
                 foreach (var monster in monsters.ToList())
                 {
                     var monsterHealth = Dice.Roll(monster.HealthRandom, monster.HealthTimes, monster.HealthConst);
@@ -555,13 +596,13 @@
                         monsters.Remove(monster);
                     }
                 }
-
-                if (!monsters.Any())
-                {
-                    return;
-                }
             }
             
+            if (!monsters.Any())
+            {
+                return;
+            }
+
             this._gameState.StartFight(monsters, currentBiome.Type);
         }
 

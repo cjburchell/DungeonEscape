@@ -5,6 +5,8 @@
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable ClassNeverInstantiated.Global
 
+using Newtonsoft.Json.Converters;
+
 namespace Redpoint.DungeonEscape.State
 {
     using Newtonsoft.Json;
@@ -20,7 +22,8 @@ namespace Redpoint.DungeonEscape.State
         [JsonIgnore]
         public bool IsOverworld { get; set; }
         
-        public int Probability { get; set; } = 1;
+        [JsonConverter(typeof(StringEnumConverter))]
+        public Rarity Rarity { get; set; } = Rarity.Common;
 
         public bool InBiome(Biome biome)
         {

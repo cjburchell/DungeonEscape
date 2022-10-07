@@ -12,7 +12,6 @@ namespace Redpoint.DungeonEscape.State
 
     public class Hero : Fighter
     {
-
         [JsonConverter(typeof(StringEnumConverter))]
         public Class Class { get; set; }
         
@@ -20,6 +19,10 @@ namespace Redpoint.DungeonEscape.State
         public Gender Gender { get; set; }
         
         public ulong NextLevel { get; set; }
+        
+        public bool IsActive { get; set; } = true;
+
+        public int Order { get; set; }
 
         public override IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells)
         {
@@ -34,11 +37,9 @@ namespace Redpoint.DungeonEscape.State
 
         public Dictionary<Slot, string> Slots = new();
         
-        public string Id { get; set; }
 
         public Hero()
         {
-            this.Id = Guid.NewGuid().ToString();
         }
 
         public void SetupImage(Texture2D heroTexture)
@@ -274,7 +275,7 @@ namespace Redpoint.DungeonEscape.State
                 this.Slots[slot] = item.Id;
             }
             item.IsEquipped = true;
-            item.EquippedTo = this.Id;
+            item.EquippedTo = this.Name;
             this.Agility += item.Agility;
             this.Attack += item.Attack;
             this.Defence += item.Defence;

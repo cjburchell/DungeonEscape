@@ -13,6 +13,8 @@ namespace Nez.UI
 	public class ListBox<T> : Element, IInputListener where T : class
 	{
 		public event Action<T> OnChanged;
+		
+		public event Func<T, string> OnDisplay;
 
 		ListBoxStyle _style;
 		List<T> _items = new List<T>();
@@ -144,7 +146,7 @@ namespace Nez.UI
 		public override void Layout()
 		{
 			var font = _style.Font;
-			IDrawable selectedDrawable = _style.Selection;
+			var selectedDrawable = _style.Selection;
 
 			_itemHeight = /*font.getCapHeight()*/ font.LineSpacing - font.Padding.Bottom * 2;
 			_itemHeight += selectedDrawable.TopHeight + selectedDrawable.BottomHeight;
@@ -153,9 +155,11 @@ namespace Nez.UI
 			_textOffsetY = selectedDrawable.TopHeight - font.Padding.Bottom;
 
 			_prefWidth = 0;
-			for (var i = 0; i < _items.Count; i++)
-				_prefWidth = Math.Max(font.MeasureString(_items[i].ToString()).X, _prefWidth);
-
+			foreach (var item in _items)
+			{
+				_prefWidth = Math.Max(font.MeasureString(OnDisplay == null?item.ToString(): OnDisplay(item)).X, _prefWidth);
+			}
+			
 			_prefWidth += selectedDrawable.LeftWidth + selectedDrawable.RightWidth;
 			_prefHeight = _items.Count * _itemHeight;
 
@@ -207,8 +211,8 @@ namespace Nez.UI
 			for (var i = 0; i < _items.Count; i++)
 			{
 				if (!_cullingArea.HasValue ||
-					(itemY - _itemHeight <= _cullingArea.Value.Y + _cullingArea.Value.Height &&
-					 itemY >= _cullingArea.Value.Y))
+				    (itemY - _itemHeight <= _cullingArea.Value.Y + _cullingArea.Value.Height &&
+				     itemY >= _cullingArea.Value.Y))
 				{
 					var item = _items[i];
 					var selected = _selection.Contains(item);
@@ -228,7 +232,8 @@ namespace Nez.UI
 					}
 
 					var textPos = new Vector2(x + _textOffsetX, y + itemY + _textOffsetY);
-					batcher.DrawString(font, item.ToString(), textPos, fontColor, 0, Vector2.Zero, new Vector2(1,1), SpriteEffects.None, 0);
+					batcher.DrawString(font, OnDisplay == null ? item.ToString() : OnDisplay(item), textPos, fontColor,
+						0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
 				}
 				else if (itemY < _cullingArea.Value.Y)
 				{

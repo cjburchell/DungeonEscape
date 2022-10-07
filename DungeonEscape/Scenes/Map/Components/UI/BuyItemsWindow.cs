@@ -22,6 +22,7 @@
                 Rarity.Rare => "rare_label",
                 Rarity.Epic => "epic_label",
                 Rarity.Common => "common_label",
+                Rarity.Legendary => "legendary_label",
                 _ => null
             };
             

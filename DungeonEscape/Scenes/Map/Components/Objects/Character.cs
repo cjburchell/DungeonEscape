@@ -261,8 +261,9 @@
             });
         }
 
-        protected virtual void JoinParty()
+        protected virtual bool JoinParty()
         {
+            return false;
         }
     }
 }

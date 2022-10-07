@@ -1,10 +1,8 @@
 [
   {
-    "Name": "Troll",
-    "Probability": 4
+    "Name": "Troll"
   },
   {
-    "Name": "Great troll",
-    "Probability": 5
+    "Name": "Great troll"
   }
 ]

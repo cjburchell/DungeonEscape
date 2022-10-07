@@ -18,7 +18,7 @@
         }
 
         [JsonIgnore]
-        public int? Level => this.Party?.Members.Max(i => i.Level);
+        public int? Level => this.Party?.ActiveMembers.Max(i => i.Level);
         public DateTime? Time { get; set; }
 
         [JsonIgnore] 

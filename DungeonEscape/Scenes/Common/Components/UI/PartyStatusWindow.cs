@@ -1,4 +1,6 @@
-﻿namespace Redpoint.DungeonEscape.Scenes.Common.Components.UI
+﻿using System.Linq;
+
+namespace Redpoint.DungeonEscape.Scenes.Common.Components.UI
 {
     using Map;
     using Microsoft.Xna.Framework;
@@ -41,11 +43,11 @@
             const int statusItemWidth = statusWidth/2;
             const int padding = 5;
             
-            var windowWidth = this._party.Members.Count * (heroWidth + statusWidth + 15);
+            var windowWidth = this._party.ActiveMembers.Count() * (heroWidth + statusWidth + 15);
             this.Window.SetWidth(windowWidth);
             this._statusTable.ClearChildren();
             this._statusTable.SetFillParent(true);
-            foreach (var member in this._party.Members)
+            foreach (var member in this._party.ActiveMembers)
             {
                 string textStyle = null;
                 if (member.IsDead)

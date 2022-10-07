@@ -494,11 +494,11 @@ namespace Redpoint.DungeonEscape
             return string.IsNullOrEmpty(item.QuestId) ? "" : this.AdvanceQuest(item.QuestId, item.NextStage, checkLevelUp);
         }
         
-        public Item CreateChestItem(int level)
+        public Item CreateChestItem(int level, Rarity? rarity = null)
         {
             if (Nez.Random.Chance(0.25f))
             {
-                return CreateRandomItem(level);
+                return CreateRandomItem(level, 1, rarity);
             }
 
             return CreateGold(Dice.Roll(5, level*3, 1));

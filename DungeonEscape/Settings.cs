@@ -2,6 +2,7 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 namespace Redpoint.DungeonEscape
 {
     public class Settings
@@ -15,5 +16,6 @@ namespace Redpoint.DungeonEscape
 
         public bool IsFullScreen { get; set; }
         public string Version { get; set; }
+        public int MaxPartyMembers { get; set; } = 4;
     }
 }

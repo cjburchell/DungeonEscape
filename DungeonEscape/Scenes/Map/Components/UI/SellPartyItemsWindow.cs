@@ -10,9 +10,9 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
 
     public class SellPartyItemsWindow : SelectWindow<ItemInstance>
     {
-        private readonly List<Hero> _heroes;
+        private readonly IEnumerable<Hero> _heroes;
 
-        public SellPartyItemsWindow(UiSystem ui, List<Hero> heroes) : base(ui, null, new Point(20, 20), 700, 48)
+        public SellPartyItemsWindow(UiSystem ui, IEnumerable<Hero> heroes) : base(ui, null, new Point(20, 20), 700, 48)
         {
             _heroes = heroes;
         }
@@ -24,7 +24,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
             var equipSymbol = string.Empty;
             if (item.IsEquipped)
             {
-                if (_heroes.Any(hero => hero.Id == item.EquippedTo))
+                if (_heroes.Any(hero => hero.Name == item.EquippedTo))
                 {
                     equipSymbol = "(E)";
                 }
@@ -36,6 +36,7 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
                 Rarity.Rare => "rare_label",
                 Rarity.Epic => "epic_label",
                 Rarity.Common => "common_label",
+                Rarity.Legendary => "legendary_label",
                 _ => null
             };
 

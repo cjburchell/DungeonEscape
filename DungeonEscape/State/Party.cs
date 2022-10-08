@@ -121,5 +121,11 @@ namespace Redpoint.DungeonEscape.State
         {
             return this.AliveMembers.Max(item => item.Level);
         }
+
+        public Hero GetOrderedHero(int order)
+        {
+            var memberArray = this.ActiveMembers.OrderBy(i => i.IsDead).ToArray();
+            return memberArray.Length <= order ? null : memberArray[order];
+        }
     }
 }

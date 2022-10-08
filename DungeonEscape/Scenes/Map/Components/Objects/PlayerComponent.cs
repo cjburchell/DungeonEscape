@@ -49,7 +49,7 @@
 
         private void UpdateAnimation()
         {
-            var hero = this._gameState.Party.ActiveMembers.First(i => i.Order == 0);
+            var hero = this._gameState.Party.GetOrderedHero(0);
             if (_lastHero == hero)
             {
                 return;    
@@ -94,7 +94,7 @@
                 var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
                 _sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, heroHeight);
 
-                var hero = this._gameState.Party.ActiveMembers.First(i => i.Order == 0);
+                var hero = this._gameState.Party.GetOrderedHero(0);
                 var animationBaseIndex = (int) hero.Class * 16 + (int) hero.Gender * 8;
                 _animator = this.Entity.AddComponent(new SpriteAnimator(_sprites[animationBaseIndex + 4]));
                 _animator.Speed = 0.5f;
@@ -265,7 +265,7 @@
             }
 
             var waterAnimation = animation;
-            var hero = this._gameState.Party.ActiveMembers.First(i => i.Order == 0);
+            var hero = this._gameState.Party.GetOrderedHero(0);
             if (hero.IsDead)
             {
                 animation += "Dead";

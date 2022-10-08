@@ -41,7 +41,7 @@
                 {
                     Dialogs = new List<DialogHead>
                     {
-                        new DialogHead
+                        new()
                         {
                             Text = text,
                             Choices = new List<Choice>
@@ -74,9 +74,7 @@
             hero.SetupImage(texture);
 
             var maxOrder = this.GameState.Party.ActiveMembers.Max(i => i.Order);
-            var lastEntity = this.Entity.Scene.FindEntity($"hero_{maxOrder}");
-            var player = this.Entity.Scene.FindEntity("hero_0").GetComponent<PlayerComponent>();
-
+            
             this.Entity.SetEnabled(false);
             this.Entity.Scene.Entities.Remove(this.Entity);
             this.SpriteState.IsActive = false;
@@ -89,11 +87,7 @@
             
             hero.IsActive = true;
             hero.Order = maxOrder + 1;
-            var followerEntity = this.Entity.Scene.CreateEntity($"hero_{hero.Order}", this.Entity.Position);
-            followerEntity.AddComponent(new Follower( hero.Order, lastEntity, player, this.GameState, this.RenderOffset));
             return true;
-
-
         }
     }
 }

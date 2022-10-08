@@ -7,27 +7,21 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
     using Microsoft.Xna.Framework;
     using Nez;
     using Nez.Sprites;
-    using State;
 
-    public class Follower : Component, IUpdatable
+    public class Cart : Component, IUpdatable
     {
-        //private readonly Hero _hero;
-        private readonly int _order;
         private readonly Entity _toFollow;
         private readonly PlayerComponent _player;
         private readonly IGame _gameState;
         private readonly int _renderOffset;
         private SpriteAnimator _animation;
         private Mover _mover;
-        private Hero _lastHero;
         private List<Nez.Textures.Sprite> _sprites;
         private SpriteAnimator _animator;
         private const float MoveSpeed = 150;
-        private const int DeadAnimationIndex = 144;
 
-        public Follower(int order, Entity toFollow, PlayerComponent player, IGame gameState, int renderOffset)
+        public Cart(Entity toFollow, PlayerComponent player, IGame gameState, int renderOffset)
         {
-            _order = order;
             this._toFollow = toFollow;
             this._player = player;
             this._gameState = gameState;
@@ -36,85 +30,55 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
         
         private void UpdateAnimation()
         {
-            var hero = this._gameState.Party.GetOrderedHero(this._order);
-            if (_lastHero == hero)
-            {
-                return;    
-            }
-
-            if (hero == null)
-            {
-                return;
-            }
-
-            _lastHero = hero;
-            
-            var animationBaseIndex = (int) hero.Class * 16 + (int) hero.Gender * 8;
             _animator.AddAnimation("WalkDown", new[]
             {
-                _sprites[animationBaseIndex + 4],
-                _sprites[animationBaseIndex + 5]
+                _sprites[6],
+                _sprites[7],
+                _sprites[8],
+                _sprites[7]
             });
 
             _animator.AddAnimation("WalkUp", new[]
             {
-                _sprites[animationBaseIndex + 0],
-                _sprites[animationBaseIndex + 1]
+                _sprites[0],
+                _sprites[1],
+                _sprites[2],
+                _sprites[1]
             });
 
             _animator.AddAnimation("WalkRight", new[]
             {
-                _sprites[animationBaseIndex + 2],
-                _sprites[animationBaseIndex + 3]
+                _sprites[3],
+                _sprites[4],
+                _sprites[5],
+                _sprites[4]
             });
 
             _animator.AddAnimation("WalkLeft", new[]
             {
-                _sprites[animationBaseIndex + 6],
-                _sprites[animationBaseIndex + 7]
+                _sprites[9],
+                _sprites[10],
+                _sprites[11],
+                _sprites[10]
             });
             
-            _animator.SetSprite(_sprites[(hero.IsDead ? DeadAnimationIndex : animationBaseIndex) + 4]);
+            _animator.SetSprite(_sprites[0]);
         }
 
         public override void OnAddedToEntity()
         {
-            const int heroHeight = 48;
-            const int heroWidth = MapScene.DefaultTileSize;
+            const int heroHeight = 54;
+            const int heroWidth = 48;
             
             base.OnAddedToEntity();
             
-            var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/hero.png");
+            var texture = this.Entity.Scene.Content.LoadTexture("Content/images/sprites/cart.png");
             _sprites = Nez.Textures.Sprite.SpritesFromAtlas(texture, heroWidth, heroHeight);
-            _animator = this.Entity.AddComponent(new SpriteAnimator());
+            _animator = this.Entity.AddComponent(new SpriteAnimator(_sprites[0]));
             _animator.Speed = 0.5f;
 
             UpdateAnimation();
             
-            _animator.AddAnimation("WalkDownDead", new[]
-            {
-                _sprites[DeadAnimationIndex + 4],
-                _sprites[DeadAnimationIndex + 5]
-            });
-
-            _animator.AddAnimation("WalkUpDead", new[]
-            {
-                _sprites[DeadAnimationIndex + 0],
-                _sprites[DeadAnimationIndex + 1]
-            });
-
-            _animator.AddAnimation("WalkRightDead", new[]
-            {
-                _sprites[DeadAnimationIndex + 2],
-                _sprites[DeadAnimationIndex + 3]
-            });
-
-            _animator.AddAnimation("WalkLeftDead", new[]
-            {
-                _sprites[DeadAnimationIndex + 6],
-                _sprites[DeadAnimationIndex + 7]
-            });
-
             this._animation = _animator;
             this._animation.SetEnabled(false);
             
@@ -126,24 +90,21 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
 
         public void Update()
         {
-            UpdateAnimation();
-            
-            var hero = this._gameState.Party.GetOrderedHero(this._order);
-            if (this._player.IsOverWater() || hero == null)
-            {
-                this._animation.SetEnabled(false);
-                this.Entity.SetPosition(this._toFollow.Position);
-                this._animation.Pause();
-                return;
-            }
-            
-            this._animation.SetEnabled(true);
-                
             if (this._gameState.IsPaused)
             {
                 return;
             }
             
+            if (this._player.IsOverWater() || !this._gameState.Party.CurrentMapIsOverWorld || !this._gameState.Party.InactiveMembers.Any())
+            {
+                this._animation.SetEnabled(false);
+                this.Entity.SetPosition(this._player.Entity.Position);
+                this._animation.Pause();
+                return;
+            }
+
+            this._animation.SetEnabled(true);
+
             var followerVector = this._toFollow.Position - this.Entity.Position;
             if (followerVector.Length() < MapScene.DefaultTileSize)
             {
@@ -174,11 +135,6 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
                     > 0 => "WalkDown",
                     _ => animation
                 };
-            }
-            
-            if (hero is { IsDead: true })
-            {
-                animation += "Dead";
             }
 
             if (!this._animation.IsAnimationActive(animation))

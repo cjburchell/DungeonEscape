@@ -71,6 +71,8 @@
                     }, TransformTransition.TransformTransitionType.SlideLeft) { Duration = 0.25f });
                 };
             }
+            
+            
 
             var settingsButton = this.AddButton("Settings");
             settingsButton.OnClicked += _ =>
@@ -83,7 +85,7 @@
                     return scene;
                 }, TransformTransition.TransformTransitionType.SlideLeft){Duration = 0.25f});
             };
-            
+
             this._table.Row().SetPadTop(20);
             var quitButton = this.AddButton("Quit");
             quitButton.OnClicked += _ =>

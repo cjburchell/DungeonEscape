@@ -1,4 +1,6 @@
-﻿namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
+﻿using Nez;
+
+namespace Redpoint.DungeonEscape.Scenes.Map.Components.UI
 {
     using System.Linq;
     using System;
@@ -118,8 +120,10 @@
                         Rarity.Legendary => "legendary_label",
                         _ => null
                     };
+                    
+                    image.SetTouchable(Touchable.Enabled);
                     var tooltip = new Tooltip(new Label(item.NameWithStats, Skin, style),image);
-                    this.Window.Add(tooltip);
+                    this.Ui.Canvas.Stage.AddElement(tooltip);
                     
                     this._itemTable.Add(new Label($"{item.NameWithStats}", Skin, style)).Left().Width(itemColumnWidth);
                 }

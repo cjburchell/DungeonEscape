@@ -8,7 +8,6 @@ Download Latest Version [Here](https://gitlab.com/cjburchell/DungeonEscape/-/job
  - Kill monster quests
  - Create More Quests
  - Improved inventory window
- - 
  
  ### Improvements
  - Balance pass

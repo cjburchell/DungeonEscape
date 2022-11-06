@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Nez.PhysicsShapes;
 
 
+// ReSharper disable once CheckNamespace
 namespace Nez
 {
 	public abstract class Collider : Component
@@ -114,11 +115,13 @@ namespace Nez
 		{
 			if (_localOffset != offset)
 			{
-				UnregisterColliderWithPhysicsSystem();
+				if(Enabled)
+					UnregisterColliderWithPhysicsSystem();
 				_localOffset = offset;
 				_localOffsetLength = _localOffset.Length();
 				_isPositionDirty = true;
-				RegisterColliderWithPhysicsSystem();
+				if(Enabled)
+					RegisterColliderWithPhysicsSystem();
 			}
 
 			return this;
@@ -183,7 +186,8 @@ namespace Nez
 			}
 
 			_isParentEntityAddedToScene = true;
-			RegisterColliderWithPhysicsSystem();
+			if(Enabled)
+				RegisterColliderWithPhysicsSystem();
 		}
 
 
@@ -236,7 +240,7 @@ namespace Nez
 		public virtual void RegisterColliderWithPhysicsSystem()
 		{
 			// entity could be null if properties such as origin are changed before we are added to an Entity
-			if (_isParentEntityAddedToScene && !_isColliderRegistered)
+			if (_isParentEntityAddedToScene && !_isColliderRegistered && Enabled)
 			{
 				Physics.AddCollider(this);
 				_isColliderRegistered = true;
@@ -260,7 +264,7 @@ namespace Nez
 		/// <summary>
 		/// checks to see if this shape overlaps any other Colliders in the Physics system
 		/// </summary>
-		/// <param name="collider">Collider.</param>
+		/// <param name="other">Collider.</param>
 		public bool Overlaps(Collider other)
 		{
 			return Shape.Overlaps(other.Shape);

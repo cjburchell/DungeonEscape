@@ -20,7 +20,7 @@ namespace Nez.UI
 					return Math.Max(style.Knob == null ? 0 : style.Knob.MinWidth,
 						style.Background != null ? style.Background.MinWidth : 0);
 				else
-					return 140;
+					return PreferredLength;
 			}
 		}
 
@@ -29,13 +29,14 @@ namespace Nez.UI
 			get
 			{
 				if (_vertical)
-					return 140;
+					return PreferredLength;
 				else
 					return Math.Max(style.Knob == null ? 0 : style.Knob.MinHeight,
 						style.Background != null ? style.Background.MinHeight : 0);
 			}
 		}
 
+		public float PreferredLength { get; set; } = 140;
 		public float Min { get; protected set; }
 		public float Max { get; protected set; }
 
@@ -369,8 +370,10 @@ namespace Nez.UI
 
 		public static ProgressBarStyle Create(Color knobBeforeColor, Color knobAfterColor)
 		{
-			var knobBefore = new PrimitiveDrawable(knobBeforeColor);
-			knobBefore.MinHeight = 10;
+			var knobBefore = new PrimitiveDrawable(knobBeforeColor)
+			{
+				MinHeight = 10
+			};
 
 			var knobAfter = new PrimitiveDrawable(knobAfterColor);
 			knobAfter.MinWidth = knobAfter.MinHeight = 10;

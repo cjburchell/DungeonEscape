@@ -8,22 +8,22 @@ namespace Nez.UI
 	/// </summary>
 	public class Tooltip : Element
 	{
-		protected Container _container;
-		protected Element _targetElement;
+		protected readonly Container Container;
+		private Element _targetElement;
 
-		TooltipManager _manager;
-		bool _instant, _always;
-		bool _isMouseOver;
+		private readonly TooltipManager _manager;
+		private bool _instant, _always;
+		private bool _isMouseOver;
 
 
 		public Tooltip(Element contents, Element targetElement)
 		{
 			_manager = TooltipManager.GetInstance();
 
-			_container = new Container(contents);
-			_container.SetOrigin(AlignInternal.Center);
+			Container = new Container(contents);
+			Container.SetOrigin(AlignInternal.Center);
 			_targetElement = targetElement;
-			_container.SetTouchable(Touchable.Disabled);
+			Container.SetTouchable(Touchable.Disabled);
 		}
 
 
@@ -37,26 +37,26 @@ namespace Nez.UI
 
 		public Container GetContainer()
 		{
-			return _container;
+			return Container;
 		}
 
 
 		public Tooltip SetElement(Element contents)
 		{
-			_container.SetElement(contents);
+			Container.SetElement(contents);
 			return this;
 		}
 
 
 		public Element GetElement()
 		{
-			return _container.GetElement();
+			return Container.GetElement();
 		}
 
 
 		public T GetElement<T>() where T : Element
 		{
-			return _container.GetElement<T>();
+			return Container.GetElement<T>();
 		}
 
 
@@ -133,30 +133,30 @@ namespace Nez.UI
 		}
 
 
-		void SetContainerPosition(float x, float y)
+		void SetContainerPosition(float xPos, float yPos)
 		{
 			var stage = _targetElement.GetStage();
 			if (stage == null)
 				return;
 
-			_container.Pack();
+			Container.Pack();
 			float offsetX = _manager.OffsetX, offsetY = _manager.OffsetY, dist = _manager.EdgeDistance;
-			var point = _targetElement.LocalToStageCoordinates(new Vector2(x + offsetX - _container.GetWidth() / 2,
-				y - offsetY - _container.GetHeight()));
+			var point = _targetElement.LocalToStageCoordinates(new Vector2(xPos + offsetX - Container.GetWidth() / 2,
+				yPos - offsetY - Container.GetHeight()));
 			if (point.Y < dist)
-				point = _targetElement.LocalToStageCoordinates(new Vector2(x + offsetX, y + offsetY));
+				point = _targetElement.LocalToStageCoordinates(new Vector2(xPos + offsetX, yPos + offsetY));
 			if (point.X < dist)
 				point.X = dist;
-			if (point.X + _container.GetWidth() > stage.GetWidth() - dist)
-				point.X = stage.GetWidth() - dist - _container.GetWidth();
-			if (point.Y + _container.GetHeight() > stage.GetHeight() - dist)
-				point.Y = stage.GetHeight() - dist - _container.GetHeight();
-			_container.SetPosition(point.X, point.Y);
+			if (point.X + Container.GetWidth() > stage.GetWidth() - dist)
+				point.X = stage.GetWidth() - dist - Container.GetWidth();
+			if (point.Y + Container.GetHeight() > stage.GetHeight() - dist)
+				point.Y = stage.GetHeight() - dist - Container.GetHeight();
+			Container.SetPosition(point.X, point.Y);
 
 			point = _targetElement.LocalToStageCoordinates(new Vector2(_targetElement.GetWidth() / 2,
 				_targetElement.GetHeight() / 2));
-			point -= new Vector2(_container.GetX(), _container.GetY());
-			_container.SetOrigin(point.X, point.Y);
+			point -= new Vector2(Container.GetX(), Container.GetY());
+			Container.SetOrigin(point.X, point.Y);
 		}
 	}
 }

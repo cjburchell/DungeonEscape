@@ -11,15 +11,15 @@
 		public TextTooltip(string text, Element targetElement, TextTooltipStyle style) : base(null, targetElement)
 		{
 			var label = new Label(text, style.LabelStyle);
-			_container.SetElement(label);
+			Container.SetElement(label);
 			SetStyle(style);
 		}
 
 
 		public TextTooltip SetStyle(TextTooltipStyle style)
 		{
-			_container.GetElement<Label>().SetStyle(style.LabelStyle);
-			_container.SetBackground(style.Background);
+			Container.GetElement<Label>().SetStyle(style.LabelStyle);
+			Container.SetBackground(style.Background);
 			return this;
 		}
 	}

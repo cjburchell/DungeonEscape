@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>netcoreapp5.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <PublishReadyToRun>false</PublishReadyToRun>
         <TieredCompilation>false</TieredCompilation>
         <Company>Redpoint Games</Company>
         <Product>Dungeon Escape</Product>
         <RootNamespace>Redpoint.DungeonEscape</RootNamespace>
+        <LangVersion>11</LangVersion>
     </PropertyGroup>
     <PropertyGroup>
         <ApplicationManifest>app.manifest</ApplicationManifest>

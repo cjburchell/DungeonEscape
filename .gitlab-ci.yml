@@ -51,7 +51,7 @@ resharper-scan:
       - RsInspection.xml
 
 publish-windows:
-  image: mcr.microsoft.com/dotnet/sdk:5.0
+  image: mcr.microsoft.com/dotnet/sdk:7.0
   stage: publish
   only:
     - tags

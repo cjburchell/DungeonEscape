@@ -1,6 +1,8 @@
 # Dungeon Escape
 
-Download Latest Version [Here](https://gitlab.com/cjburchell/DungeonEscape/-/jobs/2457372919/artifacts/download?file_type=archive)
+An updated version of my older gaming project (DE15). A game inspired by the Dragon Quest/Final Fantasy games from Super Nintendo. 
+
+Download Latest Version [Here](https://gitlab.com/cjburchell/DungeonEscape/-/jobs/4012464295/artifacts/download)
 
 ## TODO
 ### Features

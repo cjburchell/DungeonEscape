@@ -26,13 +26,13 @@ before_script:
   - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
 
 build:
-  image: mcr.microsoft.com/dotnet/sdk:5.0
+  image: mcr.microsoft.com/dotnet/sdk:7.0
   stage: build
   script:
     - 'dotnet build --no-restore'
 
 tests:
-  image: mcr.microsoft.com/dotnet/sdk:5.0
+  image: mcr.microsoft.com/dotnet/sdk:7.0
   stage: test
   script:
     - 'dotnet test --no-restore'

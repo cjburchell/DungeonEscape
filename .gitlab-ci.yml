@@ -38,7 +38,7 @@ tests:
     - 'dotnet test --no-restore'
 
 resharper-scan:
-  image: registry.gitlab.com/cjburchell/reshaper:2021.2.2-411478319
+  image: registry.gitlab.com/cjburchell/reshaper:2021.2.2-net7-819703864
   stage: scan
   script:
     - '/tools/jb inspectcode --exclude=$RESHARPER_EXCLUDE -o=RsInspection.xml --caches-home=temp $RESHARPER_SOLUTION_NAME --toolset=16.0'

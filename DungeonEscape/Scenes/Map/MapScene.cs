@@ -232,29 +232,26 @@ namespace Redpoint.DungeonEscape.Scenes.Map
                 spawn = this._start.Value;
             }
 
-            var first = true;
             Entity lastEntity = null;
             _player = null;
             var renderOffset = (map.Height * map.TileHeight);
             for (var order = 0; order < this._gameState.Settings.MaxPartyMembers; order++)
             {
-                if (first)
+                var playerEntity = this.CreateEntity($"hero_{order}", spawn);
+                if (_player == null)
                 {
-                    var playerEntity = this.CreateEntity($"hero_{order}", spawn);
                     _player = playerEntity.AddComponent(new PlayerComponent(this._gameState, map, this._debugText,
-                        this._randomMonsters, this._ui, renderOffset)).GetComponent<PlayerComponent>();
+                        this._randomMonsters, this._ui, renderOffset, graph)).GetComponent<PlayerComponent>();
                     this.Camera.Entity.AddComponent(new FollowCamera(playerEntity,
                         FollowCamera.CameraStyle.CameraWindow));
-                    first = false;
-                    lastEntity = playerEntity;
                 }
                 else
                 {
-                    var followerEntity = this.CreateEntity($"hero_{order}", spawn);
-                    followerEntity.AddComponent(new Follower(order, lastEntity, _player, this._gameState,
+                    playerEntity.AddComponent(new Follower(order, lastEntity, _player, this._gameState,
                         renderOffset));
-                    lastEntity = followerEntity;
                 }
+
+                lastEntity = playerEntity;
             }
 
             {

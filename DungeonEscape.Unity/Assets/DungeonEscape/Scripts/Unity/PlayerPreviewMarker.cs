@@ -74,20 +74,19 @@ namespace Redpoint.DungeonEscape.Unity
             var deltaX = 0;
             var deltaY = 0;
 
-            if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+            if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
             {
                 deltaX = -1;
             }
-            else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+            else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
             {
                 deltaX = 1;
             }
-
-            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+            else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
             {
                 deltaY = -1;
             }
-            else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+            else if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
             {
                 deltaY = 1;
             }

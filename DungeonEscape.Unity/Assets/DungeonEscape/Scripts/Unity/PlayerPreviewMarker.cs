@@ -1,3 +1,5 @@
+using System.IO;
+using System.Collections.Generic;
 using Redpoint.DungeonEscape.State;
 using UnityEngine;
 
@@ -8,8 +10,12 @@ namespace Redpoint.DungeonEscape.Unity
         [SerializeField]
         private TiledMapPreviewRenderer mapPreview;
 
+        [SerializeField]
+        private string heroTextureAssetPath = "Assets/DungeonEscape/Images/sprites/hero.png";
+
         private WorldPosition position;
         private SpriteRenderer spriteRenderer;
+        private Dictionary<Direction, Sprite> directionSprites;
 
         public WorldPosition Position
         {
@@ -34,10 +40,9 @@ namespace Redpoint.DungeonEscape.Unity
         private void Awake()
         {
             spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-            spriteRenderer.sprite = CreateMarkerSprite();
-            spriteRenderer.color = Color.cyan;
+            directionSprites = LoadHeroSprites();
+            spriteRenderer.sprite = directionSprites[Direction.Down];
             spriteRenderer.sortingOrder = 1000;
-            transform.localScale = new Vector3(0.6f, 0.6f, 1f);
         }
 
         private void Start()
@@ -83,6 +88,8 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
+            UpdateFacing(deltaX, deltaY);
+
             var nextX = (int)Position.X + deltaX;
             var nextY = (int)Position.Y + deltaY;
             if (mapPreview != null && !mapPreview.CanMoveTo(nextX, nextY))
@@ -112,20 +119,91 @@ namespace Redpoint.DungeonEscape.Unity
                 -0.2f);
         }
 
-        private static Sprite markerSprite;
-
-        private static Sprite CreateMarkerSprite()
+        private void UpdateFacing(int deltaX, int deltaY)
         {
-            if (markerSprite != null)
+            if (deltaX < 0)
             {
-                return markerSprite;
+                spriteRenderer.sprite = directionSprites[Direction.Left];
+            }
+            else if (deltaX > 0)
+            {
+                spriteRenderer.sprite = directionSprites[Direction.Right];
+            }
+            else if (deltaY < 0)
+            {
+                spriteRenderer.sprite = directionSprites[Direction.Up];
+            }
+            else if (deltaY > 0)
+            {
+                spriteRenderer.sprite = directionSprites[Direction.Down];
+            }
+        }
+
+        private Dictionary<Direction, Sprite> LoadHeroSprites()
+        {
+            var path = ToFullAssetPath(heroTextureAssetPath);
+            if (!File.Exists(path))
+            {
+                Debug.LogError("Hero texture not found: " + heroTextureAssetPath);
+                var fallback = CreateFallbackSprite();
+                return new Dictionary<Direction, Sprite>
+                {
+                    { Direction.Up, fallback },
+                    { Direction.Right, fallback },
+                    { Direction.Down, fallback },
+                    { Direction.Left, fallback }
+                };
             }
 
+            var bytes = File.ReadAllBytes(path);
+            var texture = new Texture2D(2, 2);
+            texture.filterMode = FilterMode.Point;
+            texture.LoadImage(bytes);
+
+            const int heroWidth = 32;
+            const int heroHeight = 48;
+            return new Dictionary<Direction, Sprite>
+            {
+                { Direction.Up, CreateHeroSprite(texture, 0, heroWidth, heroHeight) },
+                { Direction.Right, CreateHeroSprite(texture, 2, heroWidth, heroHeight) },
+                { Direction.Down, CreateHeroSprite(texture, 4, heroWidth, heroHeight) },
+                { Direction.Left, CreateHeroSprite(texture, 6, heroWidth, heroHeight) }
+            };
+        }
+
+        private static Sprite CreateHeroSprite(Texture2D texture, int frameIndex, int heroWidth, int heroHeight)
+        {
+            var columns = texture.width / heroWidth;
+            var frameX = frameIndex % columns;
+            var frameY = frameIndex / columns;
+            var rect = new Rect(
+                frameX * heroWidth,
+                texture.height - ((frameY + 1) * heroHeight),
+                heroWidth,
+                heroHeight);
+
+            return Sprite.Create(texture, rect, new Vector2(0.5f, 0.33f), heroWidth);
+        }
+
+        private static Sprite CreateFallbackSprite()
+        {
             var texture = new Texture2D(1, 1);
-            texture.SetPixel(0, 0, Color.white);
+            texture.SetPixel(0, 0, Color.cyan);
             texture.Apply();
-            markerSprite = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
-            return markerSprite;
+            return Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
+        }
+
+        private static string ToFullAssetPath(string assetPath)
+        {
+            return Path.Combine(Application.dataPath, assetPath.Replace("Assets/", ""));
+        }
+
+        private enum Direction
+        {
+            Up,
+            Right,
+            Down,
+            Left
         }
     }
 }

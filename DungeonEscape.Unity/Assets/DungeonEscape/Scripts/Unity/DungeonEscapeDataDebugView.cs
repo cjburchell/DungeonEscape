@@ -89,7 +89,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             builder.AppendLine();
             builder.AppendLine("Move: WASD / Arrow keys");
-            builder.AppendLine("Blocked: wall, water, water2");
+            builder.AppendLine("Blocked: TMX properties + map fallback");
             return builder.ToString();
         }
 

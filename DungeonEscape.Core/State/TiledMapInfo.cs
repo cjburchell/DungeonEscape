@@ -11,12 +11,14 @@ namespace Redpoint.DungeonEscape.State
         public int Height { get; set; }
         public int TileWidth { get; set; }
         public int TileHeight { get; set; }
+        public Dictionary<string, string> Properties { get; set; }
         public List<TiledTilesetInfo> Tilesets { get; set; }
         public List<TiledLayerInfo> Layers { get; set; }
         public List<TiledObjectGroupInfo> ObjectGroups { get; set; }
 
         public TiledMapInfo()
         {
+            Properties = new Dictionary<string, string>();
             Tilesets = new List<TiledTilesetInfo>();
             Layers = new List<TiledLayerInfo>();
             ObjectGroups = new List<TiledObjectGroupInfo>();
@@ -33,7 +35,8 @@ namespace Redpoint.DungeonEscape.State
                 Width = GetInt(map, "width"),
                 Height = GetInt(map, "height"),
                 TileWidth = GetInt(map, "tilewidth"),
-                TileHeight = GetInt(map, "tileheight")
+                TileHeight = GetInt(map, "tileheight"),
+                Properties = ReadProperties(map)
             };
 
             foreach (var tileset in map.Elements("tileset"))
@@ -54,7 +57,8 @@ namespace Redpoint.DungeonEscape.State
                     Name = GetString(layer, "name"),
                     Width = GetInt(layer, "width"),
                     Height = GetInt(layer, "height"),
-                    Visible = GetVisible(layer)
+                    Visible = GetVisible(layer),
+                    Properties = ReadProperties(layer)
                 });
             }
 
@@ -78,7 +82,8 @@ namespace Redpoint.DungeonEscape.State
                         X = GetFloat(mapObject, "x"),
                         Y = GetFloat(mapObject, "y"),
                         Width = GetFloat(mapObject, "width"),
-                        Height = GetFloat(mapObject, "height")
+                        Height = GetFloat(mapObject, "height"),
+                        Properties = ReadProperties(mapObject)
                     });
                 }
 
@@ -86,6 +91,30 @@ namespace Redpoint.DungeonEscape.State
             }
 
             return info;
+        }
+
+        private static Dictionary<string, string> ReadProperties(XElement element)
+        {
+            var result = new Dictionary<string, string>();
+            var properties = element.Element("properties");
+            if (properties == null)
+            {
+                return result;
+            }
+
+            foreach (var property in properties.Elements("property"))
+            {
+                var name = GetString(property, "name");
+                if (string.IsNullOrEmpty(name))
+                {
+                    continue;
+                }
+
+                var value = GetString(property, "value");
+                result[name] = value ?? property.Value;
+            }
+
+            return result;
         }
 
         private static string GetString(XElement element, string name)
@@ -189,6 +218,12 @@ namespace Redpoint.DungeonEscape.State
         public int Width { get; set; }
         public int Height { get; set; }
         public bool Visible { get; set; }
+        public Dictionary<string, string> Properties { get; set; }
+
+        public TiledLayerInfo()
+        {
+            Properties = new Dictionary<string, string>();
+        }
     }
 
     public sealed class TiledObjectGroupInfo
@@ -214,5 +249,11 @@ namespace Redpoint.DungeonEscape.State
         public float Y { get; set; }
         public float Width { get; set; }
         public float Height { get; set; }
+        public Dictionary<string, string> Properties { get; set; }
+
+        public TiledObjectInfo()
+        {
+            Properties = new Dictionary<string, string>();
+        }
     }
 }

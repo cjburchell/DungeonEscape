@@ -39,7 +39,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private int mapWidth;
         private int mapHeight;
-        private readonly HashSet<string> blockingLayerNames = new HashSet<string> { "wall", "water", "water2" };
+        private readonly HashSet<string> fallbackBlockingLayerNames = new HashSet<string> { "wall", "water", "water2" };
         private HashSet<int> blockedTiles = new HashSet<int>();
 
         public int StartColumn
@@ -288,8 +288,7 @@ namespace Redpoint.DungeonEscape.Unity
             var blocked = new HashSet<int>();
             foreach (var layer in map.Elements("layer"))
             {
-                var layerName = GetString(layer, "name");
-                if (!blockingLayerNames.Contains(layerName))
+                if (!IsBlockingLayer(layer))
                 {
                     continue;
                 }
@@ -304,7 +303,92 @@ namespace Redpoint.DungeonEscape.Unity
                 }
             }
 
+            AddBlockedObjects(blocked);
             return blocked;
+        }
+
+        private void AddBlockedObjects(HashSet<int> blocked)
+        {
+            if (bootstrap == null || bootstrap.Data == null || bootstrap.Data.TestMap == null)
+            {
+                return;
+            }
+
+            foreach (var group in bootstrap.Data.TestMap.ObjectGroups)
+            {
+                foreach (var mapObject in group.Objects)
+                {
+                    string collideable;
+                    if (mapObject.Properties == null ||
+                        !mapObject.Properties.TryGetValue("Collideable", out collideable) ||
+                        !IsTrue(collideable))
+                    {
+                        continue;
+                    }
+
+                    var column = Mathf.FloorToInt(mapObject.X / bootstrap.Data.TestMap.TileWidth);
+                    var row = Mathf.FloorToInt((mapObject.Y - mapObject.Height) / bootstrap.Data.TestMap.TileHeight);
+
+                    if (column < 0 || row < 0 || column >= mapWidth || row >= mapHeight)
+                    {
+                        continue;
+                    }
+
+                    blocked.Add(row * mapWidth + column);
+                }
+            }
+        }
+
+        private bool IsBlockingLayer(XElement layer)
+        {
+            var properties = ReadProperties(layer);
+            string canMove;
+            if (properties.TryGetValue("CanMove", out canMove))
+            {
+                return IsFalse(canMove);
+            }
+
+            string collideable;
+            if (properties.TryGetValue("Collideable", out collideable))
+            {
+                return IsTrue(collideable);
+            }
+
+            return fallbackBlockingLayerNames.Contains(GetString(layer, "name"));
+        }
+
+        private static Dictionary<string, string> ReadProperties(XElement element)
+        {
+            var result = new Dictionary<string, string>();
+            var properties = element.Element("properties");
+            if (properties == null)
+            {
+                return result;
+            }
+
+            foreach (var property in properties.Elements("property"))
+            {
+                var name = GetString(property, "name");
+                if (string.IsNullOrEmpty(name))
+                {
+                    continue;
+                }
+
+                var value = GetString(property, "value");
+                result[name] = value ?? property.Value;
+            }
+
+            return result;
+        }
+
+        private static bool IsFalse(string value)
+        {
+            return string.Equals(value, "false", StringComparison.OrdinalIgnoreCase) || value == "0";
+        }
+
+        private static bool IsTrue(string value)
+        {
+            return string.Equals(value, "true", StringComparison.OrdinalIgnoreCase) || value == "1";
         }
 
         private List<TiledTilesetInfo> GetValidatedTilesets()

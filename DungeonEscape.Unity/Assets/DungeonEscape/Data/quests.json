@@ -1,0 +1,77 @@
+﻿[
+  {
+    "Id": "Lost_Sea_Shell",
+    "Name": "The lost seashell",
+    "Description": "The Boy in the village is looking for a lost seashell.",
+    "Xp": 10,
+    "Items": ["#Random#"],
+    "Stages": [
+      {
+        "Number": 1,
+        "Description": "You should search the area for the seashell."
+      },
+      {
+        "Number": 2,
+        "Description": "You found the shell you should return it to the boy."
+      },
+      {
+        "Number": 3,
+        "Description": "You returned the seashell.",
+        "CompleteQuest": true
+      }
+    ]
+  },
+  {
+    "Id": "Lost_Dog",
+    "Name": "Lost Dog",
+    "Xp": 100,
+    "Stages": [
+      {
+        "Number": 1,
+        "Description": "Talked to the villager"
+      },
+      {
+        "Number": 2,
+        "Description": "Found the dog"
+      },
+      {
+        "Number": 3,
+        "Description": "Returned The dog",
+        "CompleteQuest": true
+      }
+    ]
+  },
+  {
+    "Id": "Find_Ship",
+    "Name": "Get a ship",
+    "Description": "To cross the sea you need to find a boat",
+    "Xp": 100,
+    "Stages": [
+      {
+        "Number": 1,
+        "Description": "Go to Isis and find the man"
+      },
+      {
+        "Number": 2,
+        "Description": "Travel to Coast and find the man's uncle"
+      },
+      {
+        "Number": 3,
+        "Description": "Find the old man's key"
+      },
+      {
+        "Number": 4,
+        "Description": "You have found the key and should return it to the old man"
+      },
+      {
+        "Number": 5,
+        "Description": "Opened the door"
+      },
+      {
+        "Number": 6,
+        "Description": "Got the ship",
+        "CompleteQuest": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,32 @@
+{
+    "maps": [
+		{
+            "fileName": "overworld.tmx",
+            "x": 0,
+            "y": 0
+        },
+		{
+            "fileName": "overworld.tmx",
+            "x": 3840,
+            "y": 0
+        }
+		,
+		{
+            "fileName": "overworld.tmx",
+            "x": 0,
+            "y": 3840
+        }
+		,
+		{
+            "fileName": "overworld.tmx",
+            "x": -3840,
+            "y": 0
+        },
+		{
+            "fileName": "overworld.tmx",
+            "x": 0,
+            "y": -3840
+        }
+    ],
+    "type": "world"
+}

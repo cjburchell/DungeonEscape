@@ -1,0 +1,451 @@
+﻿[
+  {
+    "Type": "Armor",
+    "BaseStat": 5,
+    "Slots": ["OffHand"],
+    "Classes": [
+      "Cleric",
+      "Hero",
+      "Soldier"
+    ],
+    "Names": [
+      {
+        "Name": "Buckler",
+        "ImageId": 174
+      },
+      {
+        "Name": "Small Shield",
+        "ImageId": 175
+      },
+      {
+        "Name": "Large Shield",
+        "ImageId": 181
+      },
+      {
+        "Name": "Kite Shield",
+        "ImageId": 190
+      },
+      {
+        "Name": "Tower Shield",
+        "ImageId": 201
+      }
+    ]
+  },
+  {
+    "Type": "Armor",
+    "Slots": ["Head"],
+    "BaseStat": 2,
+    "Classes": null,
+    "Names": [
+      {
+        "Name": "Circlet",
+        "ImageId": 223
+      },
+      {
+        "Name": "Coronet",
+        "ImageId": 222
+      },
+      {
+        "Name": "Tiara",
+        "ImageId": 237
+      },
+      {
+        "Name": "Diadem",
+        "ImageId": 247
+      }
+    ]
+  },
+  {
+    "Type": "Armor",
+    "Slots": ["Head"],
+    "BaseStat": 5,
+    "Classes": [
+      "Cleric",
+      "Merchant",
+      "Hero",
+      "Soldier"
+    ],
+    "Names": [
+      {
+        "Name": "Cap",
+        "ImageId": 235
+      },
+      {
+        "Name": "Skull Cap",
+        "ImageId": 213
+      },
+      {
+        "Name": "Helm",
+        "ImageId": 214
+      },
+      {
+        "Name": "Full Helm",
+        "ImageId": 220
+      },
+      {
+        "Name": "Great Helm",
+        "ImageId": 230
+      }
+    ]
+  },
+  {
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "BaseStat": 10,
+    "Classes": [
+      "Cleric",
+      "Merchant",
+      "Fighter",
+      "Hero",
+      "Soldier",
+      "Thief"
+    ],
+    "Names": [
+      {
+        "Name": "Quilted Armor",
+        "ImageId": 311
+      },
+      {
+        "Name": "Leather Armor",
+        "ImageId": 278
+      },
+      {
+        "Name": "Hard Leather Armor",
+        "ImageId": 281
+      },
+      {
+        "Name": "Studded Leather",
+        "ImageId": 285
+      },
+      {
+        "Name": "Light Plate",
+        "ImageId": 289
+      }
+    ]
+  },
+  {
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "BaseStat": 15,
+    "Classes": [
+      "Cleric",
+      "Hero",
+      "Soldier"
+    ],
+    "Names": [
+      {
+        "Name": "Ring Mail",
+        "ImageId": 280
+      },
+      {
+        "Name": "Chain Mail",
+        "ImageId": 284
+      },
+      {
+        "Name": "Splint Mail",
+        "ImageId": 298
+      },
+      {
+        "Name": "Field Plate",
+        "ImageId": 296
+      },
+      {
+        "Name": "Gothic Plate",
+        "ImageId": 294
+      },
+      {
+        "Name": "Ancient Armor",
+        "ImageId": 310
+      }
+    ]
+  },
+  {
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "BaseStat": 25,
+    "Classes": [
+      "Soldier"
+    ],
+    "Names": [
+      {
+        "Name": "Scale Mail",
+        "ImageId": 279
+      },
+      {
+        "Name": "Plate Mail",
+        "ImageId": 283
+      },
+      {
+        "Name": "Full Plate",
+        "ImageId": 303
+      }
+    ]
+  },
+  {
+    "Type": "Armor",
+    "BaseStat": 1,
+    "Slots": ["Chest"],
+    "Classes": null,
+    "Names": [
+      {
+        "Name": "Robe",
+        "ImageId": 312
+      },
+      {
+        "Name": "Robe",
+        "ImageId": 332
+      },
+      {
+        "Name": "Robe",
+        "ImageId": 376
+      }
+    ]
+  },
+  {
+    "Type": "Armor",
+    "BaseStat": 2,
+    "Slots": ["Hands"],
+    "Classes": [
+      "Cleric",
+      "Merchant",
+      "Fighter",
+      "Hero",
+      "Soldier",
+      "Thief"
+    ],
+    "Names": [
+      {
+        "Name": "Leather Gloves",
+        "ImageId": 411
+      },
+      {
+        "Name": "Heavy Gloves",
+        "ImageId": 388
+      },
+      {
+        "Name": "Chain Gloves",
+        "ImageId": 395
+      },
+      {
+        "Name": "Light Gauntlets",
+        "ImageId": 389
+      },
+      {
+        "Name": "Gauntlets",
+        "ImageId": 402
+      }
+    ]
+  },
+  {
+    "Type": "Armor",
+    "BaseStat": 2,
+    "Slots": ["Feet"],
+    "Classes": [
+      "Cleric",
+      "Merchant",
+      "Fighter",
+      "Hero",
+      "Soldier",
+      "Thief"
+    ],
+    "Names": [
+      {
+        "Name": "Leather Boots",
+        "ImageId": 477
+      },
+      {
+        "Name": "Heavy Boots",
+        "ImageId": 480
+      },
+      {
+        "Name": "Chain Boots",
+        "ImageId": 486
+      },
+      {
+        "Name": "Light Plated Boots",
+        "ImageId": 494
+      },
+      {
+        "Name": "Greaves",
+        "ImageId": 503
+      }
+    ]
+  },
+  {
+    "Type": "Armor",
+    "BaseStat": 1,
+    "Slots": ["Hands"],
+    "Classes": null,
+    "Names": [
+      {
+        "Name": "Ring",
+        "ImageId": 719
+      }
+    ]
+  },
+  {
+    "Type": "Weapon",
+    "BaseStat": 15,
+    "Slots": ["PrimaryHand", "OffHand"],
+    "Classes": [
+      "Merchant",
+      "Hero",
+      "Soldier"
+    ],
+    "Names": [
+      {
+        "Name": "Axe",
+        "ImageId": 127
+      },
+      {
+        "Name": "Broad Axe",
+        "ImageId": 128
+      },
+      {
+        "Name": "Battle Axe",
+        "ImageId": 129
+      },
+      {
+        "Name": "Great Axe",
+        "ImageId": 131
+      },
+      {
+        "Name": "Giant Axe",
+        "ImageId": 136
+      }
+    ]
+  },
+  {
+    "Type": "Weapon",
+    "Slots": ["PrimaryHand"],
+    "BaseStat": 12,
+    "Classes": [
+      "Merchant",
+      "Hero",
+      "Soldier",
+      "Sage"
+    ],
+    "Names": [
+      {
+        "Name": "Short Sword",
+        "ImageId": 1
+      },
+      {
+        "Name": "Scimitar",
+        "ImageId": 8
+      },
+      {
+        "Name": "Sabre",
+        "ImageId": 2
+      },
+      {
+        "Name": "Falchion",
+        "ImageId": 3
+      },
+      {
+        "Name": "Broad Sword",
+        "ImageId": 9
+      },
+      {
+        "Name": "Long Sword",
+        "ImageId": 12
+      }
+    ]
+  },
+  {
+    "Type": "Weapon",
+    "Slots": ["PrimaryHand", "OffHand"],
+    "BaseStat": 10,
+    "Classes": [
+      "Cleric",
+      "Merchant",
+      "Hero",
+      "Soldier"
+    ],
+    "Names": [
+      {
+        "Name": "Club",
+        "ImageId": 138
+      },
+      {
+        "Name": "Mace",
+        "ImageId": 145
+      },
+      {
+        "Name": "Hammer",
+        "ImageId": 146
+      },
+      {
+        "Name": "Great Hammer",
+        "ImageId": 150
+      }
+    ]
+  },
+  {
+    "Type": "Weapon",
+    "Slots": ["PrimaryHand"],
+    "BaseStat": 5,
+    "Classes": [
+      "Merchant",
+      "Hero",
+      "Soldier",
+      "Wizard",
+      "Sage",
+      "Thief"
+    ],
+    "Names": [
+      {
+        "Name": "Dagger",
+        "ImageId": 37
+      },
+      {
+        "Name": "Dirk",
+        "ImageId": 38
+      },
+      {
+        "Name": "Kris",
+        "ImageId": 40
+      },
+      {
+        "Name": "Blade",
+        "ImageId": 46
+      }
+    ]
+  },
+  {
+    "Type": "Weapon",
+    "Slots": ["PrimaryHand", "OffHand"],
+    "BaseStat": 10,
+    "Classes": [
+      "Cleric",
+      "Merchant",
+      "Hero",
+      "Soldier",
+      "Wizard",
+      "Sage",
+      "Thief"
+    ],
+    "Names": [
+      {
+        "Name": "Short Staff",
+        "ImageId": 19
+      },
+      {
+        "Name": "Long Staff",
+        "ImageId": 49
+      },
+      {
+        "Name": "Gnarled Staff",
+        "ImageId": 57
+      },
+      {
+        "Name": "Battle Staff",
+        "ImageId": 51
+      },
+      {
+        "Name": "War Staff",
+        "ImageId": 64
+      }
+    ]
+  }
+]

@@ -1,0 +1,254 @@
+[
+  {
+    "Name": "Heal",
+    "ImageId": 54,
+    "Skill": "Heal",
+    "Cost": 3,
+    "MinLevel": 2,
+    "Classes": [
+      "Hero",
+      "Cleric",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Outside",
+    "ImageId": 344,
+    "Skill": "Outside",
+    "Cost": 6,
+    "MinLevel": 10,
+    "Classes": [
+      "Hero",
+      "Thief"
+    ]
+  },
+  {
+    "Name": "Blaze",
+    "ImageId": 1,
+    "Skill": "Fire",
+    "Cost": 2,
+    "MinLevel": 2,
+    "Classes": [
+      "Wizard",
+      "Hero",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Lightning",
+    "ImageId": 8,
+    "Skill": "Lighting",
+    "Cost": 15,
+    "MinLevel": 8,
+    "Classes": [
+      "Wizard",
+      "Hero",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Fire Blast",
+    "ImageId": 57,
+    "Skill": "Fire Breath",
+    "Cost": 25,
+    "MinLevel": 10,
+    "Classes": [
+      "Wizard",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Lightning Storm",
+    "ImageId": 50,
+    "Skill": "Lighting Breath",
+    "Cost": 30,
+    "MinLevel": 12,
+    "Classes": [
+      "Wizard",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Return",
+    "ImageId": 220,
+    "Skill": "Return",
+    "Cost": 6,
+    "MinLevel": 12,
+    "Classes": [
+      "Hero",
+      "Thief",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Revive",
+    "ImageId": 53,
+    "Skill": "Revive",
+    "Cost": 25,
+    "MinLevel": 20,
+    "Classes": [
+      "Hero",
+      "Cleric",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Vivify",
+    "ImageId": 53,
+    "Skill": "Vivify",
+    "Cost": 40,
+    "StatType": "Health",
+    "MinLevel": 27,
+    "Classes": [
+      "Cleric",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Heal All",
+    "ImageId": 54,
+    "Skill": "Heal All",
+    "Cost": 7,
+    "MinLevel": 30,
+    "Classes": [
+      "Hero",
+      "Cleric",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Heal Us",
+    "ImageId": 54,
+    "Skill": "Heal Us",
+    "Cost": 18,
+    "MinLevel": 34,
+    "Classes": [
+      "Cleric",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Heal Us All",
+    "ImageId": 54,
+    "Type": "Heal Us All",
+    "Cost": 62,
+    "MinLevel": 38,
+    "Classes": [
+      "Cleric",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Antidote",
+    "ImageId": 54,
+    "Skill": "Antidote",
+    "Cost": 3,
+    "MinLevel": 11,
+    "Classes": [
+      "Cleric",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Speed Up",
+    "ImageId": 60,
+    "Skill": "Speed Up",
+    "Cost": 3,
+    "MinLevel": 5,
+    "Classes": [
+      "Cleric",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Upper",
+    "ImageId": 56,
+    "Skill": "Upper",
+    "Cost": 3,
+    "MinLevel": 4,
+    "Classes": [
+      "Wizard",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Increase",
+    "ImageId": 56,
+    "Skill": "Increase",
+    "Cost": 4,
+    "MinLevel": 10,
+    "Classes": [
+      "Wizard",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Sap",
+    "ImageId": 58,
+    "Skill": "Sap",
+    "Cost": 3,
+    "MinLevel": 8,
+    "Classes": [
+      "Cleric",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Sleep",
+    "ImageId": 56,
+    "Skill": "Sleep",
+    "Cost": 3,
+    "MinLevel": 8,
+    "Classes": [
+      "Cleric",
+      "Hero",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Stop Spell",
+    "ImageId": 5,
+    "Skill": "Disruptive Wave",
+    "Cost": 3,
+    "MinLevel": 13,
+    "Classes": [
+      "Cleric",
+      "Hero",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Slow",
+    "ImageId": 61,
+    "Skill": "Slow",
+    "Cost": 3,
+    "MinLevel": 12,
+    "Classes": [
+      "Wizard",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Chaos",
+    "ImageId": 62,
+    "Skill": "Chaos",
+    "Cost": 5,
+    "MinLevel": 27,
+    "Classes": [
+      "Wizard",
+      "Sage"
+    ]
+  },
+  {
+    "Name": "Repel",
+    "ImageId": 220,
+    "Skill": "Repel",
+    "Cost": 2,
+    "MinLevel": 12,
+    "Classes": [
+      "Hero",
+      "Thief",
+      "Sage"
+    ]
+  }
+]

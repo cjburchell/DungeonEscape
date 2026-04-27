@@ -13,3 +13,25 @@ DungeonEscape/imgui.ini
 DungeonEscape/save.json
 
 packages
+
+# Unity project local/generated folders
+DungeonEscape.Unity/Library/
+DungeonEscape.Unity/Temp/
+DungeonEscape.Unity/Logs/
+DungeonEscape.Unity/UserSettings/
+DungeonEscape.Unity/Obj/
+DungeonEscape.Unity/Build/
+DungeonEscape.Unity/Builds/
+DungeonEscape.Unity/MemoryCaptures/
+DungeonEscape.Unity/Recordings/
+
+# Keep Unity package manifests versioned even though the legacy root packages folder is ignored.
+!DungeonEscape.Unity/Packages/
+!DungeonEscape.Unity/Packages/manifest.json
+!DungeonEscape.Unity/Packages/packages-lock.json
+
+# Built from DungeonEscape.Core by the post-build copy target.
+DungeonEscape.Unity/Assets/DungeonEscape/Plugins/DungeonEscape.Core.dll
+DungeonEscape.Unity/Assets/DungeonEscape/Plugins/DungeonEscape.Core.pdb
+DungeonEscape.Unity/Assets/DungeonEscape/Plugins/DungeonEscape.Core.dll.meta
+DungeonEscape.Unity/Assets/DungeonEscape/Plugins/DungeonEscape.Core.pdb.meta

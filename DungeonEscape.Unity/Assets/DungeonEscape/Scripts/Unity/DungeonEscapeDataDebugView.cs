@@ -9,8 +9,8 @@ namespace Redpoint.DungeonEscape.Unity
         private DungeonEscapeBootstrap bootstrap;
 
         private GUIStyle textStyle;
-        private PlayerPreviewMarker playerMarker;
-        private TiledMapPreviewRenderer mapPreview;
+        private PlayerGridController playerMarker;
+        private TiledMapView mapView;
 
         private void Start()
         {
@@ -19,8 +19,8 @@ namespace Redpoint.DungeonEscape.Unity
                 bootstrap = FindObjectOfType<DungeonEscapeBootstrap>();
             }
 
-            playerMarker = FindObjectOfType<PlayerPreviewMarker>();
-            mapPreview = FindObjectOfType<TiledMapPreviewRenderer>();
+            playerMarker = FindObjectOfType<PlayerGridController>();
+            mapView = FindObjectOfType<TiledMapView>();
         }
 
         private void OnGUI()
@@ -45,12 +45,12 @@ namespace Redpoint.DungeonEscape.Unity
         {
             if (playerMarker == null)
             {
-                playerMarker = FindObjectOfType<PlayerPreviewMarker>();
+                playerMarker = FindObjectOfType<PlayerGridController>();
             }
 
-            if (mapPreview == null)
+            if (mapView == null)
             {
-                mapPreview = FindObjectOfType<TiledMapPreviewRenderer>();
+                mapView = FindObjectOfType<TiledMapView>();
             }
 
             var builder = new StringBuilder();
@@ -64,9 +64,9 @@ namespace Redpoint.DungeonEscape.Unity
                 builder.AppendLine("Player tile: " + playerMarker.Column + ", " + playerMarker.Row);
             }
 
-            if (mapPreview != null)
+            if (mapView != null)
             {
-                builder.AppendLine("Viewport: " + mapPreview.StartColumn + ", " + mapPreview.StartRow);
+                builder.AppendLine("Viewport: " + mapView.StartColumn + ", " + mapView.StartRow);
             }
 
             return builder.ToString();

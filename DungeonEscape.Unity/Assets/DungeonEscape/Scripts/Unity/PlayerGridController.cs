@@ -6,10 +6,10 @@ using UnityEngine;
 
 namespace Redpoint.DungeonEscape.Unity
 {
-    public sealed class PlayerPreviewMarker : MonoBehaviour
+    public sealed class PlayerGridController : MonoBehaviour
     {
         [SerializeField]
-        private TiledMapPreviewRenderer mapPreview;
+        private TiledMapView mapView;
 
         [SerializeField]
         private string heroTextureAssetPath = "Assets/DungeonEscape/Images/sprites/hero.png";
@@ -51,15 +51,15 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Start()
         {
-            if (mapPreview == null)
+            if (mapView == null)
             {
-                mapPreview = FindObjectOfType<TiledMapPreviewRenderer>();
+                mapView = FindObjectOfType<TiledMapView>();
             }
 
             Position = new WorldPosition(30, 25);
-            if (mapPreview != null)
+            if (mapView != null)
             {
-                mapPreview.CenterOn(Position);
+                mapView.CenterOn(Position);
                 UpdateVisualPosition();
             }
         }
@@ -100,7 +100,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             var nextX = (int)Position.X + deltaX;
             var nextY = (int)Position.Y + deltaY;
-            if (mapPreview != null && !mapPreview.CanMoveTo(nextX, nextY))
+            if (mapView != null && !mapView.CanMoveTo(nextX, nextY))
             {
                 SetFacing(direction);
                 return;
@@ -125,15 +125,15 @@ namespace Redpoint.DungeonEscape.Unity
 
         private Vector3 GetVisualPosition(WorldPosition value)
         {
-            if (mapPreview == null)
+            if (mapView == null)
             {
                 return new Vector3(value.X, -value.Y, -0.2f);
             }
 
             return new Vector3(
-                value.X - mapPreview.StartColumn,
-                -(value.Y - mapPreview.StartRow),
-                -0.2f) + mapPreview.ViewportOffset;
+                value.X - mapView.StartColumn,
+                -(value.Y - mapView.StartRow),
+                -0.2f) + mapView.ViewportOffset;
         }
 
         private IEnumerator MoveOneTile(Direction direction, int nextX, int nextY)
@@ -143,9 +143,9 @@ namespace Redpoint.DungeonEscape.Unity
 
             var startPosition = position;
             var nextPosition = new WorldPosition(nextX, nextY);
-            if (mapPreview != null)
+            if (mapView != null)
             {
-                mapPreview.EnsureVisible(nextPosition);
+                mapView.EnsureVisible(nextPosition);
             }
 
             const float duration = 0.15f;

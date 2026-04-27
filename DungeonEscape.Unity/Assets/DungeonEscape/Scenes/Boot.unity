@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &489879642
+--- !u!1 &774936420
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,35 +127,36 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 489879644}
-  - component: {fileID: 489879643}
+  - component: {fileID: 774936422}
+  - component: {fileID: 774936421}
   m_Layer: 0
-  m_Name: PreviewStatusView
+  m_Name: PlayerGridController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &489879643
+--- !u!114 &774936421
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 489879642}
+  m_GameObject: {fileID: 774936420}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3690f895cf621e4ea036ea7a7ff1bb9, type: 3}
+  m_Script: {fileID: 11500000, guid: 623a243e4432e5e4da48af918b4296ed, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Redpoint.DungeonEscape.Unity.DungeonEscapeDataDebugView
-  bootstrap: {fileID: 688747494}
---- !u!4 &489879644
+  m_EditorClassIdentifier: Assembly-CSharp::Redpoint.DungeonEscape.Unity.PlayerGridController
+  mapView: {fileID: 902540853}
+  heroTextureAssetPath: Assets/DungeonEscape/Images/sprites/hero.png
+--- !u!4 &774936422
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 489879642}
+  m_GameObject: {fileID: 774936420}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -164,7 +165,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &564327233
+--- !u!1 &902540852
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -172,43 +173,41 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 564327235}
-  - component: {fileID: 564327234}
+  - component: {fileID: 902540854}
+  - component: {fileID: 902540853}
   m_Layer: 0
-  m_Name: TiledMapPreview
+  m_Name: TiledMapView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &564327234
+--- !u!114 &902540853
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 564327233}
+  m_GameObject: {fileID: 902540852}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 36b25e74ad814254b92e875d30ef5f63, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Redpoint.DungeonEscape.Unity.TiledMapPreviewRenderer
+  m_EditorClassIdentifier: Assembly-CSharp::Redpoint.DungeonEscape.Unity.TiledMapView
   mapAssetPath: Assets/DungeonEscape/Maps/overworld.tmx
-  textureAssetPath: Assets/DungeonEscape/Images/tiles/overworld.png
-  bootstrap: {fileID: 688747494}
+  bootstrap: {fileID: 1145925115}
   columns: 20
   rows: 15
   startColumn: 25
   startRow: 20
-  firstGid: 1
   keyboardPanningEnabled: 0
---- !u!4 &564327235
+--- !u!4 &902540854
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 564327233}
+  m_GameObject: {fileID: 902540852}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -217,7 +216,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &688747493
+--- !u!1 &1145925114
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -225,8 +224,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 688747495}
-  - component: {fileID: 688747494}
+  - component: {fileID: 1145925116}
+  - component: {fileID: 1145925115}
   m_Layer: 0
   m_Name: DungeonEscapeBootstrap
   m_TagString: Untagged
@@ -234,13 +233,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &688747494
+--- !u!114 &1145925115
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 688747493}
+  m_GameObject: {fileID: 1145925114}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 223be9a4c2bcb2d4c97b2896015582c5, type: 3}
@@ -258,13 +257,13 @@ MonoBehaviour:
   statNamesJson: {fileID: 4900000, guid: 0e8809985289b1242a59ba59b1d0136d, type: 3}
   testMapTmx: {fileID: 0}
   testMapAssetPath: Assets/DungeonEscape/Maps/overworld.tmx
---- !u!4 &688747495
+--- !u!4 &1145925116
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 688747493}
+  m_GameObject: {fileID: 1145925114}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -273,7 +272,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1398403295
+--- !u!1 &1852591332
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -281,8 +280,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1398403297}
-  - component: {fileID: 1398403296}
+  - component: {fileID: 1852591334}
+  - component: {fileID: 1852591333}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -290,13 +289,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!20 &1398403296
+--- !u!20 &1852591333
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1398403295}
+  m_GameObject: {fileID: 1852591332}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
@@ -341,13 +340,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &1398403297
+--- !u!4 &1852591334
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1398403295}
+  m_GameObject: {fileID: 1852591332}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
@@ -356,7 +355,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1922111478
+--- !u!1 &2070538627
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -364,36 +363,35 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1922111480}
-  - component: {fileID: 1922111479}
+  - component: {fileID: 2070538629}
+  - component: {fileID: 2070538628}
   m_Layer: 0
-  m_Name: PlayerPreviewMarker
+  m_Name: PreviewStatusView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1922111479
+--- !u!114 &2070538628
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1922111478}
+  m_GameObject: {fileID: 2070538627}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 623a243e4432e5e4da48af918b4296ed, type: 3}
+  m_Script: {fileID: 11500000, guid: d3690f895cf621e4ea036ea7a7ff1bb9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Redpoint.DungeonEscape.Unity.PlayerPreviewMarker
-  mapPreview: {fileID: 564327234}
-  heroTextureAssetPath: Assets/DungeonEscape/Images/sprites/hero.png
---- !u!4 &1922111480
+  m_EditorClassIdentifier: Assembly-CSharp::Redpoint.DungeonEscape.Unity.DungeonEscapeDataDebugView
+  bootstrap: {fileID: 1145925115}
+--- !u!4 &2070538629
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1922111478}
+  m_GameObject: {fileID: 2070538627}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -406,8 +404,8 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 688747495}
-  - {fileID: 1398403297}
-  - {fileID: 489879644}
-  - {fileID: 564327235}
-  - {fileID: 1922111480}
+  - {fileID: 1145925116}
+  - {fileID: 1852591334}
+  - {fileID: 2070538629}
+  - {fileID: 902540854}
+  - {fileID: 774936422}

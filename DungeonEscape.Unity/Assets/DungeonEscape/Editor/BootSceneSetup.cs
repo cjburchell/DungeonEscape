@@ -42,18 +42,18 @@ namespace Redpoint.DungeonEscape.UnityEditor
             AssignString(bootstrap, "testMapAssetPath", "Assets/DungeonEscape/Maps/overworld.tmx");
 
             CreatePreviewStatusView(bootstrap);
-            var preview = CreateMapPreview();
-            CreatePlayerMarker(preview);
+            var mapView = CreateMapView();
+            CreatePlayerController(mapView);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.Refresh();
             EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<SceneAsset>(ScenePath));
         }
 
-        private static TiledMapPreviewRenderer CreateMapPreview()
+        private static TiledMapView CreateMapView()
         {
-            var previewObject = new GameObject("TiledMapPreview");
-            var renderer = previewObject.AddComponent<TiledMapPreviewRenderer>();
+            var previewObject = new GameObject("TiledMapView");
+            var renderer = previewObject.AddComponent<TiledMapView>();
             var serializedObject = new SerializedObject(renderer);
             serializedObject.FindProperty("bootstrap").objectReferenceValue = UnityEngine.Object.FindObjectOfType<DungeonEscapeBootstrap>();
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
@@ -69,12 +69,12 @@ namespace Redpoint.DungeonEscape.UnityEditor
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void CreatePlayerMarker(TiledMapPreviewRenderer preview)
+        private static void CreatePlayerController(TiledMapView mapView)
         {
-            var playerObject = new GameObject("PlayerPreviewMarker");
-            var marker = playerObject.AddComponent<PlayerPreviewMarker>();
+            var playerObject = new GameObject("PlayerGridController");
+            var marker = playerObject.AddComponent<PlayerGridController>();
             var serializedObject = new SerializedObject(marker);
-            serializedObject.FindProperty("mapPreview").objectReferenceValue = preview;
+            serializedObject.FindProperty("mapView").objectReferenceValue = mapView;
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 

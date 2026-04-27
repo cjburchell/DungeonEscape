@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/DungeonEscape/bin/Debug/net5.0/DungeonEscape.dll",
+            "program": "${workspaceFolder}/DungeonEscape/bin/Debug/net7.0/DungeonEscape.dll",
             "args": [],
             "cwd": "${workspaceFolder}/DungeonEscape",
             "console": "internalConsole",

@@ -5,7 +5,9 @@ variables:
   RESHARPER_SOLUTION_NAME: 'DungeonEscape.sln'
   RESHARPER_EXCLUDE: 'Nez.Portable/**;DungeonEscape/Content/*.tsx'
   RESHARPER_THRESHOLD: 0
+  RESHARPER_TOOL_VERSION: '2026.1.0.1'
   PUBLISH_PROJECT: 'DungeonEscape/DungeonEscape.csproj'
+  DOTNET_SDK_IMAGE: 'mcr.microsoft.com/dotnet/sdk:10.0'
 
 stages:
   - build
@@ -26,23 +28,31 @@ before_script:
   - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
 
 build:
-  image: mcr.microsoft.com/dotnet/sdk:7.0
+  image: $DOTNET_SDK_IMAGE
   stage: build
   script:
     - 'dotnet build --no-restore'
 
 tests:
-  image: mcr.microsoft.com/dotnet/sdk:7.0
+  image: $DOTNET_SDK_IMAGE
   stage: test
   script:
     - 'dotnet test --no-restore'
 
 resharper-scan:
-  image: registry.gitlab.com/cjburchell/reshaper:2021.2.2-net7-819722443
+  image: $DOTNET_SDK_IMAGE
   stage: scan
   script:
-    - '/tools/jb inspectcode --exclude=$RESHARPER_EXCLUDE -o=RsInspection.xml --caches-home=temp $RESHARPER_SOLUTION_NAME --toolset=16.0'
-    - 'dotnet /tools/checkwarnings/checkwarnings.dll --file=RsInspection.xml --threshold=$RESHARPER_THRESHOLD'
+    - 'dotnet tool install --global JetBrains.ReSharper.GlobalTools --version $RESHARPER_TOOL_VERSION'
+    - 'export PATH="$PATH:/root/.dotnet/tools"'
+    - 'jb inspectcode --exclude=$RESHARPER_EXCLUDE -o=RsInspection.xml -f=xml --caches-home=temp $RESHARPER_SOLUTION_NAME --dotnetcore=/usr/share/dotnet/dotnet'
+    - |
+      ISSUE_COUNT=$(grep -o '<Issue ' RsInspection.xml | wc -l | tr -d ' ')
+      echo "ReSharper issue count: $ISSUE_COUNT"
+      if [ "$ISSUE_COUNT" -gt "$RESHARPER_THRESHOLD" ]; then
+        echo "ReSharper issue count $ISSUE_COUNT exceeds threshold $RESHARPER_THRESHOLD"
+        exit 1
+      fi
   dependencies:
     - build
   artifacts:
@@ -51,7 +61,7 @@ resharper-scan:
       - RsInspection.xml
 
 publish-windows:
-  image: mcr.microsoft.com/dotnet/sdk:7.0
+  image: $DOTNET_SDK_IMAGE
   stage: publish
   only:
     - tags

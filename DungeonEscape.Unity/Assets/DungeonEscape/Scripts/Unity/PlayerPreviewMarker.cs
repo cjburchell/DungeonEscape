@@ -21,6 +21,16 @@ namespace Redpoint.DungeonEscape.Unity
             }
         }
 
+        public int Column
+        {
+            get { return (int)position.X; }
+        }
+
+        public int Row
+        {
+            get { return (int)position.Y; }
+        }
+
         private void Awake()
         {
             spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
@@ -38,6 +48,11 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             Position = new WorldPosition(30, 25);
+            if (mapPreview != null)
+            {
+                mapPreview.CenterOn(Position);
+                UpdateVisualPosition();
+            }
         }
 
         private void Update()
@@ -68,10 +83,18 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            Position = new WorldPosition(Position.X + deltaX, Position.Y + deltaY);
+            var nextX = (int)Position.X + deltaX;
+            var nextY = (int)Position.Y + deltaY;
+            if (mapPreview != null && !mapPreview.CanMoveTo(nextX, nextY))
+            {
+                return;
+            }
+
+            Position = new WorldPosition(nextX, nextY);
             if (mapPreview != null)
             {
-                mapPreview.CenterOn(Position);
+                mapPreview.EnsureVisible(Position);
+                UpdateVisualPosition();
             }
         }
 

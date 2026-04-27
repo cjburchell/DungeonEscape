@@ -39,6 +39,8 @@ namespace Redpoint.DungeonEscape.Unity
 
         private int mapWidth;
         private int mapHeight;
+        private readonly HashSet<string> blockingLayerNames = new HashSet<string> { "wall", "water", "water2" };
+        private HashSet<int> blockedTiles = new HashSet<int>();
 
         public int StartColumn
         {
@@ -100,6 +102,55 @@ namespace Redpoint.DungeonEscape.Unity
             RenderPreview();
         }
 
+        public void EnsureVisible(Redpoint.DungeonEscape.State.WorldPosition position)
+        {
+            const int margin = 3;
+            var column = (int)position.X;
+            var row = (int)position.Y;
+            var newStartColumn = startColumn;
+            var newStartRow = startRow;
+
+            if (column < startColumn + margin)
+            {
+                newStartColumn = column - margin;
+            }
+            else if (column >= startColumn + columns - margin)
+            {
+                newStartColumn = column - columns + margin + 1;
+            }
+
+            if (row < startRow + margin)
+            {
+                newStartRow = row - margin;
+            }
+            else if (row >= startRow + rows - margin)
+            {
+                newStartRow = row - rows + margin + 1;
+            }
+
+            newStartColumn = Math.Max(0, Math.Min(newStartColumn, Math.Max(0, mapWidth - columns)));
+            newStartRow = Math.Max(0, Math.Min(newStartRow, Math.Max(0, mapHeight - rows)));
+
+            if (newStartColumn == startColumn && newStartRow == startRow)
+            {
+                return;
+            }
+
+            startColumn = newStartColumn;
+            startRow = newStartRow;
+            RenderPreview();
+        }
+
+        public bool CanMoveTo(int column, int row)
+        {
+            if (column < 0 || row < 0 || column >= mapWidth || row >= mapHeight)
+            {
+                return false;
+            }
+
+            return !blockedTiles.Contains(row * mapWidth + column);
+        }
+
         private void RenderPreview()
         {
             var mapPath = ToFullAssetPath(mapAssetPath);
@@ -129,6 +180,7 @@ namespace Redpoint.DungeonEscape.Unity
             var renderedTileCount = 0;
             var layerOrder = 0;
 
+            blockedTiles = BuildBlockedTiles(map);
             ClearPreview();
 
             foreach (var layer in layers)
@@ -229,6 +281,30 @@ namespace Redpoint.DungeonEscape.Unity
         private static bool IsRenderableLayer(XElement layer)
         {
             return GetString(layer, "visible") != "0";
+        }
+
+        private HashSet<int> BuildBlockedTiles(XElement map)
+        {
+            var blocked = new HashSet<int>();
+            foreach (var layer in map.Elements("layer"))
+            {
+                var layerName = GetString(layer, "name");
+                if (!blockingLayerNames.Contains(layerName))
+                {
+                    continue;
+                }
+
+                var gids = ParseCsvTileData(layer);
+                for (var i = 0; i < gids.Count; i++)
+                {
+                    if (gids[i] != 0)
+                    {
+                        blocked.Add(i);
+                    }
+                }
+            }
+
+            return blocked;
         }
 
         private List<TiledTilesetInfo> GetValidatedTilesets()

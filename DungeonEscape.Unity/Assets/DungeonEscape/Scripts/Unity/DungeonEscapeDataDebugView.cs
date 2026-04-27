@@ -10,9 +10,10 @@ namespace Redpoint.DungeonEscape.Unity
         [SerializeField]
         private DungeonEscapeBootstrap bootstrap;
 
-        private string leftText;
         private string rightText;
         private GUIStyle textStyle;
+        private PlayerPreviewMarker playerMarker;
+        private TiledMapPreviewRenderer mapPreview;
 
         private void Start()
         {
@@ -21,14 +22,16 @@ namespace Redpoint.DungeonEscape.Unity
                 bootstrap = FindObjectOfType<DungeonEscapeBootstrap>();
             }
 
+            playerMarker = FindObjectOfType<PlayerPreviewMarker>();
+            mapPreview = FindObjectOfType<TiledMapPreviewRenderer>();
+
             if (bootstrap == null || bootstrap.Data == null)
             {
-                leftText = "Dungeon Escape data has not loaded.";
-                rightText = "";
+                rightText = "Dungeon Escape data has not loaded.";
                 return;
             }
 
-            BuildSummary(bootstrap.Data, out leftText, out rightText);
+            rightText = BuildSummary(bootstrap.Data);
         }
 
         private void OnGUI()
@@ -44,34 +47,57 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             GUI.Box(new Rect(0, 0, Screen.width, Screen.height), GUIContent.none);
-            var columnWidth = (Screen.width - 72) / 2f;
-            var panelHeight = 260f;
-            GUI.Box(new Rect(12, 12, columnWidth + 24, panelHeight), GUIContent.none);
-            GUI.Box(new Rect(36 + columnWidth, 12, columnWidth + 24, panelHeight), GUIContent.none);
-            GUI.Label(new Rect(24, 24, columnWidth, panelHeight - 24), leftText ?? "Loading Dungeon Escape data...", textStyle);
-            GUI.Label(new Rect(48 + columnWidth, 24, columnWidth, panelHeight - 24), rightText ?? "", textStyle);
+            var panelWidth = 420f;
+            var panelHeight = 320f;
+            GUI.Box(new Rect(12, 12, panelWidth, panelHeight), GUIContent.none);
+            GUI.Label(new Rect(24, 24, panelWidth - 24, panelHeight - 24), BuildRuntimeSummary(), textStyle);
+
+            var mapPanelWidth = 520f;
+            GUI.Box(new Rect(Screen.width - mapPanelWidth - 12, 12, mapPanelWidth, panelHeight), GUIContent.none);
+            GUI.Label(new Rect(Screen.width - mapPanelWidth, 24, mapPanelWidth - 24, panelHeight - 24), rightText ?? "", textStyle);
         }
 
-        private static void BuildSummary(DungeonEscapeDataSet data, out string left, out string right)
+        private string BuildRuntimeSummary()
         {
-            var leftBuilder = new StringBuilder();
-            leftBuilder.AppendLine("Dungeon Escape Data");
-            leftBuilder.AppendLine();
-            leftBuilder.AppendLine("Item definitions: " + Count(data.ItemDefinitions));
-            leftBuilder.AppendLine("Custom items: " + Count(data.CustomItems));
-            leftBuilder.AppendLine("Skills: " + Count(data.Skills));
-            leftBuilder.AppendLine("Spells: " + Count(data.Spells));
-            leftBuilder.AppendLine("Monsters: " + Count(data.Monsters));
-            leftBuilder.AppendLine("Quests: " + Count(data.Quests));
-            leftBuilder.AppendLine("Dialog sets: " + Count(data.Dialogs));
-            leftBuilder.AppendLine("Class levels: " + Count(data.ClassLevels));
-            leftBuilder.AppendLine("Stat names: " + Count(data.StatNames));
+            if (playerMarker == null)
+            {
+                playerMarker = FindObjectOfType<PlayerPreviewMarker>();
+            }
 
-            var rightBuilder = new StringBuilder();
-            AppendMap(rightBuilder, data.TestMap);
+            if (mapPreview == null)
+            {
+                mapPreview = FindObjectOfType<TiledMapPreviewRenderer>();
+            }
 
-            left = leftBuilder.ToString();
-            right = rightBuilder.ToString();
+            var builder = new StringBuilder();
+            builder.AppendLine("Preview");
+            builder.AppendLine();
+
+            if (playerMarker == null)
+            {
+                builder.AppendLine("Player: none");
+            }
+            else
+            {
+                builder.AppendLine("Player tile: " + playerMarker.Column + ", " + playerMarker.Row);
+            }
+
+            if (mapPreview != null)
+            {
+                builder.AppendLine("Viewport: " + mapPreview.StartColumn + ", " + mapPreview.StartRow);
+            }
+
+            builder.AppendLine();
+            builder.AppendLine("Move: WASD / Arrow keys");
+            builder.AppendLine("Blocked: wall, water, water2");
+            return builder.ToString();
+        }
+
+        private static string BuildSummary(DungeonEscapeDataSet data)
+        {
+            var builder = new StringBuilder();
+            AppendMap(builder, data.TestMap);
+            return builder.ToString();
         }
 
         private static void AppendMap(StringBuilder builder, TiledMapInfo map)

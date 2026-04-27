@@ -41,22 +41,13 @@ namespace Redpoint.DungeonEscape.UnityEditor
             AssignTextAsset(bootstrap, "statNamesJson", "Assets/DungeonEscape/Data/statnames.json");
             AssignString(bootstrap, "testMapAssetPath", "Assets/DungeonEscape/Maps/overworld.tmx");
 
-            CreateDebugView(bootstrap);
+            CreatePreviewStatusView(bootstrap);
             var preview = CreateMapPreview();
             CreatePlayerMarker(preview);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.Refresh();
             EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<SceneAsset>(ScenePath));
-        }
-
-        private static void CreateDebugView(DungeonEscapeBootstrap bootstrap)
-        {
-            var debugObject = new GameObject("DataDebugView");
-            var debugView = debugObject.AddComponent<DungeonEscapeDataDebugView>();
-            var serializedObject = new SerializedObject(debugView);
-            serializedObject.FindProperty("bootstrap").objectReferenceValue = bootstrap;
-            serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static TiledMapPreviewRenderer CreateMapPreview()
@@ -67,6 +58,15 @@ namespace Redpoint.DungeonEscape.UnityEditor
             serializedObject.FindProperty("bootstrap").objectReferenceValue = UnityEngine.Object.FindObjectOfType<DungeonEscapeBootstrap>();
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
             return renderer;
+        }
+
+        private static void CreatePreviewStatusView(DungeonEscapeBootstrap bootstrap)
+        {
+            var statusObject = new GameObject("PreviewStatusView");
+            var statusView = statusObject.AddComponent<DungeonEscapeDataDebugView>();
+            var serializedObject = new SerializedObject(statusView);
+            serializedObject.FindProperty("bootstrap").objectReferenceValue = bootstrap;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static void CreatePlayerMarker(TiledMapPreviewRenderer preview)

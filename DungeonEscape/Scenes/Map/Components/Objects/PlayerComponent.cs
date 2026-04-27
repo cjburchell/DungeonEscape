@@ -7,6 +7,7 @@
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Input;
     using Nez;
+    using Nez.AI.Pathfinding;
     using Nez.Sprites;
     using Nez.Tiled;
     using Nez.UI;
@@ -20,6 +21,7 @@
         private readonly List<RandomMonster> _randomMonsters;
         private readonly UiSystem _ui;
         private readonly int _renderOffset;
+        private readonly AstarGridGraph _graph;
         private const float MoveSpeed = 150;
         private SpriteAnimator _playerAnimation;
         private SpriteAnimator _shipAnimator;
@@ -37,13 +39,14 @@
         private List<Nez.Textures.Sprite> _sprites;
         private Hero _lastHero;
 
-        public PlayerComponent(IGame gameState, TmxMap map, Label debugText, List<RandomMonster> randomMonsters, UiSystem ui, int renderOffset)
+        public PlayerComponent(IGame gameState, TmxMap map, Label debugText, List<RandomMonster> randomMonsters, UiSystem ui, int renderOffset, AstarGridGraph graph)
         {
             this._map = map;
             this._debugText = debugText;
             this._randomMonsters = randomMonsters;
             this._ui = ui;
             _renderOffset = renderOffset;
+            this._graph = graph;
             this._gameState = gameState;
         }
 

@@ -89,14 +89,6 @@ namespace Redpoint.DungeonEscape.Scenes.Map.Components.Objects
             var gotItem = false;
             foreach (var item in this.State.Items.ToList())
             {
-                if (item.Type == ItemType.Quest && !item.StartQuest)
-                {
-                    if (!this.GameState.Party.ActiveQuests.Any(i => i.Id == item.QuestId && item.ForStage.Contains(i.CurrentStage)))
-                    {
-                        continue;
-                    }
-                }
-                
                 if (item.Type == ItemType.Gold)
                 {
                     message += $"You found {item.Cost} Gold\n";

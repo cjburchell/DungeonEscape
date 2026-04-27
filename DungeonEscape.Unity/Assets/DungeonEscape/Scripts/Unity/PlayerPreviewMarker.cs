@@ -110,6 +110,14 @@ namespace Redpoint.DungeonEscape.Unity
             StartCoroutine(MoveOneTile(direction, nextX, nextY));
         }
 
+        private void LateUpdate()
+        {
+            if (!isMoving)
+            {
+                UpdateVisualPosition();
+            }
+        }
+
         private void UpdateVisualPosition()
         {
             transform.position = GetVisualPosition(position);
@@ -125,7 +133,7 @@ namespace Redpoint.DungeonEscape.Unity
             return new Vector3(
                 value.X - mapPreview.StartColumn,
                 -(value.Y - mapPreview.StartRow),
-                -0.2f);
+                -0.2f) + mapPreview.ViewportOffset;
         }
 
         private IEnumerator MoveOneTile(Direction direction, int nextX, int nextY)
@@ -133,9 +141,13 @@ namespace Redpoint.DungeonEscape.Unity
             isMoving = true;
             PlayStepAnimation(direction);
 
+            var startPosition = position;
             var nextPosition = new WorldPosition(nextX, nextY);
-            var start = transform.position;
-            var end = GetVisualPosition(nextPosition);
+            if (mapPreview != null)
+            {
+                mapPreview.EnsureVisible(nextPosition);
+            }
+
             const float duration = 0.15f;
             var elapsed = 0f;
 
@@ -143,16 +155,13 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 elapsed += Time.deltaTime;
                 var progress = Mathf.Clamp01(elapsed / duration);
+                var start = GetVisualPosition(startPosition);
+                var end = GetVisualPosition(nextPosition);
                 transform.position = Vector3.Lerp(start, end, progress);
                 yield return null;
             }
 
             position = nextPosition;
-            if (mapPreview != null)
-            {
-                mapPreview.EnsureVisible(position);
-            }
-
             UpdateVisualPosition();
             isMoving = false;
         }

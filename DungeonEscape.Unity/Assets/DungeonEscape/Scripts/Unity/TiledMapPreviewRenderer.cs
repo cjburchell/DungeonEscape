@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,6 +42,7 @@ namespace Redpoint.DungeonEscape.Unity
         private int mapHeight;
         private readonly HashSet<string> fallbackBlockingLayerNames = new HashSet<string> { "wall", "water", "water2" };
         private HashSet<int> blockedTiles = new HashSet<int>();
+        private Coroutine viewportScroll;
 
         public int StartColumn
         {
@@ -50,6 +52,11 @@ namespace Redpoint.DungeonEscape.Unity
         public int StartRow
         {
             get { return startRow; }
+        }
+
+        public Vector3 ViewportOffset
+        {
+            get { return transform.position; }
         }
 
         private void Start()
@@ -90,16 +97,16 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            startColumn = Math.Max(0, Math.Min(startColumn + columnDelta, Math.Max(0, mapWidth - columns)));
-            startRow = Math.Max(0, Math.Min(startRow + rowDelta, Math.Max(0, mapHeight - rows)));
-            RenderPreview();
+            var nextStartColumn = Math.Max(0, Math.Min(startColumn + columnDelta, Math.Max(0, mapWidth - columns)));
+            var nextStartRow = Math.Max(0, Math.Min(startRow + rowDelta, Math.Max(0, mapHeight - rows)));
+            SetViewport(nextStartColumn, nextStartRow, true);
         }
 
         public void CenterOn(Redpoint.DungeonEscape.State.WorldPosition position)
         {
-            startColumn = Math.Max(0, Math.Min((int)position.X - columns / 2, Math.Max(0, mapWidth - columns)));
-            startRow = Math.Max(0, Math.Min((int)position.Y - rows / 2, Math.Max(0, mapHeight - rows)));
-            RenderPreview();
+            var nextStartColumn = Math.Max(0, Math.Min((int)position.X - columns / 2, Math.Max(0, mapWidth - columns)));
+            var nextStartRow = Math.Max(0, Math.Min((int)position.Y - rows / 2, Math.Max(0, mapHeight - rows)));
+            SetViewport(nextStartColumn, nextStartRow, false);
         }
 
         public void EnsureVisible(Redpoint.DungeonEscape.State.WorldPosition position)
@@ -136,9 +143,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            startColumn = newStartColumn;
-            startRow = newStartRow;
-            RenderPreview();
+            SetViewport(newStartColumn, newStartRow, true);
         }
 
         public bool CanMoveTo(int column, int row)
@@ -211,7 +216,7 @@ namespace Redpoint.DungeonEscape.Unity
 
                         var tileObject = new GameObject("Tile_" + GetString(layer, "name") + "_" + column + "_" + row);
                         tileObject.transform.SetParent(transform, false);
-                        tileObject.transform.position = new Vector3(column, -row, 0);
+                        tileObject.transform.localPosition = new Vector3(column, -row, 0);
 
                         var renderer = tileObject.AddComponent<SpriteRenderer>();
                         renderer.sprite = sprite;
@@ -261,7 +266,7 @@ namespace Redpoint.DungeonEscape.Unity
 
                     var markerObject = new GameObject("Object_" + group.Name + "_" + mapObject.Name);
                     markerObject.transform.SetParent(transform, false);
-                    markerObject.transform.position = new Vector3(column - startColumn, -(row - startRow), -0.1f);
+                    markerObject.transform.localPosition = new Vector3(column - startColumn, -(row - startRow), -0.1f);
 
                     var renderer = markerObject.AddComponent<SpriteRenderer>();
                     renderer.sprite = sprite;
@@ -276,6 +281,66 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 Destroy(transform.GetChild(i).gameObject);
             }
+        }
+
+        private void SetViewport(int newStartColumn, int newStartRow, bool animate)
+        {
+            var oldStartColumn = startColumn;
+            var oldStartRow = startRow;
+            startColumn = newStartColumn;
+            startRow = newStartRow;
+
+            RenderPreview();
+
+            if (!animate)
+            {
+                StopViewportScroll();
+                transform.position = Vector3.zero;
+                return;
+            }
+
+            StartViewportScroll(oldStartColumn, oldStartRow, newStartColumn, newStartRow);
+        }
+
+        private void StartViewportScroll(int oldStartColumn, int oldStartRow, int newStartColumn, int newStartRow)
+        {
+            StopViewportScroll();
+
+            var startOffset = new Vector3(
+                newStartColumn - oldStartColumn,
+                oldStartRow - newStartRow,
+                0f);
+
+            transform.position = startOffset;
+            viewportScroll = StartCoroutine(AnimateViewportScroll(startOffset));
+        }
+
+        private IEnumerator AnimateViewportScroll(Vector3 startOffset)
+        {
+            const float duration = 0.15f;
+            var elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                var progress = Mathf.Clamp01(elapsed / duration);
+                transform.position = Vector3.Lerp(startOffset, Vector3.zero, progress);
+                yield return null;
+            }
+
+            transform.position = Vector3.zero;
+            viewportScroll = null;
+        }
+
+        private void StopViewportScroll()
+        {
+            if (viewportScroll == null)
+            {
+                return;
+            }
+
+            StopCoroutine(viewportScroll);
+            viewportScroll = null;
         }
 
         private static bool IsRenderableLayer(XElement layer)

@@ -42,7 +42,8 @@ namespace Redpoint.DungeonEscape.UnityEditor
             AssignString(bootstrap, "testMapAssetPath", "Assets/DungeonEscape/Maps/overworld.tmx");
 
             CreateDebugView(bootstrap);
-            CreateMapPreview();
+            var preview = CreateMapPreview();
+            CreatePlayerMarker(preview);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.Refresh();
@@ -58,12 +59,22 @@ namespace Redpoint.DungeonEscape.UnityEditor
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void CreateMapPreview()
+        private static TiledMapPreviewRenderer CreateMapPreview()
         {
             var previewObject = new GameObject("TiledMapPreview");
             var renderer = previewObject.AddComponent<TiledMapPreviewRenderer>();
             var serializedObject = new SerializedObject(renderer);
             serializedObject.FindProperty("bootstrap").objectReferenceValue = UnityEngine.Object.FindObjectOfType<DungeonEscapeBootstrap>();
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+            return renderer;
+        }
+
+        private static void CreatePlayerMarker(TiledMapPreviewRenderer preview)
+        {
+            var playerObject = new GameObject("PlayerPreviewMarker");
+            var marker = playerObject.AddComponent<PlayerPreviewMarker>();
+            var serializedObject = new SerializedObject(marker);
+            serializedObject.FindProperty("mapPreview").objectReferenceValue = preview;
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 

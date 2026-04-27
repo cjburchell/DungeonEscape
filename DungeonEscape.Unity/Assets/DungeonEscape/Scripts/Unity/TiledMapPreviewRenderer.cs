@@ -34,8 +34,21 @@ namespace Redpoint.DungeonEscape.Unity
         [SerializeField]
         private int firstGid = 1;
 
+        [SerializeField]
+        private bool keyboardPanningEnabled;
+
         private int mapWidth;
         private int mapHeight;
+
+        public int StartColumn
+        {
+            get { return startColumn; }
+        }
+
+        public int StartRow
+        {
+            get { return startRow; }
+        }
 
         private void Start()
         {
@@ -44,6 +57,11 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Update()
         {
+            if (!keyboardPanningEnabled)
+            {
+                return;
+            }
+
             var columnDelta = 0;
             var rowDelta = 0;
 
@@ -72,6 +90,13 @@ namespace Redpoint.DungeonEscape.Unity
 
             startColumn = Math.Max(0, Math.Min(startColumn + columnDelta, Math.Max(0, mapWidth - columns)));
             startRow = Math.Max(0, Math.Min(startRow + rowDelta, Math.Max(0, mapHeight - rows)));
+            RenderPreview();
+        }
+
+        public void CenterOn(Redpoint.DungeonEscape.State.WorldPosition position)
+        {
+            startColumn = Math.Max(0, Math.Min((int)position.X - columns / 2, Math.Max(0, mapWidth - columns)));
+            startRow = Math.Max(0, Math.Min((int)position.Y - rows / 2, Math.Max(0, mapHeight - rows)));
             RenderPreview();
         }
 
@@ -146,12 +171,12 @@ namespace Redpoint.DungeonEscape.Unity
                 layerOrder++;
             }
 
-            RenderObjectMarkers(layerOrder + 10);
+            RenderObjectSprites(spriteSets, layerOrder + 10);
             PositionCamera(Math.Min(columns, mapWidth), rows);
             Debug.Log("Rendered TMX preview at " + startColumn + "," + startRow + " with " + layers.Count + " visible layers, " + spriteSets.Count + " tilesets, and " + renderedTileCount + " tiles.");
         }
 
-        private void RenderObjectMarkers(int sortingOrder)
+        private void RenderObjectSprites(IList<TilesetSpriteSet> spriteSets, int sortingOrder)
         {
             if (bootstrap == null || bootstrap.Data == null || bootstrap.Data.TestMap == null)
             {
@@ -162,6 +187,17 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 foreach (var mapObject in group.Objects)
                 {
+                    if (mapObject.Gid == 0)
+                    {
+                        continue;
+                    }
+
+                    Sprite sprite;
+                    if (!TryGetSprite(mapObject.Gid, spriteSets, out sprite))
+                    {
+                        continue;
+                    }
+
                     var column = Mathf.FloorToInt(mapObject.X / bootstrap.Data.TestMap.TileWidth);
                     var row = Mathf.FloorToInt((mapObject.Y - mapObject.Height) / bootstrap.Data.TestMap.TileHeight);
 
@@ -174,45 +210,12 @@ namespace Redpoint.DungeonEscape.Unity
                     var markerObject = new GameObject("Object_" + group.Name + "_" + mapObject.Name);
                     markerObject.transform.SetParent(transform, false);
                     markerObject.transform.position = new Vector3(column - startColumn, -(row - startRow), -0.1f);
-                    markerObject.transform.localScale = new Vector3(0.45f, 0.45f, 1f);
 
                     var renderer = markerObject.AddComponent<SpriteRenderer>();
-                    renderer.sprite = CreateMarkerSprite();
-                    renderer.color = GetMarkerColor(mapObject.Class);
+                    renderer.sprite = sprite;
                     renderer.sortingOrder = sortingOrder;
                 }
             }
-        }
-
-        private static Sprite markerSprite;
-
-        private static Sprite CreateMarkerSprite()
-        {
-            if (markerSprite != null)
-            {
-                return markerSprite;
-            }
-
-            var texture = new Texture2D(1, 1);
-            texture.SetPixel(0, 0, Color.white);
-            texture.Apply();
-            markerSprite = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
-            return markerSprite;
-        }
-
-        private static Color GetMarkerColor(string objectClass)
-        {
-            if (string.Equals(objectClass, "Warp", StringComparison.OrdinalIgnoreCase))
-            {
-                return Color.magenta;
-            }
-
-            if (string.Equals(objectClass, "Monster", StringComparison.OrdinalIgnoreCase))
-            {
-                return Color.red;
-            }
-
-            return Color.yellow;
         }
 
         private void ClearPreview()

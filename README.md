@@ -1,17 +1,18 @@
 # Dungeon Escape
 
-Dungeon Escape is a retro-inspired 2D RPG (in the spirit of classic SNES-era Dragon Quest / Final Fantasy). It is an updated version of an older project (DE15) and is built with **MonoGame** + the **Nez** 2D framework.
+Dungeon Escape is a retro-inspired 2D RPG in the spirit of classic SNES-era Dragon Quest and Final Fantasy games. It is an updated version of an older project, DE15, built with **MonoGame** and the **Nez** 2D framework.
 
-The game is largely **data-driven**: quests, dialogs, classes, skills, items, spells, and monsters are defined in JSON under `DungeonEscape/Content/data/`. Maps are authored in **Tiled** (`.tmx/.tsx`) and loaded at runtime.
+The game is largely data-driven. Quests, dialog, classes, skills, items, spells, monsters, map encounters, and default settings are defined in JSON under `DungeonEscape/Content/data/`. Maps are authored in **Tiled** (`.tmx` and `.tsx`) and loaded at runtime.
 
 ## Download / Play
 
-- Download the latest Windows build (GitLab artifacts):
-  - https://gitlab.com/cjburchell/DungeonEscape/-/jobs/4012464295/artifacts/download
+Download the latest Windows build from GitLab artifacts:
 
-### Saves & settings location
+https://gitlab.com/cjburchell/DungeonEscape/-/jobs/4012464295/artifacts/download
 
-The game stores saves/settings in your AppData folder:
+## Saves & Settings
+
+The game stores saves and settings in:
 
 ```text
 %AppData%\Redpoint\DungeonEscape\
@@ -21,19 +22,22 @@ The game stores saves/settings in your AppData folder:
 
 ## Controls
 
-Exploration controls are handled in `PlayerComponent`.
+Exploration controls are handled by `PlayerComponent`.
 
-- **Move**: Arrow keys / WASD / Gamepad left stick / D-pad
-- **Action / Interact**: Space / Gamepad A
+| Action | Keyboard | Gamepad |
+| --- | --- | --- |
+| Move | Arrow keys or WASD | Left stick or D-pad |
+| Interact / confirm | Space | A |
 
-## Build & Run (Developers)
+## Build & Run
 
 ### Prerequisites
 
-- **.NET SDK 7.0** (CI builds with 7.0)
-- A MonoGame-compatible runtime environment (primarily tested on Windows)
+- .NET SDK 10.0
+- A MonoGame-compatible desktop runtime environment
+- Windows is the primary tested platform
 
-### Build
+### Restore and Build
 
 ```bash
 dotnet restore
@@ -54,68 +58,68 @@ dotnet test
 
 ## Architecture
 
-### High-level runtime flow
+### High-level Runtime Flow
 
 ```text
 Program.cs
-  └─ Game (Nez.Core, implements IGame)
-       ├─ loads Settings + Content/data/*.json (quests, items, monsters, etc.)
-       ├─ manages Party + MapStates + Save/Load
-       └─ scene transitions
-            SplashScreen → MainMenu
-                         → CreatePlayerScene / ContinueQuestScene
-                         → MapScene (exploration)
-                         → FightScene (turn-based combat)
+  -> Game (Nez.Core, implements IGame)
+       -> loads Settings and Content/data/*.json
+       -> manages Party, MapStates, and Save/Load
+       -> handles scene transitions
+            SplashScreen
+              -> MainMenu
+                   -> CreatePlayerScene
+                   -> ContinueQuestScene
+                   -> MapScene
+                   -> FightScene
 ```
 
-### Key concepts & responsibilities
+### Key Concepts
 
-- **`Game` (`DungeonEscape/DungeonEscapeGame.cs`)**
-  - Owns global game state and services via `IGame` (party, settings, content lists, sounds, save/load).
-  - Loads data-driven gameplay definitions from `Content/data/*.json`.
-  - Loads Tiled maps from `Content/maps/*.tmx`.
-  - Creates and transitions between scenes (fade/transform transitions).
+**`Game` (`DungeonEscape/DungeonEscapeGame.cs`)**
 
-- **Scenes (`DungeonEscape/Scenes/*`)**
-  - `SplashScreen` → shows the splash image and transitions to the main menu.
-  - `MainMenu` → “New game / Load game / Settings / Quit”.
-  - `MapScene` → exploration: renders the Tiled map layers, spawns the player party, loads map objects/sprites, runs interactions and random encounters.
-  - `FightScene` → turn-based combat with UI windows (select action, target selection, damage resolution, rewards).
+Owns global game state and services through `IGame`, including party state, settings, content lists, sounds, save/load, map loading, and scene transitions.
 
-- **Domain model / State (`DungeonEscape/State/*`)**
-  - Serializable game state (party members, quests, items, map/object state).
-  - `GameSave` is persisted to JSON and loaded on startup.
+**Scenes (`DungeonEscape/Scenes/*`)**
 
-- **Content (`DungeonEscape/Content/*`)**
-  - `Content/data/*.json` → gameplay definitions (quests/dialog/items/skills/spells/monsters/names/etc.).
-  - `Content/maps/*.tmx` and tilesets (`.tsx`) → maps and map metadata (properties like `overworld`, `song`, `biome`).
-  - `Content/images`, `Content/sound`, `Content/fonts` → assets.
+- `SplashScreen`: shows the splash image and transitions to the main menu.
+- `MainMenu`: exposes New Game, Load Game, Settings, and Quit.
+- `MapScene`: handles exploration, Tiled map rendering, object and sprite loading, interactions, and random encounters.
+- `FightScene`: handles turn-based combat, action selection, target selection, damage resolution, and rewards.
 
-### Project layout (key paths)
+**State (`DungeonEscape/State/*`)**
+
+Contains serializable game state such as party members, quests, items, map/object state, and `GameSave`.
+
+**Content (`DungeonEscape/Content/*`)**
+
+- `data/*.json`: gameplay definitions, including quests, dialog, items, skills, spells, monsters, names, stat names, and default settings.
+- `data/maps/**/*.json`: map-specific monster encounter data.
+- `maps/**/*.tmx` and tilesets (`.tsx`): Tiled maps and map metadata such as `overworld`, `song`, and `biome`.
+- `images`, `sound`, and `fonts`: game assets.
+
+## Project Layout
 
 ```text
 DungeonEscape/
-  Program.cs                     # entry point
-  DungeonEscapeGame.cs            # Game : Nez.Core, IGame implementation
-  Scenes/                         # game flow, UI screens, exploration, combat
-  State/                          # domain entities + save data structures
-  Content/                        # images, audio, maps (Tiled), JSON data
-Nez.Portable/                     # vendored Nez framework (portable build)
-DungeonEscape.Test/               # unit tests
+  Program.cs                      # entry point
+  DungeonEscapeGame.cs             # Game : Nez.Core, IGame implementation
+  Scenes/                          # game flow, UI screens, exploration, combat
+  State/                           # domain entities and save data structures
+  Content/                         # images, audio, maps, Tiled tilesets, JSON data
+Nez.Portable/                      # vendored Nez framework portable build
+DungeonEscape.Test/                # xUnit tests
 ```
 
-## TODO
+## Roadmap
 
 ### Features
 
 - Escort quests
 - Kill monster quests
-- Create more quests
+- More quests
 - Improved inventory window
 
 ### Improvements
 
 - Balance pass
- 
-
- 

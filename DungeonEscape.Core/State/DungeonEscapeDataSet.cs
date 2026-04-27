@@ -14,6 +14,7 @@ namespace Redpoint.DungeonEscape.State
         public List<ClassStats> ClassLevels { get; set; }
         public Names Names { get; set; }
         public List<StatName> StatNames { get; set; }
+        public TiledMapInfo TestMap { get; set; }
 
         public DungeonEscapeDataSet()
         {

@@ -10,7 +10,8 @@ namespace Redpoint.DungeonEscape.Unity
         [SerializeField]
         private DungeonEscapeBootstrap bootstrap;
 
-        private string outputText;
+        private string leftText;
+        private string rightText;
         private GUIStyle textStyle;
 
         private void Start()
@@ -22,11 +23,12 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (bootstrap == null || bootstrap.Data == null)
             {
-                outputText = "Dungeon Escape data has not loaded.";
+                leftText = "Dungeon Escape data has not loaded.";
+                rightText = "";
                 return;
             }
 
-            outputText = BuildSummary(bootstrap.Data);
+            BuildSummary(bootstrap.Data, out leftText, out rightText);
         }
 
         private void OnGUI()
@@ -35,37 +37,92 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 textStyle = new GUIStyle(GUI.skin.label)
                 {
-                    fontSize = 22,
+                    fontSize = 16,
                     normal = { textColor = Color.white },
                     wordWrap = true
                 };
             }
 
             GUI.Box(new Rect(0, 0, Screen.width, Screen.height), GUIContent.none);
-            GUI.Label(new Rect(24, 24, Screen.width - 48, Screen.height - 48), outputText ?? "Loading Dungeon Escape data...", textStyle);
+            var columnWidth = (Screen.width - 72) / 2f;
+            var panelHeight = 260f;
+            GUI.Box(new Rect(12, 12, columnWidth + 24, panelHeight), GUIContent.none);
+            GUI.Box(new Rect(36 + columnWidth, 12, columnWidth + 24, panelHeight), GUIContent.none);
+            GUI.Label(new Rect(24, 24, columnWidth, panelHeight - 24), leftText ?? "Loading Dungeon Escape data...", textStyle);
+            GUI.Label(new Rect(48 + columnWidth, 24, columnWidth, panelHeight - 24), rightText ?? "", textStyle);
         }
 
-        private static string BuildSummary(DungeonEscapeDataSet data)
+        private static void BuildSummary(DungeonEscapeDataSet data, out string left, out string right)
         {
-            var builder = new StringBuilder();
-            builder.AppendLine("Dungeon Escape Data");
-            builder.AppendLine();
-            builder.AppendLine("Item definitions: " + Count(data.ItemDefinitions));
-            builder.AppendLine("Custom items: " + Count(data.CustomItems));
-            builder.AppendLine("Skills: " + Count(data.Skills));
-            builder.AppendLine("Spells: " + Count(data.Spells));
-            builder.AppendLine("Monsters: " + Count(data.Monsters));
-            builder.AppendLine("Quests: " + Count(data.Quests));
-            builder.AppendLine("Dialog sets: " + Count(data.Dialogs));
-            builder.AppendLine("Class levels: " + Count(data.ClassLevels));
-            builder.AppendLine("Stat names: " + Count(data.StatNames));
-            builder.AppendLine();
+            var leftBuilder = new StringBuilder();
+            leftBuilder.AppendLine("Dungeon Escape Data");
+            leftBuilder.AppendLine();
+            leftBuilder.AppendLine("Item definitions: " + Count(data.ItemDefinitions));
+            leftBuilder.AppendLine("Custom items: " + Count(data.CustomItems));
+            leftBuilder.AppendLine("Skills: " + Count(data.Skills));
+            leftBuilder.AppendLine("Spells: " + Count(data.Spells));
+            leftBuilder.AppendLine("Monsters: " + Count(data.Monsters));
+            leftBuilder.AppendLine("Quests: " + Count(data.Quests));
+            leftBuilder.AppendLine("Dialog sets: " + Count(data.Dialogs));
+            leftBuilder.AppendLine("Class levels: " + Count(data.ClassLevels));
+            leftBuilder.AppendLine("Stat names: " + Count(data.StatNames));
 
-            AppendSamples(builder, "Items", data.CustomItems == null ? null : data.CustomItems.Select(item => item.Name).Take(5));
-            AppendSamples(builder, "Quests", data.Quests == null ? null : data.Quests.Select(quest => quest.Name).Take(5));
-            AppendSamples(builder, "Monsters", data.Monsters == null ? null : data.Monsters.Select(monster => monster.Name).Take(5));
+            var rightBuilder = new StringBuilder();
+            AppendMap(rightBuilder, data.TestMap);
 
-            return builder.ToString();
+            left = leftBuilder.ToString();
+            right = rightBuilder.ToString();
+        }
+
+        private static void AppendMap(StringBuilder builder, TiledMapInfo map)
+        {
+            builder.AppendLine();
+            builder.AppendLine("Test map:");
+            if (map == null)
+            {
+                builder.AppendLine("  none");
+                return;
+            }
+
+            builder.AppendLine("  class: " + map.Class);
+            builder.AppendLine("  size: " + map.Width + "x" + map.Height + " tiles");
+            builder.AppendLine("  tile size: " + map.TileWidth + "x" + map.TileHeight);
+            builder.AppendLine("  tilesets: " + Count(map.Tilesets));
+            builder.AppendLine("  layers: " + Count(map.Layers));
+            builder.AppendLine("  visible layers: " + (map.Layers == null ? 0 : map.Layers.Count(layer => layer.Visible)));
+            builder.AppendLine("  object groups: " + Count(map.ObjectGroups));
+            builder.AppendLine("  objects: " + (map.ObjectGroups == null ? 0 : map.ObjectGroups.Sum(group => group.ObjectCount)));
+            AppendSamples(builder, "Visible map layers", map.Layers == null ? null : map.Layers.Where(layer => layer.Visible).Select(layer => layer.Name).Take(8));
+            AppendSamples(builder, "Object groups", map.ObjectGroups == null ? null : map.ObjectGroups.Select(group => group.Name + " (" + group.ObjectCount + ")").Take(8));
+            AppendTilesets(builder, map);
+        }
+
+        private static void AppendTilesets(StringBuilder builder, TiledMapInfo map)
+        {
+            builder.AppendLine("Tilesets:");
+            if (map.Tilesets == null || map.Tilesets.Count == 0)
+            {
+                builder.AppendLine("  none");
+                return;
+            }
+
+            foreach (var tileset in map.Tilesets.Take(8))
+            {
+                var name = string.IsNullOrEmpty(tileset.Source) ? tileset.Name : tileset.Source;
+                var status = tileset.TilesetFound ? "tsx found" : "tsx missing";
+                var image = tileset.ImageFound ? "image found" : "image missing";
+                if (string.IsNullOrEmpty(tileset.Source))
+                {
+                    image = "embedded image";
+                }
+
+                builder.AppendLine("  " + name);
+                builder.AppendLine("    " + status + ", " + image);
+                if (!string.IsNullOrEmpty(tileset.UnityImagePath))
+                {
+                    builder.AppendLine("    " + tileset.UnityImagePath);
+                }
+            }
         }
 
         private static void AppendSamples(StringBuilder builder, string label, System.Collections.Generic.IEnumerable<string> values)

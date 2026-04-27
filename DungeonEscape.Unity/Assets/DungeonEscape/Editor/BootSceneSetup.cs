@@ -39,8 +39,10 @@ namespace Redpoint.DungeonEscape.UnityEditor
             AssignTextAsset(bootstrap, "classLevelsJson", "Assets/DungeonEscape/Data/classlevels.json");
             AssignTextAsset(bootstrap, "namesJson", "Assets/DungeonEscape/Data/names.json");
             AssignTextAsset(bootstrap, "statNamesJson", "Assets/DungeonEscape/Data/statnames.json");
+            AssignString(bootstrap, "testMapAssetPath", "Assets/DungeonEscape/Maps/overworld.tmx");
 
             CreateDebugView(bootstrap);
+            CreateMapPreview();
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.Refresh();
@@ -53,6 +55,15 @@ namespace Redpoint.DungeonEscape.UnityEditor
             var debugView = debugObject.AddComponent<DungeonEscapeDataDebugView>();
             var serializedObject = new SerializedObject(debugView);
             serializedObject.FindProperty("bootstrap").objectReferenceValue = bootstrap;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void CreateMapPreview()
+        {
+            var previewObject = new GameObject("TiledMapPreview");
+            var renderer = previewObject.AddComponent<TiledMapPreviewRenderer>();
+            var serializedObject = new SerializedObject(renderer);
+            serializedObject.FindProperty("bootstrap").objectReferenceValue = UnityEngine.Object.FindObjectOfType<DungeonEscapeBootstrap>();
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 
@@ -78,6 +89,13 @@ namespace Redpoint.DungeonEscape.UnityEditor
 
             var serializedObject = new SerializedObject(bootstrap);
             serializedObject.FindProperty(fieldName).objectReferenceValue = textAsset;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void AssignString(DungeonEscapeBootstrap bootstrap, string fieldName, string value)
+        {
+            var serializedObject = new SerializedObject(bootstrap);
+            serializedObject.FindProperty(fieldName).stringValue = value;
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
     }

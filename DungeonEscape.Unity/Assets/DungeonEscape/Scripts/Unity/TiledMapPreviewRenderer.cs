@@ -181,11 +181,16 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             var tilesets = GetValidatedTilesets();
-            var spriteSets = LoadSpriteSets(tilesets, tileWidth, tileHeight);
+            var spriteSets = TiledTilesetSprites.LoadSpriteSets(tilesets, tileWidth, tileHeight);
             var renderedTileCount = 0;
             var layerOrder = 0;
 
-            blockedTiles = BuildBlockedTiles(map);
+            blockedTiles = TiledMapCollision.BuildBlockedTiles(
+                map,
+                bootstrap == null || bootstrap.Data == null ? null : bootstrap.Data.TestMap,
+                mapWidth,
+                mapHeight,
+                fallbackBlockingLayerNames);
             ClearPreview();
 
             foreach (var layer in layers)
@@ -209,7 +214,7 @@ namespace Redpoint.DungeonEscape.Unity
                         }
 
                         Sprite sprite;
-                        if (!TryGetSprite(gid, spriteSets, out sprite))
+                        if (!TiledTilesetSprites.TryGetSprite(gid, spriteSets, out sprite))
                         {
                             continue;
                         }
@@ -233,7 +238,7 @@ namespace Redpoint.DungeonEscape.Unity
             Debug.Log("Rendered TMX preview at " + startColumn + "," + startRow + " with " + layers.Count + " visible layers, " + spriteSets.Count + " tilesets, and " + renderedTileCount + " tiles.");
         }
 
-        private void RenderObjectSprites(IList<TilesetSpriteSet> spriteSets, int sortingOrder)
+        private void RenderObjectSprites(IList<TiledTilesetSpriteSet> spriteSets, int sortingOrder)
         {
             if (bootstrap == null || bootstrap.Data == null || bootstrap.Data.TestMap == null)
             {
@@ -250,7 +255,7 @@ namespace Redpoint.DungeonEscape.Unity
                     }
 
                     Sprite sprite;
-                    if (!TryGetSprite(mapObject.Gid, spriteSets, out sprite))
+                    if (!TiledTilesetSprites.TryGetSprite(mapObject.Gid, spriteSets, out sprite))
                     {
                         continue;
                     }
@@ -348,114 +353,6 @@ namespace Redpoint.DungeonEscape.Unity
             return GetString(layer, "visible") != "0";
         }
 
-        private HashSet<int> BuildBlockedTiles(XElement map)
-        {
-            var blocked = new HashSet<int>();
-            foreach (var layer in map.Elements("layer"))
-            {
-                if (!IsBlockingLayer(layer))
-                {
-                    continue;
-                }
-
-                var gids = ParseCsvTileData(layer);
-                for (var i = 0; i < gids.Count; i++)
-                {
-                    if (gids[i] != 0)
-                    {
-                        blocked.Add(i);
-                    }
-                }
-            }
-
-            AddBlockedObjects(blocked);
-            return blocked;
-        }
-
-        private void AddBlockedObjects(HashSet<int> blocked)
-        {
-            if (bootstrap == null || bootstrap.Data == null || bootstrap.Data.TestMap == null)
-            {
-                return;
-            }
-
-            foreach (var group in bootstrap.Data.TestMap.ObjectGroups)
-            {
-                foreach (var mapObject in group.Objects)
-                {
-                    string collideable;
-                    if (mapObject.Properties == null ||
-                        !mapObject.Properties.TryGetValue("Collideable", out collideable) ||
-                        !IsTrue(collideable))
-                    {
-                        continue;
-                    }
-
-                    var column = Mathf.FloorToInt(mapObject.X / bootstrap.Data.TestMap.TileWidth);
-                    var row = Mathf.FloorToInt((mapObject.Y - mapObject.Height) / bootstrap.Data.TestMap.TileHeight);
-
-                    if (column < 0 || row < 0 || column >= mapWidth || row >= mapHeight)
-                    {
-                        continue;
-                    }
-
-                    blocked.Add(row * mapWidth + column);
-                }
-            }
-        }
-
-        private bool IsBlockingLayer(XElement layer)
-        {
-            var properties = ReadProperties(layer);
-            string canMove;
-            if (properties.TryGetValue("CanMove", out canMove))
-            {
-                return IsFalse(canMove);
-            }
-
-            string collideable;
-            if (properties.TryGetValue("Collideable", out collideable))
-            {
-                return IsTrue(collideable);
-            }
-
-            return fallbackBlockingLayerNames.Contains(GetString(layer, "name"));
-        }
-
-        private static Dictionary<string, string> ReadProperties(XElement element)
-        {
-            var result = new Dictionary<string, string>();
-            var properties = element.Element("properties");
-            if (properties == null)
-            {
-                return result;
-            }
-
-            foreach (var property in properties.Elements("property"))
-            {
-                var name = GetString(property, "name");
-                if (string.IsNullOrEmpty(name))
-                {
-                    continue;
-                }
-
-                var value = GetString(property, "value");
-                result[name] = value ?? property.Value;
-            }
-
-            return result;
-        }
-
-        private static bool IsFalse(string value)
-        {
-            return string.Equals(value, "false", StringComparison.OrdinalIgnoreCase) || value == "0";
-        }
-
-        private static bool IsTrue(string value)
-        {
-            return string.Equals(value, "true", StringComparison.OrdinalIgnoreCase) || value == "1";
-        }
-
         private List<TiledTilesetInfo> GetValidatedTilesets()
         {
             if (bootstrap == null)
@@ -486,94 +383,6 @@ namespace Redpoint.DungeonEscape.Unity
                     }
                 }
             };
-        }
-
-        private static List<TilesetSpriteSet> LoadSpriteSets(IEnumerable<TiledTilesetInfo> tilesets, int fallbackTileWidth, int fallbackTileHeight)
-        {
-            var spriteSets = new List<TilesetSpriteSet>();
-
-            foreach (var tileset in tilesets)
-            {
-                if (string.IsNullOrEmpty(tileset.UnityImagePath))
-                {
-                    continue;
-                }
-
-                var texturePath = ToFullAssetPath(tileset.UnityImagePath);
-                if (!File.Exists(texturePath))
-                {
-                    continue;
-                }
-
-                var tileWidth = tileset.Document.TileWidth == 0 ? fallbackTileWidth : tileset.Document.TileWidth;
-                var tileHeight = tileset.Document.TileHeight == 0 ? fallbackTileHeight : tileset.Document.TileHeight;
-                var texture = LoadTexture(texturePath);
-                spriteSets.Add(new TilesetSpriteSet
-                {
-                    FirstGid = tileset.FirstGid,
-                    Sprites = SliceTexture(texture, tileWidth, tileHeight)
-                });
-            }
-
-            return spriteSets.OrderBy(set => set.FirstGid).ToList();
-        }
-
-        private static bool TryGetSprite(int gid, IList<TilesetSpriteSet> spriteSets, out Sprite sprite)
-        {
-            sprite = null;
-
-            TilesetSpriteSet selected = null;
-            foreach (var spriteSet in spriteSets)
-            {
-                if (spriteSet.FirstGid <= gid)
-                {
-                    selected = spriteSet;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            if (selected == null)
-            {
-                return false;
-            }
-
-            return selected.Sprites.TryGetValue(gid - selected.FirstGid, out sprite);
-        }
-
-        private static Texture2D LoadTexture(string path)
-        {
-            var bytes = File.ReadAllBytes(path);
-            var texture = new Texture2D(2, 2);
-            texture.filterMode = FilterMode.Point;
-            texture.LoadImage(bytes);
-            return texture;
-        }
-
-        private static Dictionary<int, Sprite> SliceTexture(Texture2D texture, int tileWidth, int tileHeight)
-        {
-            var sprites = new Dictionary<int, Sprite>();
-            var columns = texture.width / tileWidth;
-            var rows = texture.height / tileHeight;
-
-            for (var row = 0; row < rows; row++)
-            {
-                for (var column = 0; column < columns; column++)
-                {
-                    var tileId = row * columns + column;
-                    var rect = new Rect(
-                        column * tileWidth,
-                        texture.height - ((row + 1) * tileHeight),
-                        tileWidth,
-                        tileHeight);
-
-                    sprites[tileId] = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f), tileWidth);
-                }
-            }
-
-            return sprites;
         }
 
         private static List<int> ParseCsvTileData(XElement layer)
@@ -621,10 +430,5 @@ namespace Redpoint.DungeonEscape.Unity
             return int.TryParse(value, out result) ? result : 0;
         }
 
-        private sealed class TilesetSpriteSet
-        {
-            public int FirstGid { get; set; }
-            public Dictionary<int, Sprite> Sprites { get; set; }
-        }
     }
 }

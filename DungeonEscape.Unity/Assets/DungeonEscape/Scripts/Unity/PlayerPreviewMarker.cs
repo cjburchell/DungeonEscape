@@ -1,5 +1,6 @@
 using System.IO;
 using System.Collections.Generic;
+using System.Collections;
 using Redpoint.DungeonEscape.State;
 using UnityEngine;
 
@@ -15,7 +16,10 @@ namespace Redpoint.DungeonEscape.Unity
 
         private WorldPosition position;
         private SpriteRenderer spriteRenderer;
-        private Dictionary<Direction, Sprite> directionSprites;
+        private Dictionary<Direction, Sprite[]> directionSprites;
+        private Direction currentDirection = Direction.Down;
+        private Coroutine stepAnimation;
+        private bool isMoving;
 
         public WorldPosition Position
         {
@@ -41,7 +45,7 @@ namespace Redpoint.DungeonEscape.Unity
         {
             spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
             directionSprites = LoadHeroSprites();
-            spriteRenderer.sprite = directionSprites[Direction.Down];
+            spriteRenderer.sprite = directionSprites[currentDirection][0];
             spriteRenderer.sortingOrder = 1000;
         }
 
@@ -62,6 +66,11 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Update()
         {
+            if (isMoving)
+            {
+                return;
+            }
+
             var deltaX = 0;
             var deltaY = 0;
 
@@ -88,70 +97,128 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            UpdateFacing(deltaX, deltaY);
+            var direction = GetDirection(deltaX, deltaY);
 
             var nextX = (int)Position.X + deltaX;
             var nextY = (int)Position.Y + deltaY;
             if (mapPreview != null && !mapPreview.CanMoveTo(nextX, nextY))
             {
+                SetFacing(direction);
                 return;
             }
 
-            Position = new WorldPosition(nextX, nextY);
-            if (mapPreview != null)
-            {
-                mapPreview.EnsureVisible(Position);
-                UpdateVisualPosition();
-            }
+            SetFacing(direction);
+            StartCoroutine(MoveOneTile(direction, nextX, nextY));
         }
 
         private void UpdateVisualPosition()
         {
+            transform.position = GetVisualPosition(position);
+        }
+
+        private Vector3 GetVisualPosition(WorldPosition value)
+        {
             if (mapPreview == null)
             {
-                transform.position = new Vector3(position.X, -position.Y, -0.2f);
-                return;
+                return new Vector3(value.X, -value.Y, -0.2f);
             }
 
-            transform.position = new Vector3(
-                position.X - mapPreview.StartColumn,
-                -(position.Y - mapPreview.StartRow),
+            return new Vector3(
+                value.X - mapPreview.StartColumn,
+                -(value.Y - mapPreview.StartRow),
                 -0.2f);
         }
 
-        private void UpdateFacing(int deltaX, int deltaY)
+        private IEnumerator MoveOneTile(Direction direction, int nextX, int nextY)
+        {
+            isMoving = true;
+            PlayStepAnimation(direction);
+
+            var nextPosition = new WorldPosition(nextX, nextY);
+            var start = transform.position;
+            var end = GetVisualPosition(nextPosition);
+            const float duration = 0.15f;
+            var elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                var progress = Mathf.Clamp01(elapsed / duration);
+                transform.position = Vector3.Lerp(start, end, progress);
+                yield return null;
+            }
+
+            position = nextPosition;
+            if (mapPreview != null)
+            {
+                mapPreview.EnsureVisible(position);
+            }
+
+            UpdateVisualPosition();
+            isMoving = false;
+        }
+
+        private Direction GetDirection(int deltaX, int deltaY)
         {
             if (deltaX < 0)
             {
-                spriteRenderer.sprite = directionSprites[Direction.Left];
+                return Direction.Left;
             }
-            else if (deltaX > 0)
+
+            if (deltaX > 0)
             {
-                spriteRenderer.sprite = directionSprites[Direction.Right];
+                return Direction.Right;
             }
-            else if (deltaY < 0)
+
+            if (deltaY < 0)
             {
-                spriteRenderer.sprite = directionSprites[Direction.Up];
+                return Direction.Up;
             }
-            else if (deltaY > 0)
-            {
-                spriteRenderer.sprite = directionSprites[Direction.Down];
-            }
+
+            return Direction.Down;
         }
 
-        private Dictionary<Direction, Sprite> LoadHeroSprites()
+        private void SetFacing(Direction direction)
+        {
+            currentDirection = direction;
+            spriteRenderer.sprite = directionSprites[currentDirection][0];
+        }
+
+        private void PlayStepAnimation(Direction direction)
+        {
+            if (stepAnimation != null)
+            {
+                StopCoroutine(stepAnimation);
+            }
+
+            stepAnimation = StartCoroutine(AnimateStep(direction));
+        }
+
+        private IEnumerator AnimateStep(Direction direction)
+        {
+            spriteRenderer.sprite = directionSprites[direction][1];
+            yield return new WaitForSeconds(0.08f);
+            spriteRenderer.sprite = directionSprites[direction][0];
+            yield return new WaitForSeconds(0.08f);
+            spriteRenderer.sprite = directionSprites[direction][1];
+            yield return new WaitForSeconds(0.08f);
+            spriteRenderer.sprite = directionSprites[direction][0];
+            stepAnimation = null;
+        }
+
+        private Dictionary<Direction, Sprite[]> LoadHeroSprites()
         {
             var path = ToFullAssetPath(heroTextureAssetPath);
             if (!File.Exists(path))
             {
                 Debug.LogError("Hero texture not found: " + heroTextureAssetPath);
                 var fallback = CreateFallbackSprite();
-                return new Dictionary<Direction, Sprite>
+                return new Dictionary<Direction, Sprite[]>
                 {
-                    { Direction.Up, fallback },
-                    { Direction.Right, fallback },
-                    { Direction.Down, fallback },
-                    { Direction.Left, fallback }
+                    { Direction.Up, new[] { fallback, fallback } },
+                    { Direction.Right, new[] { fallback, fallback } },
+                    { Direction.Down, new[] { fallback, fallback } },
+                    { Direction.Left, new[] { fallback, fallback } }
                 };
             }
 
@@ -162,12 +229,12 @@ namespace Redpoint.DungeonEscape.Unity
 
             const int heroWidth = 32;
             const int heroHeight = 48;
-            return new Dictionary<Direction, Sprite>
+            return new Dictionary<Direction, Sprite[]>
             {
-                { Direction.Up, CreateHeroSprite(texture, 0, heroWidth, heroHeight) },
-                { Direction.Right, CreateHeroSprite(texture, 2, heroWidth, heroHeight) },
-                { Direction.Down, CreateHeroSprite(texture, 4, heroWidth, heroHeight) },
-                { Direction.Left, CreateHeroSprite(texture, 6, heroWidth, heroHeight) }
+                { Direction.Up, new[] { CreateHeroSprite(texture, 0, heroWidth, heroHeight), CreateHeroSprite(texture, 1, heroWidth, heroHeight) } },
+                { Direction.Right, new[] { CreateHeroSprite(texture, 2, heroWidth, heroHeight), CreateHeroSprite(texture, 3, heroWidth, heroHeight) } },
+                { Direction.Down, new[] { CreateHeroSprite(texture, 4, heroWidth, heroHeight), CreateHeroSprite(texture, 5, heroWidth, heroHeight) } },
+                { Direction.Left, new[] { CreateHeroSprite(texture, 6, heroWidth, heroHeight), CreateHeroSprite(texture, 7, heroWidth, heroHeight) } }
             };
         }
 

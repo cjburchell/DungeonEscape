@@ -8,6 +8,8 @@ namespace Redpoint.DungeonEscape.Unity
 {
     public static class TiledTilesetSprites
     {
+        private static readonly Dictionary<string, Dictionary<int, Sprite>> SpriteCache = new Dictionary<string, Dictionary<int, Sprite>>();
+
         public static List<TiledTilesetSpriteSet> LoadSpriteSets(
             IEnumerable<TiledTilesetInfo> tilesets,
             int fallbackTileWidth,
@@ -30,22 +32,42 @@ namespace Redpoint.DungeonEscape.Unity
 
                 var tileWidth = tileset.Document.TileWidth == 0 ? fallbackTileWidth : tileset.Document.TileWidth;
                 var tileHeight = tileset.Document.TileHeight == 0 ? fallbackTileHeight : tileset.Document.TileHeight;
-                var texture = LoadTexture(texturePath);
-                spriteSets.Add(new TiledTilesetSpriteSet
+                var cacheKey = tileset.UnityImagePath + "|" +
+                               tileWidth + "|" +
+                               tileHeight + "|" +
+                               tileset.Document.Columns + "|" +
+                               tileset.Document.TileCount + "|" +
+                               tileset.Document.Spacing + "|" +
+                               tileset.Document.Margin;
+
+                Dictionary<int, Sprite> sprites;
+                if (!SpriteCache.TryGetValue(cacheKey, out sprites))
                 {
-                    FirstGid = tileset.FirstGid,
-                    Sprites = SliceTexture(
+                    var texture = LoadTexture(texturePath);
+                    sprites = SliceTexture(
                         texture,
                         tileWidth,
                         tileHeight,
                         tileset.Document.Columns,
                         tileset.Document.TileCount,
                         tileset.Document.Spacing,
-                        tileset.Document.Margin)
+                        tileset.Document.Margin);
+                    SpriteCache[cacheKey] = sprites;
+                }
+
+                spriteSets.Add(new TiledTilesetSpriteSet
+                {
+                    FirstGid = tileset.FirstGid,
+                    Sprites = sprites
                 });
             }
 
             return spriteSets.OrderBy(set => set.FirstGid).ToList();
+        }
+
+        public static void ClearCache()
+        {
+            SpriteCache.Clear();
         }
 
         public static bool TryGetSprite(int gid, IList<TiledTilesetSpriteSet> spriteSets, out Sprite sprite)

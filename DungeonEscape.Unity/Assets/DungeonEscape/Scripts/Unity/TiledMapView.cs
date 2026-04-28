@@ -65,6 +65,17 @@ namespace Redpoint.DungeonEscape.Unity
         {
             if (!keyboardPanningEnabled)
             {
+                if (Input.GetKeyDown(KeyCode.F5))
+                {
+                    ReloadMapAssets();
+                }
+
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.F5))
+            {
+                ReloadMapAssets();
                 return;
             }
 
@@ -131,6 +142,15 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return !blockedTiles.Contains(row * mapWidth + column);
+        }
+
+        public void ReloadMapAssets()
+        {
+            TiledMapLoader.ClearCache();
+            TiledTilesetSprites.ClearCache();
+            mapLoaded = false;
+            currentMap = null;
+            RenderPreview();
         }
 
         public void LoadMap(string mapIdOrAssetPath, string spawnId)
@@ -277,11 +297,16 @@ namespace Redpoint.DungeonEscape.Unity
             var tilesets = GetValidatedTilesets();
             var spriteSets = TiledTilesetSprites.LoadSpriteSets(tilesets, loadedMap.TileWidth, loadedMap.TileHeight);
 
-            blockedTiles = TiledMapCollision.BuildBlockedTiles(
-                loadedMap.Root,
-                loadedMap.Info,
-                mapWidth,
-                mapHeight);
+            if (loadedMap.BlockedTiles == null)
+            {
+                loadedMap.BlockedTiles = TiledMapCollision.BuildBlockedTiles(
+                    loadedMap.Root,
+                    loadedMap.Info,
+                    mapWidth,
+                    mapHeight);
+            }
+
+            blockedTiles = loadedMap.BlockedTiles;
             ClearPreview();
 
             int spritesSortingOrder;

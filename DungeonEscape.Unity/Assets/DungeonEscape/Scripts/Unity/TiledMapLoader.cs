@@ -10,9 +10,18 @@ namespace Redpoint.DungeonEscape.Unity
 {
     public static class TiledMapLoader
     {
+        private static readonly Dictionary<string, TiledLoadedMap> LoadedMaps = new Dictionary<string, TiledLoadedMap>();
+        private static readonly Dictionary<string, TiledTilesetDocumentInfo> TilesetDocuments = new Dictionary<string, TiledTilesetDocumentInfo>();
+
         public static TiledLoadedMap Load(string mapAssetPath)
         {
             mapAssetPath = NormalizeMapAssetPath(mapAssetPath);
+            TiledLoadedMap cachedMap;
+            if (LoadedMaps.TryGetValue(mapAssetPath, out cachedMap))
+            {
+                return cachedMap;
+            }
+
             var mapPath = ToFullAssetPath(mapAssetPath);
 
             if (!File.Exists(mapPath))
@@ -46,7 +55,7 @@ namespace Redpoint.DungeonEscape.Unity
             var info = TiledMapInfo.Parse(text);
             ValidateTilesets(info);
 
-            return new TiledLoadedMap
+            var loadedMap = new TiledLoadedMap
             {
                 Root = map,
                 Info = info,
@@ -58,6 +67,15 @@ namespace Redpoint.DungeonEscape.Unity
                 TileWidth = GetInt(map, "tilewidth"),
                 TileHeight = GetInt(map, "tileheight")
             };
+
+            LoadedMaps[mapAssetPath] = loadedMap;
+            return loadedMap;
+        }
+
+        public static void ClearCache()
+        {
+            LoadedMaps.Clear();
+            TilesetDocuments.Clear();
         }
 
         public static string NormalizeMapAssetPath(string mapIdOrAssetPath)
@@ -113,7 +131,14 @@ namespace Redpoint.DungeonEscape.Unity
                     continue;
                 }
 
-                tileset.Document = TiledTilesetDocumentInfo.Parse(File.ReadAllText(tilesetFullPath));
+                TiledTilesetDocumentInfo document;
+                if (!TilesetDocuments.TryGetValue(tileset.UnityTilesetPath, out document))
+                {
+                    document = TiledTilesetDocumentInfo.Parse(File.ReadAllText(tilesetFullPath));
+                    TilesetDocuments[tileset.UnityTilesetPath] = document;
+                }
+
+                tileset.Document = document;
                 tileset.UnityImagePath = ResolveTilesetImageAssetPath(tileset.Document.ImageSource);
                 tileset.ImageFound = File.Exists(ToFullAssetPath(tileset.UnityImagePath));
                 if (!tileset.ImageFound)
@@ -190,6 +215,7 @@ namespace Redpoint.DungeonEscape.Unity
         public TiledMapInfo Info { get; set; }
         public List<XElement> VisibleLayers { get; set; }
         public List<XElement> RenderableElements { get; set; }
+        public HashSet<int> BlockedTiles { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
         public int TileWidth { get; set; }

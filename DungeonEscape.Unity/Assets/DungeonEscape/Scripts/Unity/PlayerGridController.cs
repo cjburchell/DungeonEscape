@@ -20,6 +20,10 @@ namespace Redpoint.DungeonEscape.Unity
         private Dictionary<Direction, Sprite[]> directionSprites;
         private Direction currentDirection = Direction.Down;
         private Coroutine stepAnimation;
+        private DungeonEscapeMessageBox messageBox;
+        private bool hasPendingTurnMove;
+        private Direction pendingTurnMoveDirection;
+        private float pendingTurnMoveDelay;
         private bool isMoving;
 
         public WorldPosition Position
@@ -61,6 +65,12 @@ namespace Redpoint.DungeonEscape.Unity
                 mapView = FindObjectOfType<TiledMapView>();
             }
 
+            messageBox = FindObjectOfType<DungeonEscapeMessageBox>();
+            if (messageBox == null)
+            {
+                messageBox = new GameObject("DungeonEscapeMessageBox").AddComponent<DungeonEscapeMessageBox>();
+            }
+
             Position = new WorldPosition(30, 25);
             if (mapView != null)
             {
@@ -73,6 +83,16 @@ namespace Redpoint.DungeonEscape.Unity
         {
             if (isMoving)
             {
+                return;
+            }
+
+            if (messageBox != null && messageBox.IsVisible)
+            {
+                if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape))
+                {
+                    messageBox.Hide();
+                }
+
                 return;
             }
 
@@ -104,10 +124,36 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (deltaX == 0 && deltaY == 0)
             {
+                hasPendingTurnMove = false;
                 return;
             }
 
             var direction = GetDirection(deltaX, deltaY);
+            if (direction != currentDirection)
+            {
+                SetFacing(direction);
+                hasPendingTurnMove = true;
+                pendingTurnMoveDirection = direction;
+                pendingTurnMoveDelay = 0.18f;
+                return;
+            }
+
+            if (hasPendingTurnMove)
+            {
+                if (direction != pendingTurnMoveDirection)
+                {
+                    hasPendingTurnMove = false;
+                    return;
+                }
+
+                pendingTurnMoveDelay -= Time.deltaTime;
+                if (pendingTurnMoveDelay > 0f)
+                {
+                    return;
+                }
+
+                hasPendingTurnMove = false;
+            }
 
             var nextX = (int)Position.X + deltaX;
             var nextY = (int)Position.Y + deltaY;
@@ -230,6 +276,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             Debug.Log(BuildInteractionMessage(mapObject, target));
+            ShowInteractionMessage(mapObject);
         }
 
         private WorldPosition GetFacingPosition()
@@ -254,6 +301,46 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return new WorldPosition(x, y);
+        }
+
+        private void ShowInteractionMessage(TiledObjectInfo mapObject)
+        {
+            if (messageBox == null)
+            {
+                return;
+            }
+
+            string text;
+            if (TryGetProperty(mapObject, "Text", out text) && !string.IsNullOrEmpty(text))
+            {
+                messageBox.Show(mapObject.Name, text);
+                return;
+            }
+
+            string dialogId;
+            if (TryGetProperty(mapObject, "Dialog", out dialogId) && !string.IsNullOrEmpty(dialogId))
+            {
+                messageBox.Show(mapObject.Name, "Dialog: " + dialogId);
+                return;
+            }
+
+            if (mapObject.Class == "Chest")
+            {
+                string itemId;
+                var itemText = TryGetProperty(mapObject, "ItemId", out itemId) && !string.IsNullOrEmpty(itemId)
+                    ? "Chest contains: " + itemId
+                    : "Chest";
+                messageBox.Show(mapObject.Name, itemText);
+                return;
+            }
+
+            messageBox.Show(mapObject.Name, string.IsNullOrEmpty(mapObject.Class) ? "Nothing happens." : mapObject.Class);
+        }
+
+        private static bool TryGetProperty(TiledObjectInfo mapObject, string propertyName, out string value)
+        {
+            value = null;
+            return mapObject.Properties != null && mapObject.Properties.TryGetValue(propertyName, out value);
         }
 
         private static string BuildInteractionMessage(TiledObjectInfo mapObject, WorldPosition target)

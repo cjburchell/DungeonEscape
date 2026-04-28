@@ -217,7 +217,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private static void EnsureCamera()
         {
-            if (Camera.main != null || FindFirstObjectByType<Camera>() != null)
+            if (Camera.main != null || FindAnyObjectByType<Camera>() != null)
             {
                 return;
             }
@@ -233,7 +233,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private static void EnsureGameMenu()
         {
-            if (FindFirstObjectByType<DungeonEscapeGameMenu>() != null)
+            if (FindAnyObjectByType<DungeonEscapeGameMenu>() != null)
             {
                 return;
             }

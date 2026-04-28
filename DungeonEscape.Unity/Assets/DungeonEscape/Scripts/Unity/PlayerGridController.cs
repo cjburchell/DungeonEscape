@@ -69,12 +69,12 @@ namespace Redpoint.DungeonEscape.Unity
         {
             if (mapView == null)
             {
-                mapView = FindFirstObjectByType<TiledMapView>();
+                mapView = FindAnyObjectByType<TiledMapView>();
             }
 
             gameState = DungeonEscapeGameState.GetOrCreate();
             gameState.SaveLoaded += OnSaveLoaded;
-            messageBox = FindFirstObjectByType<DungeonEscapeMessageBox>();
+            messageBox = FindAnyObjectByType<DungeonEscapeMessageBox>();
             if (messageBox == null)
             {
                 messageBox = new GameObject("DungeonEscapeMessageBox").AddComponent<DungeonEscapeMessageBox>();

@@ -42,7 +42,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         public static DungeonEscapeUiSettings GetOrCreate()
         {
-            var settings = FindFirstObjectByType<DungeonEscapeUiSettings>();
+            var settings = FindAnyObjectByType<DungeonEscapeUiSettings>();
             if (settings != null)
             {
                 if (settings.LoadedSettings == null)

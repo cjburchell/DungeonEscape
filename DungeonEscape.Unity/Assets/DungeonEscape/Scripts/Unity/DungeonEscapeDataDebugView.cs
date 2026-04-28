@@ -14,9 +14,9 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Start()
         {
-            playerMarker = FindFirstObjectByType<PlayerGridController>();
-            mapView = FindFirstObjectByType<TiledMapView>();
-            gameState = FindFirstObjectByType<DungeonEscapeGameState>();
+            playerMarker = FindAnyObjectByType<PlayerGridController>();
+            mapView = FindAnyObjectByType<TiledMapView>();
+            gameState = FindAnyObjectByType<DungeonEscapeGameState>();
         }
 
         private void OnGUI()
@@ -60,17 +60,17 @@ namespace Redpoint.DungeonEscape.Unity
         {
             if (playerMarker == null)
             {
-                playerMarker = FindFirstObjectByType<PlayerGridController>();
+                playerMarker = FindAnyObjectByType<PlayerGridController>();
             }
 
             if (mapView == null)
             {
-                mapView = FindFirstObjectByType<TiledMapView>();
+                mapView = FindAnyObjectByType<TiledMapView>();
             }
 
             if (gameState == null)
             {
-                gameState = FindFirstObjectByType<DungeonEscapeGameState>();
+                gameState = FindAnyObjectByType<DungeonEscapeGameState>();
             }
 
             var builder = new StringBuilder();

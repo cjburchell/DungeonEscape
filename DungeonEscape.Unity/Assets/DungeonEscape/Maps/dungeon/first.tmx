@@ -10,6 +10,10 @@
  <tileset firstgid="1182" source="../../Tilesets/hero.tsx"/>
  <tileset firstgid="1342" source="../../Tilesets/tiles_small.tsx"/>
  <layer id="2" name="water" width="35" height="35">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+   <property name="Water" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -127,6 +131,9 @@
 </data>
  </layer>
  <layer id="7" name="wall" width="35" height="35">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 806,806,806,806,806,806,970,716,716,716,716,716,971,970,716,716,716,716,971,970,716,716,716,716,716,971,970,716,716,716,716,971,806,806,806,
 806,806,806,806,806,806,821,745,746,746,746,746,819,821,745,746,746,746,819,821,745,746,746,746,746,819,821,745,746,746,746,819,806,806,806,
@@ -166,6 +173,9 @@
 </data>
  </layer>
  <layer id="8" name="wall2" width="35" height="35">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -430,6 +440,9 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="sprites">
+  <properties>
+   <property name="RenderRole" value="Sprites"/>
+  </properties>
   <object id="3" name="#Random#" class="NpcPartyMember" gid="1242" x="896" y="160" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>

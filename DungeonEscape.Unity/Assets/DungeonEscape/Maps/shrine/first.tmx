@@ -11,6 +11,10 @@
  <tileset firstgid="1662" source="../../Tilesets/tiles_small.tsx"/>
  <tileset firstgid="1854" source="../../Tilesets/castle.tsx"/>
  <layer id="2" name="water" width="32" height="20">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+   <property name="Water" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -83,6 +87,9 @@
 </data>
  </layer>
  <layer id="3" name="wall" width="32" height="20">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,1560,1561,1530,1531,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,1590,1591,1560,1561,1530,1531,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -107,6 +114,9 @@
 </data>
  </layer>
  <layer id="2" name="wall2" width="32" height="20">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -222,6 +232,9 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="sprites">
+  <properties>
+   <property name="RenderRole" value="Sprites"/>
+  </properties>
   <object id="66" name="Burgiua" class="Npc" gid="120" x="256" y="320" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="true"/>

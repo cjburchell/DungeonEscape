@@ -13,6 +13,10 @@
  <tileset firstgid="2622" source="../../Tilesets/castle2.tsx"/>
  <tileset firstgid="3102" source="../../Tilesets/edge.tsx"/>
  <layer id="2" name="water" width="50" height="50">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+   <property name="Water" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1662,705,702,702,702,702,702,702,702,702,702,702,702,702,702,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,705,795,702,702,702,702,702,702,702,702,702,702,702,702,702,
@@ -175,6 +179,9 @@
 </data>
  </layer>
  <layer id="3" name="wall" width="50" height="50">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 2041,2040,2041,2040,2041,2040,2041,2040,2041,2040,2041,2040,2041,2040,2041,2040,2041,2040,2041,2040,2041,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 2100,2101,2100,2101,2100,2101,2100,2101,2100,2101,2100,2101,2100,2101,2100,2101,2100,2101,2100,2101,2071,1028,1029,1030,1031,0,0,0,0,0,0,0,0,0,0,0,0,1028,1029,1030,1031,0,0,0,0,0,0,0,0,0,
@@ -229,6 +236,9 @@
 </data>
  </layer>
  <layer id="2" name="wall2" width="50" height="50">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1030,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1030,0,0,0,0,0,0,0,0,0,0,
@@ -313,6 +323,9 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="sprites">
+  <properties>
+   <property name="RenderRole" value="Sprites"/>
+  </properties>
   <object id="91" name="Murchant" class="Npc" gid="112" x="1216" y="1024" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="false"/>

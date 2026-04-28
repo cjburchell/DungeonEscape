@@ -32,7 +32,6 @@ namespace Redpoint.DungeonEscape.Unity
         private int objectSortingOrder = 10;
         private bool mapLoaded;
         private TiledLoadedMap currentMap;
-        private readonly HashSet<string> fallbackBlockingLayerNames = new HashSet<string> { "wall", "water", "water2" };
         private HashSet<int> blockedTiles = new HashSet<int>();
         private Coroutine viewportScroll;
         private readonly TiledMapViewport viewport = new TiledMapViewport();
@@ -255,34 +254,28 @@ namespace Redpoint.DungeonEscape.Unity
                 loadedMap.Root,
                 loadedMap.Info,
                 mapWidth,
-                mapHeight,
-                fallbackBlockingLayerNames);
+                mapHeight);
             ClearPreview();
 
-            var renderedTileCount = TiledMapRenderer.RenderVisibleTileLayers(
+            int spritesSortingOrder;
+            var renderedSpriteCount = TiledMapRenderer.RenderVisibleLayers(
                 transform,
-                loadedMap.VisibleLayers,
+                loadedMap.RenderableElements,
                 spriteSets,
                 mapWidth,
                 mapHeight,
-                viewport.StartColumn,
-                viewport.StartRow,
-                columns,
-                rows);
-
-            objectSortingOrder = loadedMap.VisibleLayers.Count + 10;
-            TiledMapRenderer.RenderObjectSprites(
-                transform,
-                loadedMap.Info,
-                spriteSets,
+                loadedMap.TileWidth,
+                loadedMap.TileHeight,
                 viewport.StartColumn,
                 viewport.StartRow,
                 columns,
                 rows,
-                objectSortingOrder);
+                out spritesSortingOrder);
+
+            objectSortingOrder = spritesSortingOrder;
             PositionCamera(Math.Min(columns, mapWidth), rows);
             mapLoaded = true;
-            Debug.Log("Rendered TMX preview at " + viewport.StartColumn + "," + viewport.StartRow + " with " + loadedMap.VisibleLayers.Count + " visible layers, " + spriteSets.Count + " tilesets, and " + renderedTileCount + " tiles.");
+            Debug.Log("Rendered TMX preview at " + viewport.StartColumn + "," + viewport.StartRow + " with " + loadedMap.RenderableElements.Count + " renderable layers, " + spriteSets.Count + " tilesets, and " + renderedSpriteCount + " sprites.");
         }
 
         private void ClearPreview()

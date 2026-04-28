@@ -12,6 +12,10 @@
  <tileset firstgid="2142" source="../../Tilesets/castle.tsx"/>
  <tileset firstgid="2622" source="../../Tilesets/tiles_small.tsx"/>
  <layer id="2" name="water" width="35" height="35">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+   <property name="Water" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 2142,2142,2142,2142,2142,2142,2142,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 2142,2142,2142,2142,2142,2142,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -129,6 +133,9 @@
 </data>
  </layer>
  <layer id="3" name="wall" width="35" height="35">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -253,7 +260,11 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="5" name="sprites"/>
+ <objectgroup id="5" name="sprites">
+  <properties>
+   <property name="RenderRole" value="Sprites"/>
+  </properties>
+ </objectgroup>
  <objectgroup id="6" name="objects">
   <object id="1" name="spawn" class="Spawn" x="544" y="960" width="32" height="32"/>
   <object id="2" name="spawn3" class="Spawn" x="416" y="704" width="32" height="32"/>

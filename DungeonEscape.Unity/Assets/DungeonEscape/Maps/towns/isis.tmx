@@ -15,6 +15,10 @@
  <tileset firstgid="3262" source="../../Tilesets/tiles.tsx"/>
  <tileset firstgid="3358" source="../../Tilesets/tiles_small.tsx"/>
  <layer id="2" name="water" width="40" height="40">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+   <property name="Water" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -147,6 +151,9 @@
 </data>
  </layer>
  <layer id="3" name="wall" width="40" height="40">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,548,549,550,551,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,548,549,550,551,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,578,579,580,581,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,578,579,580,581,0,0,0,0,0,0,
@@ -191,6 +198,9 @@
 </data>
  </layer>
  <layer id="2" name="wall2" width="40" height="40">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -303,6 +313,9 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="sprites">
+  <properties>
+   <property name="RenderRole" value="Sprites"/>
+  </properties>
   <object id="27" name="Liamas" class="NpcStore" gid="112" x="384" y="1056" width="32" height="48">
    <properties>
     <property name="CanMove" type="bool" value="false"/>

@@ -13,15 +13,13 @@ namespace Redpoint.DungeonEscape.Unity
             XElement map,
             TiledMapInfo mapInfo,
             int mapWidth,
-            int mapHeight,
-            IEnumerable<string> fallbackBlockingLayerNames)
+            int mapHeight)
         {
             var blocked = new HashSet<int>();
-            var fallbackLayerNames = new HashSet<string>(fallbackBlockingLayerNames ?? Enumerable.Empty<string>());
 
             foreach (var layer in map.Elements("layer"))
             {
-                if (!IsBlockingLayer(layer, fallbackLayerNames))
+                if (!IsBlockingLayer(layer))
                 {
                     continue;
                 }
@@ -72,7 +70,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
         }
 
-        private static bool IsBlockingLayer(XElement layer, ICollection<string> fallbackBlockingLayerNames)
+        private static bool IsBlockingLayer(XElement layer)
         {
             var properties = ReadProperties(layer);
             string canMove;
@@ -87,7 +85,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return IsTrue(collideable);
             }
 
-            return fallbackBlockingLayerNames.Contains(GetString(layer, "name"));
+            return false;
         }
 
         private static Dictionary<string, string> ReadProperties(XElement element)

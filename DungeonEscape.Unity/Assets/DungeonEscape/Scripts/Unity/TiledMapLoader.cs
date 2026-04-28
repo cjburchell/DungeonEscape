@@ -37,6 +37,12 @@ namespace Redpoint.DungeonEscape.Unity
                 return null;
             }
 
+            var renderableElements = map.Elements()
+                .Where(element =>
+                    element.Name.LocalName == "layer" && IsRenderableLayer(element) ||
+                    element.Name.LocalName == "objectgroup" && IsRenderableObjectGroup(element))
+                .ToList();
+
             var info = TiledMapInfo.Parse(text);
             ValidateTilesets(info);
 
@@ -46,6 +52,7 @@ namespace Redpoint.DungeonEscape.Unity
                 Info = info,
                 AssetPath = mapAssetPath,
                 VisibleLayers = layers,
+                RenderableElements = renderableElements,
                 Width = GetInt(map, "width"),
                 Height = GetInt(map, "height"),
                 TileWidth = GetInt(map, "tilewidth"),
@@ -152,6 +159,11 @@ namespace Redpoint.DungeonEscape.Unity
             return GetString(layer, "visible") != "0";
         }
 
+        private static bool IsRenderableObjectGroup(XElement objectGroup)
+        {
+            return GetString(objectGroup, "visible") != "0";
+        }
+
         private static string ToFullAssetPath(string assetPath)
         {
             return Path.Combine(Application.dataPath, assetPath.Replace("Assets/", ""));
@@ -177,6 +189,7 @@ namespace Redpoint.DungeonEscape.Unity
         public XElement Root { get; set; }
         public TiledMapInfo Info { get; set; }
         public List<XElement> VisibleLayers { get; set; }
+        public List<XElement> RenderableElements { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
         public int TileWidth { get; set; }

@@ -52,6 +52,9 @@
 </data>
  </layer>
  <layer id="3" name="wall" width="40" height="40">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,
 40,41,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,41,42,
@@ -169,7 +172,11 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="5" name="sprites"/>
+ <objectgroup id="5" name="sprites">
+  <properties>
+   <property name="RenderRole" value="Sprites"/>
+  </properties>
+ </objectgroup>
  <objectgroup id="6" name="objects">
   <object id="1" name="spawn" class="Spawn" x="96" y="160" width="32" height="32"/>
   <object id="2" name="spawn1" class="Spawn" x="1152" y="224" width="32" height="32"/>

@@ -395,7 +395,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void DrawPartyDetail(Hero hero)
         {
-            GUILayout.BeginVertical(panelStyle);
+            GUILayout.BeginVertical(panelStyle, GUILayout.Width(420f * GetPixelScale()));
             GUILayout.Label("Status", titleStyle);
             GUILayout.BeginHorizontal();
             Sprite sprite;
@@ -423,6 +423,10 @@ namespace Redpoint.DungeonEscape.Unity
                 DrawEquipmentSlot(hero, slot);
             }
 
+            DrawStatusEffects(hero);
+            DrawKnownSkills(hero);
+            DrawKnownSpells(hero);
+
             GUILayout.EndVertical();
         }
 
@@ -435,8 +439,65 @@ namespace Redpoint.DungeonEscape.Unity
                 DungeonEscapeUiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null,
                 32f * GetPixelScale(),
                 uiTheme);
-            GUILayout.Label(slot + ": " + (item == null ? "Empty" : item.NameWithStats), smallStyle);
+            GUILayout.Label(slot + ":", smallStyle, GUILayout.Width(98f * GetPixelScale()));
+            GUILayout.Label(item == null ? "Empty" : item.NameWithStats, GetRarityStyle(item, smallStyle));
             GUILayout.EndHorizontal();
+        }
+
+        private void DrawStatusEffects(Hero hero)
+        {
+            GUILayout.Space(8f * GetPixelScale());
+            GUILayout.Label("Effects", labelStyle);
+            if (hero.Status == null || hero.Status.Count == 0)
+            {
+                GUILayout.Label("None", smallStyle);
+                return;
+            }
+
+            foreach (var effect in hero.Status)
+            {
+                var duration = effect.Duration <= 0 ? "" : "  " + effect.Duration + " " + effect.DurationType;
+                var stat = effect.StatType == StatType.None ? "" : "  " + effect.StatType + " " + effect.StatValue;
+                GUILayout.Label(effect.Name + "  " + effect.Type + stat + duration, smallStyle);
+            }
+        }
+
+        private void DrawKnownSkills(Hero hero)
+        {
+            GUILayout.Space(8f * GetPixelScale());
+            GUILayout.Label("Skills", labelStyle);
+            var skills = DungeonEscapeGameDataCache.Current == null || DungeonEscapeGameDataCache.Current.Skills == null
+                ? new List<Skill>()
+                : hero.GetSkills(DungeonEscapeGameDataCache.Current.Skills).ToList();
+            if (skills.Count == 0)
+            {
+                GUILayout.Label("None", smallStyle);
+                return;
+            }
+
+            foreach (var skill in skills)
+            {
+                GUILayout.Label(skill.Name + "  " + skill.Type + "  " + skill.Targets, smallStyle);
+            }
+        }
+
+        private void DrawKnownSpells(Hero hero)
+        {
+            GUILayout.Space(8f * GetPixelScale());
+            GUILayout.Label("Spells", labelStyle);
+            var spells = DungeonEscapeGameDataCache.Current == null || DungeonEscapeGameDataCache.Current.Spells == null
+                ? new List<Spell>()
+                : hero.GetSpells(DungeonEscapeGameDataCache.Current.Spells).ToList();
+            if (spells.Count == 0)
+            {
+                GUILayout.Label("None", smallStyle);
+                return;
+            }
+
+            foreach (var spell in spells)
+            {
+                GUILayout.Label(spell.Name + "  MP " + spell.Cost + "  " + spell.Type + "  " + spell.Targets, smallStyle);
+            }
         }
 
         private Hero GetSelectedPartyHero(IList<Hero> activeMembers, IList<Hero> inactiveMembers)
@@ -537,7 +598,7 @@ namespace Redpoint.DungeonEscape.Unity
                     DungeonEscapeUiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null,
                     36f * GetPixelScale(),
                     uiTheme);
-                GUILayout.Label(item.NameWithStats + equipped + "    " + item.Type + "    " + item.Gold + "g", labelStyle);
+                GUILayout.Label(item.NameWithStats + equipped + "    " + item.Type + "    " + item.Gold + "g", GetRarityStyle(item, labelStyle));
                 if (item.IsEquipped)
                 {
                     if (GUILayout.Button("Unequip", buttonStyle, GUILayout.Width(112f * GetPixelScale())))
@@ -585,7 +646,7 @@ namespace Redpoint.DungeonEscape.Unity
                 64f * GetPixelScale(),
                 uiTheme);
             GUILayout.BeginVertical();
-            GUILayout.Label(item.Name, labelStyle);
+            GUILayout.Label(item.Name, GetRarityStyle(item, labelStyle));
             GUILayout.Label(item.Rarity + " " + item.Type + (item.IsEquipped ? "  Equipped" : ""), smallStyle);
             GUILayout.Label(item.Gold + " gold", smallStyle);
             GUILayout.EndVertical();
@@ -1601,6 +1662,39 @@ namespace Redpoint.DungeonEscape.Unity
         private static string GetThemeValue(string value, string fallback)
         {
             return DungeonEscapeUiTheme.GetThemeValue(value, fallback);
+        }
+
+        private static GUIStyle GetRarityStyle(ItemInstance item, GUIStyle baseStyle)
+        {
+            var style = new GUIStyle(baseStyle);
+            if (item == null)
+            {
+                return style;
+            }
+
+            style.normal.textColor = GetRarityColor(item.Rarity, baseStyle.normal.textColor);
+            style.hover.textColor = style.normal.textColor;
+            style.active.textColor = style.normal.textColor;
+            style.focused.textColor = style.normal.textColor;
+            return style;
+        }
+
+        private static Color GetRarityColor(Rarity rarity, Color commonColor)
+        {
+            switch (rarity)
+            {
+                case Rarity.Uncommon:
+                    return Color.green;
+                case Rarity.Rare:
+                    return Color.blue;
+                case Rarity.Epic:
+                    return new Color(0.55f, 0f, 0.75f);
+                case Rarity.Legendary:
+                    return new Color(1f, 0.5f, 0f);
+                case Rarity.Common:
+                default:
+                    return commonColor;
+            }
         }
 
         private static int GetBorderThickness(Settings settings)

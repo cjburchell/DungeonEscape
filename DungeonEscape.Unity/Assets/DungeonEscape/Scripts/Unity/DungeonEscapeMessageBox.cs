@@ -132,6 +132,11 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (!HasChoices)
             {
+                if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Interact))
+                {
+                    Hide();
+                }
+
                 return;
             }
 

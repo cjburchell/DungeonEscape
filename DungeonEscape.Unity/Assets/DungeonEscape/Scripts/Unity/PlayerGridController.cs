@@ -67,13 +67,37 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             gameState = DungeonEscapeGameState.GetOrCreate();
+            gameState.SaveLoaded += OnSaveLoaded;
             messageBox = FindObjectOfType<DungeonEscapeMessageBox>();
             if (messageBox == null)
             {
                 messageBox = new GameObject("DungeonEscapeMessageBox").AddComponent<DungeonEscapeMessageBox>();
             }
 
-            var party = gameState.Party;
+            ApplyGameStateToView();
+        }
+
+        private void OnDestroy()
+        {
+            if (gameState != null)
+            {
+                gameState.SaveLoaded -= OnSaveLoaded;
+            }
+        }
+
+        private void OnSaveLoaded(GameSave save)
+        {
+            ApplyGameStateToView();
+        }
+
+        private void ApplyGameStateToView()
+        {
+            var party = gameState == null ? null : gameState.Party;
+            if (party == null)
+            {
+                return;
+            }
+
             if (mapView != null && !string.IsNullOrEmpty(party.CurrentMapId))
             {
                 mapView.LoadMap(party.CurrentMapId, null);
@@ -270,6 +294,14 @@ namespace Redpoint.DungeonEscape.Unity
                 gameState.SetCurrentMap(warp.MapId);
             }
 
+            if (ShouldReturnToOverWorldPosition(warp))
+            {
+                position = gameState.Party.OverWorldPosition;
+                gameState.SetCurrentPosition(position);
+                mapView.CenterOn(position);
+                return;
+            }
+
             WorldPosition spawnPosition;
             if (mapView.TryGetSpawnPosition(warp.SpawnId, out spawnPosition))
             {
@@ -281,6 +313,20 @@ namespace Redpoint.DungeonEscape.Unity
 
                 mapView.CenterOn(position);
             }
+            else if (gameState != null && gameState.Party != null && gameState.Party.CurrentMapIsOverWorld)
+            {
+                position = gameState.Party.OverWorldPosition;
+                gameState.SetCurrentPosition(position);
+                mapView.CenterOn(position);
+            }
+        }
+
+        private bool ShouldReturnToOverWorldPosition(TiledMapWarp warp)
+        {
+            return gameState != null &&
+                   gameState.Party != null &&
+                   gameState.Party.CurrentMapIsOverWorld &&
+                   string.IsNullOrEmpty(warp.SpawnId);
         }
 
         private void TryInteract()

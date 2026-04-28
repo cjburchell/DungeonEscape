@@ -635,9 +635,13 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
+            selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, party.ActiveQuests.Count - 1);
+            GUILayout.BeginHorizontal();
+            GUILayout.BeginVertical(GUILayout.MinWidth(420f * GetPixelScale()));
             questScrollPosition = BeginThemedScroll(questScrollPosition, menuBodyHeight);
-            foreach (var activeQuest in party.ActiveQuests)
+            for (var i = 0; i < party.ActiveQuests.Count; i++)
             {
+                var activeQuest = party.ActiveQuests[i];
                 Quest quest;
                 if (DungeonEscapeGameDataCache.Current == null ||
                     !DungeonEscapeGameDataCache.Current.TryGetQuest(activeQuest.Id, out quest))
@@ -645,17 +649,13 @@ namespace Redpoint.DungeonEscape.Unity
                     BeginSelectableRow();
                     GUILayout.Label(activeQuest.Id + (activeQuest.Completed ? " (Finished)" : ""), labelStyle);
                     EndSelectableRow();
+                    SelectRowOnMouseClick(i);
                     continue;
                 }
 
                 BeginSelectableRow();
                 GUILayout.BeginVertical();
                 GUILayout.Label(quest.Name + (activeQuest.Completed ? " (Finished)" : ""), labelStyle);
-                if (!string.IsNullOrEmpty(quest.Description))
-                {
-                    GUILayout.Label(quest.Description, smallStyle);
-                }
-
                 var currentStage = quest.Stages == null
                     ? null
                     : quest.Stages.FirstOrDefault(stage => stage.Number == activeQuest.CurrentStage);
@@ -666,8 +666,78 @@ namespace Redpoint.DungeonEscape.Unity
 
                 GUILayout.EndVertical();
                 EndSelectableRow();
+                SelectRowOnMouseClick(i);
             }
             EndThemedScroll();
+            GUILayout.EndVertical();
+            GUILayout.Space(10f * GetPixelScale());
+            DrawQuestDetail(party.ActiveQuests[selectedRowIndex]);
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawQuestDetail(ActiveQuest activeQuest)
+        {
+            GUILayout.BeginVertical(panelStyle, GUILayout.Width(360f * GetPixelScale()));
+            if (activeQuest == null)
+            {
+                GUILayout.Label("No quest selected.", labelStyle);
+                GUILayout.EndVertical();
+                return;
+            }
+
+            Quest quest = null;
+            if (DungeonEscapeGameDataCache.Current != null)
+            {
+                DungeonEscapeGameDataCache.Current.TryGetQuest(activeQuest.Id, out quest);
+            }
+
+            GUILayout.Label(quest == null ? activeQuest.Id : quest.Name, titleStyle);
+            GUILayout.Label(activeQuest.Completed ? "Completed" : "Active", labelStyle);
+            GUILayout.Label("Current Stage: " + activeQuest.CurrentStage, smallStyle);
+
+            if (quest == null)
+            {
+                GUILayout.Label("Quest data was not found.", smallStyle);
+                GUILayout.EndVertical();
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(quest.Description))
+            {
+                GUILayout.Space(8f * GetPixelScale());
+                GUILayout.Label(quest.Description, smallStyle);
+            }
+
+            var currentStage = quest.Stages == null
+                ? null
+                : quest.Stages.FirstOrDefault(stage => stage.Number == activeQuest.CurrentStage);
+            if (currentStage != null && !string.IsNullOrEmpty(currentStage.Description))
+            {
+                GUILayout.Space(8f * GetPixelScale());
+                GUILayout.Label("Stage", labelStyle);
+                GUILayout.Label(currentStage.Description, smallStyle);
+            }
+
+            GUILayout.Space(8f * GetPixelScale());
+            GUILayout.Label("Rewards", labelStyle);
+            GUILayout.Label("XP: " + quest.Xp + "    Gold: " + quest.Gold, smallStyle);
+            if (quest.Items != null && quest.Items.Count > 0)
+            {
+                GUILayout.Label("Items: " + string.Join(", ", quest.Items.ToArray()), smallStyle);
+            }
+
+            if (quest.Stages != null && quest.Stages.Count > 0)
+            {
+                GUILayout.Space(8f * GetPixelScale());
+                GUILayout.Label("Stages", labelStyle);
+                foreach (var stage in quest.Stages.OrderBy(stage => stage.Number))
+                {
+                    var marker = stage.Number == activeQuest.CurrentStage ? "> " : "  ";
+                    GUILayout.Label(marker + stage.Number + ": " + stage.Description, smallStyle);
+                }
+            }
+
+            GUILayout.EndVertical();
         }
 
         private void DrawSettings()

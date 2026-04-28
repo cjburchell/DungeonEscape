@@ -67,6 +67,16 @@ namespace Redpoint.DungeonEscape.Unity
             return item != null;
         }
 
+        public bool TryGetQuest(string questId, out Quest quest)
+        {
+            quest = dataSet.Quests == null
+                ? null
+                : dataSet.Quests.FirstOrDefault(value =>
+                    string.Equals(value.Id, questId, StringComparison.OrdinalIgnoreCase));
+
+            return quest != null;
+        }
+
         private static DialogHead GetDialogHead(Dialog dialog, Party party)
         {
             var dialogs = dialog.Dialogs;

@@ -469,7 +469,17 @@ namespace Redpoint.DungeonEscape.Unity
 
             var choices = dialog.Choices == null
                 ? new List<Choice>()
-                : dialog.Choices.Where(choice => !string.IsNullOrEmpty(choice.Text)).ToList();
+                : dialog.Choices.Where(IsVisibleDialogChoice).ToList();
+
+            var dialogHead = dialog as DialogHead;
+            if (dialogHead != null && dialogHead.StartQuest && gameState != null)
+            {
+                var startMessage = gameState.StartQuest(dialogHead.Quest);
+                if (!string.IsNullOrEmpty(startMessage))
+                {
+                    Debug.Log(startMessage);
+                }
+            }
 
             if (choices.Count == 0)
             {
@@ -481,45 +491,92 @@ namespace Redpoint.DungeonEscape.Unity
                 speakerName,
                 dialog.Text,
                 choices.Select(choice => choice.Text),
-                selectedIndex => ProcessDialogChoice(speakerName, choices[selectedIndex]));
+                selectedIndex => ProcessDialogChoice(speakerName, dialogHead == null ? null : dialogHead.Quest, choices[selectedIndex]));
         }
 
-        private void ProcessDialogChoice(string speakerName, Choice choice)
+        private void ProcessDialogChoice(string speakerName, string questId, Choice choice)
         {
             if (choice == null)
             {
                 return;
             }
 
+            var resultMessage = new StringBuilder();
+            if (gameState != null && !string.IsNullOrEmpty(questId))
+            {
+                AppendMessage(resultMessage, gameState.AdvanceQuest(questId, choice.NextQuestStage));
+            }
+
             if (choice.Dialog != null)
             {
+                if (resultMessage.Length > 0 && messageBox != null)
+                {
+                    messageBox.Show(speakerName, resultMessage.ToString());
+                }
+
                 ShowDialog(speakerName, choice.Dialog);
                 return;
             }
 
             if (choice.Actions != null && choice.Actions.Contains(QuestAction.Warp) && !string.IsNullOrEmpty(choice.MapId))
             {
+                if (resultMessage.Length > 0 && messageBox != null)
+                {
+                    messageBox.Show(speakerName, resultMessage.ToString());
+                }
+
                 ApplyMapTransition(new TiledMapWarp { MapId = choice.MapId, SpawnId = choice.SpawnId });
                 return;
             }
 
             if (choice.Actions != null && choice.Actions.Contains(QuestAction.GiveItem))
             {
-                var itemNames = choice.Items == null ? "" : string.Join(", ", choice.Items.ToArray());
-                messageBox.Show(speakerName, string.IsNullOrEmpty(itemNames) ? "You received something." : "You received: " + itemNames);
-                return;
+                AppendMessage(resultMessage, gameState == null ? "" : gameState.GiveItems(choice.Items));
             }
 
             if (choice.Actions != null && choice.Actions.Contains(QuestAction.TakeItem))
             {
-                messageBox.Show(speakerName, string.IsNullOrEmpty(choice.ItemId) ? "You gave an item." : "You gave: " + choice.ItemId);
+                AppendMessage(resultMessage, gameState == null ? "" : gameState.TakeItem(choice.ItemId, speakerName));
+            }
+
+            if (resultMessage.Length > 0)
+            {
+                messageBox.Show(speakerName, resultMessage.ToString());
+            }
+        }
+
+        private bool IsVisibleDialogChoice(Choice choice)
+        {
+            if (choice == null || string.IsNullOrEmpty(choice.Text))
+            {
+                return false;
+            }
+
+            if (choice.Actions != null &&
+                choice.Actions.Contains(QuestAction.TakeItem) &&
+                !string.IsNullOrEmpty(choice.ItemId) &&
+                gameState != null &&
+                gameState.Party != null)
+            {
+                return gameState.Party.GetItem(choice.ItemId) != null;
+            }
+
+            return true;
+        }
+
+        private static void AppendMessage(StringBuilder builder, string message)
+        {
+            if (string.IsNullOrEmpty(message))
+            {
                 return;
             }
 
-            if (choice.NextQuestStage.HasValue)
+            if (builder.Length > 0)
             {
-                messageBox.Show(speakerName, "Quest stage will advance to " + choice.NextQuestStage.Value + ".");
+                builder.AppendLine();
             }
+
+            builder.Append(message.TrimEnd());
         }
 
         private static bool TryGetProperty(TiledObjectInfo mapObject, string propertyName, out string value)

@@ -4,6 +4,88 @@ namespace Redpoint.DungeonEscape.Unity
 {
     public static class DungeonEscapeUiControls
     {
+        public static void BeginSelectableRow(int rowIndex, int selectedRowIndex, DungeonEscapeUiTheme theme)
+        {
+            var style = theme == null
+                ? GUI.skin.box
+                : rowIndex == selectedRowIndex ? theme.SelectedRowStyle : theme.RowStyle;
+            GUILayout.BeginVertical(style);
+        }
+
+        public static void EndSelectableRow()
+        {
+            GUILayout.EndVertical();
+        }
+
+        public static bool TabButton(string label, bool selected, DungeonEscapeUiTheme theme, float height)
+        {
+            var style = theme == null
+                ? GUI.skin.button
+                : selected ? theme.SelectedTabStyle : theme.TabStyle;
+            return GUILayout.Button(label, style, GUILayout.Height(height));
+        }
+
+        public static bool Button(string label, bool selected, DungeonEscapeUiTheme theme, params GUILayoutOption[] options)
+        {
+            var style = theme == null
+                ? GUI.skin.button
+                : selected ? theme.SelectedTabStyle : theme.ButtonStyle;
+            return GUILayout.Button(label, style, options);
+        }
+
+        public static bool ChoiceButton(Rect rect, string label, bool selected, DungeonEscapeUiTheme theme)
+        {
+            if (theme == null)
+            {
+                return GUI.Button(rect, label);
+            }
+
+            var style = selected ? theme.SelectedRowStyle : theme.RowStyle;
+            if (GUI.Button(rect, GUIContent.none, style))
+            {
+                return true;
+            }
+
+            var textStyle = new GUIStyle(theme.LabelStyle)
+            {
+                alignment = TextAnchor.MiddleLeft,
+                fontStyle = FontStyle.Normal
+            };
+            textStyle.normal.textColor = selected ? theme.HighlightColor : theme.TextColor;
+
+            var inset = theme.BorderThickness;
+            GUI.Label(
+                new Rect(rect.x + inset, rect.y + inset, rect.width - inset * 2f, rect.height - inset * 2f),
+                label,
+                textStyle);
+            return false;
+        }
+
+        public static string TextFieldRow(string label, string value, string fallback, DungeonEscapeUiTheme theme)
+        {
+            var style = theme == null ? GUI.skin.textField : theme.ButtonStyle;
+            var labelStyle = theme == null ? GUI.skin.label : theme.LabelStyle;
+            GUILayout.Label(label, labelStyle);
+            return GUILayout.TextField(string.IsNullOrEmpty(value) ? fallback : value, style);
+        }
+
+        public static float SliderRow(
+            string label,
+            float value,
+            float leftValue,
+            float rightValue,
+            DungeonEscapeUiTheme theme)
+        {
+            var labelStyle = theme == null ? GUI.skin.label : theme.LabelStyle;
+            GUILayout.Label(label, labelStyle);
+            return Slider(value, leftValue, rightValue, theme);
+        }
+
+        public static bool CheckboxRow(bool value, string label, DungeonEscapeUiTheme theme, float scale)
+        {
+            return Checkbox(value, label, theme, scale);
+        }
+
         public static bool Checkbox(bool value, string label, DungeonEscapeUiTheme theme, float scale)
         {
             if (theme == null)

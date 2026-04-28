@@ -39,11 +39,7 @@ namespace Redpoint.DungeonEscape.Unity
         private GUIStyle labelStyle;
         private GUIStyle smallStyle;
         private GUIStyle buttonStyle;
-        private GUIStyle tabStyle;
-        private GUIStyle selectedTabStyle;
         private GUIStyle panelStyle;
-        private GUIStyle rowStyle;
-        private GUIStyle selectedRowStyle;
         private DungeonEscapeUiTheme uiTheme;
         private float lastPixelScale;
         private string lastThemeSignature;
@@ -229,8 +225,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void DrawTab(MenuTab tab, string label)
         {
-            var style = currentTab == tab ? selectedTabStyle : tabStyle;
-            if (GUILayout.Button(label, style, GUILayout.Height(34f * GetPixelScale())))
+            if (DungeonEscapeUiControls.TabButton(label, currentTab == tab, uiTheme, 34f * GetPixelScale()))
             {
                 currentTab = tab;
                 scrollPosition = Vector2.zero;
@@ -386,8 +381,7 @@ namespace Redpoint.DungeonEscape.Unity
             GUILayout.BeginHorizontal();
             for (var i = 0; i < members.Count; i++)
             {
-                var style = selectedHeroIndex == i ? selectedTabStyle : buttonStyle;
-                if (GUILayout.Button(members[i].Name, style))
+                if (DungeonEscapeUiControls.Button(members[i].Name, selectedHeroIndex == i, uiTheme))
                 {
                     selectedHeroIndex = i;
                 }
@@ -533,8 +527,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void DrawSettingsTab(SettingsTab tab, string label)
         {
-            var style = currentSettingsTab == tab ? selectedTabStyle : tabStyle;
-            if (GUILayout.Button(label, style, GUILayout.Height(32f * GetPixelScale())))
+            if (DungeonEscapeUiControls.TabButton(label, currentSettingsTab == tab, uiTheme, 32f * GetPixelScale()))
             {
                 currentSettingsTab = tab;
                 scrollPosition = Vector2.zero;
@@ -546,22 +539,19 @@ namespace Redpoint.DungeonEscape.Unity
         {
             GUI.changed = false;
             BeginSelectableRow();
-            GUILayout.Label("UI Scale: " + settings.UiScale.ToString("0.00"), labelStyle);
-            settings.UiScale = DrawSlider(settings.UiScale <= 0f ? 1f : settings.UiScale, MinUiScale, MaxUiScale);
+            settings.UiScale = DrawSliderRow("UI Scale: " + settings.UiScale.ToString("0.00"), settings.UiScale <= 0f ? 1f : settings.UiScale, MinUiScale, MaxUiScale);
             EndSelectableRow();
             GUILayout.Space(8f * GetPixelScale());
             BeginSelectableRow();
-            GUILayout.Label("Sprint Boost: " + settings.SprintBoost.ToString("0.00"), labelStyle);
-            settings.SprintBoost = DrawSlider(settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost, 1f, 3f);
+            settings.SprintBoost = DrawSliderRow("Sprint Boost: " + settings.SprintBoost.ToString("0.00"), settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost, 1f, 3f);
             EndSelectableRow();
             GUILayout.Space(8f * GetPixelScale());
             BeginSelectableRow();
-            settings.AutoSaveEnabled = DrawCheckbox(settings.AutoSaveEnabled, "Autosave enabled");
+            settings.AutoSaveEnabled = DrawCheckboxRow(settings.AutoSaveEnabled, "Autosave enabled");
             EndSelectableRow();
             BeginSelectableRow();
             GUI.enabled = settings.AutoSaveEnabled;
-            GUILayout.Label("Autosave Period: " + GetAutoSaveInterval(settings).ToString("0") + " seconds", labelStyle);
-            settings.AutoSaveIntervalSeconds = DrawSlider(GetAutoSaveInterval(settings), 5f, 300f);
+            settings.AutoSaveIntervalSeconds = DrawSliderRow("Autosave Period: " + GetAutoSaveInterval(settings).ToString("0") + " seconds", GetAutoSaveInterval(settings), 5f, 300f);
             GUI.enabled = true;
             EndSelectableRow();
 
@@ -575,36 +565,28 @@ namespace Redpoint.DungeonEscape.Unity
         {
             GUI.changed = false;
             BeginSelectableRow();
-            GUILayout.Label("Background Colour", labelStyle);
-            settings.UiBackgroundColor = GUILayout.TextField(GetThemeValue(settings.UiBackgroundColor, "#000000"), buttonStyle);
+            settings.UiBackgroundColor = DrawTextFieldRow("Background Colour", settings.UiBackgroundColor, "#000000");
             EndSelectableRow();
             BeginSelectableRow();
-            GUILayout.Label("Background Transparency: " + settings.UiBackgroundAlpha.ToString("0.00"), labelStyle);
-            settings.UiBackgroundAlpha = DrawSlider(Mathf.Clamp01(settings.UiBackgroundAlpha), 0f, 1f);
+            settings.UiBackgroundAlpha = DrawSliderRow("Background Transparency: " + settings.UiBackgroundAlpha.ToString("0.00"), Mathf.Clamp01(settings.UiBackgroundAlpha), 0f, 1f);
             EndSelectableRow();
             BeginSelectableRow();
-            GUILayout.Label("Hover Colour", labelStyle);
-            settings.UiHoverColor = GUILayout.TextField(GetThemeValue(settings.UiHoverColor, "#808080"), buttonStyle);
+            settings.UiHoverColor = DrawTextFieldRow("Hover Colour", settings.UiHoverColor, "#808080");
             EndSelectableRow();
             BeginSelectableRow();
-            GUILayout.Label("Pressed Colour", labelStyle);
-            settings.UiActiveColor = GUILayout.TextField(GetThemeValue(settings.UiActiveColor, "#D3D3D3"), buttonStyle);
+            settings.UiActiveColor = DrawTextFieldRow("Pressed Colour", settings.UiActiveColor, "#D3D3D3");
             EndSelectableRow();
             BeginSelectableRow();
-            GUILayout.Label("Border Colour", labelStyle);
-            settings.UiBorderColor = GUILayout.TextField(GetThemeValue(settings.UiBorderColor, "#FFFFFF"), buttonStyle);
+            settings.UiBorderColor = DrawTextFieldRow("Border Colour", settings.UiBorderColor, "#FFFFFF");
             EndSelectableRow();
             BeginSelectableRow();
-            GUILayout.Label("Border Thickness: " + GetBorderThickness(settings), labelStyle);
-            settings.UiBorderThickness = Mathf.RoundToInt(DrawSlider(GetBorderThickness(settings), 2f, 12f));
+            settings.UiBorderThickness = Mathf.RoundToInt(DrawSliderRow("Border Thickness: " + GetBorderThickness(settings), GetBorderThickness(settings), 2f, 12f));
             EndSelectableRow();
             BeginSelectableRow();
-            GUILayout.Label("Text Colour", labelStyle);
-            settings.UiTextColor = GUILayout.TextField(GetThemeValue(settings.UiTextColor, "#FFFFFF"), buttonStyle);
+            settings.UiTextColor = DrawTextFieldRow("Text Colour", settings.UiTextColor, "#FFFFFF");
             EndSelectableRow();
             BeginSelectableRow();
-            GUILayout.Label("Highlighted Text/Border Colour", labelStyle);
-            settings.UiHighlightColor = GUILayout.TextField(GetThemeValue(settings.UiHighlightColor, "#FFFF00"), buttonStyle);
+            settings.UiHighlightColor = DrawTextFieldRow("Highlighted Text/Border Colour", settings.UiHighlightColor, "#FFFF00");
             EndSelectableRow();
 
             if (GUI.changed)
@@ -617,10 +599,10 @@ namespace Redpoint.DungeonEscape.Unity
         {
             GUI.changed = false;
             BeginSelectableRow();
-            settings.MapDebugInfo = DrawCheckbox(settings.MapDebugInfo, "Map debug info");
+            settings.MapDebugInfo = DrawCheckboxRow(settings.MapDebugInfo, "Map debug info");
             EndSelectableRow();
             BeginSelectableRow();
-            settings.ShowHiddenObjects = DrawCheckbox(settings.ShowHiddenObjects, "Show hidden map objects");
+            settings.ShowHiddenObjects = DrawCheckboxRow(settings.ShowHiddenObjects, "Show hidden map objects");
             EndSelectableRow();
 
             if (GUI.changed)
@@ -675,13 +657,11 @@ namespace Redpoint.DungeonEscape.Unity
         private void DrawBindingButton(InputBinding binding, string slot, string currentValue, int slotIndex)
         {
             var label = slot + ": " + (string.IsNullOrEmpty(currentValue) || currentValue == "None" ? "-" : currentValue);
-            var style = currentSettingsTab == SettingsTab.Input &&
-                        drawingRowIndex - 1 == selectedRowIndex &&
-                        selectedRowIndex > 0 &&
-                        selectedBindingSlotIndex == slotIndex
-                ? selectedTabStyle
-                : buttonStyle;
-            if (GUILayout.Button(label, style, GUILayout.Width(190f * GetPixelScale())))
+            var selected = currentSettingsTab == SettingsTab.Input &&
+                           drawingRowIndex - 1 == selectedRowIndex &&
+                           selectedRowIndex > 0 &&
+                           selectedBindingSlotIndex == slotIndex;
+            if (DungeonEscapeUiControls.Button(label, selected, uiTheme, GUILayout.Width(190f * GetPixelScale())))
             {
                 rebindingInput = binding;
                 rebindingSlot = slot;
@@ -692,22 +672,27 @@ namespace Redpoint.DungeonEscape.Unity
         private void BeginSelectableRow()
         {
             var rowIndex = drawingRowIndex++;
-            GUILayout.BeginVertical(rowIndex == selectedRowIndex ? selectedRowStyle : rowStyle);
+            DungeonEscapeUiControls.BeginSelectableRow(rowIndex, selectedRowIndex, uiTheme);
         }
 
         private static void EndSelectableRow()
         {
-            GUILayout.EndVertical();
+            DungeonEscapeUiControls.EndSelectableRow();
         }
 
-        private bool DrawCheckbox(bool value, string label)
+        private bool DrawCheckboxRow(bool value, string label)
         {
-            return DungeonEscapeUiControls.Checkbox(value, label, uiTheme, GetPixelScale());
+            return DungeonEscapeUiControls.CheckboxRow(value, label, uiTheme, GetPixelScale());
         }
 
-        private float DrawSlider(float value, float leftValue, float rightValue)
+        private float DrawSliderRow(string label, float value, float leftValue, float rightValue)
         {
-            return DungeonEscapeUiControls.Slider(value, leftValue, rightValue, uiTheme);
+            return DungeonEscapeUiControls.SliderRow(label, value, leftValue, rightValue, uiTheme);
+        }
+
+        private string DrawTextFieldRow(string label, string value, string fallback)
+        {
+            return DungeonEscapeUiControls.TextFieldRow(label, value, fallback, uiTheme);
         }
 
         private int GetSelectableRowCount()
@@ -1179,14 +1164,10 @@ namespace Redpoint.DungeonEscape.Unity
             lastThemeSignature = themeSignature;
             uiTheme = DungeonEscapeUiTheme.Create(settings, scale);
             panelStyle = uiTheme.PanelStyle;
-            rowStyle = uiTheme.RowStyle;
-            selectedRowStyle = uiTheme.SelectedRowStyle;
             titleStyle = uiTheme.TitleStyle;
             labelStyle = uiTheme.LabelStyle;
             smallStyle = uiTheme.SmallStyle;
             buttonStyle = uiTheme.ButtonStyle;
-            tabStyle = uiTheme.TabStyle;
-            selectedTabStyle = uiTheme.SelectedTabStyle;
         }
 
         private float GetPixelScale()

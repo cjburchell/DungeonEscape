@@ -14,8 +14,7 @@ namespace Redpoint.DungeonEscape.Unity
         private GUIStyle boxStyle;
         private GUIStyle speakerStyle;
         private GUIStyle messageStyle;
-        private GUIStyle choiceStyle;
-        private GUIStyle selectedChoiceStyle;
+        private DungeonEscapeUiTheme uiTheme;
         private DungeonEscapeUiSettings uiSettings;
         private float lastPixelScale;
         private string lastThemeSignature;
@@ -173,7 +172,6 @@ namespace Redpoint.DungeonEscape.Unity
             var visibleChoices = choices;
             var hasChoices = visibleChoices != null && visibleChoices.Count > 0;
             var scale = GetPixelScale();
-            var borderThickness = GetBorderThickness();
             var margin = 24f * scale;
             var paddingX = 18f * scale;
             var paddingY = 12f * scale;
@@ -205,19 +203,11 @@ namespace Redpoint.DungeonEscape.Unity
                 for (var i = 0; i < visibleChoices.Count; i++)
                 {
                     var choiceRect = new Rect(contentRect.x, y, contentRect.width, choiceHeight);
-                    var style = i == selectedChoiceIndex ? selectedChoiceStyle : choiceStyle;
-                    var innerChoiceRect = new Rect(
-                        choiceRect.x + borderThickness,
-                        choiceRect.y + borderThickness,
-                        choiceRect.width - borderThickness * 2f,
-                        choiceRect.height - borderThickness * 2f);
-                    if (GUI.Button(choiceRect, GUIContent.none, style))
+                    if (DungeonEscapeUiControls.ChoiceButton(choiceRect, visibleChoices[i], i == selectedChoiceIndex, uiTheme))
                     {
                         SelectChoice(i);
                         break;
                     }
-
-                    GUI.Label(innerChoiceRect, visibleChoices[i], style);
                     y += choiceHeight + choiceGap;
                 }
             }
@@ -237,32 +227,18 @@ namespace Redpoint.DungeonEscape.Unity
 
             lastPixelScale = scale;
             lastThemeSignature = themeSignature;
-            var theme = DungeonEscapeUiTheme.Create(settings, scale);
-            boxStyle = theme.PanelStyle;
-            speakerStyle = new GUIStyle(theme.LabelStyle)
+            uiTheme = DungeonEscapeUiTheme.Create(settings, scale);
+            boxStyle = uiTheme.PanelStyle;
+            speakerStyle = new GUIStyle(uiTheme.LabelStyle)
             {
                 fontSize = Mathf.RoundToInt(18f * scale),
                 fontStyle = FontStyle.Bold
             };
-            messageStyle = new GUIStyle(theme.LabelStyle)
+            messageStyle = new GUIStyle(uiTheme.LabelStyle)
             {
                 fontSize = Mathf.RoundToInt(16f * scale),
                 wordWrap = true
             };
-            choiceStyle = new GUIStyle(theme.RowStyle)
-            {
-                fontSize = Mathf.RoundToInt(16f * scale),
-                alignment = TextAnchor.MiddleLeft,
-                fontStyle = FontStyle.Normal
-            };
-            choiceStyle.normal.textColor = theme.TextColor;
-            selectedChoiceStyle = new GUIStyle(theme.SelectedRowStyle)
-            {
-                fontSize = Mathf.RoundToInt(16f * scale),
-                alignment = TextAnchor.MiddleLeft,
-                fontStyle = FontStyle.Normal
-            };
-            selectedChoiceStyle.normal.textColor = theme.HighlightColor;
         }
 
         private void SelectChoice(int index)
@@ -288,11 +264,6 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return uiSettings == null ? 1f : uiSettings.PixelScale;
-        }
-
-        private static int GetBorderThickness()
-        {
-            return DungeonEscapeUiTheme.GetBorderThickness(DungeonEscapeSettingsCache.Current);
         }
     }
 }

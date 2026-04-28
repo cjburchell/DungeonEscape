@@ -17,6 +17,13 @@ namespace Redpoint.DungeonEscape.Unity
             Settings
         }
 
+        private enum SettingsTab
+        {
+            General,
+            Input,
+            Debug
+        }
+
         private const float MinUiScale = 0.5f;
         private const float MaxUiScale = 3f;
         private const float InitialNavigationRepeatDelay = 0.35f;
@@ -35,6 +42,7 @@ namespace Redpoint.DungeonEscape.Unity
         private GUIStyle selectedTabStyle;
         private float lastPixelScale;
         private MenuTab currentTab = MenuTab.Party;
+        private SettingsTab currentSettingsTab = SettingsTab.General;
         private Vector2 scrollPosition;
         private int selectedHeroIndex;
         private InputBinding rebindingInput;
@@ -467,22 +475,78 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
+            DrawSettingsTabs();
+
+            switch (currentSettingsTab)
+            {
+                case SettingsTab.General:
+                    DrawGeneralSettings(settings);
+                    break;
+                case SettingsTab.Input:
+                    DrawInputBindings();
+                    break;
+                case SettingsTab.Debug:
+                    DrawDebugSettings(settings);
+                    break;
+            }
+        }
+
+        private void DrawSettingsTabs()
+        {
+            GUILayout.BeginHorizontal();
+            DrawSettingsTab(SettingsTab.General, "General");
+            DrawSettingsTab(SettingsTab.Input, "Input");
+            DrawSettingsTab(SettingsTab.Debug, "Debug");
+            GUILayout.EndHorizontal();
+            GUILayout.Space(10f * GetPixelScale());
+        }
+
+        private void DrawSettingsTab(SettingsTab tab, string label)
+        {
+            var style = currentSettingsTab == tab ? selectedTabStyle : tabStyle;
+            if (GUILayout.Button(label, style, GUILayout.Height(32f * GetPixelScale())))
+            {
+                currentSettingsTab = tab;
+                scrollPosition = Vector2.zero;
+            }
+        }
+
+        private void DrawGeneralSettings(Settings settings)
+        {
             GUI.changed = false;
             GUILayout.Label("UI Scale: " + settings.UiScale.ToString("0.00"), labelStyle);
             settings.UiScale = GUILayout.HorizontalSlider(settings.UiScale <= 0f ? 1f : settings.UiScale, MinUiScale, MaxUiScale);
-            settings.MapDebugInfo = GUILayout.Toggle(settings.MapDebugInfo, "Map debug info", labelStyle);
-            settings.ShowHiddenObjects = GUILayout.Toggle(settings.ShowHiddenObjects, "Show hidden map objects", labelStyle);
             GUILayout.Space(8f * GetPixelScale());
             GUILayout.Label("Sprint Boost: " + settings.SprintBoost.ToString("0.00"), labelStyle);
             settings.SprintBoost = GUILayout.HorizontalSlider(settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost, 1f, 3f);
+            GUILayout.Space(8f * GetPixelScale());
+            settings.AutoSaveEnabled = GUILayout.Toggle(settings.AutoSaveEnabled, "Autosave enabled", labelStyle);
+            GUI.enabled = settings.AutoSaveEnabled;
+            GUILayout.Label("Autosave Period: " + GetAutoSaveInterval(settings).ToString("0") + " seconds", labelStyle);
+            settings.AutoSaveIntervalSeconds = GUILayout.HorizontalSlider(GetAutoSaveInterval(settings), 5f, 300f);
+            GUI.enabled = true;
 
             if (GUI.changed)
             {
                 ApplySettings(settings);
             }
+        }
 
-            GUILayout.Space(14f * GetPixelScale());
-            DrawInputBindings();
+        private void DrawDebugSettings(Settings settings)
+        {
+            GUI.changed = false;
+            settings.MapDebugInfo = GUILayout.Toggle(settings.MapDebugInfo, "Map debug info", labelStyle);
+            settings.ShowHiddenObjects = GUILayout.Toggle(settings.ShowHiddenObjects, "Show hidden map objects", labelStyle);
+
+            if (GUI.changed)
+            {
+                ApplySettings(settings);
+            }
+        }
+
+        private static float GetAutoSaveInterval(Settings settings)
+        {
+            return settings.AutoSaveIntervalSeconds <= 0f ? 5f : settings.AutoSaveIntervalSeconds;
         }
 
         private void DrawInputBindings()

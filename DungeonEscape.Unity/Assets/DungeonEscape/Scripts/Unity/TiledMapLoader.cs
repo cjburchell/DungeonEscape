@@ -107,6 +107,33 @@ namespace Redpoint.DungeonEscape.Unity
             return "Assets/DungeonEscape/Maps/" + normalized;
         }
 
+        public static string NormalizeMapId(string mapIdOrAssetPath)
+        {
+            if (string.IsNullOrEmpty(mapIdOrAssetPath))
+            {
+                return "overworld";
+            }
+
+            var normalized = mapIdOrAssetPath.Replace('\\', '/');
+            if (normalized.StartsWith("Assets/DungeonEscape/Maps/", StringComparison.OrdinalIgnoreCase))
+            {
+                normalized = normalized.Substring("Assets/DungeonEscape/Maps/".Length);
+            }
+
+            const string mapsPrefix = "maps/";
+            if (normalized.StartsWith(mapsPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                normalized = normalized.Substring(mapsPrefix.Length);
+            }
+
+            if (normalized.EndsWith(".tmx", StringComparison.OrdinalIgnoreCase))
+            {
+                normalized = normalized.Substring(0, normalized.Length - ".tmx".Length);
+            }
+
+            return normalized;
+        }
+
         private static void ValidateTilesets(TiledMapInfo map)
         {
             if (map == null || map.Tilesets == null)

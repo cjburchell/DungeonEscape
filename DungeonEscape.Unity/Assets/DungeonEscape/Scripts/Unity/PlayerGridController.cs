@@ -20,6 +20,7 @@ namespace Redpoint.DungeonEscape.Unity
         private Dictionary<Direction, Sprite[]> directionSprites;
         private Direction currentDirection = Direction.Down;
         private Coroutine stepAnimation;
+        private DungeonEscapeGameState gameState;
         private DungeonEscapeMessageBox messageBox;
         private bool hasPendingTurnMove;
         private Direction pendingTurnMoveDirection;
@@ -65,13 +66,20 @@ namespace Redpoint.DungeonEscape.Unity
                 mapView = FindObjectOfType<TiledMapView>();
             }
 
+            gameState = DungeonEscapeGameState.GetOrCreate();
             messageBox = FindObjectOfType<DungeonEscapeMessageBox>();
             if (messageBox == null)
             {
                 messageBox = new GameObject("DungeonEscapeMessageBox").AddComponent<DungeonEscapeMessageBox>();
             }
 
-            Position = new WorldPosition(30, 25);
+            var party = gameState.Party;
+            if (mapView != null && !string.IsNullOrEmpty(party.CurrentMapId))
+            {
+                mapView.LoadMap(party.CurrentMapId, null);
+            }
+
+            Position = party.CurrentPosition ?? WorldPosition.Zero;
             if (mapView != null)
             {
                 mapView.CenterOn(Position);
@@ -231,6 +239,12 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             position = nextPosition;
+            if (gameState != null)
+            {
+                gameState.SetCurrentPosition(position);
+                gameState.IncrementStepCount();
+            }
+
             TryApplyWarp();
             UpdateVisualPosition();
             isMoving = false;
@@ -251,11 +265,20 @@ namespace Redpoint.DungeonEscape.Unity
 
             Debug.Log("Warping to " + warp.MapId + (string.IsNullOrEmpty(warp.SpawnId) ? "" : " at " + warp.SpawnId));
             mapView.LoadMap(warp.MapId, warp.SpawnId);
+            if (gameState != null)
+            {
+                gameState.SetCurrentMap(warp.MapId);
+            }
 
             WorldPosition spawnPosition;
             if (mapView.TryGetSpawnPosition(warp.SpawnId, out spawnPosition))
             {
                 position = spawnPosition;
+                if (gameState != null)
+                {
+                    gameState.SetCurrentPosition(position);
+                }
+
                 mapView.CenterOn(position);
             }
         }

@@ -10,11 +10,13 @@ namespace Redpoint.DungeonEscape.Unity
         private float lastPixelScale;
         private PlayerGridController playerMarker;
         private TiledMapView mapView;
+        private DungeonEscapeGameState gameState;
 
         private void Start()
         {
             playerMarker = FindObjectOfType<PlayerGridController>();
             mapView = FindObjectOfType<TiledMapView>();
+            gameState = FindObjectOfType<DungeonEscapeGameState>();
         }
 
         private void OnGUI()
@@ -61,6 +63,11 @@ namespace Redpoint.DungeonEscape.Unity
                 mapView = FindObjectOfType<TiledMapView>();
             }
 
+            if (gameState == null)
+            {
+                gameState = FindObjectOfType<DungeonEscapeGameState>();
+            }
+
             var builder = new StringBuilder();
 
             if (playerMarker == null)
@@ -75,6 +82,12 @@ namespace Redpoint.DungeonEscape.Unity
             if (mapView != null)
             {
                 builder.AppendLine("Viewport: " + mapView.StartColumn + ", " + mapView.StartRow);
+            }
+
+            if (gameState != null && gameState.Party != null)
+            {
+                builder.AppendLine("Map: " + gameState.Party.CurrentMapId);
+                builder.AppendLine("Steps: " + gameState.Party.StepCount);
             }
 
             return builder.ToString();

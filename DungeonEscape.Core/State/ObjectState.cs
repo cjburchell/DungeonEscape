@@ -41,5 +41,9 @@ namespace Redpoint.DungeonEscape.State
         public bool? Collideable { get; set; }
         public bool? IsOpen { get; set; }
         public int? Level { get; set; }
+        public WorldPosition? Position { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public Direction? Direction { get; set; }
     }
 }

@@ -18,6 +18,8 @@ namespace Redpoint.DungeonEscape.Unity
         private int tileHeight;
         private int column;
         private int row;
+        private string mapId;
+        private DungeonEscapeGameState gameState;
         private bool moving;
         private float nextMoveDelay;
         private Direction direction = Direction.Down;
@@ -33,10 +35,14 @@ namespace Redpoint.DungeonEscape.Unity
             IList<TiledTilesetSpriteSet> mapSpriteSets,
             int mapTileWidth,
             int mapTileHeight,
-            int sortingOrder)
+            int sortingOrder,
+            string currentMapId,
+            DungeonEscapeGameState currentGameState)
         {
             mapView = view;
             spriteSets = mapSpriteSets;
+            mapId = currentMapId;
+            gameState = currentGameState;
             MapObject = mapObject;
             gid = mapObject.Gid;
             tileWidth = mapTileWidth;
@@ -45,6 +51,7 @@ namespace Redpoint.DungeonEscape.Unity
             column = Mathf.FloorToInt(mapObject.X / tileWidth);
             row = Mathf.FloorToInt((mapObject.Y - mapObject.Height) / tileHeight);
             direction = GetDirection(mapObject);
+            ApplySavedState();
 
             spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
             if (spriteRenderer == null)
@@ -62,6 +69,27 @@ namespace Redpoint.DungeonEscape.Unity
             PlayIdleAnimation();
             UpdateVisualPosition();
             nextMoveDelay = RandomDelay();
+        }
+
+        private void ApplySavedState()
+        {
+            if (gameState == null)
+            {
+                return;
+            }
+
+            WorldPosition savedPosition;
+            if (gameState.TryGetObjectPosition(mapId, ObjectId, out savedPosition))
+            {
+                column = Mathf.FloorToInt(savedPosition.X);
+                row = Mathf.FloorToInt(savedPosition.Y);
+            }
+
+            var savedDirection = gameState.GetObjectDirection(mapId, ObjectId);
+            if (savedDirection.HasValue)
+            {
+                direction = savedDirection.Value;
+            }
         }
 
         private void Update()
@@ -152,6 +180,11 @@ namespace Redpoint.DungeonEscape.Unity
 
             column = nextColumn;
             row = nextRow;
+            if (gameState != null)
+            {
+                gameState.SetObjectPosition(mapId, ObjectId, new WorldPosition(column, row), direction);
+            }
+
             UpdateVisualPosition();
             PlayIdleAnimation();
             moving = false;

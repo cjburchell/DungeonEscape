@@ -564,7 +564,9 @@ namespace Redpoint.DungeonEscape.Unity
                             spriteSets,
                             loadedMap.TileWidth,
                             loadedMap.TileHeight,
-                            objectSortingOrder);
+                            objectSortingOrder,
+                            TiledMapLoader.NormalizeMapId(loadedMap.AssetPath),
+                            gameState);
                         runtimeNpcs.Add(npc);
                         occupiedNpcTiles[npc.Row * mapWidth + npc.Column] = npc;
                     }

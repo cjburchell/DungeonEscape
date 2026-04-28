@@ -258,6 +258,35 @@ namespace Redpoint.DungeonEscape.Unity
             return objectState != null && objectState.IsOpen == true;
         }
 
+        public bool TryGetObjectPosition(string mapId, int objectId, out WorldPosition position)
+        {
+            EnsureInitialized();
+            position = WorldPosition.Zero;
+            var objectState = GetObjectState(mapId, objectId, false);
+            if (objectState == null || !objectState.Position.HasValue)
+            {
+                return false;
+            }
+
+            position = objectState.Position.Value;
+            return true;
+        }
+
+        public Direction? GetObjectDirection(string mapId, int objectId)
+        {
+            EnsureInitialized();
+            var objectState = GetObjectState(mapId, objectId, false);
+            return objectState == null ? null : objectState.Direction;
+        }
+
+        public void SetObjectPosition(string mapId, int objectId, WorldPosition position, Direction direction)
+        {
+            EnsureInitialized();
+            var objectState = GetObjectState(mapId, objectId, true);
+            objectState.Position = position;
+            objectState.Direction = direction;
+        }
+
         public void InitializeMapObjects(string mapId, TiledMapInfo mapInfo)
         {
             EnsureInitialized();

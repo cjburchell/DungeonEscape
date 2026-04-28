@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="32" height="25" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="3">
- <properties>
-  <property name="biome" value="Tower"/>
-  <property name="song" value="like-totally-rad"/>
- </properties>
- <tileset firstgid="1" source="../../Tilesets/tower.tsx"/>
- <tileset firstgid="481" source="../../Tilesets/tiles_small.tsx"/>
- <layer id="1" name="floor" width="32" height="25">
-  <data encoding="csv">
+  <properties>
+    <property name="biome" value="Tower" />
+    <property name="song" value="like-totally-rad" />
+  </properties>
+  <tileset firstgid="1" source="../../Tilesets/tower.tsx" />
+  <tileset firstgid="481" source="../../Tilesets/tiles_small.tsx" />
+  <layer id="1" name="floor" width="32" height="25">
+    <data encoding="csv">
 253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,
 253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,
 253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,
@@ -34,9 +34,9 @@
 253,253,253,253,253,253,75,45,45,45,45,45,45,45,75,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,
 253,253,253,253,253,253,45,75,75,75,75,75,75,75,45,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253
 </data>
- </layer>
- <layer id="1" name="floor2" width="32" height="25">
-  <data encoding="csv">
+  </layer>
+  <layer id="1" name="floor2" width="32" height="25">
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -63,13 +63,13 @@
 0,0,0,0,0,208,356,0,0,0,0,0,0,0,357,210,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,356,208,0,0,0,0,0,0,0,210,357,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <layer id="2" name="water" width="32" height="25">
-  <properties>
-   <property name="Collideable" type="bool" value="true"/>
-   <property name="Water" type="bool" value="true"/>
-  </properties>
-  <data encoding="csv">
+  </layer>
+  <layer id="2" name="water" width="32" height="25">
+    <properties>
+      <property name="Collideable" type="bool" value="true" />
+      <property name="Water" type="bool" value="true" />
+    </properties>
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -96,12 +96,12 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <layer id="3" name="wall" width="32" height="25">
-  <properties>
-   <property name="Collideable" type="bool" value="true"/>
-  </properties>
-  <data encoding="csv">
+  </layer>
+  <layer id="3" name="wall" width="32" height="25">
+    <properties>
+      <property name="Collideable" type="bool" value="true" />
+    </properties>
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -128,12 +128,12 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <layer id="2" name="wall2" width="32" height="25">
-  <properties>
-   <property name="Collideable" type="bool" value="true"/>
-  </properties>
-  <data encoding="csv">
+  </layer>
+  <layer id="2" name="wall2" width="32" height="25">
+    <properties>
+      <property name="Collideable" type="bool" value="true" />
+    </properties>
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -160,71 +160,71 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <objectgroup id="4" name="items">
-  <object id="1" name="Open Chest" class="Chest" gid="616" x="224" y="256" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="2" name="Open Chest" class="Chest" gid="616" x="256" y="256" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="3" name="Open Chest" class="Chest" gid="616" x="192" y="288" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="4" name="Open Chest" class="Chest" gid="616" x="224" y="288" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="5" name="Open Chest" class="Chest" gid="616" x="256" y="288" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="6" name="Open Chest" class="Chest" gid="616" x="192" y="320" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="7" name="Open Chest" class="Chest" gid="616" x="224" y="320" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="8" name="Open Chest" class="Chest" gid="616" x="256" y="320" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="9" name="Stairs down to floor3" class="Warp" gid="619" x="320" y="320" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" value="spawn4"/>
-    <property name="WarpMap" value="maps/forest_tower/floor3"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup id="5" name="sprites">
-  <properties>
-   <property name="RenderRole" value="Sprites"/>
-  </properties>
- </objectgroup>
- <objectgroup id="6" name="objects">
-  <object id="2" name="spawn1" class="Spawn" x="352" y="288" width="32" height="32"/>
- </objectgroup>
+  </layer>
+  <objectgroup id="4" name="items">
+    <object id="1" name="Open Chest" class="Chest" gid="616" x="224" y="256" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="2" name="Open Chest" class="Chest" gid="616" x="256" y="256" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="3" name="Open Chest" class="Chest" gid="616" x="192" y="288" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="4" name="Open Chest" class="Chest" gid="616" x="224" y="288" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="5" name="Open Chest" class="Chest" gid="616" x="256" y="288" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="6" name="Open Chest" class="Chest" gid="616" x="192" y="320" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="7" name="Open Chest" class="Chest" gid="616" x="224" y="320" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="8" name="Open Chest" class="Chest" gid="616" x="256" y="320" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="9" name="Stairs down to floor3" class="Warp" gid="619" x="320" y="320" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="SpawnId" value="spawn4" />
+        <property name="WarpMap" value="maps/forest_tower/floor3" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+  </objectgroup>
+  <objectgroup id="5" name="sprites">
+    <properties>
+      <property name="RenderRole" value="Sprites" />
+    </properties>
+  </objectgroup>
+  <objectgroup id="6" name="objects">
+    <object id="2" name="spawn1" class="Spawn" x="352" y="288" width="32" height="32" />
+  </objectgroup>
 </map>

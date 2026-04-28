@@ -1,27 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="3">
- <properties>
-  <property name="biome" value="Town"/>
-  <property name="song" value="in-the-city"/>
- </properties>
- <tileset firstgid="1" source="../../Tilesets/npc.tsx"/>
- <tileset firstgid="222" source="../../Tilesets/ship.tsx"/>
- <tileset firstgid="230" source="../../Tilesets/indoor.tsx"/>
- <tileset firstgid="710" source="../../Tilesets/overworld.tsx"/>
- <tileset firstgid="1190" source="../../Tilesets/outdoors.tsx"/>
- <tileset firstgid="1670" source="../../Tilesets/edge.tsx"/>
- <tileset firstgid="1877" source="../../Tilesets/town.tsx"/>
- <tileset firstgid="2357" source="../../Tilesets/castle2.tsx"/>
- <tileset firstgid="2837" source="../../Tilesets/castle.tsx"/>
- <tileset firstgid="3317" source="../../Tilesets/dungeon.tsx"/>
- <tileset firstgid="3797" source="../../Tilesets/tiles.tsx"/>
- <tileset firstgid="3893" source="../../Tilesets/tiles_small.tsx"/>
- <layer id="2" name="water" width="40" height="40">
   <properties>
-   <property name="Collideable" type="bool" value="true"/>
-   <property name="Water" type="bool" value="true"/>
+    <property name="biome" value="Town" />
+    <property name="song" value="in-the-city" />
   </properties>
-  <data encoding="csv">
+  <tileset firstgid="1" source="../../Tilesets/npc.tsx" />
+  <tileset firstgid="222" source="../../Tilesets/ship.tsx" />
+  <tileset firstgid="230" source="../../Tilesets/indoor.tsx" />
+  <tileset firstgid="710" source="../../Tilesets/overworld.tsx" />
+  <tileset firstgid="1190" source="../../Tilesets/outdoors.tsx" />
+  <tileset firstgid="1670" source="../../Tilesets/edge.tsx" />
+  <tileset firstgid="1877" source="../../Tilesets/town.tsx" />
+  <tileset firstgid="2357" source="../../Tilesets/castle2.tsx" />
+  <tileset firstgid="2837" source="../../Tilesets/castle.tsx" />
+  <tileset firstgid="3317" source="../../Tilesets/dungeon.tsx" />
+  <tileset firstgid="3797" source="../../Tilesets/tiles.tsx" />
+  <tileset firstgid="3893" source="../../Tilesets/tiles_small.tsx" />
+  <layer id="2" name="water" width="40" height="40">
+    <properties>
+      <property name="Collideable" type="bool" value="true" />
+      <property name="Water" type="bool" value="true" />
+    </properties>
+    <data encoding="csv">
 2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,
 2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,
 2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,
@@ -63,9 +63,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <layer id="1" name="floor" width="40" height="40">
-  <data encoding="csv">
+  </layer>
+  <layer id="1" name="floor" width="40" height="40">
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -107,9 +107,9 @@
 1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,
 1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944,1944
 </data>
- </layer>
- <layer id="2" name="floor2" width="40" height="40">
-  <data encoding="csv">
+  </layer>
+  <layer id="2" name="floor2" width="40" height="40">
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -151,12 +151,12 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <layer id="3" name="wall" width="40" height="40">
-  <properties>
-   <property name="Collideable" type="bool" value="true"/>
-  </properties>
-  <data encoding="csv">
+  </layer>
+  <layer id="3" name="wall" width="40" height="40">
+    <properties>
+      <property name="Collideable" type="bool" value="true" />
+    </properties>
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -198,12 +198,12 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <layer id="1" name="wall2" width="40" height="40">
-  <properties>
-   <property name="Collideable" type="bool" value="true"/>
-  </properties>
-  <data encoding="csv">
+  </layer>
+  <layer id="1" name="wall2" width="40" height="40">
+    <properties>
+      <property name="Collideable" type="bool" value="true" />
+    </properties>
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -245,151 +245,151 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <objectgroup id="4" name="items">
-  <object id="24" name="Ship" class="HiddenItem" gid="222" x="864" y="256" width="32" height="56">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-    <property name="ItemId" value="Deed to the ship"/>
-   </properties>
-  </object>
-  <object id="29" name="Locked Door" class="Door" gid="3826" x="832" y="415" width="32" height="64">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="40" name="Chest" class="Chest" gid="4004" x="448" y="768" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="41" name="Chest" class="Chest" gid="4004" x="480" y="768" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="42" name="Chest" class="Chest" gid="4004" x="512" y="768" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="43" name="Chest" class="Chest" gid="4004" x="448" y="800" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="44" name="Chest" class="Chest" gid="4004" x="512" y="800" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="45" name="Chest" class="Chest" gid="4004" x="448" y="832" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="46" name="Chest" class="Chest" gid="4004" x="448" y="864" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="47" name="Chest" class="Chest" gid="4004" x="512" y="864" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="48" name="Chest" class="Chest" gid="4004" x="448" y="896" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="49" name="Chest" class="Chest" gid="4004" x="480" y="896" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="50" name="Chest" class="Chest" gid="4004" x="512" y="896" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="51" name="Exit 0" class="Warp" x="672" y="1056" width="32" height="64">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" value="maps/overworld"/>
-   </properties>
-  </object>
-  <object id="52" name="Exit 0" class="Warp" x="672" y="1120" width="160" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" value="maps/overworld"/>
-   </properties>
-  </object>
-  <object id="53" name="Exit 0" class="Warp" x="800" y="1056" width="32" height="64">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" value="maps/overworld"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup id="5" name="sprites">
-  <properties>
-   <property name="RenderRole" value="Sprites"/>
-  </properties>
-  <object id="54" name="Murchant" class="Npc" gid="112" x="511.333" y="831" width="32" height="48">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="2" name="store" class="NpcStore" gid="2483" x="576" y="834" width="32" height="34">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-   </properties>
-  </object>
-  <object id="55" name="Odgild" class="NpcHeal" gid="120" x="544" y="640" width="32" height="48">
-   <properties>
-    <property name="CanMove" type="bool" value="true"/>
-    <property name="Collideable" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="56" name="Gard" class="Npc" gid="146" x="800" y="992" width="32" height="48">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="Welcome to Coast"/>
-   </properties>
-  </object>
-  <object id="57" name="Old Man" class="Npc" gid="27" x="960" y="448" width="32" height="48">
-   <properties>
-    <property name="CanMove" type="bool" value="true"/>
-    <property name="Collideable" type="bool" value="true"/>
-    <property name="Dialog" value="Find_Ship_Old_Man"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup id="6" name="objects">
-  <object id="1" name="spawn" class="Spawn" x="736" y="1056" width="32" height="32">
-   <properties>
-    <property name="DefaultSpawn" type="bool" value="true"/>
-   </properties>
-  </object>
- </objectgroup>
+  </layer>
+  <objectgroup id="4" name="items">
+    <object id="24" name="Ship" class="HiddenItem" gid="222" x="864" y="256" width="32" height="56">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="ItemId" value="Deed to the ship" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="29" name="Locked Door" class="Door" gid="3826" x="832" y="415" width="32" height="64">
+      <properties>
+        <property name="Collideable" type="bool" value="true" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="40" name="Chest" class="Chest" gid="4004" x="448" y="768" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="41" name="Chest" class="Chest" gid="4004" x="480" y="768" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="42" name="Chest" class="Chest" gid="4004" x="512" y="768" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="43" name="Chest" class="Chest" gid="4004" x="448" y="800" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="44" name="Chest" class="Chest" gid="4004" x="512" y="800" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="45" name="Chest" class="Chest" gid="4004" x="448" y="832" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="46" name="Chest" class="Chest" gid="4004" x="448" y="864" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="47" name="Chest" class="Chest" gid="4004" x="512" y="864" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="48" name="Chest" class="Chest" gid="4004" x="448" y="896" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="49" name="Chest" class="Chest" gid="4004" x="480" y="896" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="50" name="Chest" class="Chest" gid="4004" x="512" y="896" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="51" name="Exit 0" class="Warp" x="672" y="1056" width="32" height="64">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="WarpMap" value="maps/overworld" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="52" name="Exit 0" class="Warp" x="672" y="1120" width="160" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="WarpMap" value="maps/overworld" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="53" name="Exit 0" class="Warp" x="800" y="1056" width="32" height="64">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="WarpMap" value="maps/overworld" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+  </objectgroup>
+  <objectgroup id="5" name="sprites">
+    <properties>
+      <property name="RenderRole" value="Sprites" />
+    </properties>
+    <object id="54" name="Murchant" class="Npc" gid="112" x="511.333" y="831" width="32" height="48">
+      <properties>
+        <property name="Collideable" type="bool" value="true" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="2" name="store" class="NpcStore" gid="2483" x="576" y="834" width="32" height="34">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="55" name="Odgild" class="NpcHeal" gid="120" x="544" y="640" width="32" height="48">
+      <properties>
+        <property name="Collideable" type="bool" value="true" />
+        <property name="MoveRadius" type="int" value="3" />
+      </properties>
+    </object>
+    <object id="56" name="Gard" class="Npc" gid="146" x="800" y="992" width="32" height="48">
+      <properties>
+        <property name="Collideable" type="bool" value="true" />
+        <property name="Text" value="Welcome to Coast" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="57" name="Old Man" class="Npc" gid="27" x="960" y="448" width="32" height="48">
+      <properties>
+        <property name="Collideable" type="bool" value="true" />
+        <property name="Dialog" value="Find_Ship_Old_Man" />
+        <property name="MoveRadius" type="int" value="3" />
+      </properties>
+    </object>
+  </objectgroup>
+  <objectgroup id="6" name="objects">
+    <object id="1" name="spawn" class="Spawn" x="736" y="1056" width="32" height="32">
+      <properties>
+        <property name="DefaultSpawn" type="bool" value="true" />
+      </properties>
+    </object>
+  </objectgroup>
 </map>

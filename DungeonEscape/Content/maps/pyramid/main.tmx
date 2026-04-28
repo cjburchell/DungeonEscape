@@ -1,17 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="1" nextobjectid="3">
- <properties>
-  <property name="biome" value="Tower"/>
-  <property name="song" value="unprepared"/>
- </properties>
- <tileset firstgid="1" source="../../npc.tsx"/>
- <tileset firstgid="222" source="../../castle2.tsx"/>
- <tileset firstgid="702" source="../../overworld.tsx"/>
- <tileset firstgid="1182" source="../../castle.tsx"/>
- <tileset firstgid="1662" source="../../temples.tsx"/>
- <tileset firstgid="8361" source="../../tiles_small.tsx"/>
- <layer id="2" name="water" width="40" height="40">
-  <data encoding="csv">
+  <properties>
+    <property name="biome" value="Tower" />
+    <property name="song" value="unprepared" />
+  </properties>
+  <tileset firstgid="1" source="../../npc.tsx" />
+  <tileset firstgid="222" source="../../castle2.tsx" />
+  <tileset firstgid="702" source="../../overworld.tsx" />
+  <tileset firstgid="1182" source="../../castle.tsx" />
+  <tileset firstgid="1662" source="../../temples.tsx" />
+  <tileset firstgid="8361" source="../../tiles_small.tsx" />
+  <layer id="2" name="water" width="40" height="40">
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -53,9 +53,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <layer id="1" name="floor" width="40" height="40">
-  <data encoding="csv">
+  </layer>
+  <layer id="1" name="floor" width="40" height="40">
+    <data encoding="csv">
 1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,
 1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,
 1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,
@@ -97,9 +97,9 @@
 1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,
 1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009,1009
 </data>
- </layer>
- <layer id="3" name="wall" width="40" height="40">
-  <data encoding="csv">
+  </layer>
+  <layer id="3" name="wall" width="40" height="40">
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -141,60 +141,60 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <objectgroup id="4" name="items">
-  <object id="60" name="Stairs down to 47" class="Warp" gid="8499" x="640" y="672" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="string" value="spawn1"/>
-    <property name="WarpMap" type="string" value="maps/pyramid/basement"/>
-   </properties>
-  </object>
-  <object id="77" name="Exit 0" class="Warp" x="544" y="1120" width="32" height="128">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="maps/overworld"/>
-   </properties>
-  </object>
-  <object id="79" name="Exit 0" class="Warp" x="544" y="1248" width="256" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="maps/overworld"/>
-   </properties>
-  </object>
-  <object id="80" name="Exit 0" class="Warp" x="768" y="1120" width="32" height="128">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" type="string" value="maps/overworld"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup id="5" name="sprites">
-  <object id="94" name="Gard" class="Npc" gid="18" x="576" y="1152" width="32" height="48">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="Beware of Estark the Destroyer"/>
-   </properties>
-  </object>
-  <object id="95" name="Gard" class="Npc" gid="18" x="736" y="1152" width="32" height="48">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="Beware of Estark the Destroyer"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup id="6" name="objects">
-  <object id="1" name="spawn" class="Spawn" x="640" y="1184" width="32" height="32">
-   <properties>
-    <property name="DefaultSpawn" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="2" name="spawn1" class="Spawn" x="672" y="640" width="32" height="32"/>
- </objectgroup>
+  </layer>
+  <objectgroup id="4" name="items">
+    <object id="60" name="Stairs down to 47" class="Warp" gid="8499" x="640" y="672" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="SpawnId" type="string" value="spawn1" />
+        <property name="WarpMap" type="string" value="maps/pyramid/basement" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="77" name="Exit 0" class="Warp" x="544" y="1120" width="32" height="128">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="WarpMap" type="string" value="maps/overworld" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="79" name="Exit 0" class="Warp" x="544" y="1248" width="256" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="WarpMap" type="string" value="maps/overworld" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="80" name="Exit 0" class="Warp" x="768" y="1120" width="32" height="128">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="WarpMap" type="string" value="maps/overworld" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+  </objectgroup>
+  <objectgroup id="5" name="sprites">
+    <object id="94" name="Gard" class="Npc" gid="18" x="576" y="1152" width="32" height="48">
+      <properties>
+        <property name="Collideable" type="bool" value="true" />
+        <property name="Text" value="Beware of Estark the Destroyer" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="95" name="Gard" class="Npc" gid="18" x="736" y="1152" width="32" height="48">
+      <properties>
+        <property name="Collideable" type="bool" value="true" />
+        <property name="Text" value="Beware of Estark the Destroyer" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+  </objectgroup>
+  <objectgroup id="6" name="objects">
+    <object id="1" name="spawn" class="Spawn" x="640" y="1184" width="32" height="32">
+      <properties>
+        <property name="DefaultSpawn" type="bool" value="true" />
+      </properties>
+    </object>
+    <object id="2" name="spawn1" class="Spawn" x="672" y="640" width="32" height="32" />
+  </objectgroup>
 </map>

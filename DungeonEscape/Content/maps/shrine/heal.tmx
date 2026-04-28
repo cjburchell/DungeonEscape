@@ -1,20 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <map version="1.9" tiledversion="1.9.2" class="Shrine" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="5">
- <properties>
-  <property name="biome" value="Town"/>
-  <property name="song" value="in-the-city"/>
- </properties>
- <tileset firstgid="1" source="../../npc.tsx"/>
- <tileset firstgid="222" source="../../indoor.tsx"/>
- <tileset firstgid="702" source="../../outdoors.tsx"/>
- <tileset firstgid="1182" source="../../edge.tsx"/>
- <tileset firstgid="1245" source="../../overworld.tsx"/>
- <tileset firstgid="1725" source="../../hero.tsx"/>
- <tileset firstgid="1885" source="../../castle2.tsx"/>
- <tileset firstgid="2365" source="../../castle.tsx"/>
- <tileset firstgid="2845" source="../../tiles_small.tsx"/>
- <layer id="2" name="water" width="50" height="50">
-  <data encoding="csv">
+  <properties>
+    <property name="biome" value="Town" />
+    <property name="song" value="in-the-city" />
+  </properties>
+  <tileset firstgid="1" source="../../npc.tsx" />
+  <tileset firstgid="222" source="../../indoor.tsx" />
+  <tileset firstgid="702" source="../../outdoors.tsx" />
+  <tileset firstgid="1182" source="../../edge.tsx" />
+  <tileset firstgid="1245" source="../../overworld.tsx" />
+  <tileset firstgid="1725" source="../../hero.tsx" />
+  <tileset firstgid="1885" source="../../castle2.tsx" />
+  <tileset firstgid="2365" source="../../castle.tsx" />
+  <tileset firstgid="2845" source="../../tiles_small.tsx" />
+  <layer id="2" name="water" width="50" height="50">
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -66,9 +66,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <layer id="1" name="floor" width="50" height="50">
-  <data encoding="csv">
+  </layer>
+  <layer id="1" name="floor" width="50" height="50">
+    <data encoding="csv">
 2375,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,
 232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,
 232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,
@@ -120,9 +120,9 @@
 232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,
 232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232
 </data>
- </layer>
- <layer id="1" name="floor2" width="50" height="50">
-  <data encoding="csv">
+  </layer>
+  <layer id="1" name="floor2" width="50" height="50">
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -174,9 +174,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <layer id="3" name="wall" width="50" height="50">
-  <data encoding="csv">
+  </layer>
+  <layer id="3" name="wall" width="50" height="50">
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -228,9 +228,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <layer id="2" name="wall2" width="50" height="50">
-  <data encoding="csv">
+  </layer>
+  <layer id="2" name="wall2" width="50" height="50">
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -282,90 +282,90 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <objectgroup id="4" name="items">
-  <object id="9" name="Warp to 6" class="Warp" gid="2962" x="544" y="544" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" value="spawn1"/>
-    <property name="WarpMap" value="maps/towns/isis"/>
-   </properties>
-  </object>
-  <object id="21" name="Exit 0" class="Warp" x="480" y="960" width="172.667" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-    <property name="WarpMap" value="maps/overworld"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup id="5" name="sprites">
-  <object id="23" name="Healer" class="NpcHeal" gid="120" x="544" y="288" width="32" height="48">
-   <properties>
-    <property name="CanMove" type="bool" value="true"/>
-    <property name="Collideable" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="24" name="Gard" class="Npc" gid="146" x="480" y="896" width="32" height="48">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="Hello"/>
-   </properties>
-  </object>
-  <object id="25" name="Gard" class="Npc" gid="146" x="608" y="896" width="32" height="48">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="Welcome to the shrine of healing"/>
-   </properties>
-  </object>
-  <object id="26" name="Lady" class="Npc" gid="120" x="352" y="544" width="32" height="48">
-   <properties>
-    <property name="CanMove" type="bool" value="true"/>
-    <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="Welcome"/>
-   </properties>
-  </object>
-  <object id="27" name="Lady" class="Npc" gid="120" x="704" y="544" width="32" height="48">
-   <properties>
-    <property name="CanMove" type="bool" value="true"/>
-    <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="Have a nice day"/>
-   </properties>
-  </object>
-  <object id="28" name="Cat" class="Npc" gid="214" x="640" y="704" width="32" height="48">
-   <properties>
-    <property name="CanMove" type="bool" value="true"/>
-    <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="meow?"/>
-   </properties>
-  </object>
-  <object id="29" name="Cat" class="Npc" gid="214" x="448" y="704" width="32" height="48">
-   <properties>
-    <property name="CanMove" type="bool" value="true"/>
-    <property name="Collideable" type="bool" value="true"/>
-    <property name="Text" value="meow!"/>
-   </properties>
-  </object>
-  <object id="4" name="#Random#" class="NpcPartyMember" gid="1761" x="704" y="352" width="32" height="48">
-   <properties>
-    <property name="CanMove" type="bool" value="true"/>
-    <property name="Class" value="Cleric"/>
-    <property name="Collideable" type="bool" value="true"/>
-    <property name="Gender" value="Male"/>
-    <property name="Level" type="int" value="2"/>
-    <property name="Text" value="Looking for some help? Can I come along?"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup id="6" name="objects">
-  <object id="1" name="spawn" class="Spawn" x="544" y="928" width="32" height="32">
-   <properties>
-    <property name="DefaultSpawn" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="2" name="spawn1" class="Spawn" x="544" y="544" width="32" height="32"/>
- </objectgroup>
+  </layer>
+  <objectgroup id="4" name="items">
+    <object id="9" name="Warp to 6" class="Warp" gid="2962" x="544" y="544" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="SpawnId" value="spawn1" />
+        <property name="WarpMap" value="maps/towns/isis" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="21" name="Exit 0" class="Warp" x="480" y="960" width="172.667" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="WarpMap" value="maps/overworld" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+  </objectgroup>
+  <objectgroup id="5" name="sprites">
+    <object id="23" name="Healer" class="NpcHeal" gid="120" x="544" y="288" width="32" height="48">
+      <properties>
+        <property name="Collideable" type="bool" value="true" />
+        <property name="MoveRadius" type="int" value="3" />
+      </properties>
+    </object>
+    <object id="24" name="Gard" class="Npc" gid="146" x="480" y="896" width="32" height="48">
+      <properties>
+        <property name="Collideable" type="bool" value="true" />
+        <property name="Text" value="Hello" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="25" name="Gard" class="Npc" gid="146" x="608" y="896" width="32" height="48">
+      <properties>
+        <property name="Collideable" type="bool" value="true" />
+        <property name="Text" value="Welcome to the shrine of healing" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+    <object id="26" name="Lady" class="Npc" gid="120" x="352" y="544" width="32" height="48">
+      <properties>
+        <property name="Collideable" type="bool" value="true" />
+        <property name="Text" value="Welcome" />
+        <property name="MoveRadius" type="int" value="3" />
+      </properties>
+    </object>
+    <object id="27" name="Lady" class="Npc" gid="120" x="704" y="544" width="32" height="48">
+      <properties>
+        <property name="Collideable" type="bool" value="true" />
+        <property name="Text" value="Have a nice day" />
+        <property name="MoveRadius" type="int" value="3" />
+      </properties>
+    </object>
+    <object id="28" name="Cat" class="Npc" gid="214" x="640" y="704" width="32" height="48">
+      <properties>
+        <property name="Collideable" type="bool" value="true" />
+        <property name="Text" value="meow?" />
+        <property name="MoveRadius" type="int" value="3" />
+      </properties>
+    </object>
+    <object id="29" name="Cat" class="Npc" gid="214" x="448" y="704" width="32" height="48">
+      <properties>
+        <property name="Collideable" type="bool" value="true" />
+        <property name="Text" value="meow!" />
+        <property name="MoveRadius" type="int" value="3" />
+      </properties>
+    </object>
+    <object id="4" name="#Random#" class="NpcPartyMember" gid="1761" x="704" y="352" width="32" height="48">
+      <properties>
+        <property name="Class" value="Cleric" />
+        <property name="Collideable" type="bool" value="true" />
+        <property name="Gender" value="Male" />
+        <property name="Level" type="int" value="2" />
+        <property name="Text" value="Looking for some help? Can I come along?" />
+        <property name="MoveRadius" type="int" value="3" />
+      </properties>
+    </object>
+  </objectgroup>
+  <objectgroup id="6" name="objects">
+    <object id="1" name="spawn" class="Spawn" x="544" y="928" width="32" height="32">
+      <properties>
+        <property name="DefaultSpawn" type="bool" value="true" />
+      </properties>
+    </object>
+    <object id="2" name="spawn1" class="Spawn" x="544" y="544" width="32" height="32" />
+  </objectgroup>
 </map>

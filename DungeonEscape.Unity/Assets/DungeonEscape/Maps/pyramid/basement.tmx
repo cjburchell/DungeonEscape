@@ -1,23 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="3">
- <properties>
-  <property name="biome" value="Tower"/>
-  <property name="song" value="unprepared"/>
- </properties>
- <tileset firstgid="1" source="../../Tilesets/npc.tsx"/>
- <tileset firstgid="222" source="../../Tilesets/overworld.tsx"/>
- <tileset firstgid="702" source="../../Tilesets/temples.tsx"/>
- <tileset firstgid="7401" source="../../Tilesets/dungeon.tsx"/>
- <tileset firstgid="7881" source="../../Tilesets/castle2.tsx"/>
- <tileset firstgid="8361" source="../../Tilesets/indoor.tsx"/>
- <tileset firstgid="8841" source="../../Tilesets/animals.tsx"/>
- <tileset firstgid="8937" source="../../Tilesets/tiles_small.tsx"/>
- <layer id="2" name="water" width="40" height="40">
   <properties>
-   <property name="Collideable" type="bool" value="true"/>
-   <property name="Water" type="bool" value="true"/>
+    <property name="biome" value="Tower" />
+    <property name="song" value="unprepared" />
   </properties>
-  <data encoding="csv">
+  <tileset firstgid="1" source="../../Tilesets/npc.tsx" />
+  <tileset firstgid="222" source="../../Tilesets/overworld.tsx" />
+  <tileset firstgid="702" source="../../Tilesets/temples.tsx" />
+  <tileset firstgid="7401" source="../../Tilesets/dungeon.tsx" />
+  <tileset firstgid="7881" source="../../Tilesets/castle2.tsx" />
+  <tileset firstgid="8361" source="../../Tilesets/indoor.tsx" />
+  <tileset firstgid="8841" source="../../Tilesets/animals.tsx" />
+  <tileset firstgid="8937" source="../../Tilesets/tiles_small.tsx" />
+  <layer id="2" name="water" width="40" height="40">
+    <properties>
+      <property name="Collideable" type="bool" value="true" />
+      <property name="Water" type="bool" value="true" />
+    </properties>
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -59,9 +59,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <layer id="1" name="floor" width="40" height="40">
-  <data encoding="csv">
+  </layer>
+  <layer id="1" name="floor" width="40" height="40">
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -103,9 +103,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <layer id="2" name="floor2" width="40" height="40">
-  <data encoding="csv">
+  </layer>
+  <layer id="2" name="floor2" width="40" height="40">
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -147,12 +147,12 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <layer id="3" name="wall" width="40" height="40">
-  <properties>
-   <property name="Collideable" type="bool" value="true"/>
-  </properties>
-  <data encoding="csv">
+  </layer>
+  <layer id="3" name="wall" width="40" height="40">
+    <properties>
+      <property name="Collideable" type="bool" value="true" />
+    </properties>
+    <data encoding="csv">
 1693,1694,1695,1692,1693,1694,1695,1692,1693,1694,1695,1692,1693,1694,1695,1692,1693,1694,1695,1692,1693,1694,1695,1692,1693,1694,1695,1692,1693,1694,1695,1695,1692,1693,1694,1695,1692,1693,1694,1695,
 1780,1781,1782,1779,1780,1781,1782,1779,1780,1781,1782,1779,1780,1781,1782,1779,1780,1781,1782,1779,1780,1781,1782,1779,1780,1781,1782,1779,1780,1781,1782,1782,1779,1780,1781,1782,1779,1780,1781,1782,
 1867,1868,1869,1866,1867,1868,1869,1866,1867,1868,1869,1866,1867,1868,1869,1866,1867,1868,1869,1866,1867,1868,1869,1866,1867,1868,1869,1866,1867,1868,1869,1869,1866,1867,1868,1869,1866,1867,1868,1869,
@@ -194,12 +194,12 @@
 1869,1866,1867,1868,1869,1866,1867,1868,1869,1866,1867,1868,1869,1866,1867,1868,1869,1866,1867,1868,1869,1866,1867,1868,1869,1866,1867,1868,1869,1866,1867,1868,1869,1866,1867,1868,1869,1953,1954,1955,
 1956,1953,1954,1955,1956,1953,1954,1955,1956,1953,1954,1955,1956,1953,1954,1955,1956,1953,1954,1955,1956,1953,1954,1955,1956,1953,1954,1955,1956,1953,1954,1955,1956,1953,1954,1955,1956,1693,1694,1695
 </data>
- </layer>
- <layer id="1" name="wall2" width="40" height="40">
-  <properties>
-   <property name="Collideable" type="bool" value="true"/>
-  </properties>
-  <data encoding="csv">
+  </layer>
+  <layer id="1" name="wall2" width="40" height="40">
+    <properties>
+      <property name="Collideable" type="bool" value="true" />
+    </properties>
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -241,29 +241,29 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <objectgroup id="4" name="items">
-  <object id="1" name="Stairs up to 16" class="Warp" gid="2147492699" x="416" y="960" width="32" height="32">
-   <properties>
-    <property name="CanMove" type="bool" value="false"/>
-    <property name="Collideable" type="bool" value="false"/>
-    <property name="SpawnId" type="string" value="spawn1"/>
-    <property name="WarpMap" type="string" value="maps/pyramid/main"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup id="5" name="sprites">
-  <properties>
-   <property name="RenderRole" value="Sprites"/>
-  </properties>
-  <object id="2" name="Estark" class="Npc" gid="8868" x="640" y="384" width="32" height="48">
-   <properties>
-    <property name="CanMove" type="bool" value="true"/>
-    <property name="Collideable" type="bool" value="true"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup id="6" name="objects">
-  <object id="2" name="spawn1" class="Spawn" x="448" y="928" width="32" height="32"/>
- </objectgroup>
+  </layer>
+  <objectgroup id="4" name="items">
+    <object id="1" name="Stairs up to 16" class="Warp" gid="2147492699" x="416" y="960" width="32" height="32">
+      <properties>
+        <property name="Collideable" type="bool" value="false" />
+        <property name="SpawnId" type="string" value="spawn1" />
+        <property name="WarpMap" type="string" value="maps/pyramid/main" />
+        <property name="MoveRadius" type="int" value="0" />
+      </properties>
+    </object>
+  </objectgroup>
+  <objectgroup id="5" name="sprites">
+    <properties>
+      <property name="RenderRole" value="Sprites" />
+    </properties>
+    <object id="2" name="Estark" class="Npc" gid="8868" x="640" y="384" width="32" height="48">
+      <properties>
+        <property name="Collideable" type="bool" value="true" />
+        <property name="MoveRadius" type="int" value="3" />
+      </properties>
+    </object>
+  </objectgroup>
+  <objectgroup id="6" name="objects">
+    <object id="2" name="spawn1" class="Spawn" x="448" y="928" width="32" height="32" />
+  </objectgroup>
 </map>

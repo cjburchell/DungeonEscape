@@ -70,6 +70,21 @@ namespace Redpoint.DungeonEscape.Unity
             Party.CurrentMapIsOverWorld = Party.CurrentMapId == "overworld";
         }
 
+        public DungeonEscapeMapTransition CreateWarpTransition(TiledMapWarp warp)
+        {
+            EnsureInitialized();
+
+            var mapId = TiledMapLoader.NormalizeMapId(warp.MapId);
+            SetCurrentMap(mapId);
+
+            return new DungeonEscapeMapTransition
+            {
+                MapId = mapId,
+                SpawnId = warp.SpawnId,
+                UseSavedOverWorldPosition = mapId == "overworld" && string.IsNullOrEmpty(warp.SpawnId)
+            };
+        }
+
         public void SetCurrentPosition(WorldPosition position)
         {
             EnsureInitialized();
@@ -79,6 +94,12 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 Party.OverWorldPosition = position;
             }
+        }
+
+        public void SetCurrentDirection(Direction direction)
+        {
+            EnsureInitialized();
+            Party.CurrentDirection = direction;
         }
 
         public void IncrementStepCount()

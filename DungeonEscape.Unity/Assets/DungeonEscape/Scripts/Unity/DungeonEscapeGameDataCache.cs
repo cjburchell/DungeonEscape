@@ -1,0 +1,113 @@
+using System;
+using System.Linq;
+using System.Text;
+using Redpoint.DungeonEscape.State;
+
+namespace Redpoint.DungeonEscape.Unity
+{
+    public sealed class DungeonEscapeGameDataCache
+    {
+        public static DungeonEscapeGameDataCache Current { get; private set; }
+
+        private readonly DungeonEscapeDataSet dataSet;
+
+        private DungeonEscapeGameDataCache(DungeonEscapeDataSet dataSet)
+        {
+            this.dataSet = dataSet ?? new DungeonEscapeDataSet();
+        }
+
+        public static void Load(DungeonEscapeDataSet dataSet)
+        {
+            Current = new DungeonEscapeGameDataCache(dataSet);
+        }
+
+        public bool TryGetDialogText(string dialogId, Party party, out string text)
+        {
+            text = null;
+            var dialog = dataSet.Dialogs == null
+                ? null
+                : dataSet.Dialogs.FirstOrDefault(item => string.Equals(item.Id, dialogId, StringComparison.OrdinalIgnoreCase));
+
+            if (dialog == null || dialog.Dialogs == null)
+            {
+                return false;
+            }
+
+            var dialogHead = GetDialogHead(dialog, party);
+            if (dialogHead == null || string.IsNullOrEmpty(dialogHead.Text))
+            {
+                return false;
+            }
+
+            text = BuildDialogText(dialogHead);
+            return true;
+        }
+
+        public bool TryGetCustomItem(string itemId, out Item item)
+        {
+            item = dataSet.CustomItems == null
+                ? null
+                : dataSet.CustomItems.FirstOrDefault(value =>
+                    string.Equals(value.Id, itemId, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(value.Name, itemId, StringComparison.OrdinalIgnoreCase));
+
+            return item != null;
+        }
+
+        private static DialogHead GetDialogHead(Dialog dialog, Party party)
+        {
+            var dialogs = dialog.Dialogs;
+            var startQuestDialog = dialogs.FirstOrDefault(item =>
+                item.StartQuest &&
+                party != null &&
+                party.ActiveQuests.All(quest => item.Quest != quest.Id));
+
+            if (startQuestDialog != null)
+            {
+                return startQuestDialog;
+            }
+
+            if (party != null)
+            {
+                foreach (var activeQuest in party.ActiveQuests)
+                {
+                    var questDialog = dialogs.FirstOrDefault(item =>
+                        item.Quest == activeQuest.Id &&
+                        item.QuestStage != null &&
+                        item.QuestStage.Contains(activeQuest.CurrentStage));
+
+                    if (questDialog != null)
+                    {
+                        return questDialog;
+                    }
+                }
+            }
+
+            return dialogs.FirstOrDefault();
+        }
+
+        private static string BuildDialogText(DialogText dialog)
+        {
+            var text = new StringBuilder(dialog.Text);
+            if (dialog.Choices == null || dialog.Choices.Count == 0)
+            {
+                return text.ToString();
+            }
+
+            var visibleChoices = dialog.Choices
+                .Where(choice => !string.IsNullOrEmpty(choice.Text))
+                .Select(choice => choice.Text)
+                .ToList();
+
+            if (visibleChoices.Count == 0)
+            {
+                return text.ToString();
+            }
+
+            text.AppendLine();
+            text.AppendLine();
+            text.Append(string.Join(" / ", visibleChoices.ToArray()));
+            return text.ToString();
+        }
+    }
+}

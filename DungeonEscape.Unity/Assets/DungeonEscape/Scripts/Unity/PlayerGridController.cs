@@ -100,10 +100,11 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (mapView != null && !string.IsNullOrEmpty(party.CurrentMapId))
             {
-                mapView.LoadMap(party.CurrentMapId, null);
+                mapView.LoadMap(party.CurrentMapId, null, false);
             }
 
             Position = party.CurrentPosition ?? WorldPosition.Zero;
+            SetFacing(party.CurrentDirection);
             if (mapView != null)
             {
                 mapView.CenterOn(Position);
@@ -288,13 +289,12 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             Debug.Log("Warping to " + warp.MapId + (string.IsNullOrEmpty(warp.SpawnId) ? "" : " at " + warp.SpawnId));
-            mapView.LoadMap(warp.MapId, warp.SpawnId);
-            if (gameState != null)
-            {
-                gameState.SetCurrentMap(warp.MapId);
-            }
+            var transition = gameState == null
+                ? CreateFallbackTransition(warp)
+                : gameState.CreateWarpTransition(warp);
 
-            if (ShouldReturnToOverWorldPosition(warp))
+            mapView.LoadMap(transition.MapId, transition.SpawnId, !transition.UseSavedOverWorldPosition);
+            if (transition.UseSavedOverWorldPosition && gameState != null && gameState.Party != null)
             {
                 position = gameState.Party.OverWorldPosition;
                 gameState.SetCurrentPosition(position);
@@ -303,7 +303,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             WorldPosition spawnPosition;
-            if (mapView.TryGetSpawnPosition(warp.SpawnId, out spawnPosition))
+            if (mapView.TryGetSpawnPosition(transition.SpawnId, out spawnPosition))
             {
                 position = spawnPosition;
                 if (gameState != null)
@@ -321,12 +321,15 @@ namespace Redpoint.DungeonEscape.Unity
             }
         }
 
-        private bool ShouldReturnToOverWorldPosition(TiledMapWarp warp)
+        private static DungeonEscapeMapTransition CreateFallbackTransition(TiledMapWarp warp)
         {
-            return gameState != null &&
-                   gameState.Party != null &&
-                   gameState.Party.CurrentMapIsOverWorld &&
-                   string.IsNullOrEmpty(warp.SpawnId);
+            var mapId = TiledMapLoader.NormalizeMapId(warp.MapId);
+            return new DungeonEscapeMapTransition
+            {
+                MapId = mapId,
+                SpawnId = warp.SpawnId,
+                UseSavedOverWorldPosition = mapId == "overworld" && string.IsNullOrEmpty(warp.SpawnId)
+            };
         }
 
         private void TryInteract()
@@ -389,17 +392,39 @@ namespace Redpoint.DungeonEscape.Unity
             string dialogId;
             if (TryGetProperty(mapObject, "Dialog", out dialogId) && !string.IsNullOrEmpty(dialogId))
             {
-                messageBox.Show(mapObject.Name, "Dialog: " + dialogId);
+                string dialogText;
+                if (DungeonEscapeGameDataCache.Current != null &&
+                    DungeonEscapeGameDataCache.Current.TryGetDialogText(
+                        dialogId,
+                        gameState == null ? null : gameState.Party,
+                        out dialogText))
+                {
+                    messageBox.Show(mapObject.Name, dialogText);
+                }
+                else
+                {
+                    messageBox.Show(mapObject.Name, "Missing dialog: " + dialogId);
+                }
+
                 return;
             }
 
             if (mapObject.Class == "Chest")
             {
                 string itemId;
-                var itemText = TryGetProperty(mapObject, "ItemId", out itemId) && !string.IsNullOrEmpty(itemId)
-                    ? "Chest contains: " + itemId
-                    : "Chest";
-                messageBox.Show(mapObject.Name, itemText);
+                if (TryGetProperty(mapObject, "ItemId", out itemId) && !string.IsNullOrEmpty(itemId))
+                {
+                    Item item;
+                    var itemText = DungeonEscapeGameDataCache.Current != null &&
+                                   DungeonEscapeGameDataCache.Current.TryGetCustomItem(itemId, out item)
+                        ? "Chest contains: " + item.NameWithStats
+                        : "Chest contains unknown item: " + itemId;
+
+                    messageBox.Show(mapObject.Name, itemText);
+                    return;
+                }
+
+                messageBox.Show(mapObject.Name, "Chest is empty.");
                 return;
             }
 
@@ -470,6 +495,10 @@ namespace Redpoint.DungeonEscape.Unity
         {
             currentDirection = direction;
             spriteRenderer.sprite = directionSprites[currentDirection][0];
+            if (gameState != null)
+            {
+                gameState.SetCurrentDirection(direction);
+            }
         }
 
         private void PlayStepAnimation(Direction direction)

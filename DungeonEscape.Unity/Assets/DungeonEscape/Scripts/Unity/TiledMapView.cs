@@ -161,6 +161,11 @@ namespace Redpoint.DungeonEscape.Unity
 
         public void LoadMap(string mapIdOrAssetPath, string spawnId)
         {
+            LoadMap(mapIdOrAssetPath, spawnId, true);
+        }
+
+        public void LoadMap(string mapIdOrAssetPath, string spawnId, bool centerOnSpawn)
+        {
             mapAssetPath = TiledMapLoader.NormalizeMapAssetPath(mapIdOrAssetPath);
             ClearRenderedChildren();
             rendererPool = new TiledSpriteRendererPool(transform);
@@ -173,7 +178,7 @@ namespace Redpoint.DungeonEscape.Unity
             transform.position = Vector3.zero;
 
             WorldPosition spawnPosition;
-            if (TryGetSpawnPosition(spawnId, out spawnPosition))
+            if (centerOnSpawn && TryGetSpawnPosition(spawnId, out spawnPosition))
             {
                 CenterOn(spawnPosition);
             }

@@ -72,6 +72,7 @@ namespace Redpoint.DungeonEscape.Unity
             };
 
             Data.Link();
+            DungeonEscapeGameDataCache.Load(Data);
             ValidateTilesets(Data.TestMap, testMapAssetPath);
 
             Debug.Log("Dungeon Escape data loaded. Item definitions: " + Count(Data.ItemDefinitions) +

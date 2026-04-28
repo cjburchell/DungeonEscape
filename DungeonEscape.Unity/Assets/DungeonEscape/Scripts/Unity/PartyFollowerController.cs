@@ -44,7 +44,7 @@ namespace Redpoint.DungeonEscape.Unity
                 GetVisualPosition(position),
                 GetVisualPosition(nextPosition),
                 Mathf.Clamp01(progress));
-            ApplySprite();
+            ApplyMoveSprite(progress);
         }
 
         public void CommitPosition(WorldPosition nextPosition, Direction nextDirection)
@@ -68,6 +68,18 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             spriteRenderer.sprite = sprites.GetIdle(direction);
+            spriteRenderer.sortingOrder = mapView == null ? Row : mapView.GetObjectSortingOrder(Row);
+        }
+
+        private void ApplyMoveSprite(float progress)
+        {
+            if (spriteRenderer == null || sprites == null)
+            {
+                return;
+            }
+
+            var frame = progress < 0.5f ? 1 : 0;
+            spriteRenderer.sprite = sprites.GetStep(direction, frame);
             spriteRenderer.sortingOrder = mapView == null ? Row : mapView.GetObjectSortingOrder(Row);
         }
 

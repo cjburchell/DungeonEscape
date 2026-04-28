@@ -179,6 +179,7 @@ namespace Redpoint.DungeonEscape.State
         public string ImageSource { get; set; }
         public int ImageWidth { get; set; }
         public int ImageHeight { get; set; }
+        public Dictionary<int, List<TiledTileAnimationFrameInfo>> Animations { get; set; }
 
         public static TiledTilesetDocumentInfo Parse(string xml)
         {
@@ -197,8 +198,39 @@ namespace Redpoint.DungeonEscape.State
                 Margin = GetInt(tileset, "margin"),
                 ImageSource = image == null ? null : GetString(image, "source"),
                 ImageWidth = image == null ? 0 : GetInt(image, "width"),
-                ImageHeight = image == null ? 0 : GetInt(image, "height")
+                ImageHeight = image == null ? 0 : GetInt(image, "height"),
+                Animations = ReadAnimations(tileset)
             };
+        }
+
+        private static Dictionary<int, List<TiledTileAnimationFrameInfo>> ReadAnimations(XElement tileset)
+        {
+            var result = new Dictionary<int, List<TiledTileAnimationFrameInfo>>();
+            foreach (var tile in tileset.Elements("tile"))
+            {
+                var animation = tile.Element("animation");
+                if (animation == null)
+                {
+                    continue;
+                }
+
+                var frames = new List<TiledTileAnimationFrameInfo>();
+                foreach (var frame in animation.Elements("frame"))
+                {
+                    frames.Add(new TiledTileAnimationFrameInfo
+                    {
+                        TileId = GetInt(frame, "tileid"),
+                        Duration = GetInt(frame, "duration")
+                    });
+                }
+
+                if (frames.Count > 0)
+                {
+                    result[GetInt(tile, "id")] = frames;
+                }
+            }
+
+            return result;
         }
 
         private static string GetString(XElement element, string name)
@@ -213,6 +245,12 @@ namespace Redpoint.DungeonEscape.State
             int result;
             return int.TryParse(value, out result) ? result : 0;
         }
+    }
+
+    public sealed class TiledTileAnimationFrameInfo
+    {
+        public int TileId { get; set; }
+        public int Duration { get; set; }
     }
 
     public sealed class TiledLayerInfo

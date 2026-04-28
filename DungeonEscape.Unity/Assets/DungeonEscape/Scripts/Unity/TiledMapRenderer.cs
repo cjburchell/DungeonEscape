@@ -209,6 +209,9 @@ namespace Redpoint.DungeonEscape.Unity
                         continue;
                     }
 
+                    List<TiledSpriteAnimationFrame> animationFrames;
+                    TiledTilesetSprites.TryGetAnimation(gid, spriteSets, out animationFrames);
+
                     var tileObject = new GameObject("Tile_" + GetString(layer, "name") + "_" + sourceColumn + "_" + sourceRow);
                     tileObject.transform.SetParent(parent, false);
                     tileObject.transform.localPosition = new Vector3(sourceColumn - viewportStartColumn, -(sourceRow - viewportStartRow), 0);
@@ -216,6 +219,7 @@ namespace Redpoint.DungeonEscape.Unity
                     var renderer = tileObject.AddComponent<SpriteRenderer>();
                     renderer.sprite = sprite;
                     renderer.sortingOrder = sortingOrder;
+                    ApplyAnimation(renderer, animationFrames);
                     renderedTileCount++;
                 }
             }
@@ -261,6 +265,12 @@ namespace Redpoint.DungeonEscape.Unity
                     continue;
                 }
 
+                List<TiledSpriteAnimationFrame> animationFrames = null;
+                if (gid != 0)
+                {
+                    TryGetObjectAnimation(gid, mapObject, spriteSets, mapId, gameState, out animationFrames);
+                }
+
                 var x = GetFloat(mapObject, "x");
                 var y = GetFloat(mapObject, "y");
                 var width = GetFloat(mapObject, "width");
@@ -294,6 +304,7 @@ namespace Redpoint.DungeonEscape.Unity
                 var renderer = markerObject.AddComponent<SpriteRenderer>();
                 renderer.sprite = sprite;
                 renderer.sortingOrder = sortingOrder;
+                ApplyAnimation(renderer, animationFrames);
                 renderedObjectCount++;
             }
 
@@ -337,10 +348,14 @@ namespace Redpoint.DungeonEscape.Unity
                         continue;
                     }
 
+                    List<TiledSpriteAnimationFrame> animationFrames;
+                    TiledTilesetSprites.TryGetAnimation(gid, spriteSets, out animationFrames);
+
                     var key = "Tile|" + sortingOrder + "|" + GetString(layer, "name") + "|" + sourceColumn + "|" + sourceRow;
                     pool.Show(
                         key,
                         sprite,
+                        animationFrames,
                         new Vector3(sourceColumn - viewportStartColumn, -(sourceRow - viewportStartRow), 0),
                         sortingOrder,
                         "Tile_" + GetString(layer, "name") + "_" + sourceColumn + "_" + sourceRow);
@@ -389,6 +404,12 @@ namespace Redpoint.DungeonEscape.Unity
                     continue;
                 }
 
+                List<TiledSpriteAnimationFrame> animationFrames = null;
+                if (gid != 0)
+                {
+                    TryGetObjectAnimation(gid, mapObject, spriteSets, mapId, gameState, out animationFrames);
+                }
+
                 var x = GetFloat(mapObject, "x");
                 var y = GetFloat(mapObject, "y");
                 var width = GetFloat(mapObject, "width");
@@ -409,6 +430,7 @@ namespace Redpoint.DungeonEscape.Unity
                 pool.Show(
                     key,
                     sprite,
+                    animationFrames,
                     GetObjectLocalPosition(
                         x,
                         y,
@@ -489,6 +511,40 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return TiledTilesetSprites.TryGetSprite(gid, spriteSets, out sprite);
+        }
+
+        private static bool TryGetObjectAnimation(
+            int gid,
+            XElement mapObject,
+            IList<TiledTilesetSpriteSet> spriteSets,
+            string mapId,
+            DungeonEscapeGameState gameState,
+            out List<TiledSpriteAnimationFrame> frames)
+        {
+            frames = null;
+            if (gameState != null &&
+                gameState.IsObjectOpen(mapId, GetInt(mapObject, "id")) &&
+                string.Equals(GetString(mapObject, "class"), "Chest", StringComparison.OrdinalIgnoreCase))
+            {
+                var openImage = GetIntProperty(mapObject, "OpenImage", 135);
+                if (TiledTilesetSprites.TryGetAnimationFromSameSet(gid, openImage, spriteSets, out frames))
+                {
+                    return true;
+                }
+            }
+
+            return TiledTilesetSprites.TryGetAnimation(gid, spriteSets, out frames);
+        }
+
+        private static void ApplyAnimation(SpriteRenderer renderer, List<TiledSpriteAnimationFrame> animationFrames)
+        {
+            if (animationFrames == null || animationFrames.Count <= 1)
+            {
+                return;
+            }
+
+            var player = renderer.gameObject.AddComponent<TiledSpriteAnimationPlayer>();
+            player.Configure(renderer, animationFrames);
         }
 
         private static Vector3 GetObjectLocalPosition(

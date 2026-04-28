@@ -58,7 +58,8 @@ namespace Redpoint.DungeonEscape.Unity
                 spriteSets.Add(new TiledTilesetSpriteSet
                 {
                     FirstGid = tileset.FirstGid,
-                    Sprites = sprites
+                    Sprites = sprites,
+                    Animations = BuildAnimations(tileset.Document, sprites)
                 });
             }
 
@@ -95,6 +96,28 @@ namespace Redpoint.DungeonEscape.Unity
             return selected.Sprites.TryGetValue(gid - selected.FirstGid, out sprite);
         }
 
+        public static bool TryGetAnimation(int gid, IList<TiledTilesetSpriteSet> spriteSets, out List<TiledSpriteAnimationFrame> frames)
+        {
+            frames = null;
+
+            TiledTilesetSpriteSet selected = null;
+            foreach (var spriteSet in spriteSets)
+            {
+                if (spriteSet.FirstGid <= gid)
+                {
+                    selected = spriteSet;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return selected != null &&
+                   selected.Animations != null &&
+                   selected.Animations.TryGetValue(gid - selected.FirstGid, out frames);
+        }
+
         public static bool TryGetSpriteFromSameSet(int referenceGid, int tileId, IList<TiledTilesetSpriteSet> spriteSets, out Sprite sprite)
         {
             sprite = null;
@@ -113,6 +136,69 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return selected != null && selected.Sprites.TryGetValue(tileId, out sprite);
+        }
+
+        public static bool TryGetAnimationFromSameSet(
+            int referenceGid,
+            int tileId,
+            IList<TiledTilesetSpriteSet> spriteSets,
+            out List<TiledSpriteAnimationFrame> frames)
+        {
+            frames = null;
+
+            TiledTilesetSpriteSet selected = null;
+            foreach (var spriteSet in spriteSets)
+            {
+                if (spriteSet.FirstGid <= referenceGid)
+                {
+                    selected = spriteSet;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return selected != null &&
+                   selected.Animations != null &&
+                   selected.Animations.TryGetValue(tileId, out frames);
+        }
+
+        private static Dictionary<int, List<TiledSpriteAnimationFrame>> BuildAnimations(
+            TiledTilesetDocumentInfo document,
+            Dictionary<int, Sprite> sprites)
+        {
+            var result = new Dictionary<int, List<TiledSpriteAnimationFrame>>();
+            if (document == null || document.Animations == null)
+            {
+                return result;
+            }
+
+            foreach (var animation in document.Animations)
+            {
+                var frames = new List<TiledSpriteAnimationFrame>();
+                foreach (var frame in animation.Value)
+                {
+                    Sprite sprite;
+                    if (!sprites.TryGetValue(frame.TileId, out sprite))
+                    {
+                        continue;
+                    }
+
+                    frames.Add(new TiledSpriteAnimationFrame
+                    {
+                        Sprite = sprite,
+                        DurationSeconds = Mathf.Max(frame.Duration / 1000f, 0.01f)
+                    });
+                }
+
+                if (frames.Count > 0)
+                {
+                    result[animation.Key] = frames;
+                }
+            }
+
+            return result;
         }
 
         private static Texture2D LoadTexture(string path)
@@ -176,5 +262,6 @@ namespace Redpoint.DungeonEscape.Unity
     {
         public int FirstGid { get; set; }
         public Dictionary<int, Sprite> Sprites { get; set; }
+        public Dictionary<int, List<TiledSpriteAnimationFrame>> Animations { get; set; }
     }
 }

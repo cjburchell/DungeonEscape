@@ -47,6 +47,37 @@ namespace Redpoint.DungeonEscape.Unity
             cachedSettings = settings ?? new Settings { Version = SettingsFileVersion };
         }
 
+        public static void Save()
+        {
+            if (cachedSettings == null)
+            {
+                Load();
+            }
+
+            if (cachedSettings == null)
+            {
+                return;
+            }
+
+            cachedSettings.Version = SettingsFileVersion;
+            var path = GetSettingsFilePath();
+            var directory = Path.GetDirectoryName(path);
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            File.WriteAllText(
+                path,
+                JsonConvert.SerializeObject(
+                    cachedSettings,
+                    Formatting.Indented,
+                    new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    }));
+        }
+
         private static Settings LoadAppDataSettings()
         {
             var path = GetSettingsFilePath();

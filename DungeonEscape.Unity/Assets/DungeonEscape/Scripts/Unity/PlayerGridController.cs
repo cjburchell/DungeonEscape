@@ -156,6 +156,11 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Update()
         {
+            if (DungeonEscapeGameMenu.IsOpen)
+            {
+                return;
+            }
+
             if (isMoving)
             {
                 return;

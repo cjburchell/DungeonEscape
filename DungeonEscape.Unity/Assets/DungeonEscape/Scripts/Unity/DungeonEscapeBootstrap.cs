@@ -73,6 +73,7 @@ namespace Redpoint.DungeonEscape.Unity
             Data.Link();
             DungeonEscapeGameDataCache.Load(Data);
             DungeonEscapeGameState.GetOrCreate();
+            EnsureGameMenu();
             ValidateTilesets(Data.TestMap, testMapAssetPath);
 
             Debug.Log("Dungeon Escape data loaded. Item definitions: " + Count(Data.ItemDefinitions) +
@@ -228,6 +229,16 @@ namespace Redpoint.DungeonEscape.Unity
             camera.orthographic = true;
             cameraObject.tag = "MainCamera";
             cameraObject.transform.position = new Vector3(0, 0, -10);
+        }
+
+        private static void EnsureGameMenu()
+        {
+            if (FindObjectOfType<DungeonEscapeGameMenu>() != null)
+            {
+                return;
+            }
+
+            new GameObject("DungeonEscapeGameMenu").AddComponent<DungeonEscapeGameMenu>();
         }
     }
 }

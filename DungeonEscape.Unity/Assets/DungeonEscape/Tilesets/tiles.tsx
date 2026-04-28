@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.9" tiledversion="1.9.2" name="tiles" tilewidth="32" tileheight="64" tilecount="96" columns="12">
- <image source="images/sprites/tiles.png" width="384" height="512"/>
+ <image source="../Images/sprites/tiles.png" width="384" height="512"/>
  <tile id="57">
   <animation>
    <frame tileid="57" duration="80"/>

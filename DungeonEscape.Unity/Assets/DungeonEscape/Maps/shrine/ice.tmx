@@ -4,13 +4,13 @@
   <property name="biome" value="Tower"/>
   <property name="song" value="in-the-city"/>
  </properties>
- <tileset firstgid="1" source="../../tower.tsx"/>
- <tileset firstgid="481" source="../../overworld.tsx"/>
- <tileset firstgid="961" source="../../dungeon.tsx"/>
- <tileset firstgid="1441" source="../../edge.tsx"/>
- <tileset firstgid="1648" source="../../castle.tsx"/>
- <tileset firstgid="2128" source="../../castle2.tsx"/>
- <tileset firstgid="2608" source="../../tiles_small.tsx"/>
+ <tileset firstgid="1" source="../../Tilesets/tower.tsx"/>
+ <tileset firstgid="481" source="../../Tilesets/overworld.tsx"/>
+ <tileset firstgid="961" source="../../Tilesets/dungeon.tsx"/>
+ <tileset firstgid="1441" source="../../Tilesets/edge.tsx"/>
+ <tileset firstgid="1648" source="../../Tilesets/castle.tsx"/>
+ <tileset firstgid="2128" source="../../Tilesets/castle2.tsx"/>
+ <tileset firstgid="2608" source="../../Tilesets/tiles_small.tsx"/>
  <layer id="2" name="water" width="32" height="30">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

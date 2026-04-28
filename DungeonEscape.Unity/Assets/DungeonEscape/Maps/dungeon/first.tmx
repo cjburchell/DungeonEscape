@@ -4,11 +4,11 @@
   <property name="biome" value="Cave"/>
   <property name="song" value="underground-town"/>
  </properties>
- <tileset firstgid="1" source="../../npc.tsx"/>
- <tileset firstgid="222" source="../../dungeon.tsx"/>
- <tileset firstgid="702" source="../../tower.tsx"/>
- <tileset firstgid="1182" source="../../hero.tsx"/>
- <tileset firstgid="1342" source="../../tiles_small.tsx"/>
+ <tileset firstgid="1" source="../../Tilesets/npc.tsx"/>
+ <tileset firstgid="222" source="../../Tilesets/dungeon.tsx"/>
+ <tileset firstgid="702" source="../../Tilesets/tower.tsx"/>
+ <tileset firstgid="1182" source="../../Tilesets/hero.tsx"/>
+ <tileset firstgid="1342" source="../../Tilesets/tiles_small.tsx"/>
  <layer id="2" name="water" width="35" height="35">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

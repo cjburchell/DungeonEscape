@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.9" tiledversion="1.9.2" name="edge2" tilewidth="32" tileheight="32" tilecount="207" columns="9">
- <image source="images/tiles/edge.png" width="288" height="736"/>
+ <image source="../Images/tiles/edge.png" width="288" height="736"/>
  <tile id="0"/>
  <tile id="1"/>
  <tile id="2"/>

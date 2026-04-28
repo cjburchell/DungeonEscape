@@ -4,15 +4,15 @@
   <property name="biome" value="Town"/>
   <property name="song" value="in-the-city"/>
  </properties>
- <tileset firstgid="1" source="../../npc.tsx"/>
- <tileset firstgid="222" source="../../indoor.tsx"/>
- <tileset firstgid="702" source="../../outdoors.tsx"/>
- <tileset firstgid="1182" source="../../edge.tsx"/>
- <tileset firstgid="1245" source="../../overworld.tsx"/>
- <tileset firstgid="1725" source="../../hero.tsx"/>
- <tileset firstgid="1885" source="../../castle2.tsx"/>
- <tileset firstgid="2365" source="../../castle.tsx"/>
- <tileset firstgid="2845" source="../../tiles_small.tsx"/>
+ <tileset firstgid="1" source="../../Tilesets/npc.tsx"/>
+ <tileset firstgid="222" source="../../Tilesets/indoor.tsx"/>
+ <tileset firstgid="702" source="../../Tilesets/outdoors.tsx"/>
+ <tileset firstgid="1182" source="../../Tilesets/edge.tsx"/>
+ <tileset firstgid="1245" source="../../Tilesets/overworld.tsx"/>
+ <tileset firstgid="1725" source="../../Tilesets/hero.tsx"/>
+ <tileset firstgid="1885" source="../../Tilesets/castle2.tsx"/>
+ <tileset firstgid="2365" source="../../Tilesets/castle.tsx"/>
+ <tileset firstgid="2845" source="../../Tilesets/tiles_small.tsx"/>
  <layer id="2" name="water" width="50" height="50">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

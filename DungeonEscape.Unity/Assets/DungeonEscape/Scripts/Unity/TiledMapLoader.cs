@@ -134,6 +134,15 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 normalized = normalized.Substring(imagesPrefix.Length);
             }
+            else
+            {
+                const string imagesSegment = "/Images/";
+                var imagesIndex = normalized.IndexOf(imagesSegment, StringComparison.OrdinalIgnoreCase);
+                if (imagesIndex >= 0)
+                {
+                    normalized = normalized.Substring(imagesIndex + imagesSegment.Length);
+                }
+            }
 
             return "Assets/DungeonEscape/Images/" + normalized;
         }

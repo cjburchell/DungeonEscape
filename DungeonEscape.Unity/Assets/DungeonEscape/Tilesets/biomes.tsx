@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.9" tiledversion="1.9.2" name="biomes" tilewidth="32" tileheight="32" spacing="1" tilecount="30" columns="6">
- <image source="images/tiles/biomes.png" width="197" height="164"/>
+ <image source="../Images/tiles/biomes.png" width="197" height="164"/>
  <tile id="0" class="Grassland">
   <properties>
    <property name="MaxMonsterLevel" type="int" value="5"/>

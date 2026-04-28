@@ -4,14 +4,14 @@
   <property name="biome" value="Tower"/>
   <property name="song" value="unprepared"/>
  </properties>
- <tileset firstgid="1" source="../../npc.tsx"/>
- <tileset firstgid="222" source="../../overworld.tsx"/>
- <tileset firstgid="702" source="../../temples.tsx"/>
- <tileset firstgid="7401" source="../../dungeon.tsx"/>
- <tileset firstgid="7881" source="../../castle2.tsx"/>
- <tileset firstgid="8361" source="../../indoor.tsx"/>
- <tileset firstgid="8841" source="../../animals.tsx"/>
- <tileset firstgid="8937" source="../../tiles_small.tsx"/>
+ <tileset firstgid="1" source="../../Tilesets/npc.tsx"/>
+ <tileset firstgid="222" source="../../Tilesets/overworld.tsx"/>
+ <tileset firstgid="702" source="../../Tilesets/temples.tsx"/>
+ <tileset firstgid="7401" source="../../Tilesets/dungeon.tsx"/>
+ <tileset firstgid="7881" source="../../Tilesets/castle2.tsx"/>
+ <tileset firstgid="8361" source="../../Tilesets/indoor.tsx"/>
+ <tileset firstgid="8841" source="../../Tilesets/animals.tsx"/>
+ <tileset firstgid="8937" source="../../Tilesets/tiles_small.tsx"/>
  <layer id="2" name="water" width="40" height="40">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

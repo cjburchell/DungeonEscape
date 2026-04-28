@@ -4,19 +4,19 @@
   <property name="overworld" type="bool" value="true"/>
   <property name="song" value="not-in-vain"/>
  </properties>
- <tileset firstgid="1" source="../overworld.tsx"/>
- <tileset firstgid="481" source="../edge.tsx"/>
+ <tileset firstgid="1" source="../Tilesets/overworld.tsx"/>
+ <tileset firstgid="481" source="../Tilesets/edge.tsx"/>
  <tileset firstgid="688" name="damage" tilewidth="32" tileheight="32" tilecount="1" columns="0">
   <grid orientation="orthogonal" width="1" height="1"/>
   <tile id="0">
    <properties>
     <property name="damage" type="int" value="1"/>
    </properties>
-   <image width="32" height="32" source="../images/tiles/swamp.png"/>
+   <image width="32" height="32" source="../Images/tiles/swamp.png"/>
   </tile>
  </tileset>
- <tileset firstgid="689" source="../edge2.tsx"/>
- <tileset firstgid="896" source="../biomes.tsx"/>
+ <tileset firstgid="689" source="../Tilesets/edge2.tsx"/>
+ <tileset firstgid="896" source="../Tilesets/biomes.tsx"/>
  <layer id="2" name="water" width="120" height="120">
   <data encoding="csv">
 121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,121,0,0,0,0,0,

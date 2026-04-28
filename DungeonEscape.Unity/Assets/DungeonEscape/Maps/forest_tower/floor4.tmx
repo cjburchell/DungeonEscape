@@ -4,8 +4,8 @@
   <property name="biome" value="Tower"/>
   <property name="song" value="like-totally-rad"/>
  </properties>
- <tileset firstgid="1" source="../../tower.tsx"/>
- <tileset firstgid="481" source="../../tiles_small.tsx"/>
+ <tileset firstgid="1" source="../../Tilesets/tower.tsx"/>
+ <tileset firstgid="481" source="../../Tilesets/tiles_small.tsx"/>
  <layer id="1" name="floor" width="32" height="25">
   <data encoding="csv">
 253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,

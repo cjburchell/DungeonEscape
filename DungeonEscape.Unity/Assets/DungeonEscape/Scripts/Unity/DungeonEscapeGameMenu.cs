@@ -33,6 +33,7 @@ namespace Redpoint.DungeonEscape.Unity
         private static bool isOpen;
 
         private DungeonEscapeGameState gameState;
+        private DungeonEscapeMessageBox messageBox;
         private DungeonEscapeUiSettings uiSettings;
         private TiledMapView mapView;
         private GUIStyle titleStyle;
@@ -69,6 +70,11 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Update()
         {
+            if (isOpen && DungeonEscapeMessageBox.IsAnyVisible)
+            {
+                return;
+            }
+
             if (rebindingInput != null)
             {
                 string keyCode;
@@ -129,6 +135,13 @@ namespace Redpoint.DungeonEscape.Unity
             EnsureReferences();
             EnsureStyles();
 
+            if (DungeonEscapeMessageBox.IsAnyVisible)
+            {
+                return;
+            }
+
+            var previousDepth = GUI.depth;
+            GUI.depth = 1000;
             var scale = GetPixelScale();
             var width = Mathf.Min(Screen.width - 32f * scale, 980f * scale);
             var height = Mathf.Min(Screen.height - 32f * scale, 680f * scale);
@@ -149,6 +162,7 @@ namespace Redpoint.DungeonEscape.Unity
             DrawCurrentTab();
             GUI.skin.verticalScrollbarThumb = previousVerticalThumb;
             GUILayout.EndArea();
+            GUI.depth = previousDepth;
         }
 
         private void Toggle(MenuTab tab)
@@ -476,7 +490,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            var members = party.Members.OrderBy(member => member.IsActive ? 0 : 1).ThenBy(member => member.Order).ToList();
+            var members = GetInventoryMembers(party);
             if (members.Count == 0)
             {
                 GUILayout.Label("No party members.", labelStyle);
@@ -497,7 +511,11 @@ namespace Redpoint.DungeonEscape.Unity
             GUILayout.Space(8f * GetPixelScale());
 
             var hero = members[selectedHeroIndex];
+            GUILayout.BeginHorizontal();
             GUILayout.Label(hero.Name + "'s Inventory (" + hero.Items.Count + "/" + Party.MaxItems + ")", titleStyle);
+            GUILayout.FlexibleSpace();
+            GUILayout.Label("Gold: " + party.Gold, labelStyle);
+            GUILayout.EndHorizontal();
             if (hero.Items.Count == 0)
             {
                 GUILayout.Label("No items.", labelStyle);
@@ -595,6 +613,12 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             GUILayout.Space(8f * GetPixelScale());
+            GUI.enabled = gameState != null && gameState.CanUseHeroItem(hero, item);
+            if (GUILayout.Button("Use", buttonStyle))
+            {
+                ShowUseItemTargetPicker(hero, item);
+            }
+
             GUI.enabled = item.IsEquipped;
             if (GUILayout.Button("Unequip", buttonStyle))
             {
@@ -608,7 +632,152 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             GUI.enabled = true;
+            if (GUILayout.Button("Transfer", buttonStyle))
+            {
+                ShowTransferItemTargetPicker(hero, item);
+            }
+
+            GUI.enabled = item.Type != ItemType.Quest;
+            if (GUILayout.Button("Drop", buttonStyle))
+            {
+                ShowDropItemConfirmation(hero, item);
+            }
+
+            GUI.enabled = true;
             GUILayout.EndVertical();
+        }
+
+        private void ShowTransferItemTargetPicker(Hero source, ItemInstance item)
+        {
+            var party = GetParty();
+            if (party == null || source == null || item == null)
+            {
+                return;
+            }
+
+            var targets = GetInventoryMembers(party)
+                .Where(member => !ReferenceEquals(member, source) && member.Items.Count < Party.MaxItems)
+                .ToList();
+            if (targets.Count == 0)
+            {
+                ShowInventoryMessage("No party member has room for " + item.Name + ".");
+                return;
+            }
+
+            var labels = targets.Select(target => target.Name).ToList();
+            labels.Add("Cancel");
+            GetMessageBox().Show("Transfer " + item.Name, "Choose who should carry this item.", labels, selectedIndex =>
+            {
+                if (selectedIndex < 0 || selectedIndex >= targets.Count)
+                {
+                    return;
+                }
+
+                var target = targets[selectedIndex];
+                if (gameState.TransferHeroItem(source, target, item))
+                {
+                    selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(source.Items.Count - 1, 0));
+                    ShowInventoryMessage(source.Name + " gave " + item.Name + " to " + target.Name + ".");
+                }
+                else
+                {
+                    ShowInventoryMessage("Could not transfer " + item.Name + ".");
+                }
+            });
+        }
+
+        private void ShowDropItemConfirmation(Hero hero, ItemInstance item)
+        {
+            if (hero == null || item == null)
+            {
+                return;
+            }
+
+            if (item.Type == ItemType.Quest)
+            {
+                ShowInventoryMessage("Quest items cannot be dropped.");
+                return;
+            }
+
+            GetMessageBox().Show("Drop " + item.Name, "Discard this item?", new[] { "Drop", "Cancel" }, selectedIndex =>
+            {
+                if (selectedIndex != 0)
+                {
+                    return;
+                }
+
+                if (gameState.DropHeroItem(hero, item))
+                {
+                    selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
+                    ShowInventoryMessage(item.Name + " was dropped.");
+                }
+                else
+                {
+                    ShowInventoryMessage("Could not drop " + item.Name + ".");
+                }
+            });
+        }
+
+        private void ShowUseItemTargetPicker(Hero hero, ItemInstance item)
+        {
+            EnsureReferences();
+            if (gameState == null || hero == null || item == null)
+            {
+                return;
+            }
+
+            switch (item.Target)
+            {
+                case Target.Group:
+                    ShowInventoryMessage(gameState.UseHeroItemOnParty(hero, item));
+                    selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
+                    return;
+                case Target.None:
+                    ShowInventoryMessage(gameState.UseHeroItem(hero, item, hero));
+                    selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
+                    return;
+                case Target.Single:
+                    ShowSingleItemTargetPicker(hero, item);
+                    return;
+                default:
+                    ShowInventoryMessage("That item cannot be used from inventory.");
+                    return;
+            }
+        }
+
+        private void ShowSingleItemTargetPicker(Hero hero, ItemInstance item)
+        {
+            var party = GetParty();
+            if (party == null)
+            {
+                ShowInventoryMessage("No party loaded.");
+                return;
+            }
+
+            var targets = party.ActiveMembers.ToList();
+            if (targets.Count == 0)
+            {
+                ShowInventoryMessage("No party members can be targeted.");
+                return;
+            }
+
+            var labels = targets.Select(target => target.Name).ToList();
+            labels.Add("Cancel");
+            GetMessageBox().Show("Use " + item.Name, "Choose a target.", labels, selectedIndex =>
+            {
+                if (selectedIndex < 0 || selectedIndex >= targets.Count)
+                {
+                    return;
+                }
+
+                ShowInventoryMessage(gameState.UseHeroItem(hero, item, targets[selectedIndex]));
+                selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
+            });
+        }
+
+        private void ShowInventoryMessage(string message)
+        {
+            GetMessageBox().Show("Inventory", string.IsNullOrEmpty(message) ? "Done." : message);
         }
 
         private void ApplyInventoryChange(Func<bool> action)
@@ -1151,7 +1320,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return null;
             }
 
-            var members = party.Members.OrderBy(member => member.IsActive ? 0 : 1).ThenBy(member => member.Order).ToList();
+            var members = GetInventoryMembers(party);
             if (members.Count == 0)
             {
                 return null;
@@ -1169,8 +1338,16 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            selectedHeroIndex = (selectedHeroIndex + delta + party.Members.Count) % party.Members.Count;
+            var members = GetInventoryMembers(party);
+            selectedHeroIndex = (selectedHeroIndex + delta + members.Count) % members.Count;
             selectedRowIndex = 0;
+        }
+
+        private static List<Hero> GetInventoryMembers(Party party)
+        {
+            return party == null
+                ? new List<Hero>()
+                : party.Members.OrderBy(member => member.IsActive ? 0 : 1).ThenBy(member => member.Order).ToList();
         }
 
         private void ActivateSelectedInventoryItem()
@@ -1182,7 +1359,11 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             var item = hero.Items[selectedRowIndex];
-            if (item.IsEquipped)
+            if (gameState != null && gameState.CanUseHeroItem(hero, item))
+            {
+                ShowUseItemTargetPicker(hero, item);
+            }
+            else if (item.IsEquipped)
             {
                 ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item));
             }
@@ -1447,6 +1628,15 @@ namespace Redpoint.DungeonEscape.Unity
                 gameState = DungeonEscapeGameState.GetOrCreate();
             }
 
+            if (messageBox == null)
+            {
+                messageBox = FindAnyObjectByType<DungeonEscapeMessageBox>();
+                if (messageBox == null)
+                {
+                    messageBox = new GameObject("DungeonEscapeMessageBox").AddComponent<DungeonEscapeMessageBox>();
+                }
+            }
+
             if (uiSettings == null)
             {
                 uiSettings = DungeonEscapeUiSettings.GetOrCreate();
@@ -1454,8 +1644,14 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (mapView == null)
             {
-                mapView = FindFirstObjectByType<TiledMapView>();
+                mapView = FindAnyObjectByType<TiledMapView>();
             }
+        }
+
+        private DungeonEscapeMessageBox GetMessageBox()
+        {
+            EnsureReferences();
+            return messageBox;
         }
 
         private void EnsureStyles()

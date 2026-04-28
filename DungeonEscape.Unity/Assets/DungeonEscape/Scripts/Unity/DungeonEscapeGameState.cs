@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Redpoint.DungeonEscape.Unity
 {
-    public sealed class DungeonEscapeGameState : MonoBehaviour
+    public sealed class DungeonEscapeGameState : MonoBehaviour, IGame
     {
         private const string SaveFileVersion = "1.0";
         private const int MaxSaveSlots = 5;
@@ -37,6 +37,21 @@ namespace Redpoint.DungeonEscape.Unity
         public Party Party
         {
             get { return CurrentSave == null ? null : CurrentSave.Party; }
+        }
+
+        public List<ClassStats> ClassLevelStats
+        {
+            get
+            {
+                return DungeonEscapeGameDataCache.Current == null || DungeonEscapeGameDataCache.Current.ClassLevels == null
+                    ? new List<ClassStats>()
+                    : DungeonEscapeGameDataCache.Current.ClassLevels.ToList();
+            }
+        }
+
+        public ISounds Sounds
+        {
+            get { return NullSounds.Instance; }
         }
 
         private void Awake()
@@ -85,6 +100,40 @@ namespace Redpoint.DungeonEscape.Unity
             Party.CurrentMapId = TiledMapLoader.NormalizeMapId(mapId);
             Party.CurrentMapIsOverWorld = Party.CurrentMapId == "overworld";
             MarkDirty();
+        }
+
+        public void SetMap(string mapId = null, string spawnId = null, WorldPosition? point = null)
+        {
+            EnsureInitialized();
+
+            var normalizedMapId = TiledMapLoader.NormalizeMapId(string.IsNullOrEmpty(mapId) ? "overworld" : mapId);
+            SetCurrentMap(normalizedMapId);
+
+            var mapView = FindAnyObjectByType<TiledMapView>();
+            if (mapView != null)
+            {
+                mapView.LoadMap(normalizedMapId, spawnId, !point.HasValue);
+            }
+
+            if (point.HasValue)
+            {
+                SetCurrentPosition(point.Value);
+                if (mapView != null)
+                {
+                    mapView.CenterOn(point.Value);
+                }
+
+                return;
+            }
+
+            if (mapView != null)
+            {
+                WorldPosition spawnPosition;
+                if (mapView.TryGetSpawnPosition(spawnId, out spawnPosition))
+                {
+                    SetCurrentPosition(spawnPosition);
+                }
+            }
         }
 
         public DungeonEscapeMapTransition CreateWarpTransition(TiledMapWarp warp)
@@ -584,6 +633,116 @@ namespace Redpoint.DungeonEscape.Unity
             return true;
         }
 
+        public bool TransferHeroItem(Hero source, Hero target, ItemInstance item)
+        {
+            EnsureInitialized();
+            if (source == null ||
+                target == null ||
+                item == null ||
+                ReferenceEquals(source, target) ||
+                !Party.Members.Contains(source) ||
+                !Party.Members.Contains(target) ||
+                !source.Items.Contains(item) ||
+                target.Items.Count >= Party.MaxItems)
+            {
+                return false;
+            }
+
+            item.UnEquip(Party.Members);
+            source.Items.Remove(item);
+            target.Items.Add(item);
+            MarkDirty();
+            return true;
+        }
+
+        public bool DropHeroItem(Hero hero, ItemInstance item)
+        {
+            EnsureInitialized();
+            if (hero == null ||
+                item == null ||
+                item.Type == ItemType.Quest ||
+                !Party.Members.Contains(hero) ||
+                !hero.Items.Contains(item))
+            {
+                return false;
+            }
+
+            item.UnEquip(Party.Members);
+            hero.Items.Remove(item);
+            MarkDirty();
+            return true;
+        }
+
+        public string UseHeroItem(Hero source, ItemInstance item, Hero target)
+        {
+            EnsureInitialized();
+            if (!CanUseHeroItem(source, item) || target == null || !Party.Members.Contains(target))
+            {
+                return "Cannot use item.";
+            }
+
+            EnsureItemLinked(item);
+            var result = item.Use(source, target, null, this, 0);
+            if (result.Item2)
+            {
+                ConsumeUsedItem(source, item);
+                MarkDirty();
+            }
+
+            return string.IsNullOrEmpty(result.Item1) ? item.Name + " was used." : result.Item1;
+        }
+
+        public string UseHeroItemOnParty(Hero source, ItemInstance item)
+        {
+            EnsureInitialized();
+            if (!CanUseHeroItem(source, item))
+            {
+                return "Cannot use item.";
+            }
+
+            EnsureItemLinked(item);
+            var targets = Party.ActiveMembers.ToList();
+            if (targets.Count == 0)
+            {
+                return "No party members can be targeted.";
+            }
+
+            var messages = new List<string>();
+            var anySuccess = false;
+            foreach (var target in targets)
+            {
+                var result = item.Use(source, target, null, this, 0, true);
+                if (!string.IsNullOrEmpty(result.Item1))
+                {
+                    messages.Add(result.Item1);
+                }
+
+                anySuccess = anySuccess || result.Item2;
+            }
+
+            if (anySuccess)
+            {
+                if (item.MaxCharges != 0)
+                {
+                    item.Charges--;
+                }
+
+                ConsumeUsedItem(source, item);
+                MarkDirty();
+            }
+
+            return messages.Count == 0 ? item.Name + " was used." : string.Join("\n", messages.ToArray());
+        }
+
+        public Item GetCustomItem(string itemId)
+        {
+            Item item;
+            return DungeonEscapeGameDataCache.Current != null &&
+                   DungeonEscapeGameDataCache.Current.TryGetCustomItem(itemId, out item)
+                ? item
+                : null;
+        }
+
         private List<Item> CreateMapObjectItems(TiledObjectInfo mapObject)
         {
             var items = new List<Item>();
@@ -792,7 +951,7 @@ namespace Redpoint.DungeonEscape.Unity
             return Party.ActiveMembers.Any() ? Party.ActiveMembers.Max(member => member.Level) : 1;
         }
 
-        private static Item CreateGold(int gold)
+        public Item CreateGold(int gold)
         {
             return new Item
             {
@@ -802,6 +961,40 @@ namespace Redpoint.DungeonEscape.Unity
                 MinLevel = 0,
                 Type = ItemType.Gold
             };
+        }
+
+        public bool CanUseHeroItem(Hero source, ItemInstance item)
+        {
+            EnsureItemLinked(item);
+            return source != null &&
+                   item != null &&
+                   item.Item != null &&
+                   Party != null &&
+                   Party.Members.Contains(source) &&
+                   source.Items.Contains(item) &&
+                   item.HasCharges &&
+                   source.CanUseItem(item);
+        }
+
+        private static void EnsureItemLinked(ItemInstance item)
+        {
+            if (item == null || item.Item == null || DungeonEscapeGameDataCache.Current == null)
+            {
+                return;
+            }
+
+            item.Item.Setup(DungeonEscapeGameDataCache.Current.Skills);
+        }
+
+        private void ConsumeUsedItem(Hero source, ItemInstance item)
+        {
+            if (source == null || item == null || item.Type != ItemType.OneUse)
+            {
+                return;
+            }
+
+            item.UnEquip(Party.Members);
+            source.Items.Remove(item);
         }
 
         private static bool Chance(float probability)
@@ -1399,6 +1592,15 @@ namespace Redpoint.DungeonEscape.Unity
             state = new GameObject("DungeonEscapeGameState").AddComponent<DungeonEscapeGameState>();
             state.EnsureInitialized();
             return state;
+        }
+
+        private sealed class NullSounds : ISounds
+        {
+            public static readonly NullSounds Instance = new NullSounds();
+
+            public void PlaySoundEffect(string name, bool stopCurrent = false)
+            {
+            }
         }
     }
 }

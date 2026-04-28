@@ -264,7 +264,13 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (string.IsNullOrEmpty(spawnId))
             {
-                return TryGetDefaultSpawnPosition(out position);
+                if (TryGetDefaultSpawnPosition(out position))
+                {
+                    return true;
+                }
+
+                Debug.LogWarning("Default spawn not found. Mark one Spawn object with DefaultSpawn=true in " + currentMap.AssetPath + ".");
+                return false;
             }
 
             foreach (var group in currentMap.Info.ObjectGroups)
@@ -281,6 +287,7 @@ namespace Redpoint.DungeonEscape.Unity
                 }
             }
 
+            Debug.LogWarning("Spawn not found in " + currentMap.AssetPath + ": " + spawnId);
             return false;
         }
 

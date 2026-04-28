@@ -54,6 +54,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             var info = TiledMapInfo.Parse(text);
             ValidateTilesets(info);
+            ValidateWarps(info, mapAssetPath);
 
             var loadedMap = new TiledLoadedMap
             {
@@ -173,6 +174,88 @@ namespace Redpoint.DungeonEscape.Unity
                     Debug.LogWarning("Tileset image not found: " + tileset.UnityImagePath);
                 }
             }
+        }
+
+        private static void ValidateWarps(TiledMapInfo map, string sourceMapAssetPath)
+        {
+            if (map == null || map.ObjectGroups == null)
+            {
+                return;
+            }
+
+            foreach (var group in map.ObjectGroups)
+            {
+                foreach (var mapObject in group.Objects)
+                {
+                    if (!string.Equals(mapObject.Class, "Warp", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    string targetMapId;
+                    if (mapObject.Properties == null ||
+                        !mapObject.Properties.TryGetValue("WarpMap", out targetMapId) ||
+                        string.IsNullOrEmpty(targetMapId))
+                    {
+                        Debug.LogWarning("Warp is missing WarpMap in " + sourceMapAssetPath + " object " + mapObject.Id + ".");
+                        continue;
+                    }
+
+                    var targetMapAssetPath = NormalizeMapAssetPath(targetMapId);
+                    var targetMapPath = ToFullAssetPath(targetMapAssetPath);
+                    if (!File.Exists(targetMapPath))
+                    {
+                        Debug.LogWarning("Warp target map not found from " + sourceMapAssetPath + " object " + mapObject.Id + ": " + targetMapAssetPath);
+                        continue;
+                    }
+
+                    string spawnId;
+                    if (mapObject.Properties.TryGetValue("SpawnId", out spawnId) && !string.IsNullOrEmpty(spawnId) &&
+                        !TargetMapHasSpawn(targetMapAssetPath, spawnId))
+                    {
+                        Debug.LogWarning("Warp target spawn not found from " + sourceMapAssetPath + " object " + mapObject.Id + ": " + targetMapAssetPath + " / " + spawnId);
+                    }
+                }
+            }
+        }
+
+        private static bool TargetMapHasSpawn(string mapAssetPath, string spawnId)
+        {
+            TiledLoadedMap loadedMap;
+            TiledMapInfo mapInfo;
+            if (LoadedMaps.TryGetValue(mapAssetPath, out loadedMap) && loadedMap.Info != null)
+            {
+                mapInfo = loadedMap.Info;
+            }
+            else
+            {
+                var mapPath = ToFullAssetPath(mapAssetPath);
+                if (!File.Exists(mapPath))
+                {
+                    return false;
+                }
+
+                mapInfo = TiledMapInfo.Parse(File.ReadAllText(mapPath));
+            }
+
+            if (mapInfo.ObjectGroups == null)
+            {
+                return false;
+            }
+
+            foreach (var group in mapInfo.ObjectGroups)
+            {
+                foreach (var mapObject in group.Objects)
+                {
+                    if (string.Equals(mapObject.Class, "Spawn", StringComparison.OrdinalIgnoreCase) &&
+                        string.Equals(mapObject.Name, spawnId, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         private static string ResolveTilesetAssetPath(string source)

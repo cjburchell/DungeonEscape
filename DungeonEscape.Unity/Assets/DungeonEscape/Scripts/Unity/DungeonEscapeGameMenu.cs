@@ -330,6 +330,12 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void DrawHeroStatus(Hero hero, bool active)
         {
+            GUILayout.BeginHorizontal();
+            Sprite sprite;
+            DungeonEscapeUiControls.SpriteIcon(
+                DungeonEscapeUiAssetResolver.TryGetHeroSprite(hero, out sprite) ? sprite : null,
+                48f * GetPixelScale(),
+                uiTheme);
             GUILayout.BeginVertical();
             GUILayout.Label(hero.Name + "  L" + hero.Level + " " + hero.Class + (active ? "" : "  Reserve"), labelStyle);
             GUILayout.Label(
@@ -344,6 +350,7 @@ namespace Redpoint.DungeonEscape.Unity
                 "   AGI " + hero.Agility,
                 smallStyle);
             GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
         }
 
         private void ApplyPartyChange(Func<bool> action)
@@ -403,6 +410,11 @@ namespace Redpoint.DungeonEscape.Unity
                 var equipped = item.IsEquipped ? " [E]" : "";
                 BeginSelectableRow();
                 GUILayout.BeginHorizontal();
+                Sprite sprite;
+                DungeonEscapeUiControls.SpriteIcon(
+                    DungeonEscapeUiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null,
+                    36f * GetPixelScale(),
+                    uiTheme);
                 GUILayout.Label(item.NameWithStats + equipped + "    " + item.Type + "    " + item.Gold + "g", labelStyle);
                 if (item.IsEquipped)
                 {

@@ -134,5 +134,44 @@ namespace Redpoint.DungeonEscape.Unity
 
             return GUILayout.HorizontalSlider(value, leftValue, rightValue, theme.SliderStyle, theme.SliderThumbStyle);
         }
+
+        public static void SpriteIcon(Sprite sprite, float size, DungeonEscapeUiTheme theme)
+        {
+            var rect = GUILayoutUtility.GetRect(size, size, GUILayout.Width(size), GUILayout.Height(size));
+            if (theme != null)
+            {
+                GUI.Box(rect, GUIContent.none, theme.RowStyle);
+            }
+
+            if (sprite == null || sprite.texture == null)
+            {
+                return;
+            }
+
+            var drawRect = FitRect(sprite.rect.width, sprite.rect.height, rect);
+            var texCoords = new Rect(
+                sprite.rect.x / sprite.texture.width,
+                sprite.rect.y / sprite.texture.height,
+                sprite.rect.width / sprite.texture.width,
+                sprite.rect.height / sprite.texture.height);
+            GUI.DrawTextureWithTexCoords(drawRect, sprite.texture, texCoords);
+        }
+
+        private static Rect FitRect(float sourceWidth, float sourceHeight, Rect target)
+        {
+            if (sourceWidth <= 0f || sourceHeight <= 0f)
+            {
+                return target;
+            }
+
+            var scale = Mathf.Min(target.width / sourceWidth, target.height / sourceHeight);
+            var width = sourceWidth * scale;
+            var height = sourceHeight * scale;
+            return new Rect(
+                target.x + (target.width - width) / 2f,
+                target.y + (target.height - height) / 2f,
+                width,
+                height);
+        }
     }
 }

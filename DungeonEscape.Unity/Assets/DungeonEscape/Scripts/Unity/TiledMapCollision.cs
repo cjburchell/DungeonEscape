@@ -49,7 +49,7 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 foreach (var mapObject in group.Objects)
                 {
-                    if (IsMovingNpcObject(mapObject))
+                    if (IsNpcObject(mapObject))
                     {
                         continue;
                     }
@@ -87,12 +87,6 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return false;
-        }
-
-        private static bool IsMovingNpcObject(TiledObjectInfo mapObject)
-        {
-            return IsNpcObject(mapObject) &&
-                   GetIntProperty(mapObject, "MoveRadius", 0) != 0;
         }
 
         private static bool IsNpcObject(TiledObjectInfo mapObject)

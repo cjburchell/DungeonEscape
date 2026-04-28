@@ -13,6 +13,7 @@ namespace Redpoint.DungeonEscape.Unity
         private IList<TiledTilesetSpriteSet> spriteSets;
         private SpriteRenderer spriteRenderer;
         private TiledSpriteAnimationPlayer animationPlayer;
+        private DungeonEscapeMessageBox messageBox;
         private int gid;
         private int tileWidth;
         private int tileHeight;
@@ -24,6 +25,8 @@ namespace Redpoint.DungeonEscape.Unity
         private string mapId;
         private DungeonEscapeGameState gameState;
         private bool moving;
+        private bool restoreFacingAfterDialog;
+        private Direction restoreDirection;
         private float nextMoveDelay;
         private Direction direction = Direction.Down;
 
@@ -72,6 +75,7 @@ namespace Redpoint.DungeonEscape.Unity
                 animationPlayer = gameObject.AddComponent<TiledSpriteAnimationPlayer>();
             }
 
+            messageBox = FindObjectOfType<DungeonEscapeMessageBox>();
             PlayIdleAnimation();
             UpdateVisualPosition();
             nextMoveDelay = RandomDelay();
@@ -101,6 +105,19 @@ namespace Redpoint.DungeonEscape.Unity
         private void Update()
         {
             if (mapView == null || moving)
+            {
+                return;
+            }
+
+            if (restoreFacingAfterDialog && (messageBox == null || !messageBox.IsVisible))
+            {
+                restoreFacingAfterDialog = false;
+                direction = restoreDirection;
+                SaveState();
+                PlayIdleAnimation();
+            }
+
+            if (moveRadius == 0 || messageBox != null && messageBox.IsVisible)
             {
                 return;
             }
@@ -168,6 +185,29 @@ namespace Redpoint.DungeonEscape.Unity
             }
         }
 
+        public void Face(Direction selectedDirection)
+        {
+            if (moving)
+            {
+                return;
+            }
+
+            if (messageBox == null)
+            {
+                messageBox = FindObjectOfType<DungeonEscapeMessageBox>();
+            }
+
+            if (moveRadius == 0 && !restoreFacingAfterDialog)
+            {
+                restoreDirection = direction;
+                restoreFacingAfterDialog = true;
+            }
+
+            direction = selectedDirection;
+            SaveState();
+            PlayIdleAnimation();
+        }
+
         private bool IsWithinHomeRadius(int nextColumn, int nextRow)
         {
             if (moveRadius < 0)
@@ -201,15 +241,20 @@ namespace Redpoint.DungeonEscape.Unity
 
             column = nextColumn;
             row = nextRow;
-            if (gameState != null)
-            {
-                gameState.SetObjectPosition(mapId, ObjectId, new WorldPosition(column, row), direction);
-            }
+            SaveState();
 
             spriteRenderer.sortingOrder = mapView.GetObjectSortingOrder(row);
             UpdateVisualPosition();
             PlayIdleAnimation();
             moving = false;
+        }
+
+        private void SaveState()
+        {
+            if (gameState != null)
+            {
+                gameState.SetObjectPosition(mapId, ObjectId, new WorldPosition(column, row), direction);
+            }
         }
 
         private void PlayIdleAnimation()

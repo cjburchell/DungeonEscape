@@ -308,6 +308,18 @@ namespace Redpoint.DungeonEscape.Unity
             return false;
         }
 
+        public void FaceNpcAt(WorldPosition position, Direction direction)
+        {
+            var npc = runtimeNpcs.FirstOrDefault(item =>
+                item != null &&
+                Mathf.FloorToInt(position.X) == item.Column &&
+                Mathf.FloorToInt(position.Y) == item.Row);
+            if (npc != null)
+            {
+                npc.Face(direction);
+            }
+        }
+
         public bool TryGetSpawnPosition(string spawnId, out WorldPosition position)
         {
             EnsureMapLoaded();
@@ -399,12 +411,11 @@ namespace Redpoint.DungeonEscape.Unity
             return string.Equals(mapObject.Class, "Spawn", StringComparison.OrdinalIgnoreCase);
         }
 
-        private static bool IsMovingNpcObject(TiledObjectInfo mapObject)
+        private static bool IsNpcObject(TiledObjectInfo mapObject)
         {
             return mapObject != null &&
                    mapObject.Class != null &&
-                   mapObject.Class.StartsWith("Npc", StringComparison.OrdinalIgnoreCase) &&
-                   GetIntProperty(mapObject, "MoveRadius", 0) != 0;
+                   mapObject.Class.StartsWith("Npc", StringComparison.OrdinalIgnoreCase);
         }
 
         private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName, int defaultValue)
@@ -566,7 +577,7 @@ namespace Redpoint.DungeonEscape.Unity
                 {
                     foreach (var mapObject in group.Objects)
                     {
-                        if (!IsMovingNpcObject(mapObject))
+                        if (!IsNpcObject(mapObject))
                         {
                             continue;
                         }
@@ -689,13 +700,6 @@ namespace Redpoint.DungeonEscape.Unity
             return new WorldPosition(
                 Mathf.FloorToInt(mapObject.X / currentMap.Info.TileWidth),
                 row);
-        }
-
-        private static bool IsNpcObject(TiledObjectInfo mapObject)
-        {
-            return mapObject != null &&
-                   mapObject.Class != null &&
-                   mapObject.Class.StartsWith("Npc", StringComparison.OrdinalIgnoreCase);
         }
 
         private List<TiledTilesetInfo> GetValidatedTilesets()

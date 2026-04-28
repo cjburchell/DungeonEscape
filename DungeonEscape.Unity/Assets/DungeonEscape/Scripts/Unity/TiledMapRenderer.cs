@@ -218,7 +218,7 @@ namespace Redpoint.DungeonEscape.Unity
 
                     var renderer = tileObject.AddComponent<SpriteRenderer>();
                     renderer.sprite = sprite;
-                    renderer.sortingOrder = sortingOrder;
+                    renderer.sortingOrder = GetLayerSortingOrder(sortingOrder);
                     ApplyAnimation(renderer, animationFrames);
                     renderedTileCount++;
                 }
@@ -249,7 +249,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             foreach (var mapObject in objectGroup.Elements("object"))
             {
-                if (IsRuntimeMovingNpc(mapObject))
+                if (IsRuntimeNpc(mapObject))
                 {
                     continue;
                 }
@@ -364,7 +364,7 @@ namespace Redpoint.DungeonEscape.Unity
                         sprite,
                         animationFrames,
                         new Vector3(sourceColumn - viewportStartColumn, -(sourceRow - viewportStartRow), 0),
-                        sortingOrder,
+                        GetLayerSortingOrder(sortingOrder),
                         "Tile_" + GetString(layer, "name") + "_" + sourceColumn + "_" + sourceRow);
                     renderedTileCount++;
                 }
@@ -395,7 +395,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             foreach (var mapObject in objectGroup.Elements("object"))
             {
-                if (IsRuntimeMovingNpc(mapObject))
+                if (IsRuntimeNpc(mapObject))
                 {
                     continue;
                 }
@@ -532,6 +532,11 @@ namespace Redpoint.DungeonEscape.Unity
             return layerSortingOrder * 1000 + row;
         }
 
+        private static int GetLayerSortingOrder(int layerSortingOrder)
+        {
+            return layerSortingOrder * 1000;
+        }
+
         private static int GetObjectSortRow(XElement mapObject, float y, float height, int tileHeight, bool useObjectBounds)
         {
             if (!useObjectBounds && StartsWith(GetObjectClass(mapObject), "Npc"))
@@ -591,9 +596,9 @@ namespace Redpoint.DungeonEscape.Unity
             return TiledTilesetSprites.TryGetDirectionalAnimation(gid, spriteSets, out frames);
         }
 
-        private static bool IsRuntimeMovingNpc(XElement mapObject)
+        private static bool IsRuntimeNpc(XElement mapObject)
         {
-            return StartsWith(GetObjectClass(mapObject), "Npc") && GetIntProperty(mapObject, "MoveRadius", 0) != 0;
+            return StartsWith(GetObjectClass(mapObject), "Npc");
         }
 
         private static void ApplyAnimation(SpriteRenderer renderer, List<TiledSpriteAnimationFrame> animationFrames)

@@ -443,6 +443,11 @@ namespace Redpoint.DungeonEscape.Unity
                 var pickupMessage = gameState == null
                     ? "Cannot pick up item without game state."
                     : gameState.PickupMapObject(mapObject);
+                if (mapView != null)
+                {
+                    mapView.RefreshRender();
+                }
+
                 messageBox.Show(mapObject.Name, pickupMessage);
                 return;
             }

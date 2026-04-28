@@ -25,6 +25,8 @@ namespace Redpoint.DungeonEscape.Unity
             int columns,
             int rows,
             bool showHiddenObjects,
+            string mapId,
+            DungeonEscapeGameState gameState,
             out int spritesSortingOrder)
         {
             var renderedSpriteCount = 0;
@@ -55,7 +57,9 @@ namespace Redpoint.DungeonEscape.Unity
                         clampedStartColumn,
                         clampedStartRow,
                         sortingOrder,
-                        showHiddenObjects);
+                        showHiddenObjects,
+                        mapId,
+                        gameState);
                 }
                 else if (element.Name.LocalName == "objectgroup")
                 {
@@ -77,7 +81,9 @@ namespace Redpoint.DungeonEscape.Unity
                         clampedStartColumn,
                         clampedStartRow,
                         sortingOrder,
-                        showHiddenObjects);
+                        showHiddenObjects,
+                        mapId,
+                        gameState);
                 }
 
                 sortingOrder++;
@@ -99,6 +105,8 @@ namespace Redpoint.DungeonEscape.Unity
             int columns,
             int rows,
             bool showHiddenObjects,
+            string mapId,
+            DungeonEscapeGameState gameState,
             out int spritesSortingOrder)
         {
             var renderedSpriteCount = 0;
@@ -129,7 +137,9 @@ namespace Redpoint.DungeonEscape.Unity
                         clampedStartColumn,
                         clampedStartRow,
                         sortingOrder,
-                        showHiddenObjects);
+                        showHiddenObjects,
+                        mapId,
+                        gameState);
                 }
                 else if (element.Name.LocalName == "objectgroup")
                 {
@@ -151,7 +161,9 @@ namespace Redpoint.DungeonEscape.Unity
                         clampedStartColumn,
                         clampedStartRow,
                         sortingOrder,
-                        showHiddenObjects);
+                        showHiddenObjects,
+                        mapId,
+                        gameState);
                 }
 
                 sortingOrder++;
@@ -172,7 +184,9 @@ namespace Redpoint.DungeonEscape.Unity
             int viewportStartColumn,
             int viewportStartRow,
             int sortingOrder,
-            bool showHiddenObjects)
+            bool showHiddenObjects,
+            string mapId,
+            DungeonEscapeGameState gameState)
         {
             var renderedTileCount = 0;
             var gids = ParseCsvTileData(layer);
@@ -222,7 +236,9 @@ namespace Redpoint.DungeonEscape.Unity
             int viewportStartColumn,
             int viewportStartRow,
             int sortingOrder,
-            bool showHiddenObjects)
+            bool showHiddenObjects,
+            string mapId,
+            DungeonEscapeGameState gameState)
         {
             var renderedObjectCount = 0;
             var groupName = GetString(objectGroup, "name");
@@ -240,7 +256,7 @@ namespace Redpoint.DungeonEscape.Unity
                 {
                     sprite = GetHiddenObjectSprite();
                 }
-                else if (!TiledTilesetSprites.TryGetSprite(gid, spriteSets, out sprite))
+                else if (!TryGetObjectSprite(gid, mapObject, spriteSets, mapId, gameState, out sprite))
                 {
                     continue;
                 }
@@ -296,7 +312,9 @@ namespace Redpoint.DungeonEscape.Unity
             int viewportStartColumn,
             int viewportStartRow,
             int sortingOrder,
-            bool showHiddenObjects)
+            bool showHiddenObjects,
+            string mapId,
+            DungeonEscapeGameState gameState)
         {
             var renderedTileCount = 0;
             var gids = ParseCsvTileData(layer);
@@ -346,7 +364,9 @@ namespace Redpoint.DungeonEscape.Unity
             int viewportStartColumn,
             int viewportStartRow,
             int sortingOrder,
-            bool showHiddenObjects)
+            bool showHiddenObjects,
+            string mapId,
+            DungeonEscapeGameState gameState)
         {
             var renderedObjectCount = 0;
             var groupName = GetString(objectGroup, "name");
@@ -364,7 +384,7 @@ namespace Redpoint.DungeonEscape.Unity
                 {
                     sprite = GetHiddenObjectSprite();
                 }
-                else if (!TiledTilesetSprites.TryGetSprite(gid, spriteSets, out sprite))
+                else if (!TryGetObjectSprite(gid, mapObject, spriteSets, mapId, gameState, out sprite))
                 {
                     continue;
                 }
@@ -446,6 +466,29 @@ namespace Redpoint.DungeonEscape.Unity
             texture.Apply();
             hiddenObjectSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), texture.width);
             return hiddenObjectSprite;
+        }
+
+        private static bool TryGetObjectSprite(
+            int gid,
+            XElement mapObject,
+            IList<TiledTilesetSpriteSet> spriteSets,
+            string mapId,
+            DungeonEscapeGameState gameState,
+            out Sprite sprite)
+        {
+            sprite = null;
+            if (gameState != null &&
+                gameState.IsObjectOpen(mapId, GetInt(mapObject, "id")) &&
+                string.Equals(GetString(mapObject, "class"), "Chest", StringComparison.OrdinalIgnoreCase))
+            {
+                var openImage = GetIntProperty(mapObject, "OpenImage", 135);
+                if (TiledTilesetSprites.TryGetSpriteFromSameSet(gid, openImage, spriteSets, out sprite))
+                {
+                    return true;
+                }
+            }
+
+            return TiledTilesetSprites.TryGetSprite(gid, spriteSets, out sprite);
         }
 
         private static Vector3 GetObjectLocalPosition(
@@ -551,6 +594,29 @@ namespace Redpoint.DungeonEscape.Unity
             var value = GetString(element, name);
             int result;
             return int.TryParse(value, out result) ? result : 0;
+        }
+
+        private static int GetIntProperty(XElement element, string propertyName, int defaultValue)
+        {
+            var properties = element.Element("properties");
+            if (properties == null)
+            {
+                return defaultValue;
+            }
+
+            foreach (var property in properties.Elements("property"))
+            {
+                if (!string.Equals(GetString(property, "name"), propertyName, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                var value = GetString(property, "value") ?? property.Value;
+                int result;
+                return int.TryParse(value, out result) ? result : defaultValue;
+            }
+
+            return defaultValue;
         }
 
         private static float GetFloat(XElement element, string name)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Redpoint.DungeonEscape.State;
@@ -14,6 +15,26 @@ namespace Redpoint.DungeonEscape.Unity
         private DungeonEscapeGameDataCache(DungeonEscapeDataSet dataSet)
         {
             this.dataSet = dataSet ?? new DungeonEscapeDataSet();
+        }
+
+        public IList<ItemDefinition> ItemDefinitions
+        {
+            get { return dataSet.ItemDefinitions; }
+        }
+
+        public IList<Item> CustomItems
+        {
+            get { return dataSet.CustomItems; }
+        }
+
+        public IList<Skill> Skills
+        {
+            get { return dataSet.Skills; }
+        }
+
+        public IList<StatName> StatNames
+        {
+            get { return dataSet.StatNames; }
         }
 
         public static void Load(DungeonEscapeDataSet dataSet)
@@ -76,6 +97,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             return quest != null;
         }
+
 
         private static DialogHead GetDialogHead(Dialog dialog, Party party)
         {

@@ -36,6 +36,7 @@ namespace Redpoint.DungeonEscape.Unity
         private HashSet<int> blockedTiles = new HashSet<int>();
         private Coroutine viewportScroll;
         private TiledSpriteRendererPool rendererPool;
+        private DungeonEscapeGameState gameState;
         private readonly TiledMapViewport viewport = new TiledMapViewport();
 
         public int StartColumn
@@ -156,6 +157,12 @@ namespace Redpoint.DungeonEscape.Unity
             rendererPool = new TiledSpriteRendererPool(transform);
             mapLoaded = false;
             currentMap = null;
+            RenderPreview();
+        }
+
+        public void RefreshRender()
+        {
+            mapLoaded = false;
             RenderPreview();
         }
 
@@ -371,6 +378,16 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             currentMap = loadedMap;
+            if (gameState == null)
+            {
+                gameState = DungeonEscapeGameState.GetOrCreate();
+            }
+
+            if (gameState != null)
+            {
+                gameState.InitializeMapObjects(TiledMapLoader.NormalizeMapId(loadedMap.AssetPath), loadedMap.Info);
+            }
+
             if (pooledMapAssetPath != loadedMap.AssetPath)
             {
                 ClearRenderedChildren();
@@ -414,6 +431,8 @@ namespace Redpoint.DungeonEscape.Unity
                 viewport.Columns,
                 rows,
                 DungeonEscapeSettingsCache.Current.ShowHiddenObjects,
+                TiledMapLoader.NormalizeMapId(loadedMap.AssetPath),
+                gameState,
                 out spritesSortingOrder);
 
             rendererPool.End();

@@ -13,6 +13,7 @@ namespace Redpoint.DungeonEscape.Unity
     {
         private const string SaveFileVersion = "1.0";
         private const int MaxSaveSlots = 5;
+        private static readonly System.Random Random = new System.Random();
 
         [SerializeField]
         private string defaultMapId = "overworld";
@@ -257,6 +258,37 @@ namespace Redpoint.DungeonEscape.Unity
             return objectState != null && objectState.IsOpen == true;
         }
 
+        public void InitializeMapObjects(string mapId, TiledMapInfo mapInfo)
+        {
+            EnsureInitialized();
+            if (mapInfo == null || mapInfo.ObjectGroups == null)
+            {
+                return;
+            }
+
+            foreach (var group in mapInfo.ObjectGroups)
+            {
+                foreach (var mapObject in group.Objects)
+                {
+                    if (!IsPickupObject(mapObject))
+                    {
+                        continue;
+                    }
+
+                    var objectState = GetObjectState(mapId, mapObject.Id, true);
+                    if (objectState.Items != null)
+                    {
+                        continue;
+                    }
+
+                    objectState.Name = mapObject.Name;
+                    objectState.Type = GetSpriteType(mapObject);
+                    objectState.Items = CreateMapObjectItems(mapObject);
+                    objectState.IsOpen = objectState.Items.Count == 0 ? true : objectState.IsOpen;
+                }
+            }
+        }
+
         public string PickupMapObject(TiledObjectInfo mapObject)
         {
             EnsureInitialized();
@@ -272,23 +304,36 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             var message = new StringBuilder();
-            string goldText;
-            int gold;
-            if (mapObject.Properties != null &&
-                mapObject.Properties.TryGetValue("Gold", out goldText) &&
-                int.TryParse(goldText, out gold) &&
-                gold > 0)
+            if (objectState.Items != null)
             {
-                Party.Gold += gold;
-                message.AppendLine("You found " + gold + " gold.");
-            }
+                foreach (var item in objectState.Items.ToList())
+                {
+                    if (item == null)
+                    {
+                        objectState.Items.Remove(item);
+                        continue;
+                    }
 
-            string itemId;
-            if (mapObject.Properties != null &&
-                mapObject.Properties.TryGetValue("ItemId", out itemId) &&
-                !string.IsNullOrEmpty(itemId))
-            {
-                message.Append(GiveItem(itemId));
+                    if (item.Type == ItemType.Gold)
+                    {
+                        Party.Gold += item.Cost;
+                        message.AppendLine("You found " + item.Cost + " gold.");
+                        objectState.Items.Remove(item);
+                        continue;
+                    }
+
+                    var member = Party.AddItem(new ItemInstance(item));
+                    if (member == null)
+                    {
+                        message.AppendLine("You found " + item.Name + " but your party did not have enough room.");
+                    }
+                    else
+                    {
+                        message.AppendLine(member.Name + " found a " + item.Name + ".");
+                        message.Append(CheckQuest(item));
+                        objectState.Items.Remove(item);
+                    }
+                }
             }
 
             if (message.Length == 0)
@@ -301,6 +346,351 @@ namespace Redpoint.DungeonEscape.Unity
             return message.ToString().TrimEnd();
         }
 
+        private List<Item> CreateMapObjectItems(TiledObjectInfo mapObject)
+        {
+            var items = new List<Item>();
+            string itemId;
+            if (mapObject.Properties != null &&
+                mapObject.Properties.TryGetValue("ItemId", out itemId) &&
+                !string.IsNullOrEmpty(itemId))
+            {
+                Item item;
+                if (DungeonEscapeGameDataCache.Current != null &&
+                    DungeonEscapeGameDataCache.Current.TryGetCustomItem(itemId, out item) &&
+                    item != null)
+                {
+                    items.Add(item);
+                }
+
+                return items;
+            }
+
+            string goldText;
+            int gold;
+            if (mapObject.Properties != null &&
+                mapObject.Properties.TryGetValue("Gold", out goldText) &&
+                int.TryParse(goldText, out gold) &&
+                gold > 0)
+            {
+                items.Add(CreateGold(gold));
+                return items;
+            }
+
+            var level = GetIntProperty(mapObject, mapObject.Class == "Chest" ? "ChestLevel" : "Level");
+            var chestItem = CreateChestItem(level == 0 ? GetPartyMaxLevel() : level);
+            if (chestItem != null)
+            {
+                items.Add(chestItem);
+            }
+
+            return items;
+        }
+
+        public Item CreateChestItem(int level, Rarity? rarity = null)
+        {
+            if (Chance(0.25f))
+            {
+                return CreateRandomItem(level, 1, rarity);
+            }
+
+            return CreateGold(Dice.Roll(5, Math.Max(1, level) * 3, 1));
+        }
+
+        public Item CreateRandomItem(int maxLevel, int minLevel = 1, Rarity? rarity = null)
+        {
+            maxLevel = Math.Max(maxLevel, 1);
+            minLevel = Math.Max(minLevel, 1);
+
+            if (Chance(0.50f))
+            {
+                var staticItems = DungeonEscapeGameDataCache.Current == null
+                    ? new List<Item>()
+                    : DungeonEscapeGameDataCache.Current.CustomItems
+                        .Where(item => item != null &&
+                                       (item.Type == ItemType.OneUse || item.Type == ItemType.RepeatableUse) &&
+                                       !item.IsKey &&
+                                       item.MinLevel < maxLevel)
+                        .ToList();
+
+                if (staticItems.Count > 0)
+                {
+                    return staticItems[Random.Next(staticItems.Count)];
+                }
+            }
+
+            return CreateRandomEquipment(maxLevel, minLevel, rarity);
+        }
+
+        public Item CreateRandomEquipment(
+            int maxLevel,
+            int minLevel = 1,
+            Rarity? rarity = null,
+            ItemType? type = null,
+            Class? itemClass = null,
+            Slot? slot = null)
+        {
+            maxLevel = Math.Max(maxLevel, 1);
+            minLevel = Math.Max(Math.Min(minLevel, maxLevel), 1);
+
+            var itemRarity = Random.Next(100);
+            if (!rarity.HasValue)
+            {
+                rarity = itemRarity > 75
+                    ? itemRarity > 90 ? itemRarity > 98 ? Rarity.Epic : Rarity.Rare : Rarity.Uncommon
+                    : Rarity.Common;
+            }
+
+            if (!type.HasValue)
+            {
+                var types = Item.EquippableItems;
+                type = types[Random.Next(types.Count)];
+            }
+
+            var item = new Item
+            {
+                Rarity = rarity.Value,
+                Type = type.Value,
+                ImageId = 202,
+                Id = Guid.NewGuid().ToString()
+            };
+
+            var availableItemDefinitions = GetAvailableItemDefinitions(type.Value, itemClass, slot).ToArray();
+            if (availableItemDefinitions.Length == 0)
+            {
+                return null;
+            }
+
+            var itemDefinition = availableItemDefinitions[Random.Next(availableItemDefinitions.Length)];
+            List<StatType> availableStats;
+            switch (type.Value)
+            {
+                case ItemType.Weapon:
+                    availableStats = new List<StatType> { StatType.Agility, StatType.Attack, StatType.Health, StatType.Magic };
+                    item.MinLevel = RandomLevel(maxLevel, minLevel);
+                    item.Stats.Add(new StatValue
+                    {
+                        Type = StatType.Attack,
+                        Value = Math.Max(item.MinLevel - 5 + Random.Next(6) + itemDefinition.BaseStat, Math.Max(itemDefinition.BaseStat, 1))
+                    });
+                    break;
+                case ItemType.Armor:
+                    availableStats = new List<StatType>
+                    {
+                        StatType.Agility,
+                        StatType.Defence,
+                        StatType.Health,
+                        StatType.Magic,
+                        StatType.MagicDefence
+                    };
+                    item.MinLevel = RandomLevel(maxLevel, minLevel);
+                    item.Stats.Add(new StatValue
+                    {
+                        Type = StatType.Defence,
+                        Value = Math.Max(item.MinLevel - 5 + Random.Next(6) + itemDefinition.BaseStat, Math.Max(itemDefinition.BaseStat, 1))
+                    });
+                    break;
+                default:
+                    return null;
+            }
+
+            if (itemDefinition.Names == null || itemDefinition.Names.Count == 0)
+            {
+                return null;
+            }
+
+            var baseStatLevel = Math.Min((int)(item.MinLevel / 25.0f * itemDefinition.Names.Count), itemDefinition.Names.Count - 1);
+            var baseName = itemDefinition.Names[baseStatLevel];
+            if (itemDefinition.Classes != null)
+            {
+                item.Classes = itemDefinition.Classes.ToList();
+            }
+
+            item.ImageId = baseName.ImageId;
+            item.Slots = itemDefinition.Slots;
+
+            var prefix = string.Empty;
+            var suffix = string.Empty;
+            var statCount = Math.Min((int)rarity.Value, availableStats.Count);
+            var chosenStats = new List<StatType>();
+            for (var i = 0; i < statCount; i++)
+            {
+                var index = Random.Next(availableStats.Count);
+                var stat = availableStats[index];
+                availableStats.Remove(stat);
+                chosenStats.Add(stat);
+            }
+
+            foreach (var stat in chosenStats.OrderBy(value => (int)value))
+            {
+                var itemLevel = RandomLevel(maxLevel, minLevel);
+                item.MinLevel = Math.Max(itemLevel, item.MinLevel);
+                var statValue = Math.Max(itemLevel - 5 + Random.Next(6), 1);
+                item.Stats.Add(new StatValue
+                {
+                    Type = stat,
+                    Value = statValue
+                });
+
+                ApplyStatName(stat, itemLevel, ref prefix, ref suffix);
+            }
+
+            item.Name = BuildEquipmentName(baseName.Name, prefix, suffix);
+            item.Cost = item.MinLevel * ((int)rarity.Value + 1) * 100;
+            if (item.Cost > 0)
+            {
+                item.Cost += Random.Next(Math.Max(1, item.Cost / 3));
+            }
+
+            if (DungeonEscapeGameDataCache.Current != null)
+            {
+                item.Setup(DungeonEscapeGameDataCache.Current.Skills);
+            }
+
+            return item;
+        }
+
+        private int GetPartyMaxLevel()
+        {
+            return Party.ActiveMembers.Any() ? Party.ActiveMembers.Max(member => member.Level) : 1;
+        }
+
+        private static Item CreateGold(int gold)
+        {
+            return new Item
+            {
+                Id = "Gold",
+                Name = "Gold",
+                Cost = gold,
+                MinLevel = 0,
+                Type = ItemType.Gold
+            };
+        }
+
+        private static bool Chance(float probability)
+        {
+            return Random.NextDouble() < probability;
+        }
+
+        private static int RandomLevel(int maxLevel, int minLevel)
+        {
+            maxLevel = Math.Max(maxLevel, 1);
+            minLevel = Math.Max(Math.Min(minLevel, maxLevel), 1);
+            return maxLevel <= minLevel ? minLevel : Random.Next(maxLevel - minLevel) + minLevel;
+        }
+
+        private static IEnumerable<ItemDefinition> GetAvailableItemDefinitions(ItemType type, Class? itemClass, Slot? slot)
+        {
+            if (DungeonEscapeGameDataCache.Current == null || DungeonEscapeGameDataCache.Current.ItemDefinitions == null)
+            {
+                return new List<ItemDefinition>();
+            }
+
+            return DungeonEscapeGameDataCache.Current.ItemDefinitions.Where(definition =>
+            {
+                if (definition == null)
+                {
+                    return false;
+                }
+
+                if (itemClass.HasValue && slot.HasValue)
+                {
+                    return definition.Slots != null &&
+                           definition.Classes != null &&
+                           definition.Type == type &&
+                           definition.Classes.Contains(itemClass.Value) &&
+                           definition.Slots.Contains(slot.Value);
+                }
+
+                if (itemClass.HasValue)
+                {
+                    return definition.Classes != null &&
+                           definition.Type == type &&
+                           definition.Classes.Contains(itemClass.Value);
+                }
+
+                if (slot.HasValue)
+                {
+                    return definition.Slots != null &&
+                           definition.Type == type &&
+                           definition.Slots.Contains(slot.Value);
+                }
+
+                return definition.Type == type;
+            });
+        }
+
+        private static void ApplyStatName(StatType stat, int itemLevel, ref string prefix, ref string suffix)
+        {
+            if (DungeonEscapeGameDataCache.Current == null || DungeonEscapeGameDataCache.Current.StatNames == null)
+            {
+                return;
+            }
+
+            var statName = DungeonEscapeGameDataCache.Current.StatNames.FirstOrDefault(item => item.Type == stat);
+            if (statName == null)
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(suffix) && statName.Suffix != null && statName.Suffix.Count > 0)
+            {
+                var statLevel = Math.Min((int)(itemLevel / 25.0f * statName.Suffix.Count), statName.Suffix.Count - 1);
+                suffix = statName.Suffix[statLevel];
+            }
+            else if (statName.Prefix != null && statName.Prefix.Count > 0)
+            {
+                var statLevel = Math.Min((int)(itemLevel / 25.0f * statName.Prefix.Count), statName.Prefix.Count - 1);
+                if (string.IsNullOrEmpty(prefix))
+                {
+                    prefix = statName.Prefix[statLevel];
+                }
+                else
+                {
+                    prefix += " " + statName.Prefix[statLevel];
+                }
+            }
+        }
+
+        private static string BuildEquipmentName(string baseName, string prefix, string suffix)
+        {
+            var name = baseName;
+            if (!string.IsNullOrWhiteSpace(prefix))
+            {
+                name = prefix + " " + name;
+            }
+
+            if (!string.IsNullOrWhiteSpace(suffix))
+            {
+                name = name + " of " + suffix;
+            }
+
+            return name;
+        }
+
+        private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName)
+        {
+            string value;
+            int result;
+            return mapObject.Properties != null &&
+                   mapObject.Properties.TryGetValue(propertyName, out value) &&
+                   int.TryParse(value, out result)
+                ? result
+                : 0;
+        }
+
+        private static bool IsPickupObject(TiledObjectInfo mapObject)
+        {
+            return string.Equals(mapObject.Class, "Chest", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(mapObject.Class, "HiddenItem", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static SpriteType GetSpriteType(TiledObjectInfo mapObject)
+        {
+            return string.Equals(mapObject.Class, "HiddenItem", StringComparison.OrdinalIgnoreCase)
+                ? SpriteType.HiddenItem
+                : SpriteType.Chest;
+        }
+
         private string CheckQuest(Item item)
         {
             return item == null || string.IsNullOrEmpty(item.QuestId)
@@ -310,6 +700,11 @@ namespace Redpoint.DungeonEscape.Unity
 
         private ObjectState GetObjectState(string mapId, int objectId, bool create)
         {
+            if (CurrentSave.MapStates == null)
+            {
+                CurrentSave.MapStates = new List<MapState>();
+            }
+
             var normalizedMapId = TiledMapLoader.NormalizeMapId(mapId);
             var mapState = CurrentSave.MapStates.FirstOrDefault(item => item.Id == normalizedMapId);
             if (mapState == null)

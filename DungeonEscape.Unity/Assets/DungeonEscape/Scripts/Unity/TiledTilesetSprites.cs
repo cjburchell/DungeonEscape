@@ -95,6 +95,26 @@ namespace Redpoint.DungeonEscape.Unity
             return selected.Sprites.TryGetValue(gid - selected.FirstGid, out sprite);
         }
 
+        public static bool TryGetSpriteFromSameSet(int referenceGid, int tileId, IList<TiledTilesetSpriteSet> spriteSets, out Sprite sprite)
+        {
+            sprite = null;
+
+            TiledTilesetSpriteSet selected = null;
+            foreach (var spriteSet in spriteSets)
+            {
+                if (spriteSet.FirstGid <= referenceGid)
+                {
+                    selected = spriteSet;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return selected != null && selected.Sprites.TryGetValue(tileId, out sprite);
+        }
+
         private static Texture2D LoadTexture(string path)
         {
             var bytes = File.ReadAllBytes(path);

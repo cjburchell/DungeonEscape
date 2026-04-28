@@ -273,9 +273,34 @@ namespace Redpoint.DungeonEscape.Unity
                         continue;
                     }
 
-                    position = new WorldPosition(
-                        Mathf.FloorToInt(mapObject.X / currentMap.Info.TileWidth),
-                        Mathf.FloorToInt((mapObject.Y - mapObject.Height) / currentMap.Info.TileHeight));
+                    position = GetObjectTilePosition(mapObject);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool TryGetFirstSpawnPosition(out WorldPosition position)
+        {
+            EnsureMapLoaded();
+            position = WorldPosition.Zero;
+
+            if (currentMap == null || currentMap.Info == null || currentMap.Info.ObjectGroups == null)
+            {
+                return false;
+            }
+
+            foreach (var group in currentMap.Info.ObjectGroups)
+            {
+                foreach (var mapObject in group.Objects)
+                {
+                    if (mapObject.Class != "Spawn")
+                    {
+                        continue;
+                    }
+
+                    position = GetObjectTilePosition(mapObject);
                     return true;
                 }
             }
@@ -436,6 +461,13 @@ namespace Redpoint.DungeonEscape.Unity
                    centerX < mapObject.X + mapObject.Width &&
                    centerY >= mapObject.Y - mapObject.Height &&
                    centerY < mapObject.Y;
+        }
+
+        private WorldPosition GetObjectTilePosition(TiledObjectInfo mapObject)
+        {
+            return new WorldPosition(
+                Mathf.FloorToInt(mapObject.X / currentMap.Info.TileWidth),
+                Mathf.FloorToInt((mapObject.Y - mapObject.Height) / currentMap.Info.TileHeight));
         }
 
         private List<TiledTilesetInfo> GetValidatedTilesets()

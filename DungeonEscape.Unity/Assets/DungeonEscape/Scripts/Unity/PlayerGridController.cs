@@ -1,6 +1,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 using System.Text;
 using Redpoint.DungeonEscape.State;
 using UnityEngine;
@@ -101,6 +102,7 @@ namespace Redpoint.DungeonEscape.Unity
             if (mapView != null && !string.IsNullOrEmpty(party.CurrentMapId))
             {
                 mapView.LoadMap(party.CurrentMapId, null, false);
+                ApplyInitialSpawnIfNeeded();
             }
 
             Position = party.CurrentPosition ?? WorldPosition.Zero;
@@ -112,6 +114,22 @@ namespace Redpoint.DungeonEscape.Unity
             }
         }
 
+        private void ApplyInitialSpawnIfNeeded()
+        {
+            if (gameState == null || mapView == null || !gameState.ShouldApplyInitialSpawn)
+            {
+                return;
+            }
+
+            WorldPosition spawnPosition;
+            if (mapView.TryGetFirstSpawnPosition(out spawnPosition))
+            {
+                gameState.SetCurrentPosition(spawnPosition);
+            }
+
+            gameState.MarkInitialSpawnApplied();
+        }
+
         private void Update()
         {
             if (isMoving)
@@ -121,7 +139,8 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (messageBox != null && messageBox.IsVisible)
             {
-                if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape))
+                if (!messageBox.HasChoices &&
+                    (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape)))
                 {
                     messageBox.Hide();
                 }
@@ -289,6 +308,16 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             Debug.Log("Warping to " + warp.MapId + (string.IsNullOrEmpty(warp.SpawnId) ? "" : " at " + warp.SpawnId));
+            ApplyMapTransition(warp);
+        }
+
+        private void ApplyMapTransition(TiledMapWarp warp)
+        {
+            if (mapView == null || warp == null || string.IsNullOrEmpty(warp.MapId))
+            {
+                return;
+            }
+
             var transition = gameState == null
                 ? CreateFallbackTransition(warp)
                 : gameState.CreateWarpTransition(warp);
@@ -392,14 +421,14 @@ namespace Redpoint.DungeonEscape.Unity
             string dialogId;
             if (TryGetProperty(mapObject, "Dialog", out dialogId) && !string.IsNullOrEmpty(dialogId))
             {
-                string dialogText;
+                DialogText dialogText;
                 if (DungeonEscapeGameDataCache.Current != null &&
-                    DungeonEscapeGameDataCache.Current.TryGetDialogText(
+                    DungeonEscapeGameDataCache.Current.TryGetDialog(
                         dialogId,
                         gameState == null ? null : gameState.Party,
                         out dialogText))
                 {
-                    messageBox.Show(mapObject.Name, dialogText);
+                    ShowDialog(mapObject.Name, dialogText);
                 }
                 else
                 {
@@ -429,6 +458,68 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             messageBox.Show(mapObject.Name, string.IsNullOrEmpty(mapObject.Class) ? "Nothing happens." : mapObject.Class);
+        }
+
+        private void ShowDialog(string speakerName, DialogText dialog)
+        {
+            if (messageBox == null || dialog == null)
+            {
+                return;
+            }
+
+            var choices = dialog.Choices == null
+                ? new List<Choice>()
+                : dialog.Choices.Where(choice => !string.IsNullOrEmpty(choice.Text)).ToList();
+
+            if (choices.Count == 0)
+            {
+                messageBox.Show(speakerName, dialog.Text);
+                return;
+            }
+
+            messageBox.Show(
+                speakerName,
+                dialog.Text,
+                choices.Select(choice => choice.Text),
+                selectedIndex => ProcessDialogChoice(speakerName, choices[selectedIndex]));
+        }
+
+        private void ProcessDialogChoice(string speakerName, Choice choice)
+        {
+            if (choice == null)
+            {
+                return;
+            }
+
+            if (choice.Dialog != null)
+            {
+                ShowDialog(speakerName, choice.Dialog);
+                return;
+            }
+
+            if (choice.Actions != null && choice.Actions.Contains(QuestAction.Warp) && !string.IsNullOrEmpty(choice.MapId))
+            {
+                ApplyMapTransition(new TiledMapWarp { MapId = choice.MapId, SpawnId = choice.SpawnId });
+                return;
+            }
+
+            if (choice.Actions != null && choice.Actions.Contains(QuestAction.GiveItem))
+            {
+                var itemNames = choice.Items == null ? "" : string.Join(", ", choice.Items.ToArray());
+                messageBox.Show(speakerName, string.IsNullOrEmpty(itemNames) ? "You received something." : "You received: " + itemNames);
+                return;
+            }
+
+            if (choice.Actions != null && choice.Actions.Contains(QuestAction.TakeItem))
+            {
+                messageBox.Show(speakerName, string.IsNullOrEmpty(choice.ItemId) ? "You gave an item." : "You gave: " + choice.ItemId);
+                return;
+            }
+
+            if (choice.NextQuestStage.HasValue)
+            {
+                messageBox.Show(speakerName, "Quest stage will advance to " + choice.NextQuestStage.Value + ".");
+            }
         }
 
         private static bool TryGetProperty(TiledObjectInfo mapObject, string propertyName, out string value)

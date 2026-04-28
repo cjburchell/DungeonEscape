@@ -24,6 +24,19 @@ namespace Redpoint.DungeonEscape.Unity
         public bool TryGetDialogText(string dialogId, Party party, out string text)
         {
             text = null;
+            DialogText dialogHead;
+            if (!TryGetDialog(dialogId, party, out dialogHead))
+            {
+                return false;
+            }
+
+            text = BuildDialogText(dialogHead);
+            return true;
+        }
+
+        public bool TryGetDialog(string dialogId, Party party, out DialogText dialogText)
+        {
+            dialogText = null;
             var dialog = dataSet.Dialogs == null
                 ? null
                 : dataSet.Dialogs.FirstOrDefault(item => string.Equals(item.Id, dialogId, StringComparison.OrdinalIgnoreCase));
@@ -39,7 +52,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return false;
             }
 
-            text = BuildDialogText(dialogHead);
+            dialogText = dialogHead;
             return true;
         }
 

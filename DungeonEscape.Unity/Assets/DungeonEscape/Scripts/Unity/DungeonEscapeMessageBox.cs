@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Redpoint.DungeonEscape.Unity
@@ -9,25 +11,98 @@ namespace Redpoint.DungeonEscape.Unity
         private GUIStyle boxStyle;
         private GUIStyle speakerStyle;
         private GUIStyle messageStyle;
+        private GUIStyle choiceStyle;
+        private GUIStyle selectedChoiceStyle;
         private Texture2D backgroundTexture;
         private DungeonEscapeUiSettings uiSettings;
         private float lastPixelScale;
+        private List<string> choices;
+        private Action<int> choiceSelected;
+        private int selectedChoiceIndex;
 
         public bool IsVisible
         {
             get { return !string.IsNullOrEmpty(message); }
         }
 
+        public bool HasChoices
+        {
+            get { return choices != null && choices.Count > 0; }
+        }
+
         public void Show(string speakerName, string text)
         {
             speaker = speakerName;
             message = text;
+            choices = null;
+            choiceSelected = null;
+            selectedChoiceIndex = 0;
+        }
+
+        public void Show(string speakerName, string text, IEnumerable<string> choiceLabels, Action<int> selected)
+        {
+            speaker = speakerName;
+            message = text;
+            choices = new List<string>();
+            if (choiceLabels != null)
+            {
+                choices.AddRange(choiceLabels);
+            }
+
+            choiceSelected = selected;
+            selectedChoiceIndex = 0;
         }
 
         public void Hide()
         {
             speaker = null;
             message = null;
+            choices = null;
+            choiceSelected = null;
+            selectedChoiceIndex = 0;
+        }
+
+        public void ConfirmOrHide()
+        {
+            if (!HasChoices)
+            {
+                Hide();
+                return;
+            }
+
+            SelectChoice(selectedChoiceIndex);
+        }
+
+        private void Update()
+        {
+            if (!IsVisible)
+            {
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Hide();
+                return;
+            }
+
+            if (!HasChoices)
+            {
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+            {
+                selectedChoiceIndex = Mathf.Max(0, selectedChoiceIndex - 1);
+            }
+            else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+            {
+                selectedChoiceIndex = Mathf.Min(choices.Count - 1, selectedChoiceIndex + 1);
+            }
+            else if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
+            {
+                SelectChoice(selectedChoiceIndex);
+            }
         }
 
         private void OnGUI()
@@ -46,19 +121,39 @@ namespace Redpoint.DungeonEscape.Unity
             var speakerHeight = 24f * scale;
             var speakerGap = 6f * scale;
             var width = Mathf.Min(Screen.width - 32f * scale, 760f * scale);
-            var height = 120f * scale;
+            var choiceHeight = 28f * scale;
+            var choiceGap = 4f * scale;
+            var choiceAreaHeight = HasChoices ? (choices.Count * (choiceHeight + choiceGap)) : 0f;
+            var height = (120f * scale) + choiceAreaHeight;
             var rect = new Rect((Screen.width - width) / 2f, Screen.height - height - margin, width, height);
             GUI.Box(rect, GUIContent.none, boxStyle);
 
             var contentRect = new Rect(rect.x + paddingX, rect.y + paddingY, rect.width - paddingX * 2f, rect.height - paddingY * 2f);
+            var textHeight = HasChoices ? contentRect.height - choiceAreaHeight - speakerGap : contentRect.height;
             if (!string.IsNullOrEmpty(speaker))
             {
                 GUI.Label(new Rect(contentRect.x, contentRect.y, contentRect.width, speakerHeight), speaker, speakerStyle);
-                GUI.Label(new Rect(contentRect.x, contentRect.y + speakerHeight + speakerGap, contentRect.width, contentRect.height - speakerHeight - speakerGap), message, messageStyle);
+                GUI.Label(new Rect(contentRect.x, contentRect.y + speakerHeight + speakerGap, contentRect.width, textHeight - speakerHeight - speakerGap), message, messageStyle);
             }
             else
             {
-                GUI.Label(contentRect, message, messageStyle);
+                GUI.Label(new Rect(contentRect.x, contentRect.y, contentRect.width, textHeight), message, messageStyle);
+            }
+
+            if (HasChoices)
+            {
+                var y = contentRect.y + textHeight;
+                for (var i = 0; i < choices.Count; i++)
+                {
+                    var choiceRect = new Rect(contentRect.x, y, contentRect.width, choiceHeight);
+                    var style = i == selectedChoiceIndex ? selectedChoiceStyle : choiceStyle;
+                    if (GUI.Button(choiceRect, choices[i], style))
+                    {
+                        SelectChoice(i);
+                    }
+
+                    y += choiceHeight + choiceGap;
+                }
             }
         }
 
@@ -91,6 +186,30 @@ namespace Redpoint.DungeonEscape.Unity
             messageStyle.fontSize = Mathf.RoundToInt(16f * scale);
             messageStyle.wordWrap = true;
             messageStyle.normal.textColor = Color.white;
+
+            choiceStyle = new GUIStyle(GUI.skin.button);
+            choiceStyle.fontSize = Mathf.RoundToInt(16f * scale);
+            choiceStyle.alignment = TextAnchor.MiddleLeft;
+            choiceStyle.normal.textColor = Color.white;
+            choiceStyle.hover.textColor = Color.white;
+
+            selectedChoiceStyle = new GUIStyle(choiceStyle);
+            selectedChoiceStyle.normal.textColor = Color.yellow;
+        }
+
+        private void SelectChoice(int index)
+        {
+            if (!HasChoices || index < 0 || index >= choices.Count)
+            {
+                return;
+            }
+
+            var selected = choiceSelected;
+            Hide();
+            if (selected != null)
+            {
+                selected(index);
+            }
         }
 
         private float GetPixelScale()

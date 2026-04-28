@@ -23,6 +23,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         public GameSave CurrentSave { get; private set; }
         public GameFile GameFile { get; private set; }
+        public bool ShouldApplyInitialSpawn { get; private set; }
         public event Action<GameSave> SaveLoaded;
 
         public Party Party
@@ -45,6 +46,10 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 LoadQuick();
             }
+            else if (Input.GetKeyDown(KeyCode.F10))
+            {
+                RestartNewGame();
+            }
         }
 
         public void EnsureInitialized()
@@ -59,6 +64,7 @@ namespace Redpoint.DungeonEscape.Unity
             if (!IsUsableSave(CurrentSave))
             {
                 CurrentSave = CreateDefaultSave();
+                ShouldApplyInitialSpawn = true;
                 UpsertQuickSave(CurrentSave);
             }
         }
@@ -129,11 +135,30 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             CurrentSave = quickSave;
+            ShouldApplyInitialSpawn = false;
             Debug.Log("Quick loaded: " + CurrentSave.Name);
             if (SaveLoaded != null)
             {
                 SaveLoaded(CurrentSave);
             }
+        }
+
+        public void RestartNewGame()
+        {
+            GameFile = LoadGameFile();
+            CurrentSave = CreateDefaultSave();
+            CurrentSave.IsQuick = false;
+            ShouldApplyInitialSpawn = true;
+            Debug.Log("Started a new game without loading a saved level.");
+            if (SaveLoaded != null)
+            {
+                SaveLoaded(CurrentSave);
+            }
+        }
+
+        public void MarkInitialSpawnApplied()
+        {
+            ShouldApplyInitialSpawn = false;
         }
 
         private GameSave CreateDefaultSave()

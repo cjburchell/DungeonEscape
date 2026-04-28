@@ -29,6 +29,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private int mapWidth;
         private int mapHeight;
+        private int objectSortingOrder = 10;
         private bool mapLoaded;
         private TiledLoadedMap currentMap;
         private readonly HashSet<string> fallbackBlockingLayerNames = new HashSet<string> { "wall", "water", "water2" };
@@ -49,6 +50,11 @@ namespace Redpoint.DungeonEscape.Unity
         public Vector3 ViewportOffset
         {
             get { return transform.position; }
+        }
+
+        public int ObjectSortingOrder
+        {
+            get { return objectSortingOrder; }
         }
 
         private void Start()
@@ -264,6 +270,7 @@ namespace Redpoint.DungeonEscape.Unity
                 columns,
                 rows);
 
+            objectSortingOrder = loadedMap.VisibleLayers.Count + 10;
             TiledMapRenderer.RenderObjectSprites(
                 transform,
                 loadedMap.Info,
@@ -272,7 +279,7 @@ namespace Redpoint.DungeonEscape.Unity
                 viewport.StartRow,
                 columns,
                 rows,
-                loadedMap.VisibleLayers.Count + 10);
+                objectSortingOrder);
             PositionCamera(Math.Min(columns, mapWidth), rows);
             mapLoaded = true;
             Debug.Log("Rendered TMX preview at " + viewport.StartColumn + "," + viewport.StartRow + " with " + loadedMap.VisibleLayers.Count + " visible layers, " + spriteSets.Count + " tilesets, and " + renderedTileCount + " tiles.");

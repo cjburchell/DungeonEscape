@@ -46,7 +46,6 @@ namespace Redpoint.DungeonEscape.Unity
             spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
             directionSprites = LoadHeroSprites();
             spriteRenderer.sprite = directionSprites[currentDirection][0];
-            spriteRenderer.sortingOrder = 1000;
         }
 
         private void Start()
@@ -112,10 +111,22 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void LateUpdate()
         {
+            UpdateSortingOrder();
+
             if (!isMoving)
             {
                 UpdateVisualPosition();
             }
+        }
+
+        private void UpdateSortingOrder()
+        {
+            if (spriteRenderer == null || mapView == null)
+            {
+                return;
+            }
+
+            spriteRenderer.sortingOrder = mapView.ObjectSortingOrder;
         }
 
         private void UpdateVisualPosition()

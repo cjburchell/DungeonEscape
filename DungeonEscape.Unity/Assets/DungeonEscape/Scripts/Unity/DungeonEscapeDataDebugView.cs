@@ -41,7 +41,7 @@ namespace Redpoint.DungeonEscape.Unity
             var margin = 12f * scale;
             var padding = 12f * scale;
             var panelWidth = 270f * scale;
-            var panelHeight = 92f * scale;
+            var panelHeight = 132f * scale;
             GUI.Box(new Rect(margin, margin, panelWidth, panelHeight), GUIContent.none);
             GUI.Label(new Rect(margin + padding, margin + padding, panelWidth - padding * 2f, panelHeight - padding * 2f), BuildRuntimeSummary(), textStyle);
         }
@@ -93,6 +93,17 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 builder.AppendLine("Map: " + gameState.Party.CurrentMapId);
                 builder.AppendLine("Steps: " + gameState.Party.StepCount);
+
+                var hero = gameState.Party.GetOrderedHero(0);
+                if (hero != null)
+                {
+                    builder.AppendLine("Hero: " + hero.Name + " L" + hero.Level + " HP " + hero.Health + "/" + hero.MaxHealth);
+                    builder.AppendLine("Items: " + hero.Items.Count);
+                }
+                else
+                {
+                    builder.AppendLine("Hero: none");
+                }
             }
 
             return builder.ToString();

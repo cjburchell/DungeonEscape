@@ -326,12 +326,35 @@ namespace Redpoint.DungeonEscape.Unity
             };
             party.CurrentMapIsOverWorld = party.CurrentMapId == "overworld";
             party.OverWorldPosition = party.CurrentPosition.Value;
+            party.Members.Add(CreateStarterHero(party.PlayerName));
 
             return new GameSave
             {
                 Party = party,
                 IsQuick = true,
                 Time = DateTime.Now
+            };
+        }
+
+        private static Hero CreateStarterHero(string playerName)
+        {
+            return new Hero
+            {
+                Name = string.IsNullOrEmpty(playerName) ? "Player" : playerName,
+                Class = Class.Hero,
+                Gender = Gender.Male,
+                IsActive = true,
+                Order = 0,
+                Level = 1,
+                NextLevel = 100,
+                MaxHealth = 30,
+                Health = 30,
+                MaxMagic = 8,
+                Magic = 8,
+                Attack = 8,
+                Defence = 6,
+                MagicDefence = 4,
+                Agility = 6
             };
         }
 

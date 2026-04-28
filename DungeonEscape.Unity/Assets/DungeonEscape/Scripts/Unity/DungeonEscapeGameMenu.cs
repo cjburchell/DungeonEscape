@@ -167,9 +167,12 @@ namespace Redpoint.DungeonEscape.Unity
 
             GUILayout.Label("Gold: " + party.Gold + "    Map: " + party.CurrentMapId + "    Steps: " + party.StepCount, labelStyle);
             GUILayout.Space(8f * GetPixelScale());
-            foreach (var hero in party.ActiveMembers)
+            var activeMembers = party.ActiveMembers.ToList();
+            GUILayout.Label("Active Party (" + activeMembers.Count + "/" + GetMaxPartyMembers() + ")", titleStyle);
+            for (var i = 0; i < activeMembers.Count; i++)
             {
-                DrawHeroStatus(hero, true);
+                DrawHeroStatus(activeMembers[i], true);
+                DrawActivePartyControls(activeMembers[i], i, activeMembers.Count);
             }
 
             var inactive = party.InactiveMembers.ToList();
@@ -180,8 +183,47 @@ namespace Redpoint.DungeonEscape.Unity
                 foreach (var hero in inactive)
                 {
                     DrawHeroStatus(hero, false);
+                    DrawReservePartyControls(hero, activeMembers.Count);
                 }
             }
+        }
+
+        private void DrawActivePartyControls(Hero hero, int index, int activeCount)
+        {
+            GUILayout.BeginHorizontal();
+            GUI.enabled = index > 0;
+            if (GUILayout.Button("Move Up", buttonStyle, GUILayout.Width(112f * GetPixelScale())))
+            {
+                ApplyPartyChange(() => gameState.MovePartyMemberUp(hero));
+            }
+
+            GUI.enabled = index < activeCount - 1;
+            if (GUILayout.Button("Move Down", buttonStyle, GUILayout.Width(128f * GetPixelScale())))
+            {
+                ApplyPartyChange(() => gameState.MovePartyMemberDown(hero));
+            }
+
+            GUI.enabled = activeCount > 1;
+            if (GUILayout.Button("Reserve", buttonStyle, GUILayout.Width(112f * GetPixelScale())))
+            {
+                ApplyPartyChange(() => gameState.DeactivatePartyMember(hero));
+            }
+
+            GUI.enabled = true;
+            GUILayout.EndHorizontal();
+            GUILayout.Space(6f * GetPixelScale());
+        }
+
+        private void DrawReservePartyControls(Hero hero, int activeCount)
+        {
+            GUI.enabled = activeCount < GetMaxPartyMembers();
+            if (GUILayout.Button("Add to Party", buttonStyle, GUILayout.Width(144f * GetPixelScale())))
+            {
+                ApplyPartyChange(() => gameState.ActivatePartyMember(hero));
+            }
+
+            GUI.enabled = true;
+            GUILayout.Space(6f * GetPixelScale());
         }
 
         private void DrawHeroStatus(Hero hero, bool active)
@@ -200,6 +242,21 @@ namespace Redpoint.DungeonEscape.Unity
                 "   AGI " + hero.Agility,
                 smallStyle);
             GUILayout.EndVertical();
+        }
+
+        private void ApplyPartyChange(Func<bool> action)
+        {
+            EnsureReferences();
+            if (action == null || !action())
+            {
+                return;
+            }
+
+            var player = FindObjectOfType<PlayerGridController>();
+            if (player != null)
+            {
+                player.RefreshPartyFollowers();
+            }
         }
 
         private void DrawInventory()
@@ -242,7 +299,36 @@ namespace Redpoint.DungeonEscape.Unity
             foreach (var item in hero.Items)
             {
                 var equipped = item.IsEquipped ? " [E]" : "";
+                GUILayout.BeginHorizontal();
                 GUILayout.Label(item.NameWithStats + equipped + "    " + item.Type + "    " + item.Gold + "g", labelStyle);
+                if (item.IsEquipped)
+                {
+                    if (GUILayout.Button("Unequip", buttonStyle, GUILayout.Width(112f * GetPixelScale())))
+                    {
+                        ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item));
+                    }
+                }
+                else
+                {
+                    GUI.enabled = hero.CanEquipItem(item);
+                    if (GUILayout.Button("Equip", buttonStyle, GUILayout.Width(96f * GetPixelScale())))
+                    {
+                        ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item));
+                    }
+
+                    GUI.enabled = true;
+                }
+
+                GUILayout.EndHorizontal();
+            }
+        }
+
+        private void ApplyInventoryChange(Func<bool> action)
+        {
+            EnsureReferences();
+            if (action != null)
+            {
+                action();
             }
         }
 
@@ -328,6 +414,13 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 mapView.RefreshRender();
             }
+        }
+
+        private static int GetMaxPartyMembers()
+        {
+            return DungeonEscapeSettingsCache.Current == null || DungeonEscapeSettingsCache.Current.MaxPartyMembers <= 0
+                ? 4
+                : DungeonEscapeSettingsCache.Current.MaxPartyMembers;
         }
 
         private Party GetParty()

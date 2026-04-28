@@ -465,6 +465,125 @@ namespace Redpoint.DungeonEscape.Unity
             return hero.Name + " joined, but is waiting because the party is full.";
         }
 
+        public bool ActivatePartyMember(Hero hero)
+        {
+            EnsureInitialized();
+            if (hero == null || hero.IsActive || Party.ActiveMembers.Count() >= GetMaxPartyMembers())
+            {
+                return false;
+            }
+
+            hero.IsActive = true;
+            hero.Order = GetNextPartyOrder();
+            NormalizePartyOrder();
+            MarkDirty();
+            return true;
+        }
+
+        public bool DeactivatePartyMember(Hero hero)
+        {
+            EnsureInitialized();
+            if (hero == null || !hero.IsActive || Party.ActiveMembers.Count() <= 1)
+            {
+                return false;
+            }
+
+            hero.IsActive = false;
+            hero.Order = 0;
+            NormalizePartyOrder();
+            MarkDirty();
+            return true;
+        }
+
+        public bool MovePartyMemberUp(Hero hero)
+        {
+            EnsureInitialized();
+            if (hero == null || !hero.IsActive)
+            {
+                return false;
+            }
+
+            var activeMembers = Party.ActiveMembers.ToList();
+            var index = activeMembers.IndexOf(hero);
+            if (index <= 0)
+            {
+                return false;
+            }
+
+            SwapPartyOrder(hero, activeMembers[index - 1]);
+            NormalizePartyOrder();
+            MarkDirty();
+            return true;
+        }
+
+        public bool MovePartyMemberDown(Hero hero)
+        {
+            EnsureInitialized();
+            if (hero == null || !hero.IsActive)
+            {
+                return false;
+            }
+
+            var activeMembers = Party.ActiveMembers.ToList();
+            var index = activeMembers.IndexOf(hero);
+            if (index < 0 || index >= activeMembers.Count - 1)
+            {
+                return false;
+            }
+
+            SwapPartyOrder(hero, activeMembers[index + 1]);
+            NormalizePartyOrder();
+            MarkDirty();
+            return true;
+        }
+
+        public bool EquipHeroItem(Hero hero, ItemInstance item)
+        {
+            EnsureInitialized();
+            if (hero == null ||
+                item == null ||
+                item.Slots == null ||
+                item.Slots.Count == 0 ||
+                !Party.Members.Contains(hero) ||
+                !hero.CanEquipItem(item))
+            {
+                return false;
+            }
+
+            foreach (var slot in item.Slots)
+            {
+                string equippedItemId;
+                if (!hero.Slots.TryGetValue(slot, out equippedItemId) || string.IsNullOrEmpty(equippedItemId))
+                {
+                    continue;
+                }
+
+                var equippedItem = hero.Items.FirstOrDefault(candidate => candidate.Id == equippedItemId);
+                if (equippedItem != null)
+                {
+                    hero.UnEquip(equippedItem);
+                }
+            }
+
+            item.UnEquip(Party.Members);
+            hero.Equip(item);
+            MarkDirty();
+            return true;
+        }
+
+        public bool UnequipHeroItem(Hero hero, ItemInstance item)
+        {
+            EnsureInitialized();
+            if (hero == null || item == null || !Party.Members.Contains(hero) || !item.IsEquipped)
+            {
+                return false;
+            }
+
+            hero.UnEquip(item);
+            MarkDirty();
+            return true;
+        }
+
         private List<Item> CreateMapObjectItems(TiledObjectInfo mapObject)
         {
             var items = new List<Item>();
@@ -1105,6 +1224,22 @@ namespace Redpoint.DungeonEscape.Unity
         private int GetNextPartyOrder()
         {
             return Party.ActiveMembers.Any() ? Party.ActiveMembers.Max(member => member.Order) + 1 : 0;
+        }
+
+        private static void SwapPartyOrder(Hero first, Hero second)
+        {
+            var order = first.Order;
+            first.Order = second.Order;
+            second.Order = order;
+        }
+
+        private void NormalizePartyOrder()
+        {
+            var activeMembers = Party.ActiveMembers.ToList();
+            for (var i = 0; i < activeMembers.Count; i++)
+            {
+                activeMembers[i].Order = i;
+            }
         }
 
         private static int GetMaxPartyMembers()

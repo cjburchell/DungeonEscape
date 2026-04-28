@@ -785,6 +785,20 @@ namespace Redpoint.DungeonEscape.Unity
             }
         }
 
+        public void RefreshPartyFollowers()
+        {
+            var party = gameState == null ? null : gameState.Party;
+            if (party != null)
+            {
+                ApplyPartySprite(party);
+                SetFacing(currentDirection);
+            }
+
+            ResetPartyTrail();
+            SyncPartyFollowers();
+            UpdateFollowerVisualPositions();
+        }
+
         private void ResetPartyTrail()
         {
             partyTrailPositions.Clear();

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections;
+using System;
 using System.Linq;
 using System.Text;
 using Redpoint.DungeonEscape.State;
@@ -24,6 +25,9 @@ namespace Redpoint.DungeonEscape.Unity
         private Coroutine stepAnimation;
         private DungeonEscapeGameState gameState;
         private DungeonEscapeMessageBox messageBox;
+        private readonly List<PartyFollowerController> followers = new List<PartyFollowerController>();
+        private readonly List<WorldPosition> partyTrailPositions = new List<WorldPosition>();
+        private readonly List<Direction> partyTrailDirections = new List<Direction>();
         private bool hasPendingTurnMove;
         private Direction pendingTurnMoveDirection;
         private float pendingTurnMoveDelay;
@@ -109,10 +113,13 @@ namespace Redpoint.DungeonEscape.Unity
             Position = party.CurrentPosition ?? WorldPosition.Zero;
             ApplyPartySprite(party);
             SetFacing(party.CurrentDirection);
+            ResetPartyTrail();
+            SyncPartyFollowers();
             if (mapView != null)
             {
                 mapView.CenterOn(Position);
                 UpdateVisualPosition();
+                UpdateFollowerVisualPositions();
             }
         }
 
@@ -296,6 +303,7 @@ namespace Redpoint.DungeonEscape.Unity
                 var start = GetVisualPosition(startPosition);
                 var end = GetVisualPosition(nextPosition);
                 transform.position = Vector3.Lerp(start, end, progress);
+                UpdatePartyFollowers(nextPosition, direction, progress);
                 yield return null;
             }
 
@@ -306,6 +314,7 @@ namespace Redpoint.DungeonEscape.Unity
                 gameState.IncrementStepCount();
             }
 
+            CommitPartyFollowers(nextPosition, direction);
             TryApplyWarp();
             UpdateVisualPosition();
             isMoving = false;
@@ -369,6 +378,7 @@ namespace Redpoint.DungeonEscape.Unity
                 position = gameState.Party.OverWorldPosition;
                 gameState.SetCurrentPosition(position);
                 mapView.CenterOn(position);
+                SnapPartyFollowersToPlayer();
                 return;
             }
 
@@ -382,12 +392,14 @@ namespace Redpoint.DungeonEscape.Unity
                 }
 
                 mapView.CenterOn(position);
+                SnapPartyFollowersToPlayer();
             }
             else if (gameState != null && gameState.Party != null && gameState.Party.CurrentMapIsOverWorld)
             {
                 position = gameState.Party.OverWorldPosition;
                 gameState.SetCurrentPosition(position);
                 mapView.CenterOn(position);
+                SnapPartyFollowersToPlayer();
             }
         }
 
@@ -529,6 +541,8 @@ namespace Redpoint.DungeonEscape.Unity
                     {
                         mapView.RemoveRuntimeNpc(mapObject);
                     }
+
+                    SyncPartyFollowers();
 
                     if (messageBox != null)
                     {
@@ -764,6 +778,145 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 gameState.SetCurrentDirection(direction);
             }
+        }
+
+        private void ResetPartyTrail()
+        {
+            partyTrailPositions.Clear();
+            partyTrailDirections.Clear();
+            var maxFollowers = GetFollowerCount();
+            for (var i = 0; i < maxFollowers + 1; i++)
+            {
+                partyTrailPositions.Add(position);
+                partyTrailDirections.Add(currentDirection);
+            }
+        }
+
+        private void SyncPartyFollowers()
+        {
+            var party = gameState == null ? null : gameState.Party;
+            var members = party == null
+                ? new List<Hero>()
+                : party.ActiveMembers.Skip(1).ToList();
+
+            while (followers.Count > members.Count)
+            {
+                var index = followers.Count - 1;
+                if (followers[index] != null)
+                {
+                    Destroy(followers[index].gameObject);
+                }
+
+                followers.RemoveAt(index);
+            }
+
+            for (var i = 0; i < members.Count; i++)
+            {
+                if (i >= followers.Count)
+                {
+                    var followerObject = new GameObject("PartyFollower_" + members[i].Name);
+                    followerObject.transform.SetParent(transform.parent, false);
+                    var follower = followerObject.AddComponent<PartyFollowerController>();
+                    followers.Add(follower);
+                }
+
+                followers[i].Configure(
+                    mapView,
+                    LoadHeroSprites(members[i].Class, members[i].Gender),
+                    GetTrailPosition(i + 1),
+                    GetTrailDirection(i + 1));
+            }
+
+            EnsureTrailLength(members.Count + 1);
+        }
+
+        private void UpdatePartyFollowers(WorldPosition nextPosition, Direction direction, float progress)
+        {
+            EnsureTrailLength(GetFollowerCount() + 1);
+            for (var i = 0; i < followers.Count; i++)
+            {
+                if (followers[i] == null)
+                {
+                    continue;
+                }
+
+                followers[i].SetPosition(GetTrailPosition(i), GetTrailDirection(i), progress);
+            }
+        }
+
+        private void CommitPartyFollowers(WorldPosition nextPosition, Direction direction)
+        {
+            EnsureTrailLength(GetFollowerCount() + 1);
+            partyTrailPositions.Insert(0, nextPosition);
+            partyTrailDirections.Insert(0, direction);
+
+            while (partyTrailPositions.Count > followers.Count + 1)
+            {
+                partyTrailPositions.RemoveAt(partyTrailPositions.Count - 1);
+            }
+
+            while (partyTrailDirections.Count > followers.Count + 1)
+            {
+                partyTrailDirections.RemoveAt(partyTrailDirections.Count - 1);
+            }
+
+            for (var i = 0; i < followers.Count; i++)
+            {
+                if (followers[i] != null)
+                {
+                    followers[i].CommitPosition(GetTrailPosition(i + 1), GetTrailDirection(i + 1));
+                }
+            }
+        }
+
+        private void UpdateFollowerVisualPositions()
+        {
+            foreach (var follower in followers)
+            {
+                if (follower != null)
+                {
+                    follower.UpdateVisualPosition();
+                }
+            }
+        }
+
+        private void SnapPartyFollowersToPlayer()
+        {
+            transform.position = GetVisualPosition(position);
+            ResetPartyTrail();
+            SyncPartyFollowers();
+            UpdateFollowerVisualPositions();
+        }
+
+        private int GetFollowerCount()
+        {
+            var party = gameState == null ? null : gameState.Party;
+            return party == null ? 0 : Math.Max(0, party.ActiveMembers.Count() - 1);
+        }
+
+        private void EnsureTrailLength(int length)
+        {
+            while (partyTrailPositions.Count < length)
+            {
+                partyTrailPositions.Add(position);
+            }
+
+            while (partyTrailDirections.Count < length)
+            {
+                partyTrailDirections.Add(currentDirection);
+            }
+        }
+
+        private WorldPosition GetTrailPosition(int index)
+        {
+            EnsureTrailLength(index + 1);
+            return partyTrailPositions[index];
+        }
+
+        private Direction GetTrailDirection(int index)
+        {
+            EnsureTrailLength(index + 1);
+            return partyTrailDirections[index];
         }
 
         private void PlayStepAnimation(Direction direction)

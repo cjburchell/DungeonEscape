@@ -38,6 +38,9 @@ namespace Redpoint.DungeonEscape.Unity
         private TiledSpriteRendererPool rendererPool;
         private DungeonEscapeGameState gameState;
         private readonly TiledMapViewport viewport = new TiledMapViewport();
+        private readonly List<TiledNpcController> runtimeNpcs = new List<TiledNpcController>();
+        private readonly Dictionary<int, TiledNpcController> occupiedNpcTiles = new Dictionary<int, TiledNpcController>();
+        private string runtimeNpcMapAssetPath;
 
         public int StartColumn
         {
@@ -146,13 +149,42 @@ namespace Redpoint.DungeonEscape.Unity
                 return false;
             }
 
-            return !blockedTiles.Contains(row * mapWidth + column);
+            var tileKey = row * mapWidth + column;
+            return !blockedTiles.Contains(tileKey) && !occupiedNpcTiles.ContainsKey(tileKey);
+        }
+
+        public bool CanNpcMoveTo(int column, int row, TiledNpcController npc)
+        {
+            EnsureMapLoaded();
+
+            if (column < 0 || row < 0 || column >= mapWidth || row >= mapHeight)
+            {
+                return false;
+            }
+
+            var tileKey = row * mapWidth + column;
+            TiledNpcController occupiedNpc;
+            return !blockedTiles.Contains(tileKey) &&
+                   !IsPlayerAt(column, row) &&
+                   (!occupiedNpcTiles.TryGetValue(tileKey, out occupiedNpc) || occupiedNpc == npc);
+        }
+
+        public void UpdateNpcTile(TiledNpcController npc, int oldColumn, int oldRow, int newColumn, int newRow)
+        {
+            if (npc == null)
+            {
+                return;
+            }
+
+            occupiedNpcTiles.Remove(oldRow * mapWidth + oldColumn);
+            occupiedNpcTiles[newRow * mapWidth + newColumn] = npc;
         }
 
         public void ReloadMapAssets()
         {
             TiledMapLoader.ClearCache();
             TiledTilesetSprites.ClearCache();
+            ClearRuntimeNpcs();
             ClearRenderedChildren();
             rendererPool = new TiledSpriteRendererPool(transform);
             mapLoaded = false;
@@ -174,6 +206,7 @@ namespace Redpoint.DungeonEscape.Unity
         public void LoadMap(string mapIdOrAssetPath, string spawnId, bool centerOnSpawn)
         {
             mapAssetPath = TiledMapLoader.NormalizeMapAssetPath(mapIdOrAssetPath);
+            ClearRuntimeNpcs();
             ClearRenderedChildren();
             rendererPool = new TiledSpriteRendererPool(transform);
             mapLoaded = false;
@@ -247,6 +280,16 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 foreach (var mapObject in group.Objects)
                 {
+                    var runtimeNpc = runtimeNpcs.FirstOrDefault(npc =>
+                        npc.MapObject != null &&
+                        Mathf.FloorToInt(position.X) == npc.Column &&
+                        Mathf.FloorToInt(position.Y) == npc.Row);
+                    if (runtimeNpc != null)
+                    {
+                        result = runtimeNpc.MapObject;
+                        return true;
+                    }
+
                     if (IsSpawnObject(mapObject) || !ContainsTile(mapObject, position))
                     {
                         continue;
@@ -351,6 +394,20 @@ namespace Redpoint.DungeonEscape.Unity
             return string.Equals(mapObject.Class, "Spawn", StringComparison.OrdinalIgnoreCase);
         }
 
+        private static bool IsMovingNpcObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   mapObject.Class != null &&
+                   mapObject.Class.StartsWith("Npc", StringComparison.OrdinalIgnoreCase) &&
+                   IsTrueProperty(mapObject, "CanMove");
+        }
+
+        private static bool IsPlayerAt(int column, int row)
+        {
+            var player = FindObjectOfType<PlayerGridController>();
+            return player != null && player.Column == column && player.Row == row;
+        }
+
         private static bool IsTrueProperty(TiledObjectInfo mapObject, string propertyName)
         {
             string value;
@@ -390,6 +447,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (pooledMapAssetPath != loadedMap.AssetPath)
             {
+                ClearRuntimeNpcs();
                 ClearRenderedChildren();
                 rendererPool = new TiledSpriteRendererPool(transform);
                 pooledMapAssetPath = loadedMap.AssetPath;
@@ -437,6 +495,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             rendererPool.End();
             objectSortingOrder = spritesSortingOrder;
+            SyncRuntimeNpcs(loadedMap, spriteSets);
             PositionCamera(Math.Min(viewport.Columns, mapWidth), rows);
             mapLoaded = true;
         }
@@ -457,6 +516,66 @@ namespace Redpoint.DungeonEscape.Unity
                 if (child.GetComponent<SpriteRenderer>() != null)
                 {
                     Destroy(child.gameObject);
+                }
+            }
+        }
+
+        private void ClearRuntimeNpcs()
+        {
+            foreach (var npc in runtimeNpcs)
+            {
+                if (npc != null)
+                {
+                    Destroy(npc.gameObject);
+                }
+            }
+
+            runtimeNpcs.Clear();
+            occupiedNpcTiles.Clear();
+            runtimeNpcMapAssetPath = null;
+        }
+
+        private void SyncRuntimeNpcs(TiledLoadedMap loadedMap, IList<TiledTilesetSpriteSet> spriteSets)
+        {
+            if (loadedMap == null || loadedMap.Info == null || loadedMap.Info.ObjectGroups == null)
+            {
+                return;
+            }
+
+            if (runtimeNpcMapAssetPath != loadedMap.AssetPath)
+            {
+                ClearRuntimeNpcs();
+                runtimeNpcMapAssetPath = loadedMap.AssetPath;
+                foreach (var group in loadedMap.Info.ObjectGroups)
+                {
+                    foreach (var mapObject in group.Objects)
+                    {
+                        if (!IsMovingNpcObject(mapObject))
+                        {
+                            continue;
+                        }
+
+                        var npcObject = new GameObject("Npc_" + mapObject.Name + "_" + mapObject.Id);
+                        npcObject.transform.SetParent(transform, false);
+                        var npc = npcObject.AddComponent<TiledNpcController>();
+                        npc.Configure(
+                            this,
+                            mapObject,
+                            spriteSets,
+                            loadedMap.TileWidth,
+                            loadedMap.TileHeight,
+                            objectSortingOrder);
+                        runtimeNpcs.Add(npc);
+                        occupiedNpcTiles[npc.Row * mapWidth + npc.Column] = npc;
+                    }
+                }
+            }
+
+            foreach (var npc in runtimeNpcs)
+            {
+                if (npc != null)
+                {
+                    npc.UpdateVisualPosition();
                 }
             }
         }

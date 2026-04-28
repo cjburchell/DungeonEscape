@@ -249,6 +249,11 @@ namespace Redpoint.DungeonEscape.Unity
 
             foreach (var mapObject in objectGroup.Elements("object"))
             {
+                if (IsRuntimeMovingNpc(mapObject))
+                {
+                    continue;
+                }
+
                 var gid = GetInt(mapObject, "gid");
                 if (gid == 0 && !showHiddenObjects)
                 {
@@ -388,6 +393,11 @@ namespace Redpoint.DungeonEscape.Unity
 
             foreach (var mapObject in objectGroup.Elements("object"))
             {
+                if (IsRuntimeMovingNpc(mapObject))
+                {
+                    continue;
+                }
+
                 var gid = GetInt(mapObject, "gid");
                 if (gid == 0 && !showHiddenObjects)
                 {
@@ -558,6 +568,11 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return TiledTilesetSprites.TryGetDirectionalAnimation(gid, spriteSets, out frames);
+        }
+
+        private static bool IsRuntimeMovingNpc(XElement mapObject)
+        {
+            return StartsWith(GetObjectClass(mapObject), "Npc") && GetBoolProperty(mapObject, "CanMove");
         }
 
         private static void ApplyAnimation(SpriteRenderer renderer, List<TiledSpriteAnimationFrame> animationFrames)

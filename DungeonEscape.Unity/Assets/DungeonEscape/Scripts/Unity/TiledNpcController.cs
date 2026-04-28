@@ -18,6 +18,9 @@ namespace Redpoint.DungeonEscape.Unity
         private int tileHeight;
         private int column;
         private int row;
+        private int homeColumn;
+        private int homeRow;
+        private int moveRadius = 3;
         private string mapId;
         private DungeonEscapeGameState gameState;
         private bool moving;
@@ -50,6 +53,9 @@ namespace Redpoint.DungeonEscape.Unity
             ObjectId = mapObject.Id;
             column = Mathf.FloorToInt(mapObject.X / tileWidth);
             row = Mathf.FloorToInt((mapObject.Y - mapObject.Height) / tileHeight);
+            homeColumn = column;
+            homeRow = row;
+            moveRadius = GetIntProperty(mapObject, "MoveRadius", 0);
             direction = GetDirection(mapObject);
             ApplySavedState();
 
@@ -152,9 +158,24 @@ namespace Redpoint.DungeonEscape.Unity
                     continue;
                 }
 
+                if (!IsWithinHomeRadius(nextColumn, nextRow))
+                {
+                    continue;
+                }
+
                 StartCoroutine(MoveTo(option, nextColumn, nextRow));
                 return;
             }
+        }
+
+        private bool IsWithinHomeRadius(int nextColumn, int nextRow)
+        {
+            if (moveRadius < 0)
+            {
+                return true;
+            }
+
+            return Mathf.Abs(nextColumn - homeColumn) + Mathf.Abs(nextRow - homeRow) <= moveRadius;
         }
 
         private IEnumerator MoveTo(Direction nextDirection, int nextColumn, int nextRow)
@@ -242,6 +263,17 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return Direction.Down;
+        }
+
+        private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName, int defaultValue)
+        {
+            string value;
+            int result;
+            return mapObject.Properties != null &&
+                   mapObject.Properties.TryGetValue(propertyName, out value) &&
+                   int.TryParse(value, out result)
+                ? result
+                : defaultValue;
         }
 
         private static void GetDelta(Direction selectedDirection, out int deltaColumn, out int deltaRow)

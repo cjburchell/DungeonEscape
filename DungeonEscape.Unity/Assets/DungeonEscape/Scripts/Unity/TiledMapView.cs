@@ -399,7 +399,18 @@ namespace Redpoint.DungeonEscape.Unity
             return mapObject != null &&
                    mapObject.Class != null &&
                    mapObject.Class.StartsWith("Npc", StringComparison.OrdinalIgnoreCase) &&
-                   IsTrueProperty(mapObject, "CanMove");
+                   GetIntProperty(mapObject, "MoveRadius", 0) != 0;
+        }
+
+        private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName, int defaultValue)
+        {
+            string value;
+            int result;
+            return mapObject.Properties != null &&
+                   mapObject.Properties.TryGetValue(propertyName, out value) &&
+                   int.TryParse(value, out result)
+                ? result
+                : defaultValue;
         }
 
         private static bool IsPlayerAt(int column, int row)

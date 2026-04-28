@@ -572,7 +572,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private static bool IsRuntimeMovingNpc(XElement mapObject)
         {
-            return StartsWith(GetObjectClass(mapObject), "Npc") && GetBoolProperty(mapObject, "CanMove");
+            return StartsWith(GetObjectClass(mapObject), "Npc") && GetIntProperty(mapObject, "MoveRadius", 0) != 0;
         }
 
         private static void ApplyAnimation(SpriteRenderer renderer, List<TiledSpriteAnimationFrame> animationFrames)

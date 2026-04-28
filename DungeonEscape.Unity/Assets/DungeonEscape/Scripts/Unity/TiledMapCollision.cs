@@ -73,12 +73,6 @@ namespace Redpoint.DungeonEscape.Unity
         private static bool IsBlockingLayer(XElement layer)
         {
             var properties = ReadProperties(layer);
-            string canMove;
-            if (properties.TryGetValue("CanMove", out canMove))
-            {
-                return IsFalse(canMove);
-            }
-
             string collideable;
             if (properties.TryGetValue("Collideable", out collideable))
             {
@@ -124,11 +118,6 @@ namespace Redpoint.DungeonEscape.Unity
                 .Split(new[] { ',', '\n', '\r', '\t', ' ' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(int.Parse)
                 .ToList();
-        }
-
-        private static bool IsFalse(string value)
-        {
-            return string.Equals(value, "false", StringComparison.OrdinalIgnoreCase) || value == "0";
         }
 
         private static bool IsTrue(string value)

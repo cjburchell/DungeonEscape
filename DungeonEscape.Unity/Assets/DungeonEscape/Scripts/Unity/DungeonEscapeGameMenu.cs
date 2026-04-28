@@ -358,7 +358,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            var player = FindObjectOfType<PlayerGridController>();
+            var player = FindFirstObjectByType<PlayerGridController>();
             if (player != null)
             {
                 player.RefreshPartyFollowers();
@@ -1101,7 +1101,7 @@ namespace Redpoint.DungeonEscape.Unity
             lastThemeSignature = null;
             if (mapView == null)
             {
-                mapView = FindObjectOfType<TiledMapView>();
+                mapView = FindFirstObjectByType<TiledMapView>();
             }
 
             if (mapView != null)
@@ -1147,7 +1147,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (mapView == null)
             {
-                mapView = FindObjectOfType<TiledMapView>();
+                mapView = FindFirstObjectByType<TiledMapView>();
             }
         }
 

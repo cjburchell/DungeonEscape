@@ -453,7 +453,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private static bool IsPlayerAt(int column, int row)
         {
-            var player = FindObjectOfType<PlayerGridController>();
+            var player = FindFirstObjectByType<PlayerGridController>();
             return player != null && player.Column == column && player.Row == row;
         }
 

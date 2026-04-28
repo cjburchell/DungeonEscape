@@ -75,7 +75,7 @@ namespace Redpoint.DungeonEscape.Unity
                 animationPlayer = gameObject.AddComponent<TiledSpriteAnimationPlayer>();
             }
 
-            messageBox = FindObjectOfType<DungeonEscapeMessageBox>();
+            messageBox = FindFirstObjectByType<DungeonEscapeMessageBox>();
             PlayIdleAnimation();
             UpdateVisualPosition();
             nextMoveDelay = RandomDelay();
@@ -194,7 +194,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (messageBox == null)
             {
-                messageBox = FindObjectOfType<DungeonEscapeMessageBox>();
+                messageBox = FindFirstObjectByType<DungeonEscapeMessageBox>();
             }
 
             if (moveRadius == 0 && !restoreFacingAfterDialog)

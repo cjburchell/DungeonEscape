@@ -1389,7 +1389,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         public static DungeonEscapeGameState GetOrCreate()
         {
-            var state = FindObjectOfType<DungeonEscapeGameState>();
+            var state = FindFirstObjectByType<DungeonEscapeGameState>();
             if (state != null)
             {
                 state.EnsureInitialized();

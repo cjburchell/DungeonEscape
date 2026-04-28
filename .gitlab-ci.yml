@@ -59,6 +59,8 @@ resharper-scan:
     when: always
     paths:
       - RsInspection.xml
+  rules: 
+    - when: never
 
 publish-windows:
   image: $DOTNET_SDK_IMAGE

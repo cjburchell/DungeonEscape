@@ -44,6 +44,7 @@ namespace Redpoint.DungeonEscape.Unity
         private GUIStyle panelStyle;
         private GUIStyle rowStyle;
         private GUIStyle selectedRowStyle;
+        private DungeonEscapeUiTheme uiTheme;
         private float lastPixelScale;
         private string lastThemeSignature;
         private MenuTab currentTab = MenuTab.Party;
@@ -385,7 +386,8 @@ namespace Redpoint.DungeonEscape.Unity
             GUILayout.BeginHorizontal();
             for (var i = 0; i < members.Count; i++)
             {
-                if (GUILayout.Toggle(selectedHeroIndex == i, members[i].Name, buttonStyle))
+                var style = selectedHeroIndex == i ? selectedTabStyle : buttonStyle;
+                if (GUILayout.Button(members[i].Name, style))
                 {
                     selectedHeroIndex = i;
                 }
@@ -545,21 +547,21 @@ namespace Redpoint.DungeonEscape.Unity
             GUI.changed = false;
             BeginSelectableRow();
             GUILayout.Label("UI Scale: " + settings.UiScale.ToString("0.00"), labelStyle);
-            settings.UiScale = GUILayout.HorizontalSlider(settings.UiScale <= 0f ? 1f : settings.UiScale, MinUiScale, MaxUiScale);
+            settings.UiScale = DrawSlider(settings.UiScale <= 0f ? 1f : settings.UiScale, MinUiScale, MaxUiScale);
             EndSelectableRow();
             GUILayout.Space(8f * GetPixelScale());
             BeginSelectableRow();
             GUILayout.Label("Sprint Boost: " + settings.SprintBoost.ToString("0.00"), labelStyle);
-            settings.SprintBoost = GUILayout.HorizontalSlider(settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost, 1f, 3f);
+            settings.SprintBoost = DrawSlider(settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost, 1f, 3f);
             EndSelectableRow();
             GUILayout.Space(8f * GetPixelScale());
             BeginSelectableRow();
-            settings.AutoSaveEnabled = GUILayout.Toggle(settings.AutoSaveEnabled, "Autosave enabled", labelStyle);
+            settings.AutoSaveEnabled = DrawCheckbox(settings.AutoSaveEnabled, "Autosave enabled");
             EndSelectableRow();
             BeginSelectableRow();
             GUI.enabled = settings.AutoSaveEnabled;
             GUILayout.Label("Autosave Period: " + GetAutoSaveInterval(settings).ToString("0") + " seconds", labelStyle);
-            settings.AutoSaveIntervalSeconds = GUILayout.HorizontalSlider(GetAutoSaveInterval(settings), 5f, 300f);
+            settings.AutoSaveIntervalSeconds = DrawSlider(GetAutoSaveInterval(settings), 5f, 300f);
             GUI.enabled = true;
             EndSelectableRow();
 
@@ -578,7 +580,7 @@ namespace Redpoint.DungeonEscape.Unity
             EndSelectableRow();
             BeginSelectableRow();
             GUILayout.Label("Background Transparency: " + settings.UiBackgroundAlpha.ToString("0.00"), labelStyle);
-            settings.UiBackgroundAlpha = GUILayout.HorizontalSlider(Mathf.Clamp01(settings.UiBackgroundAlpha), 0f, 1f);
+            settings.UiBackgroundAlpha = DrawSlider(Mathf.Clamp01(settings.UiBackgroundAlpha), 0f, 1f);
             EndSelectableRow();
             BeginSelectableRow();
             GUILayout.Label("Hover Colour", labelStyle);
@@ -594,7 +596,7 @@ namespace Redpoint.DungeonEscape.Unity
             EndSelectableRow();
             BeginSelectableRow();
             GUILayout.Label("Border Thickness: " + GetBorderThickness(settings), labelStyle);
-            settings.UiBorderThickness = Mathf.RoundToInt(GUILayout.HorizontalSlider(GetBorderThickness(settings), 2f, 12f));
+            settings.UiBorderThickness = Mathf.RoundToInt(DrawSlider(GetBorderThickness(settings), 2f, 12f));
             EndSelectableRow();
             BeginSelectableRow();
             GUILayout.Label("Text Colour", labelStyle);
@@ -615,10 +617,10 @@ namespace Redpoint.DungeonEscape.Unity
         {
             GUI.changed = false;
             BeginSelectableRow();
-            settings.MapDebugInfo = GUILayout.Toggle(settings.MapDebugInfo, "Map debug info", labelStyle);
+            settings.MapDebugInfo = DrawCheckbox(settings.MapDebugInfo, "Map debug info");
             EndSelectableRow();
             BeginSelectableRow();
-            settings.ShowHiddenObjects = GUILayout.Toggle(settings.ShowHiddenObjects, "Show hidden map objects", labelStyle);
+            settings.ShowHiddenObjects = DrawCheckbox(settings.ShowHiddenObjects, "Show hidden map objects");
             EndSelectableRow();
 
             if (GUI.changed)
@@ -696,6 +698,16 @@ namespace Redpoint.DungeonEscape.Unity
         private static void EndSelectableRow()
         {
             GUILayout.EndVertical();
+        }
+
+        private bool DrawCheckbox(bool value, string label)
+        {
+            return DungeonEscapeUiControls.Checkbox(value, label, uiTheme, GetPixelScale());
+        }
+
+        private float DrawSlider(float value, float leftValue, float rightValue)
+        {
+            return DungeonEscapeUiControls.Slider(value, leftValue, rightValue, uiTheme);
         }
 
         private int GetSelectableRowCount()
@@ -1165,16 +1177,16 @@ namespace Redpoint.DungeonEscape.Unity
 
             lastPixelScale = scale;
             lastThemeSignature = themeSignature;
-            var theme = DungeonEscapeUiTheme.Create(settings, scale);
-            panelStyle = theme.PanelStyle;
-            rowStyle = theme.RowStyle;
-            selectedRowStyle = theme.SelectedRowStyle;
-            titleStyle = theme.TitleStyle;
-            labelStyle = theme.LabelStyle;
-            smallStyle = theme.SmallStyle;
-            buttonStyle = theme.ButtonStyle;
-            tabStyle = theme.TabStyle;
-            selectedTabStyle = theme.SelectedTabStyle;
+            uiTheme = DungeonEscapeUiTheme.Create(settings, scale);
+            panelStyle = uiTheme.PanelStyle;
+            rowStyle = uiTheme.RowStyle;
+            selectedRowStyle = uiTheme.SelectedRowStyle;
+            titleStyle = uiTheme.TitleStyle;
+            labelStyle = uiTheme.LabelStyle;
+            smallStyle = uiTheme.SmallStyle;
+            buttonStyle = uiTheme.ButtonStyle;
+            tabStyle = uiTheme.TabStyle;
+            selectedTabStyle = uiTheme.SelectedTabStyle;
         }
 
         private float GetPixelScale()

@@ -22,16 +22,31 @@ namespace Redpoint.DungeonEscape.Unity
         public readonly GUIStyle LabelStyle;
         public readonly GUIStyle SmallStyle;
         public readonly GUIStyle ButtonStyle;
+        public readonly GUIStyle CheckboxStyle;
+        public readonly GUIStyle CheckboxBoxStyle;
+        public readonly GUIStyle CheckboxCheckedBoxStyle;
+        public readonly GUIStyle SliderStyle;
+        public readonly GUIStyle SliderThumbStyle;
         public readonly GUIStyle TabStyle;
         public readonly GUIStyle SelectedTabStyle;
 
         private readonly Texture2D panelTexture;
         private readonly Texture2D rowTexture;
+        private readonly Texture2D buttonTexture;
         private readonly Texture2D selectedRowTexture;
         private readonly Texture2D hoverTexture;
         private readonly Texture2D activeTexture;
         private readonly Texture2D selectedHoverTexture;
         private readonly Texture2D selectedActiveTexture;
+        private readonly Texture2D checkboxTexture;
+        private readonly Texture2D checkboxHoverTexture;
+        private readonly Texture2D checkboxActiveTexture;
+        private readonly Texture2D checkboxBoxTexture;
+        private readonly Texture2D checkboxCheckedBoxTexture;
+        private readonly Texture2D sliderTrackTexture;
+        private readonly Texture2D sliderThumbTexture;
+        private readonly Texture2D sliderThumbHoverTexture;
+        private readonly Texture2D sliderThumbActiveTexture;
 
         private DungeonEscapeUiTheme(Settings settings, float scale)
         {
@@ -46,12 +61,22 @@ namespace Redpoint.DungeonEscape.Unity
             Signature = GetSignature(settings);
 
             panelTexture = CreateBorderTexture(BackgroundColor, BorderColor, BorderThickness);
-            rowTexture = CreateBorderTexture(BackgroundColor, BorderColor, BorderThickness);
+            rowTexture = CreateBorderTexture(BackgroundColor, BackgroundColor, BorderThickness);
+            buttonTexture = CreateBorderTexture(BackgroundColor, BorderColor, BorderThickness);
             selectedRowTexture = CreateBorderTexture(BackgroundColor, HighlightColor, BorderThickness);
             hoverTexture = CreateBorderTexture(HoverColor, BorderColor, BorderThickness);
             activeTexture = CreateBorderTexture(ActiveColor, BorderColor, BorderThickness);
             selectedHoverTexture = CreateBorderTexture(HoverColor, HighlightColor, BorderThickness);
             selectedActiveTexture = CreateBorderTexture(ActiveColor, HighlightColor, BorderThickness);
+            checkboxTexture = CreateBorderTexture(BackgroundColor, BackgroundColor, BorderThickness);
+            checkboxHoverTexture = CreateBorderTexture(HoverColor, HoverColor, BorderThickness);
+            checkboxActiveTexture = CreateBorderTexture(ActiveColor, ActiveColor, BorderThickness);
+            checkboxBoxTexture = CreateBorderTexture(BackgroundColor, BorderColor, BorderThickness);
+            checkboxCheckedBoxTexture = CreateBorderTexture(HighlightColor, HighlightColor, BorderThickness);
+            sliderTrackTexture = CreateBorderTexture(BackgroundColor, BorderColor, BorderThickness);
+            sliderThumbTexture = CreateBorderTexture(BorderColor, BorderColor, BorderThickness);
+            sliderThumbHoverTexture = CreateBorderTexture(HoverColor, BorderColor, BorderThickness);
+            sliderThumbActiveTexture = CreateBorderTexture(ActiveColor, BorderColor, BorderThickness);
             var border = new RectOffset(BorderThickness, BorderThickness, BorderThickness, BorderThickness);
 
             PanelStyle = new GUIStyle(GUI.skin.box)
@@ -92,11 +117,63 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 fontSize = Mathf.RoundToInt(15f * scale),
                 fontStyle = FontStyle.Normal,
-                normal = { background = rowTexture, textColor = TextColor },
+                normal = { background = buttonTexture, textColor = TextColor },
                 hover = { background = hoverTexture, textColor = TextColor },
                 active = { background = activeTexture, textColor = TextColor },
                 focused = { background = selectedRowTexture, textColor = HighlightColor },
+                onNormal = { background = selectedRowTexture, textColor = HighlightColor },
+                onHover = { background = selectedHoverTexture, textColor = HighlightColor },
+                onActive = { background = selectedActiveTexture, textColor = HighlightColor },
+                onFocused = { background = selectedRowTexture, textColor = HighlightColor },
                 border = border
+            };
+            CheckboxStyle = new GUIStyle(ButtonStyle)
+            {
+                alignment = TextAnchor.MiddleLeft,
+                normal = { background = checkboxTexture, textColor = TextColor },
+                hover = { background = checkboxHoverTexture, textColor = TextColor },
+                active = { background = checkboxActiveTexture, textColor = TextColor },
+                focused = { background = checkboxTexture, textColor = TextColor },
+                onNormal = { background = checkboxTexture, textColor = TextColor },
+                onHover = { background = checkboxHoverTexture, textColor = TextColor },
+                onActive = { background = checkboxActiveTexture, textColor = TextColor },
+                onFocused = { background = checkboxTexture, textColor = TextColor },
+                padding = new RectOffset(10, 10, ButtonStyle.padding.top, ButtonStyle.padding.bottom)
+            };
+            CheckboxBoxStyle = new GUIStyle(GUI.skin.box)
+            {
+                normal = { background = checkboxBoxTexture },
+                border = border,
+                margin = new RectOffset(0, 0, 0, 0),
+                padding = new RectOffset(0, 0, 0, 0)
+            };
+            CheckboxCheckedBoxStyle = new GUIStyle(GUI.skin.box)
+            {
+                normal = { background = checkboxCheckedBoxTexture },
+                border = border,
+                margin = new RectOffset(0, 0, 0, 0),
+                padding = new RectOffset(0, 0, 0, 0)
+            };
+            var sliderHeight = Mathf.RoundToInt(22f * scale);
+            SliderStyle = new GUIStyle(GUI.skin.horizontalSlider)
+            {
+                normal = { background = sliderTrackTexture },
+                hover = { background = sliderTrackTexture },
+                active = { background = sliderTrackTexture },
+                focused = { background = sliderTrackTexture },
+                border = border,
+                fixedHeight = sliderHeight,
+                margin = new RectOffset(4, 4, 4, 4)
+            };
+            SliderThumbStyle = new GUIStyle(GUI.skin.horizontalSliderThumb)
+            {
+                normal = { background = sliderThumbTexture },
+                hover = { background = sliderThumbHoverTexture },
+                active = { background = sliderThumbActiveTexture },
+                focused = { background = sliderThumbHoverTexture },
+                border = border,
+                fixedWidth = sliderHeight,
+                fixedHeight = sliderHeight
             };
             TabStyle = new GUIStyle(ButtonStyle);
             SelectedTabStyle = new GUIStyle(ButtonStyle)
@@ -105,7 +182,11 @@ namespace Redpoint.DungeonEscape.Unity
                 normal = { background = selectedRowTexture, textColor = HighlightColor },
                 hover = { background = selectedHoverTexture, textColor = HighlightColor },
                 active = { background = selectedActiveTexture, textColor = HighlightColor },
-                focused = { background = selectedRowTexture, textColor = HighlightColor }
+                focused = { background = selectedRowTexture, textColor = HighlightColor },
+                onNormal = { background = selectedRowTexture, textColor = HighlightColor },
+                onHover = { background = selectedHoverTexture, textColor = HighlightColor },
+                onActive = { background = selectedActiveTexture, textColor = HighlightColor },
+                onFocused = { background = selectedRowTexture, textColor = HighlightColor }
             };
         }
 

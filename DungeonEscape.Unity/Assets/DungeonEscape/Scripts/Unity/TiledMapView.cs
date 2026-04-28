@@ -614,7 +614,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            if (runtimeNpcMapAssetPath != loadedMap.AssetPath)
+            if (runtimeNpcMapAssetPath != loadedMap.AssetPath || !HasLiveRuntimeNpcs())
             {
                 ClearRuntimeNpcs();
                 runtimeNpcMapAssetPath = loadedMap.AssetPath;
@@ -657,6 +657,11 @@ namespace Redpoint.DungeonEscape.Unity
                     npc.UpdateVisualPosition();
                 }
             }
+        }
+
+        private bool HasLiveRuntimeNpcs()
+        {
+            return runtimeNpcs.Any(npc => npc != null);
         }
 
         private void SetViewport(Vector3 startOffset, bool animate)

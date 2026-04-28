@@ -8,6 +8,7 @@ namespace Redpoint.DungeonEscape.Unity
     {
         private const float InitialNavigationRepeatDelay = 0.35f;
         private const float NavigationRepeatDelay = 0.12f;
+        private static readonly List<DungeonEscapeMessageBox> VisibleBoxes = new List<DungeonEscapeMessageBox>();
 
         private string speaker;
         private string message;
@@ -30,6 +31,11 @@ namespace Redpoint.DungeonEscape.Unity
             get { return !string.IsNullOrEmpty(message); }
         }
 
+        public static bool IsAnyVisible
+        {
+            get { return VisibleBoxes.Count > 0; }
+        }
+
         public bool HasChoices
         {
             get { return choices != null && choices.Count > 0; }
@@ -44,6 +50,7 @@ namespace Redpoint.DungeonEscape.Unity
             selectedChoiceIndex = 0;
             acceptInputAfterFrame = Time.frameCount;
             ResetChoiceNavigationRepeat();
+            SetVisible(true);
         }
 
         public void Show(string speakerName, string text, IEnumerable<string> choiceLabels, Action<int> selected)
@@ -60,6 +67,7 @@ namespace Redpoint.DungeonEscape.Unity
             selectedChoiceIndex = 0;
             acceptInputAfterFrame = Time.frameCount + 1;
             ResetChoiceNavigationRepeat();
+            SetVisible(true);
         }
 
         public void Hide()
@@ -70,6 +78,27 @@ namespace Redpoint.DungeonEscape.Unity
             choiceSelected = null;
             selectedChoiceIndex = 0;
             ResetChoiceNavigationRepeat();
+            SetVisible(false);
+        }
+
+        private void OnDestroy()
+        {
+            SetVisible(false);
+        }
+
+        private void SetVisible(bool visible)
+        {
+            if (visible)
+            {
+                if (!VisibleBoxes.Contains(this))
+                {
+                    VisibleBoxes.Add(this);
+                }
+
+                return;
+            }
+
+            VisibleBoxes.Remove(this);
         }
 
         public void ConfirmOrHide()
@@ -169,6 +198,9 @@ namespace Redpoint.DungeonEscape.Unity
 
             EnsureStyles();
 
+            var previousDepth = GUI.depth;
+            GUI.depth = -1000;
+
             var visibleChoices = choices;
             var hasChoices = visibleChoices != null && visibleChoices.Count > 0;
             var scale = GetPixelScale();
@@ -211,6 +243,8 @@ namespace Redpoint.DungeonEscape.Unity
                     y += choiceHeight + choiceGap;
                 }
             }
+
+            GUI.depth = previousDepth;
         }
 
         private void EnsureStyles()

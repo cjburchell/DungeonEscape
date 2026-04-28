@@ -580,6 +580,11 @@ namespace Redpoint.DungeonEscape.Unity
             for (var i = transform.childCount - 1; i >= 0; i--)
             {
                 var child = transform.GetChild(i);
+                if (child.GetComponent<TiledNpcController>() != null)
+                {
+                    continue;
+                }
+
                 if (child.GetComponent<SpriteRenderer>() != null)
                 {
                     Destroy(child.gameObject);

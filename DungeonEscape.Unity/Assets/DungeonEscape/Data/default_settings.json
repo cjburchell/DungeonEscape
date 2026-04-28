@@ -11,22 +11,22 @@
   "AutoSaveIntervalSeconds": 5.0,
   "ShowHiddenObjects": false,
   "InputBindings": [
-    { "Command": "MoveLeft", "Primary": "LeftArrow", "Secondary": "A", "Gamepad": "JoystickButton14" },
-    { "Command": "MoveRight", "Primary": "RightArrow", "Secondary": "D", "Gamepad": "JoystickButton15" },
-    { "Command": "MoveUp", "Primary": "UpArrow", "Secondary": "W", "Gamepad": "JoystickButton13" },
-    { "Command": "MoveDown", "Primary": "DownArrow", "Secondary": "S", "Gamepad": "JoystickButton12" },
-    { "Command": "Interact", "Primary": "Space", "Secondary": "Return", "Gamepad": "JoystickButton0" },
-    { "Command": "Cancel", "Primary": "Escape", "Secondary": "None", "Gamepad": "JoystickButton1" },
-    { "Command": "Sprint", "Primary": "LeftShift", "Secondary": "RightShift", "Gamepad": "JoystickButton3" },
-    { "Command": "MenuParty", "Primary": "C", "Secondary": "None", "Gamepad": "JoystickButton2" },
+    { "Command": "MoveLeft", "Primary": "LeftArrow", "Secondary": "A", "Gamepad": "DpadLeft" },
+    { "Command": "MoveRight", "Primary": "RightArrow", "Secondary": "D", "Gamepad": "DpadRight" },
+    { "Command": "MoveUp", "Primary": "UpArrow", "Secondary": "W", "Gamepad": "DpadUp" },
+    { "Command": "MoveDown", "Primary": "DownArrow", "Secondary": "S", "Gamepad": "DpadDown" },
+    { "Command": "Interact", "Primary": "Space", "Secondary": "Enter", "Gamepad": "South" },
+    { "Command": "Cancel", "Primary": "Escape", "Secondary": "None", "Gamepad": "East" },
+    { "Command": "Sprint", "Primary": "LeftShift", "Secondary": "RightShift", "Gamepad": "North" },
+    { "Command": "MenuParty", "Primary": "C", "Secondary": "None", "Gamepad": "West" },
     { "Command": "MenuInventory", "Primary": "I", "Secondary": "None", "Gamepad": "None" },
     { "Command": "MenuQuests", "Primary": "J", "Secondary": "None", "Gamepad": "None" },
     { "Command": "MenuSettings", "Primary": "O", "Secondary": "None", "Gamepad": "None" },
-    { "Command": "MenuPreviousTab", "Primary": "LeftBracket", "Secondary": "None", "Gamepad": "JoystickButton4" },
-    { "Command": "MenuNextTab", "Primary": "RightBracket", "Secondary": "None", "Gamepad": "JoystickButton5" },
+    { "Command": "MenuPreviousTab", "Primary": "LeftBracket", "Secondary": "None", "Gamepad": "LeftShoulder" },
+    { "Command": "MenuNextTab", "Primary": "RightBracket", "Secondary": "None", "Gamepad": "RightShoulder" },
     { "Command": "QuickSave", "Primary": "F6", "Secondary": "None", "Gamepad": "None" },
     { "Command": "QuickLoad", "Primary": "F9", "Secondary": "None", "Gamepad": "None" },
     { "Command": "Restart", "Primary": "F10", "Secondary": "None", "Gamepad": "None" },
-    { "Command": "ReloadMap", "Primary": "F5", "Secondary": "None", "Gamepad": "JoystickButton8" }
+    { "Command": "ReloadMap", "Primary": "F5", "Secondary": "None", "Gamepad": "Start" }
   ]
 }

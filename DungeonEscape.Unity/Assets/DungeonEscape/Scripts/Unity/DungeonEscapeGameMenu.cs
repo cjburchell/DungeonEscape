@@ -521,7 +521,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void DrawBindingButton(InputBinding binding, string slot, string currentValue)
         {
-            var label = slot + ": " + (string.IsNullOrEmpty(currentValue) || currentValue == KeyCode.None.ToString() ? "-" : currentValue);
+            var label = slot + ": " + (string.IsNullOrEmpty(currentValue) || currentValue == "None" ? "-" : currentValue);
             if (GUILayout.Button(label, buttonStyle, GUILayout.Width(190f * GetPixelScale())))
             {
                 rebindingInput = binding;

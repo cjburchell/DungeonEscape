@@ -32,8 +32,10 @@ namespace Redpoint.DungeonEscape.Unity
         private int objectSortingOrder = 10;
         private bool mapLoaded;
         private TiledLoadedMap currentMap;
+        private string pooledMapAssetPath;
         private HashSet<int> blockedTiles = new HashSet<int>();
         private Coroutine viewportScroll;
+        private TiledSpriteRendererPool rendererPool;
         private readonly TiledMapViewport viewport = new TiledMapViewport();
 
         public int StartColumn
@@ -58,6 +60,8 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Start()
         {
+            ClearRenderedChildren();
+            rendererPool = new TiledSpriteRendererPool(transform);
             RenderPreview();
         }
 
@@ -148,6 +152,8 @@ namespace Redpoint.DungeonEscape.Unity
         {
             TiledMapLoader.ClearCache();
             TiledTilesetSprites.ClearCache();
+            ClearRenderedChildren();
+            rendererPool = new TiledSpriteRendererPool(transform);
             mapLoaded = false;
             currentMap = null;
             RenderPreview();
@@ -156,6 +162,8 @@ namespace Redpoint.DungeonEscape.Unity
         public void LoadMap(string mapIdOrAssetPath, string spawnId)
         {
             mapAssetPath = TiledMapLoader.NormalizeMapAssetPath(mapIdOrAssetPath);
+            ClearRenderedChildren();
+            rendererPool = new TiledSpriteRendererPool(transform);
             mapLoaded = false;
             currentMap = null;
             mapWidth = 0;
@@ -289,11 +297,19 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             currentMap = loadedMap;
+            if (pooledMapAssetPath != loadedMap.AssetPath)
+            {
+                ClearRenderedChildren();
+                rendererPool = new TiledSpriteRendererPool(transform);
+                pooledMapAssetPath = loadedMap.AssetPath;
+            }
+
             var viewportStartColumn = mapWidth == 0 && mapHeight == 0 ? startColumn : viewport.StartColumn;
             var viewportStartRow = mapWidth == 0 && mapHeight == 0 ? startRow : viewport.StartRow;
             mapWidth = loadedMap.Width;
             mapHeight = loadedMap.Height;
-            viewport.Initialize(mapWidth, mapHeight, columns, rows, viewportStartColumn, viewportStartRow);
+            var viewportColumns = GetViewportColumns();
+            viewport.Initialize(mapWidth, mapHeight, viewportColumns, rows, viewportStartColumn, viewportStartRow);
             var tilesets = GetValidatedTilesets();
             var spriteSets = TiledTilesetSprites.LoadSpriteSets(tilesets, loadedMap.TileWidth, loadedMap.TileHeight);
 
@@ -307,11 +323,12 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             blockedTiles = loadedMap.BlockedTiles;
-            ClearPreview();
+            EnsureRendererPool();
+            rendererPool.Begin();
 
             int spritesSortingOrder;
             var renderedSpriteCount = TiledMapRenderer.RenderVisibleLayers(
-                transform,
+                rendererPool,
                 loadedMap.RenderableElements,
                 spriteSets,
                 mapWidth,
@@ -320,21 +337,33 @@ namespace Redpoint.DungeonEscape.Unity
                 loadedMap.TileHeight,
                 viewport.StartColumn,
                 viewport.StartRow,
-                columns,
+                viewport.Columns,
                 rows,
                 out spritesSortingOrder);
 
+            rendererPool.End();
             objectSortingOrder = spritesSortingOrder;
-            PositionCamera(Math.Min(columns, mapWidth), rows);
+            PositionCamera(Math.Min(viewport.Columns, mapWidth), rows);
             mapLoaded = true;
-            Debug.Log("Rendered TMX preview at " + viewport.StartColumn + "," + viewport.StartRow + " with " + loadedMap.RenderableElements.Count + " renderable layers, " + spriteSets.Count + " tilesets, and " + renderedSpriteCount + " sprites.");
         }
 
-        private void ClearPreview()
+        private void EnsureRendererPool()
+        {
+            if (rendererPool == null)
+            {
+                rendererPool = new TiledSpriteRendererPool(transform);
+            }
+        }
+
+        private void ClearRenderedChildren()
         {
             for (var i = transform.childCount - 1; i >= 0; i--)
             {
-                Destroy(transform.GetChild(i).gameObject);
+                var child = transform.GetChild(i);
+                if (child.GetComponent<SpriteRenderer>() != null)
+                {
+                    Destroy(child.gameObject);
+                }
             }
         }
 
@@ -417,6 +446,14 @@ namespace Redpoint.DungeonEscape.Unity
             return new List<TiledTilesetInfo>();
         }
 
+        private int GetViewportColumns()
+        {
+            var camera = Camera.main;
+            var aspect = camera == null ? (float)Screen.width / Math.Max(1, Screen.height) : camera.aspect;
+            var aspectColumns = Mathf.CeilToInt(rows * aspect);
+            return Math.Max(columns, aspectColumns);
+        }
+
         private static void PositionCamera(int visibleColumns, int visibleRows)
         {
             var camera = Camera.main;
@@ -426,7 +463,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             camera.orthographic = true;
-            camera.orthographicSize = visibleRows / 2f + 1f;
+            camera.orthographicSize = visibleRows / 2f;
             camera.transform.position = new Vector3((visibleColumns - 1) / 2f, -(visibleRows - 1) / 2f, -10);
         }
 

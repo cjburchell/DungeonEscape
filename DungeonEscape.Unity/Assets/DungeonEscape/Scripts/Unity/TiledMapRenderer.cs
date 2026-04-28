@@ -9,6 +9,8 @@ namespace Redpoint.DungeonEscape.Unity
 {
     public static class TiledMapRenderer
     {
+        private const int RenderBufferTiles = 2;
+
         public static int RenderVisibleLayers(
             Transform parent,
             IEnumerable<XElement> elements,
@@ -28,8 +30,12 @@ namespace Redpoint.DungeonEscape.Unity
             spritesSortingOrder = 0;
             var clampedStartColumn = Math.Max(0, Math.Min(startColumn, mapWidth - 1));
             var clampedStartRow = Math.Max(0, Math.Min(startRow, mapHeight - 1));
-            var visibleColumns = Math.Min(columns, mapWidth - clampedStartColumn);
-            var visibleRows = Math.Min(rows, mapHeight - clampedStartRow);
+            var renderStartColumn = Math.Max(0, clampedStartColumn - RenderBufferTiles);
+            var renderStartRow = Math.Max(0, clampedStartRow - RenderBufferTiles);
+            var renderEndColumn = Math.Min(mapWidth, clampedStartColumn + columns + RenderBufferTiles);
+            var renderEndRow = Math.Min(mapHeight, clampedStartRow + rows + RenderBufferTiles);
+            var renderColumns = renderEndColumn - renderStartColumn;
+            var renderRows = renderEndRow - renderStartRow;
 
             foreach (var element in elements)
             {
@@ -40,10 +46,12 @@ namespace Redpoint.DungeonEscape.Unity
                         element,
                         spriteSets,
                         mapWidth,
+                        renderStartColumn,
+                        renderStartRow,
+                        renderColumns,
+                        renderRows,
                         clampedStartColumn,
                         clampedStartRow,
-                        visibleColumns,
-                        visibleRows,
                         sortingOrder);
                 }
                 else if (element.Name.LocalName == "objectgroup")
@@ -59,10 +67,83 @@ namespace Redpoint.DungeonEscape.Unity
                         spriteSets,
                         tileWidth,
                         tileHeight,
-                        startColumn,
-                        startRow,
-                        columns,
-                        rows,
+                        renderStartColumn,
+                        renderStartRow,
+                        renderColumns,
+                        renderRows,
+                        clampedStartColumn,
+                        clampedStartRow,
+                        sortingOrder);
+                }
+
+                sortingOrder++;
+            }
+
+            return renderedSpriteCount;
+        }
+
+        public static int RenderVisibleLayers(
+            TiledSpriteRendererPool pool,
+            IEnumerable<XElement> elements,
+            IList<TiledTilesetSpriteSet> spriteSets,
+            int mapWidth,
+            int mapHeight,
+            int tileWidth,
+            int tileHeight,
+            int startColumn,
+            int startRow,
+            int columns,
+            int rows,
+            out int spritesSortingOrder)
+        {
+            var renderedSpriteCount = 0;
+            var sortingOrder = 0;
+            spritesSortingOrder = 0;
+            var clampedStartColumn = Math.Max(0, Math.Min(startColumn, mapWidth - 1));
+            var clampedStartRow = Math.Max(0, Math.Min(startRow, mapHeight - 1));
+            var renderStartColumn = Math.Max(0, clampedStartColumn - RenderBufferTiles);
+            var renderStartRow = Math.Max(0, clampedStartRow - RenderBufferTiles);
+            var renderEndColumn = Math.Min(mapWidth, clampedStartColumn + columns + RenderBufferTiles);
+            var renderEndRow = Math.Min(mapHeight, clampedStartRow + rows + RenderBufferTiles);
+            var renderColumns = renderEndColumn - renderStartColumn;
+            var renderRows = renderEndRow - renderStartRow;
+
+            foreach (var element in elements)
+            {
+                if (element.Name.LocalName == "layer")
+                {
+                    renderedSpriteCount += RenderTileLayer(
+                        pool,
+                        element,
+                        spriteSets,
+                        mapWidth,
+                        renderStartColumn,
+                        renderStartRow,
+                        renderColumns,
+                        renderRows,
+                        clampedStartColumn,
+                        clampedStartRow,
+                        sortingOrder);
+                }
+                else if (element.Name.LocalName == "objectgroup")
+                {
+                    if (HasPropertyValue(element, "RenderRole", "Sprites"))
+                    {
+                        spritesSortingOrder = sortingOrder;
+                    }
+
+                    renderedSpriteCount += RenderObjectGroup(
+                        pool,
+                        element,
+                        spriteSets,
+                        tileWidth,
+                        tileHeight,
+                        renderStartColumn,
+                        renderStartRow,
+                        renderColumns,
+                        renderRows,
+                        clampedStartColumn,
+                        clampedStartRow,
                         sortingOrder);
                 }
 
@@ -81,6 +162,8 @@ namespace Redpoint.DungeonEscape.Unity
             int clampedStartRow,
             int visibleColumns,
             int visibleRows,
+            int viewportStartColumn,
+            int viewportStartRow,
             int sortingOrder)
         {
             var renderedTileCount = 0;
@@ -104,9 +187,9 @@ namespace Redpoint.DungeonEscape.Unity
                         continue;
                     }
 
-                    var tileObject = new GameObject("Tile_" + GetString(layer, "name") + "_" + column + "_" + row);
+                    var tileObject = new GameObject("Tile_" + GetString(layer, "name") + "_" + sourceColumn + "_" + sourceRow);
                     tileObject.transform.SetParent(parent, false);
-                    tileObject.transform.localPosition = new Vector3(column, -row, 0);
+                    tileObject.transform.localPosition = new Vector3(sourceColumn - viewportStartColumn, -(sourceRow - viewportStartRow), 0);
 
                     var renderer = tileObject.AddComponent<SpriteRenderer>();
                     renderer.sprite = sprite;
@@ -128,6 +211,8 @@ namespace Redpoint.DungeonEscape.Unity
             int startRow,
             int columns,
             int rows,
+            int viewportStartColumn,
+            int viewportStartRow,
             int sortingOrder)
         {
             var renderedObjectCount = 0;
@@ -161,11 +246,115 @@ namespace Redpoint.DungeonEscape.Unity
 
                 var markerObject = new GameObject("Object_" + groupName + "_" + GetString(mapObject, "name"));
                 markerObject.transform.SetParent(parent, false);
-                markerObject.transform.localPosition = new Vector3(column - startColumn, -(row - startRow), -0.1f);
+                markerObject.transform.localPosition = new Vector3(column - viewportStartColumn, -(row - viewportStartRow), -0.1f);
 
                 var renderer = markerObject.AddComponent<SpriteRenderer>();
                 renderer.sprite = sprite;
                 renderer.sortingOrder = sortingOrder;
+                renderedObjectCount++;
+            }
+
+            return renderedObjectCount;
+        }
+
+        private static int RenderTileLayer(
+            TiledSpriteRendererPool pool,
+            XElement layer,
+            IList<TiledTilesetSpriteSet> spriteSets,
+            int mapWidth,
+            int clampedStartColumn,
+            int clampedStartRow,
+            int visibleColumns,
+            int visibleRows,
+            int viewportStartColumn,
+            int viewportStartRow,
+            int sortingOrder)
+        {
+            var renderedTileCount = 0;
+            var gids = ParseCsvTileData(layer);
+
+            for (var row = 0; row < visibleRows; row++)
+            {
+                for (var column = 0; column < visibleColumns; column++)
+                {
+                    var sourceColumn = clampedStartColumn + column;
+                    var sourceRow = clampedStartRow + row;
+                    var gid = gids[sourceRow * mapWidth + sourceColumn];
+                    if (gid == 0)
+                    {
+                        continue;
+                    }
+
+                    Sprite sprite;
+                    if (!TiledTilesetSprites.TryGetSprite(gid, spriteSets, out sprite))
+                    {
+                        continue;
+                    }
+
+                    var key = "Tile|" + sortingOrder + "|" + GetString(layer, "name") + "|" + sourceColumn + "|" + sourceRow;
+                    pool.Show(
+                        key,
+                        sprite,
+                        new Vector3(sourceColumn - viewportStartColumn, -(sourceRow - viewportStartRow), 0),
+                        sortingOrder,
+                        "Tile_" + GetString(layer, "name") + "_" + sourceColumn + "_" + sourceRow);
+                    renderedTileCount++;
+                }
+            }
+
+            return renderedTileCount;
+        }
+
+        private static int RenderObjectGroup(
+            TiledSpriteRendererPool pool,
+            XElement objectGroup,
+            IList<TiledTilesetSpriteSet> spriteSets,
+            int tileWidth,
+            int tileHeight,
+            int startColumn,
+            int startRow,
+            int columns,
+            int rows,
+            int viewportStartColumn,
+            int viewportStartRow,
+            int sortingOrder)
+        {
+            var renderedObjectCount = 0;
+            var groupName = GetString(objectGroup, "name");
+
+            foreach (var mapObject in objectGroup.Elements("object"))
+            {
+                var gid = GetInt(mapObject, "gid");
+                if (gid == 0)
+                {
+                    continue;
+                }
+
+                Sprite sprite;
+                if (!TiledTilesetSprites.TryGetSprite(gid, spriteSets, out sprite))
+                {
+                    continue;
+                }
+
+                var x = GetFloat(mapObject, "x");
+                var y = GetFloat(mapObject, "y");
+                var height = GetFloat(mapObject, "height");
+                var column = Mathf.FloorToInt(x / tileWidth);
+                var row = Mathf.FloorToInt((y - height) / tileHeight);
+
+                if (column < startColumn || column >= startColumn + columns ||
+                    row < startRow || row >= startRow + rows)
+                {
+                    continue;
+                }
+
+                var key = "Object|" + sortingOrder + "|" + groupName + "|" + GetString(mapObject, "id");
+                pool.Show(
+                    key,
+                    sprite,
+                    new Vector3(column - viewportStartColumn, -(row - viewportStartRow), -0.1f),
+                    sortingOrder,
+                    "Object_" + groupName + "_" + GetString(mapObject, "name"));
                 renderedObjectCount++;
             }
 

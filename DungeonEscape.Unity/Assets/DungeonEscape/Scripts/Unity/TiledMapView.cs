@@ -651,6 +651,13 @@ namespace Redpoint.DungeonEscape.Unity
                 return false;
             }
 
+            if (mapObject.Gid != 0 && IsNpcObject(mapObject))
+            {
+                var objectTile = GetObjectTilePosition(mapObject);
+                return Mathf.FloorToInt(position.X) == Mathf.FloorToInt(objectTile.X) &&
+                       Mathf.FloorToInt(position.Y) == Mathf.FloorToInt(objectTile.Y);
+            }
+
             var centerX = position.X * currentMap.Info.TileWidth + currentMap.Info.TileWidth / 2f;
             var centerY = position.Y * currentMap.Info.TileHeight + currentMap.Info.TileHeight / 2f;
             var topY = mapObject.Gid == 0 ? mapObject.Y : mapObject.Y - mapObject.Height;
@@ -663,6 +670,13 @@ namespace Redpoint.DungeonEscape.Unity
 
         private WorldPosition GetObjectTilePosition(TiledObjectInfo mapObject)
         {
+            if (mapObject.Gid != 0 && IsNpcObject(mapObject))
+            {
+                return new WorldPosition(
+                    Mathf.FloorToInt(mapObject.X / currentMap.Info.TileWidth),
+                    Mathf.FloorToInt((mapObject.Y - 0.001f) / currentMap.Info.TileHeight));
+            }
+
             var row = mapObject.Gid == 0
                 ? Mathf.FloorToInt(mapObject.Y / currentMap.Info.TileHeight)
                 : Mathf.FloorToInt((mapObject.Y - mapObject.Height) / currentMap.Info.TileHeight);
@@ -670,6 +684,13 @@ namespace Redpoint.DungeonEscape.Unity
             return new WorldPosition(
                 Mathf.FloorToInt(mapObject.X / currentMap.Info.TileWidth),
                 row);
+        }
+
+        private static bool IsNpcObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   mapObject.Class != null &&
+                   mapObject.Class.StartsWith("Npc", StringComparison.OrdinalIgnoreCase);
         }
 
         private List<TiledTilesetInfo> GetValidatedTilesets()

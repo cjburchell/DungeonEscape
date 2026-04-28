@@ -52,7 +52,7 @@ namespace Redpoint.DungeonEscape.Unity
             tileHeight = mapTileHeight;
             ObjectId = mapObject.Id;
             column = Mathf.FloorToInt(mapObject.X / tileWidth);
-            row = Mathf.FloorToInt((mapObject.Y - mapObject.Height) / tileHeight);
+            row = Mathf.FloorToInt((mapObject.Y - 0.001f) / tileHeight);
             homeColumn = column;
             homeRow = row;
             moveRadius = GetIntProperty(mapObject, "MoveRadius", 0);

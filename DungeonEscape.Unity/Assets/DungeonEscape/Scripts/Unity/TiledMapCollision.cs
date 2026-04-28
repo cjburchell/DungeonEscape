@@ -49,6 +49,11 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 foreach (var mapObject in group.Objects)
                 {
+                    if (IsMovingNpcObject(mapObject))
+                    {
+                        continue;
+                    }
+
                     string collideable;
                     if (mapObject.Properties == null ||
                         !mapObject.Properties.TryGetValue("Collideable", out collideable) ||
@@ -58,7 +63,9 @@ namespace Redpoint.DungeonEscape.Unity
                     }
 
                     var column = Mathf.FloorToInt(mapObject.X / mapInfo.TileWidth);
-                    var row = Mathf.FloorToInt((mapObject.Y - mapObject.Height) / mapInfo.TileHeight);
+                    var row = IsNpcObject(mapObject)
+                        ? Mathf.FloorToInt((mapObject.Y - 0.001f) / mapInfo.TileHeight)
+                        : Mathf.FloorToInt((mapObject.Y - mapObject.Height) / mapInfo.TileHeight);
 
                     if (column < 0 || row < 0 || column >= mapWidth || row >= mapHeight)
                     {
@@ -80,6 +87,30 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return false;
+        }
+
+        private static bool IsMovingNpcObject(TiledObjectInfo mapObject)
+        {
+            return IsNpcObject(mapObject) &&
+                   GetIntProperty(mapObject, "MoveRadius", 0) != 0;
+        }
+
+        private static bool IsNpcObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   mapObject.Class != null &&
+                   mapObject.Class.StartsWith("Npc", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName, int defaultValue)
+        {
+            string value;
+            int result;
+            return mapObject.Properties != null &&
+                   mapObject.Properties.TryGetValue(propertyName, out value) &&
+                   int.TryParse(value, out result)
+                ? result
+                : defaultValue;
         }
 
         private static Dictionary<string, string> ReadProperties(XElement element)

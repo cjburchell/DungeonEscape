@@ -32,6 +32,7 @@ namespace Redpoint.DungeonEscape.Unity
     public static class DungeonEscapeInput
     {
         private const float AxisDeadZone = 0.35f;
+        private const float DpadAxisDeadZone = 0.5f;
 
         private static readonly Dictionary<DungeonEscapeInputCommand, InputBinding> DefaultBindings =
             new Dictionary<DungeonEscapeInputCommand, InputBinding>
@@ -79,6 +80,12 @@ namespace Redpoint.DungeonEscape.Unity
                 return 1;
             }
 
+            var dpad = GetGamepadDpadX();
+            if (dpad != 0)
+            {
+                return dpad;
+            }
+
             var axis = GetGamepadStickX();
             if (axis < -AxisDeadZone)
             {
@@ -98,6 +105,12 @@ namespace Redpoint.DungeonEscape.Unity
             if (GetCommand(DungeonEscapeInputCommand.MoveDown))
             {
                 return 1;
+            }
+
+            var dpad = GetGamepadDpadY();
+            if (dpad != 0)
+            {
+                return dpad;
             }
 
             var axis = GetGamepadStickY();
@@ -121,6 +134,12 @@ namespace Redpoint.DungeonEscape.Unity
                 return 1;
             }
 
+            var dpad = GetGamepadDpadXDown();
+            if (dpad != 0)
+            {
+                return dpad;
+            }
+
             return 0;
         }
 
@@ -134,6 +153,12 @@ namespace Redpoint.DungeonEscape.Unity
             if (GetCommandDown(DungeonEscapeInputCommand.MoveDown))
             {
                 return 1;
+            }
+
+            var dpad = GetGamepadDpadYDown();
+            if (dpad != 0)
+            {
+                return dpad;
             }
 
             return 0;
@@ -385,6 +410,122 @@ namespace Redpoint.DungeonEscape.Unity
             return GetLegacyAxis("Horizontal");
         }
 
+        private static int GetGamepadDpadX()
+        {
+            var gamepad = Gamepad.current;
+            if (gamepad != null)
+            {
+                if (gamepad.dpad.left.isPressed)
+                {
+                    return -1;
+                }
+
+                if (gamepad.dpad.right.isPressed)
+                {
+                    return 1;
+                }
+            }
+
+            if (Input.GetKey(KeyCode.JoystickButton14))
+            {
+                return -1;
+            }
+
+            if (Input.GetKey(KeyCode.JoystickButton15))
+            {
+                return 1;
+            }
+
+            return GetLegacyDpadAxisX();
+        }
+
+        private static int GetGamepadDpadY()
+        {
+            var gamepad = Gamepad.current;
+            if (gamepad != null)
+            {
+                if (gamepad.dpad.up.isPressed)
+                {
+                    return -1;
+                }
+
+                if (gamepad.dpad.down.isPressed)
+                {
+                    return 1;
+                }
+            }
+
+            if (Input.GetKey(KeyCode.JoystickButton13))
+            {
+                return -1;
+            }
+
+            if (Input.GetKey(KeyCode.JoystickButton12))
+            {
+                return 1;
+            }
+
+            return GetLegacyDpadAxisY();
+        }
+
+        private static int GetGamepadDpadXDown()
+        {
+            var gamepad = Gamepad.current;
+            if (gamepad != null)
+            {
+                if (gamepad.dpad.left.wasPressedThisFrame)
+                {
+                    return -1;
+                }
+
+                if (gamepad.dpad.right.wasPressedThisFrame)
+                {
+                    return 1;
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.JoystickButton14))
+            {
+                return -1;
+            }
+
+            if (Input.GetKeyDown(KeyCode.JoystickButton15))
+            {
+                return 1;
+            }
+
+            return GetLegacyDpadAxisXDown();
+        }
+
+        private static int GetGamepadDpadYDown()
+        {
+            var gamepad = Gamepad.current;
+            if (gamepad != null)
+            {
+                if (gamepad.dpad.up.wasPressedThisFrame)
+                {
+                    return -1;
+                }
+
+                if (gamepad.dpad.down.wasPressedThisFrame)
+                {
+                    return 1;
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.JoystickButton13))
+            {
+                return -1;
+            }
+
+            if (Input.GetKeyDown(KeyCode.JoystickButton12))
+            {
+                return 1;
+            }
+
+            return GetLegacyDpadAxisYDown();
+        }
+
         private static float GetGamepadStickY()
         {
             var gamepad = Gamepad.current;
@@ -442,6 +583,100 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 return 0f;
             }
+        }
+
+        private static int GetLegacyDpadAxisX()
+        {
+            var axis = GetFirstActiveLegacyAxis(
+                "DPad X",
+                "Dpad X",
+                "D-Pad X",
+                "POV X",
+                "Pov X",
+                "Hat X",
+                "6th Axis");
+            if (axis < -DpadAxisDeadZone)
+            {
+                return -1;
+            }
+
+            return axis > DpadAxisDeadZone ? 1 : 0;
+        }
+
+        private static int GetLegacyDpadAxisY()
+        {
+            var axis = GetFirstActiveLegacyAxis(
+                "DPad Y",
+                "Dpad Y",
+                "D-Pad Y",
+                "POV Y",
+                "Pov Y",
+                "Hat Y",
+                "7th Axis");
+            if (axis > DpadAxisDeadZone)
+            {
+                return -1;
+            }
+
+            return axis < -DpadAxisDeadZone ? 1 : 0;
+        }
+
+        private static int GetLegacyDpadAxisXDown()
+        {
+            UpdateLegacyDpadAxisState();
+            var current = currentLegacyDpadAxisX;
+            if (current == 0)
+            {
+                return 0;
+            }
+
+            return previousLegacyDpadAxisX == current ? 0 : current;
+        }
+
+        private static int GetLegacyDpadAxisYDown()
+        {
+            UpdateLegacyDpadAxisState();
+            var current = currentLegacyDpadAxisY;
+            if (current == 0)
+            {
+                return 0;
+            }
+
+            return previousLegacyDpadAxisY == current ? 0 : current;
+        }
+
+        private static int previousLegacyDpadAxisX;
+        private static int previousLegacyDpadAxisY;
+        private static int currentLegacyDpadAxisX;
+        private static int currentLegacyDpadAxisY;
+        private static int legacyDpadAxisFrame = -1;
+
+        private static void UpdateLegacyDpadAxisState()
+        {
+            if (legacyDpadAxisFrame == Time.frameCount)
+            {
+                return;
+            }
+
+            legacyDpadAxisFrame = Time.frameCount;
+            previousLegacyDpadAxisX = currentLegacyDpadAxisX;
+            previousLegacyDpadAxisY = currentLegacyDpadAxisY;
+            currentLegacyDpadAxisX = GetLegacyDpadAxisX();
+            currentLegacyDpadAxisY = GetLegacyDpadAxisY();
+        }
+
+        private static float GetFirstActiveLegacyAxis(params string[] axisNames)
+        {
+            foreach (var axisName in axisNames)
+            {
+                var value = GetLegacyAxis(axisName);
+                if (Mathf.Abs(value) > DpadAxisDeadZone)
+                {
+                    return value;
+                }
+            }
+
+            return 0f;
         }
 
         private static bool TryParseLegacyKeyCode(string keyCode, out KeyCode code)

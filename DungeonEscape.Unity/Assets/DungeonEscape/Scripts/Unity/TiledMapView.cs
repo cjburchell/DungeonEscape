@@ -296,7 +296,7 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 foreach (var mapObject in group.Objects)
                 {
-                    if (gameState != null && !gameState.IsObjectActive(mapId, mapObject.Id))
+                    if (!IsMapObjectVisible(mapId, mapObject))
                     {
                         continue;
                     }
@@ -440,6 +440,22 @@ namespace Redpoint.DungeonEscape.Unity
             return mapObject != null &&
                    mapObject.Class != null &&
                    mapObject.Class.StartsWith("Npc", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private bool IsMapObjectVisible(string mapId, TiledObjectInfo mapObject)
+        {
+            if (!IsPartyMemberObject(mapObject))
+            {
+                return true;
+            }
+
+            return gameState == null || gameState.IsObjectActive(mapId, mapObject.Id);
+        }
+
+        private static bool IsPartyMemberObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   string.Equals(mapObject.Class, "NpcPartyMember", StringComparison.OrdinalIgnoreCase);
         }
 
         private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName, int defaultValue)
@@ -606,8 +622,7 @@ namespace Redpoint.DungeonEscape.Unity
                             continue;
                         }
 
-                        if (gameState != null &&
-                            !gameState.IsObjectActive(TiledMapLoader.NormalizeMapId(loadedMap.AssetPath), mapObject.Id))
+                        if (!IsMapObjectVisible(TiledMapLoader.NormalizeMapId(loadedMap.AssetPath), mapObject))
                         {
                             continue;
                         }

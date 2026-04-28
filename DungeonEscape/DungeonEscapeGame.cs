@@ -22,9 +22,9 @@ namespace Redpoint.DungeonEscape
 
         public static readonly string SavePath =
             $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\Redpoint\\DungeonEscape";
-        private static readonly string SaveFile = $"{SavePath}\\save.json";
+        private static readonly string SaveFile = $"{SavePath}\\save2.json";
         private const string SaveFileVersion = "1.0";
-        public static readonly string SettingsFile =  $"{SavePath}\\settings.json";
+        public static readonly string SettingsFile =  $"{SavePath}\\settings2.json";
         private const string SettingsFileVersion = "1.0";
         private const int MaxSaveSlots = 5;
         private bool _isPaused;

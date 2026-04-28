@@ -7,5 +7,7 @@
   "IsFullScreen": false,
   "UiScale": 1.0,
   "SprintBoost": 1.5,
+  "AutoSaveEnabled": true,
+  "AutoSaveIntervalSeconds": 5.0,
   "ShowHiddenObjects": false
 }

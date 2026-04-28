@@ -13,6 +13,7 @@ namespace Redpoint.DungeonEscape.Unity
     {
         private const string SaveFileVersion = "1.0";
         private const int MaxSaveSlots = 5;
+        private const float DefaultAutoSaveIntervalSeconds = 5f;
         private static readonly System.Random Random = new System.Random();
 
         [SerializeField]
@@ -28,6 +29,8 @@ namespace Redpoint.DungeonEscape.Unity
         public GameFile GameFile { get; private set; }
         public bool ShouldApplyInitialSpawn { get; private set; }
         public event Action<GameSave> SaveLoaded;
+        private bool saveDirty;
+        private float autoSaveCountdown;
 
         public Party Party
         {
@@ -53,6 +56,8 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 RestartNewGame();
             }
+
+            UpdateAutoSave();
         }
 
         public void EnsureInitialized()
@@ -77,6 +82,7 @@ namespace Redpoint.DungeonEscape.Unity
             EnsureInitialized();
             Party.CurrentMapId = TiledMapLoader.NormalizeMapId(mapId);
             Party.CurrentMapIsOverWorld = Party.CurrentMapId == "overworld";
+            MarkDirty();
         }
 
         public DungeonEscapeMapTransition CreateWarpTransition(TiledMapWarp warp)
@@ -103,18 +109,22 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 Party.OverWorldPosition = position;
             }
+
+            MarkDirty();
         }
 
         public void SetCurrentDirection(Direction direction)
         {
             EnsureInitialized();
             Party.CurrentDirection = direction;
+            MarkDirty();
         }
 
         public void IncrementStepCount()
         {
             EnsureInitialized();
             Party.StepCount++;
+            MarkDirty();
         }
 
         public string StartQuest(string questId)
@@ -134,6 +144,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             Party.ActiveQuests.Add(CreateActiveQuest(quest));
+            MarkDirty();
             return "Started quest: " + quest.Name;
         }
 
@@ -153,17 +164,20 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 activeQuest = CreateActiveQuest(quest);
                 Party.ActiveQuests.Add(activeQuest);
+                MarkDirty();
             }
 
             if (nextStage.HasValue)
             {
                 activeQuest.CurrentStage = nextStage.Value;
+                MarkDirty();
             }
 
             var activeStage = activeQuest.Stages.FirstOrDefault(item => item.Number == activeQuest.CurrentStage);
             if (activeStage != null)
             {
                 activeStage.Completed = true;
+                MarkDirty();
             }
 
             var currentStage = quest.Stages == null
@@ -176,12 +190,14 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             activeQuest.Completed = true;
+            MarkDirty();
             var message = new StringBuilder();
             message.AppendLine("You have completed the quest " + quest.Name);
 
             if (quest.Gold != 0)
             {
                 Party.Gold += quest.Gold;
+                MarkDirty();
                 message.AppendLine("The party got " + quest.Gold + " gold.");
             }
 
@@ -229,6 +245,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return "No party member can carry " + item.Name + ".\n";
             }
 
+            MarkDirty();
             return member.Name + " got " + item.Name + ".\n" + CheckQuest(item);
         }
 
@@ -248,6 +265,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return "You do not have " + itemId + ".";
             }
 
+            MarkDirty();
             return member.Name + " gave " + item.Name + " to " + recipientName + ".";
         }
 
@@ -285,6 +303,7 @@ namespace Redpoint.DungeonEscape.Unity
             var objectState = GetObjectState(mapId, objectId, true);
             objectState.Position = position;
             objectState.Direction = direction;
+            MarkDirty();
         }
 
         public void InitializeMapObjects(string mapId, TiledMapInfo mapInfo)
@@ -314,6 +333,7 @@ namespace Redpoint.DungeonEscape.Unity
                     objectState.Type = GetSpriteType(mapObject);
                     objectState.Items = CreateMapObjectItems(mapObject);
                     objectState.IsOpen = objectState.Items.Count == 0 ? true : objectState.IsOpen;
+                    MarkDirty();
                 }
             }
         }
@@ -348,6 +368,7 @@ namespace Redpoint.DungeonEscape.Unity
                         Party.Gold += item.Cost;
                         message.AppendLine("You found " + item.Cost + " gold.");
                         objectState.Items.Remove(item);
+                        MarkDirty();
                         continue;
                     }
 
@@ -361,6 +382,7 @@ namespace Redpoint.DungeonEscape.Unity
                         message.AppendLine(member.Name + " found a " + item.Name + ".");
                         message.Append(CheckQuest(item));
                         objectState.Items.Remove(item);
+                        MarkDirty();
                     }
                 }
             }
@@ -368,10 +390,12 @@ namespace Redpoint.DungeonEscape.Unity
             if (message.Length == 0)
             {
                 objectState.IsOpen = true;
+                MarkDirty();
                 return "You found nothing.";
             }
 
             objectState.IsOpen = true;
+            MarkDirty();
             return message.ToString().TrimEnd();
         }
 
@@ -772,11 +796,19 @@ namespace Redpoint.DungeonEscape.Unity
         public void SaveQuick()
         {
             EnsureInitialized();
+            SaveQuick(false);
+        }
+
+        private void SaveQuick(bool autoSave)
+        {
+            EnsureInitialized();
             CurrentSave.IsQuick = true;
             CurrentSave.Time = DateTime.Now;
             UpsertQuickSave(CurrentSave);
             SaveGameFile();
-            Debug.Log("Quick saved to " + GetSaveFilePath());
+            saveDirty = false;
+            autoSaveCountdown = 0f;
+            Debug.Log((autoSave ? "Auto saved to " : "Quick saved to ") + GetSaveFilePath());
         }
 
         public void LoadQuick()
@@ -791,6 +823,8 @@ namespace Redpoint.DungeonEscape.Unity
 
             CurrentSave = quickSave;
             ShouldApplyInitialSpawn = false;
+            saveDirty = false;
+            autoSaveCountdown = 0f;
             Debug.Log("Quick loaded: " + CurrentSave.Name);
             if (SaveLoaded != null)
             {
@@ -804,6 +838,7 @@ namespace Redpoint.DungeonEscape.Unity
             CurrentSave = CreateDefaultSave();
             CurrentSave.IsQuick = false;
             ShouldApplyInitialSpawn = true;
+            MarkDirty();
             Debug.Log("Started a new game without loading a saved level.");
             if (SaveLoaded != null)
             {
@@ -953,6 +988,45 @@ namespace Redpoint.DungeonEscape.Unity
                     {
                         NullValueHandling = NullValueHandling.Ignore
                     }));
+        }
+
+        private void MarkDirty()
+        {
+            saveDirty = true;
+            if (autoSaveCountdown <= 0f)
+            {
+                autoSaveCountdown = GetAutoSaveIntervalSeconds();
+            }
+        }
+
+        private void UpdateAutoSave()
+        {
+            if (!saveDirty || !IsAutoSaveEnabled())
+            {
+                return;
+            }
+
+            autoSaveCountdown -= Time.deltaTime;
+            if (autoSaveCountdown > 0f)
+            {
+                return;
+            }
+
+            SaveQuick(true);
+        }
+
+        private static bool IsAutoSaveEnabled()
+        {
+            return DungeonEscapeSettingsCache.Current == null ||
+                   DungeonEscapeSettingsCache.Current.AutoSaveEnabled;
+        }
+
+        private static float GetAutoSaveIntervalSeconds()
+        {
+            var interval = DungeonEscapeSettingsCache.Current == null
+                ? DefaultAutoSaveIntervalSeconds
+                : DungeonEscapeSettingsCache.Current.AutoSaveIntervalSeconds;
+            return interval <= 0f ? DefaultAutoSaveIntervalSeconds : interval;
         }
 
         private static GameFile LoadGameFile()

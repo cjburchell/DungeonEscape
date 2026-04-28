@@ -250,11 +250,87 @@ namespace Redpoint.DungeonEscape.Unity
             return member.Name + " gave " + item.Name + " to " + recipientName + ".";
         }
 
+        public bool IsObjectOpen(string mapId, int objectId)
+        {
+            EnsureInitialized();
+            var objectState = GetObjectState(mapId, objectId, false);
+            return objectState != null && objectState.IsOpen == true;
+        }
+
+        public string PickupMapObject(TiledObjectInfo mapObject)
+        {
+            EnsureInitialized();
+            if (mapObject == null)
+            {
+                return "";
+            }
+
+            var objectState = GetObjectState(Party.CurrentMapId, mapObject.Id, true);
+            if (objectState.IsOpen == true)
+            {
+                return "You found nothing.";
+            }
+
+            var message = new StringBuilder();
+            string goldText;
+            int gold;
+            if (mapObject.Properties != null &&
+                mapObject.Properties.TryGetValue("Gold", out goldText) &&
+                int.TryParse(goldText, out gold) &&
+                gold > 0)
+            {
+                Party.Gold += gold;
+                message.AppendLine("You found " + gold + " gold.");
+            }
+
+            string itemId;
+            if (mapObject.Properties != null &&
+                mapObject.Properties.TryGetValue("ItemId", out itemId) &&
+                !string.IsNullOrEmpty(itemId))
+            {
+                message.Append(GiveItem(itemId));
+            }
+
+            if (message.Length == 0)
+            {
+                objectState.IsOpen = true;
+                return "You found nothing.";
+            }
+
+            objectState.IsOpen = true;
+            return message.ToString().TrimEnd();
+        }
+
         private string CheckQuest(Item item)
         {
             return item == null || string.IsNullOrEmpty(item.QuestId)
                 ? ""
                 : AdvanceQuest(item.QuestId, item.NextStage);
+        }
+
+        private ObjectState GetObjectState(string mapId, int objectId, bool create)
+        {
+            var normalizedMapId = TiledMapLoader.NormalizeMapId(mapId);
+            var mapState = CurrentSave.MapStates.FirstOrDefault(item => item.Id == normalizedMapId);
+            if (mapState == null)
+            {
+                if (!create)
+                {
+                    return null;
+                }
+
+                mapState = new MapState { Id = normalizedMapId };
+                CurrentSave.MapStates.Add(mapState);
+            }
+
+            var objectState = mapState.Objects.FirstOrDefault(item => item.Id == objectId);
+            if (objectState == null && create)
+            {
+                objectState = new ObjectState { Id = objectId };
+                mapState.Objects.Add(objectState);
+            }
+
+            return objectState;
         }
 
         private static ActiveQuest CreateActiveQuest(Quest quest)

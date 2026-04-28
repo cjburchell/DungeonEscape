@@ -438,22 +438,12 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            if (mapObject.Class == "Chest")
+            if (IsPickupObject(mapObject))
             {
-                string itemId;
-                if (TryGetProperty(mapObject, "ItemId", out itemId) && !string.IsNullOrEmpty(itemId))
-                {
-                    Item item;
-                    var itemText = DungeonEscapeGameDataCache.Current != null &&
-                                   DungeonEscapeGameDataCache.Current.TryGetCustomItem(itemId, out item)
-                        ? "Chest contains: " + item.NameWithStats
-                        : "Chest contains unknown item: " + itemId;
-
-                    messageBox.Show(mapObject.Name, itemText);
-                    return;
-                }
-
-                messageBox.Show(mapObject.Name, "Chest is empty.");
+                var pickupMessage = gameState == null
+                    ? "Cannot pick up item without game state."
+                    : gameState.PickupMapObject(mapObject);
+                messageBox.Show(mapObject.Name, pickupMessage);
                 return;
             }
 
@@ -583,6 +573,12 @@ namespace Redpoint.DungeonEscape.Unity
         {
             value = null;
             return mapObject.Properties != null && mapObject.Properties.TryGetValue(propertyName, out value);
+        }
+
+        private static bool IsPickupObject(TiledObjectInfo mapObject)
+        {
+            return string.Equals(mapObject.Class, "Chest", System.StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(mapObject.Class, "HiddenItem", System.StringComparison.OrdinalIgnoreCase);
         }
 
         private static string BuildInteractionMessage(TiledObjectInfo mapObject, WorldPosition target)

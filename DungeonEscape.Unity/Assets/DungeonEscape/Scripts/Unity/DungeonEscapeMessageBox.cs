@@ -10,6 +10,8 @@ namespace Redpoint.DungeonEscape.Unity
         private GUIStyle speakerStyle;
         private GUIStyle messageStyle;
         private Texture2D backgroundTexture;
+        private DungeonEscapeUiSettings uiSettings;
+        private float lastPixelScale;
 
         public bool IsVisible
         {
@@ -37,16 +39,22 @@ namespace Redpoint.DungeonEscape.Unity
 
             EnsureStyles();
 
-            var width = Mathf.Min(Screen.width - 32, 760);
-            var height = 120;
-            var rect = new Rect((Screen.width - width) / 2f, Screen.height - height - 24, width, height);
+            var scale = GetPixelScale();
+            var margin = 24f * scale;
+            var paddingX = 18f * scale;
+            var paddingY = 12f * scale;
+            var speakerHeight = 24f * scale;
+            var speakerGap = 6f * scale;
+            var width = Mathf.Min(Screen.width - 32f * scale, 760f * scale);
+            var height = 120f * scale;
+            var rect = new Rect((Screen.width - width) / 2f, Screen.height - height - margin, width, height);
             GUI.Box(rect, GUIContent.none, boxStyle);
 
-            var contentRect = new Rect(rect.x + 18, rect.y + 12, rect.width - 36, rect.height - 24);
+            var contentRect = new Rect(rect.x + paddingX, rect.y + paddingY, rect.width - paddingX * 2f, rect.height - paddingY * 2f);
             if (!string.IsNullOrEmpty(speaker))
             {
-                GUI.Label(new Rect(contentRect.x, contentRect.y, contentRect.width, 24), speaker, speakerStyle);
-                GUI.Label(new Rect(contentRect.x, contentRect.y + 30, contentRect.width, contentRect.height - 30), message, messageStyle);
+                GUI.Label(new Rect(contentRect.x, contentRect.y, contentRect.width, speakerHeight), speaker, speakerStyle);
+                GUI.Label(new Rect(contentRect.x, contentRect.y + speakerHeight + speakerGap, contentRect.width, contentRect.height - speakerHeight - speakerGap), message, messageStyle);
             }
             else
             {
@@ -56,27 +64,43 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void EnsureStyles()
         {
-            if (boxStyle != null)
+            var scale = GetPixelScale();
+            if (boxStyle != null && Mathf.Approximately(lastPixelScale, scale))
             {
                 return;
             }
 
+            lastPixelScale = scale;
             boxStyle = new GUIStyle(GUI.skin.box);
-            backgroundTexture = new Texture2D(1, 1);
-            backgroundTexture.SetPixel(0, 0, new Color(0.05f, 0.06f, 0.07f, 0.94f));
-            backgroundTexture.Apply();
+            if (backgroundTexture == null)
+            {
+                backgroundTexture = new Texture2D(1, 1);
+                backgroundTexture.SetPixel(0, 0, new Color(0.05f, 0.06f, 0.07f, 0.94f));
+                backgroundTexture.Apply();
+            }
+
             boxStyle.normal.background = backgroundTexture;
             boxStyle.normal.textColor = Color.white;
 
             speakerStyle = new GUIStyle(GUI.skin.label);
-            speakerStyle.fontSize = 18;
+            speakerStyle.fontSize = Mathf.RoundToInt(18f * scale);
             speakerStyle.fontStyle = FontStyle.Bold;
             speakerStyle.normal.textColor = Color.white;
 
             messageStyle = new GUIStyle(GUI.skin.label);
-            messageStyle.fontSize = 16;
+            messageStyle.fontSize = Mathf.RoundToInt(16f * scale);
             messageStyle.wordWrap = true;
             messageStyle.normal.textColor = Color.white;
+        }
+
+        private float GetPixelScale()
+        {
+            if (uiSettings == null)
+            {
+                uiSettings = DungeonEscapeUiSettings.GetOrCreate();
+            }
+
+            return uiSettings.PixelScale;
         }
     }
 }

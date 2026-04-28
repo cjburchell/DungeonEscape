@@ -45,10 +45,13 @@ namespace Redpoint.DungeonEscape.Unity
         private string testMapAssetPath = "Assets/DungeonEscape/Maps/overworld.tmx";
 
         public DungeonEscapeDataSet Data { get; private set; }
+        public Settings Settings { get; private set; }
 
         private void Awake()
         {
             EnsureCamera();
+            Settings = DungeonEscapeSettingsCache.Load();
+            DungeonEscapeUiSettings.GetOrCreate().ApplySettings(Settings);
 
             Debug.Log("Dungeon Escape Unity bootstrap starting.");
 

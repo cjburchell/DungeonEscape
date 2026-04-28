@@ -6,6 +6,8 @@ namespace Redpoint.DungeonEscape.Unity
     public sealed class DungeonEscapeDataDebugView : MonoBehaviour
     {
         private GUIStyle textStyle;
+        private DungeonEscapeUiSettings uiSettings;
+        private float lastPixelScale;
         private PlayerGridController playerMarker;
         private TiledMapView mapView;
 
@@ -17,20 +19,34 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void OnGUI()
         {
-            if (textStyle == null)
+            var scale = GetPixelScale();
+            if (textStyle == null || !Mathf.Approximately(lastPixelScale, scale))
             {
+                lastPixelScale = scale;
                 textStyle = new GUIStyle(GUI.skin.label)
                 {
-                    fontSize = 16,
+                    fontSize = Mathf.RoundToInt(16f * scale),
                     normal = { textColor = Color.white },
                     wordWrap = true
                 };
             }
 
-            var panelWidth = 270f;
-            var panelHeight = 92f;
-            GUI.Box(new Rect(12, 12, panelWidth, panelHeight), GUIContent.none);
-            GUI.Label(new Rect(24, 24, panelWidth - 24, panelHeight - 24), BuildRuntimeSummary(), textStyle);
+            var margin = 12f * scale;
+            var padding = 12f * scale;
+            var panelWidth = 270f * scale;
+            var panelHeight = 92f * scale;
+            GUI.Box(new Rect(margin, margin, panelWidth, panelHeight), GUIContent.none);
+            GUI.Label(new Rect(margin + padding, margin + padding, panelWidth - padding * 2f, panelHeight - padding * 2f), BuildRuntimeSummary(), textStyle);
+        }
+
+        private float GetPixelScale()
+        {
+            if (uiSettings == null)
+            {
+                uiSettings = DungeonEscapeUiSettings.GetOrCreate();
+            }
+
+            return uiSettings.PixelScale;
         }
 
         private string BuildRuntimeSummary()

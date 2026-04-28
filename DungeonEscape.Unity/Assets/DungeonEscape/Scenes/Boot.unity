@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &243971992
+--- !u!1 &32223004
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 243971994}
-  - component: {fileID: 243971993}
+  - component: {fileID: 32223006}
+  - component: {fileID: 32223005}
   m_Layer: 0
   m_Name: PreviewStatusView
   m_TagString: Untagged
@@ -136,25 +136,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &243971993
+--- !u!114 &32223005
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 243971992}
+  m_GameObject: {fileID: 32223004}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d3690f895cf621e4ea036ea7a7ff1bb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Redpoint.DungeonEscape.Unity.DungeonEscapeDataDebugView
---- !u!4 &243971994
+--- !u!4 &32223006
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 243971992}
+  m_GameObject: {fileID: 32223004}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -163,7 +163,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &466801159
+--- !u!1 &139963350
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -171,8 +171,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 466801161}
-  - component: {fileID: 466801160}
+  - component: {fileID: 139963352}
+  - component: {fileID: 139963351}
   m_Layer: 0
   m_Name: TiledMapView
   m_TagString: Untagged
@@ -180,13 +180,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &466801160
+--- !u!114 &139963351
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 466801159}
+  m_GameObject: {fileID: 139963350}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 36b25e74ad814254b92e875d30ef5f63, type: 3}
@@ -198,13 +198,13 @@ MonoBehaviour:
   startColumn: 25
   startRow: 20
   keyboardPanningEnabled: 0
---- !u!4 &466801161
+--- !u!4 &139963352
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 466801159}
+  m_GameObject: {fileID: 139963350}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -213,7 +213,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1443277888
+--- !u!1 &165035046
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -221,8 +221,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1443277890}
-  - component: {fileID: 1443277889}
+  - component: {fileID: 165035048}
+  - component: {fileID: 165035047}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -230,13 +230,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!20 &1443277889
+--- !u!20 &165035047
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1443277888}
+  m_GameObject: {fileID: 165035046}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
@@ -281,13 +281,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &1443277890
+--- !u!4 &165035048
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1443277888}
+  m_GameObject: {fileID: 165035046}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
@@ -296,7 +296,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2101215242
+--- !u!1 &1105063644
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -304,8 +304,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2101215244}
-  - component: {fileID: 2101215243}
+  - component: {fileID: 1105063646}
+  - component: {fileID: 1105063645}
   m_Layer: 0
   m_Name: DungeonEscapeBootstrap
   m_TagString: Untagged
@@ -313,13 +313,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2101215243
+--- !u!114 &1105063645
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2101215242}
+  m_GameObject: {fileID: 1105063644}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 223be9a4c2bcb2d4c97b2896015582c5, type: 3}
@@ -337,13 +337,13 @@ MonoBehaviour:
   statNamesJson: {fileID: 4900000, guid: 0e8809985289b1242a59ba59b1d0136d, type: 3}
   testMapTmx: {fileID: 0}
   testMapAssetPath: Assets/DungeonEscape/Maps/overworld.tmx
---- !u!4 &2101215244
+--- !u!4 &1105063646
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2101215242}
+  m_GameObject: {fileID: 1105063644}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -352,7 +352,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2113592623
+--- !u!1 &1623523520
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -360,8 +360,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2113592625}
-  - component: {fileID: 2113592624}
+  - component: {fileID: 1623523522}
+  - component: {fileID: 1623523521}
   m_Layer: 0
   m_Name: PlayerGridController
   m_TagString: Untagged
@@ -369,27 +369,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2113592624
+--- !u!114 &1623523521
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2113592623}
+  m_GameObject: {fileID: 1623523520}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 623a243e4432e5e4da48af918b4296ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Redpoint.DungeonEscape.Unity.PlayerGridController
-  mapView: {fileID: 466801160}
+  mapView: {fileID: 139963351}
   heroTextureAssetPath: Assets/DungeonEscape/Images/sprites/hero.png
---- !u!4 &2113592625
+--- !u!4 &1623523522
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2113592623}
+  m_GameObject: {fileID: 1623523520}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -402,8 +402,8 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 2101215244}
-  - {fileID: 1443277890}
-  - {fileID: 243971994}
-  - {fileID: 466801161}
-  - {fileID: 2113592625}
+  - {fileID: 1105063646}
+  - {fileID: 165035048}
+  - {fileID: 32223006}
+  - {fileID: 139963352}
+  - {fileID: 1623523522}

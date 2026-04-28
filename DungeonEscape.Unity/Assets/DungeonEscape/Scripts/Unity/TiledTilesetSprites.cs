@@ -34,7 +34,14 @@ namespace Redpoint.DungeonEscape.Unity
                 spriteSets.Add(new TiledTilesetSpriteSet
                 {
                     FirstGid = tileset.FirstGid,
-                    Sprites = SliceTexture(texture, tileWidth, tileHeight)
+                    Sprites = SliceTexture(
+                        texture,
+                        tileWidth,
+                        tileHeight,
+                        tileset.Document.Columns,
+                        tileset.Document.TileCount,
+                        tileset.Document.Spacing,
+                        tileset.Document.Margin)
                 });
             }
 
@@ -75,20 +82,38 @@ namespace Redpoint.DungeonEscape.Unity
             return texture;
         }
 
-        private static Dictionary<int, Sprite> SliceTexture(Texture2D texture, int tileWidth, int tileHeight)
+        private static Dictionary<int, Sprite> SliceTexture(
+            Texture2D texture,
+            int tileWidth,
+            int tileHeight,
+            int tilesetColumns,
+            int tileCount,
+            int spacing,
+            int margin)
         {
             var sprites = new Dictionary<int, Sprite>();
-            var columns = texture.width / tileWidth;
-            var rows = texture.height / tileHeight;
+            var columns = tilesetColumns > 0
+                ? tilesetColumns
+                : (texture.width - margin + spacing) / (tileWidth + spacing);
+            var rows = tileCount > 0
+                ? (tileCount + columns - 1) / columns
+                : (texture.height - margin + spacing) / (tileHeight + spacing);
 
             for (var row = 0; row < rows; row++)
             {
                 for (var column = 0; column < columns; column++)
                 {
                     var tileId = row * columns + column;
+                    if (tileCount > 0 && tileId >= tileCount)
+                    {
+                        break;
+                    }
+
+                    var sourceX = margin + column * (tileWidth + spacing);
+                    var sourceY = margin + row * (tileHeight + spacing);
                     var rect = new Rect(
-                        column * tileWidth,
-                        texture.height - ((row + 1) * tileHeight),
+                        sourceX,
+                        texture.height - sourceY - tileHeight,
                         tileWidth,
                         tileHeight);
 

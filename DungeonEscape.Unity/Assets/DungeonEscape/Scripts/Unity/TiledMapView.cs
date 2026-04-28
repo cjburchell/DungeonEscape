@@ -193,6 +193,33 @@ namespace Redpoint.DungeonEscape.Unity
             return false;
         }
 
+        public bool TryGetObjectAt(WorldPosition position, out TiledObjectInfo result)
+        {
+            EnsureMapLoaded();
+            result = null;
+
+            if (currentMap == null || currentMap.Info == null || currentMap.Info.ObjectGroups == null)
+            {
+                return false;
+            }
+
+            foreach (var group in currentMap.Info.ObjectGroups)
+            {
+                foreach (var mapObject in group.Objects)
+                {
+                    if (mapObject.Class == "Spawn" || !ContainsTile(mapObject, position))
+                    {
+                        continue;
+                    }
+
+                    result = mapObject;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool TryGetSpawnPosition(string spawnId, out WorldPosition position)
         {
             EnsureMapLoaded();

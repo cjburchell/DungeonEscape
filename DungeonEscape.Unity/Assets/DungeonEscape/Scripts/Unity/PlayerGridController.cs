@@ -1,6 +1,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Collections;
+using System.Text;
 using Redpoint.DungeonEscape.State;
 using UnityEngine;
 
@@ -41,6 +42,11 @@ namespace Redpoint.DungeonEscape.Unity
             get { return (int)position.Y; }
         }
 
+        public Direction FacingDirection
+        {
+            get { return currentDirection; }
+        }
+
         private void Awake()
         {
             spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
@@ -67,6 +73,12 @@ namespace Redpoint.DungeonEscape.Unity
         {
             if (isMoving)
             {
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
+            {
+                TryInteract();
                 return;
             }
 
@@ -202,6 +214,82 @@ namespace Redpoint.DungeonEscape.Unity
             }
         }
 
+        private void TryInteract()
+        {
+            if (mapView == null)
+            {
+                return;
+            }
+
+            var target = GetFacingPosition();
+            TiledObjectInfo mapObject;
+            if (!mapView.TryGetObjectAt(target, out mapObject))
+            {
+                Debug.Log("No interactable object at " + target.X + "," + target.Y + ".");
+                return;
+            }
+
+            Debug.Log(BuildInteractionMessage(mapObject, target));
+        }
+
+        private WorldPosition GetFacingPosition()
+        {
+            var x = (int)position.X;
+            var y = (int)position.Y;
+
+            switch (currentDirection)
+            {
+                case Direction.Up:
+                    y--;
+                    break;
+                case Direction.Right:
+                    x++;
+                    break;
+                case Direction.Down:
+                    y++;
+                    break;
+                case Direction.Left:
+                    x--;
+                    break;
+            }
+
+            return new WorldPosition(x, y);
+        }
+
+        private static string BuildInteractionMessage(TiledObjectInfo mapObject, WorldPosition target)
+        {
+            var message = new StringBuilder();
+            message.Append("Interact ");
+            message.Append(target.X);
+            message.Append(",");
+            message.Append(target.Y);
+            message.Append(": ");
+            message.Append(string.IsNullOrEmpty(mapObject.Name) ? "(unnamed)" : mapObject.Name);
+            message.Append(" [");
+            message.Append(string.IsNullOrEmpty(mapObject.Class) ? "no class" : mapObject.Class);
+            message.Append("]");
+
+            if (mapObject.Properties != null && mapObject.Properties.Count > 0)
+            {
+                message.Append(" properties: ");
+                var first = true;
+                foreach (var property in mapObject.Properties)
+                {
+                    if (!first)
+                    {
+                        message.Append(", ");
+                    }
+
+                    message.Append(property.Key);
+                    message.Append("=");
+                    message.Append(property.Value);
+                    first = false;
+                }
+            }
+
+            return message.ToString();
+        }
+
         private Direction GetDirection(int deltaX, int deltaY)
         {
             if (deltaX < 0)
@@ -309,12 +397,5 @@ namespace Redpoint.DungeonEscape.Unity
             return Path.Combine(Application.dataPath, assetPath.Replace("Assets/", ""));
         }
 
-        private enum Direction
-        {
-            Up,
-            Right,
-            Down,
-            Left
-        }
     }
 }

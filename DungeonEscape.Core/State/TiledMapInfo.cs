@@ -174,6 +174,8 @@ namespace Redpoint.DungeonEscape.State
         public int TileHeight { get; set; }
         public int TileCount { get; set; }
         public int Columns { get; set; }
+        public int Spacing { get; set; }
+        public int Margin { get; set; }
         public string ImageSource { get; set; }
         public int ImageWidth { get; set; }
         public int ImageHeight { get; set; }
@@ -191,6 +193,8 @@ namespace Redpoint.DungeonEscape.State
                 TileHeight = GetInt(tileset, "tileheight"),
                 TileCount = GetInt(tileset, "tilecount"),
                 Columns = GetInt(tileset, "columns"),
+                Spacing = GetInt(tileset, "spacing"),
+                Margin = GetInt(tileset, "margin"),
                 ImageSource = image == null ? null : GetString(image, "source"),
                 ImageWidth = image == null ? 0 : GetInt(image, "width"),
                 ImageHeight = image == null ? 0 : GetInt(image, "height")

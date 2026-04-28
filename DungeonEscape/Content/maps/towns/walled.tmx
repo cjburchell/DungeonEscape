@@ -397,7 +397,11 @@ himself Inside</property>
   </object>
  </objectgroup>
  <objectgroup id="6" name="objects">
-  <object id="1" name="spawn" class="Spawn" x="640" y="128" width="32" height="32"/>
+  <object id="1" name="spawn" class="Spawn" x="640" y="128" width="32" height="32">
+   <properties>
+    <property name="DefaultSpawn" type="bool" value="true"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer id="3" name="celing" width="40" height="40">
   <data encoding="csv">

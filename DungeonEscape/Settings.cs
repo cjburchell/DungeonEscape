@@ -17,5 +17,7 @@ namespace Redpoint.DungeonEscape
         public bool IsFullScreen { get; set; }
         public string Version { get; set; }
         public int MaxPartyMembers { get; set; } = 4;
+        public float UiScale { get; set; } = 1f;
+        public bool ShowHiddenObjects { get; set; }
     }
 }

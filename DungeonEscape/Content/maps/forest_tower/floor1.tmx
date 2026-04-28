@@ -255,7 +255,11 @@
  </objectgroup>
  <objectgroup id="5" name="sprites"/>
  <objectgroup id="6" name="objects">
-  <object id="1" name="spawn" class="Spawn" x="544" y="960" width="32" height="32"/>
+  <object id="1" name="spawn" class="Spawn" x="544" y="960" width="32" height="32">
+   <properties>
+    <property name="DefaultSpawn" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="2" name="spawn3" class="Spawn" x="416" y="704" width="32" height="32"/>
   <object id="3" name="spawn2" class="Spawn" x="768" y="576" width="32" height="32"/>
   <object id="4" name="spawn1" class="Spawn" x="480" y="448" width="32" height="32"/>

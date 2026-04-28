@@ -231,6 +231,10 @@
  </objectgroup>
  <objectgroup id="5" name="sprites"/>
  <objectgroup id="6" name="objects">
-  <object id="1" name="spawn" class="Spawn" x="480" y="800" width="32" height="32"/>
+  <object id="1" name="spawn" class="Spawn" x="480" y="800" width="32" height="32">
+   <properties>
+    <property name="DefaultSpawn" type="bool" value="true"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

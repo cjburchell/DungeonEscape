@@ -361,7 +361,11 @@
   </object>
  </objectgroup>
  <objectgroup id="6" name="objects">
-  <object id="1" name="spawn" class="Spawn" x="544" y="928" width="32" height="32"/>
+  <object id="1" name="spawn" class="Spawn" x="544" y="928" width="32" height="32">
+   <properties>
+    <property name="DefaultSpawn" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="2" name="spawn1" class="Spawn" x="544" y="544" width="32" height="32"/>
  </objectgroup>
 </map>

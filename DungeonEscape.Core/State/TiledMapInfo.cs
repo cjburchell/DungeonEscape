@@ -77,7 +77,7 @@ namespace Redpoint.DungeonEscape.State
                     {
                         Id = GetInt(mapObject, "id"),
                         Name = GetString(mapObject, "name"),
-                        Class = GetString(mapObject, "class"),
+                        Class = GetString(mapObject, "class") ?? GetString(mapObject, "type"),
                         Gid = GetInt(mapObject, "gid"),
                         X = GetFloat(mapObject, "x"),
                         Y = GetFloat(mapObject, "y"),

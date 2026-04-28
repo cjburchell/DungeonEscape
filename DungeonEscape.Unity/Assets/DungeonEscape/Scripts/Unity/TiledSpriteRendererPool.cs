@@ -21,10 +21,16 @@ namespace Redpoint.DungeonEscape.Unity
 
         public void Show(string key, Sprite sprite, Vector3 localPosition, int sortingOrder, string name)
         {
+            Show(key, sprite, localPosition, Vector3.one, sortingOrder, name);
+        }
+
+        public void Show(string key, Sprite sprite, Vector3 localPosition, Vector3 localScale, int sortingOrder, string name)
+        {
             activeKeys.Add(key);
             var renderer = GetRenderer(key);
             renderer.gameObject.name = name;
             renderer.transform.localPosition = localPosition;
+            renderer.transform.localScale = localScale;
             renderer.sprite = sprite;
             renderer.sortingOrder = sortingOrder;
             renderer.gameObject.SetActive(true);

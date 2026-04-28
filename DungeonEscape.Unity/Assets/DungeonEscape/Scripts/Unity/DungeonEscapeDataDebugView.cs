@@ -21,6 +21,11 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void OnGUI()
         {
+            if (!DungeonEscapeSettingsCache.Current.MapDebugInfo)
+            {
+                return;
+            }
+
             var scale = GetPixelScale();
             if (textStyle == null || !Mathf.Approximately(lastPixelScale, scale))
             {

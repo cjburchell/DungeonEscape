@@ -240,7 +240,7 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 foreach (var mapObject in group.Objects)
                 {
-                    if (mapObject.Class == "Spawn" || !ContainsTile(mapObject, position))
+                    if (IsSpawnObject(mapObject) || !ContainsTile(mapObject, position))
                     {
                         continue;
                     }
@@ -257,18 +257,21 @@ namespace Redpoint.DungeonEscape.Unity
         {
             EnsureMapLoaded();
             position = WorldPosition.Zero;
-            var targetSpawnId = string.IsNullOrEmpty(spawnId) ? "spawn" : spawnId;
-
             if (currentMap == null || currentMap.Info == null || currentMap.Info.ObjectGroups == null)
             {
                 return false;
+            }
+
+            if (string.IsNullOrEmpty(spawnId))
+            {
+                return TryGetDefaultSpawnPosition(out position);
             }
 
             foreach (var group in currentMap.Info.ObjectGroups)
             {
                 foreach (var mapObject in group.Objects)
                 {
-                    if (mapObject.Class != "Spawn" || mapObject.Name != targetSpawnId)
+                    if (!IsSpawnObject(mapObject) || mapObject.Name != spawnId)
                     {
                         continue;
                     }
@@ -295,7 +298,7 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 foreach (var mapObject in group.Objects)
                 {
-                    if (mapObject.Class != "Spawn")
+                    if (!IsSpawnObject(mapObject) || !IsTrueProperty(mapObject, "DefaultSpawn"))
                     {
                         continue;
                     }
@@ -306,6 +309,40 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return false;
+        }
+
+        private bool TryGetDefaultSpawnPosition(out WorldPosition position)
+        {
+            position = WorldPosition.Zero;
+
+            foreach (var group in currentMap.Info.ObjectGroups)
+            {
+                foreach (var mapObject in group.Objects)
+                {
+                    if (!IsSpawnObject(mapObject) || !IsTrueProperty(mapObject, "DefaultSpawn"))
+                    {
+                        continue;
+                    }
+
+                    position = GetObjectTilePosition(mapObject);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsSpawnObject(TiledObjectInfo mapObject)
+        {
+            return string.Equals(mapObject.Class, "Spawn", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsTrueProperty(TiledObjectInfo mapObject, string propertyName)
+        {
+            string value;
+            return mapObject.Properties != null &&
+                   mapObject.Properties.TryGetValue(propertyName, out value) &&
+                   string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
         }
 
         private void EnsureMapLoaded()
@@ -369,6 +406,7 @@ namespace Redpoint.DungeonEscape.Unity
                 viewport.StartRow,
                 viewport.Columns,
                 rows,
+                DungeonEscapeSettingsCache.Current.ShowHiddenObjects,
                 out spritesSortingOrder);
 
             rendererPool.End();
@@ -457,17 +495,23 @@ namespace Redpoint.DungeonEscape.Unity
 
             var centerX = position.X * currentMap.Info.TileWidth + currentMap.Info.TileWidth / 2f;
             var centerY = position.Y * currentMap.Info.TileHeight + currentMap.Info.TileHeight / 2f;
+            var topY = mapObject.Gid == 0 ? mapObject.Y : mapObject.Y - mapObject.Height;
+            var bottomY = mapObject.Gid == 0 ? mapObject.Y + mapObject.Height : mapObject.Y;
             return centerX >= mapObject.X &&
                    centerX < mapObject.X + mapObject.Width &&
-                   centerY >= mapObject.Y - mapObject.Height &&
-                   centerY < mapObject.Y;
+                   centerY >= topY &&
+                   centerY < bottomY;
         }
 
         private WorldPosition GetObjectTilePosition(TiledObjectInfo mapObject)
         {
+            var row = mapObject.Gid == 0
+                ? Mathf.FloorToInt(mapObject.Y / currentMap.Info.TileHeight)
+                : Mathf.FloorToInt((mapObject.Y - mapObject.Height) / currentMap.Info.TileHeight);
+
             return new WorldPosition(
                 Mathf.FloorToInt(mapObject.X / currentMap.Info.TileWidth),
-                Mathf.FloorToInt((mapObject.Y - mapObject.Height) / currentMap.Info.TileHeight));
+                row);
         }
 
         private List<TiledTilesetInfo> GetValidatedTilesets()

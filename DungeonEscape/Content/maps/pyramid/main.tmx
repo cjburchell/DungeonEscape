@@ -190,7 +190,11 @@
   </object>
  </objectgroup>
  <objectgroup id="6" name="objects">
-  <object id="1" name="spawn" class="Spawn" x="640" y="1184" width="32" height="32"/>
+  <object id="1" name="spawn" class="Spawn" x="640" y="1184" width="32" height="32">
+   <properties>
+    <property name="DefaultSpawn" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="2" name="spawn1" class="Spawn" x="672" y="640" width="32" height="32"/>
  </objectgroup>
 </map>

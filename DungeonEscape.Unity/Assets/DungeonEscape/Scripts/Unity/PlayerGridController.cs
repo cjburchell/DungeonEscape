@@ -162,8 +162,33 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             position = nextPosition;
+            TryApplyWarp();
             UpdateVisualPosition();
             isMoving = false;
+        }
+
+        private void TryApplyWarp()
+        {
+            if (mapView == null)
+            {
+                return;
+            }
+
+            TiledMapWarp warp;
+            if (!mapView.TryGetWarpAt(position, out warp))
+            {
+                return;
+            }
+
+            Debug.Log("Warping to " + warp.MapId + (string.IsNullOrEmpty(warp.SpawnId) ? "" : " at " + warp.SpawnId));
+            mapView.LoadMap(warp.MapId, warp.SpawnId);
+
+            WorldPosition spawnPosition;
+            if (mapView.TryGetSpawnPosition(warp.SpawnId, out spawnPosition))
+            {
+                position = spawnPosition;
+                mapView.CenterOn(position);
+            }
         }
 
         private Direction GetDirection(int deltaX, int deltaY)

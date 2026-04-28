@@ -13,9 +13,6 @@ namespace Redpoint.DungeonEscape.Unity
         private string mapAssetPath = "Assets/DungeonEscape/Maps/overworld.tmx";
 
         [SerializeField]
-        private DungeonEscapeBootstrap bootstrap;
-
-        [SerializeField]
         private int columns = 20;
 
         [SerializeField]
@@ -33,6 +30,7 @@ namespace Redpoint.DungeonEscape.Unity
         private int mapWidth;
         private int mapHeight;
         private bool mapLoaded;
+        private TiledLoadedMap currentMap;
         private readonly HashSet<string> fallbackBlockingLayerNames = new HashSet<string> { "wall", "water", "water2" };
         private HashSet<int> blockedTiles = new HashSet<int>();
         private Coroutine viewportScroll;
@@ -130,6 +128,96 @@ namespace Redpoint.DungeonEscape.Unity
             return !blockedTiles.Contains(row * mapWidth + column);
         }
 
+        public void LoadMap(string mapIdOrAssetPath, string spawnId)
+        {
+            mapAssetPath = TiledMapLoader.NormalizeMapAssetPath(mapIdOrAssetPath);
+            mapLoaded = false;
+            currentMap = null;
+            mapWidth = 0;
+            mapHeight = 0;
+            RenderPreview();
+            StopViewportScroll();
+            transform.position = Vector3.zero;
+
+            WorldPosition spawnPosition;
+            if (TryGetSpawnPosition(spawnId, out spawnPosition))
+            {
+                CenterOn(spawnPosition);
+            }
+        }
+
+        public bool TryGetWarpAt(WorldPosition position, out TiledMapWarp warp)
+        {
+            EnsureMapLoaded();
+            warp = null;
+
+            if (currentMap == null || currentMap.Info == null || currentMap.Info.ObjectGroups == null)
+            {
+                return false;
+            }
+
+            foreach (var group in currentMap.Info.ObjectGroups)
+            {
+                foreach (var mapObject in group.Objects)
+                {
+                    if (mapObject.Class != "Warp" || !ContainsTile(mapObject, position))
+                    {
+                        continue;
+                    }
+
+                    string mapId;
+                    if (mapObject.Properties == null ||
+                        !mapObject.Properties.TryGetValue("WarpMap", out mapId) ||
+                        string.IsNullOrEmpty(mapId))
+                    {
+                        continue;
+                    }
+
+                    string spawnId;
+                    mapObject.Properties.TryGetValue("SpawnId", out spawnId);
+                    warp = new TiledMapWarp
+                    {
+                        MapId = mapId,
+                        SpawnId = spawnId,
+                        Name = mapObject.Name
+                    };
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool TryGetSpawnPosition(string spawnId, out WorldPosition position)
+        {
+            EnsureMapLoaded();
+            position = WorldPosition.Zero;
+            var targetSpawnId = string.IsNullOrEmpty(spawnId) ? "spawn" : spawnId;
+
+            if (currentMap == null || currentMap.Info == null || currentMap.Info.ObjectGroups == null)
+            {
+                return false;
+            }
+
+            foreach (var group in currentMap.Info.ObjectGroups)
+            {
+                foreach (var mapObject in group.Objects)
+                {
+                    if (mapObject.Class != "Spawn" || mapObject.Name != targetSpawnId)
+                    {
+                        continue;
+                    }
+
+                    position = new WorldPosition(
+                        Mathf.FloorToInt(mapObject.X / currentMap.Info.TileWidth),
+                        Mathf.FloorToInt((mapObject.Y - mapObject.Height) / currentMap.Info.TileHeight));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private void EnsureMapLoaded()
         {
             if (mapLoaded)
@@ -148,6 +236,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
+            currentMap = loadedMap;
             var viewportStartColumn = mapWidth == 0 && mapHeight == 0 ? startColumn : viewport.StartColumn;
             var viewportStartRow = mapWidth == 0 && mapHeight == 0 ? startRow : viewport.StartRow;
             mapWidth = loadedMap.Width;
@@ -158,7 +247,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             blockedTiles = TiledMapCollision.BuildBlockedTiles(
                 loadedMap.Root,
-                bootstrap == null || bootstrap.Data == null ? null : bootstrap.Data.TestMap,
+                loadedMap.Info,
                 mapWidth,
                 mapHeight,
                 fallbackBlockingLayerNames);
@@ -177,7 +266,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             TiledMapRenderer.RenderObjectSprites(
                 transform,
-                bootstrap == null || bootstrap.Data == null ? null : bootstrap.Data.TestMap,
+                loadedMap.Info,
                 spriteSets,
                 viewport.StartColumn,
                 viewport.StartRow,
@@ -248,16 +337,26 @@ namespace Redpoint.DungeonEscape.Unity
             viewportScroll = null;
         }
 
-        private List<TiledTilesetInfo> GetValidatedTilesets()
+        private bool ContainsTile(TiledObjectInfo mapObject, WorldPosition position)
         {
-            if (bootstrap == null)
+            if (currentMap == null || currentMap.Info == null)
             {
-                bootstrap = FindObjectOfType<DungeonEscapeBootstrap>();
+                return false;
             }
 
-            if (bootstrap != null && bootstrap.Data != null && bootstrap.Data.TestMap != null)
+            var centerX = position.X * currentMap.Info.TileWidth + currentMap.Info.TileWidth / 2f;
+            var centerY = position.Y * currentMap.Info.TileHeight + currentMap.Info.TileHeight / 2f;
+            return centerX >= mapObject.X &&
+                   centerX < mapObject.X + mapObject.Width &&
+                   centerY >= mapObject.Y - mapObject.Height &&
+                   centerY < mapObject.Y;
+        }
+
+        private List<TiledTilesetInfo> GetValidatedTilesets()
+        {
+            if (currentMap != null && currentMap.Info != null && currentMap.Info.Tilesets != null)
             {
-                return bootstrap.Data.TestMap.Tilesets
+                return currentMap.Info.Tilesets
                     .Where(tileset => tileset.TilesetFound && tileset.ImageFound && tileset.Document != null)
                     .OrderBy(tileset => tileset.FirstGid)
                     .ToList();
@@ -279,5 +378,12 @@ namespace Redpoint.DungeonEscape.Unity
             camera.transform.position = new Vector3((visibleColumns - 1) / 2f, -(visibleRows - 1) / 2f, -10);
         }
 
+    }
+
+    public sealed class TiledMapWarp
+    {
+        public string Name { get; set; }
+        public string MapId { get; set; }
+        public string SpawnId { get; set; }
     }
 }

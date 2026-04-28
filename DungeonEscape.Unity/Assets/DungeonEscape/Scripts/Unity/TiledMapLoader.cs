@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Redpoint.DungeonEscape.State;
 using UnityEngine;
 
 namespace Redpoint.DungeonEscape.Unity
@@ -10,6 +12,7 @@ namespace Redpoint.DungeonEscape.Unity
     {
         public static TiledLoadedMap Load(string mapAssetPath)
         {
+            mapAssetPath = NormalizeMapAssetPath(mapAssetPath);
             var mapPath = ToFullAssetPath(mapAssetPath);
 
             if (!File.Exists(mapPath))
@@ -18,7 +21,8 @@ namespace Redpoint.DungeonEscape.Unity
                 return null;
             }
 
-            var document = XDocument.Parse(File.ReadAllText(mapPath));
+            var text = File.ReadAllText(mapPath);
+            var document = XDocument.Parse(text);
             var map = document.Root;
             if (map == null)
             {
@@ -33,15 +37,105 @@ namespace Redpoint.DungeonEscape.Unity
                 return null;
             }
 
+            var info = TiledMapInfo.Parse(text);
+            ValidateTilesets(info);
+
             return new TiledLoadedMap
             {
                 Root = map,
+                Info = info,
+                AssetPath = mapAssetPath,
                 VisibleLayers = layers,
                 Width = GetInt(map, "width"),
                 Height = GetInt(map, "height"),
                 TileWidth = GetInt(map, "tilewidth"),
                 TileHeight = GetInt(map, "tileheight")
             };
+        }
+
+        public static string NormalizeMapAssetPath(string mapIdOrAssetPath)
+        {
+            if (string.IsNullOrEmpty(mapIdOrAssetPath))
+            {
+                return "Assets/DungeonEscape/Maps/overworld.tmx";
+            }
+
+            var normalized = mapIdOrAssetPath.Replace('\\', '/');
+            if (normalized.StartsWith("Assets/", StringComparison.OrdinalIgnoreCase))
+            {
+                return normalized.EndsWith(".tmx", StringComparison.OrdinalIgnoreCase)
+                    ? normalized
+                    : normalized + ".tmx";
+            }
+
+            const string mapsPrefix = "maps/";
+            if (normalized.StartsWith(mapsPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                normalized = normalized.Substring(mapsPrefix.Length);
+            }
+
+            if (!normalized.EndsWith(".tmx", StringComparison.OrdinalIgnoreCase))
+            {
+                normalized += ".tmx";
+            }
+
+            return "Assets/DungeonEscape/Maps/" + normalized;
+        }
+
+        private static void ValidateTilesets(TiledMapInfo map)
+        {
+            if (map == null || map.Tilesets == null)
+            {
+                return;
+            }
+
+            foreach (var tileset in map.Tilesets)
+            {
+                if (string.IsNullOrEmpty(tileset.Source))
+                {
+                    tileset.TilesetFound = true;
+                    continue;
+                }
+
+                tileset.UnityTilesetPath = ResolveTilesetAssetPath(tileset.Source);
+                var tilesetFullPath = ToFullAssetPath(tileset.UnityTilesetPath);
+                tileset.TilesetFound = File.Exists(tilesetFullPath);
+                if (!tileset.TilesetFound)
+                {
+                    Debug.LogWarning("Tileset not found: " + tileset.UnityTilesetPath);
+                    continue;
+                }
+
+                tileset.Document = TiledTilesetDocumentInfo.Parse(File.ReadAllText(tilesetFullPath));
+                tileset.UnityImagePath = ResolveTilesetImageAssetPath(tileset.Document.ImageSource);
+                tileset.ImageFound = File.Exists(ToFullAssetPath(tileset.UnityImagePath));
+                if (!tileset.ImageFound)
+                {
+                    Debug.LogWarning("Tileset image not found: " + tileset.UnityImagePath);
+                }
+            }
+        }
+
+        private static string ResolveTilesetAssetPath(string source)
+        {
+            return "Assets/DungeonEscape/Tilesets/" + Path.GetFileName(source);
+        }
+
+        private static string ResolveTilesetImageAssetPath(string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                return null;
+            }
+
+            var normalized = source.Replace('\\', '/');
+            const string imagesPrefix = "images/";
+            if (normalized.StartsWith(imagesPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                normalized = normalized.Substring(imagesPrefix.Length);
+            }
+
+            return "Assets/DungeonEscape/Images/" + normalized;
         }
 
         private static bool IsRenderableLayer(XElement layer)
@@ -70,7 +164,9 @@ namespace Redpoint.DungeonEscape.Unity
 
     public sealed class TiledLoadedMap
     {
+        public string AssetPath { get; set; }
         public XElement Root { get; set; }
+        public TiledMapInfo Info { get; set; }
         public List<XElement> VisibleLayers { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }

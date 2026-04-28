@@ -41,7 +41,7 @@ namespace Redpoint.DungeonEscape.UnityEditor
             AssignTextAsset(bootstrap, "statNamesJson", "Assets/DungeonEscape/Data/statnames.json");
             AssignString(bootstrap, "testMapAssetPath", "Assets/DungeonEscape/Maps/overworld.tmx");
 
-            CreatePreviewStatusView(bootstrap);
+            CreatePreviewStatusView();
             var mapView = CreateMapView();
             CreatePlayerController(mapView);
 
@@ -54,19 +54,13 @@ namespace Redpoint.DungeonEscape.UnityEditor
         {
             var previewObject = new GameObject("TiledMapView");
             var renderer = previewObject.AddComponent<TiledMapView>();
-            var serializedObject = new SerializedObject(renderer);
-            serializedObject.FindProperty("bootstrap").objectReferenceValue = UnityEngine.Object.FindObjectOfType<DungeonEscapeBootstrap>();
-            serializedObject.ApplyModifiedPropertiesWithoutUndo();
             return renderer;
         }
 
-        private static void CreatePreviewStatusView(DungeonEscapeBootstrap bootstrap)
+        private static void CreatePreviewStatusView()
         {
             var statusObject = new GameObject("PreviewStatusView");
-            var statusView = statusObject.AddComponent<DungeonEscapeDataDebugView>();
-            var serializedObject = new SerializedObject(statusView);
-            serializedObject.FindProperty("bootstrap").objectReferenceValue = bootstrap;
-            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+            statusObject.AddComponent<DungeonEscapeDataDebugView>();
         }
 
         private static void CreatePlayerController(TiledMapView mapView)

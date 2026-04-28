@@ -5,20 +5,12 @@ namespace Redpoint.DungeonEscape.Unity
 {
     public sealed class DungeonEscapeDataDebugView : MonoBehaviour
     {
-        [SerializeField]
-        private DungeonEscapeBootstrap bootstrap;
-
         private GUIStyle textStyle;
         private PlayerGridController playerMarker;
         private TiledMapView mapView;
 
         private void Start()
         {
-            if (bootstrap == null)
-            {
-                bootstrap = FindObjectOfType<DungeonEscapeBootstrap>();
-            }
-
             playerMarker = FindObjectOfType<PlayerGridController>();
             mapView = FindObjectOfType<TiledMapView>();
         }

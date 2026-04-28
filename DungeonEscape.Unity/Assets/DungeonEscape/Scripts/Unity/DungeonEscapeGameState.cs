@@ -807,9 +807,9 @@ namespace Redpoint.DungeonEscape.Unity
             };
         }
 
-        private static Hero CreateStarterHero(string playerName)
+        private Hero CreateStarterHero(string playerName)
         {
-            return new Hero
+            var hero = new Hero
             {
                 Name = string.IsNullOrEmpty(playerName) ? "Player" : playerName,
                 Class = Class.Hero,
@@ -817,16 +817,75 @@ namespace Redpoint.DungeonEscape.Unity
                 IsActive = true,
                 Order = 0,
                 Level = 1,
-                NextLevel = 100,
-                MaxHealth = 30,
-                Health = 30,
-                MaxMagic = 8,
-                Magic = 8,
-                Attack = 8,
-                Defence = 6,
-                MagicDefence = 4,
-                Agility = 6
+                Xp = 0
             };
+
+            ApplyStartingClassStats(hero);
+            AddStartingEquipment(hero);
+            return hero;
+        }
+
+        private static void ApplyStartingClassStats(Hero hero)
+        {
+            var classStats = DungeonEscapeGameDataCache.Current == null ||
+                             DungeonEscapeGameDataCache.Current.ClassLevels == null
+                ? null
+                : DungeonEscapeGameDataCache.Current.ClassLevels.FirstOrDefault(item => item.Class == hero.Class);
+
+            if (classStats == null || classStats.Stats == null)
+            {
+                ApplyFallbackStartingStats(hero);
+                return;
+            }
+
+            hero.NextLevel = classStats.FirstLevel;
+            hero.MaxHealth = RollStartingStat(classStats, StatType.Health, 30);
+            hero.Health = hero.MaxHealth;
+            hero.MaxMagic = RollStartingStat(classStats, StatType.Magic, 8);
+            hero.Magic = hero.MaxMagic;
+            hero.Attack = RollStartingStat(classStats, StatType.Attack, 8);
+            hero.Defence = RollStartingStat(classStats, StatType.Defence, 6);
+            hero.MagicDefence = RollStartingStat(classStats, StatType.MagicDefence, 4);
+            hero.Agility = RollStartingStat(classStats, StatType.Agility, 6);
+            hero.Skills = classStats.Skills == null ? new List<string>() : classStats.Skills.ToList();
+        }
+
+        private static int RollStartingStat(ClassStats classStats, StatType type, int fallbackValue)
+        {
+            var stat = classStats.Stats.FirstOrDefault(item => item.Type == type);
+            return stat == null ? fallbackValue : stat.RollStartValue();
+        }
+
+        private static void ApplyFallbackStartingStats(Hero hero)
+        {
+            hero.NextLevel = 100;
+            hero.MaxHealth = 30;
+            hero.Health = 30;
+            hero.MaxMagic = 8;
+            hero.Magic = 8;
+            hero.Attack = 8;
+            hero.Defence = 6;
+            hero.MagicDefence = 4;
+            hero.Agility = 6;
+            hero.Skills = new List<string>();
+        }
+
+        private void AddStartingEquipment(Hero hero)
+        {
+            EquipStartingItem(hero, CreateRandomEquipment(hero.Level, 1, Rarity.Common, ItemType.Armor, hero.Class, Slot.Chest));
+            EquipStartingItem(hero, CreateRandomEquipment(hero.Level, 1, Rarity.Common, ItemType.Weapon, hero.Class));
+        }
+
+        private static void EquipStartingItem(Hero hero, Item item)
+        {
+            if (item == null || item.Slots == null || item.Slots.Count == 0)
+            {
+                return;
+            }
+
+            var instance = new ItemInstance(item);
+            hero.Items.Add(instance);
+            hero.Equip(instance);
         }
 
         private void UpsertQuickSave(GameSave save)

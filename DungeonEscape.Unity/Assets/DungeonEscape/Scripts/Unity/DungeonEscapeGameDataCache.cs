@@ -37,6 +37,11 @@ namespace Redpoint.DungeonEscape.Unity
             get { return dataSet.StatNames; }
         }
 
+        public IList<ClassStats> ClassLevels
+        {
+            get { return dataSet.ClassLevels; }
+        }
+
         public static void Load(DungeonEscapeDataSet dataSet)
         {
             Current = new DungeonEscapeGameDataCache(dataSet);

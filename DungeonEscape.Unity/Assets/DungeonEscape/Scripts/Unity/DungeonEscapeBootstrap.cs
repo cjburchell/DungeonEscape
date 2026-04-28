@@ -52,7 +52,6 @@ namespace Redpoint.DungeonEscape.Unity
             EnsureCamera();
             Settings = DungeonEscapeSettingsCache.Load();
             DungeonEscapeUiSettings.GetOrCreate().ApplySettings(Settings);
-            DungeonEscapeGameState.GetOrCreate();
 
             Debug.Log("Dungeon Escape Unity bootstrap starting.");
 
@@ -73,6 +72,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             Data.Link();
             DungeonEscapeGameDataCache.Load(Data);
+            DungeonEscapeGameState.GetOrCreate();
             ValidateTilesets(Data.TestMap, testMapAssetPath);
 
             Debug.Log("Dungeon Escape data loaded. Item definitions: " + Count(Data.ItemDefinitions) +

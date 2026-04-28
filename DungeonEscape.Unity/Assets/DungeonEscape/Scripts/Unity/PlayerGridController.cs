@@ -286,7 +286,7 @@ namespace Redpoint.DungeonEscape.Unity
                 mapView.EnsureVisible(nextPosition);
             }
 
-            const float duration = 0.15f;
+            var duration = GetMoveDuration();
             var elapsed = 0f;
 
             while (elapsed < duration)
@@ -309,6 +309,30 @@ namespace Redpoint.DungeonEscape.Unity
             TryApplyWarp();
             UpdateVisualPosition();
             isMoving = false;
+        }
+
+        private static float GetMoveDuration()
+        {
+            const float baseDuration = 0.15f;
+            if (!IsSprintHeld())
+            {
+                return baseDuration;
+            }
+
+            var boost = DungeonEscapeSettingsCache.Current == null
+                ? 1.5f
+                : DungeonEscapeSettingsCache.Current.SprintBoost;
+            if (boost <= 0f)
+            {
+                boost = 1f;
+            }
+
+            return baseDuration / boost;
+        }
+
+        private static bool IsSprintHeld()
+        {
+            return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
         }
 
         private void TryApplyWarp()

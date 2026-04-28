@@ -6,5 +6,6 @@
   "MusicVolume": 0.5,
   "IsFullScreen": false,
   "UiScale": 1.0,
+  "SprintBoost": 1.5,
   "ShowHiddenObjects": false
 }

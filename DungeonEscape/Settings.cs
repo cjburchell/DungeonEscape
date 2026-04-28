@@ -18,6 +18,7 @@ namespace Redpoint.DungeonEscape
         public string Version { get; set; }
         public int MaxPartyMembers { get; set; } = 4;
         public float UiScale { get; set; } = 1f;
+        public float SprintBoost { get; set; } = 1.5f;
         public bool ShowHiddenObjects { get; set; }
     }
 }

@@ -16,9 +16,9 @@ namespace Redpoint.DungeonEscape.Unity
         private GUIStyle messageStyle;
         private GUIStyle choiceStyle;
         private GUIStyle selectedChoiceStyle;
-        private Texture2D backgroundTexture;
         private DungeonEscapeUiSettings uiSettings;
         private float lastPixelScale;
+        private string lastThemeSignature;
         private List<string> choices;
         private Action<int> choiceSelected;
         private int selectedChoiceIndex;
@@ -173,13 +173,14 @@ namespace Redpoint.DungeonEscape.Unity
             var visibleChoices = choices;
             var hasChoices = visibleChoices != null && visibleChoices.Count > 0;
             var scale = GetPixelScale();
+            var borderThickness = GetBorderThickness();
             var margin = 24f * scale;
             var paddingX = 18f * scale;
             var paddingY = 12f * scale;
             var speakerHeight = 24f * scale;
             var speakerGap = 6f * scale;
             var width = Mathf.Min(Screen.width - 32f * scale, 760f * scale);
-            var choiceHeight = 28f * scale;
+            var choiceHeight = 34f * scale;
             var choiceGap = 4f * scale;
             var choiceAreaHeight = hasChoices ? (visibleChoices.Count * (choiceHeight + choiceGap)) : 0f;
             var height = (120f * scale) + choiceAreaHeight;
@@ -205,12 +206,18 @@ namespace Redpoint.DungeonEscape.Unity
                 {
                     var choiceRect = new Rect(contentRect.x, y, contentRect.width, choiceHeight);
                     var style = i == selectedChoiceIndex ? selectedChoiceStyle : choiceStyle;
-                    if (GUI.Button(choiceRect, visibleChoices[i], style))
+                    var innerChoiceRect = new Rect(
+                        choiceRect.x + borderThickness,
+                        choiceRect.y + borderThickness,
+                        choiceRect.width - borderThickness * 2f,
+                        choiceRect.height - borderThickness * 2f);
+                    if (GUI.Button(choiceRect, GUIContent.none, style))
                     {
                         SelectChoice(i);
                         break;
                     }
 
+                    GUI.Label(innerChoiceRect, visibleChoices[i], style);
                     y += choiceHeight + choiceGap;
                 }
             }
@@ -219,41 +226,43 @@ namespace Redpoint.DungeonEscape.Unity
         private void EnsureStyles()
         {
             var scale = GetPixelScale();
-            if (boxStyle != null && Mathf.Approximately(lastPixelScale, scale))
+            var settings = DungeonEscapeSettingsCache.Current;
+            var themeSignature = DungeonEscapeUiTheme.GetSignature(settings);
+            if (boxStyle != null &&
+                Mathf.Approximately(lastPixelScale, scale) &&
+                string.Equals(lastThemeSignature, themeSignature, StringComparison.Ordinal))
             {
                 return;
             }
 
             lastPixelScale = scale;
-            boxStyle = new GUIStyle(GUI.skin.box);
-            if (backgroundTexture == null)
+            lastThemeSignature = themeSignature;
+            var theme = DungeonEscapeUiTheme.Create(settings, scale);
+            boxStyle = theme.PanelStyle;
+            speakerStyle = new GUIStyle(theme.LabelStyle)
             {
-                backgroundTexture = new Texture2D(1, 1);
-                backgroundTexture.SetPixel(0, 0, new Color(0.05f, 0.06f, 0.07f, 0.94f));
-                backgroundTexture.Apply();
-            }
-
-            boxStyle.normal.background = backgroundTexture;
-            boxStyle.normal.textColor = Color.white;
-
-            speakerStyle = new GUIStyle(GUI.skin.label);
-            speakerStyle.fontSize = Mathf.RoundToInt(18f * scale);
-            speakerStyle.fontStyle = FontStyle.Bold;
-            speakerStyle.normal.textColor = Color.white;
-
-            messageStyle = new GUIStyle(GUI.skin.label);
-            messageStyle.fontSize = Mathf.RoundToInt(16f * scale);
-            messageStyle.wordWrap = true;
-            messageStyle.normal.textColor = Color.white;
-
-            choiceStyle = new GUIStyle(GUI.skin.button);
-            choiceStyle.fontSize = Mathf.RoundToInt(16f * scale);
-            choiceStyle.alignment = TextAnchor.MiddleLeft;
-            choiceStyle.normal.textColor = Color.white;
-            choiceStyle.hover.textColor = Color.white;
-
-            selectedChoiceStyle = new GUIStyle(choiceStyle);
-            selectedChoiceStyle.normal.textColor = Color.yellow;
+                fontSize = Mathf.RoundToInt(18f * scale),
+                fontStyle = FontStyle.Bold
+            };
+            messageStyle = new GUIStyle(theme.LabelStyle)
+            {
+                fontSize = Mathf.RoundToInt(16f * scale),
+                wordWrap = true
+            };
+            choiceStyle = new GUIStyle(theme.RowStyle)
+            {
+                fontSize = Mathf.RoundToInt(16f * scale),
+                alignment = TextAnchor.MiddleLeft,
+                fontStyle = FontStyle.Normal
+            };
+            choiceStyle.normal.textColor = theme.TextColor;
+            selectedChoiceStyle = new GUIStyle(theme.SelectedRowStyle)
+            {
+                fontSize = Mathf.RoundToInt(16f * scale),
+                alignment = TextAnchor.MiddleLeft,
+                fontStyle = FontStyle.Normal
+            };
+            selectedChoiceStyle.normal.textColor = theme.HighlightColor;
         }
 
         private void SelectChoice(int index)
@@ -279,6 +288,11 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return uiSettings == null ? 1f : uiSettings.PixelScale;
+        }
+
+        private static int GetBorderThickness()
+        {
+            return DungeonEscapeUiTheme.GetBorderThickness(DungeonEscapeSettingsCache.Current);
         }
     }
 }

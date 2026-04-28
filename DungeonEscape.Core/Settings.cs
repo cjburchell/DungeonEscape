@@ -30,6 +30,14 @@ namespace Redpoint.DungeonEscape
         public bool AutoSaveEnabled { get; set; } = true;
         public float AutoSaveIntervalSeconds { get; set; } = 5f;
         public bool ShowHiddenObjects { get; set; }
+        public string UiBackgroundColor { get; set; } = "#000000";
+        public float UiBackgroundAlpha { get; set; } = 1f;
+        public string UiHoverColor { get; set; } = "#808080";
+        public string UiActiveColor { get; set; } = "#D3D3D3";
+        public string UiBorderColor { get; set; } = "#FFFFFF";
+        public int UiBorderThickness { get; set; } = 3;
+        public string UiTextColor { get; set; } = "#FFFFFF";
+        public string UiHighlightColor { get; set; } = "#FFFF00";
         public InputBinding[] InputBindings { get; set; }
     }
 }

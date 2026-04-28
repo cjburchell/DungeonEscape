@@ -20,6 +20,7 @@ namespace Redpoint.DungeonEscape.Unity
         private enum SettingsTab
         {
             General,
+            Ui,
             Input,
             Debug
         }
@@ -40,9 +41,11 @@ namespace Redpoint.DungeonEscape.Unity
         private GUIStyle buttonStyle;
         private GUIStyle tabStyle;
         private GUIStyle selectedTabStyle;
+        private GUIStyle panelStyle;
+        private GUIStyle rowStyle;
         private GUIStyle selectedRowStyle;
-        private Texture2D selectedRowTexture;
         private float lastPixelScale;
+        private string lastThemeSignature;
         private MenuTab currentTab = MenuTab.Party;
         private SettingsTab currentSettingsTab = SettingsTab.General;
         private Vector2 scrollPosition;
@@ -130,7 +133,7 @@ namespace Redpoint.DungeonEscape.Unity
             var height = Mathf.Min(Screen.height - 32f * scale, 680f * scale);
             var rect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
 
-            GUI.Box(rect, GUIContent.none);
+            GUI.Box(rect, GUIContent.none, panelStyle);
             GUILayout.BeginArea(new Rect(rect.x + 16f * scale, rect.y + 14f * scale, rect.width - 32f * scale, rect.height - 28f * scale));
             DrawHeader();
             DrawTabs();
@@ -331,7 +334,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void DrawHeroStatus(Hero hero, bool active)
         {
-            GUILayout.BeginVertical(GUI.skin.box);
+            GUILayout.BeginVertical();
             GUILayout.Label(hero.Name + "  L" + hero.Level + " " + hero.Class + (active ? "" : "  Reserve"), labelStyle);
             GUILayout.Label(
                 "HP " + hero.Health + "/" + hero.MaxHealth +
@@ -465,7 +468,7 @@ namespace Redpoint.DungeonEscape.Unity
                 }
 
                 BeginSelectableRow();
-                GUILayout.BeginVertical(GUI.skin.box);
+                GUILayout.BeginVertical();
                 GUILayout.Label(quest.Name + (activeQuest.Completed ? " (Finished)" : ""), labelStyle);
                 if (!string.IsNullOrEmpty(quest.Description))
                 {
@@ -501,6 +504,9 @@ namespace Redpoint.DungeonEscape.Unity
                 case SettingsTab.General:
                     DrawGeneralSettings(settings);
                     break;
+                case SettingsTab.Ui:
+                    DrawUiSettings(settings);
+                    break;
                 case SettingsTab.Input:
                     DrawInputBindings();
                     break;
@@ -515,6 +521,7 @@ namespace Redpoint.DungeonEscape.Unity
             BeginSelectableRow();
             GUILayout.BeginHorizontal();
             DrawSettingsTab(SettingsTab.General, "General");
+            DrawSettingsTab(SettingsTab.Ui, "UI");
             DrawSettingsTab(SettingsTab.Input, "Input");
             DrawSettingsTab(SettingsTab.Debug, "Debug");
             GUILayout.EndHorizontal();
@@ -562,6 +569,48 @@ namespace Redpoint.DungeonEscape.Unity
             }
         }
 
+        private void DrawUiSettings(Settings settings)
+        {
+            GUI.changed = false;
+            BeginSelectableRow();
+            GUILayout.Label("Background Colour", labelStyle);
+            settings.UiBackgroundColor = GUILayout.TextField(GetThemeValue(settings.UiBackgroundColor, "#000000"), buttonStyle);
+            EndSelectableRow();
+            BeginSelectableRow();
+            GUILayout.Label("Background Transparency: " + settings.UiBackgroundAlpha.ToString("0.00"), labelStyle);
+            settings.UiBackgroundAlpha = GUILayout.HorizontalSlider(Mathf.Clamp01(settings.UiBackgroundAlpha), 0f, 1f);
+            EndSelectableRow();
+            BeginSelectableRow();
+            GUILayout.Label("Hover Colour", labelStyle);
+            settings.UiHoverColor = GUILayout.TextField(GetThemeValue(settings.UiHoverColor, "#808080"), buttonStyle);
+            EndSelectableRow();
+            BeginSelectableRow();
+            GUILayout.Label("Pressed Colour", labelStyle);
+            settings.UiActiveColor = GUILayout.TextField(GetThemeValue(settings.UiActiveColor, "#D3D3D3"), buttonStyle);
+            EndSelectableRow();
+            BeginSelectableRow();
+            GUILayout.Label("Border Colour", labelStyle);
+            settings.UiBorderColor = GUILayout.TextField(GetThemeValue(settings.UiBorderColor, "#FFFFFF"), buttonStyle);
+            EndSelectableRow();
+            BeginSelectableRow();
+            GUILayout.Label("Border Thickness: " + GetBorderThickness(settings), labelStyle);
+            settings.UiBorderThickness = Mathf.RoundToInt(GUILayout.HorizontalSlider(GetBorderThickness(settings), 2f, 12f));
+            EndSelectableRow();
+            BeginSelectableRow();
+            GUILayout.Label("Text Colour", labelStyle);
+            settings.UiTextColor = GUILayout.TextField(GetThemeValue(settings.UiTextColor, "#FFFFFF"), buttonStyle);
+            EndSelectableRow();
+            BeginSelectableRow();
+            GUILayout.Label("Highlighted Text/Border Colour", labelStyle);
+            settings.UiHighlightColor = GUILayout.TextField(GetThemeValue(settings.UiHighlightColor, "#FFFF00"), buttonStyle);
+            EndSelectableRow();
+
+            if (GUI.changed)
+            {
+                ApplySettings(settings);
+            }
+        }
+
         private void DrawDebugSettings(Settings settings)
         {
             GUI.changed = false;
@@ -600,7 +649,7 @@ namespace Redpoint.DungeonEscape.Unity
             foreach (var binding in bindings.OrderBy(item => item.Command))
             {
                 BeginSelectableRow();
-                GUILayout.BeginVertical(GUI.skin.box);
+                GUILayout.BeginVertical();
                 GUILayout.Label(binding.Command + ": " + DungeonEscapeInput.GetBindingText(binding), labelStyle);
                 GUILayout.BeginHorizontal();
                 DrawBindingButton(binding, "Primary", binding.Primary, 0);
@@ -641,7 +690,7 @@ namespace Redpoint.DungeonEscape.Unity
         private void BeginSelectableRow()
         {
             var rowIndex = drawingRowIndex++;
-            GUILayout.BeginVertical(rowIndex == selectedRowIndex ? selectedRowStyle : GUI.skin.box);
+            GUILayout.BeginVertical(rowIndex == selectedRowIndex ? selectedRowStyle : rowStyle);
         }
 
         private static void EndSelectableRow()
@@ -673,6 +722,8 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 case SettingsTab.General:
                     return 5;
+                case SettingsTab.Ui:
+                    return 9;
                 case SettingsTab.Input:
                     return DungeonEscapeInput.GetBindings().Length + 2;
                 case SettingsTab.Debug:
@@ -866,6 +917,20 @@ namespace Redpoint.DungeonEscape.Unity
                         break;
                 }
             }
+            else if (currentSettingsTab == SettingsTab.Ui)
+            {
+                switch (selectedRowIndex - 1)
+                {
+                    case 1:
+                        settings.UiBackgroundAlpha = Mathf.Clamp01(settings.UiBackgroundAlpha + 0.05f * delta);
+                        ApplySettings(settings);
+                        break;
+                    case 5:
+                        settings.UiBorderThickness = Mathf.Clamp(settings.UiBorderThickness + delta, 2, 12);
+                        ApplySettings(settings);
+                        break;
+                }
+            }
             else if (currentSettingsTab == SettingsTab.Input)
             {
                 selectedBindingSlotIndex = (selectedBindingSlotIndex + delta + 3) % 3;
@@ -1033,6 +1098,7 @@ namespace Redpoint.DungeonEscape.Unity
             DungeonEscapeSettingsCache.Set(settings);
             DungeonEscapeSettingsCache.Save();
             DungeonEscapeUiSettings.GetOrCreate().ApplySettings(settings);
+            lastThemeSignature = null;
             if (mapView == null)
             {
                 mapView = FindObjectOfType<TiledMapView>();
@@ -1042,6 +1108,16 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 mapView.RefreshRender();
             }
+        }
+
+        private static string GetThemeValue(string value, string fallback)
+        {
+            return DungeonEscapeUiTheme.GetThemeValue(value, fallback);
+        }
+
+        private static int GetBorderThickness(Settings settings)
+        {
+            return DungeonEscapeUiTheme.GetBorderThickness(settings);
         }
 
         private static int GetMaxPartyMembers()
@@ -1078,53 +1154,27 @@ namespace Redpoint.DungeonEscape.Unity
         private void EnsureStyles()
         {
             var scale = GetPixelScale();
-            if (titleStyle != null && Mathf.Approximately(lastPixelScale, scale))
+            var settings = DungeonEscapeSettingsCache.Current;
+            var themeSignature = DungeonEscapeUiTheme.GetSignature(settings);
+            if (titleStyle != null &&
+                Mathf.Approximately(lastPixelScale, scale) &&
+                string.Equals(lastThemeSignature, themeSignature, StringComparison.Ordinal))
             {
                 return;
             }
 
             lastPixelScale = scale;
-            titleStyle = new GUIStyle(GUI.skin.label)
-            {
-                fontSize = Mathf.RoundToInt(20f * scale),
-                fontStyle = FontStyle.Bold,
-                normal = { textColor = Color.white },
-                wordWrap = true
-            };
-            labelStyle = new GUIStyle(GUI.skin.label)
-            {
-                fontSize = Mathf.RoundToInt(16f * scale),
-                normal = { textColor = Color.white },
-                wordWrap = true
-            };
-            smallStyle = new GUIStyle(labelStyle)
-            {
-                fontSize = Mathf.RoundToInt(14f * scale)
-            };
-            buttonStyle = new GUIStyle(GUI.skin.button)
-            {
-                fontSize = Mathf.RoundToInt(15f * scale)
-            };
-            tabStyle = new GUIStyle(buttonStyle);
-            selectedTabStyle = new GUIStyle(buttonStyle)
-            {
-                fontStyle = FontStyle.Bold,
-                normal = { textColor = Color.yellow }
-            };
-            if (selectedRowTexture == null)
-            {
-                selectedRowTexture = new Texture2D(1, 1);
-                selectedRowTexture.SetPixel(0, 0, new Color(0.25f, 0.22f, 0.08f, 0.95f));
-                selectedRowTexture.Apply();
-            }
-
-            selectedRowStyle = new GUIStyle(GUI.skin.box)
-            {
-                normal = { background = selectedRowTexture, textColor = Color.white },
-                border = GUI.skin.box.border,
-                padding = GUI.skin.box.padding,
-                margin = GUI.skin.box.margin
-            };
+            lastThemeSignature = themeSignature;
+            var theme = DungeonEscapeUiTheme.Create(settings, scale);
+            panelStyle = theme.PanelStyle;
+            rowStyle = theme.RowStyle;
+            selectedRowStyle = theme.SelectedRowStyle;
+            titleStyle = theme.TitleStyle;
+            labelStyle = theme.LabelStyle;
+            smallStyle = theme.SmallStyle;
+            buttonStyle = theme.ButtonStyle;
+            tabStyle = theme.TabStyle;
+            selectedTabStyle = theme.SelectedTabStyle;
         }
 
         private float GetPixelScale()

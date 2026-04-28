@@ -46,15 +46,15 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F6))
+            if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.QuickSave))
             {
                 SaveQuick();
             }
-            else if (Input.GetKeyDown(KeyCode.F9))
+            else if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.QuickLoad))
             {
                 LoadQuick();
             }
-            else if (Input.GetKeyDown(KeyCode.F10))
+            else if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Restart))
             {
                 RestartNewGame();
             }

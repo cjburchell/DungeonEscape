@@ -5,6 +5,14 @@
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 namespace Redpoint.DungeonEscape
 {
+    public class InputBinding
+    {
+        public string Command { get; set; }
+        public string Primary { get; set; }
+        public string Secondary { get; set; }
+        public string Gamepad { get; set; }
+    }
+
     public class Settings
     {
         public bool NoMonsters { get; set; }
@@ -22,5 +30,6 @@ namespace Redpoint.DungeonEscape
         public bool AutoSaveEnabled { get; set; } = true;
         public float AutoSaveIntervalSeconds { get; set; } = 5f;
         public bool ShowHiddenObjects { get; set; }
+        public InputBinding[] InputBindings { get; set; }
     }
 }

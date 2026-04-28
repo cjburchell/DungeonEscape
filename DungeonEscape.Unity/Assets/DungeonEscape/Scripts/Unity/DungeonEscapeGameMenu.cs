@@ -19,6 +19,8 @@ namespace Redpoint.DungeonEscape.Unity
 
         private const float MinUiScale = 0.5f;
         private const float MaxUiScale = 3f;
+        private const float InitialNavigationRepeatDelay = 0.35f;
+        private const float NavigationRepeatDelay = 0.12f;
 
         private static bool isOpen;
 
@@ -35,6 +37,12 @@ namespace Redpoint.DungeonEscape.Unity
         private MenuTab currentTab = MenuTab.Party;
         private Vector2 scrollPosition;
         private int selectedHeroIndex;
+        private InputBinding rebindingInput;
+        private string rebindingSlot;
+        private int repeatingMenuMoveX;
+        private float nextMenuMoveXTime;
+        private int repeatingMenuMoveY;
+        private float nextMenuMoveYTime;
 
         public static bool IsOpen
         {
@@ -43,26 +51,50 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.C))
+            if (rebindingInput != null)
             {
-                Toggle(MenuTab.Party);
+                string keyCode;
+                if (DungeonEscapeInput.TryCaptureBinding(out keyCode))
+                {
+                    DungeonEscapeInput.SetBinding(rebindingInput, rebindingSlot, keyCode);
+                    DungeonEscapeSettingsCache.Save();
+                    rebindingInput = null;
+                    rebindingSlot = null;
+                }
+
+                return;
             }
-            else if (Input.GetKeyDown(KeyCode.I))
+
+            if (isOpen && DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.MenuPreviousTab))
             {
-                Toggle(MenuTab.Inventory);
+                CycleTab(-1);
             }
-            else if (Input.GetKeyDown(KeyCode.J))
+            else if (isOpen && DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.MenuNextTab))
             {
-                Toggle(MenuTab.Quests);
+                CycleTab(1);
             }
-            else if (Input.GetKeyDown(KeyCode.O))
-            {
-                Toggle(MenuTab.Settings);
-            }
-            else if (isOpen && Input.GetKeyDown(KeyCode.Escape))
+            else if (isOpen && DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Cancel))
             {
                 isOpen = false;
             }
+            else if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.MenuParty))
+            {
+                Toggle(MenuTab.Party);
+            }
+            else if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.MenuInventory))
+            {
+                Toggle(MenuTab.Inventory);
+            }
+            else if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.MenuQuests))
+            {
+                Toggle(MenuTab.Quests);
+            }
+            else if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.MenuSettings))
+            {
+                Toggle(MenuTab.Settings);
+            }
+
+            UpdateGamepadMenuNavigation();
         }
 
         private void OnGUI()
@@ -101,6 +133,56 @@ namespace Redpoint.DungeonEscape.Unity
             currentTab = tab;
             scrollPosition = Vector2.zero;
             isOpen = true;
+            ResetMenuNavigationRepeat();
+        }
+
+        private void CycleTab(int delta)
+        {
+            var tabCount = Enum.GetValues(typeof(MenuTab)).Length;
+            var next = ((int)currentTab + delta + tabCount) % tabCount;
+            currentTab = (MenuTab)next;
+            scrollPosition = Vector2.zero;
+            ResetMenuNavigationRepeat();
+        }
+
+        private void UpdateGamepadMenuNavigation()
+        {
+            if (!isOpen)
+            {
+                ResetMenuNavigationRepeat();
+                return;
+            }
+
+            var moveY = GetMenuMoveY();
+            if (moveY != 0)
+            {
+                scrollPosition.y = Mathf.Max(0f, scrollPosition.y + moveY * 42f * GetPixelScale());
+            }
+
+            if (currentTab != MenuTab.Inventory)
+            {
+                return;
+            }
+
+            var party = GetParty();
+            if (party == null)
+            {
+                return;
+            }
+
+            var memberCount = party.Members.Count;
+            if (memberCount <= 1)
+            {
+                return;
+            }
+
+            var moveX = GetMenuMoveX();
+            if (moveX == 0)
+            {
+                return;
+            }
+
+            selectedHeroIndex = (selectedHeroIndex + moveX + memberCount) % memberCount;
         }
 
         private void DrawHeader()
@@ -398,6 +480,129 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 ApplySettings(settings);
             }
+
+            GUILayout.Space(14f * GetPixelScale());
+            DrawInputBindings();
+        }
+
+        private void DrawInputBindings()
+        {
+            var bindings = DungeonEscapeInput.GetBindings();
+            GUILayout.Label("Input Bindings", titleStyle);
+            if (rebindingInput != null)
+            {
+                GUILayout.Label("Press a key or gamepad button for " + rebindingInput.Command + " " + rebindingSlot + ".", labelStyle);
+                if (GUILayout.Button("Cancel Rebind", buttonStyle, GUILayout.Width(160f * GetPixelScale())))
+                {
+                    rebindingInput = null;
+                    rebindingSlot = null;
+                }
+            }
+
+            foreach (var binding in bindings.OrderBy(item => item.Command))
+            {
+                GUILayout.BeginVertical(GUI.skin.box);
+                GUILayout.Label(binding.Command + ": " + DungeonEscapeInput.GetBindingText(binding), labelStyle);
+                GUILayout.BeginHorizontal();
+                DrawBindingButton(binding, "Primary", binding.Primary);
+                DrawBindingButton(binding, "Secondary", binding.Secondary);
+                DrawBindingButton(binding, "Gamepad", binding.Gamepad);
+                GUILayout.EndHorizontal();
+                GUILayout.EndVertical();
+            }
+
+            if (GUILayout.Button("Reset Input Bindings", buttonStyle, GUILayout.Width(220f * GetPixelScale())))
+            {
+                DungeonEscapeInput.ResetBindings();
+                rebindingInput = null;
+                rebindingSlot = null;
+            }
+        }
+
+        private void DrawBindingButton(InputBinding binding, string slot, string currentValue)
+        {
+            var label = slot + ": " + (string.IsNullOrEmpty(currentValue) || currentValue == KeyCode.None.ToString() ? "-" : currentValue);
+            if (GUILayout.Button(label, buttonStyle, GUILayout.Width(190f * GetPixelScale())))
+            {
+                rebindingInput = binding;
+                rebindingSlot = slot;
+            }
+        }
+
+        private int GetMenuMoveX()
+        {
+            var pressed = DungeonEscapeInput.GetMoveXDown();
+            if (pressed != 0)
+            {
+                repeatingMenuMoveX = pressed;
+                nextMenuMoveXTime = Time.unscaledTime + InitialNavigationRepeatDelay;
+                return pressed;
+            }
+
+            var held = DungeonEscapeInput.GetMoveX();
+            if (held == 0)
+            {
+                repeatingMenuMoveX = 0;
+                nextMenuMoveXTime = 0f;
+                return 0;
+            }
+
+            if (held != repeatingMenuMoveX)
+            {
+                repeatingMenuMoveX = held;
+                nextMenuMoveXTime = Time.unscaledTime + InitialNavigationRepeatDelay;
+                return held;
+            }
+
+            if (Time.unscaledTime < nextMenuMoveXTime)
+            {
+                return 0;
+            }
+
+            nextMenuMoveXTime = Time.unscaledTime + NavigationRepeatDelay;
+            return held;
+        }
+
+        private int GetMenuMoveY()
+        {
+            var pressed = DungeonEscapeInput.GetMoveYDown();
+            if (pressed != 0)
+            {
+                repeatingMenuMoveY = pressed;
+                nextMenuMoveYTime = Time.unscaledTime + InitialNavigationRepeatDelay;
+                return pressed;
+            }
+
+            var held = DungeonEscapeInput.GetMoveY();
+            if (held == 0)
+            {
+                repeatingMenuMoveY = 0;
+                nextMenuMoveYTime = 0f;
+                return 0;
+            }
+
+            if (held != repeatingMenuMoveY)
+            {
+                repeatingMenuMoveY = held;
+                nextMenuMoveYTime = Time.unscaledTime + InitialNavigationRepeatDelay;
+                return held;
+            }
+
+            if (Time.unscaledTime < nextMenuMoveYTime)
+            {
+                return 0;
+            }
+
+            nextMenuMoveYTime = Time.unscaledTime + NavigationRepeatDelay;
+            return held;
+        }
+
+        private void ResetMenuNavigationRepeat()
+        {
+            repeatingMenuMoveX = 0;
+            nextMenuMoveXTime = 0f;
+            repeatingMenuMoveY = 0;
+            nextMenuMoveYTime = 0f;
         }
 
         private void ApplySettings(Settings settings)

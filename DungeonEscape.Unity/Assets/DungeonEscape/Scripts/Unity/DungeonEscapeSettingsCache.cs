@@ -39,6 +39,7 @@ namespace Redpoint.DungeonEscape.Unity
                 cachedSettings = new Settings { Version = SettingsFileVersion };
             }
 
+            DungeonEscapeInput.EnsureBindings(cachedSettings);
             return cachedSettings;
         }
 

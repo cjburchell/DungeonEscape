@@ -169,7 +169,8 @@ namespace Redpoint.DungeonEscape.Unity
             if (messageBox != null && messageBox.IsVisible)
             {
                 if (!messageBox.HasChoices &&
-                    (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape)))
+                    (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Interact) ||
+                     DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Cancel)))
                 {
                     messageBox.Hide();
                 }
@@ -177,31 +178,14 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
+            if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Interact))
             {
                 TryInteract();
                 return;
             }
 
-            var deltaX = 0;
-            var deltaY = 0;
-
-            if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
-            {
-                deltaX = -1;
-            }
-            else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
-            {
-                deltaX = 1;
-            }
-            else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
-            {
-                deltaY = -1;
-            }
-            else if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
-            {
-                deltaY = 1;
-            }
+            var deltaX = DungeonEscapeInput.GetMoveX();
+            var deltaY = deltaX == 0 ? DungeonEscapeInput.GetMoveY() : 0;
 
             if (deltaX == 0 && deltaY == 0)
             {
@@ -346,7 +330,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private static bool IsSprintHeld()
         {
-            return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+            return DungeonEscapeInput.GetCommand(DungeonEscapeInputCommand.Sprint);
         }
 
         private void TryApplyWarp()

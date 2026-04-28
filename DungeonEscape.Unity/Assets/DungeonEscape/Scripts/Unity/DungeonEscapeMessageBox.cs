@@ -6,6 +6,9 @@ namespace Redpoint.DungeonEscape.Unity
 {
     public sealed class DungeonEscapeMessageBox : MonoBehaviour
     {
+        private const float InitialNavigationRepeatDelay = 0.35f;
+        private const float NavigationRepeatDelay = 0.12f;
+
         private string speaker;
         private string message;
         private GUIStyle boxStyle;
@@ -20,6 +23,8 @@ namespace Redpoint.DungeonEscape.Unity
         private Action<int> choiceSelected;
         private int selectedChoiceIndex;
         private int acceptInputAfterFrame;
+        private int repeatingChoiceMoveY;
+        private float nextChoiceMoveTime;
 
         public bool IsVisible
         {
@@ -39,6 +44,7 @@ namespace Redpoint.DungeonEscape.Unity
             choiceSelected = null;
             selectedChoiceIndex = 0;
             acceptInputAfterFrame = Time.frameCount;
+            ResetChoiceNavigationRepeat();
         }
 
         public void Show(string speakerName, string text, IEnumerable<string> choiceLabels, Action<int> selected)
@@ -54,6 +60,7 @@ namespace Redpoint.DungeonEscape.Unity
             choiceSelected = selected;
             selectedChoiceIndex = 0;
             acceptInputAfterFrame = Time.frameCount + 1;
+            ResetChoiceNavigationRepeat();
         }
 
         public void Hide()
@@ -63,6 +70,7 @@ namespace Redpoint.DungeonEscape.Unity
             choices = null;
             choiceSelected = null;
             selectedChoiceIndex = 0;
+            ResetChoiceNavigationRepeat();
         }
 
         public void ConfirmOrHide()
@@ -88,7 +96,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Cancel))
             {
                 Hide();
                 return;
@@ -99,18 +107,58 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+            var moveY = GetChoiceMoveY();
+            if (moveY < 0)
             {
                 selectedChoiceIndex = Mathf.Max(0, selectedChoiceIndex - 1);
             }
-            else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+            else if (moveY > 0)
             {
                 selectedChoiceIndex = Mathf.Min(choices.Count - 1, selectedChoiceIndex + 1);
             }
-            else if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
+            else if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Interact))
             {
                 SelectChoice(selectedChoiceIndex);
             }
+        }
+
+        private int GetChoiceMoveY()
+        {
+            var pressed = DungeonEscapeInput.GetMoveYDown();
+            if (pressed != 0)
+            {
+                repeatingChoiceMoveY = pressed;
+                nextChoiceMoveTime = Time.unscaledTime + InitialNavigationRepeatDelay;
+                return pressed;
+            }
+
+            var held = DungeonEscapeInput.GetMoveY();
+            if (held == 0)
+            {
+                ResetChoiceNavigationRepeat();
+                return 0;
+            }
+
+            if (held != repeatingChoiceMoveY)
+            {
+                repeatingChoiceMoveY = held;
+                nextChoiceMoveTime = Time.unscaledTime + InitialNavigationRepeatDelay;
+                return held;
+            }
+
+            if (Time.unscaledTime < nextChoiceMoveTime)
+            {
+                return 0;
+            }
+
+            nextChoiceMoveTime = Time.unscaledTime + NavigationRepeatDelay;
+            return held;
+        }
+
+        private void ResetChoiceNavigationRepeat()
+        {
+            repeatingChoiceMoveY = 0;
+            nextChoiceMoveTime = 0f;
         }
 
         private void OnGUI()

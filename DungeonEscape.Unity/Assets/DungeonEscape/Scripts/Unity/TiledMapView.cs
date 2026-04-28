@@ -78,7 +78,7 @@ namespace Redpoint.DungeonEscape.Unity
         {
             if (!keyboardPanningEnabled)
             {
-                if (Input.GetKeyDown(KeyCode.F5))
+                if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.ReloadMap))
                 {
                     ReloadMapAssets();
                 }
@@ -86,32 +86,14 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            if (Input.GetKeyDown(KeyCode.F5))
+            if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.ReloadMap))
             {
                 ReloadMapAssets();
                 return;
             }
 
-            var columnDelta = 0;
-            var rowDelta = 0;
-
-            if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
-            {
-                columnDelta = -1;
-            }
-            else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
-            {
-                columnDelta = 1;
-            }
-
-            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
-            {
-                rowDelta = -1;
-            }
-            else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-            {
-                rowDelta = 1;
-            }
+            var columnDelta = DungeonEscapeInput.GetMoveXDown();
+            var rowDelta = columnDelta == 0 ? DungeonEscapeInput.GetMoveYDown() : 0;
 
             if (columnDelta == 0 && rowDelta == 0)
             {

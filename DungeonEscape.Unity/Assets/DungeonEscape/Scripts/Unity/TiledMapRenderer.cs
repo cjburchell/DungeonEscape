@@ -308,7 +308,9 @@ namespace Redpoint.DungeonEscape.Unity
 
                 var renderer = markerObject.AddComponent<SpriteRenderer>();
                 renderer.sprite = sprite;
-                renderer.sortingOrder = sortingOrder;
+                renderer.sortingOrder = GetObjectSortingOrder(
+                    sortingOrder,
+                    GetObjectSortRow(mapObject, y, height, tileHeight, gid == 0));
                 ApplyAnimation(renderer, animationFrames);
                 renderedObjectCount++;
             }
@@ -452,7 +454,9 @@ namespace Redpoint.DungeonEscape.Unity
                         viewportStartRow,
                         gid == 0),
                     GetObjectLocalScale(width, height, tileWidth, tileHeight, gid == 0),
-                    sortingOrder,
+                    GetObjectSortingOrder(
+                        sortingOrder,
+                        GetObjectSortRow(mapObject, y, height, tileHeight, gid == 0)),
                     "Object_" + groupName + "_" + GetString(mapObject, "name"));
                 renderedObjectCount++;
             }
@@ -521,6 +525,23 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return TiledTilesetSprites.TryGetSprite(gid, spriteSets, out sprite);
+        }
+
+        private static int GetObjectSortingOrder(int layerSortingOrder, int row)
+        {
+            return layerSortingOrder * 1000 + row;
+        }
+
+        private static int GetObjectSortRow(XElement mapObject, float y, float height, int tileHeight, bool useObjectBounds)
+        {
+            if (!useObjectBounds && StartsWith(GetObjectClass(mapObject), "Npc"))
+            {
+                return Mathf.FloorToInt((y - 0.001f) / tileHeight);
+            }
+
+            return useObjectBounds
+                ? Mathf.FloorToInt((y + Math.Max(height, tileHeight) - 0.001f) / tileHeight)
+                : Mathf.FloorToInt((y - 0.001f) / tileHeight);
         }
 
         private static bool TryGetObjectAnimation(

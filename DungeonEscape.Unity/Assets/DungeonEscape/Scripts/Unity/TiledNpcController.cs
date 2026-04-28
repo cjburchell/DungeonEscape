@@ -65,7 +65,7 @@ namespace Redpoint.DungeonEscape.Unity
                 spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
             }
 
-            spriteRenderer.sortingOrder = sortingOrder;
+            spriteRenderer.sortingOrder = mapView.GetObjectSortingOrder(row);
             animationPlayer = gameObject.GetComponent<TiledSpriteAnimationPlayer>();
             if (animationPlayer == null)
             {
@@ -206,6 +206,7 @@ namespace Redpoint.DungeonEscape.Unity
                 gameState.SetObjectPosition(mapId, ObjectId, new WorldPosition(column, row), direction);
             }
 
+            spriteRenderer.sortingOrder = mapView.GetObjectSortingOrder(row);
             UpdateVisualPosition();
             PlayIdleAnimation();
             moving = false;

@@ -62,6 +62,11 @@ namespace Redpoint.DungeonEscape.Unity
             get { return objectSortingOrder; }
         }
 
+        public int GetObjectSortingOrder(int row)
+        {
+            return objectSortingOrder * 1000 + row;
+        }
+
         private void Start()
         {
             ClearRenderedChildren();

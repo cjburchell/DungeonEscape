@@ -253,7 +253,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            spriteRenderer.sortingOrder = mapView.ObjectSortingOrder;
+            spriteRenderer.sortingOrder = mapView.GetObjectSortingOrder(Row);
         }
 
         private void UpdateVisualPosition()

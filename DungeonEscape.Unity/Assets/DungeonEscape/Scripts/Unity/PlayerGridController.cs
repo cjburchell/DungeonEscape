@@ -1,4 +1,3 @@
-using System.IO;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
@@ -18,8 +17,10 @@ namespace Redpoint.DungeonEscape.Unity
 
         private WorldPosition position;
         private SpriteRenderer spriteRenderer;
-        private Dictionary<Direction, Sprite[]> directionSprites;
+        private DirectionalSpriteSet directionSprites;
         private Direction currentDirection = Direction.Down;
+        private Class loadedHeroClass = Class.Hero;
+        private Gender loadedHeroGender = Gender.Male;
         private Coroutine stepAnimation;
         private DungeonEscapeGameState gameState;
         private DungeonEscapeMessageBox messageBox;
@@ -57,7 +58,7 @@ namespace Redpoint.DungeonEscape.Unity
         {
             spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
             directionSprites = LoadHeroSprites();
-            spriteRenderer.sprite = directionSprites[currentDirection][0];
+            spriteRenderer.sprite = directionSprites.GetIdle(currentDirection);
         }
 
         private void Start()
@@ -106,12 +107,28 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             Position = party.CurrentPosition ?? WorldPosition.Zero;
+            ApplyPartySprite(party);
             SetFacing(party.CurrentDirection);
             if (mapView != null)
             {
                 mapView.CenterOn(Position);
                 UpdateVisualPosition();
             }
+        }
+
+        private void ApplyPartySprite(Party party)
+        {
+            var hero = party.ActiveMembers.FirstOrDefault();
+            if (hero == null ||
+                directionSprites == null ||
+                hero.Class == loadedHeroClass && hero.Gender == loadedHeroGender)
+            {
+                return;
+            }
+
+            loadedHeroClass = hero.Class;
+            loadedHeroGender = hero.Gender;
+            directionSprites = LoadHeroSprites(loadedHeroClass, loadedHeroGender);
         }
 
         private void ApplyInitialSpawnIfNeeded()
@@ -643,7 +660,7 @@ namespace Redpoint.DungeonEscape.Unity
         private void SetFacing(Direction direction)
         {
             currentDirection = direction;
-            spriteRenderer.sprite = directionSprites[currentDirection][0];
+            spriteRenderer.sprite = directionSprites.GetIdle(currentDirection);
             if (gameState != null)
             {
                 gameState.SetCurrentDirection(direction);
@@ -662,60 +679,31 @@ namespace Redpoint.DungeonEscape.Unity
 
         private IEnumerator AnimateStep(Direction direction)
         {
-            spriteRenderer.sprite = directionSprites[direction][1];
+            spriteRenderer.sprite = directionSprites.GetStep(direction, 1);
             yield return new WaitForSeconds(0.08f);
-            spriteRenderer.sprite = directionSprites[direction][0];
+            spriteRenderer.sprite = directionSprites.GetIdle(direction);
             yield return new WaitForSeconds(0.08f);
-            spriteRenderer.sprite = directionSprites[direction][1];
+            spriteRenderer.sprite = directionSprites.GetStep(direction, 1);
             yield return new WaitForSeconds(0.08f);
-            spriteRenderer.sprite = directionSprites[direction][0];
+            spriteRenderer.sprite = directionSprites.GetIdle(direction);
             stepAnimation = null;
         }
 
-        private Dictionary<Direction, Sprite[]> LoadHeroSprites()
+        private DirectionalSpriteSet LoadHeroSprites()
         {
-            var path = ToFullAssetPath(heroTextureAssetPath);
-            if (!File.Exists(path))
-            {
-                Debug.LogError("Hero texture not found: " + heroTextureAssetPath);
-                var fallback = CreateFallbackSprite();
-                return new Dictionary<Direction, Sprite[]>
-                {
-                    { Direction.Up, new[] { fallback, fallback } },
-                    { Direction.Right, new[] { fallback, fallback } },
-                    { Direction.Down, new[] { fallback, fallback } },
-                    { Direction.Left, new[] { fallback, fallback } }
-                };
-            }
-
-            var bytes = File.ReadAllBytes(path);
-            var texture = new Texture2D(2, 2);
-            texture.filterMode = FilterMode.Point;
-            texture.LoadImage(bytes);
-
-            const int heroWidth = 32;
-            const int heroHeight = 48;
-            return new Dictionary<Direction, Sprite[]>
-            {
-                { Direction.Up, new[] { CreateHeroSprite(texture, 0, heroWidth, heroHeight), CreateHeroSprite(texture, 1, heroWidth, heroHeight) } },
-                { Direction.Right, new[] { CreateHeroSprite(texture, 2, heroWidth, heroHeight), CreateHeroSprite(texture, 3, heroWidth, heroHeight) } },
-                { Direction.Down, new[] { CreateHeroSprite(texture, 4, heroWidth, heroHeight), CreateHeroSprite(texture, 5, heroWidth, heroHeight) } },
-                { Direction.Left, new[] { CreateHeroSprite(texture, 6, heroWidth, heroHeight), CreateHeroSprite(texture, 7, heroWidth, heroHeight) } }
-            };
+            return LoadHeroSprites(loadedHeroClass, loadedHeroGender);
         }
 
-        private static Sprite CreateHeroSprite(Texture2D texture, int frameIndex, int heroWidth, int heroHeight)
+        private DirectionalSpriteSet LoadHeroSprites(Class heroClass, Gender gender)
         {
-            var columns = texture.width / heroWidth;
-            var frameX = frameIndex % columns;
-            var frameY = frameIndex / columns;
-            var rect = new Rect(
-                frameX * heroWidth,
-                texture.height - ((frameY + 1) * heroHeight),
+            const int heroWidth = 32;
+            const int heroHeight = 48;
+            return DirectionalSpriteSheet.LoadCharacterSet(
+                heroTextureAssetPath,
                 heroWidth,
-                heroHeight);
-
-            return Sprite.Create(texture, rect, new Vector2(0.5f, 0.33f), heroWidth);
+                heroHeight,
+                DirectionalSpriteSheet.GetHeroBaseFrameIndex(heroClass, gender),
+                CreateFallbackSprite());
         }
 
         private static Sprite CreateFallbackSprite()
@@ -724,11 +712,6 @@ namespace Redpoint.DungeonEscape.Unity
             texture.SetPixel(0, 0, Color.cyan);
             texture.Apply();
             return Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
-        }
-
-        private static string ToFullAssetPath(string assetPath)
-        {
-            return Path.Combine(Application.dataPath, assetPath.Replace("Assets/", ""));
         }
 
     }

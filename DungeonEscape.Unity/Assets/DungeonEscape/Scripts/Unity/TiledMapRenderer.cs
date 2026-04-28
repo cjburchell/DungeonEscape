@@ -501,7 +501,7 @@ namespace Redpoint.DungeonEscape.Unity
             sprite = null;
             if (gameState != null &&
                 gameState.IsObjectOpen(mapId, GetInt(mapObject, "id")) &&
-                string.Equals(GetString(mapObject, "class"), "Chest", StringComparison.OrdinalIgnoreCase))
+                string.Equals(GetObjectClass(mapObject), "Chest", StringComparison.OrdinalIgnoreCase))
             {
                 var openImage = GetIntProperty(mapObject, "OpenImage", 135);
                 if (TiledTilesetSprites.TryGetSpriteFromSameSet(gid, openImage, spriteSets, out sprite))
@@ -524,7 +524,7 @@ namespace Redpoint.DungeonEscape.Unity
             frames = null;
             if (gameState != null &&
                 gameState.IsObjectOpen(mapId, GetInt(mapObject, "id")) &&
-                string.Equals(GetString(mapObject, "class"), "Chest", StringComparison.OrdinalIgnoreCase))
+                string.Equals(GetObjectClass(mapObject), "Chest", StringComparison.OrdinalIgnoreCase))
             {
                 var openImage = GetIntProperty(mapObject, "OpenImage", 135);
                 if (TiledTilesetSprites.TryGetAnimationFromSameSet(gid, openImage, spriteSets, out frames))
@@ -533,7 +533,31 @@ namespace Redpoint.DungeonEscape.Unity
                 }
             }
 
-            return TiledTilesetSprites.TryGetAnimation(gid, spriteSets, out frames);
+            return TiledTilesetSprites.TryGetAnimation(gid, spriteSets, out frames) ||
+                   TryGetCharacterIdleAnimation(gid, mapObject, spriteSets, out frames);
+        }
+
+        private static bool TryGetCharacterIdleAnimation(
+            int gid,
+            XElement mapObject,
+            IList<TiledTilesetSpriteSet> spriteSets,
+            out List<TiledSpriteAnimationFrame> frames)
+        {
+            frames = null;
+            var objectClass = GetObjectClass(mapObject);
+            if (!StartsWith(objectClass, "Npc") && !GetBoolProperty(mapObject, "IdleAnimation"))
+            {
+                return false;
+            }
+
+            Direction direction;
+            if (TryGetDirectionProperty(mapObject, out direction) &&
+                TiledTilesetSprites.TryGetDirectionalAnimation(gid, spriteSets, direction, out frames))
+            {
+                return true;
+            }
+
+            return TiledTilesetSprites.TryGetDirectionalAnimation(gid, spriteSets, out frames);
         }
 
         private static void ApplyAnimation(SpriteRenderer renderer, List<TiledSpriteAnimationFrame> animationFrames)
@@ -623,6 +647,16 @@ namespace Redpoint.DungeonEscape.Unity
             return attribute == null ? null : attribute.Value;
         }
 
+        private static string GetObjectClass(XElement element)
+        {
+            return GetString(element, "class") ?? GetString(element, "type");
+        }
+
+        private static bool StartsWith(string value, string prefix)
+        {
+            return value != null && value.StartsWith(prefix, StringComparison.OrdinalIgnoreCase);
+        }
+
         private static bool HasPropertyValue(XElement element, string propertyName, string expectedValue)
         {
             var properties = element.Element("properties");
@@ -673,6 +707,103 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return defaultValue;
+        }
+
+        private static bool GetBoolProperty(XElement element, string propertyName)
+        {
+            var properties = element.Element("properties");
+            if (properties == null)
+            {
+                return false;
+            }
+
+            foreach (var property in properties.Elements("property"))
+            {
+                if (!string.Equals(GetString(property, "name"), propertyName, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                var value = GetString(property, "value") ?? property.Value;
+                return string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
+            }
+
+            return false;
+        }
+
+        private static bool TryGetDirectionProperty(XElement element, out Direction direction)
+        {
+            direction = Direction.Down;
+            string value;
+            if (!TryGetStringProperty(element, "Direction", out value) &&
+                !TryGetStringProperty(element, "Facing", out value))
+            {
+                return false;
+            }
+
+            return TryParseDirection(value, out direction);
+        }
+
+        private static bool TryParseDirection(string value, out Direction direction)
+        {
+            direction = Direction.Down;
+            if (string.IsNullOrEmpty(value))
+            {
+                return false;
+            }
+
+            if (string.Equals(value, "North", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(value, "Up", StringComparison.OrdinalIgnoreCase))
+            {
+                direction = Direction.Up;
+                return true;
+            }
+
+            if (string.Equals(value, "East", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(value, "Right", StringComparison.OrdinalIgnoreCase))
+            {
+                direction = Direction.Right;
+                return true;
+            }
+
+            if (string.Equals(value, "South", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(value, "Down", StringComparison.OrdinalIgnoreCase))
+            {
+                direction = Direction.Down;
+                return true;
+            }
+
+            if (string.Equals(value, "West", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(value, "Left", StringComparison.OrdinalIgnoreCase))
+            {
+                direction = Direction.Left;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryGetStringProperty(XElement element, string propertyName, out string value)
+        {
+            value = null;
+            var properties = element.Element("properties");
+            if (properties == null)
+            {
+                return false;
+            }
+
+            foreach (var property in properties.Elements("property"))
+            {
+                if (!string.Equals(GetString(property, "name"), propertyName, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                value = GetString(property, "value") ?? property.Value;
+                return true;
+            }
+
+            return false;
         }
 
         private static float GetFloat(XElement element, string name)

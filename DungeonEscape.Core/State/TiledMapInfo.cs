@@ -179,6 +179,7 @@ namespace Redpoint.DungeonEscape.State
         public string ImageSource { get; set; }
         public int ImageWidth { get; set; }
         public int ImageHeight { get; set; }
+        public Dictionary<string, string> Properties { get; set; }
         public Dictionary<int, List<TiledTileAnimationFrameInfo>> Animations { get; set; }
 
         public static TiledTilesetDocumentInfo Parse(string xml)
@@ -199,8 +200,32 @@ namespace Redpoint.DungeonEscape.State
                 ImageSource = image == null ? null : GetString(image, "source"),
                 ImageWidth = image == null ? 0 : GetInt(image, "width"),
                 ImageHeight = image == null ? 0 : GetInt(image, "height"),
+                Properties = ReadProperties(tileset),
                 Animations = ReadAnimations(tileset)
             };
+        }
+
+        private static Dictionary<string, string> ReadProperties(XElement element)
+        {
+            var result = new Dictionary<string, string>();
+            var properties = element.Element("properties");
+            if (properties == null)
+            {
+                return result;
+            }
+
+            foreach (var property in properties.Elements("property"))
+            {
+                var name = GetString(property, "name");
+                if (string.IsNullOrEmpty(name))
+                {
+                    continue;
+                }
+
+                result[name] = GetString(property, "value") ?? property.Value;
+            }
+
+            return result;
         }
 
         private static Dictionary<int, List<TiledTileAnimationFrameInfo>> ReadAnimations(XElement tileset)

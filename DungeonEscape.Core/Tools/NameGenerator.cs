@@ -130,8 +130,13 @@ namespace Redpoint.DungeonEscape.Tools
         var tableLen = new Dictionary<string, double>();
         foreach (var key in _chain.Keys.ToList())
         {
+          if (key == "table_len")
+          {
+            continue;
+          }
+
           tableLen[key] = 0;
-          foreach (var token in _chain[key].Keys)
+          foreach (var token in _chain[key].Keys.ToList())
           {
             var count = _chain[key][token];
             var weighted = Math.Floor(Math.Pow(count, 1.3));
@@ -140,8 +145,9 @@ namespace Redpoint.DungeonEscape.Tools
             tableLen[key] += weighted;
           }
 
-          _chain["table_len"] = tableLen;
         }
+
+        _chain["table_len"] = tableLen;
       }
     }
 

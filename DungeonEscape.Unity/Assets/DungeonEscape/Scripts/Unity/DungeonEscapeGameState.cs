@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using Redpoint.DungeonEscape.State;
+using Redpoint.DungeonEscape.Tools;
 using UnityEngine;
 
 namespace Redpoint.DungeonEscape.Unity
@@ -31,6 +32,7 @@ namespace Redpoint.DungeonEscape.Unity
         public event Action<GameSave> SaveLoaded;
         private bool saveDirty;
         private float autoSaveCountdown;
+        private NameGenerator nameGenerator;
 
         public Party Party
         {
@@ -297,12 +299,34 @@ namespace Redpoint.DungeonEscape.Unity
             return objectState == null ? null : objectState.Direction;
         }
 
+        public bool IsObjectActive(string mapId, int objectId)
+        {
+            EnsureInitialized();
+            var objectState = GetObjectState(mapId, objectId, false);
+            return objectState == null || objectState.IsActive;
+        }
+
         public void SetObjectPosition(string mapId, int objectId, WorldPosition position, Direction direction)
         {
             EnsureInitialized();
             var objectState = GetObjectState(mapId, objectId, true);
             objectState.Position = position;
             objectState.Direction = direction;
+            MarkDirty();
+        }
+
+        public void SetObjectActive(string mapId, TiledObjectInfo mapObject, bool active)
+        {
+            EnsureInitialized();
+            if (mapObject == null)
+            {
+                return;
+            }
+
+            var objectState = GetObjectState(mapId, mapObject.Id, true);
+            objectState.Name = mapObject.Name;
+            objectState.Type = GetSpriteType(mapObject);
+            objectState.IsActive = active;
             MarkDirty();
         }
 
@@ -397,6 +421,48 @@ namespace Redpoint.DungeonEscape.Unity
             objectState.IsOpen = true;
             MarkDirty();
             return message.ToString().TrimEnd();
+        }
+
+        public string RecruitPartyMember(TiledObjectInfo mapObject)
+        {
+            EnsureInitialized();
+            if (mapObject == null || !IsPartyMemberObject(mapObject))
+            {
+                return "";
+            }
+
+            var currentMapId = Party.CurrentMapId;
+            if (!IsObjectActive(currentMapId, mapObject.Id))
+            {
+                return mapObject.Name + " has already joined.";
+            }
+
+            var gender = GetEnumProperty(mapObject, "Gender", Gender.Male);
+            var memberClass = GetEnumProperty(mapObject, "Class", Class.Fighter);
+            var level = Math.Max(1, GetIntProperty(mapObject, "Level", 1));
+            var memberName = GetRecruitName(mapObject, gender);
+            if (Party.Members.Any(member => string.Equals(member.Name, memberName, StringComparison.OrdinalIgnoreCase)))
+            {
+                memberName = GenerateUniqueName(gender);
+            }
+
+            var hero = CreateHero(memberName, memberClass, gender, level, true);
+            hero.IsActive = false;
+            hero.Order = 0;
+
+            Party.Members.Add(hero);
+            SetObjectActive(currentMapId, mapObject, false);
+
+            if (Party.ActiveMembers.Count() < GetMaxPartyMembers())
+            {
+                hero.IsActive = true;
+                hero.Order = GetNextPartyOrder();
+                MarkDirty();
+                return hero.Name + " joined the party.";
+            }
+
+            MarkDirty();
+            return hero.Name + " joined, but is waiting because the party is full.";
         }
 
         private List<Item> CreateMapObjectItems(TiledObjectInfo mapObject)
@@ -722,13 +788,18 @@ namespace Redpoint.DungeonEscape.Unity
 
         private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName)
         {
+            return GetIntProperty(mapObject, propertyName, 0);
+        }
+
+        private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName, int defaultValue)
+        {
             string value;
             int result;
             return mapObject.Properties != null &&
                    mapObject.Properties.TryGetValue(propertyName, out value) &&
                    int.TryParse(value, out result)
                 ? result
-                : 0;
+                : defaultValue;
         }
 
         private static bool IsPickupObject(TiledObjectInfo mapObject)
@@ -739,9 +810,23 @@ namespace Redpoint.DungeonEscape.Unity
 
         private static SpriteType GetSpriteType(TiledObjectInfo mapObject)
         {
-            return string.Equals(mapObject.Class, "HiddenItem", StringComparison.OrdinalIgnoreCase)
-                ? SpriteType.HiddenItem
-                : SpriteType.Chest;
+            if (string.Equals(mapObject.Class, "HiddenItem", StringComparison.OrdinalIgnoreCase))
+            {
+                return SpriteType.HiddenItem;
+            }
+
+            if (string.Equals(mapObject.Class, "NpcPartyMember", StringComparison.OrdinalIgnoreCase))
+            {
+                return SpriteType.NpcPartyMember;
+            }
+
+            return SpriteType.Chest;
+        }
+
+        private static bool IsPartyMemberObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   string.Equals(mapObject.Class, "NpcPartyMember", StringComparison.OrdinalIgnoreCase);
         }
 
         private string CheckQuest(Item item)
@@ -861,7 +946,7 @@ namespace Redpoint.DungeonEscape.Unity
             };
             party.CurrentMapIsOverWorld = party.CurrentMapId == "overworld";
             party.OverWorldPosition = party.CurrentPosition.Value;
-            party.Members.Add(CreateStarterHero(party.PlayerName));
+            party.Members.Add(CreateHero(party.PlayerName, Class.Hero, Gender.Male, 1, true));
 
             return new GameSave
             {
@@ -871,13 +956,13 @@ namespace Redpoint.DungeonEscape.Unity
             };
         }
 
-        private Hero CreateStarterHero(string playerName)
+        private Hero CreateHero(string heroName, Class heroClass, Gender gender, int level, bool generateItems)
         {
             var hero = new Hero
             {
-                Name = string.IsNullOrEmpty(playerName) ? "Player" : playerName,
-                Class = Class.Hero,
-                Gender = Gender.Male,
+                Name = string.IsNullOrEmpty(heroName) ? "Player" : heroName,
+                Class = heroClass,
+                Gender = gender,
                 IsActive = true,
                 Order = 0,
                 Level = 1,
@@ -885,7 +970,25 @@ namespace Redpoint.DungeonEscape.Unity
             };
 
             ApplyStartingClassStats(hero);
-            AddStartingEquipment(hero);
+            var classLevels = DungeonEscapeGameDataCache.Current == null ? null : DungeonEscapeGameDataCache.Current.ClassLevels;
+            if (classLevels != null && classLevels.Any(item => item.Class == hero.Class))
+            {
+                while (hero.Level < level)
+                {
+                    hero.Xp = hero.NextLevel;
+                    string ignored;
+                    hero.CheckLevelUp(
+                        classLevels,
+                        DungeonEscapeGameDataCache.Current == null ? null : DungeonEscapeGameDataCache.Current.Spells,
+                        out ignored);
+                }
+            }
+
+            if (generateItems)
+            {
+                AddStartingEquipment(hero);
+            }
+
             return hero;
         }
 
@@ -936,8 +1039,8 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void AddStartingEquipment(Hero hero)
         {
-            EquipStartingItem(hero, CreateRandomEquipment(hero.Level, 1, Rarity.Common, ItemType.Armor, hero.Class, Slot.Chest));
-            EquipStartingItem(hero, CreateRandomEquipment(hero.Level, 1, Rarity.Common, ItemType.Weapon, hero.Class));
+            EquipStartingItem(hero, CreateRandomEquipment(hero.Level, Math.Max(hero.Level - 5, 1), Rarity.Common, ItemType.Armor, hero.Class, Slot.Chest));
+            EquipStartingItem(hero, CreateRandomEquipment(hero.Level, Math.Max(hero.Level - 5, 1), Rarity.Common, ItemType.Weapon, hero.Class));
         }
 
         private static void EquipStartingItem(Hero hero, Item item)
@@ -997,6 +1100,71 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 autoSaveCountdown = GetAutoSaveIntervalSeconds();
             }
+        }
+
+        private int GetNextPartyOrder()
+        {
+            return Party.ActiveMembers.Any() ? Party.ActiveMembers.Max(member => member.Order) + 1 : 0;
+        }
+
+        private static int GetMaxPartyMembers()
+        {
+            return DungeonEscapeSettingsCache.Current == null || DungeonEscapeSettingsCache.Current.MaxPartyMembers <= 0
+                ? 4
+                : DungeonEscapeSettingsCache.Current.MaxPartyMembers;
+        }
+
+        private string GetRecruitName(TiledObjectInfo mapObject, Gender gender)
+        {
+            var name = mapObject.Name;
+            if (string.IsNullOrEmpty(name) || string.Equals(name, "#Random#", StringComparison.OrdinalIgnoreCase))
+            {
+                return GenerateUniqueName(gender);
+            }
+
+            return name;
+        }
+
+        private string GenerateUniqueName(Gender gender)
+        {
+            EnsureNameGenerator();
+            for (var i = 0; i < 20; i++)
+            {
+                var generated = nameGenerator == null ? "" : nameGenerator.Generate(gender);
+                if (!string.IsNullOrEmpty(generated) &&
+                    Party.Members.All(member => !string.Equals(member.Name, generated, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return generated;
+                }
+            }
+
+            return "Recruit " + (Party.Members.Count + 1);
+        }
+
+        private void EnsureNameGenerator()
+        {
+            if (nameGenerator != null)
+            {
+                return;
+            }
+
+            var names = DungeonEscapeGameDataCache.Current == null ? null : DungeonEscapeGameDataCache.Current.Names;
+            if (names != null)
+            {
+                nameGenerator = new NameGenerator(names);
+            }
+        }
+
+        private static T GetEnumProperty<T>(TiledObjectInfo mapObject, string propertyName, T defaultValue)
+            where T : struct
+        {
+            string value;
+            T result;
+            return mapObject.Properties != null &&
+                   mapObject.Properties.TryGetValue(propertyName, out value) &&
+                   Enum.TryParse(value, true, out result)
+                ? result
+                : defaultValue;
         }
 
         private void UpdateAutoSave()

@@ -275,24 +275,30 @@ namespace Redpoint.DungeonEscape.Unity
         {
             EnsureMapLoaded();
             result = null;
+            var mapId = currentMap == null ? null : TiledMapLoader.NormalizeMapId(currentMap.AssetPath);
 
             if (currentMap == null || currentMap.Info == null || currentMap.Info.ObjectGroups == null)
             {
                 return false;
             }
 
+            var runtimeNpc = runtimeNpcs.FirstOrDefault(npc =>
+                npc.MapObject != null &&
+                Mathf.FloorToInt(position.X) == npc.Column &&
+                Mathf.FloorToInt(position.Y) == npc.Row);
+            if (runtimeNpc != null)
+            {
+                result = runtimeNpc.MapObject;
+                return true;
+            }
+
             foreach (var group in currentMap.Info.ObjectGroups)
             {
                 foreach (var mapObject in group.Objects)
                 {
-                    var runtimeNpc = runtimeNpcs.FirstOrDefault(npc =>
-                        npc.MapObject != null &&
-                        Mathf.FloorToInt(position.X) == npc.Column &&
-                        Mathf.FloorToInt(position.Y) == npc.Row);
-                    if (runtimeNpc != null)
+                    if (gameState != null && !gameState.IsObjectActive(mapId, mapObject.Id))
                     {
-                        result = runtimeNpc.MapObject;
-                        return true;
+                        continue;
                     }
 
                     if (IsSpawnObject(mapObject) || !ContainsTile(mapObject, position))
@@ -306,6 +312,24 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return false;
+        }
+
+        public void RemoveRuntimeNpc(TiledObjectInfo mapObject)
+        {
+            if (mapObject == null)
+            {
+                return;
+            }
+
+            var npc = runtimeNpcs.FirstOrDefault(item => item != null && item.ObjectId == mapObject.Id);
+            if (npc == null)
+            {
+                return;
+            }
+
+            occupiedNpcTiles.Remove(npc.Row * mapWidth + npc.Column);
+            runtimeNpcs.Remove(npc);
+            Destroy(npc.gameObject);
         }
 
         public void FaceNpcAt(WorldPosition position, Direction direction)
@@ -578,6 +602,12 @@ namespace Redpoint.DungeonEscape.Unity
                     foreach (var mapObject in group.Objects)
                     {
                         if (!IsNpcObject(mapObject))
+                        {
+                            continue;
+                        }
+
+                        if (gameState != null &&
+                            !gameState.IsObjectActive(TiledMapLoader.NormalizeMapId(loadedMap.AssetPath), mapObject.Id))
                         {
                             continue;
                         }

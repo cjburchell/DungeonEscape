@@ -32,9 +32,19 @@ namespace Redpoint.DungeonEscape.Unity
             get { return dataSet.Skills; }
         }
 
+        public IList<Spell> Spells
+        {
+            get { return dataSet.Spells; }
+        }
+
         public IList<StatName> StatNames
         {
             get { return dataSet.StatNames; }
+        }
+
+        public Names Names
+        {
+            get { return dataSet.Names; }
         }
 
         public IList<ClassStats> ClassLevels

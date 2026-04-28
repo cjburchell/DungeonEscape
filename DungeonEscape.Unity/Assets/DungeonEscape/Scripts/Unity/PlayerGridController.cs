@@ -453,6 +453,12 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
+            if (IsPartyMemberObject(mapObject))
+            {
+                ShowRecruitDialog(mapObject);
+                return;
+            }
+
             string text;
             if (TryGetProperty(mapObject, "Text", out text) && !string.IsNullOrEmpty(text))
             {
@@ -495,6 +501,40 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             messageBox.Show(mapObject.Name, string.IsNullOrEmpty(mapObject.Class) ? "Nothing happens." : mapObject.Class);
+        }
+
+        private void ShowRecruitDialog(TiledObjectInfo mapObject)
+        {
+            string text;
+            if (!TryGetProperty(mapObject, "Text", out text) || string.IsNullOrEmpty(text))
+            {
+                text = "Can I join you?";
+            }
+
+            messageBox.Show(
+                GetObjectDisplayName(mapObject),
+                text,
+                new[] { "Yes", "No" },
+                selectedIndex =>
+                {
+                    if (selectedIndex != 0)
+                    {
+                        return;
+                    }
+
+                    var result = gameState == null
+                        ? "Cannot recruit without game state."
+                        : gameState.RecruitPartyMember(mapObject);
+                    if (mapView != null)
+                    {
+                        mapView.RemoveRuntimeNpc(mapObject);
+                    }
+
+                    if (messageBox != null)
+                    {
+                        messageBox.Show(GetObjectDisplayName(mapObject), result);
+                    }
+                });
         }
 
         private void ShowDialog(string speakerName, DialogText dialog)
@@ -626,6 +666,23 @@ namespace Redpoint.DungeonEscape.Unity
         {
             return string.Equals(mapObject.Class, "Chest", System.StringComparison.OrdinalIgnoreCase) ||
                    string.Equals(mapObject.Class, "HiddenItem", System.StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsPartyMemberObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   string.Equals(mapObject.Class, "NpcPartyMember", System.StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string GetObjectDisplayName(TiledObjectInfo mapObject)
+        {
+            if (mapObject == null || string.IsNullOrEmpty(mapObject.Name) ||
+                string.Equals(mapObject.Name, "#Random#", System.StringComparison.OrdinalIgnoreCase))
+            {
+                return "Traveler";
+            }
+
+            return mapObject.Name;
         }
 
         private static string BuildInteractionMessage(TiledObjectInfo mapObject, WorldPosition target)

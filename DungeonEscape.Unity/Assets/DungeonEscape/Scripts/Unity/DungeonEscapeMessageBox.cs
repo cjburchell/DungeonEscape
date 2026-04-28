@@ -19,6 +19,7 @@ namespace Redpoint.DungeonEscape.Unity
         private List<string> choices;
         private Action<int> choiceSelected;
         private int selectedChoiceIndex;
+        private int acceptInputAfterFrame;
 
         public bool IsVisible
         {
@@ -37,6 +38,7 @@ namespace Redpoint.DungeonEscape.Unity
             choices = null;
             choiceSelected = null;
             selectedChoiceIndex = 0;
+            acceptInputAfterFrame = Time.frameCount;
         }
 
         public void Show(string speakerName, string text, IEnumerable<string> choiceLabels, Action<int> selected)
@@ -51,6 +53,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             choiceSelected = selected;
             selectedChoiceIndex = 0;
+            acceptInputAfterFrame = Time.frameCount + 1;
         }
 
         public void Hide()
@@ -76,6 +79,11 @@ namespace Redpoint.DungeonEscape.Unity
         private void Update()
         {
             if (!IsVisible)
+            {
+                return;
+            }
+
+            if (Time.frameCount <= acceptInputAfterFrame)
             {
                 return;
             }

@@ -27,6 +27,8 @@ namespace Redpoint.DungeonEscape.Unity
         public readonly GUIStyle CheckboxCheckedBoxStyle;
         public readonly GUIStyle SliderStyle;
         public readonly GUIStyle SliderThumbStyle;
+        public readonly GUIStyle VerticalScrollbarStyle;
+        public readonly GUIStyle VerticalScrollbarThumbStyle;
         public readonly GUIStyle TabStyle;
         public readonly GUIStyle SelectedTabStyle;
 
@@ -47,6 +49,10 @@ namespace Redpoint.DungeonEscape.Unity
         private readonly Texture2D sliderThumbTexture;
         private readonly Texture2D sliderThumbHoverTexture;
         private readonly Texture2D sliderThumbActiveTexture;
+        private readonly Texture2D scrollbarTrackTexture;
+        private readonly Texture2D scrollbarThumbTexture;
+        private readonly Texture2D scrollbarThumbHoverTexture;
+        private readonly Texture2D scrollbarThumbActiveTexture;
 
         private DungeonEscapeUiTheme(Settings settings, float scale)
         {
@@ -77,6 +83,10 @@ namespace Redpoint.DungeonEscape.Unity
             sliderThumbTexture = CreateBorderTexture(BorderColor, BorderColor, BorderThickness);
             sliderThumbHoverTexture = CreateBorderTexture(HoverColor, BorderColor, BorderThickness);
             sliderThumbActiveTexture = CreateBorderTexture(ActiveColor, BorderColor, BorderThickness);
+            scrollbarTrackTexture = CreateBorderTexture(BackgroundColor, BorderColor, BorderThickness);
+            scrollbarThumbTexture = CreateBorderTexture(BorderColor, BorderColor, BorderThickness);
+            scrollbarThumbHoverTexture = CreateBorderTexture(HoverColor, BorderColor, BorderThickness);
+            scrollbarThumbActiveTexture = CreateBorderTexture(ActiveColor, BorderColor, BorderThickness);
             var border = new RectOffset(BorderThickness, BorderThickness, BorderThickness, BorderThickness);
 
             PanelStyle = new GUIStyle(GUI.skin.box)
@@ -174,6 +184,24 @@ namespace Redpoint.DungeonEscape.Unity
                 border = border,
                 fixedWidth = sliderHeight,
                 fixedHeight = sliderHeight
+            };
+            VerticalScrollbarStyle = new GUIStyle(GUI.skin.verticalScrollbar)
+            {
+                normal = { background = scrollbarTrackTexture },
+                hover = { background = scrollbarTrackTexture },
+                active = { background = scrollbarTrackTexture },
+                focused = { background = scrollbarTrackTexture },
+                border = border,
+                fixedWidth = Mathf.RoundToInt(18f * scale)
+            };
+            VerticalScrollbarThumbStyle = new GUIStyle(GUI.skin.verticalScrollbarThumb)
+            {
+                normal = { background = scrollbarThumbTexture },
+                hover = { background = scrollbarThumbHoverTexture },
+                active = { background = scrollbarThumbActiveTexture },
+                focused = { background = scrollbarThumbHoverTexture },
+                border = border,
+                fixedWidth = Mathf.RoundToInt(18f * scale)
             };
             TabStyle = new GUIStyle(ButtonStyle);
             SelectedTabStyle = new GUIStyle(ButtonStyle)

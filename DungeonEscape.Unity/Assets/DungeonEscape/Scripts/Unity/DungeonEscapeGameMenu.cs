@@ -45,7 +45,11 @@ namespace Redpoint.DungeonEscape.Unity
         private string lastThemeSignature;
         private MenuTab currentTab = MenuTab.Party;
         private SettingsTab currentSettingsTab = SettingsTab.General;
-        private Vector2 scrollPosition;
+        private Vector2 partyScrollPosition;
+        private Vector2 inventoryScrollPosition;
+        private Vector2 questScrollPosition;
+        private Vector2 settingsScrollPosition;
+        private float menuBodyHeight;
         private int selectedHeroIndex;
         private int selectedRowIndex;
         private int selectedBindingSlotIndex;
@@ -131,12 +135,19 @@ namespace Redpoint.DungeonEscape.Unity
             var rect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
 
             GUI.Box(rect, GUIContent.none, panelStyle);
-            GUILayout.BeginArea(new Rect(rect.x + 16f * scale, rect.y + 14f * scale, rect.width - 32f * scale, rect.height - 28f * scale));
+            var areaHeight = rect.height - 28f * scale;
+            menuBodyHeight = Mathf.Max(160f * scale, areaHeight - 90f * scale);
+            GUILayout.BeginArea(new Rect(rect.x + 16f * scale, rect.y + 14f * scale, rect.width - 32f * scale, areaHeight));
             DrawHeader();
             DrawTabs();
-            scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, true);
+            var previousVerticalThumb = GUI.skin.verticalScrollbarThumb;
+            if (uiTheme != null)
+            {
+                GUI.skin.verticalScrollbarThumb = uiTheme.VerticalScrollbarThumbStyle;
+            }
+
             DrawCurrentTab();
-            GUILayout.EndScrollView();
+            GUI.skin.verticalScrollbarThumb = previousVerticalThumb;
             GUILayout.EndArea();
         }
 
@@ -149,7 +160,6 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             currentTab = tab;
-            scrollPosition = Vector2.zero;
             isOpen = true;
             selectedRowIndex = 0;
             ResetMenuNavigationRepeat();
@@ -160,7 +170,6 @@ namespace Redpoint.DungeonEscape.Unity
             var tabCount = Enum.GetValues(typeof(MenuTab)).Length;
             var next = ((int)currentTab + delta + tabCount) % tabCount;
             currentTab = (MenuTab)next;
-            scrollPosition = Vector2.zero;
             selectedRowIndex = 0;
             ResetMenuNavigationRepeat();
         }
@@ -170,7 +179,7 @@ namespace Redpoint.DungeonEscape.Unity
             var tabCount = Enum.GetValues(typeof(SettingsTab)).Length;
             var next = ((int)currentSettingsTab + delta + tabCount) % tabCount;
             currentSettingsTab = (SettingsTab)next;
-            scrollPosition = Vector2.zero;
+            settingsScrollPosition = Vector2.zero;
             selectedRowIndex = 0;
         }
 
@@ -228,7 +237,6 @@ namespace Redpoint.DungeonEscape.Unity
             if (DungeonEscapeUiControls.TabButton(label, currentTab == tab, uiTheme, 34f * GetPixelScale()))
             {
                 currentTab = tab;
-                scrollPosition = Vector2.zero;
                 selectedRowIndex = 0;
             }
         }
@@ -266,6 +274,12 @@ namespace Redpoint.DungeonEscape.Unity
             GUILayout.Label("Gold: " + party.Gold + "    Map: " + party.CurrentMapId + "    Steps: " + party.StepCount, labelStyle);
             GUILayout.Space(8f * GetPixelScale());
             var activeMembers = party.ActiveMembers.ToList();
+            var inactive = party.InactiveMembers.ToList();
+            selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Mathf.Max(activeMembers.Count + inactive.Count - 1, 0));
+
+            GUILayout.BeginHorizontal();
+            GUILayout.BeginVertical(GUILayout.MinWidth(420f * GetPixelScale()));
+            partyScrollPosition = BeginThemedScroll(partyScrollPosition, Mathf.Max(120f * GetPixelScale(), menuBodyHeight - 32f * GetPixelScale()));
             GUILayout.Label("Active Party (" + activeMembers.Count + "/" + GetMaxPartyMembers() + ")", titleStyle);
             for (var i = 0; i < activeMembers.Count; i++)
             {
@@ -273,21 +287,33 @@ namespace Redpoint.DungeonEscape.Unity
                 DrawHeroStatus(activeMembers[i], true);
                 DrawActivePartyControls(activeMembers[i], i, activeMembers.Count);
                 EndSelectableRow();
+                SelectRowOnMouseClick(i);
             }
 
-            var inactive = party.InactiveMembers.ToList();
             if (inactive.Count > 0)
             {
                 GUILayout.Space(10f * GetPixelScale());
                 GUILayout.Label("Reserve", titleStyle);
-                foreach (var hero in inactive)
+                for (var i = 0; i < inactive.Count; i++)
                 {
                     BeginSelectableRow();
-                    DrawHeroStatus(hero, false);
-                    DrawReservePartyControls(hero, activeMembers.Count);
+                    DrawHeroStatus(inactive[i], false);
+                    DrawReservePartyControls(inactive[i], activeMembers.Count);
                     EndSelectableRow();
+                    SelectRowOnMouseClick(activeMembers.Count + i);
                 }
             }
+            EndThemedScroll();
+            GUILayout.EndVertical();
+
+            var selectedHero = GetSelectedPartyHero(activeMembers, inactive);
+            if (selectedHero != null)
+            {
+                GUILayout.Space(10f * GetPixelScale());
+                DrawPartyDetail(selectedHero);
+            }
+
+            GUILayout.EndHorizontal();
         }
 
         private void DrawActivePartyControls(Hero hero, int index, int activeCount)
@@ -353,6 +379,79 @@ namespace Redpoint.DungeonEscape.Unity
             GUILayout.EndHorizontal();
         }
 
+        private void DrawPartyDetail(Hero hero)
+        {
+            GUILayout.BeginVertical(panelStyle);
+            GUILayout.Label("Status", titleStyle);
+            GUILayout.BeginHorizontal();
+            Sprite sprite;
+            DungeonEscapeUiControls.SpriteIcon(
+                DungeonEscapeUiAssetResolver.TryGetHeroSprite(hero, out sprite) ? sprite : null,
+                72f * GetPixelScale(),
+                uiTheme);
+            GUILayout.BeginVertical();
+            GUILayout.Label(hero.Name + "  Level " + hero.Level + " " + hero.Class + "  " + hero.Gender, labelStyle);
+            GUILayout.Label("HP " + hero.Health + "/" + hero.MaxHealth + "    MP " + hero.Magic + "/" + hero.MaxMagic, labelStyle);
+            GUILayout.Label("XP " + hero.Xp + " / " + hero.NextLevel, smallStyle);
+            GUILayout.Label(
+                "Attack " + hero.Attack +
+                "    Defence " + hero.Defence +
+                "    Magic Defence " + hero.MagicDefence +
+                "    Agility " + hero.Agility,
+                smallStyle);
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(8f * GetPixelScale());
+            GUILayout.Label("Equipment", labelStyle);
+            foreach (Slot slot in Enum.GetValues(typeof(Slot)))
+            {
+                DrawEquipmentSlot(hero, slot);
+            }
+
+            GUILayout.EndVertical();
+        }
+
+        private void DrawEquipmentSlot(Hero hero, Slot slot)
+        {
+            var item = GetEquippedItem(hero, slot);
+            GUILayout.BeginHorizontal();
+            Sprite sprite;
+            DungeonEscapeUiControls.SpriteIcon(
+                DungeonEscapeUiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null,
+                32f * GetPixelScale(),
+                uiTheme);
+            GUILayout.Label(slot + ": " + (item == null ? "Empty" : item.NameWithStats), smallStyle);
+            GUILayout.EndHorizontal();
+        }
+
+        private Hero GetSelectedPartyHero(IList<Hero> activeMembers, IList<Hero> inactiveMembers)
+        {
+            if (selectedRowIndex < activeMembers.Count)
+            {
+                return activeMembers[selectedRowIndex];
+            }
+
+            var reserveIndex = selectedRowIndex - activeMembers.Count;
+            return reserveIndex >= 0 && reserveIndex < inactiveMembers.Count ? inactiveMembers[reserveIndex] : null;
+        }
+
+        private static ItemInstance GetEquippedItem(Hero hero, Slot slot)
+        {
+            if (hero == null || hero.Slots == null || hero.Items == null)
+            {
+                return null;
+            }
+
+            string itemId;
+            if (!hero.Slots.TryGetValue(slot, out itemId) || string.IsNullOrEmpty(itemId))
+            {
+                return null;
+            }
+
+            return hero.Items.FirstOrDefault(item => item != null && item.Id == itemId);
+        }
+
         private void ApplyPartyChange(Func<bool> action)
         {
             EnsureReferences();
@@ -405,8 +504,13 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            foreach (var item in hero.Items)
+            selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, hero.Items.Count - 1);
+            GUILayout.BeginHorizontal();
+            GUILayout.BeginVertical(GUILayout.MinWidth(420f * GetPixelScale()));
+            inventoryScrollPosition = BeginThemedScroll(inventoryScrollPosition, Mathf.Max(120f * GetPixelScale(), menuBodyHeight - 82f * GetPixelScale()));
+            for (var i = 0; i < hero.Items.Count; i++)
             {
+                var item = hero.Items[i];
                 var equipped = item.IsEquipped ? " [E]" : "";
                 BeginSelectableRow();
                 GUILayout.BeginHorizontal();
@@ -436,7 +540,75 @@ namespace Redpoint.DungeonEscape.Unity
 
                 GUILayout.EndHorizontal();
                 EndSelectableRow();
+                SelectRowOnMouseClick(i);
             }
+
+            EndThemedScroll();
+            GUILayout.EndVertical();
+            GUILayout.Space(10f * GetPixelScale());
+            DrawInventoryItemDetail(hero, hero.Items[selectedRowIndex]);
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawInventoryItemDetail(Hero hero, ItemInstance item)
+        {
+            GUILayout.BeginVertical(panelStyle, GUILayout.Width(320f * GetPixelScale()));
+            if (item == null)
+            {
+                GUILayout.Label("No item selected.", labelStyle);
+                GUILayout.EndVertical();
+                return;
+            }
+
+            Sprite sprite;
+            GUILayout.BeginHorizontal();
+            DungeonEscapeUiControls.SpriteIcon(
+                DungeonEscapeUiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null,
+                64f * GetPixelScale(),
+                uiTheme);
+            GUILayout.BeginVertical();
+            GUILayout.Label(item.Name, labelStyle);
+            GUILayout.Label(item.Rarity + " " + item.Type + (item.IsEquipped ? "  Equipped" : ""), smallStyle);
+            GUILayout.Label(item.Gold + " gold", smallStyle);
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(8f * GetPixelScale());
+            if (!string.IsNullOrEmpty(item.Item.StatString))
+            {
+                GUILayout.Label("Stats: " + item.Item.StatString, smallStyle);
+            }
+
+            if (item.Slots != null && item.Slots.Count > 0)
+            {
+                GUILayout.Label("Slots: " + string.Join(", ", item.Slots.Select(slot => slot.ToString()).ToArray()), smallStyle);
+            }
+
+            if (item.Classes != null && item.Classes.Count > 0)
+            {
+                GUILayout.Label("Classes: " + string.Join(", ", item.Classes.Select(itemClass => itemClass.ToString()).ToArray()), smallStyle);
+            }
+
+            if (item.MaxCharges > 0)
+            {
+                GUILayout.Label("Charges: " + item.Charges + "/" + item.MaxCharges, smallStyle);
+            }
+
+            GUILayout.Space(8f * GetPixelScale());
+            GUI.enabled = item.IsEquipped;
+            if (GUILayout.Button("Unequip", buttonStyle))
+            {
+                ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item));
+            }
+
+            GUI.enabled = !item.IsEquipped && hero.CanEquipItem(item);
+            if (GUILayout.Button("Equip", buttonStyle))
+            {
+                ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item));
+            }
+
+            GUI.enabled = true;
+            GUILayout.EndVertical();
         }
 
         private void ApplyInventoryChange(Func<bool> action)
@@ -463,6 +635,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
+            questScrollPosition = BeginThemedScroll(questScrollPosition, menuBodyHeight);
             foreach (var activeQuest in party.ActiveQuests)
             {
                 Quest quest;
@@ -494,6 +667,7 @@ namespace Redpoint.DungeonEscape.Unity
                 GUILayout.EndVertical();
                 EndSelectableRow();
             }
+            EndThemedScroll();
         }
 
         private void DrawSettings()
@@ -507,6 +681,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             DrawSettingsTabs();
 
+            settingsScrollPosition = BeginThemedScroll(settingsScrollPosition, Mathf.Max(120f * GetPixelScale(), menuBodyHeight - 50f * GetPixelScale()));
             switch (currentSettingsTab)
             {
                 case SettingsTab.General:
@@ -522,6 +697,7 @@ namespace Redpoint.DungeonEscape.Unity
                     DrawDebugSettings(settings);
                     break;
             }
+            EndThemedScroll();
         }
 
         private void DrawSettingsTabs()
@@ -542,7 +718,7 @@ namespace Redpoint.DungeonEscape.Unity
             if (DungeonEscapeUiControls.TabButton(label, currentSettingsTab == tab, uiTheme, 32f * GetPixelScale()))
             {
                 currentSettingsTab = tab;
-                scrollPosition = Vector2.zero;
+                settingsScrollPosition = Vector2.zero;
                 selectedRowIndex = 0;
             }
         }
@@ -681,6 +857,22 @@ namespace Redpoint.DungeonEscape.Unity
             }
         }
 
+        private Vector2 BeginThemedScroll(Vector2 position, float height)
+        {
+            return GUILayout.BeginScrollView(
+                position,
+                false,
+                false,
+                GUIStyle.none,
+                uiTheme == null ? GUI.skin.verticalScrollbar : uiTheme.VerticalScrollbarStyle,
+                GUILayout.Height(height));
+        }
+
+        private static void EndThemedScroll()
+        {
+            GUILayout.EndScrollView();
+        }
+
         private void BeginSelectableRow()
         {
             var rowIndex = drawingRowIndex++;
@@ -690,6 +882,22 @@ namespace Redpoint.DungeonEscape.Unity
         private static void EndSelectableRow()
         {
             DungeonEscapeUiControls.EndSelectableRow();
+        }
+
+        private void SelectRowOnMouseClick(int rowIndex)
+        {
+            var currentEvent = Event.current;
+            if (currentEvent == null || currentEvent.type != EventType.MouseDown || currentEvent.button != 0)
+            {
+                return;
+            }
+
+            if (!GUILayoutUtility.GetLastRect().Contains(currentEvent.mousePosition))
+            {
+                return;
+            }
+
+            selectedRowIndex = rowIndex;
         }
 
         private bool DrawCheckboxRow(bool value, string label)
@@ -752,7 +960,27 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             selectedRowIndex = Mathf.Clamp(selectedRowIndex + delta, 0, count - 1);
-            scrollPosition.y = Mathf.Max(0f, selectedRowIndex * 54f * GetPixelScale());
+            ScrollActiveListToSelectedRow();
+        }
+
+        private void ScrollActiveListToSelectedRow()
+        {
+            var y = Mathf.Max(0f, selectedRowIndex * 54f * GetPixelScale());
+            switch (currentTab)
+            {
+                case MenuTab.Party:
+                    partyScrollPosition.y = y;
+                    break;
+                case MenuTab.Inventory:
+                    inventoryScrollPosition.y = y;
+                    break;
+                case MenuTab.Quests:
+                    questScrollPosition.y = y;
+                    break;
+                case MenuTab.Settings:
+                    settingsScrollPosition.y = y;
+                    break;
+            }
         }
 
         private void AdjustSelectedRow(int delta)

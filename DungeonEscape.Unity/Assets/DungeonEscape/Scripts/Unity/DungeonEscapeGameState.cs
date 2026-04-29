@@ -512,6 +512,42 @@ namespace Redpoint.DungeonEscape.Unity
             return "The door opened.";
         }
 
+        public string OpenDoor(TiledObjectInfo mapObject)
+        {
+            EnsureInitialized();
+            if (mapObject == null || string.IsNullOrEmpty(Party.CurrentMapId))
+            {
+                return "";
+            }
+
+            var objectState = GetObjectState(Party.CurrentMapId, mapObject.Id, true);
+            if (objectState.IsOpen == true)
+            {
+                return "The door is already open.";
+            }
+
+            if (!CanOpenWithKey(mapObject))
+            {
+                return "The door is locked.";
+            }
+
+            var doorLevel = GetIntProperty(mapObject, "DoorLevel");
+            ItemInstance key;
+            Hero keyOwner;
+            if (!TryFindDoorKey(mapObject, doorLevel, out key, out keyOwner))
+            {
+                return "You do not have a key for this door.";
+            }
+
+            objectState.Name = mapObject.Name;
+            objectState.Type = SpriteType.Door;
+            objectState.Level = doorLevel;
+            objectState.IsOpen = true;
+            objectState.Collideable = false;
+            MarkDirty();
+            return keyOwner.Name + " used " + key.Name + ".\nThe door opened.";
+        }
+
         public bool TryGetObjectPosition(string mapId, int objectId, out WorldPosition position)
         {
             EnsureInitialized();
@@ -1033,13 +1069,6 @@ namespace Redpoint.DungeonEscape.Unity
                 return items;
             }
 
-            var level = GetIntProperty(mapObject, mapObject.Class == "Chest" ? "ChestLevel" : "Level");
-            var chestItem = CreateChestItem(level == 0 ? GetPartyMaxLevel() : level);
-            if (chestItem != null)
-            {
-                items.Add(chestItem);
-            }
-
             return items;
         }
 
@@ -1470,6 +1499,78 @@ namespace Redpoint.DungeonEscape.Unity
         private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName)
         {
             return GetIntProperty(mapObject, propertyName, 0);
+        }
+
+        private bool TryFindDoorKey(TiledObjectInfo mapObject, int doorLevel, out ItemInstance key, out Hero keyOwner)
+        {
+            key = null;
+            keyOwner = null;
+            if (Party == null)
+            {
+                return false;
+            }
+
+            string requiredKeyId = null;
+            var hasRequiredKeyId = mapObject.Properties != null &&
+                                   (mapObject.Properties.TryGetValue("KeyId", out requiredKeyId) ||
+                                    mapObject.Properties.TryGetValue("KeyItemId", out requiredKeyId));
+
+            foreach (var member in Party.AliveMembers)
+            {
+                if (member.Items == null)
+                {
+                    continue;
+                }
+
+                foreach (var item in member.Items)
+                {
+                    if (item == null || item.Item == null || !IsDoorKey(item, doorLevel))
+                    {
+                        continue;
+                    }
+
+                    if (hasRequiredKeyId && !IsItemMatch(item, requiredKeyId))
+                    {
+                        continue;
+                    }
+
+                    key = item;
+                    keyOwner = member;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsDoorKey(ItemInstance item, int doorLevel)
+        {
+            return item != null &&
+                   item.Item != null &&
+                   item.MinLevel == doorLevel &&
+                   (item.Item.IsKey || string.Equals(item.Item.SkillId, "Open", StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static bool IsItemMatch(ItemInstance item, string itemId)
+        {
+            return item != null &&
+                   item.Item != null &&
+                   !string.IsNullOrEmpty(itemId) &&
+                   (string.Equals(item.Item.Id, itemId, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(item.Item.Name, itemId, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static bool CanOpenWithKey(TiledObjectInfo mapObject)
+        {
+            string value;
+            return mapObject.Properties == null ||
+                   !mapObject.Properties.TryGetValue("OpenWithKey", out value) ||
+                   IsTrue(value);
+        }
+
+        private static bool IsTrue(string value)
+        {
+            return string.Equals(value, "true", StringComparison.OrdinalIgnoreCase) || value == "1";
         }
 
         private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName, int defaultValue)

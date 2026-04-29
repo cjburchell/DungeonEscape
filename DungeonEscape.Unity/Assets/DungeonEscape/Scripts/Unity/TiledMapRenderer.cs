@@ -10,6 +10,7 @@ namespace Redpoint.DungeonEscape.Unity
     public static class TiledMapRenderer
     {
         private const int RenderBufferTiles = 2;
+        private const uint TiledGidMask = 0x1FFFFFFF;
         private static Sprite hiddenObjectSprite;
 
         public static int RenderVisibleLayers(
@@ -264,7 +265,7 @@ namespace Redpoint.DungeonEscape.Unity
                     continue;
                 }
 
-                var gid = GetInt(mapObject, "gid");
+                var gid = GetGid(mapObject, "gid");
                 if (gid == 0 && !showHiddenObjects)
                 {
                     continue;
@@ -420,7 +421,7 @@ namespace Redpoint.DungeonEscape.Unity
                     continue;
                 }
 
-                var gid = GetInt(mapObject, "gid");
+                var gid = GetGid(mapObject, "gid");
                 if (gid == 0 && !showHiddenObjects)
                 {
                     continue;
@@ -494,7 +495,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             return data.Value
                 .Split(new[] { ',', '\n', '\r', '\t', ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(int.Parse)
+                .Select(ParseGid)
                 .ToList();
         }
 
@@ -769,6 +770,17 @@ namespace Redpoint.DungeonEscape.Unity
             var value = GetString(element, name);
             int result;
             return int.TryParse(value, out result) ? result : 0;
+        }
+
+        private static int GetGid(XElement element, string name)
+        {
+            return ParseGid(GetString(element, name));
+        }
+
+        private static int ParseGid(string value)
+        {
+            uint result;
+            return uint.TryParse(value, out result) ? (int)(result & TiledGidMask) : 0;
         }
 
         private static int GetIntProperty(XElement element, string propertyName, int defaultValue)

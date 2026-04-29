@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using Redpoint.DungeonEscape.State;
 using UnityEngine;
 
@@ -9,6 +10,8 @@ namespace Redpoint.DungeonEscape.Unity
 {
     public sealed class TiledMapView : MonoBehaviour
     {
+        private const uint TiledGidMask = 0x1FFFFFFF;
+
         [SerializeField]
         private string mapAssetPath = "Assets/DungeonEscape/Maps/overworld.tmx";
 
@@ -137,7 +140,26 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             var tileKey = row * mapWidth + column;
-            return !blockedTiles.Contains(tileKey) && !occupiedNpcTiles.ContainsKey(tileKey);
+            if (occupiedNpcTiles.ContainsKey(tileKey))
+            {
+                return false;
+            }
+
+            if (IsWaterTile(column, row))
+            {
+                return gameState != null &&
+                       gameState.Party != null &&
+                       gameState.Party.HasShip &&
+                       !blockedTiles.Contains(tileKey);
+            }
+
+            return !blockedTiles.Contains(tileKey);
+        }
+
+        public bool IsWaterAt(WorldPosition position)
+        {
+            EnsureMapLoaded();
+            return IsWaterTile(Mathf.FloorToInt(position.X), Mathf.FloorToInt(position.Y));
         }
 
         public bool CanNpcMoveTo(int column, int row, TiledNpcController npc)
@@ -151,9 +173,75 @@ namespace Redpoint.DungeonEscape.Unity
 
             var tileKey = row * mapWidth + column;
             TiledNpcController occupiedNpc;
-            return !blockedTiles.Contains(tileKey) &&
+            return !IsWaterTile(column, row) &&
+                   !blockedTiles.Contains(tileKey) &&
                    !IsPlayerAt(column, row) &&
                    (!occupiedNpcTiles.TryGetValue(tileKey, out occupiedNpc) || occupiedNpc == npc);
+        }
+
+        public int GetDamageAt(WorldPosition position)
+        {
+            EnsureMapLoaded();
+            if (currentMap == null || currentMap.Root == null)
+            {
+                return 0;
+            }
+
+            var column = Mathf.FloorToInt(position.X);
+            var row = Mathf.FloorToInt(position.Y);
+            var damage = 0;
+            foreach (var layer in currentMap.Root.Elements("layer"))
+            {
+                var gid = GetLayerGidAt(layer, column, row);
+                if (gid == 0)
+                {
+                    continue;
+                }
+
+                string damageValue;
+                int parsedDamage;
+                var tileInfo = GetTileInfo(gid);
+                if (tileInfo != null &&
+                    tileInfo.Properties != null &&
+                    tileInfo.Properties.TryGetValue("damage", out damageValue) &&
+                    int.TryParse(damageValue, out parsedDamage))
+                {
+                    damage += Math.Max(0, parsedDamage);
+                }
+            }
+
+            return damage;
+        }
+
+        public Biome GetBiomeAt(WorldPosition position)
+        {
+            EnsureMapLoaded();
+            if (currentMap == null || currentMap.Root == null)
+            {
+                return Biome.None;
+            }
+
+            var column = Mathf.FloorToInt(position.X);
+            var row = Mathf.FloorToInt(position.Y);
+            foreach (var layer in currentMap.Root.Elements("layer"))
+            {
+                var gid = GetLayerGidAt(layer, column, row);
+                if (gid == 0)
+                {
+                    continue;
+                }
+
+                var tileInfo = GetTileInfo(gid);
+                Biome biome;
+                if (tileInfo != null &&
+                    !string.IsNullOrEmpty(tileInfo.Class) &&
+                    TryParseBiome(tileInfo.Class, out biome))
+                {
+                    return biome;
+                }
+            }
+
+            return GetMapBiome();
         }
 
         public void UpdateNpcTile(TiledNpcController npc, int oldColumn, int oldRow, int newColumn, int newRow)
@@ -197,6 +285,7 @@ namespace Redpoint.DungeonEscape.Unity
                     mapHeight,
                     gameState,
                     TiledMapLoader.NormalizeMapId(currentMap.AssetPath));
+                currentMap.BlockedTilesAllowShip = gameState != null && gameState.Party != null && gameState.Party.HasShip;
                 blockedTiles = currentMap.BlockedTiles;
             }
 
@@ -506,6 +595,29 @@ namespace Redpoint.DungeonEscape.Unity
                    string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
         }
 
+        private static bool IsTrueProperty(XElement element, string propertyName)
+        {
+            var properties = element == null ? null : element.Element("properties");
+            if (properties == null)
+            {
+                return false;
+            }
+
+            foreach (var property in properties.Elements("property"))
+            {
+                var name = property.Attribute("name");
+                if (name == null || !string.Equals(name.Value, propertyName, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                var value = property.Attribute("value");
+                return string.Equals(value == null ? property.Value : value.Value, "true", StringComparison.OrdinalIgnoreCase);
+            }
+
+            return false;
+        }
+
         private void EnsureMapLoaded()
         {
             if (mapLoaded)
@@ -552,7 +664,8 @@ namespace Redpoint.DungeonEscape.Unity
             var tilesets = GetValidatedTilesets();
             var spriteSets = TiledTilesetSprites.LoadSpriteSets(tilesets, loadedMap.TileWidth, loadedMap.TileHeight);
 
-            if (loadedMap.BlockedTiles == null)
+            var partyHasShip = gameState != null && gameState.Party != null && gameState.Party.HasShip;
+            if (loadedMap.BlockedTiles == null || loadedMap.BlockedTilesAllowShip != partyHasShip)
             {
                 loadedMap.BlockedTiles = TiledMapCollision.BuildBlockedTiles(
                     loadedMap.Root,
@@ -561,6 +674,7 @@ namespace Redpoint.DungeonEscape.Unity
                     mapHeight,
                     gameState,
                     TiledMapLoader.NormalizeMapId(loadedMap.AssetPath));
+                loadedMap.BlockedTilesAllowShip = partyHasShip;
             }
 
             blockedTiles = loadedMap.BlockedTiles;
@@ -630,6 +744,128 @@ namespace Redpoint.DungeonEscape.Unity
             runtimeNpcs.Clear();
             occupiedNpcTiles.Clear();
             runtimeNpcMapAssetPath = null;
+        }
+
+        private bool IsWaterTile(int column, int row)
+        {
+            if (currentMap == null || currentMap.Root == null)
+            {
+                return false;
+            }
+
+            foreach (var layer in currentMap.Root.Elements("layer"))
+            {
+                if (!IsTrueProperty(layer, "Water") || GetLayerGidAt(layer, column, row) == 0)
+                {
+                    continue;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private int GetLayerGidAt(XElement layer, int column, int row)
+        {
+            if (currentMap == null || layer == null || column < 0 || row < 0 || column >= mapWidth || row >= mapHeight)
+            {
+                return 0;
+            }
+
+            var values = GetLayerGids(layer);
+            var index = row * mapWidth + column;
+            if (index < 0 || index >= values.Length)
+            {
+                return 0;
+            }
+
+            return values[index];
+        }
+
+        private int[] GetLayerGids(XElement layer)
+        {
+            if (currentMap.LayerGidCache == null)
+            {
+                currentMap.LayerGidCache = new Dictionary<XElement, int[]>();
+            }
+
+            int[] gids;
+            if (currentMap.LayerGidCache.TryGetValue(layer, out gids))
+            {
+                return gids;
+            }
+
+            var data = layer.Element("data");
+            if (data == null)
+            {
+                gids = new int[0];
+            }
+            else
+            {
+                var values = data.Value
+                    .Split(new[] { ',', '\n', '\r', '\t', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                gids = new int[values.Length];
+                for (var i = 0; i < values.Length; i++)
+                {
+                    gids[i] = ParseGid(values[i]);
+                }
+            }
+
+            currentMap.LayerGidCache[layer] = gids;
+            return gids;
+        }
+
+        private TiledTileInfo GetTileInfo(int gid)
+        {
+            if (currentMap == null || currentMap.Info == null || currentMap.Info.Tilesets == null || gid <= 0)
+            {
+                return null;
+            }
+
+            TiledTilesetInfo selected = null;
+            foreach (var tileset in currentMap.Info.Tilesets)
+            {
+                if (tileset.FirstGid <= gid)
+                {
+                    selected = tileset;
+                }
+            }
+
+            if (selected == null || selected.Document == null || selected.Document.Tiles == null)
+            {
+                return null;
+            }
+
+            TiledTileInfo tileInfo;
+            return selected.Document.Tiles.TryGetValue(gid - selected.FirstGid, out tileInfo)
+                ? tileInfo
+                : null;
+        }
+
+        private Biome GetMapBiome()
+        {
+            if (currentMap == null || currentMap.Info == null || currentMap.Info.Properties == null)
+            {
+                return Biome.None;
+            }
+
+            string value;
+            Biome biome;
+            return currentMap.Info.Properties.TryGetValue("biome", out value) && TryParseBiome(value, out biome)
+                ? biome
+                : Biome.None;
+        }
+
+        private static bool TryParseBiome(string value, out Biome biome)
+        {
+            return Enum.TryParse(value, true, out biome);
+        }
+
+        private static int ParseGid(string value)
+        {
+            uint result;
+            return uint.TryParse(value, out result) ? (int)(result & TiledGidMask) : 0;
         }
 
         private void SyncRuntimeNpcs(TiledLoadedMap loadedMap, IList<TiledTilesetSpriteSet> spriteSets)

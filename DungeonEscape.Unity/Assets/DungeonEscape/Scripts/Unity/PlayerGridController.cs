@@ -1104,6 +1104,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             EnsureTrailLength(members.Count + 1);
+            SetFollowersVisible(!showingShip);
         }
 
         private void UpdatePartyFollowers(WorldPosition nextPosition, Direction direction, float progress)

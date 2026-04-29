@@ -327,6 +327,8 @@ namespace Redpoint.DungeonEscape.Unity
         public List<XElement> VisibleLayers { get; set; }
         public List<XElement> RenderableElements { get; set; }
         public HashSet<int> BlockedTiles { get; set; }
+        public bool? BlockedTilesAllowShip { get; set; }
+        public Dictionary<XElement, int[]> LayerGidCache { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
         public int TileWidth { get; set; }

@@ -9,6 +9,8 @@ namespace Redpoint.DungeonEscape.Unity
 {
     public static class TiledMapCollision
     {
+        private const uint TiledGidMask = 0x1FFFFFFF;
+
         public static HashSet<int> BuildBlockedTiles(
             XElement map,
             TiledMapInfo mapInfo,
@@ -21,7 +23,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             foreach (var layer in map.Elements("layer"))
             {
-                if (!IsBlockingLayer(layer))
+                if (!IsBlockingLayer(layer, gameState))
                 {
                     continue;
                 }

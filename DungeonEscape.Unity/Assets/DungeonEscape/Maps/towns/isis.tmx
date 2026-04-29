@@ -1,25 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <map version="1.11" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="5">
+ <properties>
+  <property name="biome" value="Town"/>
+  <property name="song" value="in-the-city"/>
+ </properties>
+ <tileset firstgid="1" source="../../Tilesets/npc.tsx"/>
+ <tileset firstgid="222" source="../../Tilesets/castle.tsx"/>
+ <tileset firstgid="702" source="../../Tilesets/indoor.tsx"/>
+ <tileset firstgid="1182" source="../../Tilesets/overworld.tsx"/>
+ <tileset firstgid="1662" source="../../Tilesets/outdoors.tsx"/>
+ <tileset firstgid="2142" source="../../Tilesets/castle2.tsx"/>
+ <tileset firstgid="2622" source="../../Tilesets/town.tsx"/>
+ <tileset firstgid="3102" source="../../Tilesets/hero.tsx"/>
+ <tileset firstgid="3262" source="../../Tilesets/tiles.tsx"/>
+ <tileset firstgid="3358" source="../../Tilesets/tiles_small.tsx"/>
+ <layer id="2" name="water" width="40" height="40">
   <properties>
-    <property name="biome" value="Town" />
-    <property name="song" value="in-the-city" />
+   <property name="Collideable" type="bool" value="true"/>
+   <property name="Water" type="bool" value="true"/>
   </properties>
-  <tileset firstgid="1" source="../../Tilesets/npc.tsx" />
-  <tileset firstgid="222" source="../../Tilesets/castle.tsx" />
-  <tileset firstgid="702" source="../../Tilesets/indoor.tsx" />
-  <tileset firstgid="1182" source="../../Tilesets/overworld.tsx" />
-  <tileset firstgid="1662" source="../../Tilesets/outdoors.tsx" />
-  <tileset firstgid="2142" source="../../Tilesets/castle2.tsx" />
-  <tileset firstgid="2622" source="../../Tilesets/town.tsx" />
-  <tileset firstgid="3102" source="../../Tilesets/hero.tsx" />
-  <tileset firstgid="3262" source="../../Tilesets/tiles.tsx" />
-  <tileset firstgid="3358" source="../../Tilesets/tiles_small.tsx" />
-  <layer id="2" name="water" width="40" height="40">
-    <properties>
-      <property name="Collideable" type="bool" value="true" />
-      <property name="Water" type="bool" value="true" />
-    </properties>
-    <data encoding="csv">
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

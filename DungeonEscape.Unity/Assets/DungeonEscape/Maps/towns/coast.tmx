@@ -1,27 +1,27 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="3">
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.11" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="4">
+ <properties>
+  <property name="biome" value="Town"/>
+  <property name="song" value="in-the-city"/>
+ </properties>
+ <tileset firstgid="1" source="../../Tilesets/npc.tsx"/>
+ <tileset firstgid="222" source="../../Tilesets/ship.tsx"/>
+ <tileset firstgid="230" source="../../Tilesets/indoor.tsx"/>
+ <tileset firstgid="710" source="../../Tilesets/overworld.tsx"/>
+ <tileset firstgid="1190" source="../../Tilesets/outdoors.tsx"/>
+ <tileset firstgid="1670" source="../../Tilesets/edge.tsx"/>
+ <tileset firstgid="1877" source="../../Tilesets/town.tsx"/>
+ <tileset firstgid="2357" source="../../Tilesets/castle2.tsx"/>
+ <tileset firstgid="2837" source="../../Tilesets/castle.tsx"/>
+ <tileset firstgid="3317" source="../../Tilesets/dungeon.tsx"/>
+ <tileset firstgid="3797" source="../../Tilesets/tiles.tsx"/>
+ <tileset firstgid="3893" source="../../Tilesets/tiles_small.tsx"/>
+ <layer id="2" name="water" width="40" height="40">
   <properties>
-    <property name="biome" value="Town" />
-    <property name="song" value="in-the-city" />
+   <property name="Collideable" type="bool" value="true"/>
+   <property name="Water" type="bool" value="true"/>
   </properties>
-  <tileset firstgid="1" source="../../Tilesets/npc.tsx" />
-  <tileset firstgid="222" source="../../Tilesets/ship.tsx" />
-  <tileset firstgid="230" source="../../Tilesets/indoor.tsx" />
-  <tileset firstgid="710" source="../../Tilesets/overworld.tsx" />
-  <tileset firstgid="1190" source="../../Tilesets/outdoors.tsx" />
-  <tileset firstgid="1670" source="../../Tilesets/edge.tsx" />
-  <tileset firstgid="1877" source="../../Tilesets/town.tsx" />
-  <tileset firstgid="2357" source="../../Tilesets/castle2.tsx" />
-  <tileset firstgid="2837" source="../../Tilesets/castle.tsx" />
-  <tileset firstgid="3317" source="../../Tilesets/dungeon.tsx" />
-  <tileset firstgid="3797" source="../../Tilesets/tiles.tsx" />
-  <tileset firstgid="3893" source="../../Tilesets/tiles_small.tsx" />
-  <layer id="2" name="water" width="40" height="40">
-    <properties>
-      <property name="Collideable" type="bool" value="true" />
-      <property name="Water" type="bool" value="true" />
-    </properties>
-    <data encoding="csv">
+  <data encoding="csv">
 2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,
 2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,
 2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,2837,

@@ -41,7 +41,7 @@ Status: Done
 
 ## 3. UI Migration
 
-Status: Done
+Status: In progress
 
 - Done: Party/status window.
 - Done: Inventory view.
@@ -62,11 +62,13 @@ Status: Done
 - Done: Initial shop/healer/save NPC UI through map interaction message boxes.
 - Done: Inventory UI icon assets are prewarmed so the first Inventory open does not stall.
 - Done: Current UI migration manual tests passed.
+- Pending: Wire fullscreen setting into Unity runtime and settings UI if still desired.
+- Pending: Review whether old map command shortcuts should remain consolidated or return as direct UI actions.
 - Pending: Any future UI layout polish discovered during later gameplay migration.
 
 ## 4. Map Gameplay
 
-Status: Done
+Status: In progress
 
 - Done: NPC dialog works.
 - Done: Recruitable NPCs can join the party.
@@ -84,6 +86,11 @@ Status: Done
 - Done: NPC save behavior through quick-save service interaction.
 - Done: Hidden item quest conditions using the hidden item's quest/stage metadata.
 - Done: Removed hidden items no longer render or interact after pickup.
+- Pending: Store parity with old map stores: support `NpcKey`, fixed `Items`, persistent generated inventory, `WillBuyItems`, item removal after buy, and old sell-price behavior.
+- Pending: Healer parity with old healers: paid heal one, heal all, renew magic, cure status, and revive options based on healer `Cost`.
+- Pending: Object-target item/spell actions, especially old `Target.Object` behavior for using map-facing skills/items on nearby objects.
+- Pending: Chest and hidden-item level gating parity with old `Party.CanOpenChest(level)` behavior.
+- Pending: Decide whether to migrate the old cart follower visual.
 
 ## 5. Movement And Collision Rules
 
@@ -108,7 +115,9 @@ Status: Done
 
 Status: Deferred until map mode is mostly complete
 
+- Pending: Carry forward old biome encounter metadata, including min/max monster level, before random encounters are implemented.
 - Pending: Random encounters by biome.
+- Pending: Per-map random encounter tables from `Content/data/{mapId}_monsters.json`.
 - Pending: Monster loading/spawning.
 - Pending: Combat UI.
 - Pending: Turn system.
@@ -138,6 +147,7 @@ Status: In progress
 - Done: Autosave enabled setting.
 - Done: Autosave interval setting.
 - Pending: Main title/load game flow.
+- Pending: Create Unity equivalents for old splash/main menu/create player/continue quest flow if still wanted.
 - Pending: Version migration for old saves.
 - Pending: Final autosave policy review.
 - Pending: Final transition-save policy review.
@@ -168,3 +178,4 @@ Status: In progress
 - Pending: Confirm build settings.
 - Pending: Confirm scenes included in build.
 - Pending: Remove remaining temporary/debug code when no longer needed.
+- Pending: Decide whether old developer/debug console commands should be recreated with Unity tooling.

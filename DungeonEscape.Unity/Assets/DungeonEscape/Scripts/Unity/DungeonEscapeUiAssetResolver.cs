@@ -15,6 +15,32 @@ namespace Redpoint.DungeonEscape.Unity
         private static IList<TiledTilesetSpriteSet> itemSpriteSets;
         private static readonly Dictionary<string, Sprite> HeroSprites = new Dictionary<string, Sprite>();
 
+        public static void Preload(Party party)
+        {
+            EnsureItemSpriteSets();
+            if (party == null || party.Members == null)
+            {
+                return;
+            }
+
+            foreach (var hero in party.Members)
+            {
+                Sprite heroSprite;
+                TryGetHeroSprite(hero, out heroSprite);
+
+                if (hero.Items == null)
+                {
+                    continue;
+                }
+
+                foreach (var item in hero.Items)
+                {
+                    Sprite itemSprite;
+                    TryGetItemSprite(item, out itemSprite);
+                }
+            }
+        }
+
         public static bool TryGetItemSprite(ItemInstance item, out Sprite sprite)
         {
             sprite = null;

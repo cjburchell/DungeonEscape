@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Redpoint.DungeonEscape;
@@ -71,10 +72,18 @@ namespace Redpoint.DungeonEscape.Unity
         private float nextMenuMoveYTime;
         private int heldSettingsTabMoveX;
         private bool menuControlsBlocked;
+        private bool uiAssetsPrewarmed;
 
         public static bool IsOpen
         {
             get { return isOpen; }
+        }
+
+        private IEnumerator Start()
+        {
+            yield return null;
+            yield return null;
+            PrewarmUiAssets();
         }
 
         private void Update()
@@ -183,6 +192,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Toggle(MenuTab tab)
         {
+            PrewarmUiAssets();
             if (isOpen && currentTab == tab)
             {
                 isOpen = false;
@@ -2254,6 +2264,18 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 mapView = FindAnyObjectByType<TiledMapView>();
             }
+        }
+
+        private void PrewarmUiAssets()
+        {
+            if (uiAssetsPrewarmed)
+            {
+                return;
+            }
+
+            EnsureReferences();
+            DungeonEscapeUiAssetResolver.Preload(gameState == null ? null : gameState.Party);
+            uiAssetsPrewarmed = true;
         }
 
         private DungeonEscapeMessageBox GetMessageBox()

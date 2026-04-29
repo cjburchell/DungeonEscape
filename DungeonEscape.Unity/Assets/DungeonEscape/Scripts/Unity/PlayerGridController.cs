@@ -44,6 +44,7 @@ namespace Redpoint.DungeonEscape.Unity
         private float pendingTurnMoveDelay;
         private bool isMoving;
         private bool showingShip;
+        private bool isTransitioningMap;
 
         public WorldPosition Position
         {
@@ -179,6 +180,11 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             if (isMoving)
+            {
+                return;
+            }
+
+            if (isTransitioningMap)
             {
                 return;
             }
@@ -396,38 +402,51 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            var transition = gameState == null
-                ? CreateFallbackTransition(warp)
-                : gameState.CreateWarpTransition(warp);
+            isTransitioningMap = true;
+            DungeonEscapeScreenFade.GetOrCreate().FadeTransition(this, () => ApplyMapTransitionImmediate(warp));
+        }
 
-            mapView.LoadMap(transition.MapId, transition.SpawnId, !transition.UseSavedOverWorldPosition);
-            if (transition.UseSavedOverWorldPosition && gameState != null && gameState.Party != null)
+        private void ApplyMapTransitionImmediate(TiledMapWarp warp)
+        {
+            try
             {
-                position = gameState.Party.OverWorldPosition;
-                gameState.SetCurrentPosition(position);
-                mapView.CenterOn(position);
-                SnapPartyFollowersToPlayer();
-                return;
-            }
+                var transition = gameState == null
+                    ? CreateFallbackTransition(warp)
+                    : gameState.CreateWarpTransition(warp);
 
-            WorldPosition spawnPosition;
-            if (mapView.TryGetSpawnPosition(transition.SpawnId, out spawnPosition))
-            {
-                position = spawnPosition;
-                if (gameState != null)
+                mapView.LoadMap(transition.MapId, transition.SpawnId, !transition.UseSavedOverWorldPosition);
+                if (transition.UseSavedOverWorldPosition && gameState != null && gameState.Party != null)
                 {
+                    position = gameState.Party.OverWorldPosition;
                     gameState.SetCurrentPosition(position);
+                    mapView.CenterOn(position);
+                    SnapPartyFollowersToPlayer();
+                    return;
                 }
 
-                mapView.CenterOn(position);
-                SnapPartyFollowersToPlayer();
+                WorldPosition spawnPosition;
+                if (mapView.TryGetSpawnPosition(transition.SpawnId, out spawnPosition))
+                {
+                    position = spawnPosition;
+                    if (gameState != null)
+                    {
+                        gameState.SetCurrentPosition(position);
+                    }
+
+                    mapView.CenterOn(position);
+                    SnapPartyFollowersToPlayer();
+                }
+                else if (gameState != null && gameState.Party != null && gameState.Party.CurrentMapIsOverWorld)
+                {
+                    position = gameState.Party.OverWorldPosition;
+                    gameState.SetCurrentPosition(position);
+                    mapView.CenterOn(position);
+                    SnapPartyFollowersToPlayer();
+                }
             }
-            else if (gameState != null && gameState.Party != null && gameState.Party.CurrentMapIsOverWorld)
+            finally
             {
-                position = gameState.Party.OverWorldPosition;
-                gameState.SetCurrentPosition(position);
-                mapView.CenterOn(position);
-                SnapPartyFollowersToPlayer();
+                isTransitioningMap = false;
             }
         }
 

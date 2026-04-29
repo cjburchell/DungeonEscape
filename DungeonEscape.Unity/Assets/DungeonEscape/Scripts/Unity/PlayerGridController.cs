@@ -632,16 +632,6 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            if (choice.Actions != null && choice.Actions.Contains(QuestAction.GiveItem))
-            {
-                AppendMessage(resultMessage, gameState == null ? "" : gameState.GiveItems(choice.Items));
-            }
-
-            if (choice.Actions != null && choice.Actions.Contains(QuestAction.TakeItem))
-            {
-                AppendMessage(resultMessage, gameState == null ? "" : gameState.TakeItem(choice.ItemId, speakerName));
-            }
-
             if (resultMessage.Length > 0)
             {
                 messageBox.Show(speakerName, resultMessage.ToString());

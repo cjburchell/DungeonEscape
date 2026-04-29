@@ -70,6 +70,7 @@ namespace Redpoint.DungeonEscape.Unity
         private int repeatingMenuMoveY;
         private float nextMenuMoveYTime;
         private int heldSettingsTabMoveX;
+        private bool menuControlsBlocked;
 
         public static bool IsOpen
         {
@@ -154,7 +155,9 @@ namespace Redpoint.DungeonEscape.Unity
             menuBodyHeight = Mathf.Max(160f * scale, areaHeight - 90f * scale);
             GUILayout.BeginArea(new Rect(rect.x + 16f * scale, rect.y + 14f * scale, rect.width - 32f * scale, areaHeight));
             var previousEnabled = GUI.enabled;
-            GUI.enabled = rebindingInput == null && !IsMenuModalVisible();
+            var previousMenuControlsBlocked = menuControlsBlocked;
+            menuControlsBlocked = rebindingInput != null || IsMenuModalVisible();
+            SetMenuGuiEnabled(previousEnabled);
             DrawHeader();
             DrawTabs();
             var previousVerticalThumb = GUI.skin.verticalScrollbarThumb;
@@ -166,10 +169,16 @@ namespace Redpoint.DungeonEscape.Unity
             DrawCurrentTab();
             GUI.skin.verticalScrollbarThumb = previousVerticalThumb;
             GUI.enabled = previousEnabled;
+            menuControlsBlocked = previousMenuControlsBlocked;
             GUILayout.EndArea();
             DrawMenuModalOverlay();
             DrawRebindingOverlay();
             GUI.depth = previousDepth;
+        }
+
+        private void SetMenuGuiEnabled(bool enabled)
+        {
+            GUI.enabled = enabled && !menuControlsBlocked;
         }
 
         private void Toggle(MenuTab tab)
@@ -344,38 +353,38 @@ namespace Redpoint.DungeonEscape.Unity
         private void DrawActivePartyControls(Hero hero, int index, int activeCount)
         {
             GUILayout.BeginHorizontal();
-            GUI.enabled = index > 0;
+            SetMenuGuiEnabled(index > 0);
             if (GUILayout.Button("Move Up", buttonStyle, GUILayout.Width(112f * GetPixelScale())))
             {
                 ApplyPartyChange(() => gameState.MovePartyMemberUp(hero));
             }
 
-            GUI.enabled = index < activeCount - 1;
+            SetMenuGuiEnabled(index < activeCount - 1);
             if (GUILayout.Button("Move Down", buttonStyle, GUILayout.Width(128f * GetPixelScale())))
             {
                 ApplyPartyChange(() => gameState.MovePartyMemberDown(hero));
             }
 
-            GUI.enabled = activeCount > 1;
+            SetMenuGuiEnabled(activeCount > 1);
             if (GUILayout.Button("Reserve", buttonStyle, GUILayout.Width(112f * GetPixelScale())))
             {
                 ApplyPartyChange(() => gameState.DeactivatePartyMember(hero));
             }
 
-            GUI.enabled = true;
+            SetMenuGuiEnabled(true);
             GUILayout.EndHorizontal();
             GUILayout.Space(6f * GetPixelScale());
         }
 
         private void DrawReservePartyControls(Hero hero, int activeCount)
         {
-            GUI.enabled = activeCount < GetMaxPartyMembers();
+            SetMenuGuiEnabled(activeCount < GetMaxPartyMembers());
             if (GUILayout.Button("Add to Party", buttonStyle, GUILayout.Width(144f * GetPixelScale())))
             {
                 ApplyPartyChange(() => gameState.ActivatePartyMember(hero));
             }
 
-            GUI.enabled = true;
+            SetMenuGuiEnabled(true);
             GUILayout.Space(6f * GetPixelScale());
         }
 
@@ -509,13 +518,13 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(spell.Name + "  MP " + spell.Cost + "  " + spell.Type + "  " + spell.Targets, smallStyle);
-                GUI.enabled = gameState != null && gameState.CanCastHeroSpell(hero, spell);
+                SetMenuGuiEnabled(gameState != null && gameState.CanCastHeroSpell(hero, spell));
                 if (GUILayout.Button("Cast", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
                 {
                     ShowSpellTargetPicker(hero, spell);
                 }
 
-                GUI.enabled = true;
+                SetMenuGuiEnabled(true);
                 GUILayout.EndHorizontal();
             }
         }
@@ -682,13 +691,13 @@ namespace Redpoint.DungeonEscape.Unity
                 }
                 else
                 {
-                    GUI.enabled = hero.CanEquipItem(item);
+                    SetMenuGuiEnabled(hero.CanEquipItem(item));
                     if (GUILayout.Button("Equip", buttonStyle, GUILayout.Width(96f * GetPixelScale())))
                     {
                         ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item));
                     }
 
-                    GUI.enabled = true;
+                    SetMenuGuiEnabled(true);
                 }
 
                 GUILayout.EndHorizontal();
@@ -748,37 +757,37 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             GUILayout.Space(8f * GetPixelScale());
-            GUI.enabled = gameState != null && gameState.CanUseHeroItem(hero, item);
+            SetMenuGuiEnabled(gameState != null && gameState.CanUseHeroItem(hero, item));
             if (GUILayout.Button("Use", buttonStyle))
             {
                 ShowUseItemTargetPicker(hero, item);
             }
 
-            GUI.enabled = item.IsEquipped;
+            SetMenuGuiEnabled(item.IsEquipped);
             if (GUILayout.Button("Unequip", buttonStyle))
             {
                 ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item));
             }
 
-            GUI.enabled = !item.IsEquipped && hero.CanEquipItem(item);
+            SetMenuGuiEnabled(!item.IsEquipped && hero.CanEquipItem(item));
             if (GUILayout.Button("Equip", buttonStyle))
             {
                 ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item));
             }
 
-            GUI.enabled = true;
+            SetMenuGuiEnabled(true);
             if (GUILayout.Button("Transfer", buttonStyle))
             {
                 ShowTransferItemTargetPicker(hero, item);
             }
 
-            GUI.enabled = item.Type != ItemType.Quest;
+            SetMenuGuiEnabled(item.Type != ItemType.Quest);
             if (GUILayout.Button("Drop", buttonStyle))
             {
                 ShowDropItemConfirmation(hero, item);
             }
 
-            GUI.enabled = true;
+            SetMenuGuiEnabled(true);
             GUILayout.EndVertical();
         }
 
@@ -1191,7 +1200,7 @@ namespace Redpoint.DungeonEscape.Unity
                 ConfirmSaveManual(selectedRowIndex, save);
             }
 
-            GUI.enabled = IsUsableSave(save);
+            SetMenuGuiEnabled(IsUsableSave(save));
             if (GUILayout.Button("Load", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
             {
                 ConfirmLoadManual(selectedRowIndex);
@@ -1202,7 +1211,7 @@ namespace Redpoint.DungeonEscape.Unity
                 ConfirmDeleteManual(selectedRowIndex);
             }
 
-            GUI.enabled = true;
+            SetMenuGuiEnabled(true);
             GUILayout.Space(12f * GetPixelScale());
             if (GUILayout.Button("New Game", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
             {
@@ -1250,9 +1259,14 @@ namespace Redpoint.DungeonEscape.Unity
                 {
                     if (index == 0)
                     {
-                        ShowSaveMessage(gameState != null && gameState.LoadManual(slotIndex)
-                            ? "Loaded slot " + (slotIndex + 1) + "."
-                            : "Could not load slot " + (slotIndex + 1) + ".");
+                        if (gameState != null && gameState.LoadManual(slotIndex))
+                        {
+                            isOpen = false;
+                        }
+                        else
+                        {
+                            ShowSaveMessage("Could not load slot " + (slotIndex + 1) + ".");
+                        }
                     }
                 });
         }
@@ -1285,7 +1299,7 @@ namespace Redpoint.DungeonEscape.Unity
                     if (index == 0 && gameState != null)
                     {
                         gameState.RestartNewGame();
-                        ShowSaveMessage("Started a new game.");
+                        isOpen = false;
                     }
                 });
         }
@@ -1389,9 +1403,9 @@ namespace Redpoint.DungeonEscape.Unity
             settings.AutoSaveEnabled = DrawCheckboxRow(settings.AutoSaveEnabled, "Autosave enabled");
             EndSelectableRow();
             BeginSelectableRow();
-            GUI.enabled = settings.AutoSaveEnabled;
+            SetMenuGuiEnabled(settings.AutoSaveEnabled);
             settings.AutoSaveIntervalSeconds = DrawSliderRow("Autosave Period: " + GetAutoSaveInterval(settings).ToString("0") + " seconds", GetAutoSaveInterval(settings), 5f, 300f);
-            GUI.enabled = true;
+            SetMenuGuiEnabled(true);
             EndSelectableRow();
 
             if (GUI.changed)
@@ -1542,6 +1556,7 @@ namespace Redpoint.DungeonEscape.Unity
             var height = Mathf.Min(Screen.height - 48f * scale, (150f + choiceCount * 42f) * scale);
             var rect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
             GUI.enabled = true;
+            DrawModalBackdrop();
             GUI.Box(rect, GUIContent.none, panelStyle);
 
             GUILayout.BeginArea(new Rect(rect.x + 18f * scale, rect.y + 16f * scale, rect.width - 36f * scale, rect.height - 32f * scale));
@@ -1580,6 +1595,7 @@ namespace Redpoint.DungeonEscape.Unity
             var height = 150f * scale;
             var rect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
             GUI.enabled = true;
+            DrawModalBackdrop();
             GUI.Box(rect, GUIContent.none, panelStyle);
 
             GUILayout.BeginArea(new Rect(rect.x + 18f * scale, rect.y + 16f * scale, rect.width - 36f * scale, rect.height - 32f * scale));
@@ -1593,6 +1609,14 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             GUILayout.EndArea();
+        }
+
+        private static void DrawModalBackdrop()
+        {
+            var previousColor = GUI.color;
+            GUI.color = new Color(0f, 0f, 0f, 0.6f);
+            GUI.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), Texture2D.whiteTexture);
+            GUI.color = previousColor;
         }
 
         private Vector2 BeginThemedScroll(Vector2 position, float height)

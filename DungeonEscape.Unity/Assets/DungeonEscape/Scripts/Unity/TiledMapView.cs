@@ -450,6 +450,11 @@ namespace Redpoint.DungeonEscape.Unity
                 return false;
             }
 
+            if (IsHiddenItemObject(mapObject) && gameState != null && !gameState.CanPickupMapObject(mapObject))
+            {
+                return false;
+            }
+
             if (!IsPartyMemberObject(mapObject))
             {
                 return true;
@@ -468,6 +473,12 @@ namespace Redpoint.DungeonEscape.Unity
         {
             return mapObject != null &&
                    string.Equals(mapObject.Class, "Door", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsHiddenItemObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   string.Equals(mapObject.Class, "HiddenItem", StringComparison.OrdinalIgnoreCase);
         }
 
         private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName, int defaultValue)

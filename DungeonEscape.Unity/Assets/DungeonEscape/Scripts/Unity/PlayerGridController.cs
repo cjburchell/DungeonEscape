@@ -914,6 +914,12 @@ namespace Redpoint.DungeonEscape.Unity
                    string.Equals(mapObject.Class, "HiddenItem", System.StringComparison.OrdinalIgnoreCase);
         }
 
+        private static bool IsDoorObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   string.Equals(mapObject.Class, "Door", System.StringComparison.OrdinalIgnoreCase);
+        }
+
         private static bool IsPartyMemberObject(TiledObjectInfo mapObject)
         {
             return mapObject != null &&
@@ -1028,6 +1034,7 @@ namespace Redpoint.DungeonEscape.Unity
         private void SetFacing(Direction direction)
         {
             currentDirection = direction;
+            UpdateTravelVisualState();
             spriteRenderer.sprite = directionSprites.GetIdle(currentDirection);
             if (gameState != null)
             {

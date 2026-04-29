@@ -62,9 +62,9 @@ namespace Redpoint.DungeonEscape.Unity
                         continue;
                     }
 
-                    if (IsDoorObject(mapObject) &&
-                        gameState != null &&
-                        gameState.IsObjectOpen(mapId, mapObject.Id))
+                    if (gameState != null &&
+                        (IsDoorObject(mapObject) && gameState.IsObjectOpen(mapId, mapObject.Id) ||
+                         gameState.IsMapObjectRemoved(mapId, mapObject)))
                     {
                         continue;
                     }
@@ -77,18 +77,7 @@ namespace Redpoint.DungeonEscape.Unity
                         continue;
                     }
 
-                    if (IsDoorObject(mapObject))
-                    {
-                        AddBlockedObjectBounds(blocked, mapObject, mapInfo, mapWidth, mapHeight);
-                        continue;
-                    }
-
-                    var column = Mathf.FloorToInt(mapObject.X / mapInfo.TileWidth);
-                    var row = IsNpcObject(mapObject)
-                        ? Mathf.FloorToInt((mapObject.Y - 0.001f) / mapInfo.TileHeight)
-                        : Mathf.FloorToInt((mapObject.Y - mapObject.Height) / mapInfo.TileHeight);
-
-                    AddBlockedTile(blocked, column, row, mapWidth, mapHeight);
+                    AddBlockedObjectBounds(blocked, mapObject, mapInfo, mapWidth, mapHeight);
                 }
             }
         }
@@ -104,8 +93,10 @@ namespace Redpoint.DungeonEscape.Unity
             var height = mapObject.Height <= 0f ? mapInfo.TileHeight : mapObject.Height;
             var minColumn = Mathf.FloorToInt(mapObject.X / mapInfo.TileWidth);
             var maxColumn = Mathf.FloorToInt((mapObject.X + width - 0.001f) / mapInfo.TileWidth);
-            var minRow = Mathf.FloorToInt((mapObject.Y - height + 1f) / mapInfo.TileHeight);
-            var maxRow = Mathf.FloorToInt((mapObject.Y - 0.001f) / mapInfo.TileHeight);
+            var top = mapObject.Gid == 0 ? mapObject.Y : mapObject.Y - height;
+            var bottom = mapObject.Gid == 0 ? mapObject.Y + height : mapObject.Y;
+            var minRow = Mathf.FloorToInt(top / mapInfo.TileHeight);
+            var maxRow = Mathf.FloorToInt((bottom - 0.001f) / mapInfo.TileHeight);
 
             for (var row = minRow; row <= maxRow; row++)
             {
@@ -126,9 +117,19 @@ namespace Redpoint.DungeonEscape.Unity
             blocked.Add(row * mapWidth + column);
         }
 
-        private static bool IsBlockingLayer(XElement layer)
+        private static bool IsBlockingLayer(XElement layer, DungeonEscapeGameState gameState)
         {
             var properties = ReadProperties(layer);
+            string water;
+            if (properties.TryGetValue("Water", out water) &&
+                IsTrue(water) &&
+                gameState != null &&
+                gameState.Party != null &&
+                gameState.Party.HasShip)
+            {
+                return false;
+            }
+
             string collideable;
             if (properties.TryGetValue("Collideable", out collideable))
             {
@@ -196,8 +197,14 @@ namespace Redpoint.DungeonEscape.Unity
 
             return data.Value
                 .Split(new[] { ',', '\n', '\r', '\t', ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(int.Parse)
+                .Select(ParseGid)
                 .ToList();
+        }
+
+        private static int ParseGid(string value)
+        {
+            uint result;
+            return uint.TryParse(value, out result) ? (int)(result & TiledGidMask) : 0;
         }
 
         private static bool IsTrue(string value)

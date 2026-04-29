@@ -147,6 +147,7 @@ namespace Redpoint.DungeonEscape.Unity
                 if (string.IsNullOrEmpty(tileset.Source))
                 {
                     tileset.TilesetFound = true;
+                    tileset.ImageFound = true;
                     continue;
                 }
 

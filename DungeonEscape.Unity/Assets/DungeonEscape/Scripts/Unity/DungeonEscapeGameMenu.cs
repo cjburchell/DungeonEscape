@@ -14,6 +14,7 @@ namespace Redpoint.DungeonEscape.Unity
             Party,
             Inventory,
             Quests,
+            Save,
             Settings
         }
 
@@ -49,6 +50,7 @@ namespace Redpoint.DungeonEscape.Unity
         private Vector2 partyScrollPosition;
         private Vector2 inventoryScrollPosition;
         private Vector2 questScrollPosition;
+        private Vector2 saveScrollPosition;
         private Vector2 settingsScrollPosition;
         private float menuBodyHeight;
         private int selectedHeroIndex;
@@ -246,6 +248,7 @@ namespace Redpoint.DungeonEscape.Unity
             DrawTab(MenuTab.Party, "Party");
             DrawTab(MenuTab.Inventory, "Inventory");
             DrawTab(MenuTab.Quests, "Quests");
+            DrawTab(MenuTab.Save, "Save");
             DrawTab(MenuTab.Settings, "Settings");
             GUILayout.EndHorizontal();
             GUILayout.Space(10f * GetPixelScale());
@@ -274,6 +277,9 @@ namespace Redpoint.DungeonEscape.Unity
                     break;
                 case MenuTab.Quests:
                     DrawQuests();
+                    break;
+                case MenuTab.Save:
+                    DrawSave();
                     break;
                 case MenuTab.Settings:
                     DrawSettings();
@@ -1121,6 +1127,200 @@ namespace Redpoint.DungeonEscape.Unity
             GUILayout.EndVertical();
         }
 
+        private void DrawSave()
+        {
+            EnsureReferences();
+            if (gameState == null)
+            {
+                GUILayout.Label("Game state is not loaded.", labelStyle);
+                return;
+            }
+
+            var slots = gameState.GetManualSaveSlots();
+            selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Mathf.Max(slots.Count - 1, 0));
+
+            GUILayout.BeginHorizontal();
+            GUILayout.BeginVertical(GUILayout.MinWidth(420f * GetPixelScale()));
+            saveScrollPosition = BeginThemedScroll(saveScrollPosition, Mathf.Max(120f * GetPixelScale(), menuBodyHeight));
+            for (var i = 0; i < slots.Count; i++)
+            {
+                BeginSelectableRow();
+                DrawSaveSlotRow(i, slots[i]);
+                EndSelectableRow();
+                SelectRowOnMouseClick(i);
+            }
+
+            EndThemedScroll();
+            GUILayout.EndVertical();
+            GUILayout.Space(10f * GetPixelScale());
+            DrawSaveDetail(selectedRowIndex < slots.Count ? slots[selectedRowIndex] : null);
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawSaveSlotRow(int slotIndex, GameSave save)
+        {
+            GUILayout.BeginVertical();
+            GUILayout.Label("Slot " + (slotIndex + 1) + ": " + GetSaveTitle(save), labelStyle);
+            GUILayout.Label(GetSaveSummary(save), smallStyle);
+            GUILayout.EndVertical();
+        }
+
+        private void DrawSaveDetail(GameSave save)
+        {
+            GUILayout.BeginVertical(panelStyle, GUILayout.Width(380f * GetPixelScale()));
+            GUILayout.Label("Save Slot " + (selectedRowIndex + 1), titleStyle);
+            GUILayout.Label(GetSaveTitle(save), labelStyle);
+            GUILayout.Label(GetSaveSummary(save), smallStyle);
+
+            if (save != null && save.Party != null)
+            {
+                GUILayout.Space(8f * GetPixelScale());
+                GUILayout.Label("Map: " + save.Party.CurrentMapId, smallStyle);
+                if (save.Party.CurrentPosition.HasValue)
+                {
+                    var position = save.Party.CurrentPosition.Value;
+                    GUILayout.Label("Position: " + position.X + ", " + position.Y, smallStyle);
+                }
+
+                GUILayout.Label("Gold: " + save.Party.Gold + "    Steps: " + save.Party.StepCount, smallStyle);
+            }
+
+            GUILayout.Space(12f * GetPixelScale());
+            if (GUILayout.Button(IsUsableSave(save) ? "Save Over" : "Save", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
+            {
+                ConfirmSaveManual(selectedRowIndex, save);
+            }
+
+            GUI.enabled = IsUsableSave(save);
+            if (GUILayout.Button("Load", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
+            {
+                ConfirmLoadManual(selectedRowIndex);
+            }
+
+            if (GUILayout.Button("Delete", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
+            {
+                ConfirmDeleteManual(selectedRowIndex);
+            }
+
+            GUI.enabled = true;
+            GUILayout.Space(12f * GetPixelScale());
+            if (GUILayout.Button("New Game", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
+            {
+                ConfirmRestartNewGame();
+            }
+
+            GUILayout.EndVertical();
+        }
+
+        private void ConfirmSaveManual(int slotIndex, GameSave save)
+        {
+            if (IsUsableSave(save))
+            {
+                ShowMenuModal(
+                    "Save",
+                    "Save over slot " + (slotIndex + 1) + "?",
+                    new[] { "Save", "Cancel" },
+                    index =>
+                    {
+                        if (index == 0)
+                        {
+                            SaveManual(slotIndex);
+                        }
+                    });
+                return;
+            }
+
+            SaveManual(slotIndex);
+        }
+
+        private void SaveManual(int slotIndex)
+        {
+            ShowSaveMessage(gameState != null && gameState.SaveManual(slotIndex)
+                ? "Saved slot " + (slotIndex + 1) + "."
+                : "Could not save slot " + (slotIndex + 1) + ".");
+        }
+
+        private void ConfirmLoadManual(int slotIndex)
+        {
+            ShowMenuModal(
+                "Load",
+                "Load slot " + (slotIndex + 1) + "? Unsaved progress will be lost.",
+                new[] { "Load", "Cancel" },
+                index =>
+                {
+                    if (index == 0)
+                    {
+                        ShowSaveMessage(gameState != null && gameState.LoadManual(slotIndex)
+                            ? "Loaded slot " + (slotIndex + 1) + "."
+                            : "Could not load slot " + (slotIndex + 1) + ".");
+                    }
+                });
+        }
+
+        private void ConfirmDeleteManual(int slotIndex)
+        {
+            ShowMenuModal(
+                "Delete",
+                "Delete slot " + (slotIndex + 1) + "?",
+                new[] { "Delete", "Cancel" },
+                index =>
+                {
+                    if (index == 0)
+                    {
+                        ShowSaveMessage(gameState != null && gameState.DeleteManual(slotIndex)
+                            ? "Deleted slot " + (slotIndex + 1) + "."
+                            : "Could not delete slot " + (slotIndex + 1) + ".");
+                    }
+                });
+        }
+
+        private void ConfirmRestartNewGame()
+        {
+            ShowMenuModal(
+                "New Game",
+                "Start a new game? Unsaved progress will be lost.",
+                new[] { "Start", "Cancel" },
+                index =>
+                {
+                    if (index == 0 && gameState != null)
+                    {
+                        gameState.RestartNewGame();
+                        ShowSaveMessage("Started a new game.");
+                    }
+                });
+        }
+
+        private void ShowSaveMessage(string message)
+        {
+            ShowMenuModal("Save", string.IsNullOrEmpty(message) ? "Done." : message, null, null);
+        }
+
+        private static string GetSaveTitle(GameSave save)
+        {
+            return IsUsableSave(save) ? save.Name : "Empty";
+        }
+
+        private static string GetSaveSummary(GameSave save)
+        {
+            if (!IsUsableSave(save))
+            {
+                return "No save data.";
+            }
+
+            var time = save.Time.HasValue ? save.Time.Value.ToString("g") : "Unknown time";
+            var level = save.Level.HasValue ? "Level " + save.Level.Value : "No level";
+            var map = save.Party == null || string.IsNullOrEmpty(save.Party.CurrentMapId) ? "Unknown map" : save.Party.CurrentMapId;
+            return time + "    " + level + "    " + map;
+        }
+
+        private static bool IsUsableSave(GameSave save)
+        {
+            return save != null &&
+                   save.Party != null &&
+                   !string.IsNullOrEmpty(save.Party.CurrentMapId) &&
+                   save.Party.CurrentPosition.HasValue;
+        }
+
         private void DrawSettings()
         {
             var settings = DungeonEscapeSettingsCache.Current;
@@ -1464,6 +1664,8 @@ namespace Redpoint.DungeonEscape.Unity
                     return GetSelectedInventoryHero() == null ? 0 : GetSelectedInventoryHero().Items.Count;
                 case MenuTab.Quests:
                     return party == null || party.ActiveQuests == null ? 0 : party.ActiveQuests.Count;
+                case MenuTab.Save:
+                    return gameState == null ? 0 : gameState.ManualSaveSlotCount;
                 case MenuTab.Settings:
                     return GetSettingsSelectableRowCount();
                 default:
@@ -1515,6 +1717,9 @@ namespace Redpoint.DungeonEscape.Unity
                 case MenuTab.Quests:
                     questScrollPosition.y = y;
                     break;
+                case MenuTab.Save:
+                    saveScrollPosition.y = y;
+                    break;
                 case MenuTab.Settings:
                     settingsScrollPosition.y = y;
                     break;
@@ -1558,6 +1763,35 @@ namespace Redpoint.DungeonEscape.Unity
             if (currentTab == MenuTab.Settings)
             {
                 ActivateSelectedSetting();
+                return;
+            }
+
+            if (currentTab == MenuTab.Save)
+            {
+                ActivateSelectedSaveSlot();
+            }
+        }
+
+        private void ActivateSelectedSaveSlot()
+        {
+            if (gameState == null)
+            {
+                return;
+            }
+
+            var slots = gameState.GetManualSaveSlots();
+            if (selectedRowIndex < 0 || selectedRowIndex >= slots.Count)
+            {
+                return;
+            }
+
+            if (IsUsableSave(slots[selectedRowIndex]))
+            {
+                ConfirmLoadManual(selectedRowIndex);
+            }
+            else
+            {
+                SaveManual(selectedRowIndex);
             }
         }
 

@@ -1264,12 +1264,104 @@ namespace Redpoint.DungeonEscape.Unity
             SaveQuick(false);
         }
 
+        public int ManualSaveSlotCount
+        {
+            get { return MaxSaveSlots; }
+        }
+
+        public IReadOnlyList<GameSave> GetManualSaveSlots()
+        {
+            EnsureInitialized();
+            EnsureManualSaveSlots(GameFile);
+            return GameFile.Saves.Where(save => !save.IsQuick).Take(MaxSaveSlots).ToList();
+        }
+
+        public bool SaveManual(int slotIndex)
+        {
+            EnsureInitialized();
+            EnsureManualSaveSlots(GameFile);
+            if (slotIndex < 0 || slotIndex >= MaxSaveSlots)
+            {
+                return false;
+            }
+
+            var manualSaves = GameFile.Saves.Where(save => !save.IsQuick).ToList();
+            var existing = manualSaves[slotIndex];
+            var existingIndex = GameFile.Saves.IndexOf(existing);
+            if (existingIndex < 0)
+            {
+                return false;
+            }
+
+            var save = CloneGameSave(CurrentSave);
+            save.IsQuick = false;
+            save.Time = DateTime.Now;
+            GameFile.Saves[existingIndex] = save;
+            SaveGameFile();
+            saveDirty = false;
+            autoSaveCountdown = 0f;
+            Debug.Log("Saved manual slot " + (slotIndex + 1) + " to " + GetSaveFilePath());
+            return true;
+        }
+
+        public bool LoadManual(int slotIndex)
+        {
+            GameFile = LoadGameFile();
+            EnsureManualSaveSlots(GameFile);
+            if (slotIndex < 0 || slotIndex >= MaxSaveSlots)
+            {
+                return false;
+            }
+
+            var save = GameFile.Saves.Where(item => !item.IsQuick).ToList()[slotIndex];
+            if (!IsUsableSave(save))
+            {
+                return false;
+            }
+
+            CurrentSave = save;
+            ShouldApplyInitialSpawn = false;
+            saveDirty = false;
+            autoSaveCountdown = 0f;
+            Debug.Log("Loaded manual slot " + (slotIndex + 1) + ": " + CurrentSave.Name);
+            if (SaveLoaded != null)
+            {
+                SaveLoaded(CurrentSave);
+            }
+
+            return true;
+        }
+
+        public bool DeleteManual(int slotIndex)
+        {
+            EnsureInitialized();
+            EnsureManualSaveSlots(GameFile);
+            if (slotIndex < 0 || slotIndex >= MaxSaveSlots)
+            {
+                return false;
+            }
+
+            var manualSaves = GameFile.Saves.Where(save => !save.IsQuick).ToList();
+            var existing = manualSaves[slotIndex];
+            var existingIndex = GameFile.Saves.IndexOf(existing);
+            if (existingIndex < 0 || !IsUsableSave(existing))
+            {
+                return false;
+            }
+
+            GameFile.Saves[existingIndex] = new GameSave();
+            SaveGameFile();
+            Debug.Log("Deleted manual slot " + (slotIndex + 1) + ".");
+            return true;
+        }
+
         private void SaveQuick(bool autoSave)
         {
             EnsureInitialized();
-            CurrentSave.IsQuick = true;
-            CurrentSave.Time = DateTime.Now;
-            UpsertQuickSave(CurrentSave);
+            var quickSave = CloneGameSave(CurrentSave);
+            quickSave.IsQuick = true;
+            quickSave.Time = DateTime.Now;
+            UpsertQuickSave(quickSave);
             SaveGameFile();
             saveDirty = false;
             autoSaveCountdown = 0f;
@@ -1614,10 +1706,7 @@ namespace Redpoint.DungeonEscape.Unity
                 file = new GameFile { Version = SaveFileVersion };
             }
 
-            for (var i = file.Saves.Count(save => !save.IsQuick); i < MaxSaveSlots; i++)
-            {
-                file.Saves.Add(new GameSave());
-            }
+            EnsureManualSaveSlots(file);
 
             return file;
         }
@@ -1625,6 +1714,31 @@ namespace Redpoint.DungeonEscape.Unity
         private static GameSave GetQuickSave(GameFile file)
         {
             return file == null ? null : file.Saves.FirstOrDefault(save => save.IsQuick);
+        }
+
+        private static void EnsureManualSaveSlots(GameFile file)
+        {
+            if (file == null)
+            {
+                return;
+            }
+
+            if (file.Saves == null)
+            {
+                file.Saves = new List<GameSave>();
+            }
+
+            for (var i = file.Saves.Count(save => !save.IsQuick); i < MaxSaveSlots; i++)
+            {
+                file.Saves.Add(new GameSave());
+            }
+        }
+
+        private static GameSave CloneGameSave(GameSave save)
+        {
+            return save == null
+                ? new GameSave()
+                : JsonConvert.DeserializeObject<GameSave>(JsonConvert.SerializeObject(save));
         }
 
         private static bool IsUsableSave(GameSave save)

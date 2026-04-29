@@ -8,7 +8,7 @@ Keep combat migration last. Finish the map-mode gameplay loop, party systems, UI
 
 ## 1. Validate Current Gameplay Loop
 
-Status: Mostly done
+Status: Done
 
 - Done: New game starts at the map `DefaultSpawn`.
 - Done: Warps with `SpawnId` work.
@@ -23,7 +23,7 @@ Status: Mostly done
 - Done: Dialog choices can take items when the party has the required item.
 - Done: Item transfer/drop/use dialogs work through the game menu overlay.
 - Done: Play-tested the `Lost_Sea_Shell` dialog path end to end in Unity.
-- Pending: Re-test the `Find_Ship` dialog path end to end after open-door support.
+- Done: Play-tested the `Find_Ship` dialog path end to end in Unity, including the ship deed reward.
 
 ## 2. Party Creation
 
@@ -35,8 +35,8 @@ Status: Mostly done
 - Done: Party followers render on the map.
 - Done: Followers follow after movement, warp, and load.
 - Done: Party members animate.
-- Pending: Level-up progression validation.
-- Pending: Skill/spell assignment validation after level-up.
+- Done: Level-up progression validated with shared core tests.
+- Done: Skill/spell progression validated with shared core tests. Class skills are assigned from `classlevels.json`; spells unlock dynamically by level and class.
 
 ## 3. UI Migration
 

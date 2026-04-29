@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonEscape.Test", "Dunge
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonEscape.Core", "DungeonEscape.Core\DungeonEscape.Core.csproj", "{DCFFBBFD-CBDD-4DD3-A070-356B26426F22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonEscape.Core.Test", "DungeonEscape.Core.Test\DungeonEscape.Core.Test.csproj", "{CFA455DD-4E10-4F62-AA0F-B7298871F45E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{DCFFBBFD-CBDD-4DD3-A070-356B26426F22}.Release|x64.Build.0 = Release|Any CPU
 		{DCFFBBFD-CBDD-4DD3-A070-356B26426F22}.Release|x86.ActiveCfg = Release|Any CPU
 		{DCFFBBFD-CBDD-4DD3-A070-356B26426F22}.Release|x86.Build.0 = Release|Any CPU
+		{CFA455DD-4E10-4F62-AA0F-B7298871F45E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFA455DD-4E10-4F62-AA0F-B7298871F45E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFA455DD-4E10-4F62-AA0F-B7298871F45E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CFA455DD-4E10-4F62-AA0F-B7298871F45E}.Debug|x64.Build.0 = Debug|Any CPU
+		{CFA455DD-4E10-4F62-AA0F-B7298871F45E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CFA455DD-4E10-4F62-AA0F-B7298871F45E}.Debug|x86.Build.0 = Debug|Any CPU
+		{CFA455DD-4E10-4F62-AA0F-B7298871F45E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFA455DD-4E10-4F62-AA0F-B7298871F45E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFA455DD-4E10-4F62-AA0F-B7298871F45E}.Release|x64.ActiveCfg = Release|Any CPU
+		{CFA455DD-4E10-4F62-AA0F-B7298871F45E}.Release|x64.Build.0 = Release|Any CPU
+		{CFA455DD-4E10-4F62-AA0F-B7298871F45E}.Release|x86.ActiveCfg = Release|Any CPU
+		{CFA455DD-4E10-4F62-AA0F-B7298871F45E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

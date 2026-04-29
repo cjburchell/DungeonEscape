@@ -121,12 +121,17 @@ namespace Redpoint.DungeonEscape.Unity
 
         public void EnsureVisible(Redpoint.DungeonEscape.State.WorldPosition position)
         {
+            EnsureVisible(position, 0.15f);
+        }
+
+        public void EnsureVisible(Redpoint.DungeonEscape.State.WorldPosition position, float scrollDuration)
+        {
             EnsureMapLoaded();
 
             Vector3 startOffset;
             if (viewport.EnsureVisible(position, out startOffset))
             {
-                SetViewport(startOffset, true);
+                SetViewport(startOffset, true, scrollDuration);
             }
         }
 
@@ -927,6 +932,11 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void SetViewport(Vector3 startOffset, bool animate)
         {
+            SetViewport(startOffset, animate, 0.15f);
+        }
+
+        private void SetViewport(Vector3 startOffset, bool animate, float scrollDuration)
+        {
             mapLoaded = false;
             RenderPreview();
 
@@ -937,20 +947,20 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            StartViewportScroll(startOffset);
+            StartViewportScroll(startOffset, scrollDuration);
         }
 
-        private void StartViewportScroll(Vector3 startOffset)
+        private void StartViewportScroll(Vector3 startOffset, float scrollDuration)
         {
             StopViewportScroll();
 
             transform.position = startOffset;
-            viewportScroll = StartCoroutine(AnimateViewportScroll(startOffset));
+            viewportScroll = StartCoroutine(AnimateViewportScroll(startOffset, scrollDuration));
         }
 
-        private IEnumerator AnimateViewportScroll(Vector3 startOffset)
+        private IEnumerator AnimateViewportScroll(Vector3 startOffset, float scrollDuration)
         {
-            const float duration = 0.15f;
+            var duration = Mathf.Max(0.01f, scrollDuration);
             var elapsed = 0f;
 
             while (elapsed < duration)

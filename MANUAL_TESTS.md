@@ -58,6 +58,8 @@ Status: Done
 - Hold a movement key or stick for 20-30 seconds on the overworld.
 - Move near viewport edges horizontally and vertically.
 - Expected: no major hitching from layer parsing, and scrolling should be at least as smooth as before.
+- Hold sprint while moving across viewport edges horizontally and vertically.
+- Expected: player animation and viewport scrolling stay in sync without visible stutter from mismatched movement/scroll timing.
 
 ### Save And Load
 

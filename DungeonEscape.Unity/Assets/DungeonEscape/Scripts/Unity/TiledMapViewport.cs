@@ -39,7 +39,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         public bool EnsureVisible(WorldPosition position, out Vector3 startOffset)
         {
-            const int margin = 3;
+            const int margin = 4;
             var column = (int)position.X;
             var row = (int)position.Y;
             var newStartColumn = StartColumn;

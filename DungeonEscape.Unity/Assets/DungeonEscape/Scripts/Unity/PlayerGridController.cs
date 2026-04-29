@@ -41,7 +41,6 @@ namespace Redpoint.DungeonEscape.Unity
         private Class loadedHeroClass = Class.Hero;
         private Gender loadedHeroGender = Gender.Male;
         private bool loadedHeroIsDead;
-        private Coroutine stepAnimation;
         private DungeonEscapeGameState gameState;
         private DungeonEscapeMessageBox messageBox;
         private readonly List<PartyFollowerController> followers = new List<PartyFollowerController>();
@@ -316,16 +315,15 @@ namespace Redpoint.DungeonEscape.Unity
         private IEnumerator MoveOneTile(Direction direction, int nextX, int nextY)
         {
             isMoving = true;
-            PlayStepAnimation(direction);
 
             var startPosition = position;
             var nextPosition = new WorldPosition(nextX, nextY);
+            var duration = GetMoveDuration();
             if (mapView != null)
             {
-                mapView.EnsureVisible(nextPosition);
+                mapView.EnsureVisible(nextPosition, duration);
             }
 
-            var duration = GetMoveDuration();
             var elapsed = 0f;
 
             while (elapsed < duration)
@@ -335,6 +333,7 @@ namespace Redpoint.DungeonEscape.Unity
                 var start = GetVisualPosition(startPosition);
                 var end = GetVisualPosition(nextPosition);
                 transform.position = Vector3.Lerp(start, end, progress);
+                ApplyMoveSprite(direction, progress);
                 UpdatePartyFollowers(nextPosition, direction, progress);
                 yield return null;
             }
@@ -353,6 +352,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             UpdateVisualPosition();
+            spriteRenderer.sprite = directionSprites.GetIdle(direction);
             isMoving = false;
         }
 
@@ -1526,26 +1526,15 @@ namespace Redpoint.DungeonEscape.Unity
             return partyTrailDirections[index];
         }
 
-        private void PlayStepAnimation(Direction direction)
+        private void ApplyMoveSprite(Direction direction, float progress)
         {
-            if (stepAnimation != null)
+            if (spriteRenderer == null || directionSprites == null)
             {
-                StopCoroutine(stepAnimation);
+                return;
             }
 
-            stepAnimation = StartCoroutine(AnimateStep(direction));
-        }
-
-        private IEnumerator AnimateStep(Direction direction)
-        {
-            spriteRenderer.sprite = directionSprites.GetStep(direction, 1);
-            yield return new WaitForSeconds(0.08f);
-            spriteRenderer.sprite = directionSprites.GetIdle(direction);
-            yield return new WaitForSeconds(0.08f);
-            spriteRenderer.sprite = directionSprites.GetStep(direction, 1);
-            yield return new WaitForSeconds(0.08f);
-            spriteRenderer.sprite = directionSprites.GetIdle(direction);
-            stepAnimation = null;
+            var frame = progress < 0.5f ? 1 : 0;
+            spriteRenderer.sprite = directionSprites.GetStep(direction, frame);
         }
 
         private DirectionalSpriteSet LoadHeroSprites()

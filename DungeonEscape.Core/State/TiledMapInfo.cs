@@ -5,6 +5,8 @@ namespace Redpoint.DungeonEscape.State
 {
     public sealed class TiledMapInfo
     {
+        private const uint TiledGidMask = 0x1FFFFFFF;
+
         public string Class { get; set; }
         public string Orientation { get; set; }
         public int Width { get; set; }
@@ -45,7 +47,10 @@ namespace Redpoint.DungeonEscape.State
                 {
                     FirstGid = GetInt(tileset, "firstgid"),
                     Name = GetString(tileset, "name"),
-                    Source = GetString(tileset, "source")
+                    Source = GetString(tileset, "source"),
+                    Document = GetString(tileset, "source") == null
+                        ? TiledTilesetDocumentInfo.Parse(tileset.ToString())
+                        : null
                 });
             }
 
@@ -78,7 +83,7 @@ namespace Redpoint.DungeonEscape.State
                         Id = GetInt(mapObject, "id"),
                         Name = GetString(mapObject, "name"),
                         Class = GetString(mapObject, "class") ?? GetString(mapObject, "type"),
-                        Gid = GetInt(mapObject, "gid"),
+                        Gid = GetGid(mapObject, "gid"),
                         X = GetFloat(mapObject, "x"),
                         Y = GetFloat(mapObject, "y"),
                         Width = GetFloat(mapObject, "width"),
@@ -128,6 +133,13 @@ namespace Redpoint.DungeonEscape.State
             var value = GetString(element, name);
             int result;
             return int.TryParse(value, out result) ? result : 0;
+        }
+
+        private static int GetGid(XElement element, string name)
+        {
+            var value = GetString(element, name);
+            uint result;
+            return uint.TryParse(value, out result) ? (int)(result & TiledGidMask) : 0;
         }
 
         private static float GetFloat(XElement element, string name)
@@ -180,6 +192,7 @@ namespace Redpoint.DungeonEscape.State
         public int ImageWidth { get; set; }
         public int ImageHeight { get; set; }
         public Dictionary<string, string> Properties { get; set; }
+        public Dictionary<int, TiledTileInfo> Tiles { get; set; }
         public Dictionary<int, List<TiledTileAnimationFrameInfo>> Animations { get; set; }
 
         public static TiledTilesetDocumentInfo Parse(string xml)
@@ -201,6 +214,7 @@ namespace Redpoint.DungeonEscape.State
                 ImageWidth = image == null ? 0 : GetInt(image, "width"),
                 ImageHeight = image == null ? 0 : GetInt(image, "height"),
                 Properties = ReadProperties(tileset),
+                Tiles = ReadTiles(tileset),
                 Animations = ReadAnimations(tileset)
             };
         }
@@ -223,6 +237,27 @@ namespace Redpoint.DungeonEscape.State
                 }
 
                 result[name] = GetString(property, "value") ?? property.Value;
+            }
+
+            return result;
+        }
+
+        private static Dictionary<int, TiledTileInfo> ReadTiles(XElement tileset)
+        {
+            var result = new Dictionary<int, TiledTileInfo>();
+            foreach (var tile in tileset.Elements("tile"))
+            {
+                var tileInfo = new TiledTileInfo
+                {
+                    Id = GetInt(tile, "id"),
+                    Class = GetString(tile, "class") ?? GetString(tile, "type"),
+                    Properties = ReadProperties(tile)
+                };
+
+                if (!string.IsNullOrEmpty(tileInfo.Class) || tileInfo.Properties.Count > 0)
+                {
+                    result[tileInfo.Id] = tileInfo;
+                }
             }
 
             return result;
@@ -276,6 +311,18 @@ namespace Redpoint.DungeonEscape.State
     {
         public int TileId { get; set; }
         public int Duration { get; set; }
+    }
+
+    public sealed class TiledTileInfo
+    {
+        public int Id { get; set; }
+        public string Class { get; set; }
+        public Dictionary<string, string> Properties { get; set; }
+
+        public TiledTileInfo()
+        {
+            Properties = new Dictionary<string, string>();
+        }
     }
 
     public sealed class TiledLayerInfo

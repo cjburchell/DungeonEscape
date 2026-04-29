@@ -4,7 +4,7 @@ This file tracks the Dungeon Escape Unity migration. Update it as each area move
 
 ## Guiding Priority
 
-Keep combat migration last. Finish the map-mode gameplay loop, party systems, UI, persistence, and Unity cleanup first.
+Keep combat migration after map-mode gameplay, party systems, UI, persistence, and Unity cleanup. Leave sound/audio until after combat.
 
 ## 1. Validate Current Gameplay Loop
 
@@ -13,6 +13,7 @@ Status: Done
 - Done: New game starts at the map `DefaultSpawn`.
 - Done: Warps with `SpawnId` work.
 - Done: Overworld fallback position is remembered when returning without a spawn point.
+- Done: Map changes use a fade-out/fade-in transition.
 - Done: Chests generate once when first entering a map.
 - Done: Chest contents persist until picked up.
 - Done: Chests open visually.
@@ -40,7 +41,7 @@ Status: Done
 
 ## 3. UI Migration
 
-Status: Mostly done
+Status: Done
 
 - Done: Party/status window.
 - Done: Inventory view.
@@ -59,7 +60,9 @@ Status: Mostly done
 - Done: New game action in the Save tab.
 - Done: Fuller party/status detail polish pass with clearer vitals, attributes, XP-to-next, equipment, skills, and spells.
 - Done: Initial shop/healer/save NPC UI through map interaction message boxes.
-- Pending: Any final UI layout polish after more map gameplay is migrated.
+- Done: Inventory UI icon assets are prewarmed so the first Inventory open does not stall.
+- Done: Current UI migration manual tests passed.
+- Pending: Any future UI layout polish discovered during later gameplay migration.
 
 ## 4. Map Gameplay
 
@@ -84,7 +87,7 @@ Status: Done
 
 ## 5. Movement And Collision Rules
 
-Status: In progress
+Status: Done
 
 - Done: Continuous movement while a key or stick is held.
 - Done: Turning before moving when changing facing direction.
@@ -99,7 +102,7 @@ Status: In progress
 - Done: Biome layer tile classes update the party's current biome for future encounter logic.
 - Done: Cached TMX layer tile data for movement/gameplay queries to reduce repeated CSV parsing during movement.
 - Done: Tiled flipped object GIDs are normalized for map parsing, rendering, collision, and gameplay queries.
-- Pending: Play-test all collision, water, damage, and biome behavior across the migrated maps.
+- Done: Manual collision, water, damage, biome, stairs, doors, ship visual, save/load, and scrolling checks passed.
 
 ## 6. Encounter And Combat Migration
 
@@ -115,7 +118,7 @@ Status: Deferred until map mode is mostly complete
 
 ## 7. Audio
 
-Status: Not started
+Status: Deferred until after combat
 
 - Pending: Music by map.
 - Pending: Music by biome.

@@ -127,3 +127,26 @@ Status: Done
 - Expected: the normal player sprite and followers return.
 - Change facing direction while on water.
 - Expected: the ship sprite changes to match the current direction.
+
+## Inventory First-Open Performance
+
+Status: Done
+
+- Start the Unity scene and wait a few seconds after the map appears.
+- Open the game menu and switch to Inventory for the first time.
+- Expected: the Inventory tab opens without a long first-time stall from item icon loading.
+- Close and reopen the menu, then switch to Inventory again.
+- Expected: repeated opens remain quick and item/hero icons still render.
+
+## Map Fade Transitions
+
+Status: Ready for manual testing
+
+- Step onto a warp or stairs that changes maps.
+- Expected: the screen fades to black, the new map loads while black, then fades back in.
+- During the fade, hold a movement key or stick.
+- Expected: the player does not move or trigger another interaction until the transition completes.
+- Test returning to the overworld through a warp that uses the remembered overworld position.
+- Expected: the fade still runs and the party appears at the remembered overworld position.
+- Trigger a dialog choice that warps to another map, if available.
+- Expected: the same fade transition is used.

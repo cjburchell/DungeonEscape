@@ -425,14 +425,22 @@ namespace Redpoint.DungeonEscape.Unity
                 uiTheme);
             GUILayout.BeginVertical();
             GUILayout.Label(hero.Name + "  Level " + hero.Level + " " + hero.Class + "  " + hero.Gender, labelStyle);
-            GUILayout.Label("HP " + hero.Health + "/" + hero.MaxHealth + "    MP " + hero.Magic + "/" + hero.MaxMagic, labelStyle);
-            GUILayout.Label("XP " + hero.Xp + " / " + hero.NextLevel, smallStyle);
-            GUILayout.Label(
-                "Attack " + hero.Attack +
-                "    Defence " + hero.Defence +
-                "    Magic Defence " + hero.MagicDefence +
-                "    Agility " + hero.Agility,
-                smallStyle);
+            DrawDetailValue("HP", hero.Health + " / " + hero.MaxHealth);
+            DrawDetailValue("MP", hero.Magic + " / " + hero.MaxMagic);
+            DrawDetailValue("XP", hero.Xp + " / " + hero.NextLevel + " (" + GetXpToNextLevel(hero) + " to next)");
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(8f * GetPixelScale());
+            GUILayout.Label("Attributes", labelStyle);
+            GUILayout.BeginHorizontal();
+            GUILayout.BeginVertical();
+            DrawDetailValue("Attack", hero.Attack.ToString());
+            DrawDetailValue("Defence", hero.Defence.ToString());
+            GUILayout.EndVertical();
+            GUILayout.BeginVertical();
+            DrawDetailValue("Magic Defence", hero.MagicDefence.ToString());
+            DrawDetailValue("Agility", hero.Agility.ToString());
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
@@ -448,6 +456,19 @@ namespace Redpoint.DungeonEscape.Unity
             DrawKnownSpells(hero);
 
             GUILayout.EndVertical();
+        }
+
+        private void DrawDetailValue(string label, string value)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(label + ":", smallStyle, GUILayout.Width(112f * GetPixelScale()));
+            GUILayout.Label(value, smallStyle);
+            GUILayout.EndHorizontal();
+        }
+
+        private static ulong GetXpToNextLevel(Hero hero)
+        {
+            return hero == null || hero.Xp >= hero.NextLevel ? 0 : hero.NextLevel - hero.Xp;
         }
 
         private void DrawEquipmentSlot(Hero hero, Slot slot)

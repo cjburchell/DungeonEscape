@@ -58,6 +58,11 @@ namespace Redpoint.DungeonEscape.Unity
         private InputBinding rebindingInput;
         private string rebindingSlot;
         private int rebindingStartFrame;
+        private string menuModalTitle;
+        private string menuModalMessage;
+        private List<string> menuModalChoices;
+        private Action<int> menuModalSelected;
+        private int menuModalSelectedIndex;
         private int repeatingMenuMoveX;
         private float nextMenuMoveXTime;
         private int repeatingMenuMoveY;
@@ -87,6 +92,12 @@ namespace Redpoint.DungeonEscape.Unity
                     rebindingSlot = null;
                 }
 
+                return;
+            }
+
+            if (IsMenuModalVisible())
+            {
+                UpdateMenuModal();
                 return;
             }
 
@@ -141,7 +152,7 @@ namespace Redpoint.DungeonEscape.Unity
             menuBodyHeight = Mathf.Max(160f * scale, areaHeight - 90f * scale);
             GUILayout.BeginArea(new Rect(rect.x + 16f * scale, rect.y + 14f * scale, rect.width - 32f * scale, areaHeight));
             var previousEnabled = GUI.enabled;
-            GUI.enabled = rebindingInput == null;
+            GUI.enabled = rebindingInput == null && !IsMenuModalVisible();
             DrawHeader();
             DrawTabs();
             var previousVerticalThumb = GUI.skin.verticalScrollbarThumb;
@@ -154,6 +165,7 @@ namespace Redpoint.DungeonEscape.Unity
             GUI.skin.verticalScrollbarThumb = previousVerticalThumb;
             GUI.enabled = previousEnabled;
             GUILayout.EndArea();
+            DrawMenuModalOverlay();
             DrawRebindingOverlay();
             GUI.depth = previousDepth;
         }
@@ -510,11 +522,6 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            if (isOpen && DungeonEscapeMessageBox.IsAnyVisible)
-            {
-                return;
-            }
-
             switch (spell.Targets)
             {
                 case Target.Group:
@@ -550,7 +557,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             var labels = targets.Select(target => target.Name).ToList();
             labels.Add("Cancel");
-            GetMessageBox().Show("Cast " + spell.Name, "Choose a target.", labels, selectedIndex =>
+            ShowMenuModal("Cast " + spell.Name, "Choose a target.", labels, selectedIndex =>
             {
                 if (selectedIndex < 0 || selectedIndex >= targets.Count)
                 {
@@ -788,7 +795,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             var labels = targets.Select(target => target.Name).ToList();
             labels.Add("Cancel");
-            GetMessageBox().Show("Transfer " + item.Name, "Choose who should carry this item.", labels, selectedIndex =>
+            ShowMenuModal("Transfer " + item.Name, "Choose who should carry this item.", labels, selectedIndex =>
             {
                 if (selectedIndex < 0 || selectedIndex >= targets.Count)
                 {
@@ -821,7 +828,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            GetMessageBox().Show("Drop " + item.Name, "Discard this item?", new[] { "Drop", "Cancel" }, selectedIndex =>
+            ShowMenuModal("Drop " + item.Name, "Discard this item?", new[] { "Drop", "Cancel" }, selectedIndex =>
             {
                 if (selectedIndex != 0)
                 {
@@ -885,7 +892,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             var labels = targets.Select(target => target.Name).ToList();
             labels.Add("Cancel");
-            GetMessageBox().Show("Use " + item.Name, "Choose a target.", labels, selectedIndex =>
+            ShowMenuModal("Use " + item.Name, "Choose a target.", labels, selectedIndex =>
             {
                 if (selectedIndex < 0 || selectedIndex >= targets.Count)
                 {
@@ -899,12 +906,90 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void ShowInventoryMessage(string message)
         {
-            GetMessageBox().Show("Inventory", string.IsNullOrEmpty(message) ? "Done." : message);
+            ShowMenuModal("Inventory", string.IsNullOrEmpty(message) ? "Done." : message, null, null);
         }
 
         private void ShowPartyMessage(string message)
         {
-            GetMessageBox().Show("Party", string.IsNullOrEmpty(message) ? "Done." : message);
+            ShowMenuModal("Party", string.IsNullOrEmpty(message) ? "Done." : message, null, null);
+        }
+
+        private void ShowMenuModal(string title, string message, IEnumerable<string> choices, Action<int> selected)
+        {
+            menuModalTitle = title;
+            menuModalMessage = message;
+            menuModalChoices = choices == null ? null : choices.ToList();
+            menuModalSelected = selected;
+            menuModalSelectedIndex = 0;
+            ResetMenuNavigationRepeat();
+        }
+
+        private bool IsMenuModalVisible()
+        {
+            return !string.IsNullOrEmpty(menuModalMessage);
+        }
+
+        private bool MenuModalHasChoices()
+        {
+            return menuModalChoices != null && menuModalChoices.Count > 0;
+        }
+
+        private void HideMenuModal()
+        {
+            menuModalTitle = null;
+            menuModalMessage = null;
+            menuModalChoices = null;
+            menuModalSelected = null;
+            menuModalSelectedIndex = 0;
+            ResetMenuNavigationRepeat();
+        }
+
+        private void UpdateMenuModal()
+        {
+            if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Cancel))
+            {
+                HideMenuModal();
+                return;
+            }
+
+            if (!MenuModalHasChoices())
+            {
+                if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Interact))
+                {
+                    HideMenuModal();
+                }
+
+                return;
+            }
+
+            var moveY = GetMenuMoveY();
+            if (moveY < 0)
+            {
+                menuModalSelectedIndex = Mathf.Max(0, menuModalSelectedIndex - 1);
+            }
+            else if (moveY > 0)
+            {
+                menuModalSelectedIndex = Mathf.Min(menuModalChoices.Count - 1, menuModalSelectedIndex + 1);
+            }
+            else if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Interact))
+            {
+                SelectMenuModalChoice(menuModalSelectedIndex);
+            }
+        }
+
+        private void SelectMenuModalChoice(int index)
+        {
+            if (!MenuModalHasChoices() || index < 0 || index >= menuModalChoices.Count)
+            {
+                return;
+            }
+
+            var selected = menuModalSelected;
+            HideMenuModal();
+            if (selected != null)
+            {
+                selected(index);
+            }
         }
 
         private void ApplyInventoryChange(Func<bool> action)
@@ -1242,6 +1327,45 @@ namespace Redpoint.DungeonEscape.Unity
             rebindingInput = binding;
             rebindingSlot = slot;
             rebindingStartFrame = Time.frameCount;
+        }
+
+        private void DrawMenuModalOverlay()
+        {
+            if (!IsMenuModalVisible() || rebindingInput != null)
+            {
+                return;
+            }
+
+            var scale = GetPixelScale();
+            var width = Mathf.Min(Screen.width - 32f * scale, 620f * scale);
+            var choiceCount = MenuModalHasChoices() ? menuModalChoices.Count : 1;
+            var height = Mathf.Min(Screen.height - 48f * scale, (150f + choiceCount * 42f) * scale);
+            var rect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
+            GUI.enabled = true;
+            GUI.Box(rect, GUIContent.none, panelStyle);
+
+            GUILayout.BeginArea(new Rect(rect.x + 18f * scale, rect.y + 16f * scale, rect.width - 36f * scale, rect.height - 32f * scale));
+            GUILayout.Label(menuModalTitle, titleStyle);
+            GUILayout.Label(menuModalMessage, labelStyle);
+            GUILayout.Space(10f * scale);
+
+            if (MenuModalHasChoices())
+            {
+                for (var i = 0; i < menuModalChoices.Count; i++)
+                {
+                    if (DungeonEscapeUiControls.Button(menuModalChoices[i], i == menuModalSelectedIndex, uiTheme))
+                    {
+                        SelectMenuModalChoice(i);
+                        break;
+                    }
+                }
+            }
+            else if (GUILayout.Button("OK", buttonStyle, GUILayout.Width(120f * scale)))
+            {
+                HideMenuModal();
+            }
+
+            GUILayout.EndArea();
         }
 
         private void DrawRebindingOverlay()

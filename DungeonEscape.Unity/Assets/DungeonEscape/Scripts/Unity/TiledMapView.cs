@@ -185,6 +185,25 @@ namespace Redpoint.DungeonEscape.Unity
             RenderPreview();
         }
 
+        public void RefreshObjectState()
+        {
+            EnsureMapLoaded();
+            if (currentMap != null)
+            {
+                currentMap.BlockedTiles = TiledMapCollision.BuildBlockedTiles(
+                    currentMap.Root,
+                    currentMap.Info,
+                    mapWidth,
+                    mapHeight,
+                    gameState,
+                    TiledMapLoader.NormalizeMapId(currentMap.AssetPath));
+                blockedTiles = currentMap.BlockedTiles;
+            }
+
+            mapLoaded = false;
+            RenderPreview();
+        }
+
         public void LoadMap(string mapIdOrAssetPath, string spawnId)
         {
             LoadMap(mapIdOrAssetPath, spawnId, true);
@@ -426,6 +445,11 @@ namespace Redpoint.DungeonEscape.Unity
 
         private bool IsMapObjectVisible(string mapId, TiledObjectInfo mapObject)
         {
+            if (IsDoorObject(mapObject) && gameState != null && gameState.IsObjectOpen(mapId, mapObject.Id))
+            {
+                return false;
+            }
+
             if (!IsPartyMemberObject(mapObject))
             {
                 return true;

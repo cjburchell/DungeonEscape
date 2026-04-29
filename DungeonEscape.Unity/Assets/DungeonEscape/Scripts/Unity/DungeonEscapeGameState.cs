@@ -416,6 +416,27 @@ namespace Redpoint.DungeonEscape.Unity
             return objectState != null && objectState.IsOpen == true;
         }
 
+        public string OpenDoor(int objectId)
+        {
+            EnsureInitialized();
+            if (objectId <= 0 || string.IsNullOrEmpty(Party.CurrentMapId))
+            {
+                return "";
+            }
+
+            var objectState = GetObjectState(Party.CurrentMapId, objectId, true);
+            if (objectState.IsOpen == true)
+            {
+                return "The door is already open.";
+            }
+
+            objectState.Type = SpriteType.Door;
+            objectState.IsOpen = true;
+            objectState.Collideable = false;
+            MarkDirty();
+            return "The door opened.";
+        }
+
         public bool TryGetObjectPosition(string mapId, int objectId, out WorldPosition position)
         {
             EnsureInitialized();

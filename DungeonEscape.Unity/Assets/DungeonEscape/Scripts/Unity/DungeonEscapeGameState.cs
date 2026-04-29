@@ -178,6 +178,42 @@ namespace Redpoint.DungeonEscape.Unity
             MarkDirty();
         }
 
+        public void SetCurrentBiome(Biome biome)
+        {
+            EnsureInitialized();
+            if (Party.CurrentBiome == biome)
+            {
+                return;
+            }
+
+            Party.CurrentBiome = biome;
+            MarkDirty();
+        }
+
+        public string ApplyMapStepEffects(int damage, Biome biome)
+        {
+            EnsureInitialized();
+            SetCurrentBiome(biome);
+            if (damage <= 0 || Party.ActiveMembers == null)
+            {
+                return "";
+            }
+
+            var message = new StringBuilder();
+            foreach (var hero in Party.ActiveMembers.Where(member => member != null && !member.IsDead))
+            {
+                hero.Health = Math.Max(0, hero.Health - damage);
+                message.AppendLine(hero.Name + " took " + damage + " damage.");
+            }
+
+            if (message.Length > 0)
+            {
+                MarkDirty();
+            }
+
+            return message.ToString().TrimEnd();
+        }
+
         public string StartQuest(string questId)
         {
             EnsureInitialized();
@@ -963,6 +999,18 @@ namespace Redpoint.DungeonEscape.Unity
                 mapObject.Properties.TryGetValue("ItemId", out itemId) &&
                 !string.IsNullOrEmpty(itemId))
             {
+                if (string.Equals(itemId, "#Random#", StringComparison.OrdinalIgnoreCase))
+                {
+                    var randomLevel = GetIntProperty(mapObject, mapObject.Class == "Chest" ? "ChestLevel" : "Level");
+                    var randomItem = CreateChestItem(randomLevel == 0 ? GetPartyMaxLevel() : randomLevel);
+                    if (randomItem != null)
+                    {
+                        items.Add(randomItem);
+                    }
+
+                    return items;
+                }
+
                 Item item;
                 if (DungeonEscapeGameDataCache.Current != null &&
                     DungeonEscapeGameDataCache.Current.TryGetCustomItem(itemId, out item) &&

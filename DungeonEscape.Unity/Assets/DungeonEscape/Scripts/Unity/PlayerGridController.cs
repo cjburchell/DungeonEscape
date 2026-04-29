@@ -477,7 +477,7 @@ namespace Redpoint.DungeonEscape.Unity
                         gameState == null ? null : gameState.Party,
                         out dialogText))
                 {
-                    ShowDialog(mapObject.Name, dialogText);
+                    ShowDialog(mapObject.Name, dialogText, null);
                 }
                 else
                 {
@@ -540,7 +540,7 @@ namespace Redpoint.DungeonEscape.Unity
                 });
         }
 
-        private void ShowDialog(string speakerName, DialogText dialog)
+        private void ShowDialog(string speakerName, DialogText dialog, string questContext)
         {
             if (messageBox == null || dialog == null)
             {
@@ -552,6 +552,9 @@ namespace Redpoint.DungeonEscape.Unity
                 : dialog.Choices.Where(IsVisibleDialogChoice).ToList();
 
             var dialogHead = dialog as DialogHead;
+            var effectiveQuest = dialogHead != null && !string.IsNullOrEmpty(dialogHead.Quest)
+                ? dialogHead.Quest
+                : questContext;
             if (dialogHead != null && dialogHead.StartQuest && gameState != null)
             {
                 var startMessage = gameState.StartQuest(dialogHead.Quest);
@@ -571,7 +574,7 @@ namespace Redpoint.DungeonEscape.Unity
                 speakerName,
                 dialog.Text,
                 choices.Select(choice => choice.Text),
-                selectedIndex => ProcessDialogChoice(speakerName, dialogHead == null ? null : dialogHead.Quest, choices[selectedIndex]));
+                selectedIndex => ProcessDialogChoice(speakerName, effectiveQuest, choices[selectedIndex]));
         }
 
         private void ProcessDialogChoice(string speakerName, string questId, Choice choice)
@@ -582,19 +585,39 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             var resultMessage = new StringBuilder();
-            if (gameState != null && !string.IsNullOrEmpty(questId))
+            var effectiveQuest = string.IsNullOrEmpty(choice.Quest) ? questId : choice.Quest;
+            if (gameState != null && !string.IsNullOrEmpty(effectiveQuest) && choice.NextQuestStage.HasValue)
             {
-                AppendMessage(resultMessage, gameState.AdvanceQuest(questId, choice.NextQuestStage));
+                AppendMessage(resultMessage, gameState.AdvanceQuest(effectiveQuest, choice.NextQuestStage));
+            }
+
+            if (choice.Actions != null && choice.Actions.Contains(QuestAction.GiveItem))
+            {
+                AppendMessage(resultMessage, gameState == null ? "" : gameState.GiveItems(choice.Items));
+            }
+
+            var requiredItemWasTaken = true;
+            if (choice.Actions != null && choice.Actions.Contains(QuestAction.TakeItem))
+            {
+                requiredItemWasTaken = gameState != null && gameState.HasItem(choice.ItemId);
+                AppendMessage(resultMessage, gameState == null ? "" : gameState.TakeItem(choice.ItemId, speakerName));
+            }
+
+            if (requiredItemWasTaken &&
+                choice.Actions != null &&
+                choice.Actions.Contains(QuestAction.OpenDoor) &&
+                choice.ObjectId.HasValue)
+            {
+                AppendMessage(resultMessage, gameState == null ? "" : gameState.OpenDoor(choice.ObjectId.Value));
+                if (mapView != null)
+                {
+                    mapView.RefreshObjectState();
+                }
             }
 
             if (choice.Dialog != null)
             {
-                if (resultMessage.Length > 0 && messageBox != null)
-                {
-                    messageBox.Show(speakerName, resultMessage.ToString());
-                }
-
-                ShowDialog(speakerName, choice.Dialog);
+                ShowDialog(speakerName, choice.Dialog, effectiveQuest);
                 return;
             }
 

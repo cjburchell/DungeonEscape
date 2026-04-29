@@ -8,13 +8,11 @@ namespace Redpoint.DungeonEscape.Unity
         private GUIStyle textStyle;
         private DungeonEscapeUiSettings uiSettings;
         private float lastPixelScale;
-        private PlayerGridController playerMarker;
         private TiledMapView mapView;
         private DungeonEscapeGameState gameState;
 
         private void Start()
         {
-            playerMarker = FindAnyObjectByType<PlayerGridController>();
             mapView = FindAnyObjectByType<TiledMapView>();
             gameState = FindAnyObjectByType<DungeonEscapeGameState>();
         }
@@ -58,11 +56,6 @@ namespace Redpoint.DungeonEscape.Unity
 
         private string BuildRuntimeSummary()
         {
-            if (playerMarker == null)
-            {
-                playerMarker = FindAnyObjectByType<PlayerGridController>();
-            }
-
             if (mapView == null)
             {
                 mapView = FindAnyObjectByType<TiledMapView>();
@@ -75,15 +68,6 @@ namespace Redpoint.DungeonEscape.Unity
 
             var builder = new StringBuilder();
 
-            if (playerMarker == null)
-            {
-                builder.AppendLine("Player: none");
-            }
-            else
-            {
-                builder.AppendLine("Player tile: " + playerMarker.Column + ", " + playerMarker.Row);
-            }
-
             if (mapView != null)
             {
                 builder.AppendLine("Viewport: " + mapView.StartColumn + ", " + mapView.StartRow);
@@ -92,18 +76,8 @@ namespace Redpoint.DungeonEscape.Unity
             if (gameState != null && gameState.Party != null)
             {
                 builder.AppendLine("Map: " + gameState.Party.CurrentMapId);
+                builder.AppendLine("Biome: " + gameState.Party.CurrentBiome);
                 builder.AppendLine("Steps: " + gameState.Party.StepCount);
-
-                var hero = gameState.Party.GetOrderedHero(0);
-                if (hero != null)
-                {
-                    builder.AppendLine("Hero: " + hero.Name + " L" + hero.Level + " HP " + hero.Health + "/" + hero.MaxHealth);
-                    builder.AppendLine("Items: " + hero.Items.Count);
-                }
-                else
-                {
-                    builder.AppendLine("Hero: none");
-                }
             }
 
             return builder.ToString();

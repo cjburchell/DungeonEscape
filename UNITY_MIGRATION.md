@@ -146,6 +146,7 @@ Status: Not started
 - Pending: Expand shared core unit tests beyond level-up and skill/spell progression.
 - Pending: Add Unity-side edit mode tests for map loading, hidden item conditions, and save/load behavior.
 - Pending: Add regression tests for quest dialog actions and item rewards.
+- Pending: Review ReSharper warnings and fix actionable issues where they improve correctness or maintainability.
 
 ## 10. Unity Project Cleanup
 

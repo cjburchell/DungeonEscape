@@ -51,12 +51,14 @@ namespace Redpoint.DungeonEscape.State
         public WorldPosition? CurrentPosition { get; set; }
         public string CurrentMapId { get; set; }
         public bool CurrentMapIsOverWorld { get; set; }
+        public Biome CurrentBiome { get; set; }
         public Direction CurrentDirection { get; set; }
         public int StepCount { get; set; }
 
         public Party()
         {
             OverWorldPosition = WorldPosition.Zero;
+            CurrentBiome = Biome.None;
             CurrentDirection = Direction.Down;
             Members = new List<Hero>();
             ActiveQuests = new List<ActiveQuest>();

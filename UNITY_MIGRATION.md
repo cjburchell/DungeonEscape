@@ -27,7 +27,7 @@ Status: Done
 
 ## 2. Party Creation
 
-Status: Mostly done
+Status: Done
 
 - Done: Starter hero uses class/stat generation from `classlevels.json`.
 - Done: Starting equipment added.
@@ -40,7 +40,7 @@ Status: Mostly done
 
 ## 3. UI Migration
 
-Status: In progress
+Status: Mostly done
 
 - Done: Party/status window.
 - Done: Inventory view.
@@ -63,7 +63,7 @@ Status: In progress
 
 ## 4. Map Gameplay
 
-Status: In progress
+Status: Done
 
 - Done: NPC dialog works.
 - Done: Recruitable NPCs can join the party.
@@ -77,8 +77,8 @@ Status: In progress
 - Done: NPC heal behavior.
 - Done: NPC store buy/sell behavior.
 - Done: NPC save behavior through quick-save service interaction.
-- Pending: Hidden item quest conditions.
-- Pending: Object visuals for removed hidden items.
+- Done: Hidden item quest conditions using the hidden item's quest/stage metadata.
+- Done: Removed hidden items no longer render or interact after pickup.
 
 ## 5. Movement And Collision Rules
 

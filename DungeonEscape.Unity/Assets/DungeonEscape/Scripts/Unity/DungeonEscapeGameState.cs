@@ -341,6 +341,11 @@ namespace Redpoint.DungeonEscape.Unity
         public string GiveItem(string itemId)
         {
             EnsureInitialized();
+            if (string.Equals(itemId, "#Random#", StringComparison.OrdinalIgnoreCase))
+            {
+                return GiveGeneratedItem(CreateRandomItem(GetPartyMaxLevel()));
+            }
+
             Item item;
             if (string.IsNullOrEmpty(itemId) ||
                 DungeonEscapeGameDataCache.Current == null ||
@@ -357,6 +362,31 @@ namespace Redpoint.DungeonEscape.Unity
 
             MarkDirty();
             return member.Name + " got " + item.Name + ".\n" + CheckQuest(item);
+        }
+
+        public bool HasItem(string itemId)
+        {
+            EnsureInitialized();
+            return !string.IsNullOrEmpty(itemId) &&
+                   Party != null &&
+                   Party.GetItem(itemId) != null;
+        }
+
+        private string GiveGeneratedItem(Item item)
+        {
+            if (item == null)
+            {
+                return "Could not create a random item.\n";
+            }
+
+            var member = Party.AddItem(new ItemInstance(item));
+            if (member == null)
+            {
+                return "No party member can carry " + item.Name + ".\n";
+            }
+
+            MarkDirty();
+            return member.Name + " got " + item.Name + ".\n";
         }
 
         public string TakeItem(string itemId, string recipientName)

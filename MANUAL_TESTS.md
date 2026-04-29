@@ -140,7 +140,7 @@ Status: Done
 
 ## Map Fade Transitions
 
-Status: Ready for manual testing
+Status: Done
 
 - Step onto a warp or stairs that changes maps.
 - Expected: the screen fades to black, the new map loads while black, then fades back in.

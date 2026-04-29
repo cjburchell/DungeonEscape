@@ -574,6 +574,11 @@ namespace Redpoint.DungeonEscape.Unity
                 return "You found nothing.";
             }
 
+            if (!CanPickupMapObject(mapObject))
+            {
+                return "You found nothing.";
+            }
+
             var message = new StringBuilder();
             if (objectState.Items != null)
             {

@@ -88,6 +88,11 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Update()
         {
+            if (DungeonEscapeStoreWindow.IsOpen)
+            {
+                return;
+            }
+
             if (rebindingInput != null)
             {
                 if (Time.frameCount <= rebindingStartFrame)
@@ -579,6 +584,9 @@ namespace Redpoint.DungeonEscape.Unity
                 case Target.Single:
                     ShowSingleSpellTargetPicker(caster, spell);
                     return;
+                case Target.Object:
+                    ShowPartyMessage(CastSpellOnFacingObject(caster, spell));
+                    return;
                 default:
                     ShowPartyMessage("That spell cannot be cast from the party menu.");
                     return;
@@ -914,10 +922,30 @@ namespace Redpoint.DungeonEscape.Unity
                 case Target.Single:
                     ShowSingleItemTargetPicker(hero, item);
                     return;
+                case Target.Object:
+                    ShowInventoryMessage(UseItemOnFacingObject(hero, item));
+                    selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
+                    return;
                 default:
                     ShowInventoryMessage("That item cannot be used from inventory.");
                     return;
             }
+        }
+
+        private static string UseItemOnFacingObject(Hero hero, ItemInstance item)
+        {
+            var player = FindAnyObjectByType<PlayerGridController>();
+            return player == null
+                ? "There is no map object target."
+                : player.UseItemOnFacingObject(hero, item);
+        }
+
+        private static string CastSpellOnFacingObject(Hero hero, Spell spell)
+        {
+            var player = FindAnyObjectByType<PlayerGridController>();
+            return player == null
+                ? "There is no map object target."
+                : player.CastSpellOnFacingObject(hero, spell);
         }
 
         private void ShowSingleItemTargetPicker(Hero hero, ItemInstance item)

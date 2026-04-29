@@ -150,3 +150,79 @@ Status: Done
 - Expected: the fade still runs and the party appears at the remembered overworld position.
 - Trigger a dialog choice that warps to another map, if available.
 - Expected: the same fade transition is used.
+
+## Store, Healer, And Object Target Parity
+
+Status: Done
+
+### Regular Stores
+
+- Visit a regular `NpcStore`, such as a merchant in `towns/isis`, `towns/coast`, or `towns/walled`.
+- Expected: a store window opens directly with `Buy` and `Sell` tabs instead of a buy/sell message prompt.
+- Expected: item rows show item icons, names, stats, type/level, and price.
+- Expected: the store shows a persistent stock list of roughly 10 generated items, or the fixed `Items` list if the map object defines one.
+- Expected: generated regular stores do not show `Gold`, quest items, or hidden/chest reward items as store stock.
+- Buy an item.
+- Expected: the store asks which party member should carry it.
+- Choose a party member.
+- Expected: gold is deducted, the item goes to that party member, and the item is removed from that store's stock.
+- If the purchased item can be equipped by that party member, choose Equip.
+- Expected: the item is equipped immediately and the store window remains open.
+- Leave the store and talk to the same merchant again.
+- Expected: the purchased item is still gone from that store's stock.
+- Save and reload.
+- Expected: the store stock remains the same for that save.
+
+### Key Stores
+
+- Visit an `NpcKey` merchant, such as `towns/oasis` or `towns/walled`.
+- Expected: only key items are listed.
+- Expected: the Sell tab is disabled.
+- Buy a key.
+- Expected: gold is deducted and the key is added to the party inventory.
+
+### Store Selling
+
+- Visit a regular store with a non-quest, sellable item in inventory.
+- Open the Sell tab.
+- Expected: party members are shown as tabs.
+- Select each party member.
+- Expected: only that member's sellable items are shown, and each row has an item icon.
+- Expected: the sell price is 75% of item cost, rounded down with a minimum of 1 gold.
+- Sell an equipped item.
+- Expected: the item is unequipped, removed from the hero inventory, gold is added, and the item can appear in the store stock if the store has room.
+- Visit a store with `WillBuyItems=false`, if one exists.
+- Expected: the Sell tab is disabled.
+- While the store window is open, complete a buy or sell confirmation.
+- Expected: confirmation messages appear over the store, and the store window does not close until Close or Cancel is used.
+
+### Healers
+
+- Damage one active party member, then visit an `NpcHeal`.
+- Expected: Heal is shown with the healer's `Cost` property or 25 gold by default.
+- Heal one member.
+- Expected: only that member's HP is restored and gold is deducted.
+- Damage multiple active party members.
+- Expected: Heal All appears and costs `Cost * wounded member count`.
+- Spend magic, add a negative status, or kill a member using test setup if available.
+- Expected: Renew Magic, Cure, and Revive appear only when relevant and charge `Cost * 2`, `Cost * 2`, and `Cost * 10` respectively.
+- Try a service without enough gold.
+- Expected: the healer refuses and no party state changes.
+
+### Object-Target Items And Spells
+
+- Stand next to a closed door and face it.
+- Open Inventory and use a key item with `Target.Object`.
+- Expected: the facing door opens, collision/rendering refreshes, and the inventory item is consumed if it is a one-use item.
+- Stand facing empty space and use the same kind of object-target item or spell.
+- Expected: the message says there is nothing there.
+- If a hero has an `Open` spell, stand next to a closed door and cast it from the Party spell list.
+- Expected: MP is deducted, the door opens, and the map refreshes.
+
+### Pickup Level Gating
+
+- Find a chest or hidden item with a `ChestLevel` or `Level` above the active party's level.
+- Press interact while facing it.
+- Expected: the pickup does not open and the message says the party is not experienced enough.
+- Raise the party level or test with a lower-level object.
+- Expected: the same object can be opened or picked up when a living active member meets the required level.

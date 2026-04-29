@@ -477,7 +477,8 @@ namespace Redpoint.DungeonEscape.Unity
                 return false;
             }
 
-            return IsPickupQuestConditionMet(GetMapObjectItemId(mapObject));
+            return IsPickupQuestConditionMet(GetMapObjectItemId(mapObject)) &&
+                   CanOpenMapPickupObject(mapObject);
         }
 
         public bool CanPickupMapObject(string mapId, int objectId, string objectClass, string itemId)
@@ -644,6 +645,11 @@ namespace Redpoint.DungeonEscape.Unity
             if (objectState.IsOpen == true)
             {
                 return "You found nothing.";
+            }
+
+            if (!CanOpenMapPickupObject(mapObject))
+            {
+                return "You are not experienced enough to open this.";
             }
 
             if (!CanPickupMapObject(mapObject))
@@ -1072,6 +1078,83 @@ namespace Redpoint.DungeonEscape.Unity
             return items;
         }
 
+        private List<Item> CreateInitialStoreInventory(TiledObjectInfo mapObject)
+        {
+            var items = new List<Item>();
+            if (mapObject == null)
+            {
+                return items;
+            }
+
+            if (string.Equals(mapObject.Class, "NpcKey", StringComparison.OrdinalIgnoreCase))
+            {
+                return DungeonEscapeGameDataCache.Current == null || DungeonEscapeGameDataCache.Current.CustomItems == null
+                    ? items
+                    : DungeonEscapeGameDataCache.Current.CustomItems
+                        .Where(item => item != null && item.IsKey)
+                        .OrderBy(item => item.MinLevel)
+                        .ThenBy(item => item.Cost)
+                        .ToList();
+            }
+
+            string itemListString;
+            if (mapObject.Properties != null &&
+                mapObject.Properties.TryGetValue("Items", out itemListString) &&
+                !string.IsNullOrWhiteSpace(itemListString))
+            {
+                foreach (var itemId in itemListString.Split(',').Select(value => value.Trim()))
+                {
+                    var item = GetCustomItem(itemId);
+                    if (item != null)
+                    {
+                        items.Add(item);
+                    }
+                }
+
+                return items.OrderBy(item => item.Cost).ToList();
+            }
+
+            var level = GetPartyMaxLevel();
+            for (var i = 0; i < 10; i++)
+            {
+                var item = CreateRandomItem(level);
+                if (item != null)
+                {
+                    items.Add(item);
+                }
+            }
+
+            return items.OrderBy(item => item.Cost).ToList();
+        }
+
+        private static bool ContainsInvalidStoreItems(TiledObjectInfo mapObject, List<Item> items)
+        {
+            if (items == null)
+            {
+                return true;
+            }
+
+            if (string.Equals(mapObject.Class, "NpcKey", StringComparison.OrdinalIgnoreCase))
+            {
+                return items.Any(item => item == null || !item.IsKey);
+            }
+
+            string itemListString;
+            var hasFixedInventory = mapObject.Properties != null &&
+                                    mapObject.Properties.TryGetValue("Items", out itemListString) &&
+                                    !string.IsNullOrWhiteSpace(itemListString);
+            if (hasFixedInventory)
+            {
+                return false;
+            }
+
+            return items.Any(item =>
+                item == null ||
+                item.Type == ItemType.Gold ||
+                item.Type == ItemType.Quest ||
+                item.Type == ItemType.Unknown);
+        }
+
         public Item CreateChestItem(int level, Rarity? rarity = null)
         {
             if (Chance(0.25f))
@@ -1274,6 +1357,94 @@ namespace Redpoint.DungeonEscape.Unity
             return "Your party has been fully restored.";
         }
 
+        public string HealHero(Hero hero, int cost)
+        {
+            EnsureInitialized();
+            if (hero == null || !Party.Members.Contains(hero) || hero.IsDead)
+            {
+                return "That party member cannot be healed.";
+            }
+
+            if (!SpendGold(cost))
+            {
+                return "You do not have " + cost + " gold.";
+            }
+
+            hero.Health = hero.MaxHealth;
+            MarkDirty();
+            return hero.Name + " has been fully healed.";
+        }
+
+        public string HealAllHeroes(int cost)
+        {
+            EnsureInitialized();
+            if (!SpendGold(cost))
+            {
+                return "You do not have " + cost + " gold.";
+            }
+
+            foreach (var hero in Party.AliveMembers)
+            {
+                hero.Health = hero.MaxHealth;
+            }
+
+            MarkDirty();
+            return "All party members have been healed.";
+        }
+
+        public string RenewMagic(int cost)
+        {
+            EnsureInitialized();
+            if (!SpendGold(cost))
+            {
+                return "You do not have " + cost + " gold.";
+            }
+
+            foreach (var hero in Party.AliveMembers)
+            {
+                hero.Magic = hero.MaxMagic;
+            }
+
+            MarkDirty();
+            return "All party members' magic has been replenished.";
+        }
+
+        public string CureHero(Hero hero, int cost)
+        {
+            EnsureInitialized();
+            if (hero == null || !Party.Members.Contains(hero) || hero.Status == null || hero.Status.Count == 0)
+            {
+                return "That party member does not need curing.";
+            }
+
+            if (!SpendGold(cost))
+            {
+                return "You do not have " + cost + " gold.";
+            }
+
+            hero.Status.Clear();
+            MarkDirty();
+            return hero.Name + " has been cured.";
+        }
+
+        public string ReviveHero(Hero hero, int cost)
+        {
+            EnsureInitialized();
+            if (hero == null || !Party.Members.Contains(hero) || !hero.IsDead)
+            {
+                return "That party member does not need reviving.";
+            }
+
+            if (!SpendGold(cost))
+            {
+                return "You do not have " + cost + " gold.";
+            }
+
+            hero.Health = 1;
+            MarkDirty();
+            return hero.Name + " has been revived.";
+        }
+
         public string SaveAtCurrentPosition()
         {
             EnsureInitialized();
@@ -1306,12 +1477,54 @@ namespace Redpoint.DungeonEscape.Unity
             return inventory;
         }
 
-        public string BuyStoreItem(Item item)
+        public List<Item> GetStoreInventory(TiledObjectInfo mapObject)
         {
             EnsureInitialized();
+            if (mapObject == null)
+            {
+                return new List<Item>();
+            }
+
+            var spriteState = GetSpriteState(Party.CurrentMapId, mapObject.Id, true);
+            spriteState.Name = mapObject.Name;
+            spriteState.Type = string.Equals(mapObject.Class, "NpcKey", StringComparison.OrdinalIgnoreCase)
+                ? SpriteType.NpcKey
+                : SpriteType.NpcStore;
+            if (spriteState.Items == null || ContainsInvalidStoreItems(mapObject, spriteState.Items))
+            {
+                spriteState.Items = CreateInitialStoreInventory(mapObject);
+                MarkDirty();
+            }
+
+            spriteState.Items = spriteState.Items
+                .Where(item => item != null)
+                .OrderBy(item => item.Cost)
+                .ToList();
+            return spriteState.Items;
+        }
+
+        public string BuyStoreItem(TiledObjectInfo mapObject, Item item)
+        {
+            EnsureInitialized();
+            var recipient = Party == null
+                ? null
+                : Party.AliveMembers.FirstOrDefault(partyMember => partyMember.Items.Count < Party.MaxItems);
+            ItemInstance purchasedItem;
+            return BuyStoreItem(mapObject, item, recipient, out purchasedItem);
+        }
+
+        public string BuyStoreItem(TiledObjectInfo mapObject, Item item, Hero recipient, out ItemInstance purchasedItem)
+        {
+            EnsureInitialized();
+            purchasedItem = null;
             if (item == null)
             {
                 return "That item is not available.";
+            }
+
+            if (recipient == null || Party == null || !Party.Members.Contains(recipient) || recipient.Items.Count >= Party.MaxItems)
+            {
+                return "No one has room to carry that.";
             }
 
             if (Party.Gold < item.Cost)
@@ -1319,18 +1532,21 @@ namespace Redpoint.DungeonEscape.Unity
                 return "You do not have enough gold.";
             }
 
-            var member = Party.AddItem(new ItemInstance(item));
-            if (member == null)
-            {
-                return "No one has room to carry that.";
-            }
+            purchasedItem = new ItemInstance(item);
+            recipient.Items.Add(purchasedItem);
 
             Party.Gold -= item.Cost;
+            if (mapObject != null)
+            {
+                var inventory = GetStoreInventory(mapObject);
+                inventory.Remove(item);
+            }
+
             MarkDirty();
-            return member.Name + " bought " + item.Name + " for " + item.Cost + " gold.";
+            return recipient.Name + " bought " + item.Name + " for " + item.Cost + " gold.";
         }
 
-        public string SellHeroItem(Hero hero, ItemInstance item)
+        public string SellHeroItem(TiledObjectInfo mapObject, Hero hero, ItemInstance item)
         {
             EnsureInitialized();
             if (hero == null || item == null || item.Item == null || !Party.Members.Contains(hero) || !hero.Items.Contains(item))
@@ -1343,12 +1559,32 @@ namespace Redpoint.DungeonEscape.Unity
                 return item.Name + " cannot be sold.";
             }
 
-            var salePrice = Math.Max(1, item.Gold / 2);
+            var salePrice = Math.Max(1, item.Gold * 3 / 4);
             item.UnEquip(Party.Members);
             hero.Items.Remove(item);
             Party.Gold += salePrice;
+            if (mapObject != null)
+            {
+                var inventory = GetStoreInventory(mapObject);
+                if (inventory.Count <= 15)
+                {
+                    inventory.Add(item.Item);
+                    inventory.Sort((left, right) => left.Cost.CompareTo(right.Cost));
+                }
+            }
+
             MarkDirty();
             return hero.Name + " sold " + item.Name + " for " + salePrice + " gold.";
+        }
+
+        public string BuyStoreItem(Item item)
+        {
+            return BuyStoreItem(null, item);
+        }
+
+        public string SellHeroItem(Hero hero, ItemInstance item)
+        {
+            return SellHeroItem(null, hero, item);
         }
 
         public bool CanUseHeroItem(Hero source, ItemInstance item)
@@ -1362,6 +1598,76 @@ namespace Redpoint.DungeonEscape.Unity
                    source.Items.Contains(item) &&
                    item.HasCharges &&
                    source.CanUseItem(item);
+        }
+
+        public string UseHeroItemOnMapObject(Hero source, ItemInstance item, TiledObjectInfo mapObject)
+        {
+            EnsureInitialized();
+            EnsureItemLinked(item);
+            if (!CanUseHeroItem(source, item))
+            {
+                return "That item cannot be used.";
+            }
+
+            if (mapObject == null)
+            {
+                return "There is nothing there.";
+            }
+
+            if (item.Item.IsKey || item.Item.Skill != null && item.Item.Skill.Type == SkillType.Open)
+            {
+                var result = OpenDoor(mapObject);
+                if (result.IndexOf("opened", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    ConsumeUsedItem(source, item);
+                    MarkDirty();
+                }
+
+                return source.Name + " used " + item.Name + ".\n" + result;
+            }
+
+            var objectState = GetTargetObjectState(mapObject);
+            var useResult = item.Use(source, source, objectState, this, 0);
+            if (useResult.Item2)
+            {
+                ConsumeUsedItem(source, item);
+                MarkDirty();
+            }
+
+            return useResult.Item1;
+        }
+
+        public string CastHeroSpellOnMapObject(Hero caster, Spell spell, TiledObjectInfo mapObject)
+        {
+            EnsureInitialized();
+            EnsureSpellLinked(spell);
+            if (!CanCastHeroSpell(caster, spell))
+            {
+                return "That spell cannot be cast.";
+            }
+
+            if (mapObject == null)
+            {
+                return "There is nothing there.";
+            }
+
+            if (spell.Type == SkillType.Open)
+            {
+                if (caster.Magic < spell.Cost)
+                {
+                    return caster.Name + ": I do not have enough magic to cast " + spell.Name + ".";
+                }
+
+                caster.Magic -= spell.Cost;
+                var result = OpenDoor(mapObject);
+                MarkDirty();
+                return caster.Name + " casts " + spell.Name + ".\n" + result;
+            }
+
+            var objectState = GetTargetObjectState(mapObject);
+            var message = spell.Cast(new List<IFighter>(), new[] { objectState }, caster, this);
+            MarkDirty();
+            return message;
         }
 
         private static void EnsureItemLinked(ItemInstance item)
@@ -1584,10 +1890,69 @@ namespace Redpoint.DungeonEscape.Unity
                 : defaultValue;
         }
 
+        private bool SpendGold(int cost)
+        {
+            cost = Math.Max(0, cost);
+            if (Party == null || Party.Gold < cost)
+            {
+                return false;
+            }
+
+            Party.Gold -= cost;
+            MarkDirty();
+            return true;
+        }
+
+        private bool CanOpenMapPickupObject(TiledObjectInfo mapObject)
+        {
+            if (mapObject == null || Party == null)
+            {
+                return false;
+            }
+
+            var level = GetMapPickupLevel(mapObject);
+            return Party.CanOpenChest(level);
+        }
+
+        private static int GetMapPickupLevel(TiledObjectInfo mapObject)
+        {
+            if (mapObject == null)
+            {
+                return 0;
+            }
+
+            return string.Equals(mapObject.Class, "Chest", StringComparison.OrdinalIgnoreCase)
+                ? GetIntProperty(mapObject, "ChestLevel", GetIntProperty(mapObject, "Level", 0))
+                : GetIntProperty(mapObject, "Level", 0);
+        }
+
+        private ObjectState GetTargetObjectState(TiledObjectInfo mapObject)
+        {
+            var objectState = GetObjectState(Party.CurrentMapId, mapObject.Id, true);
+            objectState.Name = mapObject.Name;
+            if (IsDoorObject(mapObject))
+            {
+                objectState.Type = SpriteType.Door;
+                objectState.Level = GetIntProperty(mapObject, "DoorLevel", 0);
+            }
+            else
+            {
+                objectState.Type = GetSpriteType(mapObject);
+            }
+
+            return objectState;
+        }
+
         private static bool IsPickupObject(TiledObjectInfo mapObject)
         {
             return string.Equals(mapObject.Class, "Chest", StringComparison.OrdinalIgnoreCase) ||
                    string.Equals(mapObject.Class, "HiddenItem", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsDoorObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   string.Equals(mapObject.Class, "Door", StringComparison.OrdinalIgnoreCase);
         }
 
         private static SpriteType GetSpriteType(TiledObjectInfo mapObject)
@@ -1685,6 +2050,47 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return objectState;
+        }
+
+        private SpriteState GetSpriteState(string mapId, int spriteId, bool create)
+        {
+            var mapState = GetMapState(mapId, create);
+            if (mapState == null)
+            {
+                return null;
+            }
+
+            if (mapState.Sprites == null)
+            {
+                mapState.Sprites = new List<SpriteState>();
+            }
+
+            var spriteState = mapState.Sprites.FirstOrDefault(item => item.Id == spriteId);
+            if (spriteState == null && create)
+            {
+                spriteState = new SpriteState { Id = spriteId };
+                mapState.Sprites.Add(spriteState);
+            }
+
+            return spriteState;
+        }
+
+        private MapState GetMapState(string mapId, bool create)
+        {
+            if (CurrentSave.MapStates == null)
+            {
+                CurrentSave.MapStates = new List<MapState>();
+            }
+
+            var normalizedMapId = TiledMapLoader.NormalizeMapId(mapId);
+            var mapState = CurrentSave.MapStates.FirstOrDefault(item => item.Id == normalizedMapId);
+            if (mapState == null && create)
+            {
+                mapState = new MapState { Id = normalizedMapId };
+                CurrentSave.MapStates.Add(mapState);
+            }
+
+            return mapState;
         }
 
         private static ActiveQuest CreateActiveQuest(Quest quest)

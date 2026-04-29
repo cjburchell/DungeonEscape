@@ -83,13 +83,15 @@ Status: In progress
 - Done: Opened doors stop blocking movement and are hidden from the map.
 - Done: NPC heal behavior.
 - Done: NPC store buy/sell behavior.
+- Done: Store UI uses a persistent tabbed Buy/Sell window with item icons, party-member sell tabs, selected purchase recipient, and optional equip-after-buy prompt.
 - Done: NPC save behavior through quick-save service interaction.
 - Done: Hidden item quest conditions using the hidden item's quest/stage metadata.
 - Done: Removed hidden items no longer render or interact after pickup.
-- Pending: Store parity with old map stores: support `NpcKey`, fixed `Items`, persistent generated inventory, `WillBuyItems`, item removal after buy, and old sell-price behavior.
-- Pending: Healer parity with old healers: paid heal one, heal all, renew magic, cure status, and revive options based on healer `Cost`.
-- Pending: Object-target item/spell actions, especially old `Target.Object` behavior for using map-facing skills/items on nearby objects.
-- Pending: Chest and hidden-item level gating parity with old `Party.CanOpenChest(level)` behavior.
+- Done: Store parity with old map stores: support `NpcKey`, fixed `Items`, persistent generated inventory, `WillBuyItems`, item removal after buy, and old sell-price behavior.
+- Done: Healer parity with old healers: paid heal one, heal all, renew magic, cure status, and revive options based on healer `Cost`.
+- Done: Object-target item/spell actions, especially old `Target.Object` behavior for using map-facing skills/items on nearby objects.
+- Done: Chest and hidden-item level gating parity with old `Party.CanOpenChest(level)` behavior.
+- Done: Manual Unity play-test pass for store, healer, object-target use, and level-gated pickups.
 - Pending: Decide whether to migrate the old cart follower visual.
 
 ## 5. Movement And Collision Rules

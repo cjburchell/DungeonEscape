@@ -179,6 +179,11 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
+            if (DungeonEscapeStoreWindow.IsOpen)
+            {
+                return;
+            }
+
             if (isMoving)
             {
                 return;
@@ -505,6 +510,53 @@ namespace Redpoint.DungeonEscape.Unity
             return new WorldPosition(x, y);
         }
 
+        public string UseItemOnFacingObject(Hero hero, ItemInstance item)
+        {
+            if (gameState == null || mapView == null)
+            {
+                return "Cannot use that without game state.";
+            }
+
+            TiledObjectInfo mapObject;
+            if (!mapView.TryGetObjectAt(GetFacingPosition(), out mapObject))
+            {
+                return "There is nothing there.";
+            }
+
+            var result = gameState.UseHeroItemOnMapObject(hero, item, mapObject);
+            RefreshMapAfterObjectTarget();
+            return result;
+        }
+
+        public string CastSpellOnFacingObject(Hero hero, Spell spell)
+        {
+            if (gameState == null || mapView == null)
+            {
+                return "Cannot cast that without game state.";
+            }
+
+            TiledObjectInfo mapObject;
+            if (!mapView.TryGetObjectAt(GetFacingPosition(), out mapObject))
+            {
+                return "There is nothing there.";
+            }
+
+            var result = gameState.CastHeroSpellOnMapObject(hero, spell, mapObject);
+            RefreshMapAfterObjectTarget();
+            return result;
+        }
+
+        private void RefreshMapAfterObjectTarget()
+        {
+            if (mapView == null)
+            {
+                return;
+            }
+
+            mapView.RefreshObjectState();
+            mapView.RefreshRender();
+        }
+
         private void ShowInteractionMessage(TiledObjectInfo mapObject)
         {
             if (messageBox == null)
@@ -635,27 +687,111 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (IsStoreObject(mapObject))
             {
-                ShowStoreDialog(mapObject);
+                DungeonEscapeStoreWindow.Show(gameState, mapObject);
             }
         }
 
         private void ShowHealerDialog(TiledObjectInfo mapObject)
         {
+            if (gameState == null || gameState.Party == null)
+            {
+                messageBox.Show(GetObjectDisplayName(mapObject), "Cannot heal without game state.");
+                return;
+            }
+
+            var cost = GetIntProperty(mapObject, "Cost", 25);
+            var wounded = gameState.Party.AliveMembers.Where(member => member.Health != member.MaxHealth).ToList();
+            var magicMissing = gameState.Party.AliveMembers.Where(member => member.Magic != member.MaxMagic).ToList();
+            var statusMembers = gameState.Party.AliveMembers.Where(member => member.Status != null && member.Status.Count != 0).ToList();
+            var dead = gameState.Party.DeadMembers.ToList();
+            var labels = new List<string>();
+
+            if (wounded.Count > 0)
+            {
+                labels.Add("Heal " + cost + "g");
+                if (wounded.Count > 1)
+                {
+                    labels.Add("Heal All " + cost * wounded.Count + "g");
+                }
+            }
+
+            if (magicMissing.Count > 0)
+            {
+                labels.Add("Renew Magic " + cost * 2 * magicMissing.Count + "g");
+            }
+
+            if (statusMembers.Count > 0)
+            {
+                labels.Add("Cure " + cost * 2 + "g");
+            }
+
+            if (dead.Count > 0)
+            {
+                labels.Add("Revive " + cost * 10 + "g");
+            }
+
+            if (labels.Count == 0)
+            {
+                messageBox.Show(GetObjectDisplayName(mapObject), "You do not require any of my services.");
+                return;
+            }
+
+            labels.Add("Leave");
             messageBox.Show(
                 GetObjectDisplayName(mapObject),
-                "Welcome. Do you want me to restore the party?",
-                new[] { "Heal Party", "Leave" },
+                "Do you require my services as a healer?\nGold: " + gameState.Party.Gold,
+                labels,
                 selectedIndex =>
                 {
-                    if (selectedIndex != 0)
+                    if (selectedIndex < 0 || selectedIndex >= labels.Count - 1)
                     {
                         return;
                     }
 
-                    messageBox.Show(
-                        GetObjectDisplayName(mapObject),
-                        gameState == null ? "Cannot heal without game state." : gameState.HealParty());
+                    var selected = labels[selectedIndex];
+                    if (selected.StartsWith("Heal All", StringComparison.OrdinalIgnoreCase))
+                    {
+                        messageBox.Show(GetObjectDisplayName(mapObject), gameState.HealAllHeroes(cost * wounded.Count));
+                    }
+                    else if (selected.StartsWith("Heal ", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ShowHealerHeroPicker(mapObject, wounded, "Heal", hero => gameState.HealHero(hero, cost));
+                    }
+                    else if (selected.StartsWith("Renew Magic", StringComparison.OrdinalIgnoreCase))
+                    {
+                        messageBox.Show(GetObjectDisplayName(mapObject), gameState.RenewMagic(cost * 2 * magicMissing.Count));
+                    }
+                    else if (selected.StartsWith("Cure", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ShowHealerHeroPicker(mapObject, statusMembers, "Cure", hero => gameState.CureHero(hero, cost * 2));
+                    }
+                    else if (selected.StartsWith("Revive", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ShowHealerHeroPicker(mapObject, dead, "Revive", hero => gameState.ReviveHero(hero, cost * 10));
+                    }
                 });
+        }
+
+        private void ShowHealerHeroPicker(TiledObjectInfo mapObject, List<Hero> heroes, string action, Func<Hero, string> apply)
+        {
+            if (heroes.Count == 1)
+            {
+                messageBox.Show(GetObjectDisplayName(mapObject), apply(heroes[0]));
+                return;
+            }
+
+            var labels = heroes.Select(hero => hero.Name).ToList();
+            labels.Add("Back");
+            messageBox.Show(GetObjectDisplayName(mapObject), action + " who?", labels, selectedIndex =>
+            {
+                if (selectedIndex < 0 || selectedIndex >= heroes.Count)
+                {
+                    ShowHealerDialog(mapObject);
+                    return;
+                }
+
+                messageBox.Show(GetObjectDisplayName(mapObject), apply(heroes[selectedIndex]));
+            });
         }
 
         private void ShowSaveDialog(TiledObjectInfo mapObject)
@@ -679,17 +815,25 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void ShowStoreDialog(TiledObjectInfo mapObject)
         {
+            var willBuyItems = GetBoolProperty(mapObject, "WillBuyItems", true) && !IsKeyStoreObject(mapObject);
+            var choices = willBuyItems
+                ? new[] { "Buy", "Sell", "Leave" }
+                : new[] { "Buy", "Leave" };
+            var text = IsKeyStoreObject(mapObject)
+                ? "Would you like to buy a key?"
+                : GetStringProperty(mapObject, "Text", "Welcome to my store.\nI buy and sell items. What can I do for you?");
+
             messageBox.Show(
                 GetObjectDisplayName(mapObject),
-                "What do you need?",
-                new[] { "Buy", "Sell", "Leave" },
+                text,
+                choices,
                 selectedIndex =>
                 {
                     if (selectedIndex == 0)
                     {
                         ShowBuyDialog(mapObject);
                     }
-                    else if (selectedIndex == 1)
+                    else if (willBuyItems && selectedIndex == 1)
                     {
                         ShowSellDialog(mapObject);
                     }
@@ -704,7 +848,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            var inventory = gameState.CreateStoreInventory(6);
+            var inventory = gameState.GetStoreInventory(mapObject);
             if (inventory.Count == 0)
             {
                 messageBox.Show(GetObjectDisplayName(mapObject), "I have nothing to sell right now.");
@@ -725,7 +869,7 @@ namespace Redpoint.DungeonEscape.Unity
                         return;
                     }
 
-                    messageBox.Show(GetObjectDisplayName(mapObject), gameState.BuyStoreItem(inventory[selectedIndex]));
+                    messageBox.Show(GetObjectDisplayName(mapObject), gameState.BuyStoreItem(mapObject, inventory[selectedIndex]));
                 });
         }
 
@@ -745,7 +889,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             var labels = entries
-                .Select(entry => entry.Hero.Name + ": " + entry.Item.NameWithStats + "  " + Math.Max(1, entry.Item.Gold / 2) + "g")
+                .Select(entry => entry.Hero.Name + ": " + entry.Item.NameWithStats + "  " + Math.Max(1, entry.Item.Gold * 3 / 4) + "g")
                 .ToList();
             labels.Add("Back");
             messageBox.Show(
@@ -761,7 +905,7 @@ namespace Redpoint.DungeonEscape.Unity
                     }
 
                     var entry = entries[selectedIndex];
-                    messageBox.Show(GetObjectDisplayName(mapObject), gameState.SellHeroItem(entry.Hero, entry.Item));
+                    messageBox.Show(GetObjectDisplayName(mapObject), gameState.SellHeroItem(mapObject, entry.Hero, entry.Item));
                 });
         }
 
@@ -927,6 +1071,32 @@ namespace Redpoint.DungeonEscape.Unity
             return mapObject.Properties != null && mapObject.Properties.TryGetValue(propertyName, out value);
         }
 
+        private static string GetStringProperty(TiledObjectInfo mapObject, string propertyName, string defaultValue)
+        {
+            string value;
+            return TryGetProperty(mapObject, propertyName, out value) && !string.IsNullOrEmpty(value)
+                ? value
+                : defaultValue;
+        }
+
+        private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName, int defaultValue)
+        {
+            string value;
+            int result;
+            return TryGetProperty(mapObject, propertyName, out value) && int.TryParse(value, out result)
+                ? result
+                : defaultValue;
+        }
+
+        private static bool GetBoolProperty(TiledObjectInfo mapObject, string propertyName, bool defaultValue)
+        {
+            string value;
+            bool result;
+            return TryGetProperty(mapObject, propertyName, out value) && bool.TryParse(value, out result)
+                ? result
+                : defaultValue;
+        }
+
         private static bool IsPickupObject(TiledObjectInfo mapObject)
         {
             return string.Equals(mapObject.Class, "Chest", System.StringComparison.OrdinalIgnoreCase) ||
@@ -965,7 +1135,14 @@ namespace Redpoint.DungeonEscape.Unity
         private static bool IsStoreObject(TiledObjectInfo mapObject)
         {
             return mapObject != null &&
-                   string.Equals(mapObject.Class, "NpcStore", System.StringComparison.OrdinalIgnoreCase);
+                   (string.Equals(mapObject.Class, "NpcStore", System.StringComparison.OrdinalIgnoreCase) ||
+                    IsKeyStoreObject(mapObject));
+        }
+
+        private static bool IsKeyStoreObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   string.Equals(mapObject.Class, "NpcKey", System.StringComparison.OrdinalIgnoreCase);
         }
 
         private static string GetObjectDisplayName(TiledObjectInfo mapObject)

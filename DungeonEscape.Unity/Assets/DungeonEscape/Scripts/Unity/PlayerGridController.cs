@@ -25,11 +25,15 @@ namespace Redpoint.DungeonEscape.Unity
         [SerializeField]
         private string shipTextureAssetPath = "Assets/DungeonEscape/Images/sprites/ship2.png";
 
+        [SerializeField]
+        private string cartTextureAssetPath = "Assets/DungeonEscape/Images/sprites/cart.png";
+
         private WorldPosition position;
         private SpriteRenderer spriteRenderer;
         private DirectionalSpriteSet directionSprites;
         private DirectionalSpriteSet heroDirectionSprites;
         private DirectionalSpriteSet shipDirectionSprites;
+        private DirectionalSpriteSet cartDirectionSprites;
         private Direction currentDirection = Direction.Down;
         private Class loadedHeroClass = Class.Hero;
         private Gender loadedHeroGender = Gender.Male;
@@ -37,6 +41,7 @@ namespace Redpoint.DungeonEscape.Unity
         private DungeonEscapeGameState gameState;
         private DungeonEscapeMessageBox messageBox;
         private readonly List<PartyFollowerController> followers = new List<PartyFollowerController>();
+        private PartyFollowerController cartFollower;
         private readonly List<WorldPosition> partyTrailPositions = new List<WorldPosition>();
         private readonly List<Direction> partyTrailDirections = new List<Direction>();
         private bool hasPendingTurnMove;
@@ -1256,7 +1261,7 @@ namespace Redpoint.DungeonEscape.Unity
         {
             partyTrailPositions.Clear();
             partyTrailDirections.Clear();
-            var maxFollowers = GetFollowerCount();
+            var maxFollowers = GetTrailFollowerCount();
             for (var i = 0; i < maxFollowers + 1; i++)
             {
                 partyTrailPositions.Add(position);
@@ -1299,13 +1304,14 @@ namespace Redpoint.DungeonEscape.Unity
                     GetTrailDirection(i + 1));
             }
 
-            EnsureTrailLength(members.Count + 1);
-            SetFollowersVisible(!showingShip);
+            EnsureTrailLength(GetTrailFollowerCount() + 1);
+            SyncCartFollower();
+            UpdateFollowerVisibility();
         }
 
         private void UpdatePartyFollowers(WorldPosition nextPosition, Direction direction, float progress)
         {
-            EnsureTrailLength(GetFollowerCount() + 1);
+            EnsureTrailLength(GetTrailFollowerCount() + 1);
             for (var i = 0; i < followers.Count; i++)
             {
                 if (followers[i] == null)
@@ -1315,20 +1321,27 @@ namespace Redpoint.DungeonEscape.Unity
 
                 followers[i].SetPosition(GetTrailPosition(i), GetTrailDirection(i), progress);
             }
+
+            if (cartFollower != null)
+            {
+                var cartIndex = followers.Count;
+                cartFollower.SetPosition(GetTrailPosition(cartIndex), GetTrailDirection(cartIndex), progress);
+            }
         }
 
         private void CommitPartyFollowers(WorldPosition nextPosition, Direction direction)
         {
-            EnsureTrailLength(GetFollowerCount() + 1);
+            EnsureTrailLength(GetTrailFollowerCount() + 1);
             partyTrailPositions.Insert(0, nextPosition);
             partyTrailDirections.Insert(0, direction);
 
-            while (partyTrailPositions.Count > followers.Count + 1)
+            var maxTrailLength = GetTrailFollowerCount() + 1;
+            while (partyTrailPositions.Count > maxTrailLength)
             {
                 partyTrailPositions.RemoveAt(partyTrailPositions.Count - 1);
             }
 
-            while (partyTrailDirections.Count > followers.Count + 1)
+            while (partyTrailDirections.Count > maxTrailLength)
             {
                 partyTrailDirections.RemoveAt(partyTrailDirections.Count - 1);
             }
@@ -1340,6 +1353,12 @@ namespace Redpoint.DungeonEscape.Unity
                     followers[i].CommitPosition(GetTrailPosition(i + 1), GetTrailDirection(i + 1));
                 }
             }
+
+            if (cartFollower != null)
+            {
+                var cartIndex = followers.Count + 1;
+                cartFollower.CommitPosition(GetTrailPosition(cartIndex), GetTrailDirection(cartIndex));
+            }
         }
 
         private void UpdateFollowerVisualPositions()
@@ -1350,6 +1369,11 @@ namespace Redpoint.DungeonEscape.Unity
                 {
                     follower.UpdateVisualPosition();
                 }
+            }
+
+            if (cartFollower != null)
+            {
+                cartFollower.UpdateVisualPosition();
             }
         }
 
@@ -1364,6 +1388,48 @@ namespace Redpoint.DungeonEscape.Unity
             }
         }
 
+        private void SyncCartFollower()
+        {
+            if (!HasReserveMembers())
+            {
+                if (cartFollower != null)
+                {
+                    Destroy(cartFollower.gameObject);
+                    cartFollower = null;
+                }
+
+                return;
+            }
+
+            if (cartFollower == null)
+            {
+                var cartObject = new GameObject("PartyCartFollower");
+                cartObject.transform.SetParent(transform.parent, false);
+                cartFollower = cartObject.AddComponent<PartyFollowerController>();
+            }
+
+            if (cartDirectionSprites == null)
+            {
+                cartDirectionSprites = LoadCartSprites();
+            }
+
+            var cartTrailIndex = followers.Count + 1;
+            cartFollower.Configure(
+                mapView,
+                cartDirectionSprites,
+                GetTrailPosition(cartTrailIndex),
+                GetTrailDirection(cartTrailIndex));
+        }
+
+        private void UpdateFollowerVisibility()
+        {
+            SetFollowersVisible(!showingShip);
+            if (cartFollower != null)
+            {
+                cartFollower.gameObject.SetActive(ShouldShowCart());
+            }
+        }
+
         private void SnapPartyFollowersToPlayer()
         {
             transform.position = GetVisualPosition(position);
@@ -1372,10 +1438,31 @@ namespace Redpoint.DungeonEscape.Unity
             UpdateFollowerVisualPositions();
         }
 
-        private int GetFollowerCount()
+        private int GetPartyFollowerCount()
         {
             var party = gameState == null ? null : gameState.Party;
             return party == null ? 0 : Math.Max(0, party.ActiveMembers.Count() - 1);
+        }
+
+        private int GetTrailFollowerCount()
+        {
+            return GetPartyFollowerCount() + (HasReserveMembers() ? 1 : 0);
+        }
+
+        private bool HasReserveMembers()
+        {
+            var party = gameState == null ? null : gameState.Party;
+            return party != null && party.InactiveMembers.Any();
+        }
+
+        private bool ShouldShowCart()
+        {
+            var party = gameState == null ? null : gameState.Party;
+            return party != null &&
+                   party.CurrentMapIsOverWorld &&
+                   HasReserveMembers() &&
+                   mapView != null &&
+                   !mapView.IsWaterAt(position);
         }
 
         private void EnsureTrailLength(int length)
@@ -1453,6 +1540,17 @@ namespace Redpoint.DungeonEscape.Unity
                 CreateFallbackSprite());
         }
 
+        private DirectionalSpriteSet LoadCartSprites()
+        {
+            return DirectionalSpriteSheet.LoadDirectionalSet(
+                cartTextureAssetPath,
+                48,
+                54,
+                "NESW",
+                3,
+                CreateFallbackSprite());
+        }
+
         private void UpdateTravelVisualState()
         {
             var party = gameState == null ? null : gameState.Party;
@@ -1463,6 +1561,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (shouldShowShip == showingShip && directionSprites != null)
             {
+                UpdateFollowerVisibility();
                 return;
             }
 
@@ -1475,13 +1574,13 @@ namespace Redpoint.DungeonEscape.Unity
                 }
 
                 directionSprites = shipDirectionSprites;
-                SetFollowersVisible(false);
             }
             else
             {
                 directionSprites = heroDirectionSprites ?? LoadHeroSprites();
-                SetFollowersVisible(true);
             }
+
+            UpdateFollowerVisibility();
         }
 
         private static Sprite CreateFallbackSprite()

@@ -128,6 +128,29 @@ Status: Done
 - Change facing direction while on water.
 - Expected: the ship sprite changes to match the current direction.
 
+## Cart Follower Visual
+
+Status: Done
+
+- Start or load a game on the overworld with no reserve party members.
+- Expected: no cart is shown.
+- Recruit enough party members that at least one member is in reserve, or move an active member to reserve from the Party UI.
+- Expected: a cart appears behind the active party followers on the overworld.
+- Hold movement for several tiles in each direction.
+- Expected: the cart follows behind the last visible active follower, or behind the player if there are no active followers after the leader.
+- Walk behind and in front of NPCs, walls, and tall sprite objects.
+- Expected: the cart sorts like other sprite-layer characters and does not draw over objects it should be behind.
+- Move onto water after obtaining `Deed to the ship`.
+- Expected: the player changes to the ship visual and the cart is hidden.
+- Move from water back to land.
+- Expected: the cart returns if a reserve party member still exists.
+- Warp from the overworld to a town, dungeon, or other non-overworld map.
+- Expected: the cart is hidden.
+- Warp back to the overworld.
+- Expected: the cart appears again if a reserve party member still exists.
+- Save and load while the party has reserve members.
+- Expected: cart visibility is restored according to the loaded map and current tile.
+
 ## Inventory First-Open Performance
 
 Status: Done

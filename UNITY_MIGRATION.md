@@ -68,7 +68,7 @@ Status: In progress
 
 ## 4. Map Gameplay
 
-Status: In progress
+Status: Done
 
 - Done: NPC dialog works.
 - Done: Recruitable NPCs can join the party.
@@ -91,8 +91,9 @@ Status: In progress
 - Done: Healer parity with old healers: paid heal one, heal all, renew magic, cure status, and revive options based on healer `Cost`.
 - Done: Object-target item/spell actions, especially old `Target.Object` behavior for using map-facing skills/items on nearby objects.
 - Done: Chest and hidden-item level gating parity with old `Party.CanOpenChest(level)` behavior.
+- Done: Old cart follower visual migrated. The cart appears behind the party on the overworld when reserve party members exist, and hides while on water.
 - Done: Manual Unity play-test pass for store, healer, object-target use, and level-gated pickups.
-- Pending: Decide whether to migrate the old cart follower visual.
+- Done: Manual Unity play-test pass for cart follower visibility and following behavior.
 
 ## 5. Movement And Collision Rules
 

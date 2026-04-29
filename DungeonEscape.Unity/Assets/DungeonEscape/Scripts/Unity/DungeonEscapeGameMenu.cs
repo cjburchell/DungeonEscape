@@ -57,6 +57,7 @@ namespace Redpoint.DungeonEscape.Unity
         private int drawingRowIndex;
         private InputBinding rebindingInput;
         private string rebindingSlot;
+        private int rebindingStartFrame;
         private int repeatingMenuMoveX;
         private float nextMenuMoveXTime;
         private int repeatingMenuMoveY;
@@ -70,15 +71,15 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Update()
         {
-            if (isOpen && DungeonEscapeMessageBox.IsAnyVisible)
-            {
-                return;
-            }
-
             if (rebindingInput != null)
             {
+                if (Time.frameCount <= rebindingStartFrame)
+                {
+                    return;
+                }
+
                 string keyCode;
-                if (DungeonEscapeInput.TryCaptureBinding(out keyCode))
+                if (DungeonEscapeInput.TryCaptureBinding(rebindingSlot, out keyCode))
                 {
                     DungeonEscapeInput.SetBinding(rebindingInput, rebindingSlot, keyCode);
                     DungeonEscapeSettingsCache.Save();
@@ -505,6 +506,11 @@ namespace Redpoint.DungeonEscape.Unity
         {
             EnsureReferences();
             if (gameState == null || caster == null || spell == null)
+            {
+                return;
+            }
+
+            if (isOpen && DungeonEscapeMessageBox.IsAnyVisible)
             {
                 return;
             }
@@ -1590,7 +1596,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
             else if (currentSettingsTab == SettingsTab.Input)
             {
-                selectedBindingSlotIndex = (selectedBindingSlotIndex + delta + 3) % 3;
+                selectedBindingSlotIndex = (selectedBindingSlotIndex + delta + 2) % 2;
             }
         }
 
@@ -1649,10 +1655,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            rebindingInput = bindings[bindingIndex];
-            rebindingSlot = selectedBindingSlotIndex == 0
-                ? "Primary"
-                : selectedBindingSlotIndex == 1 ? "Secondary" : "Gamepad";
+            StartRebinding(bindings[bindingIndex], selectedBindingSlotIndex == 0 ? "Primary" : "Gamepad");
         }
 
         private int GetMenuMoveX()

@@ -223,10 +223,14 @@ namespace Redpoint.DungeonEscape.Unity
                 }
             }
 
-            var gamepadCode = TryCaptureGamepadButton();
-            if (!string.IsNullOrEmpty(gamepadCode))
+            foreach (KeyCode code in Enum.GetValues(typeof(KeyCode)))
             {
-                keyCode = gamepadCode;
+                if (!IsKeyboardKeyCode(code) || !Input.GetKeyDown(code))
+                {
+                    continue;
+                }
+
+                keyCode = FormatLegacyKeyboardKey(code);
                 return true;
             }
 
@@ -243,15 +247,12 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (slot == "Primary")
             {
-                binding.Primary = keyCode;
-            }
-            else if (slot == "Secondary")
-            {
-                binding.Secondary = keyCode;
+                binding.Primary = string.IsNullOrEmpty(keyCode) ? "None" : keyCode;
+                binding.Secondary = "None";
             }
             else if (slot == "Gamepad")
             {
-                binding.Gamepad = keyCode;
+                binding.Gamepad = string.IsNullOrEmpty(keyCode) ? "None" : keyCode;
             }
         }
 

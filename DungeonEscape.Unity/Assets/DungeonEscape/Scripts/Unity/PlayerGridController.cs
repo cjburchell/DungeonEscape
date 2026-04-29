@@ -22,9 +22,14 @@ namespace Redpoint.DungeonEscape.Unity
         [SerializeField]
         private string heroTextureAssetPath = "Assets/DungeonEscape/Images/sprites/hero.png";
 
+        [SerializeField]
+        private string shipTextureAssetPath = "Assets/DungeonEscape/Images/sprites/ship2.png";
+
         private WorldPosition position;
         private SpriteRenderer spriteRenderer;
         private DirectionalSpriteSet directionSprites;
+        private DirectionalSpriteSet heroDirectionSprites;
+        private DirectionalSpriteSet shipDirectionSprites;
         private Direction currentDirection = Direction.Down;
         private Class loadedHeroClass = Class.Hero;
         private Gender loadedHeroGender = Gender.Male;
@@ -38,6 +43,7 @@ namespace Redpoint.DungeonEscape.Unity
         private Direction pendingTurnMoveDirection;
         private float pendingTurnMoveDelay;
         private bool isMoving;
+        private bool showingShip;
 
         public WorldPosition Position
         {
@@ -67,7 +73,8 @@ namespace Redpoint.DungeonEscape.Unity
         private void Awake()
         {
             spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-            directionSprites = LoadHeroSprites();
+            heroDirectionSprites = LoadHeroSprites();
+            directionSprites = heroDirectionSprites;
             spriteRenderer.sprite = directionSprites.GetIdle(currentDirection);
         }
 
@@ -141,7 +148,11 @@ namespace Redpoint.DungeonEscape.Unity
 
             loadedHeroClass = hero.Class;
             loadedHeroGender = hero.Gender;
-            directionSprites = LoadHeroSprites(loadedHeroClass, loadedHeroGender);
+            heroDirectionSprites = LoadHeroSprites(loadedHeroClass, loadedHeroGender);
+            if (!showingShip)
+            {
+                directionSprites = heroDirectionSprites;
+            }
         }
 
         private void ApplyInitialSpawnIfNeeded()
@@ -260,6 +271,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void UpdateVisualPosition()
         {
+            UpdateTravelVisualState();
             transform.position = GetVisualPosition(position);
         }
 
@@ -310,7 +322,11 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             CommitPartyFollowers(nextPosition, direction);
-            TryApplyWarp();
+            if (!TryApplyWarp())
+            {
+                ApplyMapStepEffects();
+            }
+
             UpdateVisualPosition();
             isMoving = false;
         }
@@ -339,21 +355,38 @@ namespace Redpoint.DungeonEscape.Unity
             return DungeonEscapeInput.GetCommand(DungeonEscapeInputCommand.Sprint);
         }
 
-        private void TryApplyWarp()
+        private bool TryApplyWarp()
         {
             if (mapView == null)
             {
-                return;
+                return false;
             }
 
             TiledMapWarp warp;
             if (!mapView.TryGetWarpAt(position, out warp))
             {
-                return;
+                return false;
             }
 
             Debug.Log("Warping to " + warp.MapId + (string.IsNullOrEmpty(warp.SpawnId) ? "" : " at " + warp.SpawnId));
             ApplyMapTransition(warp);
+            return true;
+        }
+
+        private void ApplyMapStepEffects()
+        {
+            if (mapView == null || gameState == null)
+            {
+                return;
+            }
+
+            var message = gameState.ApplyMapStepEffects(
+                mapView.GetDamageAt(position),
+                mapView.GetBiomeAt(position));
+            if (!string.IsNullOrEmpty(message) && messageBox != null)
+            {
+                messageBox.Show("Terrain", message);
+            }
         }
 
         private void ApplyMapTransition(TiledMapWarp warp)
@@ -469,6 +502,21 @@ namespace Redpoint.DungeonEscape.Unity
             if (IsServiceNpc(mapObject))
             {
                 ShowServiceDialog(mapObject);
+                return;
+            }
+
+            if (IsDoorObject(mapObject))
+            {
+                var result = gameState == null
+                    ? "Cannot open door without game state."
+                    : gameState.OpenDoor(mapObject);
+                if (mapView != null)
+                {
+                    mapView.RefreshObjectState();
+                    mapView.RefreshRender();
+                }
+
+                messageBox.Show(GetObjectDisplayName(mapObject), result);
                 return;
             }
 
@@ -1101,6 +1149,17 @@ namespace Redpoint.DungeonEscape.Unity
             }
         }
 
+        private void SetFollowersVisible(bool visible)
+        {
+            foreach (var follower in followers)
+            {
+                if (follower != null)
+                {
+                    follower.gameObject.SetActive(visible);
+                }
+            }
+        }
+
         private void SnapPartyFollowersToPlayer()
         {
             transform.position = GetVisualPosition(position);
@@ -1177,6 +1236,48 @@ namespace Redpoint.DungeonEscape.Unity
                 heroHeight,
                 DirectionalSpriteSheet.GetHeroBaseFrameIndex(heroClass, gender),
                 CreateFallbackSprite());
+        }
+
+        private DirectionalSpriteSet LoadShipSprites()
+        {
+            return DirectionalSpriteSheet.LoadDirectionalSet(
+                shipTextureAssetPath,
+                32,
+                56,
+                "SENW",
+                2,
+                CreateFallbackSprite());
+        }
+
+        private void UpdateTravelVisualState()
+        {
+            var party = gameState == null ? null : gameState.Party;
+            var shouldShowShip = party != null &&
+                                 party.HasShip &&
+                                 mapView != null &&
+                                 mapView.IsWaterAt(position);
+
+            if (shouldShowShip == showingShip && directionSprites != null)
+            {
+                return;
+            }
+
+            showingShip = shouldShowShip;
+            if (showingShip)
+            {
+                if (shipDirectionSprites == null)
+                {
+                    shipDirectionSprites = LoadShipSprites();
+                }
+
+                directionSprites = shipDirectionSprites;
+                SetFollowersVisible(false);
+            }
+            else
+            {
+                directionSprites = heroDirectionSprites ?? LoadHeroSprites();
+                SetFollowersVisible(true);
+            }
         }
 
         private static Sprite CreateFallbackSprite()

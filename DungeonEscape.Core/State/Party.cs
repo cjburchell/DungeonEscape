@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using System.Linq;
 using Newtonsoft.Json;
 
@@ -63,14 +64,16 @@ namespace Redpoint.DungeonEscape.State
 
         public ItemInstance GetItem(string itemId)
         {
-            return AliveMembers.Select(member => member.Items.FirstOrDefault(i => i.Item.Id == itemId)).FirstOrDefault(item => item != null);
+            return AliveMembers
+                .Select(member => member.Items.FirstOrDefault(i => IsItemMatch(i, itemId)))
+                .FirstOrDefault(item => item != null);
         }
 
         public (Item, Hero) RemoveItem(string itemId)
         {
             foreach (var member in ActiveMembers)
             {
-                var item = member.Items.FirstOrDefault(i => i.Item.Id == itemId);
+                var item = member.Items.FirstOrDefault(i => IsItemMatch(i, itemId));
                 if (item == null)
                 {
                     continue;
@@ -81,6 +84,15 @@ namespace Redpoint.DungeonEscape.State
             }
 
             return (null, null);
+        }
+
+        private static bool IsItemMatch(ItemInstance instance, string itemId)
+        {
+            return instance != null &&
+                   instance.Item != null &&
+                   !string.IsNullOrEmpty(itemId) &&
+                   (string.Equals(instance.Item.Id, itemId, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(instance.Item.Name, itemId, StringComparison.OrdinalIgnoreCase));
         }
 
         public Hero AddItem(ItemInstance item)

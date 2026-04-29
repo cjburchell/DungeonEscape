@@ -10,6 +10,12 @@ namespace Redpoint.DungeonEscape.Unity
 {
     public sealed class PlayerGridController : MonoBehaviour
     {
+        private sealed class ShopSellEntry
+        {
+            public Hero Hero { get; set; }
+            public ItemInstance Item { get; set; }
+        }
+
         [SerializeField]
         private TiledMapView mapView;
 
@@ -460,6 +466,12 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
+            if (IsServiceNpc(mapObject))
+            {
+                ShowServiceDialog(mapObject);
+                return;
+            }
+
             string text;
             if (TryGetProperty(mapObject, "Text", out text) && !string.IsNullOrEmpty(text))
             {
@@ -538,6 +550,176 @@ namespace Redpoint.DungeonEscape.Unity
                         messageBox.Show(GetObjectDisplayName(mapObject), result);
                     }
                 });
+        }
+
+        private void ShowServiceDialog(TiledObjectInfo mapObject)
+        {
+            if (IsHealerObject(mapObject))
+            {
+                ShowHealerDialog(mapObject);
+                return;
+            }
+
+            if (IsSaveObject(mapObject))
+            {
+                ShowSaveDialog(mapObject);
+                return;
+            }
+
+            if (IsStoreObject(mapObject))
+            {
+                ShowStoreDialog(mapObject);
+            }
+        }
+
+        private void ShowHealerDialog(TiledObjectInfo mapObject)
+        {
+            messageBox.Show(
+                GetObjectDisplayName(mapObject),
+                "Welcome. Do you want me to restore the party?",
+                new[] { "Heal Party", "Leave" },
+                selectedIndex =>
+                {
+                    if (selectedIndex != 0)
+                    {
+                        return;
+                    }
+
+                    messageBox.Show(
+                        GetObjectDisplayName(mapObject),
+                        gameState == null ? "Cannot heal without game state." : gameState.HealParty());
+                });
+        }
+
+        private void ShowSaveDialog(TiledObjectInfo mapObject)
+        {
+            messageBox.Show(
+                GetObjectDisplayName(mapObject),
+                "Do you want to save your progress here?",
+                new[] { "Save", "Leave" },
+                selectedIndex =>
+                {
+                    if (selectedIndex != 0)
+                    {
+                        return;
+                    }
+
+                    messageBox.Show(
+                        GetObjectDisplayName(mapObject),
+                        gameState == null ? "Cannot save without game state." : gameState.SaveAtCurrentPosition());
+                });
+        }
+
+        private void ShowStoreDialog(TiledObjectInfo mapObject)
+        {
+            messageBox.Show(
+                GetObjectDisplayName(mapObject),
+                "What do you need?",
+                new[] { "Buy", "Sell", "Leave" },
+                selectedIndex =>
+                {
+                    if (selectedIndex == 0)
+                    {
+                        ShowBuyDialog(mapObject);
+                    }
+                    else if (selectedIndex == 1)
+                    {
+                        ShowSellDialog(mapObject);
+                    }
+                });
+        }
+
+        private void ShowBuyDialog(TiledObjectInfo mapObject)
+        {
+            if (gameState == null)
+            {
+                messageBox.Show(GetObjectDisplayName(mapObject), "Cannot buy without game state.");
+                return;
+            }
+
+            var inventory = gameState.CreateStoreInventory(6);
+            if (inventory.Count == 0)
+            {
+                messageBox.Show(GetObjectDisplayName(mapObject), "I have nothing to sell right now.");
+                return;
+            }
+
+            var labels = inventory.Select(item => item.NameWithStats + "  " + item.Cost + "g").ToList();
+            labels.Add("Back");
+            messageBox.Show(
+                GetObjectDisplayName(mapObject),
+                "Gold: " + gameState.Party.Gold,
+                labels,
+                selectedIndex =>
+                {
+                    if (selectedIndex < 0 || selectedIndex >= inventory.Count)
+                    {
+                        ShowStoreDialog(mapObject);
+                        return;
+                    }
+
+                    messageBox.Show(GetObjectDisplayName(mapObject), gameState.BuyStoreItem(inventory[selectedIndex]));
+                });
+        }
+
+        private void ShowSellDialog(TiledObjectInfo mapObject)
+        {
+            if (gameState == null || gameState.Party == null)
+            {
+                messageBox.Show(GetObjectDisplayName(mapObject), "Cannot sell without game state.");
+                return;
+            }
+
+            var entries = GetSellableItems().ToList();
+            if (entries.Count == 0)
+            {
+                messageBox.Show(GetObjectDisplayName(mapObject), "You have nothing I can buy.");
+                return;
+            }
+
+            var labels = entries
+                .Select(entry => entry.Hero.Name + ": " + entry.Item.NameWithStats + "  " + Math.Max(1, entry.Item.Gold / 2) + "g")
+                .ToList();
+            labels.Add("Back");
+            messageBox.Show(
+                GetObjectDisplayName(mapObject),
+                "What do you want to sell?",
+                labels,
+                selectedIndex =>
+                {
+                    if (selectedIndex < 0 || selectedIndex >= entries.Count)
+                    {
+                        ShowStoreDialog(mapObject);
+                        return;
+                    }
+
+                    var entry = entries[selectedIndex];
+                    messageBox.Show(GetObjectDisplayName(mapObject), gameState.SellHeroItem(entry.Hero, entry.Item));
+                });
+        }
+
+        private IEnumerable<ShopSellEntry> GetSellableItems()
+        {
+            if (gameState == null || gameState.Party == null)
+            {
+                yield break;
+            }
+
+            foreach (var hero in gameState.Party.Members)
+            {
+                if (hero.Items == null)
+                {
+                    continue;
+                }
+
+                foreach (var item in hero.Items)
+                {
+                    if (item != null && item.Item != null && item.Item.CanBeSoldInStore && item.Type != ItemType.Quest)
+                    {
+                        yield return new ShopSellEntry { Hero = hero, Item = item };
+                    }
+                }
+            }
         }
 
         private void ShowDialog(string speakerName, DialogText dialog, string questContext)
@@ -688,6 +870,29 @@ namespace Redpoint.DungeonEscape.Unity
         {
             return mapObject != null &&
                    string.Equals(mapObject.Class, "NpcPartyMember", System.StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsServiceNpc(TiledObjectInfo mapObject)
+        {
+            return IsHealerObject(mapObject) || IsSaveObject(mapObject) || IsStoreObject(mapObject);
+        }
+
+        private static bool IsHealerObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   string.Equals(mapObject.Class, "NpcHeal", System.StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsSaveObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   string.Equals(mapObject.Class, "NpcSave", System.StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsStoreObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   string.Equals(mapObject.Class, "NpcStore", System.StringComparison.OrdinalIgnoreCase);
         }
 
         private static string GetObjectDisplayName(TiledObjectInfo mapObject)

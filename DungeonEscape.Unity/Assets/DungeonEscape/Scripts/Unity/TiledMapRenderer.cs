@@ -254,6 +254,11 @@ namespace Redpoint.DungeonEscape.Unity
                     continue;
                 }
 
+                if (IsOpenDoor(mapObject, mapId, gameState))
+                {
+                    continue;
+                }
+
                 var gid = GetInt(mapObject, "gid");
                 if (gid == 0 && !showHiddenObjects)
                 {
@@ -396,6 +401,11 @@ namespace Redpoint.DungeonEscape.Unity
             foreach (var mapObject in objectGroup.Elements("object"))
             {
                 if (IsRuntimeNpc(mapObject))
+                {
+                    continue;
+                }
+
+                if (IsOpenDoor(mapObject, mapId, gameState))
                 {
                     continue;
                 }
@@ -599,6 +609,13 @@ namespace Redpoint.DungeonEscape.Unity
         private static bool IsRuntimeNpc(XElement mapObject)
         {
             return StartsWith(GetObjectClass(mapObject), "Npc");
+        }
+
+        private static bool IsOpenDoor(XElement mapObject, string mapId, DungeonEscapeGameState gameState)
+        {
+            return gameState != null &&
+                   string.Equals(GetObjectClass(mapObject), "Door", StringComparison.OrdinalIgnoreCase) &&
+                   gameState.IsObjectOpen(mapId, GetInt(mapObject, "id"));
         }
 
         private static void ApplyAnimation(SpriteRenderer renderer, List<TiledSpriteAnimationFrame> animationFrames)

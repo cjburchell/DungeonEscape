@@ -464,6 +464,12 @@ namespace Redpoint.DungeonEscape.Unity
                    string.Equals(mapObject.Class, "NpcPartyMember", StringComparison.OrdinalIgnoreCase);
         }
 
+        private static bool IsDoorObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   string.Equals(mapObject.Class, "Door", StringComparison.OrdinalIgnoreCase);
+        }
+
         private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName, int defaultValue)
         {
             string value;

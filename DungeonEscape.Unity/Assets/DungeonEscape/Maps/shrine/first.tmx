@@ -1,21 +1,21 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<map version="1.9" tiledversion="1.9.2" class="Shrine" orientation="orthogonal" renderorder="right-down" width="32" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="11">
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.11" tiledversion="1.11.0" class="Shrine" orientation="orthogonal" renderorder="right-down" width="32" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="11">
+ <properties>
+  <property name="biome" value="Town"/>
+  <property name="song" value="in-the-city"/>
+ </properties>
+ <tileset firstgid="1" source="../../Tilesets/npc.tsx"/>
+ <tileset firstgid="222" source="../../Tilesets/outdoors.tsx"/>
+ <tileset firstgid="702" source="../../Tilesets/indoor.tsx"/>
+ <tileset firstgid="1182" source="../../Tilesets/town.tsx"/>
+ <tileset firstgid="1662" source="../../Tilesets/tiles_small.tsx"/>
+ <tileset firstgid="1854" source="../../Tilesets/castle.tsx"/>
+ <layer id="2" name="water" width="32" height="20">
   <properties>
-    <property name="biome" value="Town" />
-    <property name="song" value="in-the-city" />
+   <property name="Collideable" type="bool" value="true"/>
+   <property name="Water" type="bool" value="true"/>
   </properties>
-  <tileset firstgid="1" source="../../Tilesets/npc.tsx" />
-  <tileset firstgid="222" source="../../Tilesets/outdoors.tsx" />
-  <tileset firstgid="702" source="../../Tilesets/indoor.tsx" />
-  <tileset firstgid="1182" source="../../Tilesets/town.tsx" />
-  <tileset firstgid="1662" source="../../Tilesets/tiles_small.tsx" />
-  <tileset firstgid="1854" source="../../Tilesets/castle.tsx" />
-  <layer id="2" name="water" width="32" height="20">
-    <properties>
-      <property name="Collideable" type="bool" value="true" />
-      <property name="Water" type="bool" value="true" />
-    </properties>
-    <data encoding="csv">
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -37,9 +37,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-  </layer>
-  <layer id="1" name="floor" width="32" height="20">
-    <data encoding="csv">
+ </layer>
+ <layer id="1" name="floor" width="32" height="20">
+  <data encoding="csv">
 712,712,712,712,712,712,712,712,712,712,712,712,712,712,1588,1588,1588,1588,628,628,628,628,628,628,628,628,628,628,628,1588,1588,1588,
 712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,1588,1588,628,628,628,628,628,628,628,628,628,628,628,1588,1588,1588,
 712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,628,628,628,628,628,628,628,628,628,628,1588,1588,1588,
@@ -61,9 +61,9 @@
 712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,
 712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712,712
 </data>
-  </layer>
-  <layer id="1" name="floor2" width="32" height="20">
-    <data encoding="csv">
+ </layer>
+ <layer id="1" name="floor2" width="32" height="20">
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -75,22 +75,22 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,581,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2266,2266,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2266,2266,2266,2266,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2266,2266,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2266,0,2266,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-  </layer>
-  <layer id="3" name="wall" width="32" height="20">
-    <properties>
-      <property name="Collideable" type="bool" value="true" />
-    </properties>
-    <data encoding="csv">
+ </layer>
+ <layer id="3" name="wall" width="32" height="20">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+  </properties>
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,1560,1561,1530,1531,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,1590,1591,1560,1561,1530,1531,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1590,1591,600,1588,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -112,12 +112,12 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-  </layer>
-  <layer id="2" name="wall2" width="32" height="20">
-    <properties>
-      <property name="Collideable" type="bool" value="true" />
-    </properties>
-    <data encoding="csv">
+ </layer>
+ <layer id="2" name="wall2" width="32" height="20">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+  </properties>
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -139,130 +139,125 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,549,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-  </layer>
-  <objectgroup id="4" name="items">
-    <object id="4" name="Exit 0" class="Warp" x="0" y="608" width="1024" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="WarpMap" value="maps/overworld" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="5" name="Exit 0" class="Warp" x="0" y="32" width="32" height="576">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="WarpMap" value="maps/overworld" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="29" name="Chest" class="Chest" gid="1773" x="288" y="416" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="30" name="Chest" class="Chest" gid="1773" x="320" y="416" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="31" name="Chest" class="Chest" gid="1773" x="352" y="416" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="36" name="Chest" class="Chest" gid="1773" x="288" y="448" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="37" name="Chest" class="Chest" gid="1773" x="320" y="448" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="38" name="Chest" class="Chest" gid="1773" x="352" y="448" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="42" name="Chest" class="Chest" gid="1773" x="288" y="480" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="43" name="Chest" class="Chest" gid="1773" x="320" y="480" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="44" name="Chest" class="Chest" gid="1773" x="352" y="480" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="6" name="Exit 0" class="Warp" x="992" y="32" width="32" height="576">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="WarpMap" value="maps/overworld" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="7" name="Exit 0" class="Warp" x="0" y="0" width="1024" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="WarpMap" value="maps/overworld" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="8" name="Hidden sea shell" class="HiddenItem" gid="1533" x="736" y="416" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="ItemId" value="Boy's Sea Shell" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-  </objectgroup>
-  <objectgroup id="5" name="sprites">
-    <properties>
-      <property name="RenderRole" value="Sprites" />
-    </properties>
-    <object id="66" name="Burgiua" class="Npc" gid="120" x="256" y="320" width="32" height="48">
-      <properties>
-        <property name="Collideable" type="bool" value="true" />
-        <property name="Dialog" value="Find_Ship_Start_Dialog" />
-        <property name="MoveRadius" type="int" value="3" />
-      </properties>
-    </object>
-    <object id="67" name="Eanswild" class="Npc" gid="120" x="320" y="384" width="32" height="48">
-      <properties>
-        <property name="Collideable" type="bool" value="true" />
-        <property name="Text">Estark must
+ </layer>
+ <objectgroup id="4" name="items">
+  <object id="4" name="Exit 0" type="Warp" x="0" y="608" width="1024" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="false"/>
+    <property name="MoveRadius" type="int" value="0"/>
+    <property name="WarpMap" value="maps/overworld"/>
+   </properties>
+  </object>
+  <object id="5" name="Exit 0" type="Warp" x="0" y="32" width="32" height="576">
+   <properties>
+    <property name="Collideable" type="bool" value="false"/>
+    <property name="MoveRadius" type="int" value="0"/>
+    <property name="WarpMap" value="maps/overworld"/>
+   </properties>
+  </object>
+  <object id="29" name="Chest" type="Chest" gid="1773" x="288" y="416" width="32" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="true"/>
+    <property name="ItemId" value="#Random#"/>
+    <property name="MoveRadius" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="30" name="Chest" type="Chest" gid="1773" x="320" y="416" width="32" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="true"/>
+    <property name="ItemId" value="#Random#"/>
+    <property name="MoveRadius" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="31" name="Chest" type="Chest" gid="1773" x="352" y="416" width="32" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="true"/>
+    <property name="ItemId" value="#Random#"/>
+    <property name="MoveRadius" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="36" name="Chest" type="Chest" gid="1773" x="256" y="448" width="32" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="true"/>
+    <property name="ItemId" value="#Random#"/>
+    <property name="MoveRadius" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="38" name="Chest" type="Chest" gid="1773" x="384" y="448" width="32" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="true"/>
+    <property name="ItemId" value="#Random#"/>
+    <property name="MoveRadius" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="42" name="Chest" type="Chest" gid="1773" x="256" y="480" width="32" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="true"/>
+    <property name="ItemId" value="#Random#"/>
+    <property name="MoveRadius" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="44" name="Chest" type="Chest" gid="1773" x="384" y="480" width="32" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="true"/>
+    <property name="ItemId" value="#Random#"/>
+    <property name="MoveRadius" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="6" name="Exit 0" type="Warp" x="992" y="32" width="32" height="576">
+   <properties>
+    <property name="Collideable" type="bool" value="false"/>
+    <property name="MoveRadius" type="int" value="0"/>
+    <property name="WarpMap" value="maps/overworld"/>
+   </properties>
+  </object>
+  <object id="7" name="Exit 0" type="Warp" x="0" y="0" width="1024" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="false"/>
+    <property name="MoveRadius" type="int" value="0"/>
+    <property name="WarpMap" value="maps/overworld"/>
+   </properties>
+  </object>
+  <object id="8" name="Hidden sea shell" type="HiddenItem" gid="2265" x="736" y="416" width="32" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="true"/>
+    <property name="ItemId" value="Boy's Sea Shell"/>
+    <property name="MoveRadius" type="int" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="5" name="sprites">
+  <properties>
+   <property name="RenderRole" value="Sprites"/>
+  </properties>
+  <object id="66" name="Burgiua" type="Npc" gid="120" x="256" y="320" width="32" height="48">
+   <properties>
+    <property name="Collideable" type="bool" value="true"/>
+    <property name="Dialog" value="Find_Ship_Start_Dialog"/>
+    <property name="MoveRadius" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="67" name="Eanswild" type="Npc" gid="120" x="320" y="384" width="32" height="48">
+   <properties>
+    <property name="Collideable" type="bool" value="true"/>
+    <property name="MoveRadius" type="int" value="3"/>
+    <property name="Text">Estark must
 be defeted</property>
-        <property name="MoveRadius" type="int" value="3" />
-      </properties>
-    </object>
-    <object id="10" name="Adric" class="Npc" gid="78" x="384" y="160" width="32" height="48">
-      <properties>
-        <property name="Collideable" type="bool" value="true" />
-        <property name="Dialog" value="Boy_Looking_For_Shell" />
-        <property name="MoveRadius" type="int" value="3" />
-      </properties>
-    </object>
-  </objectgroup>
-  <objectgroup id="6" name="objects">
-    <object id="1" name="spawn" class="Spawn" x="320" y="576" width="32" height="32">
-      <properties>
-        <property name="DefaultSpawn" type="bool" value="true" />
-      </properties>
-    </object>
-  </objectgroup>
+   </properties>
+  </object>
+  <object id="10" name="Adric" type="Npc" gid="78" x="384" y="160" width="32" height="48">
+   <properties>
+    <property name="Collideable" type="bool" value="true"/>
+    <property name="Dialog" value="Boy_Looking_For_Shell"/>
+    <property name="MoveRadius" type="int" value="3"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="6" name="objects">
+  <object id="1" name="spawn" type="Spawn" x="320" y="576" width="32" height="32">
+   <properties>
+    <property name="DefaultSpawn" type="bool" value="true"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>

@@ -222,20 +222,23 @@
     </object>
     <object id="2" name="Chest" class="Chest" gid="2719" x="512" y="352" width="32" height="32">
       <properties>
-        <property name="Collideable" type="bool" value="false" />
+        <property name="Collideable" type="bool" value="true" />
         <property name="MoveRadius" type="int" value="0" />
+        <property name="ItemId" value="#Random#" />
       </properties>
     </object>
     <object id="3" name="Chest" class="Chest" gid="2719" x="544" y="352" width="32" height="32">
       <properties>
-        <property name="Collideable" type="bool" value="false" />
+        <property name="Collideable" type="bool" value="true" />
         <property name="MoveRadius" type="int" value="0" />
+        <property name="ItemId" value="#Random#" />
       </properties>
     </object>
     <object id="4" name="Chest" class="Chest" gid="2719" x="576" y="352" width="32" height="32">
       <properties>
-        <property name="Collideable" type="bool" value="false" />
+        <property name="Collideable" type="bool" value="true" />
         <property name="MoveRadius" type="int" value="0" />
+        <property name="ItemId" value="#Random#" />
       </properties>
     </object>
   </objectgroup>

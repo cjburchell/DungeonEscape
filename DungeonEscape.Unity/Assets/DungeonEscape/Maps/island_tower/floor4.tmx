@@ -219,26 +219,30 @@
     </object>
     <object id="4" name="Chest" class="Chest" gid="592" x="448" y="256" width="32" height="32">
       <properties>
-        <property name="Collideable" type="bool" value="false" />
+        <property name="Collideable" type="bool" value="true" />
         <property name="MoveRadius" type="int" value="0" />
+        <property name="ItemId" value="#Random#" />
       </properties>
     </object>
     <object id="7" name="Chest" class="Chest" gid="592" x="704" y="256" width="32" height="32">
       <properties>
-        <property name="Collideable" type="bool" value="false" />
+        <property name="Collideable" type="bool" value="true" />
         <property name="MoveRadius" type="int" value="0" />
+        <property name="ItemId" value="#Random#" />
       </properties>
     </object>
     <object id="10" name="Chest" class="Chest" gid="592" x="384" y="640" width="32" height="32">
       <properties>
-        <property name="Collideable" type="bool" value="false" />
+        <property name="Collideable" type="bool" value="true" />
         <property name="MoveRadius" type="int" value="0" />
+        <property name="ItemId" value="#Random#" />
       </properties>
     </object>
     <object id="11" name="Chest" class="Chest" gid="592" x="384" y="672" width="32" height="32">
       <properties>
-        <property name="Collideable" type="bool" value="false" />
+        <property name="Collideable" type="bool" value="true" />
         <property name="MoveRadius" type="int" value="0" />
+        <property name="ItemId" value="#Random#" />
       </properties>
     </object>
     <object id="12" name="Stairs down to 44" class="Warp" gid="619" x="576" y="736" width="32" height="32">

@@ -416,6 +416,45 @@ namespace Redpoint.DungeonEscape.Unity
             return objectState != null && objectState.IsOpen == true;
         }
 
+        public bool IsMapObjectRemoved(string mapId, TiledObjectInfo mapObject)
+        {
+            EnsureInitialized();
+            return IsHiddenItemObject(mapObject) && IsObjectOpen(mapId, mapObject.Id);
+        }
+
+        public bool IsMapObjectRemoved(string mapId, int objectId, string objectClass)
+        {
+            EnsureInitialized();
+            return IsHiddenItemClass(objectClass) && IsObjectOpen(mapId, objectId);
+        }
+
+        public bool CanPickupMapObject(TiledObjectInfo mapObject)
+        {
+            EnsureInitialized();
+            if (mapObject == null)
+            {
+                return false;
+            }
+
+            if (IsMapObjectRemoved(Party.CurrentMapId, mapObject))
+            {
+                return false;
+            }
+
+            return IsPickupQuestConditionMet(GetMapObjectItemId(mapObject));
+        }
+
+        public bool CanPickupMapObject(string mapId, int objectId, string objectClass, string itemId)
+        {
+            EnsureInitialized();
+            if (IsMapObjectRemoved(mapId, objectId, objectClass))
+            {
+                return false;
+            }
+
+            return IsPickupQuestConditionMet(itemId);
+        }
+
         public string OpenDoor(int objectId)
         {
             EnsureInitialized();

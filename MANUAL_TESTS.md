@@ -151,6 +151,24 @@ Status: Done
 - Save and load while the party has reserve members.
 - Expected: cart visibility is restored according to the loaded map and current tile.
 
+## Dead Party Member Coffin Visual
+
+Status: Pending
+
+- Load or create a party with at least two active members.
+- Reduce one active follower's HP to `0`, for example by stepping on damage tiles until that party member dies.
+- Expected: that party member's map follower changes from the hero sprite to the coffin visual.
+- Continue moving in all four directions.
+- Expected: the coffin follows in the normal party order and animates/faces consistently with the movement direction.
+- Reduce the active leader's HP to `0`, if possible.
+- Expected: the player visual changes to the coffin visual while on land.
+- Move onto water after obtaining `Deed to the ship`.
+- Expected: the ship visual still takes precedence over the coffin/player visual while on water.
+- Visit a healer and revive the dead member.
+- Expected: the revived member changes back from the coffin to their class/gender hero sprite.
+- Save and load with a dead active party member.
+- Expected: the coffin visual is restored after loading.
+
 ## Inventory First-Open Performance
 
 Status: Done

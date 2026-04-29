@@ -10,6 +10,8 @@ namespace Redpoint.DungeonEscape.Unity
 {
     public sealed class PlayerGridController : MonoBehaviour
     {
+        private const int DeadHeroBaseFrameIndex = 144;
+
         private sealed class ShopSellEntry
         {
             public Hero Hero { get; set; }
@@ -34,9 +36,11 @@ namespace Redpoint.DungeonEscape.Unity
         private DirectionalSpriteSet heroDirectionSprites;
         private DirectionalSpriteSet shipDirectionSprites;
         private DirectionalSpriteSet cartDirectionSprites;
+        private DirectionalSpriteSet deadHeroDirectionSprites;
         private Direction currentDirection = Direction.Down;
         private Class loadedHeroClass = Class.Hero;
         private Gender loadedHeroGender = Gender.Male;
+        private bool loadedHeroIsDead;
         private Coroutine stepAnimation;
         private DungeonEscapeGameState gameState;
         private DungeonEscapeMessageBox messageBox;
@@ -44,6 +48,7 @@ namespace Redpoint.DungeonEscape.Unity
         private PartyFollowerController cartFollower;
         private readonly List<WorldPosition> partyTrailPositions = new List<WorldPosition>();
         private readonly List<Direction> partyTrailDirections = new List<Direction>();
+        private readonly Dictionary<string, DirectionalSpriteSet> heroSpriteCache = new Dictionary<string, DirectionalSpriteSet>();
         private bool hasPendingTurnMove;
         private Direction pendingTurnMoveDirection;
         private float pendingTurnMoveDelay;
@@ -80,6 +85,7 @@ namespace Redpoint.DungeonEscape.Unity
         {
             spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
             heroDirectionSprites = LoadHeroSprites();
+            deadHeroDirectionSprites = LoadDeadHeroSprites();
             directionSprites = heroDirectionSprites;
             spriteRenderer.sprite = directionSprites.GetIdle(currentDirection);
         }
@@ -147,14 +153,17 @@ namespace Redpoint.DungeonEscape.Unity
             var hero = party.ActiveMembers.FirstOrDefault();
             if (hero == null ||
                 directionSprites == null ||
-                hero.Class == loadedHeroClass && hero.Gender == loadedHeroGender)
+                hero.Class == loadedHeroClass &&
+                hero.Gender == loadedHeroGender &&
+                hero.IsDead == loadedHeroIsDead)
             {
                 return;
             }
 
             loadedHeroClass = hero.Class;
             loadedHeroGender = hero.Gender;
-            heroDirectionSprites = LoadHeroSprites(loadedHeroClass, loadedHeroGender);
+            loadedHeroIsDead = hero.IsDead;
+            heroDirectionSprites = LoadHeroSprites(hero);
             if (!showingShip)
             {
                 directionSprites = heroDirectionSprites;
@@ -399,6 +408,7 @@ namespace Redpoint.DungeonEscape.Unity
             var message = gameState.ApplyMapStepEffects(
                 mapView.GetDamageAt(position),
                 mapView.GetBiomeAt(position));
+            RefreshPartyVisuals();
             if (!string.IsNullOrEmpty(message) && messageBox != null)
             {
                 messageBox.Show("Terrain", message);
@@ -756,7 +766,7 @@ namespace Redpoint.DungeonEscape.Unity
                     var selected = labels[selectedIndex];
                     if (selected.StartsWith("Heal All", StringComparison.OrdinalIgnoreCase))
                     {
-                        messageBox.Show(GetObjectDisplayName(mapObject), gameState.HealAllHeroes(cost * wounded.Count));
+                        messageBox.Show(GetObjectDisplayName(mapObject), ApplyHealerAction(() => gameState.HealAllHeroes(cost * wounded.Count)));
                     }
                     else if (selected.StartsWith("Heal ", StringComparison.OrdinalIgnoreCase))
                     {
@@ -764,7 +774,7 @@ namespace Redpoint.DungeonEscape.Unity
                     }
                     else if (selected.StartsWith("Renew Magic", StringComparison.OrdinalIgnoreCase))
                     {
-                        messageBox.Show(GetObjectDisplayName(mapObject), gameState.RenewMagic(cost * 2 * magicMissing.Count));
+                        messageBox.Show(GetObjectDisplayName(mapObject), ApplyHealerAction(() => gameState.RenewMagic(cost * 2 * magicMissing.Count)));
                     }
                     else if (selected.StartsWith("Cure", StringComparison.OrdinalIgnoreCase))
                     {
@@ -781,7 +791,7 @@ namespace Redpoint.DungeonEscape.Unity
         {
             if (heroes.Count == 1)
             {
-                messageBox.Show(GetObjectDisplayName(mapObject), apply(heroes[0]));
+                messageBox.Show(GetObjectDisplayName(mapObject), ApplyHealerAction(() => apply(heroes[0])));
                 return;
             }
 
@@ -795,8 +805,15 @@ namespace Redpoint.DungeonEscape.Unity
                     return;
                 }
 
-                messageBox.Show(GetObjectDisplayName(mapObject), apply(heroes[selectedIndex]));
+                messageBox.Show(GetObjectDisplayName(mapObject), ApplyHealerAction(() => apply(heroes[selectedIndex])));
             });
+        }
+
+        private string ApplyHealerAction(Func<string> apply)
+        {
+            var message = apply == null ? "" : apply();
+            RefreshPartyVisuals();
+            return message;
         }
 
         private void ShowSaveDialog(TiledObjectInfo mapObject)
@@ -1257,6 +1274,25 @@ namespace Redpoint.DungeonEscape.Unity
             UpdateFollowerVisualPositions();
         }
 
+        private void RefreshPartyVisuals()
+        {
+            var party = gameState == null ? null : gameState.Party;
+            if (party == null)
+            {
+                return;
+            }
+
+            ApplyPartySprite(party);
+            UpdateTravelVisualState();
+            if (spriteRenderer != null && directionSprites != null)
+            {
+                spriteRenderer.sprite = directionSprites.GetIdle(currentDirection);
+            }
+
+            SyncPartyFollowers();
+            UpdateFollowerVisualPositions();
+        }
+
         private void ResetPartyTrail()
         {
             partyTrailPositions.Clear();
@@ -1299,7 +1335,7 @@ namespace Redpoint.DungeonEscape.Unity
 
                 followers[i].Configure(
                     mapView,
-                    LoadHeroSprites(members[i].Class, members[i].Gender),
+                    LoadHeroSprites(members[i]),
                     GetTrailPosition(i + 1),
                     GetTrailDirection(i + 1));
             }
@@ -1517,16 +1553,55 @@ namespace Redpoint.DungeonEscape.Unity
             return LoadHeroSprites(loadedHeroClass, loadedHeroGender);
         }
 
+        private DirectionalSpriteSet LoadHeroSprites(Hero hero)
+        {
+            if (hero != null && hero.IsDead)
+            {
+                return deadHeroDirectionSprites ?? LoadDeadHeroSprites();
+            }
+
+            return hero == null ? LoadHeroSprites() : LoadHeroSprites(hero.Class, hero.Gender);
+        }
+
         private DirectionalSpriteSet LoadHeroSprites(Class heroClass, Gender gender)
         {
+            var cacheKey = "hero:" + heroClass + ":" + gender;
+            DirectionalSpriteSet spriteSet;
+            if (heroSpriteCache.TryGetValue(cacheKey, out spriteSet))
+            {
+                return spriteSet;
+            }
+
             const int heroWidth = 32;
             const int heroHeight = 48;
-            return DirectionalSpriteSheet.LoadCharacterSet(
+            spriteSet = DirectionalSpriteSheet.LoadCharacterSet(
                 heroTextureAssetPath,
                 heroWidth,
                 heroHeight,
                 DirectionalSpriteSheet.GetHeroBaseFrameIndex(heroClass, gender),
                 CreateFallbackSprite());
+            heroSpriteCache[cacheKey] = spriteSet;
+            return spriteSet;
+        }
+
+        private DirectionalSpriteSet LoadDeadHeroSprites()
+        {
+            DirectionalSpriteSet spriteSet;
+            if (heroSpriteCache.TryGetValue("hero:dead", out spriteSet))
+            {
+                return spriteSet;
+            }
+
+            const int heroWidth = 32;
+            const int heroHeight = 48;
+            spriteSet = DirectionalSpriteSheet.LoadCharacterSet(
+                heroTextureAssetPath,
+                heroWidth,
+                heroHeight,
+                DeadHeroBaseFrameIndex,
+                CreateFallbackSprite());
+            heroSpriteCache["hero:dead"] = spriteSet;
+            return spriteSet;
         }
 
         private DirectionalSpriteSet LoadShipSprites()
@@ -1554,6 +1629,11 @@ namespace Redpoint.DungeonEscape.Unity
         private void UpdateTravelVisualState()
         {
             var party = gameState == null ? null : gameState.Party;
+            if (party != null)
+            {
+                ApplyPartySprite(party);
+            }
+
             var shouldShowShip = party != null &&
                                  party.HasShip &&
                                  mapView != null &&

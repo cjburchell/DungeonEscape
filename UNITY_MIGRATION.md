@@ -36,6 +36,7 @@ Status: Done
 - Done: Party followers render on the map.
 - Done: Followers follow after movement, warp, and load.
 - Done: Party members animate.
+- Done: Dead active party members render with the old coffin visual instead of their hero sprite.
 - Done: Level-up progression validated with shared core tests.
 - Done: Skill/spell progression validated with shared core tests. Class skills are assigned from `classlevels.json`; spells unlock dynamically by level and class.
 

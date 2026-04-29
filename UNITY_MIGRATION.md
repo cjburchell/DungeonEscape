@@ -18,9 +18,12 @@ Status: Mostly done
 - Done: Chests open visually.
 - Done: Chest state survives save/load.
 - Done: Dialog choices can trigger recruitment.
+- Done: Dialog choices advance quests, including nested dialog choices.
+- Done: Dialog choices can give items.
+- Done: Dialog choices can take items when the party has the required item.
 - Done: Item transfer/drop/use dialogs work through the game menu overlay.
-- Pending: Broader validation that dialog choices advance quests correctly.
-- Pending: Broader validation that dialog choices give/take quest items correctly.
+- Done: Play-tested the `Lost_Sea_Shell` dialog path end to end in Unity.
+- Pending: Re-test the `Find_Ship` dialog path end to end after open-door support.
 
 ## 2. Party Creation
 
@@ -69,11 +72,11 @@ Status: In progress
 - Done: Layer rendering follows TMX layer order.
 - Done: Player renders at the sprite layer level.
 - Done: Hidden object debug rendering is controlled by settings.
-- Pending: Doors and open-door actions.
+- Done: Doors and open-door actions.
+- Done: Opened doors stop blocking movement and are hidden from the map.
 - Pending: NPC heal behavior.
 - Pending: NPC store behavior.
 - Pending: Hidden item quest conditions.
-- Pending: Object visuals for opened doors.
 - Pending: Object visuals for removed hidden items.
 
 ## 5. Movement And Collision Rules

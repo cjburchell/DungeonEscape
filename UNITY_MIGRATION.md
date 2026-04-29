@@ -69,10 +69,12 @@ Status: Done
 - Done: Recruitable NPCs can join the party.
 - Done: Static NPCs turn toward the player during dialog and turn back afterward.
 - Done: Open chest visuals.
+- Done: Chest loot is explicit: `ItemId="#Random#"` generates random loot, fixed `ItemId` gives a fixed item, and missing `ItemId` means empty.
 - Done: Layer rendering follows TMX layer order.
 - Done: Player renders at the sprite layer level.
 - Done: Hidden object debug rendering is controlled by settings.
 - Done: Doors and open-door actions.
+- Done: Direct door interaction uses matching party keys.
 - Done: Opened doors stop blocking movement and are hidden from the map.
 - Done: NPC heal behavior.
 - Done: NPC store buy/sell behavior.
@@ -88,15 +90,16 @@ Status: In progress
 - Done: Turning before moving when changing facing direction.
 - Done: Sprint boost setting.
 - Done: Smooth viewport scrolling pass.
-- Done: Tile/object collision is partially driven from TMX data.
+- Done: Tile collision rules use TMX `Collideable` layer data.
+- Done: Object collision rules use TMX `Collideable` object bounds and persisted open/removed object state.
 - Done: Damage and biome layers are data-only and do not render.
-- Done: Water layer has custom-property support started.
-- Pending: Finalize tile collision rules.
-- Pending: Finalize object collision rules.
-- Pending: Water/boat movement rules.
-- Pending: Damage layer gameplay effects.
-- Pending: Biome layer gameplay effects.
-- Pending: Revisit viewport smoothness/performance if needed.
+- Done: Water movement uses the TMX `Water` layer property and allows travel when the party has the ship deed.
+- Done: When the party has the ship deed and is on water, followers are hidden and the player renders as the ship.
+- Done: Damage layer tile properties apply step damage to active party members.
+- Done: Biome layer tile classes update the party's current biome for future encounter logic.
+- Done: Cached TMX layer tile data for movement/gameplay queries to reduce repeated CSV parsing during movement.
+- Done: Tiled flipped object GIDs are normalized for map parsing, rendering, collision, and gameplay queries.
+- Pending: Play-test all collision, water, damage, and biome behavior across the migrated maps.
 
 ## 6. Encounter And Combat Migration
 

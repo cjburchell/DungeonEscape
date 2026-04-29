@@ -628,6 +628,23 @@ namespace Redpoint.DungeonEscape.Unity
                    gameState.IsObjectOpen(mapId, GetInt(mapObject, "id"));
         }
 
+        private static bool CanRenderPickupObject(XElement mapObject, string mapId, DungeonEscapeGameState gameState)
+        {
+            var objectClass = GetObjectClass(mapObject);
+            if (!string.Equals(objectClass, "HiddenItem", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            string itemId;
+            return gameState == null ||
+                   gameState.CanPickupMapObject(
+                       mapId,
+                       GetInt(mapObject, "id"),
+                       objectClass,
+                       TryGetStringProperty(mapObject, "ItemId", out itemId) ? itemId : null);
+        }
+
         private static void ApplyAnimation(SpriteRenderer renderer, List<TiledSpriteAnimationFrame> animationFrames)
         {
             if (animationFrames == null || animationFrames.Count <= 1)

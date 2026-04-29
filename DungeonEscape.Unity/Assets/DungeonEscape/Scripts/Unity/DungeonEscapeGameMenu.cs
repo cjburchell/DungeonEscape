@@ -139,6 +139,8 @@ namespace Redpoint.DungeonEscape.Unity
             var areaHeight = rect.height - 28f * scale;
             menuBodyHeight = Mathf.Max(160f * scale, areaHeight - 90f * scale);
             GUILayout.BeginArea(new Rect(rect.x + 16f * scale, rect.y + 14f * scale, rect.width - 32f * scale, areaHeight));
+            var previousEnabled = GUI.enabled;
+            GUI.enabled = rebindingInput == null;
             DrawHeader();
             DrawTabs();
             var previousVerticalThumb = GUI.skin.verticalScrollbarThumb;
@@ -149,7 +151,9 @@ namespace Redpoint.DungeonEscape.Unity
 
             DrawCurrentTab();
             GUI.skin.verticalScrollbarThumb = previousVerticalThumb;
+            GUI.enabled = previousEnabled;
             GUILayout.EndArea();
+            DrawRebindingOverlay();
             GUI.depth = previousDepth;
         }
 
@@ -1062,7 +1066,7 @@ namespace Redpoint.DungeonEscape.Unity
             GUILayout.BeginHorizontal();
             DrawSettingsTab(SettingsTab.General, "General");
             DrawSettingsTab(SettingsTab.Ui, "UI");
-            DrawSettingsTab(SettingsTab.Input, "Input");
+            DrawSettingsTab(SettingsTab.Input, "Input Bindings");
             DrawSettingsTab(SettingsTab.Debug, "Debug");
             GUILayout.EndHorizontal();
             EndSelectableRow();
@@ -1195,19 +1199,70 @@ namespace Redpoint.DungeonEscape.Unity
             EndSelectableRow();
         }
 
-        private void DrawBindingButton(InputBinding binding, string slot, string currentValue, int slotIndex)
+        private void DrawBindingCell(InputBinding binding, string slot, string currentValue, int slotIndex)
         {
-            var label = slot + ": " + (string.IsNullOrEmpty(currentValue) || currentValue == "None" ? "-" : currentValue);
+            var label = string.IsNullOrEmpty(currentValue) || currentValue == "None" ? "-" : currentValue;
             var selected = currentSettingsTab == SettingsTab.Input &&
                            drawingRowIndex - 1 == selectedRowIndex &&
                            selectedRowIndex > 0 &&
                            selectedBindingSlotIndex == slotIndex;
             if (DungeonEscapeUiControls.Button(label, selected, uiTheme, GUILayout.Width(190f * GetPixelScale())))
             {
-                rebindingInput = binding;
-                rebindingSlot = slot;
+                StartRebinding(binding, slot);
                 selectedBindingSlotIndex = slotIndex;
             }
+        }
+
+        private static string GetBindingSlotLabel(string slot)
+        {
+            return slot == "Primary" ? "Key" : slot;
+        }
+
+        private string GetRebindingPrompt()
+        {
+            if (rebindingInput == null)
+            {
+                return "";
+            }
+
+            return rebindingSlot == "Gamepad"
+                ? "Press a gamepad button to change the binding for " + rebindingInput.Command + "."
+                : "Press a key to change the binding for " + rebindingInput.Command + ".";
+        }
+
+        private void StartRebinding(InputBinding binding, string slot)
+        {
+            EnsureReferences();
+            rebindingInput = binding;
+            rebindingSlot = slot;
+            rebindingStartFrame = Time.frameCount;
+        }
+
+        private void DrawRebindingOverlay()
+        {
+            if (rebindingInput == null)
+            {
+                return;
+            }
+
+            var scale = GetPixelScale();
+            var width = Mathf.Min(Screen.width - 32f * scale, 620f * scale);
+            var height = 150f * scale;
+            var rect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
+            GUI.enabled = true;
+            GUI.Box(rect, GUIContent.none, panelStyle);
+
+            GUILayout.BeginArea(new Rect(rect.x + 18f * scale, rect.y + 16f * scale, rect.width - 36f * scale, rect.height - 32f * scale));
+            GUILayout.Label("Input Bindings", titleStyle);
+            GUILayout.Label(GetRebindingPrompt(), labelStyle);
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Cancel", buttonStyle, GUILayout.Width(120f * scale)))
+            {
+                rebindingInput = null;
+                rebindingSlot = null;
+            }
+
+            GUILayout.EndArea();
         }
 
         private Vector2 BeginThemedScroll(Vector2 position, float height)

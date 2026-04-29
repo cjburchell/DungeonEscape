@@ -194,10 +194,21 @@ namespace Redpoint.DungeonEscape.Unity
                 return "";
             }
 
-            return FormatCode(binding.Primary) + " / " + FormatCode(binding.Secondary) + " / " + FormatCode(binding.Gamepad);
+            return FormatCode(binding.Primary) + " / " + FormatCode(binding.Gamepad);
         }
 
-        public static bool TryCaptureBinding(out string keyCode)
+        public static bool TryCaptureBinding(string slot, out string keyCode)
+        {
+            if (slot == "Gamepad")
+            {
+                keyCode = TryCaptureGamepadButton();
+                return !string.IsNullOrEmpty(keyCode);
+            }
+
+            return TryCaptureKeyboardKey(out keyCode);
+        }
+
+        private static bool TryCaptureKeyboardKey(out string keyCode)
         {
             var keyboard = Keyboard.current;
             if (keyboard != null)
@@ -605,25 +616,33 @@ namespace Redpoint.DungeonEscape.Unity
         private static string TryCaptureGamepadButton()
         {
             var gamepad = Gamepad.current;
-            if (gamepad == null)
+            if (gamepad != null)
             {
-                return null;
+                if (gamepad.buttonSouth.wasPressedThisFrame) return "South";
+                if (gamepad.buttonEast.wasPressedThisFrame) return "East";
+                if (gamepad.buttonWest.wasPressedThisFrame) return "West";
+                if (gamepad.buttonNorth.wasPressedThisFrame) return "North";
+                if (gamepad.leftShoulder.wasPressedThisFrame) return "LeftShoulder";
+                if (gamepad.rightShoulder.wasPressedThisFrame) return "RightShoulder";
+                if (gamepad.leftStickButton.wasPressedThisFrame) return "LeftStickPress";
+                if (gamepad.rightStickButton.wasPressedThisFrame) return "RightStickPress";
+                if (gamepad.startButton.wasPressedThisFrame) return "Start";
+                if (gamepad.selectButton.wasPressedThisFrame) return "Select";
+                if (gamepad.dpad.left.wasPressedThisFrame) return "DpadLeft";
+                if (gamepad.dpad.right.wasPressedThisFrame) return "DpadRight";
+                if (gamepad.dpad.up.wasPressedThisFrame) return "DpadUp";
+                if (gamepad.dpad.down.wasPressedThisFrame) return "DpadDown";
             }
 
-            if (gamepad.buttonSouth.wasPressedThisFrame) return "South";
-            if (gamepad.buttonEast.wasPressedThisFrame) return "East";
-            if (gamepad.buttonWest.wasPressedThisFrame) return "West";
-            if (gamepad.buttonNorth.wasPressedThisFrame) return "North";
-            if (gamepad.leftShoulder.wasPressedThisFrame) return "LeftShoulder";
-            if (gamepad.rightShoulder.wasPressedThisFrame) return "RightShoulder";
-            if (gamepad.leftStickButton.wasPressedThisFrame) return "LeftStickPress";
-            if (gamepad.rightStickButton.wasPressedThisFrame) return "RightStickPress";
-            if (gamepad.startButton.wasPressedThisFrame) return "Start";
-            if (gamepad.selectButton.wasPressedThisFrame) return "Select";
-            if (gamepad.dpad.left.wasPressedThisFrame) return "DpadLeft";
-            if (gamepad.dpad.right.wasPressedThisFrame) return "DpadRight";
-            if (gamepad.dpad.up.wasPressedThisFrame) return "DpadUp";
-            return gamepad.dpad.down.wasPressedThisFrame ? "DpadDown" : null;
+            foreach (var code in LegacyGamepadButtons)
+            {
+                if (Input.GetKeyDown(code))
+                {
+                    return NormalizeGamepadButton(code.ToString());
+                }
+            }
+
+            return null;
         }
 
         private static bool GetLegacyKey(string keyCode)
@@ -887,6 +906,49 @@ namespace Redpoint.DungeonEscape.Unity
         private static string FormatKeyboardKey(Key key)
         {
             return key == Key.Enter ? "Enter" : key.ToString();
+        }
+
+        private static string FormatLegacyKeyboardKey(KeyCode code)
+        {
+            switch (code)
+            {
+                case KeyCode.Return:
+                    return "Enter";
+                case KeyCode.Alpha0:
+                    return "Digit0";
+                case KeyCode.Alpha1:
+                    return "Digit1";
+                case KeyCode.Alpha2:
+                    return "Digit2";
+                case KeyCode.Alpha3:
+                    return "Digit3";
+                case KeyCode.Alpha4:
+                    return "Digit4";
+                case KeyCode.Alpha5:
+                    return "Digit5";
+                case KeyCode.Alpha6:
+                    return "Digit6";
+                case KeyCode.Alpha7:
+                    return "Digit7";
+                case KeyCode.Alpha8:
+                    return "Digit8";
+                case KeyCode.Alpha9:
+                    return "Digit9";
+                default:
+                    return code.ToString();
+            }
+        }
+
+        private static bool IsKeyboardKeyCode(KeyCode code)
+        {
+            if (code == KeyCode.None)
+            {
+                return false;
+            }
+
+            var name = code.ToString();
+            return !name.StartsWith("Mouse", StringComparison.OrdinalIgnoreCase) &&
+                   !name.StartsWith("Joystick", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

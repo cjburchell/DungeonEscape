@@ -734,6 +734,64 @@ namespace Redpoint.DungeonEscape.Unity
             return messages.Count == 0 ? item.Name + " was used." : string.Join("\n", messages.ToArray());
         }
 
+        public bool CanCastHeroSpell(Hero caster, Spell spell)
+        {
+            EnsureSpellLinked(spell);
+            return caster != null &&
+                   spell != null &&
+                   Party != null &&
+                   DungeonEscapeGameDataCache.Current != null &&
+                   DungeonEscapeGameDataCache.Current.Spells != null &&
+                   Party.Members.Contains(caster) &&
+                   spell.IsNonEncounterSpell &&
+                   caster.GetSpells(DungeonEscapeGameDataCache.Current.Spells).Contains(spell);
+        }
+
+        public string CastHeroSpell(Hero caster, Spell spell, Hero target)
+        {
+            EnsureInitialized();
+            if (!CanCastHeroSpell(caster, spell) || target == null || !Party.Members.Contains(target))
+            {
+                return "Cannot cast spell.";
+            }
+
+            var message = spell.Cast(new[] { target }, new BaseState[0], caster, this);
+            MarkDirty();
+            return string.IsNullOrEmpty(message) ? caster.Name + " casts " + spell.Name + "." : message.TrimEnd();
+        }
+
+        public string CastHeroSpellOnParty(Hero caster, Spell spell)
+        {
+            EnsureInitialized();
+            if (!CanCastHeroSpell(caster, spell))
+            {
+                return "Cannot cast spell.";
+            }
+
+            var targets = Party.ActiveMembers.Cast<IFighter>().ToList();
+            if (targets.Count == 0)
+            {
+                return "No party members can be targeted.";
+            }
+
+            var message = spell.Cast(targets, new BaseState[0], caster, this);
+            MarkDirty();
+            return string.IsNullOrEmpty(message) ? caster.Name + " casts " + spell.Name + "." : message.TrimEnd();
+        }
+
+        public string CastHeroSpellWithoutTarget(Hero caster, Spell spell)
+        {
+            EnsureInitialized();
+            if (!CanCastHeroSpell(caster, spell))
+            {
+                return "Cannot cast spell.";
+            }
+
+            var message = spell.Cast(new IFighter[0], new BaseState[0], caster, this);
+            MarkDirty();
+            return string.IsNullOrEmpty(message) ? caster.Name + " casts " + spell.Name + "." : message.TrimEnd();
+        }
+
         public Item GetCustomItem(string itemId)
         {
             Item item;
@@ -984,6 +1042,16 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             item.Item.Setup(DungeonEscapeGameDataCache.Current.Skills);
+        }
+
+        private static void EnsureSpellLinked(Spell spell)
+        {
+            if (spell == null || DungeonEscapeGameDataCache.Current == null)
+            {
+                return;
+            }
+
+            spell.Setup(DungeonEscapeGameDataCache.Current.Skills);
         }
 
         private void ConsumeUsedItem(Hero source, ItemInstance item)

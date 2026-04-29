@@ -496,8 +496,71 @@ namespace Redpoint.DungeonEscape.Unity
 
             foreach (var spell in spells)
             {
+                GUILayout.BeginHorizontal();
                 GUILayout.Label(spell.Name + "  MP " + spell.Cost + "  " + spell.Type + "  " + spell.Targets, smallStyle);
+                GUI.enabled = gameState != null && gameState.CanCastHeroSpell(hero, spell);
+                if (GUILayout.Button("Cast", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
+                {
+                    ShowSpellTargetPicker(hero, spell);
+                }
+
+                GUI.enabled = true;
+                GUILayout.EndHorizontal();
             }
+        }
+
+        private void ShowSpellTargetPicker(Hero caster, Spell spell)
+        {
+            EnsureReferences();
+            if (gameState == null || caster == null || spell == null)
+            {
+                return;
+            }
+
+            switch (spell.Targets)
+            {
+                case Target.Group:
+                    ShowPartyMessage(gameState.CastHeroSpellOnParty(caster, spell));
+                    return;
+                case Target.None:
+                    ShowPartyMessage(gameState.CastHeroSpellWithoutTarget(caster, spell));
+                    return;
+                case Target.Single:
+                    ShowSingleSpellTargetPicker(caster, spell);
+                    return;
+                default:
+                    ShowPartyMessage("That spell cannot be cast from the party menu.");
+                    return;
+            }
+        }
+
+        private void ShowSingleSpellTargetPicker(Hero caster, Spell spell)
+        {
+            var party = GetParty();
+            if (party == null)
+            {
+                ShowPartyMessage("No party loaded.");
+                return;
+            }
+
+            var targets = party.ActiveMembers.ToList();
+            if (targets.Count == 0)
+            {
+                ShowPartyMessage("No party members can be targeted.");
+                return;
+            }
+
+            var labels = targets.Select(target => target.Name).ToList();
+            labels.Add("Cancel");
+            GetMessageBox().Show("Cast " + spell.Name, "Choose a target.", labels, selectedIndex =>
+            {
+                if (selectedIndex < 0 || selectedIndex >= targets.Count)
+                {
+                    return;
+                }
+
+                ShowPartyMessage(gameState.CastHeroSpell(caster, spell, targets[selectedIndex]));
+            });
         }
 
         private Hero GetSelectedPartyHero(IList<Hero> activeMembers, IList<Hero> inactiveMembers)
@@ -839,6 +902,11 @@ namespace Redpoint.DungeonEscape.Unity
         private void ShowInventoryMessage(string message)
         {
             GetMessageBox().Show("Inventory", string.IsNullOrEmpty(message) ? "Done." : message);
+        }
+
+        private void ShowPartyMessage(string message)
+        {
+            GetMessageBox().Show("Party", string.IsNullOrEmpty(message) ? "Done." : message);
         }
 
         private void ApplyInventoryChange(Func<bool> action)

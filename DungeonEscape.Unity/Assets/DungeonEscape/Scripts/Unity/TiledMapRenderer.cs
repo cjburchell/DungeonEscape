@@ -259,6 +259,11 @@ namespace Redpoint.DungeonEscape.Unity
                     continue;
                 }
 
+                if (!CanRenderPickupObject(mapObject, mapId, gameState))
+                {
+                    continue;
+                }
+
                 var gid = GetInt(mapObject, "gid");
                 if (gid == 0 && !showHiddenObjects)
                 {
@@ -406,6 +411,11 @@ namespace Redpoint.DungeonEscape.Unity
                 }
 
                 if (IsOpenDoor(mapObject, mapId, gameState))
+                {
+                    continue;
+                }
+
+                if (!CanRenderPickupObject(mapObject, mapId, gameState))
                 {
                     continue;
                 }

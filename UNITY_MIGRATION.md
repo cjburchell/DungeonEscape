@@ -57,8 +57,8 @@ Status: In progress
 - Done: Modal overlay for menu actions, including use/transfer/drop/bind prompts.
 - Done: Manual save slots in the Save tab.
 - Done: New game action in the Save tab.
-- Pending: Fuller party/status detail polish.
-- Pending: Shop/healer/save NPC UI.
+- Done: Fuller party/status detail polish pass with clearer vitals, attributes, XP-to-next, equipment, skills, and spells.
+- Done: Initial shop/healer/save NPC UI through map interaction message boxes.
 - Pending: Any final UI layout polish after more map gameplay is migrated.
 
 ## 4. Map Gameplay
@@ -74,8 +74,9 @@ Status: In progress
 - Done: Hidden object debug rendering is controlled by settings.
 - Done: Doors and open-door actions.
 - Done: Opened doors stop blocking movement and are hidden from the map.
-- Pending: NPC heal behavior.
-- Pending: NPC store behavior.
+- Done: NPC heal behavior.
+- Done: NPC store buy/sell behavior.
+- Done: NPC save behavior through quick-save service interaction.
 - Pending: Hidden item quest conditions.
 - Pending: Object visuals for removed hidden items.
 

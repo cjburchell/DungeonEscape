@@ -1462,6 +1462,45 @@ namespace Redpoint.DungeonEscape.Unity
                    string.Equals(mapObject.Class, "NpcPartyMember", StringComparison.OrdinalIgnoreCase);
         }
 
+        private static bool IsHiddenItemObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null && IsHiddenItemClass(mapObject.Class);
+        }
+
+        private static bool IsHiddenItemClass(string objectClass)
+        {
+            return string.Equals(objectClass, "HiddenItem", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private bool IsPickupQuestConditionMet(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId))
+            {
+                return true;
+            }
+
+            var item = GetCustomItem(itemId);
+            if (item == null || string.IsNullOrEmpty(item.QuestId) || item.ForStage == null || item.ForStage.Count == 0)
+            {
+                return true;
+            }
+
+            var activeQuest = Party.ActiveQuests.FirstOrDefault(quest => quest.Id == item.QuestId);
+            return activeQuest != null &&
+                   !activeQuest.Completed &&
+                   item.ForStage.Contains(activeQuest.CurrentStage);
+        }
+
+        private static string GetMapObjectItemId(TiledObjectInfo mapObject)
+        {
+            string itemId;
+            return mapObject != null &&
+                   mapObject.Properties != null &&
+                   mapObject.Properties.TryGetValue("ItemId", out itemId)
+                ? itemId
+                : null;
+        }
+
         private string CheckQuest(Item item)
         {
             return item == null || string.IsNullOrEmpty(item.QuestId)

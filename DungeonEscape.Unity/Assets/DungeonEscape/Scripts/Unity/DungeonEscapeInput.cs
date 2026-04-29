@@ -17,10 +17,7 @@ namespace Redpoint.DungeonEscape.Unity
         Interact,
         Cancel,
         Sprint,
-        MenuParty,
-        MenuInventory,
-        MenuQuests,
-        MenuSettings,
+        Menu,
         MenuPreviousTab,
         MenuNextTab,
         QuickSave,
@@ -33,21 +30,41 @@ namespace Redpoint.DungeonEscape.Unity
     {
         private const float AxisDeadZone = 0.35f;
         private const float DpadAxisDeadZone = 0.5f;
+        private static readonly KeyCode[] LegacyGamepadButtons =
+        {
+            KeyCode.JoystickButton0,
+            KeyCode.JoystickButton1,
+            KeyCode.JoystickButton2,
+            KeyCode.JoystickButton3,
+            KeyCode.JoystickButton4,
+            KeyCode.JoystickButton5,
+            KeyCode.JoystickButton6,
+            KeyCode.JoystickButton7,
+            KeyCode.JoystickButton8,
+            KeyCode.JoystickButton9,
+            KeyCode.JoystickButton10,
+            KeyCode.JoystickButton11,
+            KeyCode.JoystickButton12,
+            KeyCode.JoystickButton13,
+            KeyCode.JoystickButton14,
+            KeyCode.JoystickButton15,
+            KeyCode.JoystickButton16,
+            KeyCode.JoystickButton17,
+            KeyCode.JoystickButton18,
+            KeyCode.JoystickButton19
+        };
 
         private static readonly Dictionary<DungeonEscapeInputCommand, InputBinding> DefaultBindings =
             new Dictionary<DungeonEscapeInputCommand, InputBinding>
             {
-                { DungeonEscapeInputCommand.MoveLeft, Binding(DungeonEscapeInputCommand.MoveLeft, "LeftArrow", "A", "DpadLeft") },
-                { DungeonEscapeInputCommand.MoveRight, Binding(DungeonEscapeInputCommand.MoveRight, "RightArrow", "D", "DpadRight") },
-                { DungeonEscapeInputCommand.MoveUp, Binding(DungeonEscapeInputCommand.MoveUp, "UpArrow", "W", "DpadUp") },
-                { DungeonEscapeInputCommand.MoveDown, Binding(DungeonEscapeInputCommand.MoveDown, "DownArrow", "S", "DpadDown") },
-                { DungeonEscapeInputCommand.Interact, Binding(DungeonEscapeInputCommand.Interact, "Space", "Enter", "South") },
+                { DungeonEscapeInputCommand.MoveLeft, Binding(DungeonEscapeInputCommand.MoveLeft, "A", "None", "DpadLeft") },
+                { DungeonEscapeInputCommand.MoveRight, Binding(DungeonEscapeInputCommand.MoveRight, "D", "None", "DpadRight") },
+                { DungeonEscapeInputCommand.MoveUp, Binding(DungeonEscapeInputCommand.MoveUp, "W", "None", "DpadUp") },
+                { DungeonEscapeInputCommand.MoveDown, Binding(DungeonEscapeInputCommand.MoveDown, "S", "None", "DpadDown") },
+                { DungeonEscapeInputCommand.Interact, Binding(DungeonEscapeInputCommand.Interact, "Space", "None", "South") },
                 { DungeonEscapeInputCommand.Cancel, Binding(DungeonEscapeInputCommand.Cancel, "Escape", "None", "East") },
-                { DungeonEscapeInputCommand.Sprint, Binding(DungeonEscapeInputCommand.Sprint, "LeftShift", "RightShift", "North") },
-                { DungeonEscapeInputCommand.MenuParty, Binding(DungeonEscapeInputCommand.MenuParty, "C", "None", "West") },
-                { DungeonEscapeInputCommand.MenuInventory, Binding(DungeonEscapeInputCommand.MenuInventory, "I", "None", "None") },
-                { DungeonEscapeInputCommand.MenuQuests, Binding(DungeonEscapeInputCommand.MenuQuests, "J", "None", "None") },
-                { DungeonEscapeInputCommand.MenuSettings, Binding(DungeonEscapeInputCommand.MenuSettings, "O", "None", "None") },
+                { DungeonEscapeInputCommand.Sprint, Binding(DungeonEscapeInputCommand.Sprint, "LeftShift", "None", "North") },
+                { DungeonEscapeInputCommand.Menu, Binding(DungeonEscapeInputCommand.Menu, "E", "None", "West") },
                 { DungeonEscapeInputCommand.MenuPreviousTab, Binding(DungeonEscapeInputCommand.MenuPreviousTab, "LeftBracket", "None", "LeftShoulder") },
                 { DungeonEscapeInputCommand.MenuNextTab, Binding(DungeonEscapeInputCommand.MenuNextTab, "RightBracket", "None", "RightShoulder") },
                 { DungeonEscapeInputCommand.QuickSave, Binding(DungeonEscapeInputCommand.QuickSave, "F6", "None", "None") },
@@ -250,6 +267,14 @@ namespace Redpoint.DungeonEscape.Unity
                 ? new List<InputBinding>()
                 : settings.InputBindings.Where(binding => binding != null && !string.IsNullOrEmpty(binding.Command)).ToList();
 
+            MigrateLegacyMenuBinding(existing);
+            existing = existing
+                .Where(binding => DefaultBindings.Values.Any(defaultBinding =>
+                    string.Equals(binding.Command, defaultBinding.Command, StringComparison.OrdinalIgnoreCase)))
+                .GroupBy(binding => binding.Command, StringComparer.OrdinalIgnoreCase)
+                .Select(group => group.First())
+                .ToList();
+
             foreach (var defaultBinding in DefaultBindings.Values)
             {
                 if (existing.Any(binding => string.Equals(binding.Command, defaultBinding.Command, StringComparison.OrdinalIgnoreCase)))
@@ -258,6 +283,20 @@ namespace Redpoint.DungeonEscape.Unity
                 }
 
                 existing.Add(CloneBinding(defaultBinding));
+            }
+
+            foreach (var binding in existing)
+            {
+                binding.Secondary = "None";
+                var defaultBinding = DefaultBindings.Values.FirstOrDefault(item =>
+                    string.Equals(item.Command, binding.Command, StringComparison.OrdinalIgnoreCase));
+                if (defaultBinding != null &&
+                    string.Equals(binding.Primary, "None", StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(binding.Gamepad, "None", StringComparison.OrdinalIgnoreCase))
+                {
+                    binding.Primary = defaultBinding.Primary;
+                    binding.Gamepad = defaultBinding.Gamepad;
+                }
             }
 
             settings.InputBindings = existing.ToArray();
@@ -269,14 +308,40 @@ namespace Redpoint.DungeonEscape.Unity
             UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.Cancel, "JoystickButton1", "East");
             UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.Sprint, "JoystickButton5", "North");
             UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.Sprint, "JoystickButton3", "North");
-            UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.MenuParty, "JoystickButton3", "West");
-            UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.MenuParty, "JoystickButton2", "West");
-            UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.MenuInventory, "JoystickButton2", "None");
-            UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.MenuQuests, "JoystickButton6", "None");
-            UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.MenuSettings, "JoystickButton7", "None");
+            UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.Menu, "JoystickButton3", "West");
+            UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.Menu, "JoystickButton2", "West");
             UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.MenuPreviousTab, "JoystickButton4", "LeftShoulder");
             UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.MenuNextTab, "JoystickButton5", "RightShoulder");
             UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.ReloadMap, "JoystickButton8", "Start");
+        }
+
+        private static void MigrateLegacyMenuBinding(List<InputBinding> bindings)
+        {
+            if (bindings == null)
+            {
+                return;
+            }
+
+            var current = bindings.FirstOrDefault(binding =>
+                string.Equals(binding.Command, DungeonEscapeInputCommand.Menu.ToString(), StringComparison.OrdinalIgnoreCase));
+            if (current != null)
+            {
+                return;
+            }
+
+            var legacy = bindings.FirstOrDefault(binding =>
+                string.Equals(binding.Command, "MenuParty", StringComparison.OrdinalIgnoreCase));
+            if (legacy == null)
+            {
+                return;
+            }
+
+            legacy.Command = DungeonEscapeInputCommand.Menu.ToString();
+            if (string.Equals(legacy.Primary, "C", StringComparison.OrdinalIgnoreCase) ||
+                string.IsNullOrEmpty(legacy.Primary))
+            {
+                legacy.Primary = DefaultBindings[DungeonEscapeInputCommand.Menu].Primary;
+            }
         }
 
         private static InputBinding GetBinding(DungeonEscapeInputCommand command)

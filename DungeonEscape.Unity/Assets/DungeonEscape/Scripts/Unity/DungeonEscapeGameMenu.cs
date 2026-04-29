@@ -101,21 +101,9 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 isOpen = false;
             }
-            else if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.MenuParty))
+            else if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Menu))
             {
                 Toggle(MenuTab.Party);
-            }
-            else if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.MenuInventory))
-            {
-                Toggle(MenuTab.Inventory);
-            }
-            else if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.MenuQuests))
-            {
-                Toggle(MenuTab.Quests);
-            }
-            else if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.MenuSettings))
-            {
-                Toggle(MenuTab.Settings);
             }
             else if (isOpen && DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Interact))
             {
@@ -1175,33 +1163,30 @@ namespace Redpoint.DungeonEscape.Unity
         private void DrawInputBindings()
         {
             var bindings = DungeonEscapeInput.GetBindings();
-            GUILayout.Label("Input Bindings", titleStyle);
-            if (rebindingInput != null)
+            var headerStyle = new GUIStyle(labelStyle)
             {
-                GUILayout.Label("Press a key or gamepad button for " + rebindingInput.Command + " " + rebindingSlot + ".", labelStyle);
-                if (GUILayout.Button("Cancel Rebind", buttonStyle, GUILayout.Width(160f * GetPixelScale())))
-                {
-                    rebindingInput = null;
-                    rebindingSlot = null;
-                }
-            }
+                alignment = TextAnchor.MiddleCenter,
+                fontStyle = FontStyle.Bold
+            };
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Action", headerStyle, GUILayout.Width(220f * GetPixelScale()));
+            GUILayout.Label("Key", headerStyle, GUILayout.Width(190f * GetPixelScale()));
+            GUILayout.Label("Gamepad", headerStyle, GUILayout.Width(190f * GetPixelScale()));
+            GUILayout.EndHorizontal();
 
             foreach (var binding in bindings.OrderBy(item => item.Command))
             {
                 BeginSelectableRow();
-                GUILayout.BeginVertical();
-                GUILayout.Label(binding.Command + ": " + DungeonEscapeInput.GetBindingText(binding), labelStyle);
                 GUILayout.BeginHorizontal();
-                DrawBindingButton(binding, "Primary", binding.Primary, 0);
-                DrawBindingButton(binding, "Secondary", binding.Secondary, 1);
-                DrawBindingButton(binding, "Gamepad", binding.Gamepad, 2);
+                GUILayout.Label(binding.Command, labelStyle, GUILayout.Width(220f * GetPixelScale()));
+                DrawBindingCell(binding, "Primary", binding.Primary, 0);
+                DrawBindingCell(binding, "Gamepad", binding.Gamepad, 1);
                 GUILayout.EndHorizontal();
-                GUILayout.EndVertical();
                 EndSelectableRow();
             }
 
             BeginSelectableRow();
-            if (GUILayout.Button("Reset Input Bindings", buttonStyle, GUILayout.Width(220f * GetPixelScale())))
+            if (GUILayout.Button("Reset", buttonStyle, GUILayout.Width(120f * GetPixelScale())))
             {
                 DungeonEscapeInput.ResetBindings();
                 rebindingInput = null;

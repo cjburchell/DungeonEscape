@@ -13,7 +13,9 @@ namespace Redpoint.DungeonEscape.Unity
             XElement map,
             TiledMapInfo mapInfo,
             int mapWidth,
-            int mapHeight)
+            int mapHeight,
+            DungeonEscapeGameState gameState,
+            string mapId)
         {
             var blocked = new HashSet<int>();
 
@@ -34,11 +36,17 @@ namespace Redpoint.DungeonEscape.Unity
                 }
             }
 
-            AddBlockedObjects(blocked, mapInfo, mapWidth, mapHeight);
+            AddBlockedObjects(blocked, mapInfo, mapWidth, mapHeight, gameState, mapId);
             return blocked;
         }
 
-        private static void AddBlockedObjects(HashSet<int> blocked, TiledMapInfo mapInfo, int mapWidth, int mapHeight)
+        private static void AddBlockedObjects(
+            HashSet<int> blocked,
+            TiledMapInfo mapInfo,
+            int mapWidth,
+            int mapHeight,
+            DungeonEscapeGameState gameState,
+            string mapId)
         {
             if (mapInfo == null || mapInfo.ObjectGroups == null)
             {
@@ -54,6 +62,13 @@ namespace Redpoint.DungeonEscape.Unity
                         continue;
                     }
 
+                    if (IsDoorObject(mapObject) &&
+                        gameState != null &&
+                        gameState.IsObjectOpen(mapId, mapObject.Id))
+                    {
+                        continue;
+                    }
+
                     string collideable;
                     if (mapObject.Properties == null ||
                         !mapObject.Properties.TryGetValue("Collideable", out collideable) ||
@@ -62,19 +77,53 @@ namespace Redpoint.DungeonEscape.Unity
                         continue;
                     }
 
+                    if (IsDoorObject(mapObject))
+                    {
+                        AddBlockedObjectBounds(blocked, mapObject, mapInfo, mapWidth, mapHeight);
+                        continue;
+                    }
+
                     var column = Mathf.FloorToInt(mapObject.X / mapInfo.TileWidth);
                     var row = IsNpcObject(mapObject)
                         ? Mathf.FloorToInt((mapObject.Y - 0.001f) / mapInfo.TileHeight)
                         : Mathf.FloorToInt((mapObject.Y - mapObject.Height) / mapInfo.TileHeight);
 
-                    if (column < 0 || row < 0 || column >= mapWidth || row >= mapHeight)
-                    {
-                        continue;
-                    }
-
-                    blocked.Add(row * mapWidth + column);
+                    AddBlockedTile(blocked, column, row, mapWidth, mapHeight);
                 }
             }
+        }
+
+        private static void AddBlockedObjectBounds(
+            HashSet<int> blocked,
+            TiledObjectInfo mapObject,
+            TiledMapInfo mapInfo,
+            int mapWidth,
+            int mapHeight)
+        {
+            var width = mapObject.Width <= 0f ? mapInfo.TileWidth : mapObject.Width;
+            var height = mapObject.Height <= 0f ? mapInfo.TileHeight : mapObject.Height;
+            var minColumn = Mathf.FloorToInt(mapObject.X / mapInfo.TileWidth);
+            var maxColumn = Mathf.FloorToInt((mapObject.X + width - 0.001f) / mapInfo.TileWidth);
+            var minRow = Mathf.FloorToInt((mapObject.Y - height + 1f) / mapInfo.TileHeight);
+            var maxRow = Mathf.FloorToInt((mapObject.Y - 0.001f) / mapInfo.TileHeight);
+
+            for (var row = minRow; row <= maxRow; row++)
+            {
+                for (var column = minColumn; column <= maxColumn; column++)
+                {
+                    AddBlockedTile(blocked, column, row, mapWidth, mapHeight);
+                }
+            }
+        }
+
+        private static void AddBlockedTile(HashSet<int> blocked, int column, int row, int mapWidth, int mapHeight)
+        {
+            if (column < 0 || row < 0 || column >= mapWidth || row >= mapHeight)
+            {
+                return;
+            }
+
+            blocked.Add(row * mapWidth + column);
         }
 
         private static bool IsBlockingLayer(XElement layer)
@@ -94,6 +143,12 @@ namespace Redpoint.DungeonEscape.Unity
             return mapObject != null &&
                    mapObject.Class != null &&
                    mapObject.Class.StartsWith("Npc", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsDoorObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   string.Equals(mapObject.Class, "Door", StringComparison.OrdinalIgnoreCase);
         }
 
         private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName, int defaultValue)

@@ -541,7 +541,9 @@ namespace Redpoint.DungeonEscape.Unity
                     loadedMap.Root,
                     loadedMap.Info,
                     mapWidth,
-                    mapHeight);
+                    mapHeight,
+                    gameState,
+                    TiledMapLoader.NormalizeMapId(loadedMap.AssetPath));
             }
 
             blockedTiles = loadedMap.BlockedTiles;

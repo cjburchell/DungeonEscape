@@ -245,6 +245,11 @@ namespace Redpoint.DungeonEscape.Unity
             var message = new StringBuilder();
             message.AppendLine("You have completed the quest " + quest.Name);
 
+            if (quest.Xp != 0)
+            {
+                AppendQuestXpReward(message, quest.Xp);
+            }
+
             if (quest.Gold != 0)
             {
                 Party.Gold += quest.Gold;
@@ -261,6 +266,60 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return message.ToString().TrimEnd();
+        }
+
+        private void AppendQuestXpReward(StringBuilder message, int xp)
+        {
+            var activeMembers = Party.ActiveMembers.ToList();
+            if (activeMembers.Count == 0)
+            {
+                return;
+            }
+
+            var xpReward = (ulong)Math.Max(0, xp);
+            foreach (var hero in activeMembers)
+            {
+                hero.Xp += xpReward;
+            }
+
+            MarkDirty();
+            message.AppendLine("The party got " + xp + " XP.");
+            foreach (var hero in activeMembers)
+            {
+                AppendLevelUpMessages(message, hero);
+            }
+        }
+
+        private void AppendLevelUpMessages(StringBuilder message, Hero hero)
+        {
+            if (hero == null)
+            {
+                return;
+            }
+
+            var classLevels = DungeonEscapeGameDataCache.Current == null ? null : DungeonEscapeGameDataCache.Current.ClassLevels;
+            if (classLevels == null)
+            {
+                return;
+            }
+
+            while (true)
+            {
+                string levelUpMessage;
+                if (!hero.CheckLevelUp(
+                        classLevels,
+                        DungeonEscapeGameDataCache.Current == null ? null : DungeonEscapeGameDataCache.Current.Spells,
+                        out levelUpMessage))
+                {
+                    return;
+                }
+
+                MarkDirty();
+                if (!string.IsNullOrEmpty(levelUpMessage))
+                {
+                    message.Append(levelUpMessage);
+                }
+            }
         }
 
         public string GiveItems(IEnumerable<string> itemIds)

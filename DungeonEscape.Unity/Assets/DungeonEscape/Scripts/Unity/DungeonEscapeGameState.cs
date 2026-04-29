@@ -1131,6 +1131,105 @@ namespace Redpoint.DungeonEscape.Unity
             };
         }
 
+        public string HealParty()
+        {
+            EnsureInitialized();
+            if (Party == null || !Party.Members.Any())
+            {
+                return "There is no party to heal.";
+            }
+
+            foreach (var hero in Party.Members)
+            {
+                hero.Health = hero.MaxHealth;
+                hero.Magic = hero.MaxMagic;
+                if (hero.Status != null)
+                {
+                    hero.Status.Clear();
+                }
+            }
+
+            MarkDirty();
+            return "Your party has been fully restored.";
+        }
+
+        public string SaveAtCurrentPosition()
+        {
+            EnsureInitialized();
+            if (Party == null)
+            {
+                return "There is no party to save.";
+            }
+
+            Party.SavedMapId = Party.CurrentMapId;
+            Party.SavedPoint = Party.CurrentPosition;
+            MarkDirty();
+            SaveQuick();
+            return "Game saved.";
+        }
+
+        public List<Item> CreateStoreInventory(int itemCount)
+        {
+            EnsureInitialized();
+            var inventory = new List<Item>();
+            var maxLevel = GetPartyMaxLevel();
+            for (var i = 0; i < itemCount; i++)
+            {
+                var item = CreateRandomItem(maxLevel + 2, Math.Max(1, maxLevel - 2));
+                if (item != null)
+                {
+                    inventory.Add(item);
+                }
+            }
+
+            return inventory;
+        }
+
+        public string BuyStoreItem(Item item)
+        {
+            EnsureInitialized();
+            if (item == null)
+            {
+                return "That item is not available.";
+            }
+
+            if (Party.Gold < item.Cost)
+            {
+                return "You do not have enough gold.";
+            }
+
+            var member = Party.AddItem(new ItemInstance(item));
+            if (member == null)
+            {
+                return "No one has room to carry that.";
+            }
+
+            Party.Gold -= item.Cost;
+            MarkDirty();
+            return member.Name + " bought " + item.Name + " for " + item.Cost + " gold.";
+        }
+
+        public string SellHeroItem(Hero hero, ItemInstance item)
+        {
+            EnsureInitialized();
+            if (hero == null || item == null || item.Item == null || !Party.Members.Contains(hero) || !hero.Items.Contains(item))
+            {
+                return "That item cannot be sold.";
+            }
+
+            if (!item.Item.CanBeSoldInStore || item.Type == ItemType.Quest)
+            {
+                return item.Name + " cannot be sold.";
+            }
+
+            var salePrice = Math.Max(1, item.Gold / 2);
+            item.UnEquip(Party.Members);
+            hero.Items.Remove(item);
+            Party.Gold += salePrice;
+            MarkDirty();
+            return hero.Name + " sold " + item.Name + " for " + salePrice + " gold.";
+        }
+
         public bool CanUseHeroItem(Hero source, ItemInstance item)
         {
             EnsureItemLinked(item);

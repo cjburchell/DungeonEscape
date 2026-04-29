@@ -22,6 +22,7 @@ namespace Redpoint.DungeonEscape.Unity
         private int homeColumn;
         private int homeRow;
         private int moveRadius = 3;
+        private float visualYOffset;
         private string mapId;
         private DungeonEscapeGameState gameState;
         private bool moving;
@@ -53,6 +54,7 @@ namespace Redpoint.DungeonEscape.Unity
             gid = mapObject.Gid;
             tileWidth = mapTileWidth;
             tileHeight = mapTileHeight;
+            visualYOffset = GetVisualYOffset(mapObject, tileHeight);
             ObjectId = mapObject.Id;
             column = Mathf.FloorToInt(mapObject.X / tileWidth);
             row = Mathf.FloorToInt((mapObject.Y - 0.001f) / tileHeight);
@@ -139,10 +141,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            transform.localPosition = new Vector3(
-                column - mapView.StartColumn,
-                -(row - mapView.StartRow),
-                -0.15f);
+            transform.localPosition = GetLocalPosition(column, row);
         }
 
         private void TryMove()
@@ -226,10 +225,7 @@ namespace Redpoint.DungeonEscape.Unity
             mapView.UpdateNpcTile(this, column, row, nextColumn, nextRow);
 
             var start = transform.localPosition;
-            var end = new Vector3(
-                nextColumn - mapView.StartColumn,
-                -(nextRow - mapView.StartRow),
-                -0.15f);
+            var end = GetLocalPosition(nextColumn, nextRow);
             const float duration = 0.28f;
             var elapsed = 0f;
             while (elapsed < duration)
@@ -255,6 +251,25 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 gameState.SetObjectPosition(mapId, ObjectId, new WorldPosition(column, row), direction);
             }
+        }
+
+        private Vector3 GetLocalPosition(int targetColumn, int targetRow)
+        {
+            return new Vector3(
+                targetColumn - mapView.StartColumn,
+                -(targetRow - mapView.StartRow) + visualYOffset,
+                -0.15f);
+        }
+
+        private static float GetVisualYOffset(TiledObjectInfo mapObject, int mapTileHeight)
+        {
+            if (mapObject == null || mapTileHeight <= 0)
+            {
+                return 0f;
+            }
+
+            var objectHeight = mapObject.Height <= 0f ? mapTileHeight : mapObject.Height;
+            return Mathf.Max(0f, objectHeight - mapTileHeight) / (mapTileHeight * 2f);
         }
 
         private void PlayIdleAnimation()

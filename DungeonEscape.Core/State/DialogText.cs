@@ -16,6 +16,7 @@ namespace Redpoint.DungeonEscape.State
     {
         public string Quest { get; set; }
         public List<int> QuestStage { get; set; }
+        public List<int> ForQuestStage { get; set; }
         public bool StartQuest { get; set; }
     }
 }

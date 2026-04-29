@@ -21,6 +21,7 @@ namespace Redpoint.DungeonEscape.State
         public List<string> Items { get; set; }
         
         public string ItemId { get; set; }
+        public string Quest { get; set; }
         
         public string Monster { get; set; }
         public int? NextQuestStage { get; set; }

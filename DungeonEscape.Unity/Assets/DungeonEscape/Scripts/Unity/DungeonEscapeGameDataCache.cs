@@ -136,10 +136,14 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 foreach (var activeQuest in party.ActiveQuests)
                 {
+                    if (activeQuest.Completed)
+                    {
+                        continue;
+                    }
+
                     var questDialog = dialogs.FirstOrDefault(item =>
                         item.Quest == activeQuest.Id &&
-                        item.QuestStage != null &&
-                        item.QuestStage.Contains(activeQuest.CurrentStage));
+                        GetDialogQuestStages(item).Contains(activeQuest.CurrentStage));
 
                     if (questDialog != null)
                     {
@@ -148,7 +152,26 @@ namespace Redpoint.DungeonEscape.Unity
                 }
             }
 
-            return dialogs.FirstOrDefault();
+            return GetDefaultDialogHead(dialogs);
+        }
+
+        private static DialogHead GetDefaultDialogHead(IEnumerable<DialogHead> dialogs)
+        {
+            return dialogs.FirstOrDefault(item =>
+                       !item.StartQuest &&
+                       string.IsNullOrEmpty(item.Quest) &&
+                       !GetDialogQuestStages(item).Any()) ??
+                   dialogs.FirstOrDefault();
+        }
+
+        private static IEnumerable<int> GetDialogQuestStages(DialogHead dialog)
+        {
+            if (dialog == null)
+            {
+                return Enumerable.Empty<int>();
+            }
+
+            return dialog.QuestStage ?? dialog.ForQuestStage ?? Enumerable.Empty<int>();
         }
 
         private static string BuildDialogText(DialogText dialog)

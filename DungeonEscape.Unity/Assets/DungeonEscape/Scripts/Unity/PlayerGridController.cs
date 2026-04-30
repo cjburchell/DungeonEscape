@@ -240,7 +240,7 @@ namespace Redpoint.DungeonEscape.Unity
                 SetFacing(direction);
                 hasPendingTurnMove = true;
                 pendingTurnMoveDirection = direction;
-                pendingTurnMoveDelay = 0.18f;
+                pendingTurnMoveDelay = GetTurnMoveDelay();
                 return;
             }
 
@@ -378,6 +378,14 @@ namespace Redpoint.DungeonEscape.Unity
         private static bool IsSprintHeld()
         {
             return DungeonEscapeInput.GetCommand(DungeonEscapeInputCommand.Sprint);
+        }
+
+        private static float GetTurnMoveDelay()
+        {
+            var delay = DungeonEscapeSettingsCache.Current == null
+                ? 0.12f
+                : DungeonEscapeSettingsCache.Current.TurnMoveDelaySeconds;
+            return Mathf.Clamp(delay, 0f, 0.3f);
         }
 
         private bool TryApplyWarp()

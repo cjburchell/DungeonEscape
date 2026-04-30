@@ -1,125 +1,81 @@
 # Dungeon Escape
 
-Dungeon Escape is a retro-inspired 2D RPG in the spirit of classic SNES-era Dragon Quest and Final Fantasy games. It is an updated version of an older project, DE15, built with **MonoGame** and the **Nez** 2D framework.
+Dungeon Escape is a retro-inspired 2D RPG being migrated from the original MonoGame/Nez implementation to Unity.
 
-The game is largely data-driven. Quests, dialog, classes, skills, items, spells, monsters, map encounters, and default settings are defined in JSON under `DungeonEscape/Content/data/`. Maps are authored in **Tiled** (`.tmx` and `.tsx`) and loaded at runtime.
+In this branch, the active target is the Unity project. The old `DungeonEscape/` MonoGame project remains in the repository for reference while the migration is completed, but migration work should happen in `DungeonEscape.Unity/`, `DungeonEscape.Core/`, tests, CI, and `memory-bank/`.
 
-## Download / Play
-
-Download the latest Windows build from GitLab artifacts:
-
-https://gitlab.com/cjburchell/DungeonEscape/-/jobs/4012464295/artifacts/download
-
-## Saves & Settings
-
-The game stores saves and settings in:
+## Current Project Layout
 
 ```text
-%AppData%\Redpoint\DungeonEscape\
-  save.json
-  settings.json
+DungeonEscape.Unity/        # Active Unity project
+DungeonEscape.Core/         # Unity-friendly shared domain/state code
+DungeonEscape.Core.Test/    # Migration-relevant shared core tests
+DungeonEscape/              # Old MonoGame/Nez project, reference only in this branch
+Nez.Portable/               # Old Nez dependency used by the old project
+memory-bank/                # Migration status, manual tests, architecture, handoff docs
 ```
 
-## Controls
+## Memory Bank
 
-Exploration controls are handled by `PlayerComponent`.
+Use `memory-bank/` as the source of truth for migration context:
 
-| Action | Keyboard | Gamepad |
-| --- | --- | --- |
-| Move | Arrow keys or WASD | Left stick or D-pad |
-| Interact / confirm | Space | A |
+- `memory-bank/UNITY_MIGRATION.md`: migration status and pending work.
+- `memory-bank/MANUAL_TESTS.md`: manual play-test plans.
+- `memory-bank/architecture.md`: current architecture overview.
+- `memory-bank/activeContext.md`: current working context.
+- `memory-bank/progress.md`: high-level progress summary.
 
-## Build & Run
+## Build And Test
 
-### Prerequisites
+### .NET
 
-- .NET SDK 10.0
-- A MonoGame-compatible desktop runtime environment
-- Windows is the primary tested platform
-
-### Restore and Build
-
-```bash
-dotnet restore
-dotnet build
+```powershell
+dotnet restore DungeonEscape.sln
+dotnet build DungeonEscape.sln
+dotnet test DungeonEscape.sln --no-restore
 ```
 
-### Run
+The old `DungeonEscape.Test` project has been removed. Current automated migration tests run through `DungeonEscape.Core.Test`; Unity edit/play mode tests can be added later.
 
-```bash
-dotnet run --project DungeonEscape/DungeonEscape.csproj
-```
+### Unity
 
-### Test
-
-```bash
-dotnet test
-```
-
-## Architecture
-
-### High-level Runtime Flow
+Open:
 
 ```text
-Program.cs
-  -> Game (Nez.Core, implements IGame)
-       -> loads Settings and Content/data/*.json
-       -> manages Party, MapStates, and Save/Load
-       -> handles scene transitions
-            SplashScreen
-              -> MainMenu
-                   -> CreatePlayerScene
-                   -> ContinueQuestScene
-                   -> MapScene
-                   -> FightScene
+DungeonEscape.Unity/
 ```
 
-### Key Concepts
-
-**`Game` (`DungeonEscape/DungeonEscapeGame.cs`)**
-
-Owns global game state and services through `IGame`, including party state, settings, content lists, sounds, save/load, map loading, and scene transitions.
-
-**Scenes (`DungeonEscape/Scenes/*`)**
-
-- `SplashScreen`: shows the splash image and transitions to the main menu.
-- `MainMenu`: exposes New Game, Load Game, Settings, and Quit.
-- `MapScene`: handles exploration, Tiled map rendering, object and sprite loading, interactions, and random encounters.
-- `FightScene`: handles turn-based combat, action selection, target selection, damage resolution, and rewards.
-
-**State (`DungeonEscape/State/*`)**
-
-Contains serializable game state such as party members, quests, items, map/object state, and `GameSave`.
-
-**Content (`DungeonEscape/Content/*`)**
-
-- `data/*.json`: gameplay definitions, including quests, dialog, items, skills, spells, monsters, names, stat names, and default settings.
-- `data/maps/**/*.json`: map-specific monster encounter data.
-- `maps/**/*.tmx` and tilesets (`.tsx`): Tiled maps and map metadata such as `overworld`, `song`, and `biome`.
-- `images`, `sound`, and `fonts`: game assets.
-
-## Project Layout
+The active boot scene is:
 
 ```text
-DungeonEscape/
-  Program.cs                      # entry point
-  DungeonEscapeGame.cs             # Game : Nez.Core, IGame implementation
-  Scenes/                          # game flow, UI screens, exploration, combat
-  State/                           # domain entities and save data structures
-  Content/                         # images, audio, maps, Tiled tilesets, JSON data
-Nez.Portable/                      # vendored Nez framework portable build
-DungeonEscape.Test/                # xUnit tests
+DungeonEscape.Unity/Assets/DungeonEscape/Scenes/Boot.unity
 ```
 
-## Roadmap
+Unity runtime assets are under:
 
-### Features
+```text
+DungeonEscape.Unity/Assets/DungeonEscape/
+  Data/
+  Images/
+  Maps/
+  Scripts/
+  Tilesets/
+```
 
-- Escort quests
-- Kill monster quests
-- More quests
-- Improved inventory window
+## Data And Maps
 
-### Improvements
+The Unity migration uses data and assets under `DungeonEscape.Unity/Assets/DungeonEscape/`.
 
-- Balance pass
+Tiled object metadata in Unity maps should use `class="..."`, not object `type="..."`. Chest and door locking is explicit:
+
+- Chests use `class="Chest"` and default map data should set `Locked=false`.
+- Doors use `class="Door"` and default map data should set `Locked=true`.
+
+## CI
+
+GitLab CI restores, builds, and tests the solution. Unity validation and Windows player artifact builds are controlled with:
+
+- `UNITY_CI_ENABLED`
+- `UNITY_BUILD_WINDOWS_ENABLED`
+
+Unity license variables are required for Unity CI jobs.

@@ -171,6 +171,7 @@ Status: In progress
 - Done: Add Unity project validation to CI by default. Disable with `UNITY_CI_ENABLED=false` if needed.
 - Done: Add Unity Windows artifact build to CI by default. Disable with `UNITY_BUILD_WINDOWS_ENABLED=false`; output is stored as a downloadable GitLab artifact.
 - Done: Stage runtime map, tileset, image, and data files into `StreamingAssets` during Unity builds.
+- Done: Removed the old `DungeonEscape.Test` project from the solution; migration tests now run through `DungeonEscape.Core.Test` and future Unity test assemblies.
 - Pending: Expand shared core unit tests beyond level-up and skill/spell progression.
 - Pending: Add Unity-side edit mode tests for map loading, hidden item conditions, and save/load behavior.
 - Pending: Add regression tests for quest dialog actions and item rewards.

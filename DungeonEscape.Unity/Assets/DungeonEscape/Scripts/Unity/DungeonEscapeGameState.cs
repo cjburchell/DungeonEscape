@@ -29,6 +29,7 @@ namespace Redpoint.DungeonEscape.Unity
         public GameSave CurrentSave { get; private set; }
         public GameFile GameFile { get; private set; }
         public bool ShouldApplyInitialSpawn { get; private set; }
+        public static bool AutoSaveBlocked { get; set; }
         public event Action<GameSave> SaveLoaded;
         private bool saveDirty;
         private float autoSaveCountdown;
@@ -2116,7 +2117,18 @@ namespace Redpoint.DungeonEscape.Unity
         public void SaveQuick()
         {
             EnsureInitialized();
-            SaveQuick(false);
+            SaveQuick(false, "Quick saved to ");
+        }
+
+        public void SaveAfterMapTransitionIfNeeded(string sourceMapId, string targetMapId)
+        {
+            EnsureInitialized();
+            if (!saveDirty || !IsOverWorldBoundaryTransition(sourceMapId, targetMapId))
+            {
+                return;
+            }
+
+            SaveQuick(true, "Transition saved to ");
         }
 
         public int ManualSaveSlotCount
@@ -2210,7 +2222,7 @@ namespace Redpoint.DungeonEscape.Unity
             return true;
         }
 
-        private void SaveQuick(bool autoSave)
+        private void SaveQuick(bool autoSave, string logPrefix)
         {
             EnsureInitialized();
             var quickSave = CloneGameSave(CurrentSave);
@@ -2220,7 +2232,7 @@ namespace Redpoint.DungeonEscape.Unity
             SaveGameFile();
             saveDirty = false;
             autoSaveCountdown = 0f;
-            Debug.Log((autoSave ? "Auto saved to " : "Quick saved to ") + GetSaveFilePath());
+            Debug.Log((string.IsNullOrEmpty(logPrefix) ? autoSave ? "Auto saved to " : "Quick saved to " : logPrefix) + GetSaveFilePath());
         }
 
         public bool LoadQuick()
@@ -2552,13 +2564,18 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
+            if (IsAutoSaveBlocked())
+            {
+                return;
+            }
+
             autoSaveCountdown -= Time.deltaTime;
             if (autoSaveCountdown > 0f)
             {
                 return;
             }
 
-            SaveQuick(true);
+            SaveQuick(true, "Auto saved to ");
         }
 
         private static bool IsAutoSaveEnabled()
@@ -2575,6 +2592,33 @@ namespace Redpoint.DungeonEscape.Unity
             return interval <= 0f ? DefaultAutoSaveIntervalSeconds : interval;
         }
 
+        private static bool IsAutoSaveBlocked()
+        {
+            return AutoSaveBlocked ||
+                   DungeonEscapeTitleMenu.IsOpen ||
+                   DungeonEscapeGameMenu.IsOpen ||
+                   DungeonEscapeStoreWindow.IsOpen ||
+                   DungeonEscapeMessageBox.IsAnyVisible;
+        }
+
+        private static bool IsOverWorldBoundaryTransition(string sourceMapId, string targetMapId)
+        {
+            if (string.IsNullOrEmpty(sourceMapId) || string.IsNullOrEmpty(targetMapId))
+            {
+                return false;
+            }
+
+            var source = TiledMapLoader.NormalizeMapId(sourceMapId);
+            var target = TiledMapLoader.NormalizeMapId(targetMapId);
+            if (string.Equals(source, target, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            return string.Equals(source, "overworld", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(target, "overworld", StringComparison.OrdinalIgnoreCase);
+        }
+
         private static GameFile LoadGameFile()
         {
             GameFile file = null;
@@ -2584,6 +2628,15 @@ namespace Redpoint.DungeonEscape.Unity
                 try
                 {
                     file = JsonConvert.DeserializeObject<GameFile>(File.ReadAllText(path));
+                    if (file != null && !string.Equals(file.Version, SaveFileVersion, StringComparison.Ordinal))
+                    {
+                        Debug.LogWarning(
+                            "Unsupported save file version '" + file.Version +
+                            "'. Expected '" + SaveFileVersion +
+                            "'. The existing save will be archived and a new Unity save file will be created.");
+                        ArchiveUnsupportedSaveFile(path, file.Version);
+                        file = null;
+                    }
                 }
                 catch (Exception exception)
                 {
@@ -2591,7 +2644,7 @@ namespace Redpoint.DungeonEscape.Unity
                 }
             }
 
-            if (file == null || file.Version != SaveFileVersion)
+            if (file == null)
             {
                 file = new GameFile { Version = SaveFileVersion };
             }
@@ -2599,6 +2652,46 @@ namespace Redpoint.DungeonEscape.Unity
             EnsureManualSaveSlots(file);
 
             return file;
+        }
+
+        private static void ArchiveUnsupportedSaveFile(string path, string version)
+        {
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
+            {
+                return;
+            }
+
+            var directory = Path.GetDirectoryName(path);
+            if (string.IsNullOrEmpty(directory))
+            {
+                return;
+            }
+
+            var safeVersion = string.IsNullOrEmpty(version) ? "unknown" : SanitizeFileName(version);
+            var archivePath = Path.Combine(
+                directory,
+                "save.unsupported-" + safeVersion + "-" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".json");
+
+            try
+            {
+                File.Copy(path, archivePath, false);
+                Debug.LogWarning("Archived unsupported save file to " + archivePath);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogWarning("Failed to archive unsupported save file from " + path + ": " + exception.Message);
+            }
+        }
+
+        private static string SanitizeFileName(string value)
+        {
+            var result = value;
+            foreach (var character in Path.GetInvalidFileNameChars())
+            {
+                result = result.Replace(character, '-');
+            }
+
+            return result;
         }
 
         private static GameSave GetQuickSave(GameFile file)

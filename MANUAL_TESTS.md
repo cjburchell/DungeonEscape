@@ -312,3 +312,35 @@ Status: Pending
 - Expected: selection changes visibly and activates the selected command.
 - Choose Quit in a built player.
 - Expected: the player application exits.
+
+## Unity Save Version Policy
+
+Status: Pending
+
+- Locate the Unity save file under `%APPDATA%/Redpoint/DungeonEscape/save.json`.
+- Back up the file manually before testing this case.
+- Edit the save JSON `Version` value to an unsupported value such as `0.0`.
+- Start Play Mode or a built player.
+- Expected: the game logs that the save version is unsupported.
+- Expected: the original save is copied to a file named like `save.unsupported-0.0-YYYYMMDDHHMMSS.json`.
+- Expected: the game creates a fresh Unity save file instead of trying to migrate old or unsupported save data.
+
+## Autosave And Transition Save Policy
+
+Status: Pending
+
+- Enable autosave and set a short autosave interval in Settings.
+- Move around on one non-overworld map without opening dialogs.
+- Expected: timer autosave still occurs after the configured interval.
+- Open a dialog or message box and wait longer than the autosave interval.
+- Expected: no autosave happens while the dialog is visible.
+- Close the dialog and keep playing.
+- Expected: autosave can occur again after gameplay resumes.
+- Open the title menu, game menu, or store window and wait longer than the autosave interval.
+- Expected: no autosave happens while that UI is open.
+- Warp between two non-overworld maps.
+- Expected: no transition save occurs only because of that warp.
+- Warp from the overworld into a town, dungeon, or other map.
+- Expected: a transition save occurs after the destination map and final player position are applied.
+- Warp from a town, dungeon, or other map back to the overworld.
+- Expected: a transition save occurs after the party reaches the overworld.

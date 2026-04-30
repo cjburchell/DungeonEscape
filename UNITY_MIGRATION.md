@@ -154,9 +154,9 @@ Status: In progress
 - Partial: Unity equivalent for old main menu/continue quest flow.
 - Pending: Decide whether to recreate old splash screen.
 - Pending: Create player flow.
-- Pending: Version migration for old saves.
-- Pending: Final autosave policy review.
-- Pending: Final transition-save policy review.
+- Done: Unity save version policy: unsupported versions are archived and ignored; forward migrations will be added only when the Unity save schema changes.
+- Done: Final autosave policy: timer autosave is kept, but autosave is skipped while title/menu/store/dialog UI is active; combat can also block autosave through `DungeonEscapeGameState.AutoSaveBlocked`.
+- Done: Final transition-save policy: transition saves only occur when moving to or from the overworld.
 
 ## 9. Build And Test Automation
 

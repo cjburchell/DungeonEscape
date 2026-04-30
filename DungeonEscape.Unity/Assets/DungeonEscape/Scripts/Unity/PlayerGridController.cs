@@ -441,11 +441,17 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void ApplyMapTransitionImmediate(TiledMapWarp warp)
         {
+            var sourceMapId = gameState == null || gameState.Party == null
+                ? null
+                : gameState.Party.CurrentMapId;
+            string targetMapId = null;
+
             try
             {
                 var transition = gameState == null
                     ? CreateFallbackTransition(warp)
                     : gameState.CreateWarpTransition(warp);
+                targetMapId = transition.MapId;
 
                 mapView.LoadMap(transition.MapId, transition.SpawnId, !transition.UseSavedOverWorldPosition);
                 if (transition.UseSavedOverWorldPosition && gameState != null && gameState.Party != null)
@@ -454,27 +460,33 @@ namespace Redpoint.DungeonEscape.Unity
                     gameState.SetCurrentPosition(position);
                     mapView.CenterOn(position);
                     SnapPartyFollowersToPlayer();
-                    return;
                 }
-
-                WorldPosition spawnPosition;
-                if (mapView.TryGetSpawnPosition(transition.SpawnId, out spawnPosition))
+                else
                 {
-                    position = spawnPosition;
-                    if (gameState != null)
+                    WorldPosition spawnPosition;
+                    if (mapView.TryGetSpawnPosition(transition.SpawnId, out spawnPosition))
                     {
-                        gameState.SetCurrentPosition(position);
-                    }
+                        position = spawnPosition;
+                        if (gameState != null)
+                        {
+                            gameState.SetCurrentPosition(position);
+                        }
 
-                    mapView.CenterOn(position);
-                    SnapPartyFollowersToPlayer();
+                        mapView.CenterOn(position);
+                        SnapPartyFollowersToPlayer();
+                    }
+                    else if (gameState != null && gameState.Party != null && gameState.Party.CurrentMapIsOverWorld)
+                    {
+                        position = gameState.Party.OverWorldPosition;
+                        gameState.SetCurrentPosition(position);
+                        mapView.CenterOn(position);
+                        SnapPartyFollowersToPlayer();
+                    }
                 }
-                else if (gameState != null && gameState.Party != null && gameState.Party.CurrentMapIsOverWorld)
+
+                if (gameState != null)
                 {
-                    position = gameState.Party.OverWorldPosition;
-                    gameState.SetCurrentPosition(position);
-                    mapView.CenterOn(position);
-                    SnapPartyFollowersToPlayer();
+                    gameState.SaveAfterMapTransitionIfNeeded(sourceMapId, targetMapId);
                 }
             }
             finally

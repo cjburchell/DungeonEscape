@@ -559,7 +559,7 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(spell.Name + "  MP " + spell.Cost + "  " + spell.Type + "  " + spell.Targets, smallStyle);
-                SetMenuGuiEnabled(gameState != null && gameState.CanCastHeroSpell(hero, spell));
+                SetMenuGuiEnabled(gameState != null && CanCastSpellFromPartyMenu(hero, spell));
                 if (GUILayout.Button("Cast", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
                 {
                     ShowSpellTargetPicker(hero, spell);
@@ -570,11 +570,43 @@ namespace Redpoint.DungeonEscape.Unity
             }
         }
 
+        private bool CanCastSpellFromPartyMenu(Hero caster, Spell spell)
+        {
+            if (gameState == null || !gameState.CanCastHeroSpell(caster, spell))
+            {
+                return false;
+            }
+
+            if (spell.Type == SkillType.Outside)
+            {
+                return gameState.CanCastOutside();
+            }
+
+            if (spell.Type == SkillType.Return)
+            {
+                return gameState.CanCastReturn();
+            }
+
+            return true;
+        }
+
         private void ShowSpellTargetPicker(Hero caster, Spell spell)
         {
             EnsureReferences();
             if (gameState == null || caster == null || spell == null)
             {
+                return;
+            }
+
+            if (spell.Type == SkillType.Outside)
+            {
+                ShowPartyMessage(gameState.CastOutsideSpell(caster, spell));
+                return;
+            }
+
+            if (spell.Type == SkillType.Return)
+            {
+                ShowReturnLocationPicker(caster, spell);
                 return;
             }
 
@@ -596,6 +628,32 @@ namespace Redpoint.DungeonEscape.Unity
                     ShowPartyMessage("That spell cannot be cast from the party menu.");
                     return;
             }
+        }
+
+        private void ShowReturnLocationPicker(Hero caster, Spell spell)
+        {
+            var locations = gameState.GetReturnLocations().ToList();
+            if (locations.Count == 0)
+            {
+                ShowPartyMessage(gameState.Party != null && gameState.Party.CurrentMapIsOverWorld
+                    ? "You have not visited any places to return to."
+                    : "Return can only be used outside.");
+                return;
+            }
+
+            var labels = locations
+                .Select(location => string.IsNullOrEmpty(location.DisplayName) ? location.MapId : location.DisplayName)
+                .ToList();
+            labels.Add("Cancel");
+            ShowMenuModal("Return", "Choose a place to return to.", labels, selectedIndex =>
+            {
+                if (selectedIndex < 0 || selectedIndex >= locations.Count)
+                {
+                    return;
+                }
+
+                ShowPartyMessage(gameState.CastReturnSpell(caster, spell, locations[selectedIndex]));
+            });
         }
 
         private void ShowSingleSpellTargetPicker(Hero caster, Spell spell)
@@ -801,7 +859,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             GUILayout.Space(8f * GetPixelScale());
-            SetMenuGuiEnabled(gameState != null && gameState.CanUseHeroItem(hero, item));
+            SetMenuGuiEnabled(gameState != null && CanUseItemFromInventory(hero, item));
             if (GUILayout.Button("Use", buttonStyle))
             {
                 ShowUseItemTargetPicker(hero, item);
@@ -914,6 +972,19 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
+            if (item.Item != null && item.Item.Skill != null && item.Item.Skill.Type == SkillType.Outside)
+            {
+                ShowInventoryMessage(gameState.UseOutsideItem(hero, item));
+                selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
+                return;
+            }
+
+            if (item.Item != null && item.Item.Skill != null && item.Item.Skill.Type == SkillType.Return)
+            {
+                ShowReturnLocationPicker(hero, item);
+                return;
+            }
+
             switch (item.Target)
             {
                 case Target.Group:
@@ -979,6 +1050,56 @@ namespace Redpoint.DungeonEscape.Unity
                 }
 
                 ShowInventoryMessage(gameState.UseHeroItem(hero, item, targets[selectedIndex]));
+                selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
+            });
+        }
+
+        private bool CanUseItemFromInventory(Hero hero, ItemInstance item)
+        {
+            if (gameState == null || !gameState.CanUseHeroItem(hero, item))
+            {
+                return false;
+            }
+
+            if (item != null && item.Item != null && item.Item.Skill != null)
+            {
+                if (item.Item.Skill.Type == SkillType.Outside)
+                {
+                    return gameState.CanCastOutside();
+                }
+
+                if (item.Item.Skill.Type == SkillType.Return)
+                {
+                    return gameState.CanCastReturn();
+                }
+            }
+
+            return true;
+        }
+
+        private void ShowReturnLocationPicker(Hero hero, ItemInstance item)
+        {
+            var locations = gameState.GetReturnLocations().ToList();
+            if (locations.Count == 0)
+            {
+                ShowInventoryMessage(gameState.Party != null && gameState.Party.CurrentMapIsOverWorld
+                    ? "You have not visited any places to return to."
+                    : "Return can only be used outside.");
+                return;
+            }
+
+            var labels = locations
+                .Select(location => string.IsNullOrEmpty(location.DisplayName) ? location.MapId : location.DisplayName)
+                .ToList();
+            labels.Add("Cancel");
+            ShowMenuModal("Return", "Choose a place to return to.", labels, selectedIndex =>
+            {
+                if (selectedIndex < 0 || selectedIndex >= locations.Count)
+                {
+                    return;
+                }
+
+                ShowInventoryMessage(gameState.UseReturnItem(hero, item, locations[selectedIndex]));
                 selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
             });
         }

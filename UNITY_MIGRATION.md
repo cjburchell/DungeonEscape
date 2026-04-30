@@ -23,6 +23,8 @@ Status: Done
 - Done: Dialog choices can give items.
 - Done: Dialog choices can take items when the party has the required item.
 - Done: Item transfer/drop/use dialogs work through the game menu overlay.
+- Done: `Outside` spell returns to the last remembered overworld position without party-member targeting.
+- Done: `Return` spell and `Wings` item show a visited-location picker on the overworld.
 - Done: Play-tested the `Lost_Sea_Shell` dialog path end to end in Unity.
 - Done: Play-tested the `Find_Ship` dialog path end to end in Unity, including the ship deed reward.
 

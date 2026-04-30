@@ -170,6 +170,63 @@ namespace Redpoint.DungeonEscape.Unity
             MarkDirty();
         }
 
+        public IReadOnlyList<VisitedLocation> GetReturnLocations()
+        {
+            EnsureInitialized();
+            EnsureVisitedLocations();
+            return Party.VisitedLocations
+                .Where(location => location != null && !string.IsNullOrEmpty(location.MapId))
+                .OrderBy(location => location.DisplayName)
+                .ThenBy(location => location.MapId)
+                .ToList();
+        }
+
+        public bool CanCastOutside()
+        {
+            EnsureInitialized();
+            return Party != null && !Party.CurrentMapIsOverWorld;
+        }
+
+        public bool CanCastReturn()
+        {
+            EnsureInitialized();
+            return Party != null && Party.CurrentMapIsOverWorld && GetReturnLocations().Count > 0;
+        }
+
+        public void RecordVisitedLocation(string mapId, WorldPosition position)
+        {
+            EnsureInitialized();
+            var normalizedMapId = TiledMapLoader.NormalizeMapId(mapId);
+            if (string.IsNullOrEmpty(normalizedMapId) ||
+                string.Equals(normalizedMapId, "overworld", StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            EnsureVisitedLocations();
+            var existing = Party.VisitedLocations.FirstOrDefault(location =>
+                string.Equals(location.MapId, normalizedMapId, StringComparison.OrdinalIgnoreCase));
+            if (existing == null)
+            {
+                Party.VisitedLocations.Add(new VisitedLocation
+                {
+                    MapId = normalizedMapId,
+                    Position = position,
+                    DisplayName = FormatLocationName(normalizedMapId)
+                });
+            }
+            else
+            {
+                existing.Position = position;
+                if (string.IsNullOrEmpty(existing.DisplayName))
+                {
+                    existing.DisplayName = FormatLocationName(normalizedMapId);
+                }
+            }
+
+            MarkDirty();
+        }
+
         public void SetCurrentDirection(Direction direction)
         {
             EnsureInitialized();
@@ -1033,6 +1090,146 @@ namespace Redpoint.DungeonEscape.Unity
             return string.IsNullOrEmpty(message) ? caster.Name + " casts " + spell.Name + "." : message.TrimEnd();
         }
 
+        public string CastOutsideSpell(Hero caster, Spell spell)
+        {
+            EnsureInitialized();
+            EnsureSpellLinked(spell);
+            if (!CanCastHeroSpell(caster, spell))
+            {
+                return "Cannot cast spell.";
+            }
+
+            if (spell.Type != SkillType.Outside)
+            {
+                return "That spell cannot take you outside.";
+            }
+
+            if (Party.CurrentMapIsOverWorld)
+            {
+                return caster.Name + " casts " + spell.Name + "\nbut you are already outside.";
+            }
+
+            if (!SpendSpellCost(caster, spell))
+            {
+                return caster.Name + ": I do not have enough magic to cast " + spell.Name + ".";
+            }
+
+            var sourceMapId = Party.CurrentMapId;
+            if (Party.CurrentPosition.HasValue)
+            {
+                RecordVisitedLocation(sourceMapId, Party.CurrentPosition.Value);
+            }
+
+            SetMap("overworld", null, Party.OverWorldPosition);
+            NotifySaveLoaded();
+            SaveAfterMapTransitionIfNeeded(sourceMapId, Party.CurrentMapId);
+            return caster.Name + " casts " + spell.Name + ".";
+        }
+
+        public string CastReturnSpell(Hero caster, Spell spell, VisitedLocation location)
+        {
+            EnsureInitialized();
+            EnsureSpellLinked(spell);
+            if (!CanCastHeroSpell(caster, spell))
+            {
+                return "Cannot cast spell.";
+            }
+
+            if (spell.Type != SkillType.Return)
+            {
+                return "That spell cannot return you to a known place.";
+            }
+
+            if (!Party.CurrentMapIsOverWorld)
+            {
+                return caster.Name + " casts " + spell.Name + "\nbut you are not outside.";
+            }
+
+            if (location == null || string.IsNullOrEmpty(location.MapId))
+            {
+                return "Choose a place to return to.";
+            }
+
+            if (!SpendSpellCost(caster, spell))
+            {
+                return caster.Name + ": I do not have enough magic to cast " + spell.Name + ".";
+            }
+
+            var sourceMapId = Party.CurrentMapId;
+            SetMap(location.MapId, null, location.Position);
+            RecordVisitedLocation(location.MapId, location.Position);
+            NotifySaveLoaded();
+            SaveAfterMapTransitionIfNeeded(sourceMapId, Party.CurrentMapId);
+            return caster.Name + " casts " + spell.Name + ".";
+        }
+
+        public string UseOutsideItem(Hero source, ItemInstance item)
+        {
+            EnsureInitialized();
+            EnsureItemLinked(item);
+            if (!CanUseHeroItem(source, item))
+            {
+                return "That item cannot be used.";
+            }
+
+            if (item.Item.Skill == null || item.Item.Skill.Type != SkillType.Outside)
+            {
+                return "That item cannot take you outside.";
+            }
+
+            if (Party.CurrentMapIsOverWorld)
+            {
+                return source.Name + " used " + item.Name + "\nbut you are already outside.";
+            }
+
+            var sourceMapId = Party.CurrentMapId;
+            if (Party.CurrentPosition.HasValue)
+            {
+                RecordVisitedLocation(sourceMapId, Party.CurrentPosition.Value);
+            }
+
+            SetMap("overworld", null, Party.OverWorldPosition);
+            ConsumeUsedItem(source, item);
+            MarkDirty();
+            NotifySaveLoaded();
+            SaveAfterMapTransitionIfNeeded(sourceMapId, Party.CurrentMapId);
+            return source.Name + " used " + item.Name + ".";
+        }
+
+        public string UseReturnItem(Hero source, ItemInstance item, VisitedLocation location)
+        {
+            EnsureInitialized();
+            EnsureItemLinked(item);
+            if (!CanUseHeroItem(source, item))
+            {
+                return "That item cannot be used.";
+            }
+
+            if (item.Item.Skill == null || item.Item.Skill.Type != SkillType.Return)
+            {
+                return "That item cannot return you to a known place.";
+            }
+
+            if (!Party.CurrentMapIsOverWorld)
+            {
+                return source.Name + " used " + item.Name + "\nbut you are not outside.";
+            }
+
+            if (location == null || string.IsNullOrEmpty(location.MapId))
+            {
+                return "Choose a place to return to.";
+            }
+
+            var sourceMapId = Party.CurrentMapId;
+            SetMap(location.MapId, null, location.Position);
+            RecordVisitedLocation(location.MapId, location.Position);
+            ConsumeUsedItem(source, item);
+            MarkDirty();
+            NotifySaveLoaded();
+            SaveAfterMapTransitionIfNeeded(sourceMapId, Party.CurrentMapId);
+            return source.Name + " used " + item.Name + ".";
+        }
+
         public Item GetCustomItem(string itemId)
         {
             Item item;
@@ -1697,6 +1894,18 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             spell.Setup(DungeonEscapeGameDataCache.Current.Skills);
+        }
+
+        private bool SpendSpellCost(Hero caster, Spell spell)
+        {
+            if (caster == null || spell == null || caster.Magic < spell.Cost)
+            {
+                return false;
+            }
+
+            caster.Magic -= spell.Cost;
+            MarkDirty();
+            return true;
         }
 
         private void ConsumeUsedItem(Hero source, ItemInstance item)
@@ -2681,6 +2890,43 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 Debug.LogWarning("Failed to archive unsupported save file from " + path + ": " + exception.Message);
             }
+        }
+
+        private void NotifySaveLoaded()
+        {
+            if (SaveLoaded != null)
+            {
+                SaveLoaded(CurrentSave);
+            }
+        }
+
+        private void EnsureVisitedLocations()
+        {
+            if (Party.VisitedLocations == null)
+            {
+                Party.VisitedLocations = new List<VisitedLocation>();
+            }
+        }
+
+        private static string FormatLocationName(string mapId)
+        {
+            if (string.IsNullOrEmpty(mapId))
+            {
+                return "Unknown";
+            }
+
+            var name = mapId.Replace('\\', '/');
+            var slashIndex = name.LastIndexOf('/');
+            if (slashIndex >= 0 && slashIndex < name.Length - 1)
+            {
+                name = name.Substring(slashIndex + 1);
+            }
+
+            return string.Join(
+                " ",
+                name.Split(new[] { '_', '-' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(part => part.Length == 0 ? part : char.ToUpperInvariant(part[0]) + part.Substring(1))
+                    .ToArray());
         }
 
         private static string SanitizeFileName(string value)

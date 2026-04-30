@@ -344,3 +344,24 @@ Status: Pending
 - Expected: a transition save occurs after the destination map and final player position are applied.
 - Warp from a town, dungeon, or other map back to the overworld.
 - Expected: a transition save occurs after the party reaches the overworld.
+
+## Outside And Return Skills
+
+Status: Pending
+
+- Get access to the `Outside` spell on a party member.
+- Enter a non-overworld map, then open the party menu and cast `Outside`.
+- Expected: no party member target picker appears.
+- Expected: the party is warped to the last remembered overworld position.
+- Expected: the previous non-overworld map is added to the return location list.
+- Try casting `Outside` while already on the overworld.
+- Expected: the spell is disabled, or if triggered directly, it reports that the party is already outside.
+- Visit multiple non-overworld locations from the overworld.
+- Return to the overworld and cast `Return`.
+- Expected: the user is shown a list of visited locations.
+- Select one location.
+- Expected: the party is transported to that map and the remembered location on that map.
+- Try casting `Return` while not on the overworld.
+- Expected: the spell is disabled, or if triggered directly, it reports that Return can only be used outside.
+- Use a `Wings` item from the inventory on the overworld after visiting at least one return location.
+- Expected: the same visited-location picker appears, and selecting a location consumes the item and transports the party.

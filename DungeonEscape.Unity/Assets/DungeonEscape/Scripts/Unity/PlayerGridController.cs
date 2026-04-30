@@ -486,6 +486,7 @@ namespace Redpoint.DungeonEscape.Unity
 
                 if (gameState != null)
                 {
+                    gameState.RecordVisitedLocation(targetMapId, position);
                     gameState.SaveAfterMapTransitionIfNeeded(sourceMapId, targetMapId);
                 }
             }

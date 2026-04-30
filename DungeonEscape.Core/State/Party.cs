@@ -12,6 +12,7 @@ namespace Redpoint.DungeonEscape.State
         public WorldPosition OverWorldPosition { get; set; }
         public WorldPosition? SavedPoint { get; set; }
         public string SavedMapId { get; set; }
+        public List<VisitedLocation> VisitedLocations { get; set; }
 
         [JsonIgnore]
         public bool HasShip
@@ -62,6 +63,7 @@ namespace Redpoint.DungeonEscape.State
             CurrentDirection = Direction.Down;
             Members = new List<Hero>();
             ActiveQuests = new List<ActiveQuest>();
+            VisitedLocations = new List<VisitedLocation>();
         }
 
         public ItemInstance GetItem(string itemId)

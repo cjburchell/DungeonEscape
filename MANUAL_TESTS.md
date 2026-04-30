@@ -62,6 +62,8 @@ Status: Done
 - Expected: no major hitching from layer parsing, and scrolling should be at least as smooth as before.
 - Hold sprint while moving across viewport edges horizontally and vertically.
 - Expected: player animation and viewport scrolling stay in sync without visible stutter from mismatched movement/scroll timing.
+- Open Settings > General and adjust Turn Delay.
+- Expected: changing direction only turns first, then moves after the configured delay; moving while already facing that direction has no extra turn delay.
 
 ### Save And Load
 

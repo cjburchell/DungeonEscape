@@ -15,6 +15,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private const float InitialNavigationRepeatDelay = 0.35f;
         private const float NavigationRepeatDelay = 0.12f;
+        private const int TitleGuiDepth = -3000;
 
         private static bool isOpen;
 
@@ -37,15 +38,47 @@ namespace Redpoint.DungeonEscape.Unity
             get { return isOpen; }
         }
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState()
+        {
+            isOpen = false;
+        }
+
+        private void Awake()
+        {
+            OpenAtStartup();
+        }
+
         private void Start()
         {
-            isOpen = true;
+            OpenAtStartup();
             EnsureReferences();
+        }
+
+        private void OpenAtStartup()
+        {
+            if (DungeonEscapeSettingsCache.Current.SkipSplashAndLoadQuickSave)
+            {
+                return;
+            }
+
+            if (isOpen)
+            {
+                return;
+            }
+
+            isOpen = true;
+            mode = TitleMode.Main;
         }
 
         private void Update()
         {
             if (!isOpen)
+            {
+                return;
+            }
+
+            if (DungeonEscapeSplashScreen.IsVisible)
             {
                 return;
             }
@@ -79,11 +112,21 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
+            if (DungeonEscapeSplashScreen.IsVisible)
+            {
+                return;
+            }
+
             EnsureReferences();
             EnsureStyles();
 
             var previousDepth = GUI.depth;
-            GUI.depth = -1000;
+            var previousColor = GUI.color;
+            GUI.depth = TitleGuiDepth;
+            GUI.color = Color.black;
+            GUI.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), Texture2D.whiteTexture);
+            GUI.color = previousColor;
+
             var scale = GetPixelScale();
             var width = Mathf.Min(Screen.width - 32f * scale, 620f * scale);
             var height = mode == TitleMode.Load

@@ -10,6 +10,7 @@
   "TurnMoveDelaySeconds": 0.12,
   "AutoSaveEnabled": true,
   "AutoSaveIntervalSeconds": 5.0,
+  "SkipSplashAndLoadQuickSave": false,
   "ShowHiddenObjects": false,
   "UiBackgroundColor": "#000000",
   "UiBackgroundAlpha": 1.0,

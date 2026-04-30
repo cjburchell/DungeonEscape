@@ -30,6 +30,7 @@ namespace Redpoint.DungeonEscape
         public float TurnMoveDelaySeconds { get; set; } = 0.12f;
         public bool AutoSaveEnabled { get; set; } = true;
         public float AutoSaveIntervalSeconds { get; set; } = 5f;
+        public bool SkipSplashAndLoadQuickSave { get; set; }
         public bool ShowHiddenObjects { get; set; }
         public string UiBackgroundColor { get; set; } = "#000000";
         public float UiBackgroundAlpha { get; set; } = 1f;

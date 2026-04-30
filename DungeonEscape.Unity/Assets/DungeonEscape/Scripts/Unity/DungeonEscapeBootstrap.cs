@@ -121,7 +121,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (string.IsNullOrEmpty(text) && !string.IsNullOrEmpty(assetPath))
             {
-                var fullPath = Path.Combine(Application.dataPath, assetPath.Replace("Assets/", ""));
+                var fullPath = UnityAssetPath.ToRuntimePath(assetPath);
                 if (File.Exists(fullPath))
                 {
                     text = File.ReadAllText(fullPath);
@@ -207,12 +207,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private static string ToFullAssetPath(string assetPath)
         {
-            if (string.IsNullOrEmpty(assetPath))
-            {
-                return null;
-            }
-
-            return Path.Combine(Application.dataPath, assetPath.Replace("Assets/", ""));
+            return UnityAssetPath.ToRuntimePath(assetPath);
         }
 
         private static void EnsureCamera()

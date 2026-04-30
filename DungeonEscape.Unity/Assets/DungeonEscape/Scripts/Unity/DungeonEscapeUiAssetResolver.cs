@@ -160,7 +160,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private static string ToFullAssetPath(string assetPath)
         {
-            return Path.Combine(Application.dataPath, assetPath.Replace("Assets/", ""));
+            return UnityAssetPath.ToRuntimePath(assetPath);
         }
     }
 }

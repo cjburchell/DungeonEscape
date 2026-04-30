@@ -24,6 +24,8 @@ DungeonEscape.Unity/Build/
 DungeonEscape.Unity/Builds/
 DungeonEscape.Unity/MemoryCaptures/
 DungeonEscape.Unity/Recordings/
+DungeonEscape.Unity/Assets/StreamingAssets/
+DungeonEscape.Unity/Assets/StreamingAssets.meta
 
 # Keep Unity package manifests versioned even though the legacy root packages folder is ignored.
 !DungeonEscape.Unity/Packages/

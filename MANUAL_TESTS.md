@@ -273,3 +273,17 @@ Status: Done
 - Expected: the pickup does not open and the message says the party is not experienced enough.
 - Raise the party level or test with a lower-level object.
 - Expected: the same object can be opened or picked up when a living active member meets the required level.
+
+## Unity Build And Run
+
+Status: Done
+
+- Open Unity and wait for scripts to finish compiling.
+- Open `File > Build Settings`.
+- Expected: `Assets/DungeonEscape/Scenes/Boot.unity` is listed and checked.
+- Use `File > Build And Run`.
+- Expected: the built Windows player opens to the same map view as Play Mode, not only the debug window.
+- Expected: terrain, objects, NPC sprites, player sprites, item icons, and UI images are visible.
+- Move, warp to another map, and open the inventory.
+- Expected: map TMX files, TSX files, tileset images, character images, and item images continue loading in the built player.
+- Result: Confirmed. `File > Build And Run` renders the map correctly outside the editor.

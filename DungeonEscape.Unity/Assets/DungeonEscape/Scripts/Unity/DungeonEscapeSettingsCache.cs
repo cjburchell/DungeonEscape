@@ -100,7 +100,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private static Settings LoadDefaultSettings()
         {
-            var path = Path.Combine(Application.dataPath, DefaultSettingsAssetPath.Replace("Assets/", ""));
+            var path = UnityAssetPath.ToRuntimePath(DefaultSettingsAssetPath);
             if (!File.Exists(path))
             {
                 return null;

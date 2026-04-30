@@ -163,6 +163,7 @@ Status: In progress
 - Done: Add GitLab CI pipeline for solution restore/build/test.
 - Done: Add Unity project validation to CI by default. Disable with `UNITY_CI_ENABLED=false` if needed.
 - Done: Add Unity Windows artifact build to CI by default. Disable with `UNITY_BUILD_WINDOWS_ENABLED=false`; output is stored as a downloadable GitLab artifact.
+- Done: Stage runtime map, tileset, image, and data files into `StreamingAssets` during Unity builds.
 - Pending: Expand shared core unit tests beyond level-up and skill/spell progression.
 - Pending: Add Unity-side edit mode tests for map loading, hidden item conditions, and save/load behavior.
 - Pending: Add regression tests for quest dialog actions and item rewards.
@@ -178,8 +179,9 @@ Status: In progress
 - Done: Shared `DungeonEscape.Core` project created.
 - Done: Initial portable state/core migration.
 - Done: Temporary test-map debug screen removed.
+- Done: `Boot.unity` added to Unity Build Settings.
+- Done: Built player runtime asset paths now resolve through `StreamingAssets`.
+- Done: Confirmed File > Build And Run renders the map correctly outside the editor.
 - Pending: Replace remaining runtime filesystem asset loading with Unity-native asset references where appropriate.
-- Pending: Confirm build settings.
-- Pending: Confirm scenes included in build.
 - Pending: Remove remaining temporary/debug code when no longer needed.
 - Pending: Decide whether old developer/debug console commands should be recreated with Unity tooling.

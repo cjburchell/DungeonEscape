@@ -610,6 +610,12 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
+            if (spell.Type == SkillType.Open)
+            {
+                ShowPartyMessage(CastSpellOnFacingObject(caster, spell));
+                return;
+            }
+
             switch (spell.Targets)
             {
                 case Target.Group:
@@ -982,6 +988,13 @@ namespace Redpoint.DungeonEscape.Unity
             if (item.Item != null && item.Item.Skill != null && item.Item.Skill.Type == SkillType.Return)
             {
                 ShowReturnLocationPicker(hero, item);
+                return;
+            }
+
+            if (item.Item != null && item.Item.Skill != null && item.Item.Skill.Type == SkillType.Open)
+            {
+                ShowInventoryMessage(UseItemOnFacingObject(hero, item));
+                selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
                 return;
             }
 

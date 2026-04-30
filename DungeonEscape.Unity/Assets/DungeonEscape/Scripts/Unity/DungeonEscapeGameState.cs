@@ -593,6 +593,17 @@ namespace Redpoint.DungeonEscape.Unity
                 return "The door is already open.";
             }
 
+            if (!IsLockedMapObject(mapObject))
+            {
+                objectState.Name = mapObject.Name;
+                objectState.Type = SpriteType.Door;
+                objectState.Level = GetIntProperty(mapObject, "DoorLevel");
+                objectState.IsOpen = true;
+                objectState.Collideable = false;
+                MarkDirty();
+                return "The door opened.";
+            }
+
             if (!CanOpenWithKey(mapObject))
             {
                 return "The door is locked.";
@@ -613,6 +624,62 @@ namespace Redpoint.DungeonEscape.Unity
             objectState.Collideable = false;
             MarkDirty();
             return keyOwner.Name + " used " + key.Name + ".\nThe door opened.";
+        }
+
+        public string OpenMapObject(TiledObjectInfo mapObject)
+        {
+            EnsureInitialized();
+            if (mapObject == null)
+            {
+                return "There is nothing there.";
+            }
+
+            if (IsDoorObject(mapObject))
+            {
+                return OpenDoor(mapObject);
+            }
+
+            if (IsChestObject(mapObject))
+            {
+                return OpenChest(mapObject);
+            }
+
+            return "This cannot be opened.";
+        }
+
+        public string OpenChest(TiledObjectInfo mapObject)
+        {
+            EnsureInitialized();
+            if (mapObject == null)
+            {
+                return "";
+            }
+
+            var objectState = GetObjectState(Party.CurrentMapId, mapObject.Id, true);
+            if (objectState.IsOpen == true)
+            {
+                return "You found nothing.";
+            }
+
+            if (!IsLockedMapObject(mapObject))
+            {
+                return PickupMapObject(mapObject);
+            }
+
+            if (!CanOpenWithKey(mapObject))
+            {
+                return "The chest is locked.";
+            }
+
+            var chestLevel = GetMapPickupLevel(mapObject);
+            ItemInstance key;
+            Hero keyOwner;
+            if (!TryFindMapObjectKey(mapObject, chestLevel, out key, out keyOwner))
+            {
+                return "You do not have a key for this chest.";
+            }
+
+            return keyOwner.Name + " used " + key.Name + ".\n" + PickupMapObject(mapObject);
         }
 
         public bool TryGetObjectPosition(string mapId, int objectId, out WorldPosition position)
@@ -1822,8 +1889,10 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (item.Item.IsKey || item.Item.Skill != null && item.Item.Skill.Type == SkillType.Open)
             {
-                var result = OpenDoor(mapObject);
-                if (result.IndexOf("opened", StringComparison.OrdinalIgnoreCase) >= 0)
+                var wasOpen = IsObjectOpen(Party.CurrentMapId, mapObject.Id);
+                var wasLocked = IsLockedMapObject(mapObject);
+                var result = OpenMapObject(mapObject);
+                if (wasLocked && !wasOpen && IsObjectOpen(Party.CurrentMapId, mapObject.Id))
                 {
                     ConsumeUsedItem(source, item);
                     MarkDirty();
@@ -1865,7 +1934,7 @@ namespace Redpoint.DungeonEscape.Unity
                 }
 
                 caster.Magic -= spell.Cost;
-                var result = OpenDoor(mapObject);
+                var result = OpenMapObject(mapObject);
                 MarkDirty();
                 return caster.Name + " casts " + spell.Name + ".\n" + result;
             }
@@ -2025,7 +2094,7 @@ namespace Redpoint.DungeonEscape.Unity
             return GetIntProperty(mapObject, propertyName, 0);
         }
 
-        private bool TryFindDoorKey(TiledObjectInfo mapObject, int doorLevel, out ItemInstance key, out Hero keyOwner)
+        private bool TryFindMapObjectKey(TiledObjectInfo mapObject, int keyLevel, out ItemInstance key, out Hero keyOwner)
         {
             key = null;
             keyOwner = null;
@@ -2048,7 +2117,7 @@ namespace Redpoint.DungeonEscape.Unity
 
                 foreach (var item in member.Items)
                 {
-                    if (item == null || item.Item == null || !IsDoorKey(item, doorLevel))
+                    if (item == null || item.Item == null || !IsMapObjectKey(item, keyLevel))
                     {
                         continue;
                     }
@@ -2067,11 +2136,16 @@ namespace Redpoint.DungeonEscape.Unity
             return false;
         }
 
-        private static bool IsDoorKey(ItemInstance item, int doorLevel)
+        private bool TryFindDoorKey(TiledObjectInfo mapObject, int doorLevel, out ItemInstance key, out Hero keyOwner)
+        {
+            return TryFindMapObjectKey(mapObject, doorLevel, out key, out keyOwner);
+        }
+
+        private static bool IsMapObjectKey(ItemInstance item, int keyLevel)
         {
             return item != null &&
                    item.Item != null &&
-                   item.MinLevel == doorLevel &&
+                   item.MinLevel == keyLevel &&
                    (item.Item.IsKey || string.Equals(item.Item.SkillId, "Open", StringComparison.OrdinalIgnoreCase));
         }
 
@@ -2090,6 +2164,22 @@ namespace Redpoint.DungeonEscape.Unity
             return mapObject.Properties == null ||
                    !mapObject.Properties.TryGetValue("OpenWithKey", out value) ||
                    IsTrue(value);
+        }
+
+        private static bool IsLockedMapObject(TiledObjectInfo mapObject)
+        {
+            if (mapObject == null)
+            {
+                return false;
+            }
+
+            string value;
+            if (mapObject.Properties != null && mapObject.Properties.TryGetValue("Locked", out value))
+            {
+                return IsTrue(value);
+            }
+
+            return IsDoorObject(mapObject);
         }
 
         private static bool IsTrue(string value)
@@ -2171,6 +2261,12 @@ namespace Redpoint.DungeonEscape.Unity
         {
             return mapObject != null &&
                    string.Equals(mapObject.Class, "Door", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsChestObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   string.Equals(mapObject.Class, "Chest", StringComparison.OrdinalIgnoreCase);
         }
 
         private static SpriteType GetSpriteType(TiledObjectInfo mapObject)

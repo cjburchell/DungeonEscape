@@ -83,6 +83,7 @@ Status: Done
 - Done: Hidden object debug rendering is controlled by settings.
 - Done: Doors and open-door actions.
 - Done: Direct door interaction uses matching party keys.
+- Done: Doors can be explicitly unlocked with `Locked=false`; unlocked doors open without a key.
 - Done: Opened doors stop blocking movement and are hidden from the map.
 - Done: NPC heal behavior.
 - Done: NPC store buy/sell behavior.
@@ -93,6 +94,8 @@ Status: Done
 - Done: Store parity with old map stores: support `NpcKey`, fixed `Items`, persistent generated inventory, `WillBuyItems`, item removal after buy, and old sell-price behavior.
 - Done: Healer parity with old healers: paid heal one, heal all, renew magic, cure status, and revive options based on healer `Cost`.
 - Done: Object-target item/spell actions, especially old `Target.Object` behavior for using map-facing skills/items on nearby objects.
+- Done: `Open` skill/items use the object the player is facing directly, without party-member targeting, and can open doors or chests.
+- Done: Chests support optional locking with `Locked=true`; current chests remain unlocked by default.
 - Done: Chest and hidden-item level gating parity with old `Party.CanOpenChest(level)` behavior.
 - Done: Old cart follower visual migrated. The cart appears behind the party on the overworld when reserve party members exist, and hides while on water.
 - Done: Manual Unity play-test pass for store, healer, object-target use, and level-gated pickups.

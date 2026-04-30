@@ -105,6 +105,9 @@ Status: Done
 
 Status: Done
 
+- Add or find a door with `Locked=false`.
+- Stand next to it, face it, and press interact.
+- Expected: the door opens without requiring a key.
 - Load a map with key-locked doors, such as `towns/walled`, `tunnel/area1`, or `island_tower/floor1`.
 - Stand next to a closed door without a matching key and press interact.
 - Expected: a message says the party does not have a key for the door, and the door stays closed.
@@ -118,6 +121,22 @@ Status: Done
 - Expected: the message says the door is locked and the door does not open.
 - Complete the old man's key handoff.
 - Expected: the old man's dialog opens the ship door.
+
+## Locked And Unlocked Chests
+
+Status: Done
+
+- Open an existing chest that does not define `Locked`.
+- Expected: the chest opens without a key, matching existing chest behavior.
+- Add or find a chest with `Locked=false`.
+- Expected: the chest opens without a key.
+- Add or find a chest with `Locked=true` and `ChestLevel=0`.
+- Stand next to it without a level-0 key item and press interact.
+- Expected: the chest stays closed and says the party does not have a key for the chest.
+- Give the party an `Iron Key`, stand next to the same chest, and press interact.
+- Expected: the chest opens and gives its normal persisted contents.
+- Add or find a chest with `Locked=true` and `KeyItemId` set to a specific key item.
+- Expected: only that key item opens the chest.
 
 ## Ship Over Water Visual
 
@@ -259,12 +278,19 @@ Status: Done
 ### Object-Target Items And Spells
 
 - Stand next to a closed door and face it.
-- Open Inventory and use a key item with `Target.Object`.
+- Open Inventory and use a key item or other item with the `Open` skill.
+- Expected: no party-member target picker appears.
 - Expected: the facing door opens, collision/rendering refreshes, and the inventory item is consumed if it is a one-use item.
 - Stand facing empty space and use the same kind of object-target item or spell.
 - Expected: the message says there is nothing there.
 - If a hero has an `Open` spell, stand next to a closed door and cast it from the Party spell list.
+- Expected: no party-member target picker appears.
 - Expected: MP is deducted, the door opens, and the map refreshes.
+- Stand next to a closed chest and face it.
+- Use the `Open` spell or an item with the `Open` skill.
+- Expected: the facing chest opens with the same contents, level-gating, and persistence behavior as pressing interact.
+- Stand facing an NPC, hidden item, warp, or other non-door/non-chest object and use `Open`.
+- Expected: the message says the object cannot be opened.
 
 ### Pickup Level Gating
 

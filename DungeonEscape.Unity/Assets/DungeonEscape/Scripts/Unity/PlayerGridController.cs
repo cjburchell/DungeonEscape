@@ -663,7 +663,9 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 var pickupMessage = gameState == null
                     ? "Cannot pick up item without game state."
-                    : gameState.PickupMapObject(mapObject);
+                    : IsChestObject(mapObject)
+                        ? gameState.OpenChest(mapObject)
+                        : gameState.PickupMapObject(mapObject);
                 if (mapView != null)
                 {
                     mapView.RefreshRender();
@@ -1149,6 +1151,12 @@ namespace Redpoint.DungeonEscape.Unity
         {
             return string.Equals(mapObject.Class, "Chest", System.StringComparison.OrdinalIgnoreCase) ||
                    string.Equals(mapObject.Class, "HiddenItem", System.StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsChestObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   string.Equals(mapObject.Class, "Chest", System.StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool IsDoorObject(TiledObjectInfo mapObject)

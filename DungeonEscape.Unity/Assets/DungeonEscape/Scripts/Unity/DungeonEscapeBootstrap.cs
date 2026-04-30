@@ -72,9 +72,23 @@ namespace Redpoint.DungeonEscape.Unity
 
             Data.Link();
             DungeonEscapeGameDataCache.Load(Data);
-            DungeonEscapeGameState.GetOrCreate();
+            var gameState = DungeonEscapeGameState.GetOrCreate();
             EnsureGameMenu();
-            EnsureTitleMenu();
+            if (Settings.SkipSplashAndLoadQuickSave)
+            {
+                if (gameState.HasQuickSave())
+                {
+                    gameState.LoadQuick();
+                }
+
+                Debug.Log("Skipping splash/title startup and loading quick save because SkipSplashAndLoadQuickSave is enabled.");
+            }
+            else
+            {
+                EnsureSplashScreen();
+                EnsureTitleMenu();
+            }
+
             ValidateTilesets(Data.TestMap, testMapAssetPath);
 
             Debug.Log("Dungeon Escape data loaded. Item definitions: " + Count(Data.ItemDefinitions) +
@@ -245,6 +259,16 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             new GameObject("DungeonEscapeTitleMenu").AddComponent<DungeonEscapeTitleMenu>();
+        }
+
+        private static void EnsureSplashScreen()
+        {
+            if (FindAnyObjectByType<DungeonEscapeSplashScreen>() != null)
+            {
+                return;
+            }
+
+            new GameObject("DungeonEscapeSplashScreen").AddComponent<DungeonEscapeSplashScreen>();
         }
     }
 }

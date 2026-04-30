@@ -27,6 +27,7 @@ namespace Redpoint.DungeonEscape
         public int MaxPartyMembers { get; set; } = 4;
         public float UiScale { get; set; } = 1f;
         public float SprintBoost { get; set; } = 1.5f;
+        public float TurnMoveDelaySeconds { get; set; } = 0.12f;
         public bool AutoSaveEnabled { get; set; } = true;
         public float AutoSaveIntervalSeconds { get; set; } = 5f;
         public bool ShowHiddenObjects { get; set; }

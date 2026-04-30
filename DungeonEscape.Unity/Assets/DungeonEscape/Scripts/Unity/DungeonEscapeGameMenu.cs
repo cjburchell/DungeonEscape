@@ -2024,7 +2024,11 @@ namespace Redpoint.DungeonEscape.Unity
                         settings.SprintBoost = Mathf.Clamp((settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost) + 0.05f * delta, 1f, 3f);
                         ApplySettings(settings);
                         break;
-                    case 3:
+                    case 2:
+                        settings.TurnMoveDelaySeconds = Mathf.Clamp(GetTurnMoveDelay(settings) + 0.01f * delta, 0f, 0.3f);
+                        ApplySettings(settings);
+                        break;
+                    case 4:
                         settings.AutoSaveIntervalSeconds = Mathf.Clamp(GetAutoSaveInterval(settings) + 5f * delta, 5f, 300f);
                         ApplySettings(settings);
                         break;
@@ -2064,7 +2068,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             var settingsRowIndex = selectedRowIndex - 1;
-            if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 2)
+            if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 3)
             {
                 settings.AutoSaveEnabled = !settings.AutoSaveEnabled;
                 ApplySettings(settings);

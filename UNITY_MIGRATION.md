@@ -158,11 +158,11 @@ Status: In progress
 
 ## 9. Build And Test Automation
 
-Status: Not started
+Status: In progress
 
-- Pending: Add GitLab CI pipeline for solution restore/build/test.
-- Pending: Add Unity project validation to CI where practical.
-- Pending: Add automated packaging/build checks for the Unity project.
+- Done: Add GitLab CI pipeline for solution restore/build/test.
+- Done: Add Unity project validation to CI by default. Disable with `UNITY_CI_ENABLED=false` if needed.
+- Done: Add Unity Windows artifact build to CI by default. Disable with `UNITY_BUILD_WINDOWS_ENABLED=false`; output is stored as a downloadable GitLab artifact.
 - Pending: Expand shared core unit tests beyond level-up and skill/spell progression.
 - Pending: Add Unity-side edit mode tests for map loading, hidden item conditions, and save/load behavior.
 - Pending: Add regression tests for quest dialog actions and item rewards.

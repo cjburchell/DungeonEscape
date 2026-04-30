@@ -43,9 +43,11 @@ Status: Done
 - Find a known damage tile area, likely swamp or damage-marked overworld tiles.
 - Note active party members' HP.
 - Step onto the damage tile.
-- Expected: active living party members lose HP and a terrain message appears.
+- Expected: active living party members lose HP and no blocking terrain dialog appears.
 - Step again.
 - Expected: damage applies once per completed step, not while standing still.
+- Continue stepping on damage tiles until a party member reaches `0` HP.
+- Expected: a terrain message appears only when a party member dies.
 
 ### Biome Tracking
 

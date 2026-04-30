@@ -203,10 +203,13 @@ namespace Redpoint.DungeonEscape.Unity
             foreach (var hero in Party.ActiveMembers.Where(member => member != null && !member.IsDead))
             {
                 hero.Health = Math.Max(0, hero.Health - damage);
-                message.AppendLine(hero.Name + " took " + damage + " damage.");
+                if (hero.IsDead)
+                {
+                    message.AppendLine(hero.Name + " has died.");
+                }
             }
 
-            if (message.Length > 0)
+            if (damage > 0)
             {
                 MarkDirty();
             }

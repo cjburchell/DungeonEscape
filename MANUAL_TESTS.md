@@ -287,3 +287,28 @@ Status: Done
 - Move, warp to another map, and open the inventory.
 - Expected: map TMX files, TSX files, tileset images, character images, and item images continue loading in the built player.
 - Result: Confirmed. `File > Build And Run` renders the map correctly outside the editor.
+
+## Title And Load Flow
+
+Status: Pending
+
+- Start Play Mode or launch a built player.
+- Expected: a `Dungeon Escape` title window appears before map controls are usable.
+- Try moving while the title window is open.
+- Expected: the player does not move.
+- If no quick save exists, inspect the Continue button.
+- Expected: Continue is disabled.
+- Choose New Game.
+- Expected: the title window closes, a fresh party starts at the map default spawn, and map controls work.
+- Save into a manual slot from the in-game Save tab, then return to the title flow by restarting Play Mode or the built player.
+- Choose Load Game.
+- Expected: manual save slots are listed with save time, level, and map.
+- Select a populated manual slot.
+- Expected: the title window closes and the saved map, position, party, inventory, quest, and object state are restored.
+- Create or wait for a quick save, then restart.
+- Choose Continue.
+- Expected: the title window closes and the quick save is loaded.
+- Use keyboard or gamepad up/down and interact on the title and load screens.
+- Expected: selection changes visibly and activates the selected command.
+- Choose Quit in a built player.
+- Expected: the player application exits.

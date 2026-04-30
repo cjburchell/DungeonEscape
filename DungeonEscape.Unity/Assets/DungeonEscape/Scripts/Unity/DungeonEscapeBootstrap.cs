@@ -74,6 +74,7 @@ namespace Redpoint.DungeonEscape.Unity
             DungeonEscapeGameDataCache.Load(Data);
             DungeonEscapeGameState.GetOrCreate();
             EnsureGameMenu();
+            EnsureTitleMenu();
             ValidateTilesets(Data.TestMap, testMapAssetPath);
 
             Debug.Log("Dungeon Escape data loaded. Item definitions: " + Count(Data.ItemDefinitions) +
@@ -234,6 +235,16 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             new GameObject("DungeonEscapeGameMenu").AddComponent<DungeonEscapeGameMenu>();
+        }
+
+        private static void EnsureTitleMenu()
+        {
+            if (FindAnyObjectByType<DungeonEscapeTitleMenu>() != null)
+            {
+                return;
+            }
+
+            new GameObject("DungeonEscapeTitleMenu").AddComponent<DungeonEscapeTitleMenu>();
         }
     }
 }

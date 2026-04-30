@@ -93,6 +93,11 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
+            if (DungeonEscapeTitleMenu.IsOpen)
+            {
+                return;
+            }
+
             if (rebindingInput != null)
             {
                 if (Time.frameCount <= rebindingStartFrame)
@@ -1370,28 +1375,17 @@ namespace Redpoint.DungeonEscape.Unity
 
         private static string GetSaveTitle(GameSave save)
         {
-            return IsUsableSave(save) ? save.Name : "Empty";
+            return DungeonEscapeGameState.GetGameSaveTitle(save);
         }
 
         private static string GetSaveSummary(GameSave save)
         {
-            if (!IsUsableSave(save))
-            {
-                return "No save data.";
-            }
-
-            var time = save.Time.HasValue ? save.Time.Value.ToString("g") : "Unknown time";
-            var level = save.Level.HasValue ? "Level " + save.Level.Value : "No level";
-            var map = save.Party == null || string.IsNullOrEmpty(save.Party.CurrentMapId) ? "Unknown map" : save.Party.CurrentMapId;
-            return time + "    " + level + "    " + map;
+            return DungeonEscapeGameState.GetGameSaveSummary(save);
         }
 
         private static bool IsUsableSave(GameSave save)
         {
-            return save != null &&
-                   save.Party != null &&
-                   !string.IsNullOrEmpty(save.Party.CurrentMapId) &&
-                   save.Party.CurrentPosition.HasValue;
+            return DungeonEscapeGameState.IsUsableGameSave(save);
         }
 
         private void DrawSettings()

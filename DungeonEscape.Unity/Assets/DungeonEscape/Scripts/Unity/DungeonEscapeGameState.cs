@@ -61,6 +61,11 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Update()
         {
+            if (DungeonEscapeTitleMenu.IsOpen)
+            {
+                return;
+            }
+
             if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.QuickSave))
             {
                 SaveQuick();
@@ -2218,14 +2223,14 @@ namespace Redpoint.DungeonEscape.Unity
             Debug.Log((autoSave ? "Auto saved to " : "Quick saved to ") + GetSaveFilePath());
         }
 
-        public void LoadQuick()
+        public bool LoadQuick()
         {
             GameFile = LoadGameFile();
             var quickSave = GetQuickSave(GameFile);
             if (!IsUsableSave(quickSave))
             {
                 Debug.LogWarning("No quick save found.");
-                return;
+                return false;
             }
 
             CurrentSave = quickSave;
@@ -2237,6 +2242,41 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 SaveLoaded(CurrentSave);
             }
+
+            return true;
+        }
+
+        public bool HasQuickSave()
+        {
+            return IsUsableSave(GetQuickSave(LoadGameFile()));
+        }
+
+        public GameSave GetQuickSaveSlot()
+        {
+            return GetQuickSave(LoadGameFile());
+        }
+
+        public static bool IsUsableGameSave(GameSave save)
+        {
+            return IsUsableSave(save);
+        }
+
+        public static string GetGameSaveTitle(GameSave save)
+        {
+            return IsUsableSave(save) ? save.Name : "Empty";
+        }
+
+        public static string GetGameSaveSummary(GameSave save)
+        {
+            if (!IsUsableSave(save))
+            {
+                return "No save data.";
+            }
+
+            var time = save.Time.HasValue ? save.Time.Value.ToString("g") : "Unknown time";
+            var level = save.Level.HasValue ? "Level " + save.Level.Value : "No level";
+            var map = save.Party == null || string.IsNullOrEmpty(save.Party.CurrentMapId) ? "Unknown map" : save.Party.CurrentMapId;
+            return time + "    " + level + "    " + map;
         }
 
         public void RestartNewGame()

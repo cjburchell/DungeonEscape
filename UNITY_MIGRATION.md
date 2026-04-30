@@ -150,8 +150,10 @@ Status: In progress
 - Done: New game reset without loading saved level.
 - Done: Autosave enabled setting.
 - Done: Autosave interval setting.
-- Pending: Main title/load game flow.
-- Pending: Create Unity equivalents for old splash/main menu/create player/continue quest flow if still wanted.
+- Done: Main title/load game flow with Continue, New Game, Load Game, and Quit.
+- Partial: Unity equivalent for old main menu/continue quest flow.
+- Pending: Decide whether to recreate old splash screen.
+- Pending: Create player flow.
 - Pending: Version migration for old saves.
 - Pending: Final autosave policy review.
 - Pending: Final transition-save policy review.

@@ -192,6 +192,11 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
+            if (DungeonEscapeTitleMenu.IsOpen)
+            {
+                return;
+            }
+
             if (DungeonEscapeStoreWindow.IsOpen)
             {
                 return;

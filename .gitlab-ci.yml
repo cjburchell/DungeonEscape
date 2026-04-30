@@ -21,6 +21,44 @@ stages:
   - test
   - package
 
+.unity-license-before-script: &unity-license-before-script
+  - mkdir -p /root/.local/share/unity3d/Unity
+  - |
+    if [ -n "$UNITY_LICENSE" ]; then
+      if [ -f "$UNITY_LICENSE" ]; then
+        tr -d '\r' < "$UNITY_LICENSE" > /root/.local/share/unity3d/Unity/Unity_lic.ulf
+      else
+        echo "$UNITY_LICENSE" | tr -d '\r' > /root/.local/share/unity3d/Unity/Unity_lic.ulf
+      fi
+      echo "Unity license file written from UNITY_LICENSE."
+    elif [ -n "$UNITY_SERIAL" ] && [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then
+      "$UNITY_EXECUTABLE" \
+        -batchmode \
+        -nographics \
+        -quit \
+        -logFile /dev/stdout \
+        -username "$UNITY_EMAIL" \
+        -password "$UNITY_PASSWORD" \
+        -serial "$UNITY_SERIAL"
+    elif [ -n "$UNITY_LICENSING_SERVER" ]; then
+      echo "UNITY_LICENSING_SERVER is configured; Unity will attempt license server activation."
+    else
+      echo "No Unity license variables configured. Set UNITY_LICENSE or UNITY_SERIAL, UNITY_EMAIL, and UNITY_PASSWORD in GitLab CI/CD variables."
+    fi
+
+.unity-license-after-script: &unity-license-after-script
+  - |
+    if [ -n "$UNITY_SERIAL" ] && [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ] && [ -z "$UNITY_LICENSE" ]; then
+      "$UNITY_EXECUTABLE" \
+        -batchmode \
+        -nographics \
+        -quit \
+        -logFile /dev/stdout \
+        -username "$UNITY_EMAIL" \
+        -password "$UNITY_PASSWORD" \
+        -returnlicense || true
+    fi
+
 cache:
   key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
   paths:
@@ -66,6 +104,7 @@ unity-validate:
       artifacts: true
   variables:
     UNITY_LOG_FILE: "$CI_PROJECT_DIR/DungeonEscape.Unity/Logs/ci-unity-validate.log"
+  before_script: *unity-license-before-script
   script:
     - mkdir -p "$CI_PROJECT_DIR/DungeonEscape.Unity/Logs"
     - >
@@ -76,6 +115,7 @@ unity-validate:
       -projectPath "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH"
       -executeMethod Redpoint.DungeonEscape.UnityEditor.UnityCiValidation.ValidateProject
       -logFile "$UNITY_LOG_FILE"
+  after_script: *unity-license-after-script
   artifacts:
     when: always
     paths:
@@ -95,6 +135,7 @@ unity-build-windows:
   variables:
     UNITY_LOG_FILE: "$CI_PROJECT_DIR/DungeonEscape.Unity/Logs/ci-unity-build-windows.log"
     UNITY_WINDOWS_BUILD_PATH: "DungeonEscape.Unity/Builds/Windows"
+  before_script: *unity-license-before-script
   script:
     - mkdir -p "$CI_PROJECT_DIR/DungeonEscape.Unity/Logs"
     - rm -rf "$CI_PROJECT_DIR/$UNITY_WINDOWS_BUILD_PATH"
@@ -106,6 +147,7 @@ unity-build-windows:
       -projectPath "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH"
       -executeMethod Redpoint.DungeonEscape.UnityEditor.UnityCiBuild.BuildWindows64
       -logFile "$UNITY_LOG_FILE"
+  after_script: *unity-license-after-script
   artifacts:
     when: on_success
     expire_in: 1 week

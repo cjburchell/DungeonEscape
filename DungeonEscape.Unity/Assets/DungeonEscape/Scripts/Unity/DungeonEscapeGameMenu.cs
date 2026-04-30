@@ -1459,6 +1459,10 @@ namespace Redpoint.DungeonEscape.Unity
             EndSelectableRow();
             GUILayout.Space(8f * GetPixelScale());
             BeginSelectableRow();
+            settings.TurnMoveDelaySeconds = DrawSliderRow("Turn Delay: " + GetTurnMoveDelay(settings).ToString("0.00") + " seconds", GetTurnMoveDelay(settings), 0f, 0.3f);
+            EndSelectableRow();
+            GUILayout.Space(8f * GetPixelScale());
+            BeginSelectableRow();
             settings.AutoSaveEnabled = DrawCheckboxRow(settings.AutoSaveEnabled, "Autosave enabled");
             EndSelectableRow();
             BeginSelectableRow();
@@ -1526,6 +1530,11 @@ namespace Redpoint.DungeonEscape.Unity
         private static float GetAutoSaveInterval(Settings settings)
         {
             return settings.AutoSaveIntervalSeconds <= 0f ? 5f : settings.AutoSaveIntervalSeconds;
+        }
+
+        private static float GetTurnMoveDelay(Settings settings)
+        {
+            return Mathf.Clamp(settings.TurnMoveDelaySeconds, 0f, 0.3f);
         }
 
         private void DrawInputBindings()
@@ -1761,7 +1770,7 @@ namespace Redpoint.DungeonEscape.Unity
             switch (currentSettingsTab)
             {
                 case SettingsTab.General:
-                    return 5;
+                    return 6;
                 case SettingsTab.Ui:
                     return 9;
                 case SettingsTab.Input:

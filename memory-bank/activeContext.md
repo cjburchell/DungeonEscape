@@ -10,6 +10,9 @@ The migration is past the first playable Unity map-mode loop. Recent work focuse
 - Chests support `Locked=true`; current chests are explicitly `Locked=false`.
 - Doors are explicitly `Locked=true` unless intended to be unlocked.
 - Unity TMX object metadata is normalized to `class="..."`; object `type="..."` should not be used.
+- Startup now shows the old splash image before the title menu.
+- Splash/title UI draws on a black backdrop so the map is not visible until gameplay starts.
+- Hidden `SkipSplashAndLoadQuickSave` can be enabled in the settings file for fast Play Mode testing.
 
 ## Important Current Constraint
 
@@ -26,6 +29,7 @@ Do not modify files under the old `DungeonEscape/` project unless explicitly req
 - `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/DungeonEscapeGameMenu.cs`
 - `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/DungeonEscapeGameState.cs`
 - `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/PlayerGridController.cs`
+- `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/DungeonEscapeTitleMenu.cs`
 - `DungeonEscape.sln`
 - `memory-bank/MANUAL_TESTS.md`
 - `memory-bank/UNITY_MIGRATION.md`

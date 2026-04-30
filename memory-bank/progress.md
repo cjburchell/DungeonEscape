@@ -15,6 +15,8 @@
 - Implemented party, inventory, quest, settings, save, store, healer, title/load UI.
 - Implemented configurable UI scale/style and gamepad/keyboard input rebinding.
 - Implemented `Outside`, `Return`, `Wings`, and `Open` map-mode behavior.
+- Recreated the old splash screen in Unity and hid the map behind a black startup/title backdrop.
+- Added hidden fast-start setting to skip splash/title and load the quick save for testing.
 - Added GitLab CI solution build/test and Unity validation/build artifact support.
 - Added memory-bank docs.
 - Removed the old `DungeonEscape.Test` project from the solution; migration tests should live in `DungeonEscape.Core.Test` or future Unity test assemblies.

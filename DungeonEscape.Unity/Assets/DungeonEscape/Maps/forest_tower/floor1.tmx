@@ -1,22 +1,22 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="35" height="35" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="5">
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.11" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="35" height="35" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="5">
+ <properties>
+  <property name="biome" value="Tower"/>
+  <property name="song" value="like-totally-rad"/>
+ </properties>
+ <tileset firstgid="1" source="../../Tilesets/npc.tsx"/>
+ <tileset firstgid="222" source="../../Tilesets/indoor.tsx"/>
+ <tileset firstgid="702" source="../../Tilesets/tower.tsx"/>
+ <tileset firstgid="1182" source="../../Tilesets/outdoors.tsx"/>
+ <tileset firstgid="1662" source="../../Tilesets/town.tsx"/>
+ <tileset firstgid="2142" source="../../Tilesets/castle.tsx"/>
+ <tileset firstgid="2622" source="../../Tilesets/tiles_small.tsx"/>
+ <layer id="2" name="water" width="35" height="35">
   <properties>
-    <property name="biome" value="Tower" />
-    <property name="song" value="like-totally-rad" />
+   <property name="Collideable" type="bool" value="true"/>
+   <property name="Water" type="bool" value="true"/>
   </properties>
-  <tileset firstgid="1" source="../../Tilesets/npc.tsx" />
-  <tileset firstgid="222" source="../../Tilesets/indoor.tsx" />
-  <tileset firstgid="702" source="../../Tilesets/tower.tsx" />
-  <tileset firstgid="1182" source="../../Tilesets/outdoors.tsx" />
-  <tileset firstgid="1662" source="../../Tilesets/town.tsx" />
-  <tileset firstgid="2142" source="../../Tilesets/castle.tsx" />
-  <tileset firstgid="2622" source="../../Tilesets/tiles_small.tsx" />
-  <layer id="2" name="water" width="35" height="35">
-    <properties>
-      <property name="Collideable" type="bool" value="true" />
-      <property name="Water" type="bool" value="true" />
-    </properties>
-    <data encoding="csv">
+  <data encoding="csv">
 2142,2142,2142,2142,2142,2142,2142,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 2142,2142,2142,2142,2142,2142,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 2142,2142,2142,2142,1662,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -53,9 +53,9 @@
 2142,2142,2142,2142,2142,2142,2142,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 2142,2142,2142,2142,2142,2142,2142,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-  </layer>
-  <layer id="1" name="floor" width="35" height="35">
-    <data encoding="csv">
+ </layer>
+ <layer id="1" name="floor" width="35" height="35">
+  <data encoding="csv">
 0,0,0,0,0,0,1901,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,
 0,0,0,0,1900,1901,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,
 0,0,0,1923,1841,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,
@@ -92,9 +92,9 @@
 0,0,0,0,0,0,1391,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,
 0,0,0,0,0,0,1391,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232,232
 </data>
-  </layer>
-  <layer id="1" name="floor2" width="35" height="35">
-    <data encoding="csv">
+ </layer>
+ <layer id="1" name="floor2" width="35" height="35">
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -131,12 +131,12 @@
 0,0,0,0,0,0,0,0,0,2550,2551,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2550,2551,0,2550,2551,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-  </layer>
-  <layer id="3" name="wall" width="35" height="35">
-    <properties>
-      <property name="Collideable" type="bool" value="true" />
-    </properties>
-    <data encoding="csv">
+ </layer>
+ <layer id="3" name="wall" width="35" height="35">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+  </properties>
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -173,9 +173,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-  </layer>
-  <layer id="2" name="ceiling" width="35" height="35">
-    <data encoding="csv">
+ </layer>
+ <layer id="2" name="ceiling" width="35" height="35">
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -212,67 +212,67 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-  </layer>
-  <objectgroup id="4" name="items">
-    <object id="29" name="Stairs up to 40" class="Warp" gid="2147486384" x="448" y="480" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="SpawnId" value="spawn1" />
-        <property name="WarpMap" value="maps/forest_tower/floor2" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="30" name="Stairs up to 40" class="Warp" gid="2147486384" x="736" y="608" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="SpawnId" value="spawn3" />
-        <property name="WarpMap" value="maps/forest_tower/floor2" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="31" name="Stairs up to 40" class="Warp" gid="2736" x="448" y="736" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="SpawnId" value="spawn2" />
-        <property name="WarpMap" value="maps/forest_tower/floor2" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="35" name="Exit 0" class="Warp" x="768" y="896" width="32" height="160">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="WarpMap" value="maps/overworld" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="80" name="Exit 0" class="Warp" x="384" y="1056" width="416" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="WarpMap" value="maps/overworld" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="81" name="Exit 0" class="Warp" x="384" y="896" width="32" height="160">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="WarpMap" value="maps/overworld" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-  </objectgroup>
-  <objectgroup id="5" name="sprites">
-    <properties>
-      <property name="RenderRole" value="Sprites" />
-    </properties>
-  </objectgroup>
-  <objectgroup id="6" name="objects">
-    <object id="1" name="spawn" class="Spawn" x="544" y="960" width="32" height="32">
-      <properties>
-        <property name="DefaultSpawn" type="bool" value="true" />
-      </properties>
-    </object>
-    <object id="2" name="spawn3" class="Spawn" x="416" y="704" width="32" height="32" />
-    <object id="3" name="spawn2" class="Spawn" x="768" y="576" width="32" height="32" />
-    <object id="4" name="spawn1" class="Spawn" x="480" y="448" width="32" height="32" />
-  </objectgroup>
+ </layer>
+ <objectgroup id="4" name="items">
+  <object id="29" name="Stairs up to 40" class="Warp" gid="2147486384" x="448" y="480" width="32" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="false"/>
+    <property name="MoveRadius" type="int" value="0"/>
+    <property name="SpawnId" value="spawn1"/>
+    <property name="WarpMap" value="maps/forest_tower/floor2"/>
+   </properties>
+  </object>
+  <object id="30" name="Stairs up to 40" class="Warp" gid="2147486384" x="736" y="608" width="32" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="false"/>
+    <property name="MoveRadius" type="int" value="0"/>
+    <property name="SpawnId" value="spawn3"/>
+    <property name="WarpMap" value="maps/forest_tower/floor2"/>
+   </properties>
+  </object>
+  <object id="31" name="Stairs up to 40" class="Warp" gid="2736" x="448" y="736" width="32" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="false"/>
+    <property name="MoveRadius" type="int" value="0"/>
+    <property name="SpawnId" value="spawn2"/>
+    <property name="WarpMap" value="maps/forest_tower/floor2"/>
+   </properties>
+  </object>
+  <object id="35" name="Exit 0" class="Warp" x="768" y="896" width="32" height="160">
+   <properties>
+    <property name="Collideable" type="bool" value="false"/>
+    <property name="MoveRadius" type="int" value="0"/>
+    <property name="WarpMap" value="maps/overworld"/>
+   </properties>
+  </object>
+  <object id="80" name="Exit 0" class="Warp" x="384" y="1056" width="416" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="false"/>
+    <property name="MoveRadius" type="int" value="0"/>
+    <property name="WarpMap" value="maps/overworld"/>
+   </properties>
+  </object>
+  <object id="81" name="Exit 0" class="Warp" x="384" y="896" width="32" height="160">
+   <properties>
+    <property name="Collideable" type="bool" value="false"/>
+    <property name="MoveRadius" type="int" value="0"/>
+    <property name="WarpMap" value="maps/overworld"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="5" name="sprites">
+  <properties>
+   <property name="RenderRole" value="Sprites"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="6" name="objects">
+  <object id="1" name="spawn" class="Spawn" x="544" y="960" width="32" height="32">
+   <properties>
+    <property name="DefaultSpawn" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="2" name="spawn3" class="Spawn" x="416" y="704" width="32" height="32"/>
+  <object id="3" name="spawn2" class="Spawn" x="768" y="576" width="32" height="32"/>
+  <object id="4" name="spawn1" class="Spawn" x="480" y="448" width="32" height="32"/>
+ </objectgroup>
 </map>

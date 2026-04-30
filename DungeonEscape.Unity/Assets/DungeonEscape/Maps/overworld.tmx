@@ -1020,98 +1020,98 @@
 </data>
  </layer>
  <objectgroup id="5" name="items">
-  <object id="1" name="Shrine 15" type="Warp" gid="205" x="3360" y="256" width="32" height="32">
+  <object id="1" name="Shrine 15" class="Warp" gid="205" x="3360" y="256" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="WarpMap" value="maps/shrine/ice"/>
    </properties>
   </object>
-  <object id="2" name="Shrine 14" type="Warp" gid="205" x="512" y="416" width="32" height="32">
+  <object id="2" name="Shrine 14" class="Warp" gid="205" x="512" y="416" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="WarpMap" value="maps/shrine/first"/>
    </properties>
   </object>
-  <object id="3" name="Tower 24" type="Warp" gid="205" x="2368" y="640" width="32" height="32">
+  <object id="3" name="Tower 24" class="Warp" gid="205" x="2368" y="640" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="WarpMap" value="maps/island_tower/floor1"/>
    </properties>
   </object>
-  <object id="4" name="Castle 6" type="Warp" gid="205" x="928" y="768" width="32" height="32">
+  <object id="4" name="Castle 6" class="Warp" gid="205" x="928" y="768" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="WarpMap" value="maps/towns/isis"/>
    </properties>
   </object>
-  <object id="5" name="Cave 19" type="Warp" gid="205" x="608" y="1120" width="32" height="32">
+  <object id="5" name="Cave 19" class="Warp" gid="205" x="608" y="1120" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="WarpMap" value="maps/dungeon/first"/>
    </properties>
   </object>
-  <object id="6" name="Tower 25" type="Warp" gid="205" x="3072" y="1120" width="32" height="32">
+  <object id="6" name="Tower 25" class="Warp" gid="205" x="3072" y="1120" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="WarpMap" value="maps/forest_tower/floor1"/>
    </properties>
   </object>
-  <object id="7" name="Shrine 13" type="Warp" gid="205" x="1760" y="1280" width="32" height="32">
+  <object id="7" name="Shrine 13" class="Warp" gid="205" x="1760" y="1280" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="WarpMap" value="maps/shrine/heal"/>
    </properties>
   </object>
-  <object id="8" name="Town 7" type="Warp" gid="236" x="160" y="1312" width="32" height="32">
+  <object id="8" name="Town 7" class="Warp" gid="236" x="160" y="1312" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="WarpMap" value="maps/towns/coast"/>
    </properties>
   </object>
-  <object id="9" name="Castle 10" type="Warp" gid="205" x="3296" y="2048" width="32" height="32">
+  <object id="9" name="Castle 10" class="Warp" gid="205" x="3296" y="2048" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="WarpMap" value="maps/towns/walled"/>
    </properties>
   </object>
-  <object id="10" name="Shrine 16" type="Warp" gid="205" x="2880" y="2528" width="32" height="32">
+  <object id="10" name="Shrine 16" class="Warp" gid="205" x="2880" y="2528" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="WarpMap" value="maps/pyramid/main"/>
    </properties>
   </object>
-  <object id="11" name="Castle 8" type="Warp" gid="205" x="1344" y="2560" width="32" height="32">
+  <object id="11" name="Castle 8" class="Warp" gid="205" x="1344" y="2560" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="WarpMap" value="maps/towns/forest"/>
    </properties>
   </object>
-  <object id="12" name="Town 9" type="Warp" gid="205" x="2304" y="2656" width="32" height="32">
+  <object id="12" name="Town 9" class="Warp" gid="205" x="2304" y="2656" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="WarpMap" value="maps/towns/oasis"/>
    </properties>
   </object>
-  <object id="13" name="Cave 18" type="Warp" gid="235" x="1920" y="3360" width="32" height="32">
+  <object id="13" name="Cave 18" class="Warp" gid="235" x="1920" y="3360" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="WarpMap" value="maps/tunnel/area2"/>
    </properties>
   </object>
-  <object id="14" name="Cave 17" type="Warp" gid="205" x="2112" y="3488" width="32" height="32">
+  <object id="14" name="Cave 17" class="Warp" gid="205" x="2112" y="3488" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
@@ -1125,12 +1125,12 @@
   </properties>
  </objectgroup>
  <objectgroup id="7" name="objects">
-  <object id="1" name="spawn" type="Spawn" x="480" y="512" width="32" height="32">
+  <object id="1" name="spawn" class="Spawn" x="480" y="512" width="32" height="32">
    <properties>
     <property name="DefaultSpawn" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="3" name="spawn1" type="Spawn" x="2112" y="3488" width="32" height="32"/>
-  <object id="4" name="spawn2" type="Spawn" x="1920" y="3360" width="32" height="32"/>
+  <object id="3" name="spawn1" class="Spawn" x="2112" y="3488" width="32" height="32"/>
+  <object id="4" name="spawn2" class="Spawn" x="1920" y="3360" width="32" height="32"/>
  </objectgroup>
 </map>

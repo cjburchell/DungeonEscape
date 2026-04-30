@@ -1,14 +1,14 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="4">
-  <properties>
-    <property name="biome" value="Cave" />
-    <property name="song" value="underground-town" />
-  </properties>
-  <tileset firstgid="1" source="../../Tilesets/dungeon.tsx" />
-  <tileset firstgid="481" source="../../Tilesets/outdoors.tsx" />
-  <tileset firstgid="961" source="../../Tilesets/tiles_small.tsx" />
-  <layer id="1" name="floor" width="40" height="40">
-    <data encoding="csv">
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.11" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="4">
+ <properties>
+  <property name="biome" value="Cave"/>
+  <property name="song" value="underground-town"/>
+ </properties>
+ <tileset firstgid="1" source="../../Tilesets/dungeon.tsx"/>
+ <tileset firstgid="481" source="../../Tilesets/outdoors.tsx"/>
+ <tileset firstgid="961" source="../../Tilesets/tiles_small.tsx"/>
+ <layer id="1" name="floor" width="40" height="40">
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -50,12 +50,12 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-  </layer>
-  <layer id="3" name="wall" width="40" height="40">
-    <properties>
-      <property name="Collideable" type="bool" value="true" />
-    </properties>
-    <data encoding="csv">
+ </layer>
+ <layer id="3" name="wall" width="40" height="40">
+  <properties>
+   <property name="Collideable" type="bool" value="true"/>
+  </properties>
+  <data encoding="csv">
 226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,
 40,41,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,392,41,42,
 70,72,133,135,134,135,134,135,134,135,134,135,134,135,134,135,134,135,134,135,134,135,134,135,134,135,134,135,134,135,134,135,134,134,135,134,135,136,70,72,
@@ -97,9 +97,9 @@
 226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,
 226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226,226
 </data>
-  </layer>
-  <layer id="2" name="ceiling" width="40" height="40">
-    <data encoding="csv">
+ </layer>
+ <layer id="2" name="ceiling" width="40" height="40">
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,72,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,70,0,
@@ -141,50 +141,52 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-  </layer>
-  <objectgroup id="4" name="items">
-    <object id="1" name="Stairs up to 0" class="Warp" gid="2147484723" x="64" y="192" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="SpawnId" type="string" value="spawn2" />
-        <property name="WarpMap" type="string" value="maps/overworld" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="2" name="Stairs up to 17" class="Warp" gid="2147484723" x="1120" y="256" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="false" />
-        <property name="SpawnId" type="string" value="spawn1" />
-        <property name="WarpMap" type="string" value="maps/tunnel/area1" />
-        <property name="MoveRadius" type="int" value="0" />
-      </properties>
-    </object>
-    <object id="3" name="Chest" class="Chest" gid="1072" x="768" y="928" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="true" />
-        <property name="MoveRadius" type="int" value="0" />
-        <property name="ItemId" value="#Random#" />
-      </properties>
-    </object>
-    <object id="3" name="Chest" class="Chest" gid="1072" x="768" y="960" width="32" height="32">
-      <properties>
-        <property name="Collideable" type="bool" value="true" />
-        <property name="MoveRadius" type="int" value="0" />
-        <property name="ItemId" value="#Random#" />
-      </properties>
-    </object>
-  </objectgroup>
-  <objectgroup id="5" name="sprites">
-    <properties>
-      <property name="RenderRole" value="Sprites" />
-    </properties>
-  </objectgroup>
-  <objectgroup id="6" name="objects">
-    <object id="1" name="spawn" class="Spawn" x="96" y="160" width="32" height="32">
-      <properties>
-        <property name="DefaultSpawn" type="bool" value="true" />
-      </properties>
-    </object>
-    <object id="2" name="spawn1" class="Spawn" x="1152" y="224" width="32" height="32" />
-  </objectgroup>
+ </layer>
+ <objectgroup id="4" name="items">
+  <object id="1" name="Stairs up to 0" class="Warp" gid="2147484723" x="64" y="192" width="32" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="false"/>
+    <property name="MoveRadius" type="int" value="0"/>
+    <property name="SpawnId" value="spawn2"/>
+    <property name="WarpMap" value="maps/overworld"/>
+   </properties>
+  </object>
+  <object id="2" name="Stairs up to 17" class="Warp" gid="2147484723" x="1120" y="256" width="32" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="false"/>
+    <property name="MoveRadius" type="int" value="0"/>
+    <property name="SpawnId" value="spawn1"/>
+    <property name="WarpMap" value="maps/tunnel/area1"/>
+   </properties>
+  </object>
+  <object id="3" name="Chest" class="Chest" gid="1072" x="768" y="928" width="32" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="true"/>
+    <property name="ItemId" value="#Random#"/>
+    <property name="Locked" type="bool" value="false"/>
+    <property name="MoveRadius" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="3" name="Chest" class="Chest" gid="1072" x="768" y="960" width="32" height="32">
+   <properties>
+    <property name="Collideable" type="bool" value="true"/>
+    <property name="ItemId" value="#Random#"/>
+    <property name="Locked" type="bool" value="false"/>
+    <property name="MoveRadius" type="int" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="5" name="sprites">
+  <properties>
+   <property name="RenderRole" value="Sprites"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="6" name="objects">
+  <object id="1" name="spawn" class="Spawn" x="96" y="160" width="32" height="32">
+   <properties>
+    <property name="DefaultSpawn" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="2" name="spawn1" class="Spawn" x="1152" y="224" width="32" height="32"/>
+ </objectgroup>
 </map>

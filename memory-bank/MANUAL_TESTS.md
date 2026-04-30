@@ -314,6 +314,24 @@ Status: Done
 - Expected: map TMX files, TSX files, tileset images, character images, and item images continue loading in the built player.
 - Result: Confirmed. `File > Build And Run` renders the map correctly outside the editor.
 
+## Splash And Title Startup
+
+Status: Pending
+
+- Start Play Mode from `Boot.unity`.
+- Expected: the old `splash.png` image fades in centered on a black screen, holds briefly, then fades out.
+- Expected: the map is not visible behind the splash.
+- Wait for the title menu.
+- Expected: the title menu appears on a black background, not over the rendered map.
+- Choose Continue, New Game, or Load Game.
+- Expected: the title menu closes and the map becomes visible only after entering gameplay.
+- Use File > Build And Run.
+- Expected: the built player follows the same splash, black title background, and map reveal behavior.
+- Set `SkipSplashAndLoadQuickSave` to `true` in the user settings file.
+- Expected: Play Mode starts directly from the quick save without showing the splash or title menu.
+- Set `SkipSplashAndLoadQuickSave` back to `false`.
+- Expected: normal splash/title startup returns.
+
 ## Title And Load Flow
 
 Status: Pending

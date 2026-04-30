@@ -156,8 +156,10 @@ Status: In progress
 - Done: Autosave enabled setting.
 - Done: Autosave interval setting.
 - Done: Main title/load game flow with Continue, New Game, Load Game, and Quit.
+- Done: Unity splash screen recreated using `Images/ui/splash.png` before the title menu.
+- Done: Title/startup UI draws over a black backdrop instead of showing the map behind it.
+- Done: Hidden `SkipSplashAndLoadQuickSave` setting for fast test startup without exposing it in the Settings UI.
 - Partial: Unity equivalent for old main menu/continue quest flow.
-- Pending: Decide whether to recreate old splash screen.
 - Pending: Create player flow.
 - Done: Unity save version policy: unsupported versions are archived and ignored; forward migrations will be added only when the Unity save schema changes.
 - Done: Final autosave policy: timer autosave is kept, but autosave is skipped while title/menu/store/dialog UI is active; combat can also block autosave through `DungeonEscapeGameState.AutoSaveBlocked`.

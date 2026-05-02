@@ -79,6 +79,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private Texture2D secondaryMenuBackground;
         private bool ownsMainMenuBackground;
         private bool ownsSecondaryMenuBackground;
+        private bool waitingForConfirmRelease;
 
         public static bool IsOpen
         {
@@ -95,6 +96,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             menu.mode = TitleMode.Main;
             menu.selectedIndex = 0;
+            menu.WaitForConfirmRelease();
             menu.ResetNavigationRepeat();
             isOpen = true;
         }
@@ -146,6 +148,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             EnsureReferences();
+            if (waitingForConfirmRelease)
+            {
+                if (GetConfirmHeld() || Input.GetMouseButton(0))
+                {
+                    return;
+                }
+
+                waitingForConfirmRelease = false;
+            }
+
             if (activeCreateDropdown != CreateDropdown.None)
             {
                 HandleCreateDropdownInput();
@@ -161,6 +173,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 {
                     mode = TitleMode.Main;
                     selectedIndex = 0;
+                    WaitForConfirmRelease();
                     ResetNavigationRepeat();
                 }
             }
@@ -321,7 +334,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 var enabled = rows[i].Enabled;
                 var previousEnabled = GUI.enabled;
                 GUI.enabled = enabled;
-                if (UiControls.Button(rect, rows[i].Label, selectedIndex == i ? selectedMainMenuButtonStyle : mainMenuButtonStyle))
+                if (UiControls.Button(rect, rows[i].Label, selectedIndex == i ? selectedMainMenuButtonStyle : mainMenuButtonStyle) &&
+                    !waitingForConfirmRelease)
                 {
                     selectedIndex = i;
                     if (enabled)
@@ -395,7 +409,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.EndArea();
 
             var backRect = new Rect((Screen.width - backWidth) / 2f, area.yMax + backGap, backWidth, backHeight);
-            if (UiControls.Button(backRect, "Back", selectedIndex == GetLoadBackIndex(slots.Count) ? selectedMainMenuButtonStyle : mainMenuButtonStyle))
+            if (UiControls.Button(backRect, "Back", selectedIndex == GetLoadBackIndex(slots.Count) ? selectedMainMenuButtonStyle : mainMenuButtonStyle) &&
+                !waitingForConfirmRelease)
             {
                 ShowMainMenu();
             }
@@ -412,13 +427,15 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     selectedIndex == GetLoadSaveIndex(i),
                     uiTheme,
                     GUILayout.Height(48f * scale),
-                    GUILayout.Width(500f * scale)))
+                    GUILayout.Width(500f * scale)) &&
+                    !waitingForConfirmRelease)
                 {
                     selectedIndex = GetLoadSaveIndex(i);
                     TryLoadSlot(i);
                 }
 
-                if (UiControls.Button("Delete", selectedIndex == GetLoadDeleteIndex(i), uiTheme, GUILayout.Height(48f * scale), GUILayout.Width(92f * scale)))
+                if (UiControls.Button("Delete", selectedIndex == GetLoadDeleteIndex(i), uiTheme, GUILayout.Height(48f * scale), GUILayout.Width(92f * scale)) &&
+                    !waitingForConfirmRelease)
                 {
                     selectedIndex = GetLoadDeleteIndex(i);
                     DeleteSlot(i);
@@ -472,7 +489,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 focusCreateNameNextGui = false;
             }
 
-            if (UiControls.Button("Generate Name", selectedIndex == CreateGenerateNameIndex, uiTheme, GUILayout.Width(152f * scale), GUILayout.Height(32f * scale)))
+            if (UiControls.Button("Generate Name", selectedIndex == CreateGenerateNameIndex, uiTheme, GUILayout.Width(152f * scale), GUILayout.Height(32f * scale)) &&
+                !waitingForConfirmRelease)
             {
                 selectedIndex = CreateGenerateNameIndex;
                 GenerateRandomPlayerName();
@@ -489,7 +507,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             DrawClassDropdown(selectedIndex == CreateClassIndex);
             GUILayout.Space(34f * scale);
             GUI.enabled = previousEnabled && !dropdownOpen;
-            if (UiControls.Button("Re-roll", selectedIndex == CreateRerollIndex, uiTheme, GUILayout.Width(92f * scale), GUILayout.Height(32f * scale)))
+            if (UiControls.Button("Re-roll", selectedIndex == CreateRerollIndex, uiTheme, GUILayout.Width(92f * scale), GUILayout.Height(32f * scale)) &&
+                !waitingForConfirmRelease)
             {
                 selectedIndex = CreateRerollIndex;
                 RerollCreatePreviewHero();
@@ -506,14 +525,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             GUI.enabled = previousEnabled && !dropdownOpen;
-            if (UiControls.Button("Start", selectedIndex == CreateStartIndex, uiTheme, GUILayout.Width(82f * scale), GUILayout.Height(32f * scale)))
+            if (UiControls.Button("Start", selectedIndex == CreateStartIndex, uiTheme, GUILayout.Width(82f * scale), GUILayout.Height(32f * scale)) &&
+                !waitingForConfirmRelease)
             {
                 selectedIndex = CreateStartIndex;
                 StartCreatedGame();
             }
 
             GUILayout.Space(10f * scale);
-            if (UiControls.Button("Back", selectedIndex == CreateBackIndex, uiTheme, GUILayout.Width(82f * scale), GUILayout.Height(32f * scale)))
+            if (UiControls.Button("Back", selectedIndex == CreateBackIndex, uiTheme, GUILayout.Width(82f * scale), GUILayout.Height(32f * scale)) &&
+                !waitingForConfirmRelease)
             {
                 selectedIndex = CreateBackIndex;
                 ShowMainMenu();
@@ -527,11 +548,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawGenderDropdown(bool selected)
         {
-            if (UiControls.Button(createPlayerGender.ToString(), selected || activeCreateDropdown == CreateDropdown.Gender, uiTheme, GUILayout.Width(136f * GetPixelScale()), GUILayout.Height(32f * GetPixelScale())))
+            if (UiControls.Button(createPlayerGender.ToString(), selected || activeCreateDropdown == CreateDropdown.Gender, uiTheme, GUILayout.Width(136f * GetPixelScale()), GUILayout.Height(32f * GetPixelScale())) &&
+                !waitingForConfirmRelease)
             {
                 selectedIndex = CreateGenderIndex;
                 activeCreateDropdown = activeCreateDropdown == CreateDropdown.Gender ? CreateDropdown.None : CreateDropdown.Gender;
                 selectedDropdownIndex = (int)createPlayerGender;
+                WaitForConfirmRelease();
             }
 
             genderDropdownAnchor = ToScreenRect(GUILayoutUtility.GetLastRect());
@@ -539,11 +562,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawClassDropdown(bool selected)
         {
-            if (UiControls.Button(createPlayerClass.ToString(), selected || activeCreateDropdown == CreateDropdown.Class, uiTheme, GUILayout.Width(136f * GetPixelScale()), GUILayout.Height(32f * GetPixelScale())))
+            if (UiControls.Button(createPlayerClass.ToString(), selected || activeCreateDropdown == CreateDropdown.Class, uiTheme, GUILayout.Width(136f * GetPixelScale()), GUILayout.Height(32f * GetPixelScale())) &&
+                !waitingForConfirmRelease)
             {
                 selectedIndex = CreateClassIndex;
                 activeCreateDropdown = activeCreateDropdown == CreateDropdown.Class ? CreateDropdown.None : CreateDropdown.Class;
                 selectedDropdownIndex = System.Array.IndexOf(System.Enum.GetValues(typeof(Class)), createPlayerClass);
+                WaitForConfirmRelease();
             }
 
             classDropdownAnchor = ToScreenRect(GUILayoutUtility.GetLastRect());
@@ -667,7 +692,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 var value = values[i];
                 var selectedRow = EqualityComparer<T>.Default.Equals(value, selectedValue);
                 var style = selectedRow || i == keyboardSelectedIndex ? uiTheme.SelectedTabStyle : uiTheme.ButtonStyle;
-                if (UiControls.Button(new Rect(0f, y, width, rowHeight), value.ToString(), style))
+                if (UiControls.Button(new Rect(0f, y, width, rowHeight), value.ToString(), style) &&
+                    !waitingForConfirmRelease)
                 {
                     selected(value);
                     Event.current.Use();
@@ -1043,6 +1069,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 {
                     mode = TitleMode.Main;
                     selectedIndex = 0;
+                    WaitForConfirmRelease();
                     ResetNavigationRepeat();
                     return;
                 }
@@ -1087,10 +1114,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 case CreateGenderIndex:
                     activeCreateDropdown = CreateDropdown.Gender;
                     selectedDropdownIndex = (int)createPlayerGender;
+                    WaitForConfirmRelease();
                     break;
                 case CreateClassIndex:
                     activeCreateDropdown = CreateDropdown.Class;
                     selectedDropdownIndex = System.Array.IndexOf(System.Enum.GetValues(typeof(Class)), createPlayerClass);
+                    WaitForConfirmRelease();
                     break;
                 case CreateRerollIndex:
                     RerollCreatePreviewHero();
@@ -1141,6 +1170,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             RerollCreatePreviewHero();
             activeCreateDropdown = CreateDropdown.None;
+            WaitForConfirmRelease();
             ResetNavigationRepeat();
         }
 
@@ -1149,6 +1179,18 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return InputManager.GetCommandDown(InputCommand.Interact) ||
                    Input.GetKeyDown(KeyCode.Return) ||
                    Input.GetKeyDown(KeyCode.KeypadEnter);
+        }
+
+        private static bool GetConfirmHeld()
+        {
+            return InputManager.GetCommand(InputCommand.Interact) ||
+                   Input.GetKey(KeyCode.Return) ||
+                   Input.GetKey(KeyCode.KeypadEnter);
+        }
+
+        private void WaitForConfirmRelease()
+        {
+            waitingForConfirmRelease = GetConfirmHeld() || Input.GetMouseButton(0);
         }
 
         private void ContinueGame()
@@ -1163,6 +1205,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             mode = TitleMode.Load;
             selectedIndex = 0;
+            WaitForConfirmRelease();
             ResetNavigationRepeat();
         }
 
@@ -1171,6 +1214,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             mode = TitleMode.Create;
             selectedIndex = 0;
             EnsureCreatePlayerName();
+            WaitForConfirmRelease();
             ResetNavigationRepeat();
         }
 
@@ -1178,6 +1222,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             mode = TitleMode.Main;
             selectedIndex = 0;
+            WaitForConfirmRelease();
             ResetNavigationRepeat();
         }
 

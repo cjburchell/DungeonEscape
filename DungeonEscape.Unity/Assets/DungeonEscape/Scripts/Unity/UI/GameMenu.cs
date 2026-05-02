@@ -83,6 +83,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private List<string> menuModalChoices;
         private Action<int> menuModalSelected;
         private int menuModalSelectedIndex;
+        private bool menuModalWaitingForConfirmRelease;
         private int repeatingMenuMoveX;
         private float nextMenuMoveXTime;
         private int repeatingMenuMoveY;
@@ -398,7 +399,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 BeginSelectableRow();
                 DrawHeroStatus(activeMembers[i], true);
-                DrawActivePartyControls(activeMembers[i], i, activeMembers.Count);
                 EndSelectableRow();
                 SelectRowOnMouseClick(i);
             }
@@ -411,7 +411,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 {
                     BeginSelectableRow();
                     DrawHeroStatus(inactive[i], false);
-                    DrawReservePartyControls(inactive[i], activeMembers.Count);
                     EndSelectableRow();
                     SelectRowOnMouseClick(activeMembers.Count + i);
                 }
@@ -427,44 +426,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             GUILayout.EndHorizontal();
-        }
-
-        private void DrawActivePartyControls(Hero hero, int index, int activeCount)
-        {
-            GUILayout.BeginHorizontal();
-            SetMenuGuiEnabled(index > 0);
-            if (UiControls.Button("Up", buttonStyle, GUILayout.Width(72f * GetPixelScale())))
-            {
-                ApplyPartyChange(() => gameState.MovePartyMemberUp(hero));
-            }
-
-            SetMenuGuiEnabled(index < activeCount - 1);
-            if (UiControls.Button("Down", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
-            {
-                ApplyPartyChange(() => gameState.MovePartyMemberDown(hero));
-            }
-
-            SetMenuGuiEnabled(activeCount > 1);
-            if (UiControls.Button("Reserve", buttonStyle, GUILayout.Width(112f * GetPixelScale())))
-            {
-                ApplyPartyChange(() => gameState.DeactivatePartyMember(hero));
-            }
-
-            SetMenuGuiEnabled(true);
-            GUILayout.EndHorizontal();
-            GUILayout.Space(6f * GetPixelScale());
-        }
-
-        private void DrawReservePartyControls(Hero hero, int activeCount)
-        {
-            SetMenuGuiEnabled(activeCount < GetMaxPartyMembers());
-            if (UiControls.Button("Add to Party", buttonStyle, GUILayout.Width(144f * GetPixelScale())))
-            {
-                ApplyPartyChange(() => gameState.ActivatePartyMember(hero));
-            }
-
-            SetMenuGuiEnabled(true);
-            GUILayout.Space(6f * GetPixelScale());
         }
 
         private void DrawHeroStatus(Hero hero, bool active)
@@ -628,7 +589,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             EndThemedScroll();
             GUILayout.Space(8f * GetPixelScale());
-            DrawInventoryItemDetail(hero, hero.Items[selectedPartyItemIndex], false);
+            DrawInventoryItemDetail(hero, hero.Items[selectedPartyItemIndex], false, false);
         }
 
         private void DrawPartySkillsDetail(Hero hero)
@@ -1079,7 +1040,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.EndHorizontal();
         }
 
-        private void DrawInventoryItemDetail(Hero hero, ItemInstance item, bool framed = true)
+        private void DrawInventoryItemDetail(Hero hero, ItemInstance item, bool framed = true, bool showActions = true)
         {
             if (framed)
             {
@@ -1117,6 +1078,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
             if (item.MaxCharges > 0)
             {
                 GUILayout.Label("Charges: " + item.Charges + "/" + item.MaxCharges, smallStyle);
+            }
+
+            if (!showActions)
+            {
+                GUILayout.EndVertical();
+                return;
             }
 
             GUILayout.Space(8f * GetPixelScale());
@@ -1212,7 +1179,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 var target = targets[selectedIndex];
                 if (gameState.TransferHeroItem(source, target, item))
                 {
-                    selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(source.Items.Count - 1, 0));
+                    ClampSelectedItemIndex(source);
                     ShowInventoryMessage(source.Name + " gave " + item.Name + " to " + target.Name + ".");
                 }
                 else
@@ -1244,7 +1211,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
                 if (gameState.DropHeroItem(hero, item))
                 {
-                    selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
+                    ClampSelectedItemIndex(hero);
                     ShowInventoryMessage(item.Name + " was dropped.");
                 }
                 else
@@ -1265,7 +1232,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             if (item.Item != null && item.Item.Skill != null && item.Item.Skill.Type == SkillType.Outside)
             {
                 ShowInventoryMessage(gameState.UseOutsideItem(hero, item));
-                selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
+                ClampSelectedItemIndex(hero);
                 return;
             }
 
@@ -1278,7 +1245,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             if (item.Item != null && item.Item.Skill != null && item.Item.Skill.Type == SkillType.Open)
             {
                 ShowInventoryMessage(UseItemOnFacingObject(hero, item));
-                selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
+                ClampSelectedItemIndex(hero);
                 return;
             }
 
@@ -1286,18 +1253,18 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 case Target.Group:
                     ShowInventoryMessage(gameState.UseHeroItemOnParty(hero, item));
-                    selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
+                    ClampSelectedItemIndex(hero);
                     return;
                 case Target.None:
                     ShowInventoryMessage(gameState.UseHeroItem(hero, item, hero));
-                    selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
+                    ClampSelectedItemIndex(hero);
                     return;
                 case Target.Single:
                     ShowSingleItemTargetPicker(hero, item);
                     return;
                 case Target.Object:
                     ShowInventoryMessage(UseItemOnFacingObject(hero, item));
-                    selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
+                    ClampSelectedItemIndex(hero);
                     return;
                 default:
                     ShowInventoryMessage("That item cannot be used from inventory.");
@@ -1347,7 +1314,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 }
 
                 ShowInventoryMessage(gameState.UseHeroItem(hero, item, targets[selectedIndex]));
-                selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
+                ClampSelectedItemIndex(hero);
             });
         }
 
@@ -1397,7 +1364,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 }
 
                 ShowInventoryMessage(gameState.UseReturnItem(hero, item, locations[selectedIndex]));
-                selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(hero.Items.Count - 1, 0));
+                ClampSelectedItemIndex(hero);
             });
         }
 
@@ -1418,6 +1385,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             menuModalChoices = choices == null ? null : choices.ToList();
             menuModalSelected = selected;
             menuModalSelectedIndex = 0;
+            menuModalWaitingForConfirmRelease =
+                InputManager.GetCommand(InputCommand.Interact) || UnityEngine.Input.GetMouseButton(0);
             ResetMenuNavigationRepeat();
         }
 
@@ -1438,6 +1407,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             menuModalChoices = null;
             menuModalSelected = null;
             menuModalSelectedIndex = 0;
+            menuModalWaitingForConfirmRelease = false;
             ResetMenuNavigationRepeat();
         }
 
@@ -1447,6 +1417,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 HideMenuModal();
                 return;
+            }
+
+            if (menuModalWaitingForConfirmRelease)
+            {
+                if (InputManager.GetCommand(InputCommand.Interact) || UnityEngine.Input.GetMouseButton(0))
+                {
+                    return;
+                }
+
+                menuModalWaitingForConfirmRelease = false;
             }
 
             if (!MenuModalHasChoices())
@@ -1509,6 +1489,19 @@ namespace Redpoint.DungeonEscape.Unity.UI
             if (action != null)
             {
                 action();
+            }
+        }
+
+        private void ClampSelectedItemIndex(Hero hero)
+        {
+            var maxIndex = hero == null || hero.Items == null ? 0 : Math.Max(hero.Items.Count - 1, 0);
+            if (currentTab == MenuTab.Party)
+            {
+                selectedPartyItemIndex = Mathf.Clamp(selectedPartyItemIndex, 0, maxIndex);
+            }
+            else
+            {
+                selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, maxIndex);
             }
         }
 
@@ -2206,7 +2199,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     GUILayout.FlexibleSpace();
                     for (var i = 0; i < menuModalChoices.Count; i++)
                     {
-                        if (UiControls.Button(menuModalChoices[i], i == menuModalSelectedIndex, uiTheme, GUILayout.Width(120f * scale), GUILayout.Height(34f * scale)))
+                        if (UiControls.Button(menuModalChoices[i], i == menuModalSelectedIndex, uiTheme, GUILayout.Width(120f * scale), GUILayout.Height(34f * scale)) &&
+                            !menuModalWaitingForConfirmRelease)
                         {
                             SelectMenuModalChoice(i);
                             break;
@@ -2225,7 +2219,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 {
                     for (var i = 0; i < menuModalChoices.Count; i++)
                     {
-                        if (UiControls.Button(menuModalChoices[i], i == menuModalSelectedIndex, uiTheme))
+                        if (UiControls.Button(menuModalChoices[i], i == menuModalSelectedIndex, uiTheme) &&
+                            !menuModalWaitingForConfirmRelease)
                         {
                             SelectMenuModalChoice(i);
                             break;
@@ -2233,7 +2228,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     }
                 }
             }
-            else if (UiControls.Button("OK", buttonStyle, GUILayout.Width(120f * scale)))
+            else if (UiControls.Button("OK", buttonStyle, GUILayout.Width(120f * scale)) &&
+                     !menuModalWaitingForConfirmRelease)
             {
                 HideMenuModal();
             }
@@ -2561,8 +2557,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var activeMembers = party.ActiveMembers.ToList();
             if (selectedRowIndex < activeMembers.Count)
             {
-                ApplyPartyChange(() => gameState.DeactivatePartyMember(activeMembers[selectedRowIndex]));
-                selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(GetSelectableRowCount() - 1, 0));
+                ActivatePartyDetailAction(activeMembers[selectedRowIndex]);
                 return;
             }
 
@@ -2570,8 +2565,189 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var inactiveIndex = selectedRowIndex - activeMembers.Count;
             if (inactiveIndex >= 0 && inactiveIndex < inactiveMembers.Count)
             {
-                ApplyPartyChange(() => gameState.ActivatePartyMember(inactiveMembers[inactiveIndex]));
+                ActivatePartyDetailAction(inactiveMembers[inactiveIndex]);
             }
+        }
+
+        private void ActivatePartyDetailAction(Hero hero)
+        {
+            if (hero == null)
+            {
+                return;
+            }
+
+            switch (currentPartyDetailTab)
+            {
+                case PartyDetailTab.Items:
+                    ShowPartyItemPicker(hero);
+                    break;
+                case PartyDetailTab.Spells:
+                    ShowPartySpellPicker(hero);
+                    break;
+                default:
+                    ShowPartyMemberActionModal(hero);
+                    break;
+            }
+        }
+
+        private void ShowPartyMemberActionModal(Hero hero)
+        {
+            var party = GetParty();
+            if (party == null || hero == null)
+            {
+                return;
+            }
+
+            var activeMembers = party.ActiveMembers.ToList();
+            var choices = new List<string>();
+            var actions = new List<Action>();
+            if (hero.IsActive)
+            {
+                var activeIndex = activeMembers.IndexOf(hero);
+                if (activeIndex > 0)
+                {
+                    choices.Add("Up");
+                    actions.Add(() =>
+                    {
+                        ApplyPartyChange(() => gameState.MovePartyMemberUp(hero));
+                        selectedRowIndex = Mathf.Max(0, selectedRowIndex - 1);
+                    });
+                }
+
+                if (activeIndex >= 0 && activeIndex < activeMembers.Count - 1)
+                {
+                    choices.Add("Down");
+                    actions.Add(() =>
+                    {
+                        ApplyPartyChange(() => gameState.MovePartyMemberDown(hero));
+                        selectedRowIndex = Mathf.Min(Math.Max(GetSelectableRowCount() - 1, 0), selectedRowIndex + 1);
+                    });
+                }
+
+                if (activeMembers.Count > 1)
+                {
+                    choices.Add("Reserve");
+                    actions.Add(() =>
+                    {
+                        ApplyPartyChange(() => gameState.DeactivatePartyMember(hero));
+                        selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(GetSelectableRowCount() - 1, 0));
+                    });
+                }
+            }
+            else if (activeMembers.Count < GetMaxPartyMembers())
+            {
+                choices.Add("Add To Party");
+                actions.Add(() =>
+                {
+                    ApplyPartyChange(() => gameState.ActivatePartyMember(hero));
+                    selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(GetSelectableRowCount() - 1, 0));
+                });
+            }
+
+            choices.Add("Cancel");
+            ShowMenuModal(hero.Name, "Choose an action.", choices, selectedIndex =>
+            {
+                if (selectedIndex >= 0 && selectedIndex < actions.Count)
+                {
+                    actions[selectedIndex]();
+                }
+            });
+        }
+
+        private void ShowPartyItemPicker(Hero hero)
+        {
+            if (hero == null || hero.Items == null || hero.Items.Count == 0)
+            {
+                ShowPartyMessage("No items.");
+                return;
+            }
+
+            var labels = hero.Items.Select(item => item.NameWithStats + (item.IsEquipped ? " [E]" : "")).ToList();
+            labels.Add("Cancel");
+            ShowMenuModal(hero.Name + " Items", "Choose an item.", labels, selectedIndex =>
+            {
+                if (selectedIndex < 0 || selectedIndex >= hero.Items.Count)
+                {
+                    return;
+                }
+
+                selectedPartyItemIndex = selectedIndex;
+                ShowPartyItemActionModal(hero, hero.Items[selectedIndex]);
+            });
+        }
+
+        private void ShowPartyItemActionModal(Hero hero, ItemInstance item)
+        {
+            if (hero == null || item == null)
+            {
+                return;
+            }
+
+            var choices = new List<string>();
+            var actions = new List<Action>();
+            if (gameState != null && CanUseItemFromInventory(hero, item))
+            {
+                choices.Add("Use");
+                actions.Add(() => ShowUseItemTargetPicker(hero, item));
+            }
+
+            if (item.IsEquipped)
+            {
+                choices.Add("Unequip");
+                actions.Add(() => ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item)));
+            }
+            else if (hero.CanEquipItem(item))
+            {
+                choices.Add("Equip");
+                actions.Add(() => ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item)));
+            }
+
+            if (HasTransferTarget(hero))
+            {
+                choices.Add("Transfer");
+                actions.Add(() => ShowTransferItemTargetPicker(hero, item));
+            }
+
+            if (item.Type != ItemType.Quest)
+            {
+                choices.Add("Drop");
+                actions.Add(() => ShowDropItemConfirmation(hero, item));
+            }
+
+            choices.Add("Cancel");
+            ShowMenuModal(item.Name, "Choose an action.", choices, selectedIndex =>
+            {
+                if (selectedIndex >= 0 && selectedIndex < actions.Count)
+                {
+                    actions[selectedIndex]();
+                }
+            });
+        }
+
+        private void ShowPartySpellPicker(Hero hero)
+        {
+            var spells = GameDataCache.Current == null || GameDataCache.Current.Spells == null
+                ? new List<Spell>()
+                : hero.GetSpells(GameDataCache.Current.Spells)
+                    .Where(spell => CanCastSpellFromPartyMenu(hero, spell))
+                    .ToList();
+            if (spells.Count == 0)
+            {
+                ShowPartyMessage("No spells can be cast.");
+                return;
+            }
+
+            var labels = spells.Select(spell => spell.Name).ToList();
+            labels.Add("Cancel");
+            ShowMenuModal(hero.Name + " Spells", "Choose a spell.", labels, selectedIndex =>
+            {
+                if (selectedIndex < 0 || selectedIndex >= spells.Count)
+                {
+                    return;
+                }
+
+                ShowSpellTargetPicker(hero, spells[selectedIndex]);
+            });
         }
 
         private Hero GetSelectedInventoryHero()

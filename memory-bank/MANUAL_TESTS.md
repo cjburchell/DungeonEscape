@@ -338,7 +338,7 @@ Status legend:
 - Inspect the item detail panel.
 - Expected: internal slot/class metadata is not shown in the right panel.
 
-### [x] Combined Party And Inventory Menu
+### [ ] Combined Party And Inventory Menu
 
 - Open the in-game menu.
 - Expected: there is no separate top-level Inventory tab.
@@ -360,11 +360,19 @@ Status legend:
 - Expected: item icons, rarity coloring, details, and available actions match the old Inventory behavior.
 - Expected: Use actions are hidden when the selected item cannot currently be used.
 - Expected: spell rows show a spell icon, the spell name, and a Cast button; Cast is disabled when the member does not have enough MP or cannot currently cast it.
-- Expected: party ordering buttons are labelled `Up` and `Down`.
+- Expected: party ordering buttons are not shown inline in the member list.
+- Use keyboard/gamepad up/down in the Party tab.
+- Expected: selection moves only between active and reserve party members.
+- Use keyboard/gamepad left/right while on the Party tab.
+- Expected: the selected detail sub-tab changes without changing the selected party member.
+- Press Interact/Enter/confirm on Status or Equipment.
+- Expected: a modal opens for party-member actions such as `Up`, `Down`, `Reserve`, or `Add To Party`, depending on the selected member.
+- Press Interact/Enter/confirm on Items.
+- Expected: an item picker modal opens, then an item action modal offers only valid actions such as `Use`, `Equip`, `Unequip`, `Transfer`, or `Drop`.
+- Press Interact/Enter/confirm on Spells.
+- Expected: a spell picker modal opens with currently castable spells, then follows the existing target picker when needed.
 - Use Transfer, Drop, Equip, Unequip, and Use where available.
 - Expected: actions still work through the existing modal overlays and update the selected member afterward.
-- Use keyboard or gamepad left/right while on the Party tab.
-- Expected: the selected detail sub-tab changes without changing the selected party member.
 
 ### [x] Regular Store Buy Flow Uses Tabbed Store UI
 

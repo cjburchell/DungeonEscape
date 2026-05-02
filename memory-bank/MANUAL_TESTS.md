@@ -238,6 +238,8 @@ Status legend:
 - Open the in-game menu and go to Settings > General.
 - Toggle `Fullscreen`.
 - Expected: the Unity player switches between fullscreen and windowed mode.
+- When windowed, resize the game window by dragging the window edge or corner.
+- Expected: the built player window resizes and the map/UI remain visible without changing tile aspect ratio.
 - Close and restart Play Mode or the built player.
 - Expected: the saved fullscreen setting is applied during startup.
 - Navigate Settings > General with keyboard or gamepad.

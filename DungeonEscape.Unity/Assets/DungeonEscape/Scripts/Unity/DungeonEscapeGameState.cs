@@ -2438,29 +2438,21 @@ namespace Redpoint.DungeonEscape.Unity
 
         public int ManualSaveSlotCount
         {
-            get { return MaxSaveSlots; }
+            get { return GetManualSaveSlots().Count + 1; }
         }
 
         public IReadOnlyList<GameSave> GetManualSaveSlots()
         {
-            EnsureInitialized();
-            EnsureManualSaveSlots(GameFile);
-            return GameFile.Saves.Where(save => !save.IsQuick).Take(MaxSaveSlots).ToList();
+            var file = GameFile ?? LoadGameFile();
+            return file.Saves == null
+                ? new List<GameSave>()
+                : file.Saves.Where(save => !save.IsQuick && IsUsableSave(save)).ToList();
         }
 
         public bool SaveManual(int slotIndex)
         {
             EnsureInitialized();
-            EnsureManualSaveSlots(GameFile);
-            if (slotIndex < 0 || slotIndex >= MaxSaveSlots)
-            {
-                return false;
-            }
-
-            var manualSaves = GameFile.Saves.Where(save => !save.IsQuick).ToList();
-            var existing = manualSaves[slotIndex];
-            var existingIndex = GameFile.Saves.IndexOf(existing);
-            if (existingIndex < 0)
+            if (slotIndex < 0)
             {
                 return false;
             }
@@ -2468,24 +2460,44 @@ namespace Redpoint.DungeonEscape.Unity
             var save = CloneGameSave(CurrentSave);
             save.IsQuick = false;
             save.Time = DateTime.Now;
-            GameFile.Saves[existingIndex] = save;
+            var manualSaves = GameFile.Saves.Where(item => !item.IsQuick && IsUsableSave(item)).ToList();
+            if (slotIndex >= manualSaves.Count)
+            {
+                GameFile.Saves.Add(save);
+            }
+            else
+            {
+                var existingIndex = GameFile.Saves.IndexOf(manualSaves[slotIndex]);
+                if (existingIndex < 0)
+                {
+                    return false;
+                }
+
+                GameFile.Saves[existingIndex] = save;
+            }
+
             SaveGameFile();
             saveDirty = false;
             autoSaveCountdown = 0f;
-            Debug.Log("Saved manual slot " + (slotIndex + 1) + " to " + GetSaveFilePath());
+            Debug.Log("Saved manual quest " + (slotIndex + 1) + " to " + GetSaveFilePath());
             return true;
         }
 
         public bool LoadManual(int slotIndex)
         {
             GameFile = LoadGameFile();
-            EnsureManualSaveSlots(GameFile);
-            if (slotIndex < 0 || slotIndex >= MaxSaveSlots)
+            if (slotIndex < 0)
             {
                 return false;
             }
 
-            var save = GameFile.Saves.Where(item => !item.IsQuick).ToList()[slotIndex];
+            var manualSaves = GameFile.Saves.Where(item => !item.IsQuick && IsUsableSave(item)).ToList();
+            if (slotIndex >= manualSaves.Count)
+            {
+                return false;
+            }
+
+            var save = manualSaves[slotIndex];
             if (!IsUsableSave(save))
             {
                 return false;
@@ -2495,7 +2507,7 @@ namespace Redpoint.DungeonEscape.Unity
             ShouldApplyInitialSpawn = false;
             saveDirty = false;
             autoSaveCountdown = 0f;
-            Debug.Log("Loaded manual slot " + (slotIndex + 1) + ": " + CurrentSave.Name);
+            Debug.Log("Loaded manual quest " + (slotIndex + 1) + ": " + CurrentSave.Name);
             if (SaveLoaded != null)
             {
                 SaveLoaded(CurrentSave);
@@ -2506,14 +2518,23 @@ namespace Redpoint.DungeonEscape.Unity
 
         public bool DeleteManual(int slotIndex)
         {
-            EnsureInitialized();
-            EnsureManualSaveSlots(GameFile);
-            if (slotIndex < 0 || slotIndex >= MaxSaveSlots)
+            GameFile = GameFile ?? LoadGameFile();
+            if (slotIndex < 0)
             {
                 return false;
             }
 
-            var manualSaves = GameFile.Saves.Where(save => !save.IsQuick).ToList();
+            if (GameFile.Saves == null)
+            {
+                return false;
+            }
+
+            var manualSaves = GameFile.Saves.Where(save => !save.IsQuick && IsUsableSave(save)).ToList();
+            if (slotIndex >= manualSaves.Count)
+            {
+                return false;
+            }
+
             var existing = manualSaves[slotIndex];
             var existingIndex = GameFile.Saves.IndexOf(existing);
             if (existingIndex < 0 || !IsUsableSave(existing))
@@ -2521,9 +2542,9 @@ namespace Redpoint.DungeonEscape.Unity
                 return false;
             }
 
-            GameFile.Saves[existingIndex] = new GameSave();
+            GameFile.Saves.RemoveAt(existingIndex);
             SaveGameFile();
-            Debug.Log("Deleted manual slot " + (slotIndex + 1) + ".");
+            Debug.Log("Deleted manual quest " + (slotIndex + 1) + ".");
             return true;
         }
 
@@ -2592,14 +2613,18 @@ namespace Redpoint.DungeonEscape.Unity
 
             var time = save.Time.HasValue ? save.Time.Value.ToString("g") : "Unknown time";
             var level = save.Level.HasValue ? "Level " + save.Level.Value : "No level";
-            var map = save.Party == null || string.IsNullOrEmpty(save.Party.CurrentMapId) ? "Unknown map" : save.Party.CurrentMapId;
-            return time + "    " + level + "    " + map;
+            return time + "    " + level;
         }
 
         public void RestartNewGame()
         {
+            RestartNewGame("Player", Class.Hero, Gender.Male);
+        }
+
+        public void RestartNewGame(string playerName, Class playerClass, Gender gender)
+        {
             GameFile = LoadGameFile();
-            CurrentSave = CreateDefaultSave();
+            CurrentSave = CreateDefaultSave(playerName, playerClass, gender);
             CurrentSave.IsQuick = false;
             ShouldApplyInitialSpawn = true;
             MarkDirty();
@@ -2610,6 +2635,11 @@ namespace Redpoint.DungeonEscape.Unity
             }
         }
 
+        public Hero CreatePlayerPreviewHero(string playerName, Class playerClass, Gender gender)
+        {
+            return CreateHero(playerName, playerClass, gender, 1, false);
+        }
+
         public void MarkInitialSpawnApplied()
         {
             ShouldApplyInitialSpawn = false;
@@ -2617,15 +2647,25 @@ namespace Redpoint.DungeonEscape.Unity
 
         private GameSave CreateDefaultSave()
         {
+            return CreateDefaultSave("Player", Class.Hero, Gender.Male);
+        }
+
+        private GameSave CreateDefaultSave(string playerName, Class playerClass, Gender gender)
+        {
+            if (string.IsNullOrEmpty(playerName))
+            {
+                playerName = "Player";
+            }
+
             var party = new Party
             {
-                PlayerName = "Player",
+                PlayerName = playerName,
                 CurrentMapId = TiledMapLoader.NormalizeMapId(defaultMapId),
                 CurrentPosition = new WorldPosition(defaultColumn, defaultRow)
             };
             party.CurrentMapIsOverWorld = party.CurrentMapId == "overworld";
             party.OverWorldPosition = party.CurrentPosition.Value;
-            party.Members.Add(CreateHero(party.PlayerName, Class.Hero, Gender.Male, 1, true));
+            party.Members.Add(CreateHero(party.PlayerName, playerClass, gender, 1, true));
 
             return new GameSave
             {
@@ -2954,8 +2994,6 @@ namespace Redpoint.DungeonEscape.Unity
                 file = new GameFile { Version = SaveFileVersion };
             }
 
-            EnsureManualSaveSlots(file);
-
             return file;
         }
 
@@ -3051,11 +3089,6 @@ namespace Redpoint.DungeonEscape.Unity
             if (file.Saves == null)
             {
                 file.Saves = new List<GameSave>();
-            }
-
-            for (var i = file.Saves.Count(save => !save.IsQuick); i < MaxSaveSlots; i++)
-            {
-                file.Saves.Add(new GameSave());
             }
         }
 

@@ -1370,53 +1370,60 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            var slots = gameState.GetManualSaveSlots();
-            selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Mathf.Max(slots.Count - 1, 0));
+            var saves = gameState.GetManualSaveSlots();
+            selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, saves.Count);
 
             GUILayout.BeginHorizontal();
             GUILayout.BeginVertical(GUILayout.MinWidth(420f * GetPixelScale()));
             saveScrollPosition = BeginThemedScroll(saveScrollPosition, Mathf.Max(120f * GetPixelScale(), menuBodyHeight));
-            for (var i = 0; i < slots.Count; i++)
+            for (var i = 0; i < saves.Count; i++)
             {
                 BeginSelectableRow();
-                DrawSaveSlotRow(i, slots[i]);
+                DrawSaveRow(saves[i]);
                 EndSelectableRow();
                 SelectRowOnMouseClick(i);
             }
 
+            BeginSelectableRow();
+            DrawNewSaveRow();
+            EndSelectableRow();
+            SelectRowOnMouseClick(saves.Count);
+
             EndThemedScroll();
             GUILayout.EndVertical();
             GUILayout.Space(10f * GetPixelScale());
-            DrawSaveDetail(selectedRowIndex < slots.Count ? slots[selectedRowIndex] : null);
+            DrawSaveDetail(selectedRowIndex < saves.Count ? saves[selectedRowIndex] : null);
             GUILayout.EndHorizontal();
         }
 
-        private void DrawSaveSlotRow(int slotIndex, GameSave save)
+        private void DrawSaveRow(GameSave save)
         {
             GUILayout.BeginVertical();
-            GUILayout.Label("Slot " + (slotIndex + 1) + ": " + GetSaveTitle(save), labelStyle);
+            GUILayout.Label(GetSaveTitle(save), labelStyle);
             GUILayout.Label(GetSaveSummary(save), smallStyle);
+            GUILayout.EndVertical();
+        }
+
+        private void DrawNewSaveRow()
+        {
+            GUILayout.BeginVertical();
+            GUILayout.Label("New Save", labelStyle);
+            GUILayout.Label("Save the current quest.", smallStyle);
             GUILayout.EndVertical();
         }
 
         private void DrawSaveDetail(GameSave save)
         {
             GUILayout.BeginVertical(panelStyle, GUILayout.Width(380f * GetPixelScale()));
-            GUILayout.Label("Save Slot " + (selectedRowIndex + 1), titleStyle);
-            GUILayout.Label(GetSaveTitle(save), labelStyle);
-            GUILayout.Label(GetSaveSummary(save), smallStyle);
-
-            if (save != null && save.Party != null)
+            if (IsUsableSave(save))
             {
-                GUILayout.Space(8f * GetPixelScale());
-                GUILayout.Label("Map: " + save.Party.CurrentMapId, smallStyle);
-                if (save.Party.CurrentPosition.HasValue)
-                {
-                    var position = save.Party.CurrentPosition.Value;
-                    GUILayout.Label("Position: " + position.X + ", " + position.Y, smallStyle);
-                }
-
-                GUILayout.Label("Gold: " + save.Party.Gold + "    Steps: " + save.Party.StepCount, smallStyle);
+                GUILayout.Label(GetSaveTitle(save), titleStyle);
+                GUILayout.Label(GetSaveSummary(save), smallStyle);
+            }
+            else
+            {
+                GUILayout.Label("New Save", titleStyle);
+                GUILayout.Label("Create a new manual save from the current quest.", smallStyle);
             }
 
             GUILayout.Space(12f * GetPixelScale());
@@ -2091,8 +2098,14 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             var slots = gameState.GetManualSaveSlots();
-            if (selectedRowIndex < 0 || selectedRowIndex >= slots.Count)
+            if (selectedRowIndex < 0)
             {
+                return;
+            }
+
+            if (selectedRowIndex >= slots.Count)
+            {
+                SaveManual(selectedRowIndex);
                 return;
             }
 

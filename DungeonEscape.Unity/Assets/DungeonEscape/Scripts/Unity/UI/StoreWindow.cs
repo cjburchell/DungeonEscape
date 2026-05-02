@@ -13,10 +13,19 @@ namespace Redpoint.DungeonEscape.Unity.UI
 {
     public sealed class StoreWindow : MonoBehaviour
     {
+        private const float InitialNavigationRepeatDelay = 0.35f;
+        private const float NavigationRepeatDelay = 0.12f;
+
         private enum StoreTab
         {
             Buy,
             Sell
+        }
+
+        private enum StoreFocus
+        {
+            SellMembers,
+            Items
         }
 
         private static StoreWindow instance;

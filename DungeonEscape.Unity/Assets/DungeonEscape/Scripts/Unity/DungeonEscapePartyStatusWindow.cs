@@ -28,7 +28,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             EnsureReferences();
-            if (player != null && player.IsMoving)
+            if (player != null && player.IsMovementActive)
             {
                 return;
             }

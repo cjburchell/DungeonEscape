@@ -1197,7 +1197,21 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 menuModalSelectedIndex = Mathf.Min(menuModalChoices.Count - 1, menuModalSelectedIndex + 1);
             }
-            else if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Interact))
+
+            if (menuModalChoices.Count <= 2)
+            {
+                var moveX = DungeonEscapeInput.GetMoveXDown();
+                if (moveX < 0)
+                {
+                    menuModalSelectedIndex = Mathf.Max(0, menuModalSelectedIndex - 1);
+                }
+                else if (moveX > 0)
+                {
+                    menuModalSelectedIndex = Mathf.Min(menuModalChoices.Count - 1, menuModalSelectedIndex + 1);
+                }
+            }
+
+            if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Interact))
             {
                 SelectMenuModalChoice(menuModalSelectedIndex);
             }
@@ -1787,32 +1801,70 @@ namespace Redpoint.DungeonEscape.Unity
 
             var scale = GetPixelScale();
             var width = Mathf.Min(Screen.width - 32f * scale, 620f * scale);
-            var choiceCount = MenuModalHasChoices() ? menuModalChoices.Count : 1;
-            var height = Mathf.Min(Screen.height - 48f * scale, (150f + choiceCount * 42f) * scale);
+            var hasChoices = MenuModalHasChoices();
+            var choiceCount = hasChoices ? menuModalChoices.Count : 1;
+            var compactDialog = !hasChoices || choiceCount <= 2;
+            var height = compactDialog
+                ? 170f * scale
+                : Mathf.Min(Screen.height - 48f * scale, (150f + choiceCount * 42f) * scale);
             var rect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
             GUI.enabled = true;
             DrawModalBackdrop();
             GUI.Box(rect, GUIContent.none, panelStyle);
 
             GUILayout.BeginArea(new Rect(rect.x + 18f * scale, rect.y + 16f * scale, rect.width - 36f * scale, rect.height - 32f * scale));
+            if (compactDialog)
+            {
+                GUILayout.FlexibleSpace();
+            }
+
             GUILayout.Label(menuModalTitle, titleStyle);
             GUILayout.Label(menuModalMessage, labelStyle);
             GUILayout.Space(10f * scale);
 
-            if (MenuModalHasChoices())
+            if (hasChoices)
             {
-                for (var i = 0; i < menuModalChoices.Count; i++)
+                if (menuModalChoices.Count <= 2)
                 {
-                    if (DungeonEscapeUiControls.Button(menuModalChoices[i], i == menuModalSelectedIndex, uiTheme))
+                    GUILayout.BeginHorizontal();
+                    GUILayout.FlexibleSpace();
+                    for (var i = 0; i < menuModalChoices.Count; i++)
                     {
-                        SelectMenuModalChoice(i);
-                        break;
+                        if (DungeonEscapeUiControls.Button(menuModalChoices[i], i == menuModalSelectedIndex, uiTheme, GUILayout.Width(120f * scale), GUILayout.Height(34f * scale)))
+                        {
+                            SelectMenuModalChoice(i);
+                            break;
+                        }
+
+                        if (i < menuModalChoices.Count - 1)
+                        {
+                            GUILayout.Space(10f * scale);
+                        }
+                    }
+
+                    GUILayout.FlexibleSpace();
+                    GUILayout.EndHorizontal();
+                }
+                else
+                {
+                    for (var i = 0; i < menuModalChoices.Count; i++)
+                    {
+                        if (DungeonEscapeUiControls.Button(menuModalChoices[i], i == menuModalSelectedIndex, uiTheme))
+                        {
+                            SelectMenuModalChoice(i);
+                            break;
+                        }
                     }
                 }
             }
             else if (GUILayout.Button("OK", buttonStyle, GUILayout.Width(120f * scale)))
             {
                 HideMenuModal();
+            }
+
+            if (compactDialog)
+            {
+                GUILayout.FlexibleSpace();
             }
 
             GUILayout.EndArea();

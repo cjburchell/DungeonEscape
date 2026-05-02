@@ -66,6 +66,26 @@ Status legend:
 - Hold sprint while moving across viewport edges horizontally and vertically.
 - Expected: player animation and viewport scrolling stay in sync without visible stutter from mismatched movement/scroll timing.
 
+### [ ] Viewport Shows Old 32 By 18 Tile Baseline
+
+- Start or load a game in Play Mode or a built player at a 16:9 resolution.
+- Compare the visible map area against the old MonoGame version.
+- Expected: Unity shows roughly 32 columns by 18 rows at 16:9, matching the old map scene zoom level.
+- Resize the window wider than 16:9.
+- Expected: Unity shows extra horizontal columns instead of stretching tiles.
+- Resize the window taller than 16:9.
+- Expected: tile aspect ratio remains correct and the map remains centered.
+
+### [ ] Tile Seams Do Not Flicker During Movement
+
+- Start or load a game on the overworld or a map with repeated terrain tiles.
+- Stand still and inspect tile edges near the center and viewport edges.
+- Expected: no white/black/transparent lines appear between adjacent tiles.
+- Hold movement horizontally and vertically, including near viewport scroll edges.
+- Expected: tile-edge artifacts do not appear and disappear while the viewport scrolls.
+- Toggle fullscreen/windowed mode and resize the window.
+- Expected: tile edges remain stable and tiles keep the correct aspect ratio.
+
 ### [x] Turn Delay Only Applies When Changing Facing
 
 - Open Settings > General and adjust Turn Delay.

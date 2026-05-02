@@ -1681,6 +1681,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             var shouldShowShip = party != null &&
                                  party.HasShip &&
+                                 party.CurrentMapIsOverWorld &&
                                  mapView != null &&
                                  mapView.IsWaterAt(position);
 

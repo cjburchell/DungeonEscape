@@ -23,7 +23,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             foreach (var layer in map.Elements("layer"))
             {
-                if (!IsBlockingLayer(layer, gameState))
+                if (!IsBlockingLayer(layer, gameState, mapId))
                 {
                     continue;
                 }
@@ -119,7 +119,7 @@ namespace Redpoint.DungeonEscape.Unity
             blocked.Add(row * mapWidth + column);
         }
 
-        private static bool IsBlockingLayer(XElement layer, DungeonEscapeGameState gameState)
+        private static bool IsBlockingLayer(XElement layer, DungeonEscapeGameState gameState, string mapId)
         {
             var properties = ReadProperties(layer);
             string water;
@@ -127,6 +127,7 @@ namespace Redpoint.DungeonEscape.Unity
                 IsTrue(water) &&
                 gameState != null &&
                 gameState.Party != null &&
+                IsOverworldMap(mapId) &&
                 gameState.Party.HasShip)
             {
                 return false;
@@ -139,6 +140,11 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return false;
+        }
+
+        private static bool IsOverworldMap(string mapId)
+        {
+            return string.Equals(TiledMapLoader.NormalizeMapId(mapId), "overworld", StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool IsNpcObject(TiledObjectInfo mapObject)

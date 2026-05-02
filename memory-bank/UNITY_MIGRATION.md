@@ -115,8 +115,8 @@ Status: Done
 - Done: Tile collision rules use TMX `Collideable` layer data.
 - Done: Object collision rules use TMX `Collideable` object bounds and persisted open/removed object state.
 - Done: Damage and biome layers are data-only and do not render.
-- Done: Water movement uses the TMX `Water` layer property and allows travel when the party has the ship deed.
-- Done: When the party has the ship deed and is on water, followers are hidden and the player renders as the ship.
+- Done: Water movement uses the TMX `Water` layer property and allows travel only on the overworld when the party has the ship deed.
+- Done: When the party has the ship deed and is on overworld water, followers are hidden and the player renders as the ship.
 - Done: Damage layer tile properties apply step damage to active party members.
 - Done: Biome layer tile classes update the party's current biome for future encounter logic.
 - Done: Cached TMX layer tile data for movement/gameplay queries to reduce repeated CSV parsing during movement.

@@ -162,6 +162,7 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 return gameState != null &&
                        gameState.Party != null &&
+                       IsCurrentMapOverworld() &&
                        gameState.Party.HasShip &&
                        !blockedTiles.Contains(tileKey);
             }
@@ -313,7 +314,7 @@ namespace Redpoint.DungeonEscape.Unity
                     mapHeight,
                     gameState,
                     TiledMapLoader.NormalizeMapId(currentMap.AssetPath));
-                currentMap.BlockedTilesAllowShip = gameState != null && gameState.Party != null && gameState.Party.HasShip;
+                currentMap.BlockedTilesAllowShip = CanUseShipOnCurrentMap();
                 blockedTiles = currentMap.BlockedTiles;
             }
 
@@ -693,8 +694,8 @@ namespace Redpoint.DungeonEscape.Unity
             var tilesets = GetValidatedTilesets();
             var spriteSets = TiledTilesetSprites.LoadSpriteSets(tilesets, loadedMap.TileWidth, loadedMap.TileHeight);
 
-            var partyHasShip = gameState != null && gameState.Party != null && gameState.Party.HasShip;
-            if (loadedMap.BlockedTiles == null || loadedMap.BlockedTilesAllowShip != partyHasShip)
+            var canUseShip = CanUseShipOnMap(TiledMapLoader.NormalizeMapId(loadedMap.AssetPath));
+            if (loadedMap.BlockedTiles == null || loadedMap.BlockedTilesAllowShip != canUseShip)
             {
                 loadedMap.BlockedTiles = TiledMapCollision.BuildBlockedTiles(
                     loadedMap.Root,
@@ -703,7 +704,7 @@ namespace Redpoint.DungeonEscape.Unity
                     mapHeight,
                     gameState,
                     TiledMapLoader.NormalizeMapId(loadedMap.AssetPath));
-                loadedMap.BlockedTilesAllowShip = partyHasShip;
+                loadedMap.BlockedTilesAllowShip = canUseShip;
             }
 
             blockedTiles = loadedMap.BlockedTiles;
@@ -844,6 +845,24 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return false;
+        }
+
+        private bool CanUseShipOnCurrentMap()
+        {
+            return CanUseShipOnMap(CurrentMapId);
+        }
+
+        private bool CanUseShipOnMap(string mapId)
+        {
+            return gameState != null &&
+                   gameState.Party != null &&
+                   gameState.Party.HasShip &&
+                   string.Equals(TiledMapLoader.NormalizeMapId(mapId), "overworld", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private bool IsCurrentMapOverworld()
+        {
+            return string.Equals(CurrentMapId, "overworld", StringComparison.OrdinalIgnoreCase);
         }
 
         private int GetLayerGidAt(XElement layer, int column, int row)

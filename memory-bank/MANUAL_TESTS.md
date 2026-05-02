@@ -35,11 +35,14 @@ Status legend:
 ### [x] Water Allows Movement After Ship Deed
 
 - Load a save after completing `Find_Ship` and receiving `Deed to the ship`.
-- Go to overworld or coast water.
+- Go to overworld water.
 - Try walking onto water.
 - Expected: movement onto water is allowed.
 - Try walking from water back to land.
 - Expected: movement back to land is allowed.
+- Go to any non-overworld map with a water layer.
+- Try walking onto water.
+- Expected: movement is blocked even with `Deed to the ship`, and the player does not change to the ship visual.
 
 ### [x] Damage Layer Applies Step Damage
 
@@ -642,7 +645,7 @@ Status legend:
 
 ## Encounter And Combat
 
-### [ ] Random Encounter Logs Monsters By Biome
+### [x] Random Encounter Logs Monsters By Biome
 
 - Start or load a quest and walk around the overworld across grassland, forest, hills, swamp, or water.
 - Expected: random encounters occasionally log to the Unity Console in the format `Random encounter in <Biome> on <MapId>: <monster list>`.

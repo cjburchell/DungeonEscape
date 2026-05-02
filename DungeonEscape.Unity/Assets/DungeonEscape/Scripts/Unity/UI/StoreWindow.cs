@@ -186,14 +186,18 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.BeginHorizontal();
             if (UiControls.TabButton("Buy", currentTab == StoreTab.Buy, uiTheme, 34f * scale))
             {
+                currentFocus = StoreFocus.Items;
                 SetCurrentTab(StoreTab.Buy);
             }
+            DrawTabFocusIndicator(GUILayoutUtility.GetLastRect(), currentTab == StoreTab.Buy);
 
             GUI.enabled = StoreWillBuyItems();
             if (UiControls.TabButton("Sell", currentTab == StoreTab.Sell, uiTheme, 34f * scale))
             {
+                currentFocus = StoreFocus.Items;
                 SetCurrentTab(StoreTab.Sell);
             }
+            DrawTabFocusIndicator(GUILayoutUtility.GetLastRect(), currentTab == StoreTab.Sell);
 
             GUI.enabled = true;
             GUILayout.EndHorizontal();
@@ -201,6 +205,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawBuyTab(float height)
         {
+            buyListHeight = height;
             var inventory = gameState == null ? new List<Item>() : gameState.GetStoreInventory(storeObject);
             selectedBuyIndex = Mathf.Clamp(selectedBuyIndex, 0, Mathf.Max(inventory.Count - 1, 0));
             if (inventory.Count == 0)
@@ -215,32 +220,23 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 DrawBuyItemRow(inventory[i], i);
             }
 
-            GUILayout.EndScrollView();
+            EndThemedScroll();
         }
 
         private void DrawBuyItemRow(Item item, int index)
         {
-            GUILayout.BeginHorizontal(GetRowStyle(index == selectedBuyIndex));
+            GUILayout.BeginHorizontal(GetRowStyle(currentFocus == StoreFocus.Items && index == selectedBuyIndex));
+            var rowHeight = GetStoreRowHeight();
             Sprite sprite;
             UiControls.SpriteIcon(
                 UiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null,
                 34f * GetPixelScale(),
                 uiTheme);
-            GUILayout.BeginVertical();
-            GUILayout.Label(item.NameWithStats, GetRarityStyle(item, labelStyle));
-            GUILayout.Label(item.Type + "  Level " + item.MinLevel + "  " + item.Cost + "g", smallStyle);
-            GUILayout.EndVertical();
+            GUILayout.Label(item.Name, GetCenteredRarityStyle(item), GUILayout.Height(rowHeight));
             GUILayout.FlexibleSpace();
-            var canBuy = CanBuy(item);
-            GUI.enabled = canBuy;
-            if (UiControls.Button("Buy", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
-            {
-                selectedBuyIndex = index;
-                ShowRecipientPicker(item);
-            }
-
-            GUI.enabled = true;
+            GUILayout.Label(item.Cost + "g", GetRightAlignedStyle(labelStyle), GUILayout.Width(92f * GetPixelScale()), GUILayout.Height(rowHeight));
             GUILayout.EndHorizontal();
+            HandleBuyRowMouse(GUILayoutUtility.GetLastRect(), item, index);
         }
 
         private void DrawSellTab(float height)
@@ -264,8 +260,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 if (UiControls.TabButton(members[i].Name, selectedHeroIndex == i, uiTheme, 34f * GetPixelScale()))
                 {
+                    currentFocus = StoreFocus.SellMembers;
                     SetSelectedHeroIndex(i);
                 }
+
+                DrawTabFocusIndicator(GUILayoutUtility.GetLastRect(), selectedHeroIndex == i);
             }
 
             GUILayout.EndHorizontal();
@@ -280,35 +279,30 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            sellScroll = BeginThemedScroll(sellScroll, height - 44f * GetPixelScale());
+            sellListHeight = height - 44f * GetPixelScale();
+            sellScroll = BeginThemedScroll(sellScroll, sellListHeight);
             for (var i = 0; i < items.Count; i++)
             {
                 DrawSellItemRow(hero, items[i], i);
             }
 
-            GUILayout.EndScrollView();
+            EndThemedScroll();
         }
 
         private void DrawSellItemRow(Hero hero, ItemInstance item, int index)
         {
-            GUILayout.BeginHorizontal(GetRowStyle(index == selectedSellIndex));
+            GUILayout.BeginHorizontal(GetRowStyle(currentFocus == StoreFocus.Items && index == selectedSellIndex));
+            var rowHeight = GetStoreRowHeight();
             Sprite sprite;
             UiControls.SpriteIcon(
                 UiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null,
                 34f * GetPixelScale(),
                 uiTheme);
-            GUILayout.BeginVertical();
-            GUILayout.Label(item.NameWithStats + (item.IsEquipped ? "  Equipped" : ""), GetRarityStyle(item.Item, labelStyle));
-            GUILayout.Label(item.Type + "  " + GetSalePrice(item) + "g", smallStyle);
-            GUILayout.EndVertical();
+            GUILayout.Label(item.Name + (item.IsEquipped ? "  Equipped" : ""), GetCenteredRarityStyle(item.Item), GUILayout.Height(rowHeight));
             GUILayout.FlexibleSpace();
-            if (UiControls.Button("Sell", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
-            {
-                selectedSellIndex = index;
-                ShowSellConfirmation(hero, item);
-            }
-
+            GUILayout.Label(GetSalePrice(item) + "g", GetRightAlignedStyle(labelStyle), GUILayout.Width(92f * GetPixelScale()), GUILayout.Height(rowHeight));
             GUILayout.EndHorizontal();
+            HandleSellRowMouse(GUILayoutUtility.GetLastRect(), hero, item, index);
         }
 
         private void ShowRecipientPicker(Item item)
@@ -450,6 +444,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private Vector2 BeginThemedScroll(Vector2 position, float height)
         {
+            previousScrollbarThumb = GUI.skin.verticalScrollbarThumb;
+            themedScrollActive = uiTheme != null;
+            if (uiTheme != null)
+            {
+                GUI.skin.verticalScrollbarThumb = uiTheme.VerticalScrollbarThumbStyle;
+            }
+
             return GUILayout.BeginScrollView(
                 position,
                 false,
@@ -457,6 +458,18 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 GUIStyle.none,
                 uiTheme == null ? GUI.skin.verticalScrollbar : uiTheme.VerticalScrollbarStyle,
                 GUILayout.Height(height));
+        }
+
+        private void EndThemedScroll()
+        {
+            GUILayout.EndScrollView();
+            if (themedScrollActive)
+            {
+                GUI.skin.verticalScrollbarThumb = previousScrollbarThumb;
+            }
+
+            previousScrollbarThumb = null;
+            themedScrollActive = false;
         }
 
         private GUIStyle GetRarityStyle(Item item, GUIStyle fallback)

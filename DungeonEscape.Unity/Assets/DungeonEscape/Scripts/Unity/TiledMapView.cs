@@ -650,6 +650,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             currentMap = loadedMap;
+            PlayMapMusic(loadedMap, false);
             if (gameState == null)
             {
                 gameState = DungeonEscapeGameState.GetOrCreate();
@@ -718,6 +719,30 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             mapLoaded = true;
+        }
+
+        public void PlayCurrentMapMusic()
+        {
+            PlayMapMusic(currentMap, true);
+        }
+
+        private static void PlayMapMusic(TiledLoadedMap loadedMap, bool force)
+        {
+            if (loadedMap == null || loadedMap.Info == null || loadedMap.Info.Properties == null)
+            {
+                return;
+            }
+
+            if (!force && (DungeonEscapeSplashScreen.IsVisible || DungeonEscapeTitleMenu.IsOpen))
+            {
+                return;
+            }
+
+            string song;
+            if (loadedMap.Info.Properties.TryGetValue("song", out song) && !string.IsNullOrEmpty(song))
+            {
+                DungeonEscapeAudio.GetOrCreate().PlayMapMusic(song);
+            }
         }
 
         private void ApplyCameraPosition()

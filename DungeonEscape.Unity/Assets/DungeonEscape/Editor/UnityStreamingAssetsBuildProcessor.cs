@@ -12,6 +12,7 @@ namespace Redpoint.DungeonEscape.UnityEditor
         private static readonly string[] SourceFolders =
         {
             "Assets/DungeonEscape/Data",
+            "Assets/DungeonEscape/Audio",
             "Assets/DungeonEscape/Images",
             "Assets/DungeonEscape/Maps",
             "Assets/DungeonEscape/Tilesets"

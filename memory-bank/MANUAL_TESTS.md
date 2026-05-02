@@ -662,7 +662,7 @@ Status legend:
 - Start or load a quest and walk until a random encounter triggers.
 - Expected: a full-screen combat view opens after the Unity Console random encounter log.
 - Expected: the biome battlefield image fills the screen while maintaining its aspect ratio.
-- Expected: the battlefield image matches the encounter biome, such as field, ocean, mountain, desert, swamp, cave, castle, or tower.
+- Expected: the battlefield image matches the encounter biome, such as field, forest, ocean, mountain, desert, swamp, cave, castle, or tower.
 - Expected: each selected monster is shown with its own image from `allmonsters.tsx`, including duplicate monsters of the same type.
 - Expected: monster sprites keep their relative source image sizes instead of being forced to a uniform size.
 - Expected: each monster shows a health progress bar instead of a name label.
@@ -677,15 +677,43 @@ Status legend:
 
 - Trigger a random encounter.
 - Press OK on the encounter message.
-- Expected: combat rolls monster stats and initiative, then shows the first living hero action prompt when that hero's turn arrives.
+- Expected: combat rolls monster stats, queues monster actions, then asks every living active party member to choose an action before resolving the round.
 - Choose Fight.
 - If more than one monster is alive, choose a monster target.
-- Expected: the hero attacks using the old hit, critical hit, and damage rules, and the target monster HP bar updates.
+- Expected: after all party members have chosen actions, queued hero and monster actions resolve in agility order.
+- Expected: attacks use the old hit, critical hit, and damage rules, and target HP bars update as actions resolve.
 - Continue through monster turns.
-- Expected: monsters automatically attack random living active party members, and the party status window updates HP.
+- Expected: monsters use their queued actions and the party status window updates HP as damage is applied.
 - Continue rounds until either all monsters or all active party members are defeated.
 - Expected: a defeat/victory message is shown and OK closes the combat view.
 - If the party wins, expected: living active party members gain XP, party gold increases, level-up messages appear when relevant, and any monster/item rewards are added to party inventory if there is room.
+
+### [ ] Combat Round Action Queue
+
+- Trigger combat with at least two living active party members.
+- Choose an action for the first party member.
+- Expected: the action does not resolve immediately.
+- Expected: the next living party member is prompted for an action.
+- Choose actions for the remaining living party members.
+- Expected: only after the final party member chooses an action do combat messages begin resolving.
+- Compare action order with actor Agility values if visible in the Party tab or test data.
+- Expected: queued actions resolve from highest Agility to lowest Agility.
+- Kill a monster before its queued action resolves.
+- Expected: that monster's queued action is skipped.
+- Kill a party member before their queued action resolves.
+- Expected: that party member's queued action is skipped unless the action is no longer relevant.
+
+### [ ] Combat Retargets Unavailable Queued Targets
+
+- Trigger combat with at least two monsters.
+- Choose Fight or a single-target attack spell against a monster that can be defeated by an earlier queued party action.
+- Finish choosing actions for the round.
+- Expected: if the selected target is defeated before the later queued action resolves, the later action automatically targets another living monster instead of doing nothing.
+- Trigger combat with at least two living active party members.
+- Let a monster queue an attack against a party member who dies before that monster action resolves.
+- Expected: the monster action automatically targets another living party member.
+- Use a group attack spell or skill where some chosen targets are defeated before the action resolves.
+- Expected: defeated targets are ignored and the action still applies to remaining living targets.
 
 ### [x] Combat Action Menu Shows Available Options
 

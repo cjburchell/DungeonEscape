@@ -213,13 +213,12 @@ Status: In progress
 - Done: Gold window is hidden during combat, and the party status window remains visible during combat.
 - Done: Autosave is blocked while combat is open.
 - Done: Current combat UI pass supports encounter message, old-style action menu, spell/item icon lists, target buttons, HP bars, and round messages.
-- Done: Current turn system pass rolls initiative and resolves hero Fight, Spell, Skill, Item, Run, and monster attack turns.
+- Done: Combat round flow now matches the old game model: monster actions and all living hero actions are chosen first, then queued actions resolve in agility order.
 - Done: Combat rewards award XP, gold, monster item drops, rare chest-style drops, and level-up messages on victory.
 - Done: Skills in combat can run encounter skills through shared core `Skill.Do`.
 - Done: Spells in combat can cast encounter spells through shared core `Spell.Cast`; non-revive spells target living members only and revive spells target dead members.
 - Done: Items in combat can use encounter items with item icons and shared core item/skill effects.
 - Done: Manual Unity combat validation passed for random encounters, biome backgrounds, monster display, Fight loop, rewards, action menu, spell/item icons, spell targeting, skills, items, and Run.
-- Pending: Restore old combat round-planning flow: choose all monster and hero actions first, queue them, then resolve queued actions in agility order.
 - Done: Combat music selection uses the old battle track pool: `battleground`, `like-totally-rad`, `sword-metal`, and `unprepared`.
 - Done: Combat close restores the current map or biome music.
 - Done: Combat sound effects use existing audio for attacks, misses, spells, item use, victory, defeat, and monster/player damage where matching assets exist.

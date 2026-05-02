@@ -184,6 +184,7 @@ Status legend:
 - Start or load a game with at least one active party member.
 - Stop moving.
 - Expected: a compact status window appears in the top-left corner and shows active party members only, not reserve members.
+- Expected: HP and MP are shown as compact progress bars rather than text-only values.
 - Hold movement in any direction.
 - Expected: the status window hides while the player is moving, then returns after movement stops.
 - Open the title menu, game menu, store window, or a dialog/message box.
@@ -277,7 +278,7 @@ Status legend:
 
 ### [x] Inventory Detail Shows Only Available Actions
 
-- Open the Inventory tab with a mix of equippable, non-equippable, usable, quest, and regular items.
+- Open the Party tab, select a member, and switch to the Items sub-tab with a mix of equippable, non-equippable, usable, quest, and regular items.
 - Select a non-equippable item.
 - Expected: Equip and Unequip buttons are not shown.
 - Select an equipped item.
@@ -290,6 +291,34 @@ Status legend:
 - Expected: Drop is not shown.
 - Inspect the item detail panel.
 - Expected: internal slot/class metadata is not shown in the right panel.
+
+### [ ] Combined Party And Inventory Menu
+
+- Open the in-game menu.
+- Expected: there is no separate top-level Inventory tab.
+- Select different active and reserve party members in the Party tab.
+- Expected: the detail panel on the right updates for the selected member.
+- Expected: the party member selection list shows only member names, plus reserve labels where applicable.
+- Use the detail sub-tabs: Status, Equipment, Items, Skills, and Spells.
+- Expected: each sub-tab shows only that selected member's information.
+- Expected: each detail sub-tab uses a consistent height matching the menu body.
+- Expected: the selected sub-tab text is bold.
+- Expected: the selected member's name is shown once above the detail sub-tabs and is not repeated in Status.
+- Expected: HP, MP, and XP show progress bars with current/max text.
+- Expected: HP, MP, and XP progress bar fill is white on black, with text shown to the right of the bar.
+- Expected: Skills and Spells tabs are hidden for members that do not know any.
+- Expected: Effects is hidden when the selected member has no status effects.
+- On the Items sub-tab, select items with a mix of equippable, usable, quest, and regular items.
+- Expected: item names in the item selection list are left-aligned.
+- Expected: the Equipment sub-tab shows item images beside equipped item names.
+- Expected: item icons, rarity coloring, details, and available actions match the old Inventory behavior.
+- Expected: Use actions are hidden when the selected item cannot currently be used.
+- Expected: spell rows show only the spell name and a Cast button; Cast is disabled when the member does not have enough MP or cannot currently cast it.
+- Expected: party ordering buttons are labelled `Up` and `Down`.
+- Use Transfer, Drop, Equip, Unequip, and Use where available.
+- Expected: actions still work through the existing modal overlays and update the selected member afterward.
+- Use keyboard or gamepad left/right while on the Party tab.
+- Expected: the selected detail sub-tab changes without changing the selected party member.
 
 ### [x] Regular Store Buy Flow Uses Tabbed Store UI
 
@@ -557,3 +586,45 @@ Status legend:
 - Move, warp to another map, and open the inventory.
 - Expected: map TMX files, TSX files, tileset images, character images, and item images continue loading in the built player.
 - Result: Confirmed. `File > Build And Run` renders the map correctly outside the editor.
+
+## Audio
+
+### [x] Startup Music Plays Through Splash And Title
+
+- Start Play Mode or launch a built player with `SkipSplashAndLoadQuickSave` disabled.
+- Expected: `first-story` music starts while the splash screen is shown.
+- Wait for the title menu.
+- Expected: the same music continues on the title menu without restarting repeatedly.
+
+### [x] Map Music Follows TMX Song Property
+
+- Start or load a quest and enter the overworld.
+- Expected: overworld music plays from the map `song` property.
+- Warp into a town, dungeon, tower, or shrine with a different `song` property.
+- Expected: the music changes to that map's configured song.
+- Warp back to the previous map.
+- Expected: the previous map music resumes.
+
+### [x] Biome Music Hook Does Not Interrupt Normal Movement
+
+- Move across the overworld and watch the Unity Console.
+- Expected: no missing-audio warnings appear while crossing grassland, forest, hills, swamp, or water.
+- Enter a map or biome identified as town, cave, tower, or desert.
+- Expected: the configured biome music may play, and repeated steps on the same biome do not restart the same track.
+
+### [x] Sound Effect Volume Controls Gameplay Effects
+
+- Open Settings > General.
+- Set Sound Effects Volume to `0.00`.
+- Open a chest, warp, trigger dialog, step on damage terrain, and trigger a level-up if available.
+- Expected: sound effects are muted.
+- Set Sound Effects Volume to `1.00` and repeat the available actions.
+- Expected: chest, warp, dialog, damage, and level-up effects are audible.
+
+### [x] Music Volume Controls Current Track
+
+- Open Settings > General while music is playing.
+- Set Music Volume to `0.00`.
+- Expected: music becomes silent without stopping the game.
+- Set Music Volume to `1.00`.
+- Expected: the currently playing track becomes audible again.

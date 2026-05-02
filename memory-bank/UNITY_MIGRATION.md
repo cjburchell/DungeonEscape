@@ -4,7 +4,7 @@ This file tracks the Dungeon Escape Unity migration. Update it as each area move
 
 ## Guiding Priority
 
-Keep combat migration after map-mode gameplay, party systems, UI, persistence, and Unity cleanup. Leave sound/audio until after combat.
+Keep combat migration after map-mode gameplay, party systems, UI, persistence, Unity cleanup, and audio.
 
 ## 1. Validate Current Gameplay Loop
 
@@ -44,10 +44,11 @@ Status: Done
 
 ## 3. UI Migration
 
-Status: In progress
+Status: Done
 
 - Done: Party/status window.
 - Done: Inventory view.
+- Done: Party and Inventory are combined into one Party tab with member detail sub-tabs for Status, Equipment, Items, Skills, and Spells.
 - Done: Inventory item detail panel.
 - Done: Item rarity text coloring.
 - Done: Item and character sprites in UI where available.
@@ -67,7 +68,7 @@ Status: In progress
 - Done: Current UI migration manual tests passed.
 - Done: Fullscreen setting is applied at Unity startup and exposed on Settings > General.
 - Reviewed: Old direct map command shortcuts remain consolidated into the tabbed Menu action for now; direct Inventory/Quest/Settings shortcuts can be reintroduced later if playtesting shows the tab flow is too slow.
-- Pending: Any future UI layout polish discovered during later gameplay migration.
+- Follow-up: Any future UI layout polish discovered during later gameplay migration.
 
 ## 4. Map Gameplay
 
@@ -120,35 +121,24 @@ Status: Done
 - Done: Tiled flipped object GIDs are normalized for map parsing, rendering, collision, and gameplay queries.
 - Done: Manual collision, water, damage, biome, stairs, doors, ship visual, save/load, and scrolling checks passed.
 
-## 6. Encounter And Combat Migration
+## 6. Audio
 
-Status: Deferred until map mode is mostly complete
+Status: Done
 
-- Pending: Carry forward old biome encounter metadata, including min/max monster level, before random encounters are implemented.
-- Pending: Random encounters by biome.
-- Pending: Per-map random encounter tables from `Content/data/{mapId}_monsters.json`.
-- Pending: Monster loading/spawning.
-- Pending: Combat UI.
-- Pending: Turn system.
-- Pending: Skills in combat.
-- Pending: Spells in combat.
-- Pending: Items in combat.
+- Done: Startup music begins on the recreated splash/title flow using `first-story`.
+- Done: Music by map through each TMX map's `song` property.
+- Done: Biome music hooks for town, cave, tower, and desert biome transitions, with other biomes falling back to map music.
+- Done: Separate settings-backed music and sound effect volume sliders on Settings > General.
+- Done: Sound effects for chests.
+- Done: Sound effects for warps.
+- Done: Sound effects for dialog.
+- Done: Sound effects for damage.
+- Done: Sound effects for level-up.
+- Done: Manual Unity audio validation passed for current map-mode music and sound effects.
 
-## 7. Audio
+## 7. Persistence Hardening
 
-Status: Deferred until after combat
-
-- Pending: Music by map.
-- Pending: Music by biome.
-- Pending: Sound effects for chests.
-- Pending: Sound effects for warps.
-- Pending: Sound effects for dialog.
-- Pending: Sound effects for damage.
-- Pending: Sound effects for level-up.
-
-## 8. Persistence Hardening
-
-Status: In progress
+Status: Done
 
 - Done: Quick save/load.
 - Done: Variable manual saves without fixed save slots.
@@ -171,7 +161,7 @@ Status: In progress
 - Done: Final autosave policy: timer autosave is kept, but autosave is skipped while title/menu/store/dialog UI is active; combat can also block autosave through `DungeonEscapeGameState.AutoSaveBlocked`.
 - Done: Final transition-save policy: transition saves only occur when moving to or from the overworld.
 
-## 9. Build And Test Automation
+## 8. Build And Test Automation
 
 Status: In progress
 
@@ -185,7 +175,7 @@ Status: In progress
 - Pending: Add regression tests for quest dialog actions and item rewards.
 - Pending: Review ReSharper warnings and fix actionable issues where they improve correctness or maintainability.
 
-## 10. Unity Project Cleanup
+## 9. Unity Project Cleanup
 
 Status: In progress
 
@@ -201,3 +191,21 @@ Status: In progress
 - Pending: Replace remaining runtime filesystem asset loading with Unity-native asset references where appropriate.
 - Pending: Remove remaining temporary/debug code when no longer needed.
 - Pending: Decide whether old developer/debug console commands should be recreated with Unity tooling.
+
+## 10. Encounter And Combat Migration
+
+Status: Deferred until map mode is mostly complete
+
+- Pending: Carry forward old biome encounter metadata, including min/max monster level, before random encounters are implemented.
+- Pending: Random encounters by biome.
+- Pending: Per-map random encounter tables from `Content/data/{mapId}_monsters.json`.
+- Pending: Monster loading/spawning.
+- Pending: Combat UI.
+- Pending: Turn system.
+- Pending: Skills in combat.
+- Pending: Spells in combat.
+- Pending: Items in combat.
+- Pending: Combat music selection, including `battleground` or map/encounter-specific combat tracks.
+- Pending: Restore the correct map or biome music after combat ends.
+- Pending: Combat sound effects for attacks, misses, spells, item use, victory, defeat, and monster/player damage.
+- Pending: Confirm combat audio respects the existing Music Volume and Sound Effects Volume settings.

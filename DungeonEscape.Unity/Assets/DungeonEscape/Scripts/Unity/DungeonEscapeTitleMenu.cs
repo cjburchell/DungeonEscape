@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Tools;
@@ -32,6 +33,8 @@ namespace Redpoint.DungeonEscape.Unity
         private const int CreateRerollIndex = 4;
         private const int CreateStartIndex = 5;
         private const int CreateBackIndex = 6;
+        private const string MainMenuBackgroundAssetPath = "Assets/DungeonEscape/Images/ui/mainmenue.png";
+        private const string SecondaryMenuBackgroundAssetPath = "Assets/DungeonEscape/Images/ui/menu2.png";
 
         private static bool isOpen;
 
@@ -39,7 +42,6 @@ namespace Redpoint.DungeonEscape.Unity
         private DungeonEscapeUiSettings uiSettings;
         private DungeonEscapeUiTheme uiTheme;
         private GUIStyle titleStyle;
-        private GUIStyle mainTitleStyle;
         private GUIStyle mainMenuButtonStyle;
         private GUIStyle selectedMainMenuButtonStyle;
         private GUIStyle labelStyle;
@@ -65,6 +67,8 @@ namespace Redpoint.DungeonEscape.Unity
         private Hero createPreviewHero;
         private int selectedDropdownIndex;
         private bool focusCreateNameNextGui;
+        private Texture2D mainMenuBackground;
+        private Texture2D secondaryMenuBackground;
 
         public static bool IsOpen
         {
@@ -173,15 +177,14 @@ namespace Redpoint.DungeonEscape.Unity
             var previousDepth = GUI.depth;
             var previousColor = GUI.color;
             GUI.depth = TitleGuiDepth;
-            GUI.color = Color.black;
-            GUI.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), Texture2D.whiteTexture);
-            GUI.color = previousColor;
+            DrawBackgroundForCurrentMode();
 
             var scale = GetPixelScale();
             if (mode == TitleMode.Main)
             {
                 DrawMainMenuStandalone(scale);
                 GUI.depth = previousDepth;
+                GUI.color = previousColor;
                 return;
             }
 
@@ -190,6 +193,7 @@ namespace Redpoint.DungeonEscape.Unity
                 DrawCreateMenuStandalone(scale);
                 DrawCreateDropdownOverlay();
                 GUI.depth = previousDepth;
+                GUI.color = previousColor;
                 return;
             }
 
@@ -197,22 +201,93 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 DrawLoadMenuStandalone(scale);
                 GUI.depth = previousDepth;
+                GUI.color = previousColor;
                 return;
             }
 
             GUI.depth = previousDepth;
+            GUI.color = previousColor;
+        }
+
+        private void OnDestroy()
+        {
+            if (mainMenuBackground != null)
+            {
+                Destroy(mainMenuBackground);
+                mainMenuBackground = null;
+            }
+
+            if (secondaryMenuBackground != null)
+            {
+                Destroy(secondaryMenuBackground);
+                secondaryMenuBackground = null;
+            }
+        }
+
+        private void DrawBackgroundForCurrentMode()
+        {
+            var background = mode == TitleMode.Main ? GetMainMenuBackground() : GetSecondaryMenuBackground();
+            GUI.color = Color.white;
+            if (background != null)
+            {
+                GUI.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), background, ScaleMode.ScaleAndCrop);
+                return;
+            }
+
+            GUI.color = Color.black;
+            GUI.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), Texture2D.whiteTexture);
+            GUI.color = Color.white;
+        }
+
+        private Texture2D GetMainMenuBackground()
+        {
+            if (mainMenuBackground == null)
+            {
+                mainMenuBackground = LoadTexture(MainMenuBackgroundAssetPath, "DungeonEscapeMainMenuBackground");
+            }
+
+            return mainMenuBackground;
+        }
+
+        private Texture2D GetSecondaryMenuBackground()
+        {
+            if (secondaryMenuBackground == null)
+            {
+                secondaryMenuBackground = LoadTexture(SecondaryMenuBackgroundAssetPath, "DungeonEscapeSecondaryMenuBackground");
+            }
+
+            return secondaryMenuBackground;
+        }
+
+        private static Texture2D LoadTexture(string assetPath, string textureName)
+        {
+            var fullPath = UnityAssetPath.ToRuntimePath(assetPath);
+            if (!File.Exists(fullPath))
+            {
+                Debug.LogWarning("Title menu background image not found: " + assetPath);
+                return null;
+            }
+
+            var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            if (!texture.LoadImage(File.ReadAllBytes(fullPath)))
+            {
+                Debug.LogWarning("Could not load title menu background image: " + assetPath);
+                return null;
+            }
+
+            texture.name = textureName;
+            return texture;
         }
 
         private void DrawMainMenuStandalone(float scale)
         {
             var rows = GetMainRows().ToList();
-            var titleRect = new Rect(0f, 36f * scale, Screen.width, 88f * scale);
-            GUI.Label(titleRect, "Dungeon Escape", mainTitleStyle);
-
             var buttonWidth = Mathf.Min(250f * scale, Screen.width - 48f * scale);
             var buttonHeight = 32f * scale;
             var buttonGap = 18f * scale;
-            var startY = titleRect.yMax + 4f * scale;
+            var totalHeight = rows.Count * buttonHeight + Mathf.Max(0, rows.Count - 1) * buttonGap;
+            var bottomHalfY = Screen.height / 2f;
+            var startY = bottomHalfY + Mathf.Max(0f, (Screen.height - bottomHalfY - totalHeight) / 2f);
             var x = (Screen.width - buttonWidth) / 2f;
             for (var i = 0; i < rows.Count; i++)
             {
@@ -241,7 +316,6 @@ namespace Redpoint.DungeonEscape.Unity
                 fontSize = Mathf.RoundToInt(32f * scale),
                 fontStyle = FontStyle.Normal
             };
-            GUI.Label(new Rect(0f, 28f * scale, Screen.width, 44f * scale), "Load Quest", loadTitleStyle);
 
             var slots = gameState == null
                 ? new List<GameSave>()
@@ -250,7 +324,23 @@ namespace Redpoint.DungeonEscape.Unity
             selectedIndex = Mathf.Clamp(selectedIndex, 0, GetLoadBackIndex(slots.Count));
             var width = Mathf.Min(640f * scale, Screen.width - 32f * scale);
             var height = 330f * scale;
-            var area = new Rect((Screen.width - width) / 2f, 86f * scale, width, height);
+            var titleHeight = 44f * scale;
+            var titleGap = 14f * scale;
+            var backWidth = 82f * scale;
+            var backHeight = 32f * scale;
+            var backGap = 10f * scale;
+            var totalHeight = titleHeight + titleGap + height + backGap + backHeight;
+            var titleY = Mathf.Max(16f * scale, (Screen.height - totalHeight) / 2f);
+            var panelPadding = 16f * scale;
+            var panelRect = new Rect(
+                (Screen.width - width) / 2f - panelPadding,
+                titleY - panelPadding,
+                width + panelPadding * 2f,
+                totalHeight + panelPadding * 2f);
+            GUI.Box(panelRect, GUIContent.none, panelStyle);
+            GUI.Label(new Rect(0f, titleY, Screen.width, titleHeight), "Load Quest", loadTitleStyle);
+
+            var area = new Rect((Screen.width - width) / 2f, titleY + titleHeight + titleGap, width, height);
             GUILayout.BeginArea(area);
             GUILayout.BeginVertical();
             var visibleSlotCount = Mathf.Min(slots.Count, 5);
@@ -278,9 +368,7 @@ namespace Redpoint.DungeonEscape.Unity
             GUILayout.EndVertical();
             GUILayout.EndArea();
 
-            var backWidth = 82f * scale;
-            var backHeight = 32f * scale;
-            var backRect = new Rect((Screen.width - backWidth) / 2f, area.yMax + 10f * scale, backWidth, backHeight);
+            var backRect = new Rect((Screen.width - backWidth) / 2f, area.yMax + backGap, backWidth, backHeight);
             if (GUI.Button(backRect, "Back", selectedIndex == GetLoadBackIndex(slots.Count) ? selectedMainMenuButtonStyle : mainMenuButtonStyle))
             {
                 ShowMainMenu();
@@ -323,12 +411,24 @@ namespace Redpoint.DungeonEscape.Unity
                 fontSize = Mathf.RoundToInt(32f * scale),
                 fontStyle = FontStyle.Normal
             };
-            GUI.Label(new Rect(0f, 28f * scale, Screen.width, 44f * scale), "New Quest", newQuestTitleStyle);
             EnsureCreatePreviewHero();
 
             var width = Mathf.Min(660f * scale, Screen.width - 32f * scale);
             var height = 230f * scale;
-            createMenuAreaOffset = new Rect((Screen.width - width) / 2f, 80f * scale, width, height);
+            var titleHeight = 44f * scale;
+            var titleGap = 8f * scale;
+            var totalHeight = titleHeight + titleGap + height;
+            var titleY = Mathf.Max(16f * scale, (Screen.height - totalHeight) / 2f);
+            var panelPadding = 16f * scale;
+            var panelRect = new Rect(
+                (Screen.width - width) / 2f - panelPadding,
+                titleY - panelPadding,
+                width + panelPadding * 2f,
+                totalHeight + panelPadding * 2f);
+            GUI.Box(panelRect, GUIContent.none, panelStyle);
+            GUI.Label(new Rect(0f, titleY, Screen.width, titleHeight), "New Quest", newQuestTitleStyle);
+
+            createMenuAreaOffset = new Rect((Screen.width - width) / 2f, titleY + titleHeight + titleGap, width, height);
             GUILayout.BeginArea(createMenuAreaOffset);
 
             var previousEnabled = GUI.enabled;
@@ -1171,13 +1271,6 @@ namespace Redpoint.DungeonEscape.Unity
             uiTheme = DungeonEscapeUiTheme.Create(settings, scale);
             panelStyle = uiTheme.PanelStyle;
             titleStyle = uiTheme.TitleStyle;
-            mainTitleStyle = new GUIStyle(uiTheme.TitleStyle)
-            {
-                alignment = TextAnchor.MiddleCenter,
-                fontSize = Mathf.RoundToInt(64f * scale),
-                fontStyle = FontStyle.Normal,
-                wordWrap = false
-            };
             mainMenuButtonStyle = new GUIStyle(uiTheme.ButtonStyle)
             {
                 alignment = TextAnchor.MiddleCenter,

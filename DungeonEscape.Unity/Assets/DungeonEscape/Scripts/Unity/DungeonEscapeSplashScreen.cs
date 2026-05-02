@@ -46,6 +46,7 @@ namespace Redpoint.DungeonEscape.Unity
             isVisible = true;
             startTime = -1f;
             splashTexture = LoadTexture(SplashTextureAssetPath);
+            DungeonEscapeAudio.GetOrCreate().PlayMusic("first-story");
             Debug.Log("Dungeon Escape splash screen starting.");
         }
 

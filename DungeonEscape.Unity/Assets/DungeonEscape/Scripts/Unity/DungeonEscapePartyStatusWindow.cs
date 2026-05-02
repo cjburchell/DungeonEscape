@@ -54,7 +54,7 @@ namespace Redpoint.DungeonEscape.Unity
             var scale = GetPixelScale();
             var portraitWidth = 32f * scale;
             var portraitHeight = 48f * scale;
-            var statusWidth = 80f * scale;
+            var statusWidth = 110f * scale;
             var memberWidth = portraitWidth + statusWidth + 15f * scale;
             var windowWidth = Mathf.Max(memberWidth, members.Count * memberWidth + 10f * scale);
             var windowHeight = 76f * scale;
@@ -98,10 +98,10 @@ namespace Redpoint.DungeonEscape.Unity
             var style = GetMemberStatusStyle(member);
             GUILayout.BeginVertical(GUILayout.Width(statusWidth));
             GUILayout.Label(GetShortName(member.Name), style, GUILayout.Width(statusWidth), GUILayout.Height(GetLineHeight(scale)));
-            DrawSplitLabel("HP:", member.Health.ToString(), style, statusWidth, scale);
+            DrawProgressRow("HP", member.Health, member.MaxHealth, style, statusWidth, scale);
             if (member.MaxMagic != 0)
             {
-                DrawSplitLabel("MP:", member.Magic.ToString(), style, statusWidth, scale);
+                DrawProgressRow("MP", member.Magic, member.MaxMagic, style, statusWidth, scale);
             }
             else
             {
@@ -120,6 +120,34 @@ namespace Redpoint.DungeonEscape.Unity
             GUILayout.Label(label, style, GUILayout.Width(width / 2f), GUILayout.Height(GetLineHeight(scale)));
             GUILayout.Label(value, style, GUILayout.Width(width / 2f), GUILayout.Height(GetLineHeight(scale)));
             GUILayout.EndHorizontal();
+        }
+
+        private void DrawProgressRow(string label, int value, int maxValue, GUIStyle style, float width, float scale)
+        {
+            GUILayout.BeginHorizontal(GUILayout.Width(width), GUILayout.Height(GetLineHeight(scale)));
+            GUILayout.Label(label + ":", style, GUILayout.Width(24f * scale), GUILayout.Height(GetLineHeight(scale)));
+            DrawProgressBar(maxValue <= 0 ? 0f : Mathf.Clamp01((float)value / maxValue), width - 28f * scale, 10f * scale);
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawProgressBar(float progress, float width, float height)
+        {
+            var rect = GUILayoutUtility.GetRect(width, height, GUILayout.Width(width), GUILayout.Height(GetLineHeight(GetPixelScale())));
+            rect.y += (rect.height - height) / 2f;
+            rect.height = height;
+            GUI.Box(rect, GUIContent.none, uiTheme.ButtonStyle);
+
+            var previousColor = GUI.color;
+            GUI.color = Color.white;
+            var inset = Mathf.Max(1f, uiTheme.BorderThickness);
+            GUI.DrawTexture(
+                new Rect(
+                    rect.x + inset,
+                    rect.y + inset,
+                    Mathf.Max(0f, rect.width - inset * 2f) * progress,
+                    Mathf.Max(0f, rect.height - inset * 2f)),
+                Texture2D.whiteTexture);
+            GUI.color = previousColor;
         }
 
         private static float GetLineHeight(float scale)

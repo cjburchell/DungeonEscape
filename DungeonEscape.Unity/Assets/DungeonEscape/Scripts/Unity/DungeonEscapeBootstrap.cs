@@ -53,6 +53,7 @@ namespace Redpoint.DungeonEscape.Unity
             Settings = DungeonEscapeSettingsCache.Load();
             DungeonEscapeDisplaySettings.Apply(Settings);
             DungeonEscapeUiSettings.GetOrCreate().ApplySettings(Settings);
+            DungeonEscapeAudio.GetOrCreate().ApplySettings(Settings);
 
             Debug.Log("Dungeon Escape Unity bootstrap starting.");
 

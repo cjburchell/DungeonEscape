@@ -692,7 +692,7 @@ namespace Redpoint.DungeonEscape.Unity
         {
             var item = GetEquippedItem(hero, slot);
             GUILayout.BeginHorizontal();
-            GUILayout.Label(slot + ":", smallStyle, GUILayout.Width(98f * GetPixelScale()));
+            GUILayout.Label(slot + ":", labelStyle, GUILayout.Width(98f * GetPixelScale()));
             if (item != null)
             {
                 Sprite sprite;
@@ -702,7 +702,7 @@ namespace Redpoint.DungeonEscape.Unity
                     uiTheme);
             }
 
-            GUILayout.Label(item == null ? "Empty" : item.NameWithStats, GetRarityStyle(item, smallStyle));
+            GUILayout.Label(item == null ? "Empty" : item.NameWithStats, GetRarityStyle(item, labelStyle));
             GUILayout.EndHorizontal();
         }
 
@@ -757,15 +757,14 @@ namespace Redpoint.DungeonEscape.Unity
 
             foreach (var spell in spells)
             {
+                var canCast = gameState != null && CanCastSpellFromPartyMenu(hero, spell);
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(spell.Name, smallStyle);
-                SetMenuGuiEnabled(gameState != null && CanCastSpellFromPartyMenu(hero, spell));
-                if (GUILayout.Button("Cast", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
+                GUILayout.Label(spell.Name, labelStyle);
+                if (canCast && GUILayout.Button("Cast", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
                 {
                     ShowSpellTargetPicker(hero, spell);
                 }
 
-                SetMenuGuiEnabled(true);
                 GUILayout.EndHorizontal();
             }
         }

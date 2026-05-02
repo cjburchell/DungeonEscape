@@ -434,9 +434,9 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            var message = gameState.ApplyMapStepEffects(
-                mapView.GetDamageAt(position),
-                mapView.GetBiomeAt(position));
+            var biome = mapView.GetBiomeAt(position);
+            var message = gameState.ApplyMapStepEffects(mapView.GetDamageAt(position), biome);
+            DungeonEscapeAudio.GetOrCreate().PlayBiomeMusic(biome);
             RefreshPartyVisuals();
             if (!string.IsNullOrEmpty(message) && messageBox != null)
             {
@@ -452,6 +452,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             isTransitioningMap = true;
+            DungeonEscapeAudio.GetOrCreate().PlaySoundEffect("stairs-up");
             DungeonEscapeScreenFade.GetOrCreate().FadeTransition(this, () => ApplyMapTransitionImmediate(warp));
         }
 
@@ -651,6 +652,7 @@ namespace Redpoint.DungeonEscape.Unity
             string text;
             if (TryGetProperty(mapObject, "Text", out text) && !string.IsNullOrEmpty(text))
             {
+                DungeonEscapeAudio.GetOrCreate().PlaySoundEffect("confirm");
                 messageBox.Show(mapObject.Name, text);
                 return;
             }
@@ -1009,6 +1011,7 @@ namespace Redpoint.DungeonEscape.Unity
             var choices = dialog.Choices == null
                 ? new List<Choice>()
                 : dialog.Choices.Where(IsVisibleDialogChoice).ToList();
+            DungeonEscapeAudio.GetOrCreate().PlaySoundEffect("confirm");
 
             var dialogHead = dialog as DialogHead;
             var effectiveQuest = dialogHead != null && !string.IsNullOrEmpty(dialogHead.Quest)
@@ -1044,6 +1047,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             var resultMessage = new StringBuilder();
+            DungeonEscapeAudio.GetOrCreate().PlaySoundEffect("confirm");
             var effectiveQuest = string.IsNullOrEmpty(choice.Quest) ? questId : choice.Quest;
             if (gameState != null && !string.IsNullOrEmpty(effectiveQuest) && choice.NextQuestStage.HasValue)
             {

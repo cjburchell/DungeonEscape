@@ -219,7 +219,7 @@ namespace Redpoint.DungeonEscape.Unity
             TabStyle = new GUIStyle(ButtonStyle);
             SelectedTabStyle = new GUIStyle(ButtonStyle)
             {
-                fontStyle = FontStyle.Normal,
+                fontStyle = FontStyle.Bold,
                 normal = { background = selectedRowTexture, textColor = HighlightColor },
                 hover = { background = selectedHoverTexture, textColor = HighlightColor },
                 active = { background = selectedActiveTexture, textColor = HighlightColor },

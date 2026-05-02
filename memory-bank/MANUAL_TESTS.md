@@ -442,11 +442,11 @@ Status legend:
 - Expected: the old `splash.png` image fades in centered on a black screen, holds briefly, then fades out.
 - Expected: the map is not visible behind the splash.
 - Wait for the title menu.
-- Expected: the title menu appears on a black background, not over the rendered map.
+- Expected: the title menu appears over `mainmenue.png`, with no separate game title text and with menu buttons vertically centered in the bottom half of the screen.
 - Choose Continue, New Quest, or Load Quest if those options are available.
 - Expected: the title menu closes and the map becomes visible only after entering gameplay.
 - Use File > Build And Run.
-- Expected: the built player follows the same splash, black title background, and map reveal behavior.
+- Expected: the built player follows the same splash, image-backed title background, and map reveal behavior.
 - Set `SkipSplashAndLoadQuickSave` to `true` in the user settings file.
 - Expected: Play Mode starts directly from the quick save without showing the splash or title menu.
 - Set `SkipSplashAndLoadQuickSave` back to `false`.
@@ -467,7 +467,7 @@ Status legend:
 
 - Return to the title menu from the in-game menu.
 - Select New Quest.
-- Expected: New Quest screen appears on a black background with compact Name/Gender/Class controls, portrait, and stat panel.
+- Expected: New Quest screen appears over `menu2.png` with vertically centered compact Name/Gender/Class controls, portrait, and stat panel inside a black panel with a white border.
 - Enter a player name or press Random.
 - Expected: Random fills the name field with a generated name for the selected gender.
 - Open the Gender dropdown and choose a gender.
@@ -507,7 +507,7 @@ Status legend:
 ### [x] Load Quest Screen Flow
 
 - Return to the title menu again and select Load Quest.
-- Expected: Load Quest screen appears on a black background with a centered title, manual saves on the left, and a Delete button beside each save.
+- Expected: Load Quest screen appears over `menu2.png` with vertically centered title, manual saves on the left, and a Delete button beside each save inside a black panel with a white border.
 - Expected: the centered Back button is fully visible below the save list.
 - Press up/down while a save or Delete button is selected.
 - Expected: selection moves to the previous/next save row, not sideways into Delete.

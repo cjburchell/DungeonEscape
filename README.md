@@ -71,6 +71,27 @@ Tiled object metadata in Unity maps should use `class="..."`, not object `type="
 - Chests use `class="Chest"` and default map data should set `Locked=false`.
 - Doors use `class="Door"` and default map data should set `Locked=true`.
 
+## Controls
+
+Default keyboard and gamepad bindings:
+
+| Action | Keyboard | Gamepad |
+|---|---:|---:|
+| Move left | `A` | D-pad left |
+| Move right | `D` | D-pad right |
+| Move up | `W` | D-pad up |
+| Move down | `S` | D-pad down |
+| Interact / confirm | `Space` | South button |
+| Cancel / back | `Escape` | East button |
+| Sprint | `LeftShift` | North button |
+| Menu | `E` | West button |
+| Previous tab | `[` | Left shoulder |
+| Next tab | `]` | Right shoulder |
+| Quick save | `F6` | Unbound |
+| Quick load | `F9` | Unbound |
+
+Bindings can be changed in the Unity game menu under Settings > Input Bindings.
+
 ## CI
 
 GitLab CI restores, builds, and tests the solution. Unity validation and Windows player artifact builds are controlled with:

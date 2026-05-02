@@ -449,33 +449,90 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void DrawHeroStatus(Hero hero, bool active)
         {
-            GUILayout.BeginHorizontal();
-            Sprite sprite;
-            DungeonEscapeUiControls.SpriteIcon(
-                DungeonEscapeUiAssetResolver.TryGetHeroSprite(hero, out sprite) ? sprite : null,
-                48f * GetPixelScale(),
-                uiTheme);
-            GUILayout.BeginVertical();
-            GUILayout.Label(hero.Name + "  L" + hero.Level + " " + hero.Class + (active ? "" : "  Reserve"), labelStyle);
-            GUILayout.Label(
-                "HP " + hero.Health + "/" + hero.MaxHealth +
-                "   MP " + hero.Magic + "/" + hero.MaxMagic +
-                "   XP " + hero.Xp + "/" + hero.NextLevel,
-                smallStyle);
-            GUILayout.Label(
-                "ATK " + hero.Attack +
-                "   DEF " + hero.Defence +
-                "   MDEF " + hero.MagicDefence +
-                "   AGI " + hero.Agility,
-                smallStyle);
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
+            GUILayout.Label(hero.Name + (active ? "" : "  Reserve"), labelStyle);
         }
 
         private void DrawPartyDetail(Hero hero)
         {
-            GUILayout.BeginVertical(panelStyle, GUILayout.Width(420f * GetPixelScale()));
-            GUILayout.Label("Status", titleStyle);
+            EnsureVisiblePartyDetailTab(hero);
+            GUILayout.BeginVertical(panelStyle, GUILayout.Height(menuBodyHeight), GUILayout.ExpandWidth(true));
+            GUILayout.Label(hero.Name, titleStyle);
+            DrawPartyDetailTabs();
+            GUILayout.Space(8f * GetPixelScale());
+            partyDetailScrollPosition = BeginThemedScroll(
+                partyDetailScrollPosition,
+                Mathf.Max(120f * GetPixelScale(), menuBodyHeight - 86f * GetPixelScale()));
+            switch (currentPartyDetailTab)
+            {
+                case PartyDetailTab.Status:
+                    DrawPartyStatusDetail(hero);
+                    break;
+                case PartyDetailTab.Equipment:
+                    DrawPartyEquipmentDetail(hero);
+                    break;
+                case PartyDetailTab.Items:
+                    DrawPartyItemsDetail(hero);
+                    break;
+                case PartyDetailTab.Skills:
+                    DrawPartySkillsDetail(hero);
+                    break;
+                case PartyDetailTab.Spells:
+                    DrawPartySpellsDetail(hero);
+                    break;
+            }
+
+            EndThemedScroll();
+            GUILayout.EndVertical();
+        }
+
+        private void DrawPartyDetailTabs()
+        {
+            GUILayout.BeginHorizontal();
+            foreach (var tab in GetVisiblePartyDetailTabs(GetSelectedPartyHero()))
+            {
+                DrawPartyDetailTab(tab, GetPartyDetailTabLabel(tab));
+            }
+
+            GUILayout.EndHorizontal();
+        }
+
+        private static List<PartyDetailTab> GetVisiblePartyDetailTabs(Hero hero)
+        {
+            var tabs = new List<PartyDetailTab>
+            {
+                PartyDetailTab.Status,
+                PartyDetailTab.Equipment,
+                PartyDetailTab.Items
+            };
+
+            if (HasKnownSkills(hero))
+            {
+                tabs.Add(PartyDetailTab.Skills);
+            }
+
+            if (HasKnownSpells(hero))
+            {
+                tabs.Add(PartyDetailTab.Spells);
+            }
+
+            return tabs;
+        }
+
+        private static string GetPartyDetailTabLabel(PartyDetailTab tab)
+        {
+            return tab.ToString();
+        }
+
+        private void DrawPartyDetailTab(PartyDetailTab tab, string label)
+        {
+            if (DungeonEscapeUiControls.TabButton(label, currentPartyDetailTab == tab, uiTheme, 30f * GetPixelScale()))
+            {
+                currentPartyDetailTab = tab;
+            }
+        }
+
+        private void DrawPartyStatusDetail(Hero hero)
+        {
             GUILayout.BeginHorizontal();
             Sprite sprite;
             DungeonEscapeUiControls.SpriteIcon(
@@ -483,10 +540,10 @@ namespace Redpoint.DungeonEscape.Unity
                 72f * GetPixelScale(),
                 uiTheme);
             GUILayout.BeginVertical();
-            GUILayout.Label(hero.Name + "  Level " + hero.Level + " " + hero.Class + "  " + hero.Gender, labelStyle);
-            DrawDetailValue("HP", hero.Health + " / " + hero.MaxHealth);
-            DrawDetailValue("MP", hero.Magic + " / " + hero.MaxMagic);
-            DrawDetailValue("XP", hero.Xp + " / " + hero.NextLevel + " (" + GetXpToNextLevel(hero) + " to next)");
+            GUILayout.Label("Level " + hero.Level + " " + hero.Class + "  " + hero.Gender, labelStyle);
+            DrawProgressValue("HP", hero.Health, hero.MaxHealth, hero.Health + " / " + hero.MaxHealth);
+            DrawProgressValue("MP", hero.Magic, hero.MaxMagic, hero.Magic + " / " + hero.MaxMagic);
+            DrawProgressValue("XP", hero.Xp, hero.NextLevel, hero.Xp + " / " + hero.NextLevel + " (" + GetXpToNextLevel(hero) + " to next)");
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
@@ -503,18 +560,62 @@ namespace Redpoint.DungeonEscape.Unity
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
-            GUILayout.Space(8f * GetPixelScale());
+            DrawStatusEffects(hero);
+        }
+
+        private void DrawPartyEquipmentDetail(Hero hero)
+        {
             GUILayout.Label("Equipment", labelStyle);
             foreach (Slot slot in Enum.GetValues(typeof(Slot)))
             {
                 DrawEquipmentSlot(hero, slot);
             }
+        }
 
-            DrawStatusEffects(hero);
+        private void DrawPartyItemsDetail(Hero hero)
+        {
+            GUILayout.Label("Items (" + hero.Items.Count + "/" + Party.MaxItems + ")", titleStyle);
+            if (hero.Items.Count == 0)
+            {
+                GUILayout.Label("No items.", smallStyle);
+                return;
+            }
+
+            selectedPartyItemIndex = Mathf.Clamp(selectedPartyItemIndex, 0, hero.Items.Count - 1);
+            inventoryScrollPosition = BeginThemedScroll(inventoryScrollPosition, 172f * GetPixelScale());
+            for (var i = 0; i < hero.Items.Count; i++)
+            {
+                var item = hero.Items[i];
+                Sprite sprite;
+                GUILayout.BeginHorizontal();
+                DungeonEscapeUiControls.SpriteIcon(
+                    DungeonEscapeUiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null,
+                    32f * GetPixelScale(),
+                    uiTheme);
+                if (GUILayout.Button(
+                        item.NameWithStats + (item.IsEquipped ? " [E]" : ""),
+                        GetLeftAlignedButtonStyle(selectedPartyItemIndex == i),
+                        GUILayout.Height(32f * GetPixelScale())))
+                {
+                    selectedPartyItemIndex = i;
+                }
+
+                GUILayout.EndHorizontal();
+            }
+
+            EndThemedScroll();
+            GUILayout.Space(8f * GetPixelScale());
+            DrawInventoryItemDetail(hero, hero.Items[selectedPartyItemIndex], false);
+        }
+
+        private void DrawPartySkillsDetail(Hero hero)
+        {
             DrawKnownSkills(hero);
-            DrawKnownSpells(hero);
+        }
 
-            GUILayout.EndVertical();
+        private void DrawPartySpellsDetail(Hero hero)
+        {
+            DrawKnownSpells(hero);
         }
 
         private void DrawDetailValue(string label, string value)
@@ -523,6 +624,50 @@ namespace Redpoint.DungeonEscape.Unity
             GUILayout.Label(label + ":", smallStyle, GUILayout.Width(112f * GetPixelScale()));
             GUILayout.Label(value, smallStyle);
             GUILayout.EndHorizontal();
+        }
+
+        private void DrawProgressValue(string label, ulong value, ulong maxValue, string text)
+        {
+            var scale = GetPixelScale();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(label + ":", smallStyle, GUILayout.Width(36f * scale));
+            DrawProgressBar(maxValue == 0 ? 0f : Mathf.Clamp01((float)((double)value / maxValue)), 170f * scale, 20f * scale);
+            GUILayout.Label(text, smallStyle, GUILayout.Width(190f * scale));
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawProgressValue(string label, int value, int maxValue, string text)
+        {
+            DrawProgressValue(label, (ulong)Math.Max(0, value), (ulong)Math.Max(0, maxValue), text);
+        }
+
+        private void DrawProgressBar(float progress, float width, float height)
+        {
+            var rect = GUILayoutUtility.GetRect(width, height, GUILayout.Width(width), GUILayout.Height(height));
+            GUI.Box(rect, GUIContent.none, uiTheme == null ? GUI.skin.box : uiTheme.ButtonStyle);
+
+            var previousColor = GUI.color;
+            GUI.color = Color.white;
+            var inset = uiTheme == null ? 2f : Mathf.Max(2f, uiTheme.BorderThickness);
+            GUI.DrawTexture(
+                new Rect(
+                    rect.x + inset,
+                    rect.y + inset,
+                    Mathf.Max(0f, rect.width - inset * 2f) * progress,
+                    Mathf.Max(0f, rect.height - inset * 2f)),
+                Texture2D.whiteTexture);
+            GUI.color = previousColor;
+        }
+
+        private GUIStyle GetLeftAlignedButtonStyle(bool selected)
+        {
+            var style = new GUIStyle(uiTheme == null
+                ? GUI.skin.button
+                : selected ? uiTheme.SelectedTabStyle : uiTheme.ButtonStyle)
+            {
+                alignment = TextAnchor.MiddleLeft
+            };
+            return style;
         }
 
         private static ulong GetXpToNextLevel(Hero hero)
@@ -534,26 +679,29 @@ namespace Redpoint.DungeonEscape.Unity
         {
             var item = GetEquippedItem(hero, slot);
             GUILayout.BeginHorizontal();
-            Sprite sprite;
-            DungeonEscapeUiControls.SpriteIcon(
-                DungeonEscapeUiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null,
-                32f * GetPixelScale(),
-                uiTheme);
             GUILayout.Label(slot + ":", smallStyle, GUILayout.Width(98f * GetPixelScale()));
+            if (item != null)
+            {
+                Sprite sprite;
+                DungeonEscapeUiControls.SpriteIcon(
+                    DungeonEscapeUiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null,
+                    32f * GetPixelScale(),
+                    uiTheme);
+            }
+
             GUILayout.Label(item == null ? "Empty" : item.NameWithStats, GetRarityStyle(item, smallStyle));
             GUILayout.EndHorizontal();
         }
 
         private void DrawStatusEffects(Hero hero)
         {
-            GUILayout.Space(8f * GetPixelScale());
-            GUILayout.Label("Effects", labelStyle);
             if (hero.Status == null || hero.Status.Count == 0)
             {
-                GUILayout.Label("None", smallStyle);
                 return;
             }
 
+            GUILayout.Space(8f * GetPixelScale());
+            GUILayout.Label("Effects", labelStyle);
             foreach (var effect in hero.Status)
             {
                 var duration = effect.Duration <= 0 ? "" : "  " + effect.Duration + " " + effect.DurationType;

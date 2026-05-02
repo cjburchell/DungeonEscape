@@ -80,6 +80,11 @@ namespace Redpoint.DungeonEscape.Unity
             get { return currentDirection; }
         }
 
+        public bool IsMoving
+        {
+            get { return isMoving; }
+        }
+
         private void Awake()
         {
             spriteRenderer = gameObject.AddComponent<SpriteRenderer>();

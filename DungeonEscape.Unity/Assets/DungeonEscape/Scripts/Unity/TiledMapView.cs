@@ -74,14 +74,6 @@ namespace Redpoint.DungeonEscape.Unity
             RenderPreview();
         }
 
-        private void Update()
-        {
-            if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.ReloadMap))
-            {
-                ReloadMapAssets();
-            }
-        }
-
         private void LateUpdate()
         {
             if (!cameraWindowInitialized || mapWidth <= 0 || mapHeight <= 0)

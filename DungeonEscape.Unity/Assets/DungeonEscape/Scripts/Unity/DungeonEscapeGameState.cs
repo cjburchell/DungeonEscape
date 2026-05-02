@@ -74,10 +74,6 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 LoadQuick();
             }
-            else if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Restart))
-            {
-                RestartNewGame();
-            }
 
             UpdateAutoSave();
         }

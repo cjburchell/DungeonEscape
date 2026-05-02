@@ -21,9 +21,7 @@ namespace Redpoint.DungeonEscape.Unity
         MenuPreviousTab,
         MenuNextTab,
         QuickSave,
-        QuickLoad,
-        Restart,
-        ReloadMap
+        QuickLoad
     }
 
     public static class DungeonEscapeInput
@@ -68,9 +66,7 @@ namespace Redpoint.DungeonEscape.Unity
                 { DungeonEscapeInputCommand.MenuPreviousTab, Binding(DungeonEscapeInputCommand.MenuPreviousTab, "LeftBracket", "None", "LeftShoulder") },
                 { DungeonEscapeInputCommand.MenuNextTab, Binding(DungeonEscapeInputCommand.MenuNextTab, "RightBracket", "None", "RightShoulder") },
                 { DungeonEscapeInputCommand.QuickSave, Binding(DungeonEscapeInputCommand.QuickSave, "F6", "None", "None") },
-                { DungeonEscapeInputCommand.QuickLoad, Binding(DungeonEscapeInputCommand.QuickLoad, "F9", "None", "None") },
-                { DungeonEscapeInputCommand.Restart, Binding(DungeonEscapeInputCommand.Restart, "F10", "None", "None") },
-                { DungeonEscapeInputCommand.ReloadMap, Binding(DungeonEscapeInputCommand.ReloadMap, "F5", "None", "Start") }
+                { DungeonEscapeInputCommand.QuickLoad, Binding(DungeonEscapeInputCommand.QuickLoad, "F9", "None", "None") }
             };
 
         public static bool GetCommandDown(DungeonEscapeInputCommand command)
@@ -324,7 +320,6 @@ namespace Redpoint.DungeonEscape.Unity
             UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.Menu, "JoystickButton2", "West");
             UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.MenuPreviousTab, "JoystickButton4", "LeftShoulder");
             UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.MenuNextTab, "JoystickButton5", "RightShoulder");
-            UpdateLegacyGamepadBinding(settings, DungeonEscapeInputCommand.ReloadMap, "JoystickButton8", "Start");
         }
 
         private static void MigrateLegacyMenuBinding(List<InputBinding> bindings)

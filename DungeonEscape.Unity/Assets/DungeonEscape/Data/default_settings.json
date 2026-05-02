@@ -32,8 +32,6 @@
     { "Command": "MenuPreviousTab", "Primary": "LeftBracket", "Secondary": "None", "Gamepad": "LeftShoulder" },
     { "Command": "MenuNextTab", "Primary": "RightBracket", "Secondary": "None", "Gamepad": "RightShoulder" },
     { "Command": "QuickSave", "Primary": "F6", "Secondary": "None", "Gamepad": "None" },
-    { "Command": "QuickLoad", "Primary": "F9", "Secondary": "None", "Gamepad": "None" },
-    { "Command": "Restart", "Primary": "F10", "Secondary": "None", "Gamepad": "None" },
-    { "Command": "ReloadMap", "Primary": "F5", "Secondary": "None", "Gamepad": "Start" }
+    { "Command": "QuickLoad", "Primary": "F9", "Secondary": "None", "Gamepad": "None" }
   ]
 }

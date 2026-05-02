@@ -10,6 +10,7 @@ namespace Redpoint.DungeonEscape.Unity
     public static class TiledMapRenderer
     {
         private const int RenderBufferTiles = 2;
+        private const float TileLayerOverlapScale = 1.002f;
         private const uint TiledGidMask = 0x1FFFFFFF;
         private static Sprite hiddenObjectSprite;
 
@@ -220,6 +221,7 @@ namespace Redpoint.DungeonEscape.Unity
                     var renderer = tileObject.AddComponent<SpriteRenderer>();
                     renderer.sprite = sprite;
                     renderer.sortingOrder = GetLayerSortingOrder(sortingOrder);
+                    tileObject.transform.localScale = GetTileLayerScale();
                     ApplyAnimation(renderer, animationFrames);
                     renderedTileCount++;
                 }
@@ -375,6 +377,7 @@ namespace Redpoint.DungeonEscape.Unity
                         sprite,
                         animationFrames,
                         new Vector3(sourceColumn - viewportStartColumn, -(sourceRow - viewportStartRow), 0),
+                        GetTileLayerScale(),
                         GetLayerSortingOrder(sortingOrder),
                         "Tile_" + GetString(layer, "name") + "_" + sourceColumn + "_" + sourceRow);
                     renderedTileCount++;
@@ -699,6 +702,11 @@ namespace Redpoint.DungeonEscape.Unity
             var objectWidth = width <= 0f ? tileWidth : width;
             var objectHeight = height <= 0f ? tileHeight : height;
             return new Vector3(objectWidth / tileWidth, objectHeight / tileHeight, 1f);
+        }
+
+        private static Vector3 GetTileLayerScale()
+        {
+            return new Vector3(TileLayerOverlapScale, TileLayerOverlapScale, 1f);
         }
 
         private static void GetObjectTileBounds(

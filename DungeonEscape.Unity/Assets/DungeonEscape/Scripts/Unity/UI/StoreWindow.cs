@@ -139,7 +139,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.Label(GetStoreName(), titleStyle);
             GUILayout.FlexibleSpace();
             GUILayout.Label("Gold: " + (gameState == null || gameState.Party == null ? 0 : gameState.Party.Gold), labelStyle);
-            if (GUILayout.Button("Close", buttonStyle, GUILayout.Width(96f * GetPixelScale())))
+            if (UiControls.Button("Close", buttonStyle, GUILayout.Width(96f * GetPixelScale())))
             {
                 Close();
             }
@@ -199,7 +199,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.EndVertical();
             GUILayout.FlexibleSpace();
             GUI.enabled = gameState != null && gameState.Party != null && gameState.Party.Gold >= item.Cost && GetBuyRecipients().Count > 0;
-            if (GUILayout.Button("Buy", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
+            if (UiControls.Button("Buy", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
             {
                 ShowRecipientPicker(item);
             }
@@ -267,7 +267,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.Label(item.Type + "  " + GetSalePrice(item) + "g", smallStyle);
             GUILayout.EndVertical();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Sell", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
+            if (UiControls.Button("Sell", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
             {
                 ShowModal(
                     "Sell " + item.Name,
@@ -403,7 +403,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     }
                 }
             }
-            else if (GUILayout.Button("OK", buttonStyle, GUILayout.Width(120f * scale)))
+            else if (UiControls.Button("OK", buttonStyle, GUILayout.Width(120f * scale)))
             {
                 HideModal();
             }

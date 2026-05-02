@@ -61,6 +61,14 @@ Status legend:
 - Expected: no visible error or movement hitch.
 - Expected: the debug window shows the current biome changing as the party enters each biome.
 
+### [ ] Distance Status Effects Update On Map Steps
+
+- Cast Fairy Water/Repel or another non-combat skill that creates a distance-duration status effect.
+- Walk enough completed steps for the effect duration to expire.
+- Expected: the effect expires after movement and the status message reports that it has worn off.
+- If a party member has an over-time status effect outside combat, walk one completed step.
+- Expected: the status effect updates on step completion, including damage/heal and death messaging when applicable.
+
 ### [x] Camera Window Scrolling Is Smooth In Every Direction
 
 - Hold a movement key or stick for 20-30 seconds on the overworld.
@@ -272,6 +280,16 @@ Status legend:
 - Expected: the full dialog text and choices appear immediately.
 - Trigger a combat message.
 - Expected: combat footer messages use the same reveal speed and the OK button appears only after the text is complete.
+
+### [ ] Standard UI Selection And Confirm Sounds
+
+- Open the title menu, new quest screen, load quest screen, in-game menu, store window, dialog choices, and combat action/target lists.
+- Move selection with keyboard arrows, WASD, D-pad, and stick where each UI supports it.
+- Expected: changing the highlighted row/tab plays `select.wav` once per selection step.
+- Press Interact, Enter, a gamepad confirm button, or click a button with the mouse.
+- Expected: activating a button, choice, tab, checkbox, dialog OK, or combat action plays `confirm.wav`.
+- Hold a direction in a menu with repeated navigation.
+- Expected: select sounds follow the repeated selection changes and do not spam while the selected row is pinned at the first or last item.
 
 ### [x] Fullscreen Setting Applies
 
@@ -661,13 +679,17 @@ Status legend:
 
 ### [x] Random Encounter Logs Monsters By Biome
 
+- Open Settings > Debug and turn `Monster encounters` off.
+- Walk for several dozen completed steps on an encounter-enabled map or biome.
+- Expected: no random encounter logs appear and combat does not open.
+- Open Settings > Debug and turn `Monster encounters` back on.
 - Start or load a quest and walk around the overworld across grassland, forest, hills, swamp, or water.
 - Expected: random encounters occasionally log to the Unity Console in the format `Random encounter in <Biome> on <MapId>: <monster list>`.
 - Walk inside a dungeon, tower, tunnel, shrine, or other map with a copied `*_monsters.json` table.
 - Expected: random encounters use that map's monster table instead of the overworld biome monster list.
 - Keep walking after an encounter log appears and close combat if it opens.
 - Expected: map movement resumes after combat is closed.
-- If no logs appear after many steps, confirm `NoMonsters` is `false` in the settings file.
+- If no logs appear after many steps, confirm Settings > Debug > `Monster encounters` is enabled.
 
 ### [x] Combat Shows Biome Background And Monsters
 
@@ -708,8 +730,17 @@ Status legend:
 - Continue through monster turns.
 - Expected: monsters use their queued actions and the party status window updates HP as damage is applied.
 - Continue rounds until either all monsters or all active party members are defeated.
-- Expected: a defeat/victory message is shown and OK closes the combat view.
+- Expected: a victory message is shown and `not-in-vain` plays until OK closes the combat view and restores map/biome music.
 - If the party wins, expected: living active party members gain XP, party gold increases, level-up messages appear when relevant, and any monster/item rewards are added to party inventory if there is room.
+- If the party is defeated, expected: `Everyone has died!` is shown, pressing OK closes combat, opens the title menu, and plays title music.
+
+### [ ] Combat Clears Round Effects On Exit
+
+- Trigger combat with a temporary round-duration buff, debuff, sleep, confusion, stop-spell, or similar status effect if test data makes one available.
+- Win the fight or successfully Run.
+- Expected: after combat closes, round-duration effects from combat are gone from party members.
+- Trigger another combat and allow the party to be defeated if practical.
+- Expected: after returning to the title menu, the defeated save state does not keep temporary round-duration effects.
 
 ### [ ] Combat Round Action Queue
 
@@ -787,8 +818,10 @@ Status legend:
 - Expected: non-revive spells and skills do not show dead party members in the target list.
 - Use a combat item with an encounter skill.
 - Expected: the item effect runs, charges update, and one-use or depleted items are removed when consumed.
+- Use an attack-style skill with `DoAttack` or `SkillType.Attack` if a party member or monster has one.
+- Expected: the skill first performs the normal attack hit, critical, dodge, and damage flow, then applies the skill effect when the target survives.
 - Choose Run.
-- Expected: success closes combat with a getaway message; failure consumes the hero turn and combat continues.
+- Expected: success plays `not-in-vain` with the getaway message and closes combat after OK; failure consumes the hero turn and combat continues.
 
 ### [ ] Combat Audio
 
@@ -799,9 +832,9 @@ Status legend:
 - Cast a spell and use a combat item if available.
 - Expected: spell and item sound effects play.
 - Win a fight.
-- Expected: victory and level-up sounds play when applicable, then closing combat restores the current map or biome music.
+- Expected: victory and level-up sounds play when applicable, `not-in-vain` plays during the victory message, then closing combat restores the current map or biome music.
 - Lose a fight or let the party be defeated if practical.
-- Expected: a defeat/damage sound plays and closing combat restores the current map or biome music.
+- Expected: a defeat/damage sound plays, pressing OK returns to the title menu, and title music plays.
 - Set Music Volume and Sound Effects Volume to `0.00`, then repeat a short combat.
 - Expected: combat music and sound effects are muted.
 - Set both volumes back to `1.00`.

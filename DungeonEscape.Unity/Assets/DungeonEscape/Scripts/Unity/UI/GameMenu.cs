@@ -146,22 +146,27 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (isOpen && InputManager.GetCommandDown(InputCommand.MenuPreviousTab))
             {
+                UiControls.PlaySelectSound();
                 CycleTab(-1);
             }
             else if (isOpen && InputManager.GetCommandDown(InputCommand.MenuNextTab))
             {
+                UiControls.PlaySelectSound();
                 CycleTab(1);
             }
             else if (isOpen && InputManager.GetCommandDown(InputCommand.Cancel))
             {
+                UiControls.PlayConfirmSound();
                 isOpen = false;
             }
             else if (InputManager.GetCommandDown(InputCommand.Menu))
             {
+                UiControls.PlayConfirmSound();
                 Toggle(MenuTab.Party);
             }
             else if (isOpen && InputManager.GetCommandDown(InputCommand.Interact))
             {
+                UiControls.PlayConfirmSound();
                 ActivateSelectedRow();
             }
 
@@ -305,17 +310,17 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.BeginHorizontal();
             GUILayout.Label("Dungeon Escape", titleStyle);
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Main Menu", buttonStyle, GUILayout.Width(120f * GetPixelScale())))
+            if (UiControls.Button("Main Menu", buttonStyle, GUILayout.Width(120f * GetPixelScale())))
             {
                 ConfirmReturnToMainMenu();
             }
 
-            if (GUILayout.Button("Quit", buttonStyle, GUILayout.Width(96f * GetPixelScale())))
+            if (UiControls.Button("Quit", buttonStyle, GUILayout.Width(96f * GetPixelScale())))
             {
                 ConfirmQuitGame();
             }
 
-            if (GUILayout.Button("Close", buttonStyle, GUILayout.Width(96f * GetPixelScale())))
+            if (UiControls.Button("Close", buttonStyle, GUILayout.Width(96f * GetPixelScale())))
             {
                 isOpen = false;
             }
@@ -428,19 +433,19 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             GUILayout.BeginHorizontal();
             SetMenuGuiEnabled(index > 0);
-            if (GUILayout.Button("Up", buttonStyle, GUILayout.Width(72f * GetPixelScale())))
+            if (UiControls.Button("Up", buttonStyle, GUILayout.Width(72f * GetPixelScale())))
             {
                 ApplyPartyChange(() => gameState.MovePartyMemberUp(hero));
             }
 
             SetMenuGuiEnabled(index < activeCount - 1);
-            if (GUILayout.Button("Down", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
+            if (UiControls.Button("Down", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
             {
                 ApplyPartyChange(() => gameState.MovePartyMemberDown(hero));
             }
 
             SetMenuGuiEnabled(activeCount > 1);
-            if (GUILayout.Button("Reserve", buttonStyle, GUILayout.Width(112f * GetPixelScale())))
+            if (UiControls.Button("Reserve", buttonStyle, GUILayout.Width(112f * GetPixelScale())))
             {
                 ApplyPartyChange(() => gameState.DeactivatePartyMember(hero));
             }
@@ -453,7 +458,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void DrawReservePartyControls(Hero hero, int activeCount)
         {
             SetMenuGuiEnabled(activeCount < GetMaxPartyMembers());
-            if (GUILayout.Button("Add to Party", buttonStyle, GUILayout.Width(144f * GetPixelScale())))
+            if (UiControls.Button("Add to Party", buttonStyle, GUILayout.Width(144f * GetPixelScale())))
             {
                 ApplyPartyChange(() => gameState.ActivatePartyMember(hero));
             }
@@ -610,7 +615,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     UiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null,
                     32f * GetPixelScale(),
                     uiTheme);
-                if (GUILayout.Button(
+                if (UiControls.Button(
                         item.NameWithStats + (item.IsEquipped ? " [E]" : ""),
                         GetLeftAlignedButtonStyle(selectedPartyItemIndex == i),
                         GUILayout.Height(32f * GetPixelScale())))
@@ -770,7 +775,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     32f * GetPixelScale(),
                     uiTheme);
                 GUILayout.Label(spell.Name, labelStyle);
-                if (canCast && GUILayout.Button("Cast", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
+                if (canCast && UiControls.Button("Cast", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
                 {
                     ShowSpellTargetPicker(hero, spell);
                 }
@@ -1049,14 +1054,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 GUILayout.Label(item.NameWithStats + equipped, GetRarityStyle(item, labelStyle));
                 if (item.IsEquipped)
                 {
-                    if (GUILayout.Button("Unequip", buttonStyle, GUILayout.Width(112f * GetPixelScale())))
+                if (UiControls.Button("Unequip", buttonStyle, GUILayout.Width(112f * GetPixelScale())))
                     {
                         ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item));
                     }
                 }
                 else if (hero.CanEquipItem(item))
                 {
-                    if (GUILayout.Button("Equip", buttonStyle, GUILayout.Width(112f * GetPixelScale())))
+                if (UiControls.Button("Equip", buttonStyle, GUILayout.Width(112f * GetPixelScale())))
                     {
                         ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item));
                     }
@@ -1117,7 +1122,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.Space(8f * GetPixelScale());
             if (gameState != null && CanUseItemFromInventory(hero, item))
             {
-                if (GUILayout.Button("Use", buttonStyle))
+            if (UiControls.Button("Use", buttonStyle))
                 {
                     ShowUseItemTargetPicker(hero, item);
                 }
@@ -1125,14 +1130,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (item.IsEquipped)
             {
-                if (GUILayout.Button("Unequip", buttonStyle))
+            if (UiControls.Button("Unequip", buttonStyle))
                 {
                     ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item));
                 }
             }
             else if (hero.CanEquipItem(item))
             {
-                if (GUILayout.Button("Equip", buttonStyle))
+            if (UiControls.Button("Equip", buttonStyle))
                 {
                     ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item));
                 }
@@ -1140,7 +1145,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (HasTransferTarget(hero))
             {
-                if (GUILayout.Button("Transfer", buttonStyle))
+            if (UiControls.Button("Transfer", buttonStyle))
                 {
                     ShowTransferItemTargetPicker(hero, item);
                 }
@@ -1148,7 +1153,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (item.Type != ItemType.Quest)
             {
-                if (GUILayout.Button("Drop", buttonStyle))
+            if (UiControls.Button("Drop", buttonStyle))
                 {
                     ShowDropItemConfirmation(hero, item);
                 }
@@ -1693,19 +1698,19 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             GUILayout.Space(12f * GetPixelScale());
-            if (GUILayout.Button(IsUsableSave(save) ? "Save Over" : "Save", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
+                if (UiControls.Button(IsUsableSave(save) ? "Save Over" : "Save", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
             {
                 ConfirmSaveManual(selectedRowIndex, save);
             }
 
             if (IsUsableSave(save))
             {
-                if (GUILayout.Button("Load", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
+                if (UiControls.Button("Load", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
                 {
                     ConfirmLoadManual(selectedRowIndex);
                 }
 
-                if (GUILayout.Button("Delete", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
+                if (UiControls.Button("Delete", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
                 {
                     ConfirmDeleteManual(selectedRowIndex);
                 }
@@ -2034,6 +2039,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             var oldMapDebugInfo = settings.MapDebugInfo;
             var oldShowHiddenObjects = settings.ShowHiddenObjects;
+            var oldNoMonsters = settings.NoMonsters;
             var oldSprintBoost = settings.SprintBoost;
             var oldTurnDelay = settings.TurnMoveDelaySeconds;
             BeginSelectableRow();
@@ -2041,6 +2047,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
             EndSelectableRow();
             BeginSelectableRow();
             settings.ShowHiddenObjects = DrawCheckboxRow(settings.ShowHiddenObjects, "Show hidden map objects");
+            EndSelectableRow();
+            BeginSelectableRow();
+            settings.NoMonsters = !DrawCheckboxRow(!settings.NoMonsters, "Monster encounters");
             EndSelectableRow();
             GUILayout.Space(8f * GetPixelScale());
             BeginSelectableRow();
@@ -2052,6 +2061,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (oldMapDebugInfo != settings.MapDebugInfo ||
                 oldShowHiddenObjects != settings.ShowHiddenObjects ||
+                oldNoMonsters != settings.NoMonsters ||
                 !Mathf.Approximately(oldSprintBoost, settings.SprintBoost) ||
                 !Mathf.Approximately(oldTurnDelay, settings.TurnMoveDelaySeconds))
             {
@@ -2100,7 +2110,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             BeginSelectableRow();
-            if (GUILayout.Button("Reset", buttonStyle, GUILayout.Width(120f * GetPixelScale())))
+            if (UiControls.Button("Reset", buttonStyle, GUILayout.Width(120f * GetPixelScale())))
             {
                 InputManager.ResetBindings();
                 rebindingInput = null;
@@ -2213,7 +2223,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     }
                 }
             }
-            else if (GUILayout.Button("OK", buttonStyle, GUILayout.Width(120f * scale)))
+            else if (UiControls.Button("OK", buttonStyle, GUILayout.Width(120f * scale)))
             {
                 HideMenuModal();
             }
@@ -2245,7 +2255,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.Label("Input Bindings", titleStyle);
             GUILayout.Label(GetRebindingPrompt(), labelStyle);
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Cancel", buttonStyle, GUILayout.Width(120f * scale)))
+            if (UiControls.Button("Cancel", buttonStyle, GUILayout.Width(120f * scale)))
             {
                 rebindingInput = null;
                 rebindingSlot = null;
@@ -2351,7 +2361,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 case SettingsTab.Input:
                     return InputManager.GetBindings().Length + 2;
                 case SettingsTab.Debug:
-                    return 5;
+                    return 6;
                 default:
                     return 0;
             }
@@ -2366,7 +2376,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
+            var previousIndex = selectedRowIndex;
             selectedRowIndex = Mathf.Clamp(selectedRowIndex + delta, 0, count - 1);
+            if (selectedRowIndex != previousIndex)
+            {
+                UiControls.PlaySelectSound();
+            }
+
             ScrollActiveListToSelectedRow();
         }
 
@@ -2422,7 +2438,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 currentIndex = 0;
             }
 
+            var previousTab = currentPartyDetailTab;
             currentPartyDetailTab = tabs[(currentIndex + delta + tabs.Count) % tabs.Count];
+            if (currentPartyDetailTab != previousTab)
+            {
+                UiControls.PlaySelectSound();
+            }
         }
 
         private void ActivateSelectedRow()
@@ -2653,11 +2674,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 switch (selectedRowIndex - 1)
                 {
-                    case 2:
+                    case 3:
                         settings.SprintBoost = Mathf.Clamp((settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost) + 0.05f * delta, 1f, 3f);
                         ApplySettings(settings);
                         break;
-                    case 3:
+                    case 4:
                         settings.TurnMoveDelaySeconds = Mathf.Clamp(GetTurnMoveDelay(settings) + 0.01f * delta, 0f, 0.3f);
                         ApplySettings(settings);
                         break;
@@ -2698,6 +2719,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 else if (settingsRowIndex == 1)
                 {
                     settings.ShowHiddenObjects = !settings.ShowHiddenObjects;
+                }
+                else if (settingsRowIndex == 2)
+                {
+                    settings.NoMonsters = !settings.NoMonsters;
                 }
 
                 ApplySettings(settings, settingsRowIndex == 1);

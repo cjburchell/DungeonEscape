@@ -4,7 +4,14 @@ This file tracks the Dungeon Escape Unity migration. Update it as each area move
 
 ## Guiding Priority
 
-Keep combat migration after map-mode gameplay, party systems, UI, persistence, Unity cleanup, and audio.
+Map-mode gameplay, party systems, UI, persistence, audio, and combat are migrated. Remaining work is focused on automation coverage and final Unity cleanup.
+
+## Remaining Work
+
+- Expand automated tests: shared core unit tests, Unity edit mode tests, and quest/dialog regression tests.
+- Review ReSharper warnings and fix actionable issues.
+- Replace remaining runtime filesystem asset loading with Unity-native asset references where appropriate.
+- Remove remaining temporary/debug code when no longer needed.
 
 ## 1. Validate Current Gameplay Loop
 
@@ -60,6 +67,7 @@ Status: Done
 - Done: UI scale setting.
 - Done: Hidden settings can show/hide the UI and Debug settings tabs.
 - Done: Configurable UI colors, border thickness, hover color, and highlight color.
+- Done: Standard UI selection and confirm sounds use `select.wav` and `confirm.wav` through common UI controls and keyboard/gamepad navigation paths.
 - Done: Gamepad navigation through main menu UI.
 - Done: Keyboard and gamepad input rebinding.
 - Done: Modal overlay for menu actions, including use/transfer/drop/bind prompts.
@@ -70,8 +78,6 @@ Status: Done
 - Done: Inventory UI icon assets are prewarmed so the first Inventory open does not stall.
 - Done: Current UI migration manual tests passed.
 - Done: Fullscreen setting is applied at Unity startup and exposed on Settings > General.
-- Reviewed: Old direct map command shortcuts remain consolidated into the tabbed Menu action for now; direct Inventory/Quest/Settings shortcuts can be reintroduced later if playtesting shows the tab flow is too slow.
-- Follow-up: Any future UI layout polish discovered during later gameplay migration.
 
 ## 4. Map Gameplay
 
@@ -118,6 +124,7 @@ Status: Done
 - Done: Tile collision rules use TMX `Collideable` layer data.
 - Done: Object collision rules use TMX `Collideable` object bounds and persisted open/removed object state.
 - Done: Damage and biome layers are data-only and do not render.
+- Done: Step/distance status effects are checked and updated after map movement, matching the old map-step status path.
 - Done: Water movement uses the TMX `Water` layer property and allows travel only on the overworld when the party has the ship deed.
 - Done: When the party has the ship deed and is on overworld water, followers are hidden and the player renders as the ship.
 - Done: Damage layer tile properties apply step damage to active party members.
@@ -197,11 +204,10 @@ Status: In progress
 - Done: Most Unity script class/file names no longer carry the `DungeonEscape` prefix; Tiled-specific script class/file names no longer carry the `Tiled` prefix and live under `Redpoint.DungeonEscape.Unity.Map.Tiled`.
 - Pending: Replace remaining runtime filesystem asset loading with Unity-native asset references where appropriate.
 - Pending: Remove remaining temporary/debug code when no longer needed.
-- Pending: Decide whether old developer/debug console commands should be recreated with Unity tooling.
 
 ## 10. Encounter And Combat Migration
 
-Status: In progress
+Status: Done
 
 - Done: Biome random encounter check runs after completed map steps and logs selected monsters to the Unity Console.
 - Done: Carry forward old biome encounter metadata, including min/max monster level, for random encounter filtering.
@@ -221,6 +227,11 @@ Status: In progress
 - Done: Manual Unity combat validation passed for random encounters, biome backgrounds, monster display, Fight loop, rewards, action menu, spell/item icons, spell targeting, skills, items, and Run.
 - Done: Combat music selection uses the old battle track pool: `battleground`, `like-totally-rad`, `sword-metal`, and `unprepared`.
 - Done: Combat close restores the current map or biome music.
+- Done: Combat victory and successful Run play the old end-fight track `not-in-vain` while the result message is shown, then restore map/biome music after closing combat.
+- Done: Combat defeat shows `Everyone has died!` and returns to the title menu with title music instead of returning to map play.
+- Done: Round-duration status effects are cleared from party members when combat exits.
+- Done: Attack-style skills now run the old normal attack hit/damage step before applying the skill effect when `DoAttack` or `SkillType.Attack` requires it.
 - Done: Combat sound effects use existing audio for attacks, misses, spells, item use, victory, defeat, and monster/player damage where matching assets exist.
 - Done: Combat audio flows through the existing `Audio` service, so Music Volume and Sound Effects Volume apply to combat.
-- Pending: Combat UI polish pass after the combat rules settle.
+- Done: Monster encounters can be enabled/disabled from Settings > Debug through the existing `NoMonsters` setting.
+- Done: Combat UI polish pass after the combat rules settled.

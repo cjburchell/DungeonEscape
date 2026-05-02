@@ -9,6 +9,31 @@ namespace Redpoint.DungeonEscape.Unity.UI
 {
     public static class UiControls
     {
+        private static int lastConfirmSoundFrame;
+        private static int lastSelectSoundFrame;
+
+        public static void PlayConfirmSound()
+        {
+            if (Time.frameCount == lastConfirmSoundFrame)
+            {
+                return;
+            }
+
+            lastConfirmSoundFrame = Time.frameCount;
+            Audio.GetOrCreate().PlaySoundEffect("confirm");
+        }
+
+        public static void PlaySelectSound()
+        {
+            if (Time.frameCount == lastSelectSoundFrame)
+            {
+                return;
+            }
+
+            lastSelectSoundFrame = Time.frameCount;
+            Audio.GetOrCreate().PlaySoundEffect("select");
+        }
+
         public static void BeginSelectableRow(int rowIndex, int selectedRowIndex, UiTheme theme)
         {
             var style = theme == null
@@ -27,7 +52,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var style = theme == null
                 ? GUI.skin.button
                 : selected ? theme.SelectedTabStyle : theme.TabStyle;
-            return GUILayout.Button(label, style, GUILayout.Height(height));
+            var pressed = GUILayout.Button(label, style, GUILayout.Height(height));
+            if (pressed)
+            {
+                PlayConfirmSound();
+            }
+
+            return pressed;
         }
 
         public static bool Button(string label, bool selected, UiTheme theme, params GUILayoutOption[] options)
@@ -35,19 +66,65 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var style = theme == null
                 ? GUI.skin.button
                 : selected ? theme.SelectedTabStyle : theme.ButtonStyle;
-            return GUILayout.Button(label, style, options);
+            var pressed = GUILayout.Button(label, style, options);
+            if (pressed)
+            {
+                PlayConfirmSound();
+            }
+
+            return pressed;
+        }
+
+        public static bool Button(string label, GUIStyle style, params GUILayoutOption[] options)
+        {
+            var pressed = GUILayout.Button(label, style ?? GUI.skin.button, options);
+            if (pressed)
+            {
+                PlayConfirmSound();
+            }
+
+            return pressed;
+        }
+
+        public static bool Button(Rect rect, string label, GUIStyle style)
+        {
+            var pressed = GUI.Button(rect, label, style ?? GUI.skin.button);
+            if (pressed)
+            {
+                PlayConfirmSound();
+            }
+
+            return pressed;
+        }
+
+        public static bool Button(Rect rect, GUIContent content, GUIStyle style)
+        {
+            var pressed = GUI.Button(rect, content, style ?? GUI.skin.button);
+            if (pressed)
+            {
+                PlayConfirmSound();
+            }
+
+            return pressed;
         }
 
         public static bool ChoiceButton(Rect rect, string label, bool selected, UiTheme theme)
         {
             if (theme == null)
             {
-                return GUI.Button(rect, label);
+                var defaultPressed = GUI.Button(rect, label);
+                if (defaultPressed)
+                {
+                    PlayConfirmSound();
+                }
+
+                return defaultPressed;
             }
 
             var style = selected ? theme.SelectedRowStyle : theme.RowStyle;
             if (GUI.Button(rect, GUIContent.none, style))
             {
+                PlayConfirmSound();
                 return true;
             }
 
@@ -104,6 +181,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var rect = GUILayoutUtility.GetRect(GUIContent.none, theme.CheckboxStyle, GUILayout.Height(height));
             if (GUI.Button(rect, GUIContent.none, theme.CheckboxStyle))
             {
+                PlayConfirmSound();
                 value = !value;
             }
 

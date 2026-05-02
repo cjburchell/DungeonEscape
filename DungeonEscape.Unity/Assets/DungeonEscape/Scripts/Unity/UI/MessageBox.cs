@@ -120,6 +120,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (!HasChoices)
             {
+                UiControls.PlayConfirmSound();
                 Hide();
                 return;
             }
@@ -143,6 +144,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (InputManager.GetCommandDown(InputCommand.Cancel))
             {
+                UiControls.PlayConfirmSound();
                 if (!IsTextFullyRevealed)
                 {
                     FinishTextReveal();
@@ -157,6 +159,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 if (CanAcceptInteract() && InputManager.GetCommandDown(InputCommand.Interact))
                 {
+                    UiControls.PlayConfirmSound();
                     if (!IsTextFullyRevealed)
                     {
                         FinishTextReveal();
@@ -173,6 +176,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 if (CanAcceptInteract() && InputManager.GetCommandDown(InputCommand.Interact))
                 {
+                    UiControls.PlayConfirmSound();
                     FinishTextReveal();
                 }
 
@@ -182,11 +186,21 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var moveY = GetChoiceMoveY();
             if (moveY < 0)
             {
+                var previousIndex = selectedChoiceIndex;
                 selectedChoiceIndex = Mathf.Max(0, selectedChoiceIndex - 1);
+                if (selectedChoiceIndex != previousIndex)
+                {
+                    UiControls.PlaySelectSound();
+                }
             }
             else if (moveY > 0)
             {
+                var previousIndex = selectedChoiceIndex;
                 selectedChoiceIndex = Mathf.Min(choices.Count - 1, selectedChoiceIndex + 1);
+                if (selectedChoiceIndex != previousIndex)
+                {
+                    UiControls.PlaySelectSound();
+                }
             }
             else if (CanAcceptInteract() && InputManager.GetCommandDown(InputCommand.Interact))
             {
@@ -411,6 +425,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
+            UiControls.PlayConfirmSound();
             var selected = choiceSelected;
             Hide();
             if (selected != null)

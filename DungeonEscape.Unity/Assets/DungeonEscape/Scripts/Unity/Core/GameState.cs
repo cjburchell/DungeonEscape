@@ -258,17 +258,30 @@ namespace Redpoint.DungeonEscape.Unity.Core
         {
             EnsureInitialized();
             SetCurrentBiome(biome);
-            if (damage <= 0 || Party.ActiveMembers == null)
+            if (Party.ActiveMembers == null)
             {
                 return "";
             }
 
             var message = new StringBuilder();
             var appliedDamage = false;
+            var statusChanged = false;
             foreach (var hero in Party.ActiveMembers.Where(member => member != null && !member.IsDead))
             {
-                hero.Health = Math.Max(0, hero.Health - damage);
-                appliedDamage = true;
+                var statusMessage = hero.CheckForExpiredStates(Party.StepCount, DurationType.Distance);
+                statusMessage += hero.UpdateStatusEffects(this);
+                if (!string.IsNullOrEmpty(statusMessage))
+                {
+                    message.Append(statusMessage);
+                    statusChanged = true;
+                }
+
+                if (damage > 0)
+                {
+                    hero.Health = Math.Max(0, hero.Health - damage);
+                    appliedDamage = true;
+                }
+
                 if (hero.IsDead)
                 {
                     message.AppendLine(hero.Name + " has died.");
@@ -278,6 +291,10 @@ namespace Redpoint.DungeonEscape.Unity.Core
             if (appliedDamage)
             {
                 Sounds.PlaySoundEffect("receive-damage");
+                MarkDirty();
+            }
+            else if (statusChanged)
+            {
                 MarkDirty();
             }
 

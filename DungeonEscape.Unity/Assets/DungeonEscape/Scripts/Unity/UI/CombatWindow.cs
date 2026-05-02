@@ -20,6 +20,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private const float NavigationRepeatDelay = 0.12f;
         private const float DamageFlashDuration = 0.65f;
         private const float DamageFlashInterval = 0.08f;
+        private const string EndFightSong = "not-in-vain";
+        private const string TitleSong = "first-story";
         private const string MonsterTilesetAssetPath = "Assets/DungeonEscape/Tilesets/allmonsters.tsx";
         private static readonly Dictionary<int, string> MonsterImagePaths = new Dictionary<int, string>();
         private static readonly Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>(StringComparer.OrdinalIgnoreCase);
@@ -207,6 +209,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 if (InputManager.GetCommandDown(InputCommand.Interact) ||
                     InputManager.GetCommandDown(InputCommand.Cancel))
                 {
+                    UiControls.PlayConfirmSound();
                     ContinueMessage();
                 }
 
@@ -215,6 +218,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (InputManager.GetCommandDown(InputCommand.Cancel))
             {
+                UiControls.PlayConfirmSound();
                 ReturnToActionMenu();
                 return;
             }
@@ -451,6 +455,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (!IsTextFullyRevealed)
             {
+                UiControls.PlayConfirmSound();
                 FinishTextReveal();
                 return;
             }
@@ -538,7 +543,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
+            var previousIndex = selectedMenuIndex;
             selectedMenuIndex = Mathf.Clamp(selectedMenuIndex + (moveY > 0 ? 1 : -1), 0, count - 1);
+            if (selectedMenuIndex != previousIndex)
+            {
+                UiControls.PlaySelectSound();
+            }
         }
 
         private int GetCurrentSelectionCount()
@@ -566,6 +576,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     var actions = BuildActionButtons().ToList();
                     if (selectedMenuIndex >= 0 && selectedMenuIndex < actions.Count)
                     {
+                        UiControls.PlayConfirmSound();
                         RememberAction(actions[selectedMenuIndex].Label);
                         actions[selectedMenuIndex].Action();
                     }
@@ -575,6 +586,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     var spells = actingHero == null ? new List<Spell>() : GetAvailableEncounterSpells(actingHero).ToList();
                     if (selectedMenuIndex >= 0 && selectedMenuIndex < spells.Count)
                     {
+                        UiControls.PlayConfirmSound();
                         ResolveHeroSpell(spells[selectedMenuIndex]);
                     }
 
@@ -583,6 +595,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     var items = actingHero == null ? new List<ItemInstance>() : GetAvailableEncounterItems(actingHero).ToList();
                     if (selectedMenuIndex >= 0 && selectedMenuIndex < items.Count)
                     {
+                        UiControls.PlayConfirmSound();
                         ResolveHeroItem(items[selectedMenuIndex]);
                     }
 
@@ -632,14 +645,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (!AliveHeroes().Any())
             {
-                Audio.GetOrCreate().PlaySoundEffect("receive-damage");
-                ShowMessage("The party has been defeated.", null);
+                ShowDefeatMessage();
                 return;
             }
 
             if (!AliveMonsters().Any())
             {
-                ShowMessage(GetVictoryMessage(), null);
+                ShowVictoryMessage();
                 return;
             }
 
@@ -704,14 +716,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (!AliveHeroes().Any())
             {
-                Audio.GetOrCreate().PlaySoundEffect("receive-damage");
-                ShowMessage("The party has been defeated.", null);
+                ShowDefeatMessage();
                 return;
             }
 
             if (!AliveMonsters().Any())
             {
-                ShowMessage(GetVictoryMessage(), null);
+                ShowVictoryMessage();
                 return;
             }
 
@@ -1137,6 +1148,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             message += "And got away.";
             if (source is Hero)
             {
+                Audio.GetOrCreate().PlayMusic(EndFightSong);
                 endFight = true;
                 return;
             }
@@ -1368,6 +1380,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             Audio.GetOrCreate().PlaySoundEffect(skill.IsAttackSkill || skill.DoAttack ? "prepare-attack" : "spell", true);
             var message = source.Name + " uses " + skill.Name + ".\n";
+            var hit = false;
             var selectedTargets = targets ?? new List<IFighter>();
             if (selectedTargets.Count == 0)
             {
@@ -1380,13 +1393,51 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             foreach (var target in selectedTargets)
             {
-                var startingHealth = target == null ? 0 : target.Health;
+                if (target == null)
+                {
+                    continue;
+                }
+
+                if (skill.DoAttack || skill.Type == SkillType.Attack)
+                {
+                    int damage;
+                    message += Fight(source, target, out damage, false) + "\n";
+                    if (damage != 0)
+                    {
+                        hit = true;
+                    }
+                }
+
+                if (target.IsDead)
+                {
+                    continue;
+                }
+
+                if (skill.IsAttackSkill)
+                {
+                    if (skill.Type == SkillType.Attack && !skill.DoAttack)
+                    {
+                        message += source.Name + " attacks " + target.Name + " with " + skill.EffectName + ".\n";
+                    }
+
+                    if (!source.CanHit(target))
+                    {
+                        if (!skill.DoAttack)
+                        {
+                            message += target.Name + " dodges the " + skill.EffectName + "\n";
+                        }
+
+                        continue;
+                    }
+                }
+
+                var startingHealth = target.Health;
                 var result = skill.Do(target, source, null, gameState, round);
-                if (target != null && target.Health < startingHealth)
+                if (target.Health < startingHealth)
                 {
                     StartDamageFlash(target);
                 }
-                else if (target != null && target.Health > startingHealth)
+                else if (target.Health > startingHealth)
                 {
                     StartHealFlash(target);
                 }
@@ -1395,6 +1446,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 {
                     message += result.Item1;
                 }
+
+                if (skill.IsAttackSkill && result.Item2)
+                {
+                    hit = true;
+                }
+            }
+
+            if (skill.IsAttackSkill || skill.DoAttack)
+            {
+                Audio.GetOrCreate().PlaySoundEffect(hit ? "receive-damage" : "miss");
             }
 
             return message.TrimEnd();
@@ -1520,14 +1581,25 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private string Fight(IFighter source, IFighter target)
         {
+            int damage;
+            return Fight(source, target, out damage, true);
+        }
+
+        private string Fight(IFighter source, IFighter target, out int damage, bool playSounds)
+        {
             if (source == null || target == null)
             {
+                damage = 0;
                 return "";
             }
 
-            Audio.GetOrCreate().PlaySoundEffect("prepare-attack", true);
+            if (playSounds)
+            {
+                Audio.GetOrCreate().PlaySoundEffect("prepare-attack", true);
+            }
+
             var message = source.Name + " attacks " + target.Name + ".\n";
-            var damage = 0;
+            damage = 0;
             if (source.CanCriticalHit(target))
             {
                 damage = target.CalculateDamage(RandomAttack(source.CriticalAttack));
@@ -1563,7 +1635,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 message += "\nand has died!";
             }
 
-            Audio.GetOrCreate().PlaySoundEffect(damage == 0 ? "miss" : "receive-damage");
+            if (playSounds)
+            {
+                Audio.GetOrCreate().PlaySoundEffect(damage == 0 ? "miss" : "receive-damage");
+            }
+
             return message.TrimEnd();
         }
 
@@ -1611,6 +1687,26 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return gameState == null
                 ? "The enemies have been defeated."
                 : gameState.ApplyCombatRewards(monsters.Select(monster => monster.Instance));
+        }
+
+        private void ShowVictoryMessage()
+        {
+            Audio.GetOrCreate().PlaySoundEffect("victory", true);
+            Audio.GetOrCreate().PlayMusic(EndFightSong);
+            ShowMessage(GetVictoryMessage(), null);
+        }
+
+        private void ShowDefeatMessage()
+        {
+            Audio.GetOrCreate().PlaySoundEffect("receive-damage");
+            ShowMessage("Everyone has died!", ReturnToTitleAfterDefeat);
+        }
+
+        private void ReturnToTitleAfterDefeat()
+        {
+            Close(false);
+            Audio.GetOrCreate().PlayMusic(TitleSong);
+            TitleMenu.OpenMainMenu();
         }
 
         private void DrawActionMenu(Rect panelRect, float scale)
@@ -1698,7 +1794,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             for (var i = 0; i < values.Count; i++)
             {
                 var rect = new Rect(x, y + i * (rowHeight + 4f * scale), menuWidth, rowHeight);
-                if (GUI.Button(rect, GUIContent.none, GetMenuButtonStyle(i == selectedMenuIndex)))
+                if (UiControls.Button(rect, GUIContent.none, GetMenuButtonStyle(i == selectedMenuIndex)))
                 {
                     selectedMenuIndex = i;
                     onSelect(values[i]);
@@ -1729,7 +1825,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             for (var i = 0; i < buttons.Count; i++)
             {
                 var rect = new Rect(x, y + i * (rowHeight + 4f * scale), menuWidth, rowHeight);
-                if (GUI.Button(rect, buttons[i].Label, GetMenuButtonStyle(i == selectedMenuIndex)))
+                if (UiControls.Button(rect, buttons[i].Label, GetMenuButtonStyle(i == selectedMenuIndex)))
                 {
                     selectedMenuIndex = i;
                     RememberAction(buttons[i].Label);
@@ -1905,7 +2001,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             for (var i = 0; i < buttonList.Count; i++)
             {
                 var rect = new Rect(startX + i * (buttonWidth + gap), y, buttonWidth, buttonHeight);
-                if (GUI.Button(rect, buttonList[i].Label, buttonStyle))
+                if (UiControls.Button(rect, buttonList[i].Label, buttonStyle))
                 {
                     buttonList[i].Action();
                 }
@@ -1926,7 +2022,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 var target = targets[i];
                 var rect = new Rect(x, y + i * (rowHeight + 4f * scale), listWidth, rowHeight);
-                if (GUI.Button(rect, target.Name, GetTargetButtonStyle(target, i == selectedMenuIndex)))
+                if (UiControls.Button(rect, target.Name, GetTargetButtonStyle(target, i == selectedMenuIndex)))
                 {
                     selectedMenuIndex = i;
                     ActivateTargetSelection(i);
@@ -1942,6 +2038,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             var target = targetSelectionCandidates[index];
+            UiControls.PlayConfirmSound();
             RememberTarget(target);
             var done = targetSelectionDone;
             targetSelectionDone = null;
@@ -1954,10 +2051,36 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void Close()
         {
+            Close(true);
+        }
+
+        private void Close(bool restoreMapMusic)
+        {
+            ClearRoundStatusEffects();
             IsOpen = false;
             GameState.AutoSaveBlocked = false;
-            var currentBiome = gameState == null || gameState.Party == null ? biome : gameState.Party.CurrentBiome;
-            Audio.GetOrCreate().RestoreMapOrBiomeMusic(currentBiome);
+            if (restoreMapMusic)
+            {
+                var currentBiome = gameState == null || gameState.Party == null ? biome : gameState.Party.CurrentBiome;
+                Audio.GetOrCreate().RestoreMapOrBiomeMusic(currentBiome);
+            }
+        }
+
+        private void ClearRoundStatusEffects()
+        {
+            var party = gameState == null ? null : gameState.Party;
+            if (party == null || party.Members == null)
+            {
+                return;
+            }
+
+            foreach (var hero in party.Members.Where(member => member != null))
+            {
+                foreach (var effect in hero.Status.Where(item => item.DurationType == DurationType.Rounds).ToList())
+                {
+                    hero.RemoveEffect(effect);
+                }
+            }
         }
 
         private void EnsureStyles()

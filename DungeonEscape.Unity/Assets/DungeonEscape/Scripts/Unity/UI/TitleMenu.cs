@@ -151,6 +151,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (InputManager.GetCommandDown(InputCommand.Cancel))
             {
+                UiControls.PlayConfirmSound();
                 if (mode == TitleMode.Load)
                 {
                     mode = TitleMode.Main;
@@ -160,6 +161,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
             else if (GetConfirmDown())
             {
+                UiControls.PlayConfirmSound();
                 ActivateSelected();
             }
         }
@@ -300,7 +302,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 var enabled = rows[i].Enabled;
                 var previousEnabled = GUI.enabled;
                 GUI.enabled = enabled;
-                if (GUI.Button(rect, rows[i].Label, selectedIndex == i ? selectedMainMenuButtonStyle : mainMenuButtonStyle))
+                if (UiControls.Button(rect, rows[i].Label, selectedIndex == i ? selectedMainMenuButtonStyle : mainMenuButtonStyle))
                 {
                     selectedIndex = i;
                     if (enabled)
@@ -374,7 +376,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.EndArea();
 
             var backRect = new Rect((Screen.width - backWidth) / 2f, area.yMax + backGap, backWidth, backHeight);
-            if (GUI.Button(backRect, "Back", selectedIndex == GetLoadBackIndex(slots.Count) ? selectedMainMenuButtonStyle : mainMenuButtonStyle))
+            if (UiControls.Button(backRect, "Back", selectedIndex == GetLoadBackIndex(slots.Count) ? selectedMainMenuButtonStyle : mainMenuButtonStyle))
             {
                 ShowMainMenu();
             }
@@ -646,7 +648,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 var value = values[i];
                 var selectedRow = EqualityComparer<T>.Default.Equals(value, selectedValue);
                 var style = selectedRow || i == keyboardSelectedIndex ? uiTheme.SelectedTabStyle : uiTheme.ButtonStyle;
-                if (GUI.Button(new Rect(0f, y, width, rowHeight), value.ToString(), style))
+                if (UiControls.Button(new Rect(0f, y, width, rowHeight), value.ToString(), style))
                 {
                     selected(value);
                     Event.current.Use();
@@ -859,7 +861,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var moveY = GetMenuMoveY();
             if (moveY != 0)
             {
-                selectedIndex = Mathf.Clamp(selectedIndex + moveY, 0, Mathf.Max(GetOptionCount() - 1, 0));
+                SetSelectedIndex(Mathf.Clamp(selectedIndex + moveY, 0, Mathf.Max(GetOptionCount() - 1, 0)));
             }
         }
 
@@ -868,21 +870,21 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var moveY = GetMenuMoveY();
             if (moveY < 0)
             {
-                selectedIndex = GetCreateUpIndex(selectedIndex);
+                SetSelectedIndex(GetCreateUpIndex(selectedIndex));
             }
             else if (moveY > 0)
             {
-                selectedIndex = GetCreateDownIndex(selectedIndex);
+                SetSelectedIndex(GetCreateDownIndex(selectedIndex));
             }
 
             var moveX = InputManager.GetMoveXDown();
             if (moveX < 0)
             {
-                selectedIndex = GetCreateLeftIndex(selectedIndex);
+                SetSelectedIndex(GetCreateLeftIndex(selectedIndex));
             }
             else if (moveX > 0)
             {
-                selectedIndex = GetCreateRightIndex(selectedIndex);
+                SetSelectedIndex(GetCreateRightIndex(selectedIndex));
             }
         }
 
@@ -963,24 +965,24 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 if (saveCount == 0)
                 {
-                    selectedIndex = backIndex;
+                    SetSelectedIndex(backIndex);
                     return;
                 }
 
                 if (selectedIndex >= backIndex)
                 {
-                    selectedIndex = moveY < 0 ? GetLoadSaveIndex(saveCount - 1) : backIndex;
+                    SetSelectedIndex(moveY < 0 ? GetLoadSaveIndex(saveCount - 1) : backIndex);
                     return;
                 }
 
                 var row = selectedIndex / 2;
                 if (moveY < 0)
                 {
-                    selectedIndex = row <= 0 ? GetLoadSaveIndex(0) : GetLoadSaveIndex(row - 1);
+                    SetSelectedIndex(row <= 0 ? GetLoadSaveIndex(0) : GetLoadSaveIndex(row - 1));
                 }
                 else
                 {
-                    selectedIndex = row >= saveCount - 1 ? backIndex : GetLoadSaveIndex(row + 1);
+                    SetSelectedIndex(row >= saveCount - 1 ? backIndex : GetLoadSaveIndex(row + 1));
                 }
             }
 
@@ -993,12 +995,23 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var saveIndex = selectedIndex / 2;
             if (moveX > 0)
             {
-                selectedIndex = GetLoadDeleteIndex(saveIndex);
+                SetSelectedIndex(GetLoadDeleteIndex(saveIndex));
             }
             else
             {
-                selectedIndex = GetLoadSaveIndex(saveIndex);
+                SetSelectedIndex(GetLoadSaveIndex(saveIndex));
             }
+        }
+
+        private void SetSelectedIndex(int index)
+        {
+            if (selectedIndex == index)
+            {
+                return;
+            }
+
+            selectedIndex = index;
+            UiControls.PlaySelectSound();
         }
 
         private void ActivateSelected()

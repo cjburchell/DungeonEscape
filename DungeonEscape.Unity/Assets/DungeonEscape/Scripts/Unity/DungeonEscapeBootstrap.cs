@@ -74,6 +74,8 @@ namespace Redpoint.DungeonEscape.Unity
             DungeonEscapeGameDataCache.Load(Data);
             var gameState = DungeonEscapeGameState.GetOrCreate();
             EnsureGameMenu();
+            EnsurePartyStatusWindow();
+            EnsureGoldWindow();
             if (Settings.SkipSplashAndLoadQuickSave)
             {
                 if (gameState.HasQuickSave())

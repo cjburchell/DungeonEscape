@@ -231,8 +231,15 @@ namespace Redpoint.DungeonEscape.Unity
 
         private static void EnsureCamera()
         {
-            if (Camera.main != null || FindAnyObjectByType<Camera>() != null)
+            var existingCamera = Camera.main;
+            if (existingCamera == null)
             {
+                existingCamera = FindAnyObjectByType<Camera>();
+            }
+
+            if (existingCamera != null)
+            {
+                EnsureAudioListener(existingCamera.gameObject);
                 return;
             }
 
@@ -243,6 +250,17 @@ namespace Redpoint.DungeonEscape.Unity
             camera.orthographic = true;
             cameraObject.tag = "MainCamera";
             cameraObject.transform.position = new Vector3(0, 0, -10);
+            EnsureAudioListener(cameraObject);
+        }
+
+        private static void EnsureAudioListener(GameObject cameraObject)
+        {
+            if (cameraObject == null || FindAnyObjectByType<AudioListener>() != null)
+            {
+                return;
+            }
+
+            cameraObject.AddComponent<AudioListener>();
         }
 
         private static void EnsureGameMenu()

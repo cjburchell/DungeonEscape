@@ -1644,27 +1644,23 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var saves = gameState.GetManualSaveSlots();
             selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, saves.Count);
 
-            GUILayout.BeginHorizontal();
-            GUILayout.BeginVertical(GUILayout.MinWidth(420f * GetPixelScale()));
+            GUILayout.BeginVertical();
             saveScrollPosition = BeginThemedScroll(saveScrollPosition, Mathf.Max(120f * GetPixelScale(), menuBodyHeight));
             for (var i = 0; i < saves.Count; i++)
             {
                 BeginSelectableRow();
                 DrawSaveRow(saves[i]);
                 EndSelectableRow();
-                SelectRowOnMouseClick(i);
+                SelectSaveRowOnMouseClick(i);
             }
 
             BeginSelectableRow();
             DrawNewSaveRow();
             EndSelectableRow();
-            SelectRowOnMouseClick(saves.Count);
+            SelectSaveRowOnMouseClick(saves.Count);
 
             EndThemedScroll();
             GUILayout.EndVertical();
-            GUILayout.Space(10f * GetPixelScale());
-            DrawSaveDetail(selectedRowIndex < saves.Count ? saves[selectedRowIndex] : null);
-            GUILayout.EndHorizontal();
         }
 
         private void DrawSaveRow(GameSave save)
@@ -1680,42 +1676,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.BeginVertical();
             GUILayout.Label("New Save", labelStyle);
             GUILayout.Label("Save the current quest.", smallStyle);
-            GUILayout.EndVertical();
-        }
-
-        private void DrawSaveDetail(GameSave save)
-        {
-            GUILayout.BeginVertical(panelStyle, GUILayout.Width(380f * GetPixelScale()));
-            if (IsUsableSave(save))
-            {
-                GUILayout.Label(GetSaveTitle(save), titleStyle);
-                GUILayout.Label(GetSaveSummary(save), smallStyle);
-            }
-            else
-            {
-                GUILayout.Label("New Save", titleStyle);
-                GUILayout.Label("Create a new manual save from the current quest.", smallStyle);
-            }
-
-            GUILayout.Space(12f * GetPixelScale());
-                if (UiControls.Button(IsUsableSave(save) ? "Save Over" : "Save", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
-            {
-                ConfirmSaveManual(selectedRowIndex, save);
-            }
-
-            if (IsUsableSave(save))
-            {
-                if (UiControls.Button("Load", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
-                {
-                    ConfirmLoadManual(selectedRowIndex);
-                }
-
-                if (UiControls.Button("Delete", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
-                {
-                    ConfirmDeleteManual(selectedRowIndex);
-                }
-            }
-
             GUILayout.EndVertical();
         }
 
@@ -1779,9 +1739,59 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 {
                     if (index == 0)
                     {
-                        ShowSaveMessage(gameState != null && gameState.DeleteManual(slotIndex)
-                            ? "Deleted quest."
-                            : "Could not delete quest.");
+                        var deleted = gameState != null && gameState.DeleteManual(slotIndex);
+                        if (deleted && gameState != null)
+                        {
+                            selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, gameState.GetManualSaveSlots().Count);
+                        }
+
+                        ShowSaveMessage(deleted ? "Deleted quest." : "Could not delete quest.");
+                    }
+                });
+        }
+
+        private void ShowSaveActionModal(int rowIndex)
+        {
+            if (gameState == null || rowIndex < 0)
+            {
+                return;
+            }
+
+            var saves = gameState.GetManualSaveSlots();
+            if (rowIndex >= saves.Count)
+            {
+                ShowMenuModal(
+                    "New Save",
+                    "Create a new manual save?",
+                    new[] { "Save", "Cancel" },
+                    index =>
+                    {
+                        if (index == 0)
+                        {
+                            SaveManual(rowIndex);
+                        }
+                    });
+                return;
+            }
+
+            var save = saves[rowIndex];
+            ShowMenuModal(
+                GetSaveTitle(save),
+                "Choose an action for this save.",
+                new[] { "Save Over", "Load", "Delete", "Cancel" },
+                index =>
+                {
+                    switch (index)
+                    {
+                        case 0:
+                            ConfirmSaveManual(rowIndex, save);
+                            break;
+                        case 1:
+                            ConfirmLoadManual(rowIndex);
+                            break;
+                        case 2:
+                            ConfirmDeleteManual(rowIndex);
+                            break;
                     }
                 });
         }
@@ -2315,6 +2325,33 @@ namespace Redpoint.DungeonEscape.Unity.UI
             selectedRowIndex = rowIndex;
         }
 
+        private void SelectSaveRowOnMouseClick(int rowIndex)
+        {
+            var currentEvent = Event.current;
+            if (currentEvent == null || currentEvent.type != EventType.MouseDown || currentEvent.button != 0)
+            {
+                return;
+            }
+
+            if (!GUILayoutUtility.GetLastRect().Contains(currentEvent.mousePosition))
+            {
+                return;
+            }
+
+            selectedRowIndex = rowIndex;
+            if (currentEvent.clickCount >= 2)
+            {
+                UiControls.PlayConfirmSound();
+                ShowSaveActionModal(rowIndex);
+            }
+            else
+            {
+                UiControls.PlaySelectSound();
+            }
+
+            currentEvent.Use();
+        }
+
         private bool DrawCheckboxRow(bool value, string label)
         {
             return UiControls.CheckboxRow(value, label, uiTheme, GetPixelScale());
@@ -2479,26 +2516,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            var slots = gameState.GetManualSaveSlots();
             if (selectedRowIndex < 0)
             {
                 return;
             }
 
-            if (selectedRowIndex >= slots.Count)
-            {
-                SaveManual(selectedRowIndex);
-                return;
-            }
-
-            if (IsUsableSave(slots[selectedRowIndex]))
-            {
-                ConfirmLoadManual(selectedRowIndex);
-            }
-            else
-            {
-                SaveManual(selectedRowIndex);
-            }
+            ShowSaveActionModal(selectedRowIndex);
         }
 
         private void AdjustSelectedPartyMember(int delta)

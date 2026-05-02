@@ -559,17 +559,26 @@ Status legend:
 - Select Start.
 - Expected: a new game starts with the chosen player name/class/gender and the title menu closes.
 
-### [x] Variable Manual Save Flow
+### [ ] In-Game Save Modal Flow
 
 - Open the in-game Save tab.
 - Expected: existing manual saves are listed, plus a `New Save` row.
-- Select `New Save` and save.
+- Expected: there is no right-side status/action panel; the save list fills the tab body.
+- Select `New Save` with keyboard or gamepad and press Interact/Enter/confirm.
+- Expected: a modal opens with `Save` and `Cancel`.
+- Choose `Save`.
 - Expected: a new manual save is appended; no fixed numbered save slot is required.
-- Expected: the `New Save` detail only shows Save; it does not show Load, Delete, or New Game.
 - Select an existing manual save.
-- Expected: the detail panel shows only the save name, save time, and level; it does not show map, position, gold, or steps.
-- Save over an existing manual save.
+- Press Interact/Enter/confirm.
+- Expected: a modal opens with `Save Over`, `Load`, `Delete`, and `Cancel`.
+- Choose `Save Over`.
 - Expected: the save is overwritten after confirmation.
+- Reopen the same action modal, choose `Load`, then confirm.
+- Expected: the selected save loads and the in-game menu closes.
+- Reopen the Save tab, choose `Delete` for an existing save, then confirm.
+- Expected: the save is removed and selection remains on a valid save row or `New Save`.
+- Double-click an existing save with the mouse.
+- Expected: the same action modal opens.
 
 ### [x] Load Quest Screen Flow
 

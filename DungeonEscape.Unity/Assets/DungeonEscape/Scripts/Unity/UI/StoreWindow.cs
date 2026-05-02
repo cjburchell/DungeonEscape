@@ -37,11 +37,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private GUIStyle titleStyle;
         private GUIStyle labelStyle;
         private GUIStyle smallStyle;
-        private GUIStyle buttonStyle;
         private GUIStyle panelStyle;
         private float lastPixelScale;
         private string lastThemeSignature;
         private StoreTab currentTab = StoreTab.Buy;
+        private StoreFocus currentFocus = StoreFocus.Items;
         private int selectedHeroIndex;
         private int selectedBuyIndex;
         private int selectedSellIndex;
@@ -54,6 +54,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private Action<int> modalSelected;
         private int acceptInteractAfterFrame;
         private bool waitForInteractRelease;
+        private int repeatingMoveX;
+        private int repeatingMoveY;
+        private float nextMoveXTime;
+        private float nextMoveYTime;
+        private float buyListHeight;
+        private float sellListHeight;
+        private GUIStyle previousScrollbarThumb;
+        private bool themedScrollActive;
 
         public static bool IsOpen
         {
@@ -87,12 +95,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
             gameState = state == null ? GameState.GetOrCreate() : state;
             storeObject = mapObject;
             currentTab = StoreTab.Buy;
+            currentFocus = StoreFocus.Items;
             selectedHeroIndex = 0;
             selectedBuyIndex = 0;
             selectedSellIndex = 0;
             buyScroll = Vector2.zero;
             sellScroll = Vector2.zero;
             HideModal();
+            ResetNavigationRepeat();
             BlockInteractUntilRelease();
         }
 

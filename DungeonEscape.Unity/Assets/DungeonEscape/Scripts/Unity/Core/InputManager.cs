@@ -649,6 +649,23 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 "RZ");
         }
 
+        private static float GetGamepadRightStickX()
+        {
+            var gamepad = Gamepad.current;
+            if (gamepad != null)
+            {
+                return gamepad.rightStick.ReadValue().x;
+            }
+
+            return GetFirstActiveLegacyAxis(
+                "Right Stick X",
+                "Right X",
+                "RightHorizontal",
+                "Right Horizontal",
+                "3rd Axis",
+                "4th Axis");
+        }
+
         private static string TryCaptureGamepadButton()
         {
             var gamepad = Gamepad.current;

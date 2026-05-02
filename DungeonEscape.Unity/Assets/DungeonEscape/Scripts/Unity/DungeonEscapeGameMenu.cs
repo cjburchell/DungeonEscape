@@ -263,6 +263,16 @@ namespace Redpoint.DungeonEscape.Unity
             GUILayout.BeginHorizontal();
             GUILayout.Label("Dungeon Escape", titleStyle);
             GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Main Menu", buttonStyle, GUILayout.Width(120f * GetPixelScale())))
+            {
+                ConfirmReturnToMainMenu();
+            }
+
+            if (GUILayout.Button("Quit", buttonStyle, GUILayout.Width(96f * GetPixelScale())))
+            {
+                ConfirmQuitGame();
+            }
+
             if (GUILayout.Button("Close", buttonStyle, GUILayout.Width(96f * GetPixelScale())))
             {
                 isOpen = false;
@@ -1498,6 +1508,37 @@ namespace Redpoint.DungeonEscape.Unity
                     {
                         gameState.RestartNewGame();
                         isOpen = false;
+                    }
+                });
+        }
+
+        private void ConfirmReturnToMainMenu()
+        {
+            ShowMenuModal(
+                "Main Menu",
+                "Return to the main menu? Unsaved progress will be lost.",
+                new[] { "OK", "Back" },
+                index =>
+                {
+                    if (index == 0)
+                    {
+                        isOpen = false;
+                        DungeonEscapeTitleMenu.OpenMainMenu();
+                    }
+                });
+        }
+
+        private void ConfirmQuitGame()
+        {
+            ShowMenuModal(
+                "Quit",
+                "Quit the game? Unsaved progress will be lost.",
+                new[] { "Quit", "Back" },
+                index =>
+                {
+                    if (index == 0)
+                    {
+                        Application.Quit();
                     }
                 });
         }

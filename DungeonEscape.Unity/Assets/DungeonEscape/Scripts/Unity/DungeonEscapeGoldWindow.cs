@@ -17,7 +17,7 @@ namespace Redpoint.DungeonEscape.Unity
             if (DungeonEscapeTitleMenu.IsOpen ||
                 DungeonEscapeGameMenu.IsOpen ||
                 DungeonEscapeStoreWindow.IsOpen ||
-                DungeonEscapeCombatPreviewWindow.IsOpen ||
+                DungeonEscapeCombatWindow.IsOpen ||
                 DungeonEscapeMessageBox.IsAnyVisible)
             {
                 return;

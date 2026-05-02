@@ -219,7 +219,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            if (DungeonEscapeCombatPreviewWindow.IsOpen)
+            if (DungeonEscapeCombatWindow.IsOpen)
             {
                 return;
             }

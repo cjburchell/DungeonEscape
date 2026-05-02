@@ -200,15 +200,16 @@ Status: Started
 
 - Partial: Biome random encounter check runs after completed map steps and logs selected monsters to the Unity Console.
 - Done: Carry forward old biome encounter metadata, including min/max monster level, for random encounter filtering.
-- Partial: Random encounters by biome. Current pass logs encounters and opens a temporary combat preview screen.
+- Partial: Random encounters by biome. Current pass logs encounters and opens the combat screen.
 - Partial: Per-map random encounter tables from `Content/data/{mapId}_monsters.json`. Current pass loads copied Unity data from `Assets/DungeonEscape/Data/maps/{mapId}_monsters.json`.
-- Partial: Monster loading/spawning. Current pass resolves monster images from `allmonsters.tsx`, displays each monster instance, rolls preview HP, and keeps relative monster sprite sizes without full combat state.
+- Partial: Monster loading/spawning. Current pass resolves monster images from `allmonsters.tsx`, displays each monster instance, rolls monster stats through `MonsterInstance`, and keeps relative monster sprite sizes.
 - Partial: Biome combat backgrounds. Current pass displays the old fight background image for the selected biome.
-- Partial: Combat preview layout shows full-screen aspect-preserved biome backgrounds with a bottom message box.
-- Done: Gold window is hidden during combat preview, and the party status window remains visible during combat preview.
-- Done: Autosave is blocked while the temporary combat preview is open.
-- Pending: Combat UI.
-- Pending: Turn system.
+- Partial: Combat layout shows full-screen aspect-preserved biome backgrounds with a bottom message box.
+- Done: Gold window is hidden during combat, and the party status window remains visible during combat.
+- Done: Autosave is blocked while combat is open.
+- Partial: Combat UI. Current pass supports encounter message, Attack button, target buttons, HP bars, and round messages.
+- Partial: Turn system. Current pass rolls initiative and resolves attack-only hero and monster turns.
+- Partial: Combat rewards. Current pass awards XP, gold, monster item drops, rare chest-style drops, and level-up messages on victory.
 - Pending: Skills in combat.
 - Pending: Spells in combat.
 - Pending: Items in combat.

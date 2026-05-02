@@ -651,14 +651,14 @@ Status legend:
 - Expected: random encounters occasionally log to the Unity Console in the format `Random encounter in <Biome> on <MapId>: <monster list>`.
 - Walk inside a dungeon, tower, tunnel, shrine, or other map with a copied `*_monsters.json` table.
 - Expected: random encounters use that map's monster table instead of the overworld biome monster list.
-- Keep walking after an encounter log appears and close the combat preview if it opens.
-- Expected: map movement resumes after the preview is closed.
+- Keep walking after an encounter log appears and close combat if it opens.
+- Expected: map movement resumes after combat is closed.
 - If no logs appear after many steps, confirm `NoMonsters` is `false` in the settings file.
 
-### [ ] Combat Preview Shows Biome Background And Monsters
+### [ ] Combat Shows Biome Background And Monsters
 
 - Start or load a quest and walk until a random encounter triggers.
-- Expected: a full-screen combat preview opens after the Unity Console random encounter log.
+- Expected: a full-screen combat view opens after the Unity Console random encounter log.
 - Expected: the biome battlefield image fills the screen while maintaining its aspect ratio.
 - Expected: the battlefield image matches the encounter biome, such as field, ocean, mountain, desert, swamp, cave, castle, or tower.
 - Expected: each selected monster is shown with its own image from `allmonsters.tsx`, including duplicate monsters of the same type.
@@ -667,6 +667,20 @@ Status legend:
 - Expected: the party status window remains visible in the upper-left while combat is open, including after using the directional pad.
 - Expected: the gold window is hidden while combat is open.
 - Press OK, Interact, or Cancel.
-- Expected: the preview closes and map movement resumes.
-- Set a short autosave interval, then wait on the combat preview longer than that interval.
-- Expected: no autosave happens while the combat preview is open.
+- Expected: combat closes and map movement resumes.
+- Set a short autosave interval, then wait in combat longer than that interval.
+- Expected: no autosave happens while combat is open.
+
+### [ ] Attack-Only Combat Loop
+
+- Trigger a random encounter.
+- Press OK on the encounter message.
+- Expected: combat rolls monster stats and initiative, then shows the first living hero action prompt when that hero's turn arrives.
+- Choose Attack.
+- If more than one monster is alive, choose a monster target.
+- Expected: the hero attacks using the old hit, critical hit, and damage rules, and the target monster HP bar updates.
+- Continue through monster turns.
+- Expected: monsters automatically attack random living active party members, and the party status window updates HP.
+- Continue rounds until either all monsters or all active party members are defeated.
+- Expected: a defeat/victory message is shown and OK closes the combat view.
+- If the party wins, expected: living active party members gain XP, party gold increases, level-up messages appear when relevant, and any monster/item rewards are added to party inventory if there is room.

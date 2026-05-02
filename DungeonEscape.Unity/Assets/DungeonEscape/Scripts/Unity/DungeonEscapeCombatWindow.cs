@@ -8,15 +8,38 @@ using UnityEngine;
 
 namespace Redpoint.DungeonEscape.Unity
 {
-    public sealed class DungeonEscapeCombatPreviewWindow : MonoBehaviour
+    public sealed class DungeonEscapeCombatWindow : MonoBehaviour
     {
         private const int WindowDepth = -2500;
         private const string MonsterTilesetAssetPath = "Assets/DungeonEscape/Tilesets/allmonsters.tsx";
         private static readonly Dictionary<int, string> MonsterImagePaths = new Dictionary<int, string>();
         private static readonly Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>(StringComparer.OrdinalIgnoreCase);
+        private static readonly System.Random CombatRandom = new System.Random();
 
-        private readonly List<CombatPreviewMonster> monsters = new List<CombatPreviewMonster>();
+        private enum CombatState
+        {
+            Message,
+            ChooseAction,
+            ChooseTarget
+        }
+
+        private sealed class CombatMonster
+        {
+            public Monster Data { get; set; }
+            public MonsterInstance Instance { get; set; }
+        }
+
+        private sealed class CombatTurn
+        {
+            public IFighter Actor { get; set; }
+            public bool IsHero { get; set; }
+            public int Initiative { get; set; }
+        }
+
+        private readonly List<CombatMonster> monsters = new List<CombatMonster>();
+        private readonly List<CombatTurn> turnOrder = new List<CombatTurn>();
         private Biome biome;
+        private DungeonEscapeGameState gameState;
         private DungeonEscapeUiSettings uiSettings;
         private DungeonEscapeUiTheme uiTheme;
         private GUIStyle panelStyle;
@@ -25,26 +48,36 @@ namespace Redpoint.DungeonEscape.Unity
         private GUIStyle titleStyle;
         private float lastPixelScale;
         private string lastThemeSignature;
+        private CombatState state;
+        private string messageText;
+        private Action afterMessage;
+        private Hero actingHero;
+        private int round;
+        private int turnIndex;
 
         public static bool IsOpen { get; private set; }
 
         public static void Open(IEnumerable<Monster> encounterMonsters, Biome encounterBiome)
         {
-            var window = FindAnyObjectByType<DungeonEscapeCombatPreviewWindow>();
+            var window = FindAnyObjectByType<DungeonEscapeCombatWindow>();
             if (window == null)
             {
-                window = new GameObject("DungeonEscapeCombatPreviewWindow").AddComponent<DungeonEscapeCombatPreviewWindow>();
+                window = new GameObject("DungeonEscapeCombatWindow").AddComponent<DungeonEscapeCombatWindow>();
             }
 
             window.monsters.Clear();
+            window.turnOrder.Clear();
+            window.gameState = DungeonEscapeGameState.GetOrCreate();
             if (encounterMonsters != null)
             {
-                window.monsters.AddRange(encounterMonsters
-                    .Where(monster => monster != null)
-                    .Select(monster => new CombatPreviewMonster(monster)));
+                window.CreateMonsterInstances(encounterMonsters.Where(monster => monster != null));
             }
 
             window.biome = encounterBiome;
+            window.round = 0;
+            window.turnIndex = 0;
+            window.actingHero = null;
+            window.ShowMessage(window.GetEncounterMessage(), window.BeginRound);
             IsOpen = window.monsters.Count > 0;
             DungeonEscapeGameState.AutoSaveBlocked = IsOpen;
         }
@@ -65,7 +98,7 @@ namespace Redpoint.DungeonEscape.Unity
             if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Interact) ||
                 DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Cancel))
             {
-                Close();
+                ContinueMessage();
             }
         }
 
@@ -141,8 +174,8 @@ namespace Redpoint.DungeonEscape.Unity
                 }
 
                 DrawHealthBar(
-                    monster.CurrentHealth,
-                    monster.MaxHealth,
+                    monster.Instance.Health,
+                    monster.Instance.MaxHealth,
                     new Rect(slotRect.x + 8f * scale, slotRect.yMax + 10f * scale, slotRect.width - 16f * scale, 14f * scale));
             }
         }
@@ -156,17 +189,23 @@ namespace Redpoint.DungeonEscape.Unity
             GUI.Box(panelRect, GUIContent.none, panelStyle);
 
             GUI.Label(
-                new Rect(panelRect.x + 14f * scale, panelRect.y + 12f * scale, panelRect.width - 28f * scale, 34f * scale),
-                GetEncounterMessage(),
+                new Rect(panelRect.x + 14f * scale, panelRect.y + 12f * scale, panelRect.width - 28f * scale, 70f * scale),
+                messageText,
                 labelStyle);
 
-            var buttonWidth = 96f * scale;
-            var buttonHeight = 32f * scale;
-            var buttonRect = new Rect((Screen.width - buttonWidth) / 2f, panelRect.yMax - buttonHeight - 16f * scale, buttonWidth, buttonHeight);
-            if (GUI.Button(buttonRect, "OK", buttonStyle))
+            if (state == CombatState.ChooseAction)
             {
-                Close();
+                DrawCenteredButtons(panelRect, scale, new[] { new CombatButton("Attack", BeginTargetSelection) });
+                return;
             }
+
+            if (state == CombatState.ChooseTarget)
+            {
+                DrawTargetButtons(panelRect, scale);
+                return;
+            }
+
+            DrawCenteredButtons(panelRect, scale, new[] { new CombatButton("OK", ContinueMessage) });
         }
 
         private static Rect GetBattlefieldRect(float scale)
@@ -178,8 +217,287 @@ namespace Redpoint.DungeonEscape.Unity
         private string GetEncounterMessage()
         {
             return monsters.Count == 1
-                ? "You have encountered a " + monsters[0].Data.Name + "!"
+                ? "You have encountered a " + monsters[0].Instance.Name + "!"
                 : "You have encountered " + monsters.Count + " enemies!";
+        }
+
+        private void CreateMonsterInstances(IEnumerable<Monster> encounterMonsters)
+        {
+            foreach (var monsterGroup in encounterMonsters.OrderBy(monster => monster.MinLevel).GroupBy(monster => monster.Name))
+            {
+                var monsterId = 'A';
+                foreach (var monster in monsterGroup)
+                {
+                    var instance = new MonsterInstance(monster, gameState);
+                    if (monsterGroup.Count() != 1)
+                    {
+                        instance.Name = instance.Name + " " + monsterId;
+                        monsterId++;
+                    }
+
+                    monsters.Add(new CombatMonster
+                    {
+                        Data = monster,
+                        Instance = instance
+                    });
+                }
+            }
+        }
+
+        private void ShowMessage(string text, Action next)
+        {
+            state = CombatState.Message;
+            messageText = text;
+            afterMessage = next;
+        }
+
+        private void ContinueMessage()
+        {
+            if (state != CombatState.Message)
+            {
+                return;
+            }
+
+            var next = afterMessage;
+            afterMessage = null;
+            if (next == null)
+            {
+                Close();
+                return;
+            }
+
+            next();
+        }
+
+        private void BeginRound()
+        {
+            round++;
+            actingHero = null;
+            turnIndex = 0;
+            turnOrder.Clear();
+
+            var party = gameState == null ? null : gameState.Party;
+            if (party != null)
+            {
+                foreach (var hero in party.AliveMembers.Where(CanBeAttacked))
+                {
+                    turnOrder.Add(new CombatTurn
+                    {
+                        Actor = hero,
+                        IsHero = true,
+                        Initiative = RollInitiative(hero)
+                    });
+                }
+            }
+
+            foreach (var monster in AliveMonsters())
+            {
+                turnOrder.Add(new CombatTurn
+                {
+                    Actor = monster.Instance,
+                    IsHero = false,
+                    Initiative = RollInitiative(monster.Instance)
+                });
+            }
+
+            turnOrder.Sort((left, right) => right.Initiative.CompareTo(left.Initiative));
+            AdvanceTurn();
+        }
+
+        private void AdvanceTurn()
+        {
+            if (!AliveHeroes().Any())
+            {
+                ShowMessage("The party has been defeated.", null);
+                return;
+            }
+
+            if (!AliveMonsters().Any())
+            {
+                ShowMessage(GetVictoryMessage(), null);
+                return;
+            }
+
+            while (turnIndex < turnOrder.Count)
+            {
+                var turn = turnOrder[turnIndex];
+                turnIndex++;
+                if (!CanBeAttacked(turn.Actor))
+                {
+                    continue;
+                }
+
+                if (turn.IsHero)
+                {
+                    actingHero = turn.Actor as Hero;
+                    state = CombatState.ChooseAction;
+                    messageText = actingHero == null ? "Choose an action." : actingHero.Name + "'s turn.";
+                    return;
+                }
+
+                ResolveMonsterTurn(turn.Actor);
+                return;
+            }
+
+            BeginRound();
+        }
+
+        private void ResolveMonsterTurn(IFighter monster)
+        {
+            var targets = AliveHeroes().Cast<IFighter>().ToList();
+            if (monster == null || targets.Count == 0)
+            {
+                AdvanceTurn();
+                return;
+            }
+
+            var target = targets[CombatRandom.Next(targets.Count)];
+            ShowMessage(Fight(monster, target), AdvanceTurn);
+        }
+
+        private void BeginTargetSelection()
+        {
+            if (actingHero == null || actingHero.IsDead)
+            {
+                AdvanceTurn();
+                return;
+            }
+
+            var targets = AliveMonsters().ToList();
+            if (targets.Count == 1)
+            {
+                ResolveHeroAttack(targets[0].Instance);
+                return;
+            }
+
+            state = CombatState.ChooseTarget;
+            messageText = "Choose a target for " + actingHero.Name + ".";
+        }
+
+        private void ResolveHeroAttack(IFighter target)
+        {
+            if (actingHero == null || target == null)
+            {
+                AdvanceTurn();
+                return;
+            }
+
+            ShowMessage(Fight(actingHero, target), AdvanceTurn);
+        }
+
+        private string Fight(IFighter source, IFighter target)
+        {
+            var message = source.Name + " attacks " + target.Name + ".\n";
+            var damage = 0;
+            if (source.CanCriticalHit(target))
+            {
+                damage = target.CalculateDamage(RandomAttack(source.CriticalAttack));
+                message += "Heroic maneuver!\n";
+                message += target.Name;
+            }
+            else if (source.CanHit(target))
+            {
+                damage = target.CalculateDamage(RandomAttack(source.Attack));
+                message += target.Name;
+            }
+            else
+            {
+                message += target.Name + " dodges the attack and";
+            }
+
+            if (damage <= 0)
+            {
+                message += " was unharmed";
+            }
+            else
+            {
+                target.Health -= damage;
+                target.PlayDamageAnimation();
+                message += " took " + damage + " points of damage";
+                message += "\n" + target.HitCheck().TrimEnd();
+            }
+
+            if (target.IsDead)
+            {
+                target.Health = 0;
+                message += "\nand has died!";
+            }
+
+            DungeonEscapeAudio.GetOrCreate().PlaySoundEffect(damage == 0 ? "miss" : "receive-damage");
+            return message.TrimEnd();
+        }
+
+        private static int RandomAttack(int attack)
+        {
+            return attack <= 0 ? 0 : CombatRandom.Next(attack);
+        }
+
+        private static int RollInitiative(IFighter fighter)
+        {
+            return Dice.RollD20() + (fighter == null ? 0 : fighter.Agility);
+        }
+
+        private static bool CanBeAttacked(IFighter fighter)
+        {
+            return fighter != null && !fighter.IsDead && !fighter.RanAway;
+        }
+
+        private IEnumerable<CombatMonster> AliveMonsters()
+        {
+            return monsters.Where(monster => monster != null && CanBeAttacked(monster.Instance));
+        }
+
+        private IEnumerable<Hero> AliveHeroes()
+        {
+            return gameState == null || gameState.Party == null
+                ? Enumerable.Empty<Hero>()
+                : gameState.Party.AliveMembers.Where(CanBeAttacked);
+        }
+
+        private string GetVictoryMessage()
+        {
+            return gameState == null
+                ? "The enemies have been defeated."
+                : gameState.ApplyCombatRewards(monsters.Select(monster => monster.Instance));
+        }
+
+        private void DrawCenteredButtons(Rect panelRect, float scale, IEnumerable<CombatButton> buttons)
+        {
+            var buttonList = buttons.ToList();
+            var buttonWidth = 112f * scale;
+            var buttonHeight = 32f * scale;
+            var gap = 10f * scale;
+            var totalWidth = buttonList.Count * buttonWidth + Math.Max(0, buttonList.Count - 1) * gap;
+            var startX = panelRect.x + (panelRect.width - totalWidth) / 2f;
+            var y = panelRect.yMax - buttonHeight - 16f * scale;
+            for (var i = 0; i < buttonList.Count; i++)
+            {
+                var rect = new Rect(startX + i * (buttonWidth + gap), y, buttonWidth, buttonHeight);
+                if (GUI.Button(rect, buttonList[i].Label, buttonStyle))
+                {
+                    buttonList[i].Action();
+                }
+            }
+        }
+
+        private void DrawTargetButtons(Rect panelRect, float scale)
+        {
+            var targets = AliveMonsters().ToList();
+            var buttonWidth = 126f * scale;
+            var buttonHeight = 32f * scale;
+            var gap = 8f * scale;
+            var totalWidth = targets.Count * buttonWidth + Math.Max(0, targets.Count - 1) * gap;
+            var startX = panelRect.x + (panelRect.width - totalWidth) / 2f;
+            var y = panelRect.yMax - buttonHeight - 16f * scale;
+            for (var i = 0; i < targets.Count; i++)
+            {
+                var target = targets[i];
+                var rect = new Rect(startX + i * (buttonWidth + gap), y, buttonWidth, buttonHeight);
+                if (GUI.Button(rect, target.Instance.Name, buttonStyle))
+                {
+                    ResolveHeroAttack(target.Instance);
+                }
+            }
         }
 
         private void Close()
@@ -323,7 +641,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (string.IsNullOrEmpty(fullPath) || !File.Exists(fullPath))
             {
-                Debug.LogWarning("Combat preview image not found: " + assetPath);
+                Debug.LogWarning("Combat image not found: " + assetPath);
                 Textures[assetPath] = null;
                 return null;
             }
@@ -331,7 +649,7 @@ namespace Redpoint.DungeonEscape.Unity
             texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             if (!texture.LoadImage(File.ReadAllBytes(fullPath)))
             {
-                Debug.LogWarning("Could not load combat preview image: " + assetPath);
+                Debug.LogWarning("Could not load Combat image: " + assetPath);
                 Textures[assetPath] = null;
                 return null;
             }
@@ -414,18 +732,16 @@ namespace Redpoint.DungeonEscape.Unity
             }
         }
 
-        private sealed class CombatPreviewMonster
+        private sealed class CombatButton
         {
-            public CombatPreviewMonster(Monster monster)
+            public CombatButton(string label, Action action)
             {
-                Data = monster;
-                MaxHealth = Math.Max(1, Dice.Roll(monster.HealthRandom, monster.HealthTimes, monster.HealthConst));
-                CurrentHealth = MaxHealth;
+                Label = label;
+                Action = action;
             }
 
-            public Monster Data { get; private set; }
-            public int CurrentHealth { get; private set; }
-            public int MaxHealth { get; private set; }
+            public string Label { get; private set; }
+            public Action Action { get; private set; }
         }
     }
 }

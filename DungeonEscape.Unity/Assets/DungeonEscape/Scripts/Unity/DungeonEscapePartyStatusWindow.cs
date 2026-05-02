@@ -20,7 +20,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void OnGUI()
         {
-            var combatOpen = DungeonEscapeCombatPreviewWindow.IsOpen;
+            var combatOpen = DungeonEscapeCombatWindow.IsOpen;
             if (DungeonEscapeTitleMenu.IsOpen ||
                 DungeonEscapeGameMenu.IsOpen ||
                 DungeonEscapeStoreWindow.IsOpen ||

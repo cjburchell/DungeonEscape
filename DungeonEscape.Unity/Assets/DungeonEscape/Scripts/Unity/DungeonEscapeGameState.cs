@@ -305,7 +305,60 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             Debug.Log("Random encounter in " + biomeInfo.Type + " on " + TiledMapLoader.NormalizeMapId(mapId) + ": " + FormatMonsterList(monsters));
-            DungeonEscapeCombatPreviewWindow.Open(monsters, biomeInfo.Type);
+            DungeonEscapeCombatWindow.Open(monsters, biomeInfo.Type);
+        }
+
+        public string ApplyCombatRewards(IEnumerable<MonsterInstance> monsters)
+        {
+            EnsureInitialized();
+            var defeatedMonsters = monsters == null
+                ? new List<MonsterInstance>()
+                : monsters.Where(monster => monster != null && monster.IsDead).ToList();
+            var aliveMembers = Party == null
+                ? new List<Hero>()
+                : Party.AliveMembers.Where(member => member != null && !member.IsDead).ToList();
+            if (defeatedMonsters.Count == 0 || aliveMembers.Count == 0)
+            {
+                return "";
+            }
+
+            var message = new StringBuilder();
+            var monsterName = defeatedMonsters.Count == 1 ? "the " + defeatedMonsters[0].Name : "all the enemies";
+            var xp = defeatedMonsters.Sum(monster => (int)monster.Xp) / aliveMembers.Count;
+            if (xp == 0)
+            {
+                xp = 1;
+            }
+
+            var gold = defeatedMonsters.Sum(monster => monster.Gold);
+            Party.Gold += gold;
+            message.AppendLine("You have defeated " + monsterName + ".");
+            message.AppendLine("Each party member has gained " + xp + " XP.");
+            message.AppendLine("The party got " + gold + " gold.");
+
+            var foundItems = defeatedMonsters
+                .SelectMany(monster => monster.Items == null
+                    ? Enumerable.Empty<Item>()
+                    : monster.Items.Select(item => item.Item))
+                .Where(item => item != null)
+                .ToList();
+
+            if (Dice.RollD20() > 18)
+            {
+                foundItems.Add(CreateChestItem(Party.MaxLevel(), defeatedMonsters.Max(monster => monster.Rarity)));
+            }
+
+            AppendCombatItems(message, foundItems);
+
+            foreach (var member in aliveMembers)
+            {
+                member.Xp += (ulong)xp;
+                AppendLevelUpMessages(message, member);
+            }
+
+            MarkDirty();
+            Sounds.PlaySoundEffect("victory");
+            return message.ToString().TrimEnd();
         }
 
         public string StartQuest(string questId)
@@ -451,6 +504,46 @@ namespace Redpoint.DungeonEscape.Unity
                     message.Append(levelUpMessage);
                 }
             }
+        }
+
+        private void AppendCombatItems(StringBuilder message, IEnumerable<Item> foundItems)
+        {
+            if (foundItems == null)
+            {
+                return;
+            }
+
+            var foundItemMessage = new StringBuilder();
+            var questMessage = new StringBuilder();
+            foreach (var foundItem in foundItems.Where(item => item != null))
+            {
+                if (foundItem.Type == ItemType.Gold)
+                {
+                    Party.Gold += foundItem.Cost;
+                    foundItemMessage.AppendLine("You found " + foundItem.Cost + " gold.");
+                    continue;
+                }
+
+                var member = Party.AddItem(new ItemInstance(foundItem));
+                if (member == null)
+                {
+                    foundItemMessage.AppendLine("You found " + foundItem.Name + " but your party did not have enough room.");
+                    continue;
+                }
+
+                foundItemMessage.AppendLine(member.Name + " found a " + foundItem.Name + ".");
+                questMessage.Append(CheckQuest(foundItem));
+            }
+
+            if (foundItemMessage.Length == 0)
+            {
+                return;
+            }
+
+            Sounds.PlaySoundEffect("treasure");
+            message.AppendLine("You found a chest and opened it!");
+            message.Append(foundItemMessage);
+            message.Append(questMessage);
         }
 
         public string GiveItems(IEnumerable<string> itemIds)
@@ -2984,7 +3077,7 @@ namespace Redpoint.DungeonEscape.Unity
         private static bool IsAutoSaveBlocked()
         {
             return AutoSaveBlocked ||
-                   DungeonEscapeCombatPreviewWindow.IsOpen ||
+                   DungeonEscapeCombatWindow.IsOpen ||
                    DungeonEscapeTitleMenu.IsOpen ||
                    DungeonEscapeGameMenu.IsOpen ||
                    DungeonEscapeStoreWindow.IsOpen ||

@@ -163,7 +163,7 @@ Status: Done
 - Done: Continue is hidden when no quick save exists.
 - Done: Save summaries no longer display map, position, gold, or steps.
 - Done: Unity save version policy: unsupported versions are archived and ignored; forward migrations will be added only when the Unity save schema changes.
-- Done: Final autosave policy: timer autosave is kept, but autosave is skipped while title/menu/store/dialog UI is active; combat can also block autosave through `DungeonEscapeGameState.AutoSaveBlocked`.
+- Done: Final autosave policy: timer autosave is kept, but autosave is skipped while title/menu/store/dialog UI is active; combat can also block autosave through `GameState.AutoSaveBlocked`.
 - Done: Final transition-save policy: transition saves only occur when moving to or from the overworld.
 
 ## 8. Build And Test Automation
@@ -193,6 +193,8 @@ Status: In progress
 - Done: `Boot.unity` added to Unity Build Settings.
 - Done: Built player runtime asset paths now resolve through `StreamingAssets`.
 - Done: Confirmed File > Build And Run renders the map correctly outside the editor.
+- Done: Unity scripts reorganized into `Core`, `Map`, `Rendering`, `Map/Tiled`, and `UI` folders with matching namespaces.
+- Done: Most Unity script class/file names no longer carry the `DungeonEscape` prefix; Tiled-specific script class/file names no longer carry the `Tiled` prefix and live under `Redpoint.DungeonEscape.Unity.Map.Tiled`.
 - Pending: Replace remaining runtime filesystem asset loading with Unity-native asset references where appropriate.
 - Pending: Remove remaining temporary/debug code when no longer needed.
 - Pending: Decide whether old developer/debug console commands should be recreated with Unity tooling.

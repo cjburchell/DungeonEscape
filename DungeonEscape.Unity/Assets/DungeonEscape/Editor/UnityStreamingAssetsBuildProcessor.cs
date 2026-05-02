@@ -5,6 +5,7 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
+using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.UnityEditor
 {
     public sealed class UnityStreamingAssetsBuildProcessor : IPreprocessBuildWithReport

@@ -1,10 +1,13 @@
 using System.IO;
-using Redpoint.DungeonEscape.Unity;
+using Redpoint.DungeonEscape.Unity.Core;
+using Redpoint.DungeonEscape.Unity.Map;
+using Redpoint.DungeonEscape.Unity.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.UnityEditor
 {
     public static class BootSceneSetup
@@ -24,8 +27,8 @@ namespace Redpoint.DungeonEscape.UnityEditor
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             scene.name = "Boot";
 
-            var bootstrapObject = new GameObject("DungeonEscapeBootstrap");
-            var bootstrap = bootstrapObject.AddComponent<DungeonEscapeBootstrap>();
+            var bootstrapObject = new GameObject("Bootstrap");
+            var bootstrap = bootstrapObject.AddComponent<Bootstrap>();
 
             CreateCamera();
 
@@ -42,7 +45,7 @@ namespace Redpoint.DungeonEscape.UnityEditor
             AssignString(bootstrap, "testMapAssetPath", "Assets/DungeonEscape/Maps/overworld.tmx");
 
             CreatePreviewStatusView();
-            var mapView = CreateMapView();
+            var mapView = CreateView();
             CreatePlayerController(mapView);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -50,20 +53,20 @@ namespace Redpoint.DungeonEscape.UnityEditor
             EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<SceneAsset>(ScenePath));
         }
 
-        private static TiledMapView CreateMapView()
+        private static View CreateView()
         {
-            var previewObject = new GameObject("TiledMapView");
-            var renderer = previewObject.AddComponent<TiledMapView>();
+            var previewObject = new GameObject("View");
+            var renderer = previewObject.AddComponent<View>();
             return renderer;
         }
 
         private static void CreatePreviewStatusView()
         {
             var statusObject = new GameObject("PreviewStatusView");
-            statusObject.AddComponent<DungeonEscapeDataDebugView>();
+            statusObject.AddComponent<DataDebugView>();
         }
 
-        private static void CreatePlayerController(TiledMapView mapView)
+        private static void CreatePlayerController(View mapView)
         {
             var playerObject = new GameObject("PlayerGridController");
             var marker = playerObject.AddComponent<PlayerGridController>();
@@ -83,7 +86,7 @@ namespace Redpoint.DungeonEscape.UnityEditor
             cameraObject.transform.position = new Vector3(0, 0, -10);
         }
 
-        private static void AssignTextAsset(DungeonEscapeBootstrap bootstrap, string fieldName, string assetPath)
+        private static void AssignTextAsset(Bootstrap bootstrap, string fieldName, string assetPath)
         {
             var textAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(assetPath);
             if (textAsset == null)
@@ -97,7 +100,7 @@ namespace Redpoint.DungeonEscape.UnityEditor
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void AssignString(DungeonEscapeBootstrap bootstrap, string fieldName, string value)
+        private static void AssignString(Bootstrap bootstrap, string fieldName, string value)
         {
             var serializedObject = new SerializedObject(bootstrap);
             serializedObject.FindProperty(fieldName).stringValue = value;

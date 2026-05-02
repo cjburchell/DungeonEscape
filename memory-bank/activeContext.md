@@ -27,10 +27,10 @@ Do not modify files under the old `DungeonEscape/` project unless explicitly req
 
 - `DungeonEscape.Core/State/TiledMapInfo.cs`
 - `DungeonEscape.Unity/Assets/DungeonEscape/Maps/**/*.tmx`
-- `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/DungeonEscapeGameMenu.cs`
-- `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/DungeonEscapeGameState.cs`
+- `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/GameMenu.cs`
+- `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/GameState.cs`
 - `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/PlayerGridController.cs`
-- `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/DungeonEscapeTitleMenu.cs`
+- `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/TitleMenu.cs`
 - `DungeonEscape.sln`
 - `memory-bank/MANUAL_TESTS.md`
 - `memory-bank/UNITY_MIGRATION.md`

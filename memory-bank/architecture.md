@@ -24,26 +24,26 @@ Important constraints:
 
 ### Unity Runtime
 
-`DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity` owns Unity-specific application behavior:
+`DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity` owns Unity-specific application behavior and is split by responsibility:
 
-- TMX/TSX loading and rendering.
-- Map movement, collision, warps, water/ship behavior, damage/biome layers.
-- Player, follower, cart, coffin, NPC animation, and sorting behavior.
-- Unity UI/menu/store/message/title flow.
-- Save/load/autosave policy and Unity file/runtime path handling.
+- `Core/` namespace `Redpoint.DungeonEscape.Unity.Core`: Unity bootstrap, game state, data/settings caches, audio, input, display settings, JSON/path helpers.
+- `Map/` namespace `Redpoint.DungeonEscape.Unity.Map`: player movement, warps, followers, cart/coffin, and high-level map interaction behavior.
+- `Rendering/` namespace `Redpoint.DungeonEscape.Unity.Rendering`: directional sprite helpers.
+- `Map/Tiled/` namespace `Redpoint.DungeonEscape.Unity.Map.Tiled`: TMX/TSX map loading, collision, rendering, view/viewport, NPC object rendering, Tiled sprite animation, and renderer pooling.
+- `UI/` namespace `Redpoint.DungeonEscape.Unity.UI`: IMGUI menus, message boxes, title/splash flow, store/combat/status windows, reusable UI theme/control helpers.
 
 Important scripts:
 
-- `TiledMapLoader.cs`: loads TMX maps and TSX tilesets.
-- `TiledMapRenderer.cs`: renders TMX layers and map objects.
-- `TiledMapView.cs`: owns current rendered map view and refreshes.
-- `TiledMapCollision.cs`: tile/object collision queries.
-- `PlayerGridController.cs`: movement, facing, interaction, warps, followers.
-- `DungeonEscapeGameState.cs`: Unity-facing game state, party, object state, quests, shops, saves.
-- `DungeonEscapeGameMenu.cs`: IMGUI party/inventory/quest/settings/save UI.
-- `DungeonEscapeStoreWindow.cs`: tabbed buy/sell store UI.
-- `DungeonEscapeMessageBox.cs`: modal map dialogs.
-- `DungeonEscapeTitleMenu.cs`: title/continue/new/load/quit flow.
+- `Map/Tiled/Loader.cs`: loads TMX maps and TSX tilesets.
+- `Map/Tiled/Renderer.cs`: renders TMX layers and map objects.
+- `Map/Tiled/View.cs`: owns current rendered map view and refreshes.
+- `Map/Tiled/Collision.cs`: tile/object collision queries.
+- `Map/PlayerGridController.cs`: movement, facing, interaction, warps, followers.
+- `Core/GameState.cs`: Unity-facing game state, party, object state, quests, shops, saves.
+- `UI/GameMenu.cs`: IMGUI party/inventory/quest/settings/save UI.
+- `UI/StoreWindow.cs`: tabbed buy/sell store UI.
+- `UI/MessageBox.cs`: modal map dialogs.
+- `UI/TitleMenu.cs`: title/continue/new/load/quit flow.
 
 ## Data And Assets
 
@@ -76,7 +76,7 @@ Autosave policy:
 
 - Timer autosave can be enabled/disabled in settings.
 - Autosave is skipped while title/menu/store/dialog UI is active.
-- Combat can block autosave through `DungeonEscapeGameState.AutoSaveBlocked`.
+- Combat can block autosave through `GameState.AutoSaveBlocked`.
 
 Transition save policy:
 
@@ -87,10 +87,10 @@ Transition save policy:
 
 The Unity UI is currently IMGUI-based. It uses reusable style/control helpers:
 
-- `DungeonEscapeUiTheme`
-- `DungeonEscapeUiSettings`
-- `DungeonEscapeUiControls`
-- `DungeonEscapeUiAssetResolver`
+- `UiTheme`
+- `UiSettings`
+- `UiControls`
+- `UiAssetResolver`
 
 UI scale and colors are settings-driven. Avoid hard-coded UI colors or ad hoc controls when an existing helper exists.
 

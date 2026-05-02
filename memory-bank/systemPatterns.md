@@ -20,9 +20,9 @@ TMX objects define initial map data. Runtime state is persisted in object state 
 General pattern:
 
 1. Read TMX object metadata through `TiledMapInfo`.
-2. Initialize or retrieve persisted object state through `DungeonEscapeGameState`.
+2. Initialize or retrieve persisted object state through `GameState`.
 3. Apply behavior.
-4. Refresh object state/rendering through `TiledMapView` or `PlayerGridController`.
+4. Refresh object state/rendering through `View` or `PlayerGridController`.
 
 ## Interaction Pattern
 
@@ -60,9 +60,9 @@ Use properties for behavior:
 
 Prefer the existing IMGUI helper layer:
 
-- `DungeonEscapeUiControls` for reusable controls.
-- `DungeonEscapeUiTheme` for colors/styles.
-- `DungeonEscapeUiSettings` for scale and settings-driven UI values.
+- `UiControls` for reusable controls.
+- `UiTheme` for colors/styles.
+- `UiSettings` for scale and settings-driven UI values.
 
 Keep modals on top and block unrelated controls while active.
 

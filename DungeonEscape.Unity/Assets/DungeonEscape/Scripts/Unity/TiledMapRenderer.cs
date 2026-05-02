@@ -10,7 +10,7 @@ namespace Redpoint.DungeonEscape.Unity
     public static class TiledMapRenderer
     {
         private const int RenderBufferTiles = 2;
-        private const float TileLayerOverlapScale = 1.002f;
+        private const float TileLayerOverlapScale = 1.006f;
         private const uint TiledGidMask = 0x1FFFFFFF;
         private static Sprite hiddenObjectSprite;
 

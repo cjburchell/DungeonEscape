@@ -27,6 +27,15 @@ namespace Redpoint.DungeonEscape.Unity
             Debug
         }
 
+        private enum PartyDetailTab
+        {
+            Status,
+            Equipment,
+            Items,
+            Skills,
+            Spells
+        }
+
         private const float MinUiScale = 0.5f;
         private const float MaxUiScale = 3f;
         private const float InitialNavigationRepeatDelay = 0.35f;
@@ -48,13 +57,16 @@ namespace Redpoint.DungeonEscape.Unity
         private string lastThemeSignature;
         private MenuTab currentTab = MenuTab.Party;
         private SettingsTab currentSettingsTab = SettingsTab.General;
+        private PartyDetailTab currentPartyDetailTab = PartyDetailTab.Status;
         private Vector2 partyScrollPosition;
         private Vector2 inventoryScrollPosition;
+        private Vector2 partyDetailScrollPosition;
         private Vector2 questScrollPosition;
         private Vector2 saveScrollPosition;
         private Vector2 settingsScrollPosition;
         private float menuBodyHeight;
         private int selectedHeroIndex;
+        private int selectedPartyItemIndex;
         private int selectedRowIndex;
         private int selectedBindingSlotIndex;
         private int drawingRowIndex;
@@ -217,11 +229,27 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void CycleTab(int delta)
         {
-            var tabCount = Enum.GetValues(typeof(MenuTab)).Length;
-            var next = ((int)currentTab + delta + tabCount) % tabCount;
-            currentTab = (MenuTab)next;
+            var tabs = GetVisibleTabs();
+            var currentIndex = tabs.IndexOf(currentTab);
+            if (currentIndex < 0)
+            {
+                currentIndex = 0;
+            }
+
+            currentTab = tabs[(currentIndex + delta + tabs.Count) % tabs.Count];
             selectedRowIndex = 0;
             ResetMenuNavigationRepeat();
+        }
+
+        private static List<MenuTab> GetVisibleTabs()
+        {
+            return new List<MenuTab>
+            {
+                MenuTab.Party,
+                MenuTab.Quests,
+                MenuTab.Save,
+                MenuTab.Settings
+            };
         }
 
         private void CycleSettingsTab(int delta)
@@ -285,7 +313,6 @@ namespace Redpoint.DungeonEscape.Unity
         {
             GUILayout.BeginHorizontal();
             DrawTab(MenuTab.Party, "Party");
-            DrawTab(MenuTab.Inventory, "Inventory");
             DrawTab(MenuTab.Quests, "Quests");
             DrawTab(MenuTab.Save, "Save");
             DrawTab(MenuTab.Settings, "Settings");
@@ -342,8 +369,10 @@ namespace Redpoint.DungeonEscape.Unity
             selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Mathf.Max(activeMembers.Count + inactive.Count - 1, 0));
 
             GUILayout.BeginHorizontal();
-            GUILayout.BeginVertical(GUILayout.MinWidth(420f * GetPixelScale()));
-            partyScrollPosition = BeginThemedScroll(partyScrollPosition, Mathf.Max(120f * GetPixelScale(), menuBodyHeight - 32f * GetPixelScale()));
+            GUILayout.BeginVertical(panelStyle, GUILayout.Width(340f * GetPixelScale()), GUILayout.Height(menuBodyHeight));
+            partyScrollPosition = BeginThemedScroll(
+                partyScrollPosition,
+                Mathf.Max(120f * GetPixelScale(), menuBodyHeight - 28f * GetPixelScale()));
             GUILayout.Label("Active Party (" + activeMembers.Count + "/" + GetMaxPartyMembers() + ")", titleStyle);
             for (var i = 0; i < activeMembers.Count; i++)
             {
@@ -384,13 +413,13 @@ namespace Redpoint.DungeonEscape.Unity
         {
             GUILayout.BeginHorizontal();
             SetMenuGuiEnabled(index > 0);
-            if (GUILayout.Button("Move Up", buttonStyle, GUILayout.Width(112f * GetPixelScale())))
+            if (GUILayout.Button("Up", buttonStyle, GUILayout.Width(72f * GetPixelScale())))
             {
                 ApplyPartyChange(() => gameState.MovePartyMemberUp(hero));
             }
 
             SetMenuGuiEnabled(index < activeCount - 1);
-            if (GUILayout.Button("Move Down", buttonStyle, GUILayout.Width(128f * GetPixelScale())))
+            if (GUILayout.Button("Down", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
             {
                 ApplyPartyChange(() => gameState.MovePartyMemberDown(hero));
             }

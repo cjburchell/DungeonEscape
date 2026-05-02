@@ -116,6 +116,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             isOpen = true;
             mode = TitleMode.Main;
+            DungeonEscapeAudio.GetOrCreate().PlayMusic("first-story");
         }
 
         private void Update()
@@ -1093,6 +1094,11 @@ namespace Redpoint.DungeonEscape.Unity
         private static void Close()
         {
             isOpen = false;
+            var mapView = FindAnyObjectByType<TiledMapView>();
+            if (mapView != null)
+            {
+                mapView.PlayCurrentMapMusic();
+            }
         }
 
         private int GetMenuMoveY()

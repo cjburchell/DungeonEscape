@@ -56,6 +56,7 @@ Status: Done
 - Done: Settings UI.
 - Done: Settings tabs: General, UI, Input Bindings, Debug.
 - Done: UI scale setting.
+- Done: Hidden settings can show/hide the UI and Debug settings tabs.
 - Done: Configurable UI colors, border thickness, hover color, and highlight color.
 - Done: Gamepad navigation through main menu UI.
 - Done: Keyboard and gamepad input rebinding.
@@ -108,7 +109,8 @@ Status: Done
 
 - Done: Continuous movement while a key or stick is held.
 - Done: Turning before moving when changing facing direction.
-- Done: Sprint boost setting.
+- Done: Sprint boost setting, exposed on Settings > Debug.
+- Done: Turn delay setting, exposed on Settings > Debug.
 - Done: Smooth viewport scrolling pass.
 - Done: Tile collision rules use TMX `Collideable` layer data.
 - Done: Object collision rules use TMX `Collideable` object bounds and persisted open/removed object state.

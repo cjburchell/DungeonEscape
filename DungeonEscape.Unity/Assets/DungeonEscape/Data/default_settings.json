@@ -11,6 +11,8 @@
   "AutoSaveEnabled": true,
   "AutoSaveIntervalSeconds": 5.0,
   "SkipSplashAndLoadQuickSave": false,
+  "ShowUiSettingsTab": false,
+  "ShowDebugSettingsTab": false,
   "ShowHiddenObjects": false,
   "UiBackgroundColor": "#000000",
   "UiBackgroundAlpha": 1.0,

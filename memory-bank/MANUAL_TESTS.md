@@ -90,7 +90,7 @@ Status legend:
 
 ### [x] Turn Delay Only Applies When Changing Facing
 
-- Open Settings > General and adjust Turn Delay.
+- Open Settings > Debug and adjust Turn Delay.
 - Press a direction different from the current facing direction.
 - Expected: changing direction only turns first, then moves after the configured delay.
 - Hold movement while already facing the movement direction.
@@ -266,7 +266,18 @@ Status legend:
 - Close and restart Play Mode or the built player.
 - Expected: the saved fullscreen setting is applied during startup.
 - Navigate Settings > General with keyboard or gamepad.
-- Expected: Fullscreen participates in the normal settings row navigation and does not prevent changing Sprint Boost, Turn Delay, Autosave, or Autosave Period.
+- Expected: Fullscreen participates in the normal settings row navigation and does not prevent changing Autosave or Autosave Period.
+
+### [ ] Hidden Settings Tabs Can Be Disabled
+
+- Start with default settings.
+- Expected: Settings does not show the UI or Debug tabs.
+- In the settings file, set `ShowUiSettingsTab` to `true` and restart the game.
+- Expected: Settings shows the UI tab.
+- Set `ShowDebugSettingsTab` to `true` and restart the game.
+- Expected: Settings shows the Debug tab.
+- Restore both values to `false`.
+- Expected: Settings shows only General and Input Bindings tabs again.
 
 ### [x] Inventory First Open Is Responsive
 

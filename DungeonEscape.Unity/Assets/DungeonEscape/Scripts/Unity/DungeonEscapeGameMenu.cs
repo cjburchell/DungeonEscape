@@ -258,9 +258,14 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void CycleSettingsTab(int delta)
         {
-            var tabCount = Enum.GetValues(typeof(SettingsTab)).Length;
-            var next = ((int)currentSettingsTab + delta + tabCount) % tabCount;
-            currentSettingsTab = (SettingsTab)next;
+            var tabs = GetVisibleSettingsTabs(DungeonEscapeSettingsCache.Current);
+            var currentIndex = tabs.IndexOf(currentSettingsTab);
+            if (currentIndex < 0)
+            {
+                currentIndex = 0;
+            }
+
+            currentSettingsTab = tabs[(currentIndex + delta + tabs.Count) % tabs.Count];
             settingsScrollPosition = Vector2.zero;
             selectedRowIndex = 0;
         }
@@ -1831,6 +1836,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
+            EnsureVisibleSettingsTab(settings);
             DrawSettingsTabs();
 
             settingsScrollPosition = BeginThemedScroll(settingsScrollPosition, Mathf.Max(120f * GetPixelScale(), menuBodyHeight - 50f * GetPixelScale()));
@@ -1856,13 +1862,47 @@ namespace Redpoint.DungeonEscape.Unity
         {
             BeginSelectableRow();
             GUILayout.BeginHorizontal();
-            DrawSettingsTab(SettingsTab.General, "General");
-            DrawSettingsTab(SettingsTab.Ui, "UI");
-            DrawSettingsTab(SettingsTab.Input, "Input Bindings");
-            DrawSettingsTab(SettingsTab.Debug, "Debug");
+            foreach (var tab in GetVisibleSettingsTabs(DungeonEscapeSettingsCache.Current))
+            {
+                DrawSettingsTab(tab, GetSettingsTabLabel(tab));
+            }
+
             GUILayout.EndHorizontal();
             EndSelectableRow();
             GUILayout.Space(10f * GetPixelScale());
+        }
+
+        private void EnsureVisibleSettingsTab(Settings settings)
+        {
+            var tabs = GetVisibleSettingsTabs(settings);
+            if (!tabs.Contains(currentSettingsTab))
+            {
+                currentSettingsTab = SettingsTab.General;
+                selectedRowIndex = 0;
+                settingsScrollPosition = Vector2.zero;
+            }
+        }
+
+        private static List<SettingsTab> GetVisibleSettingsTabs(Settings settings)
+        {
+            var tabs = new List<SettingsTab> { SettingsTab.General };
+            if (settings == null || settings.ShowUiSettingsTab)
+            {
+                tabs.Add(SettingsTab.Ui);
+            }
+
+            tabs.Add(SettingsTab.Input);
+            if (settings == null || settings.ShowDebugSettingsTab)
+            {
+                tabs.Add(SettingsTab.Debug);
+            }
+
+            return tabs;
+        }
+
+        private static string GetSettingsTabLabel(SettingsTab tab)
+        {
+            return tab == SettingsTab.Ui ? "UI" : tab == SettingsTab.Input ? "Input Bindings" : tab.ToString();
         }
 
         private void DrawSettingsTab(SettingsTab tab, string label)
@@ -1881,8 +1921,6 @@ namespace Redpoint.DungeonEscape.Unity
             var oldFullScreen = settings.IsFullScreen;
             var oldMusicVolume = settings.MusicVolume;
             var oldSoundEffectsVolume = settings.SoundEffectsVolume;
-            var oldSprintBoost = settings.SprintBoost;
-            var oldTurnDelay = settings.TurnMoveDelaySeconds;
             var oldAutoSaveEnabled = settings.AutoSaveEnabled;
             var oldAutoSaveInterval = settings.AutoSaveIntervalSeconds;
 
@@ -1901,14 +1939,6 @@ namespace Redpoint.DungeonEscape.Unity
             EndSelectableRow();
             GUILayout.Space(8f * GetPixelScale());
             BeginSelectableRow();
-            settings.SprintBoost = DrawSliderRow("Sprint Boost: " + settings.SprintBoost.ToString("0.00"), settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost, 1f, 3f);
-            EndSelectableRow();
-            GUILayout.Space(8f * GetPixelScale());
-            BeginSelectableRow();
-            settings.TurnMoveDelaySeconds = DrawSliderRow("Turn Delay: " + GetTurnMoveDelay(settings).ToString("0.00") + " seconds", GetTurnMoveDelay(settings), 0f, 0.3f);
-            EndSelectableRow();
-            GUILayout.Space(8f * GetPixelScale());
-            BeginSelectableRow();
             settings.AutoSaveEnabled = DrawCheckboxRow(settings.AutoSaveEnabled, "Autosave enabled");
             EndSelectableRow();
             BeginSelectableRow();
@@ -1923,8 +1953,6 @@ namespace Redpoint.DungeonEscape.Unity
             var otherChanged =
                 !Mathf.Approximately(oldUiScale, settings.UiScale) ||
                 oldFullScreen != settings.IsFullScreen ||
-                !Mathf.Approximately(oldSprintBoost, settings.SprintBoost) ||
-                !Mathf.Approximately(oldTurnDelay, settings.TurnMoveDelaySeconds) ||
                 oldAutoSaveEnabled != settings.AutoSaveEnabled ||
                 !Mathf.Approximately(oldAutoSaveInterval, settings.AutoSaveIntervalSeconds);
 
@@ -1974,17 +2002,30 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void DrawDebugSettings(Settings settings)
         {
-            GUI.changed = false;
+            var oldMapDebugInfo = settings.MapDebugInfo;
+            var oldShowHiddenObjects = settings.ShowHiddenObjects;
+            var oldSprintBoost = settings.SprintBoost;
+            var oldTurnDelay = settings.TurnMoveDelaySeconds;
             BeginSelectableRow();
             settings.MapDebugInfo = DrawCheckboxRow(settings.MapDebugInfo, "Map debug info");
             EndSelectableRow();
             BeginSelectableRow();
             settings.ShowHiddenObjects = DrawCheckboxRow(settings.ShowHiddenObjects, "Show hidden map objects");
             EndSelectableRow();
+            GUILayout.Space(8f * GetPixelScale());
+            BeginSelectableRow();
+            settings.SprintBoost = DrawSliderRow("Sprint Boost: " + settings.SprintBoost.ToString("0.00"), settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost, 1f, 3f);
+            EndSelectableRow();
+            BeginSelectableRow();
+            settings.TurnMoveDelaySeconds = DrawSliderRow("Turn Delay: " + GetTurnMoveDelay(settings).ToString("0.00") + " seconds", GetTurnMoveDelay(settings), 0f, 0.3f);
+            EndSelectableRow();
 
-            if (GUI.changed)
+            if (oldMapDebugInfo != settings.MapDebugInfo ||
+                oldShowHiddenObjects != settings.ShowHiddenObjects ||
+                !Mathf.Approximately(oldSprintBoost, settings.SprintBoost) ||
+                !Mathf.Approximately(oldTurnDelay, settings.TurnMoveDelaySeconds))
             {
-                ApplySettings(settings, true);
+                ApplySettings(settings, oldShowHiddenObjects != settings.ShowHiddenObjects);
             }
         }
 
@@ -2269,13 +2310,13 @@ namespace Redpoint.DungeonEscape.Unity
             switch (currentSettingsTab)
             {
                 case SettingsTab.General:
-                    return 9;
+                    return 7;
                 case SettingsTab.Ui:
                     return 9;
                 case SettingsTab.Input:
                     return DungeonEscapeInput.GetBindings().Length + 2;
                 case SettingsTab.Debug:
-                    return 3;
+                    return 5;
                 default:
                     return 0;
             }
@@ -2545,15 +2586,7 @@ namespace Redpoint.DungeonEscape.Unity
                         settings.SoundEffectsVolume = Mathf.Clamp01(settings.SoundEffectsVolume + 0.01f * delta);
                         ApplyAudioSettings(settings);
                         break;
-                    case 4:
-                        settings.SprintBoost = Mathf.Clamp((settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost) + 0.05f * delta, 1f, 3f);
-                        ApplySettings(settings);
-                        break;
                     case 5:
-                        settings.TurnMoveDelaySeconds = Mathf.Clamp(GetTurnMoveDelay(settings) + 0.01f * delta, 0f, 0.3f);
-                        ApplySettings(settings);
-                        break;
-                    case 7:
                         settings.AutoSaveIntervalSeconds = Mathf.Clamp(GetAutoSaveInterval(settings) + 5f * delta, 5f, 300f);
                         ApplySettings(settings);
                         break;
@@ -2577,6 +2610,20 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 selectedBindingSlotIndex = (selectedBindingSlotIndex + delta + 2) % 2;
             }
+            else if (currentSettingsTab == SettingsTab.Debug)
+            {
+                switch (selectedRowIndex - 1)
+                {
+                    case 2:
+                        settings.SprintBoost = Mathf.Clamp((settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost) + 0.05f * delta, 1f, 3f);
+                        ApplySettings(settings);
+                        break;
+                    case 3:
+                        settings.TurnMoveDelaySeconds = Mathf.Clamp(GetTurnMoveDelay(settings) + 0.01f * delta, 0f, 0.3f);
+                        ApplySettings(settings);
+                        break;
+                }
+            }
         }
 
         private void ActivateSelectedSetting()
@@ -2596,9 +2643,9 @@ namespace Redpoint.DungeonEscape.Unity
             if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 1)
             {
                 settings.IsFullScreen = !settings.IsFullScreen;
-                ApplySettings(settings, settingsRowIndex == 1);
+                ApplySettings(settings);
             }
-            else if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 6)
+            else if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 4)
             {
                 settings.AutoSaveEnabled = !settings.AutoSaveEnabled;
                 ApplySettings(settings);
@@ -2614,7 +2661,7 @@ namespace Redpoint.DungeonEscape.Unity
                     settings.ShowHiddenObjects = !settings.ShowHiddenObjects;
                 }
 
-                ApplySettings(settings);
+                ApplySettings(settings, settingsRowIndex == 1);
             }
             else if (currentSettingsTab == SettingsTab.Input)
             {

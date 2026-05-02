@@ -157,6 +157,23 @@ namespace Redpoint.DungeonEscape.Unity.Core
             return axis < -AxisDeadZone ? 1 : 0;
         }
 
+        public static int GetUiMoveXWithRightStick()
+        {
+            var moveX = GetMoveX();
+            if (moveX != 0)
+            {
+                return moveX;
+            }
+
+            var axis = GetGamepadRightStickX();
+            if (axis < -AxisDeadZone)
+            {
+                return -1;
+            }
+
+            return axis > AxisDeadZone ? 1 : 0;
+        }
+
         public static int GetMoveXDown()
         {
             if (GetCommandDown(InputCommand.MoveLeft))

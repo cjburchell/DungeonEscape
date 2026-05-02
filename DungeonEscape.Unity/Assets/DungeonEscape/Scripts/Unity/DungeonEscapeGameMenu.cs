@@ -845,17 +845,16 @@ namespace Redpoint.DungeonEscape.Unity
                 uiTheme);
             GUILayout.BeginVertical();
             GUILayout.Label(item.Name, GetRarityStyle(item, labelStyle));
-            GUILayout.Label(item.Rarity + " " + item.Type + (item.IsEquipped ? "  Equipped" : ""), smallStyle);
-            GUILayout.Label(item.Gold + " gold", smallStyle);
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
-
-            GUILayout.Space(8f * GetPixelScale());
+            GUILayout.Label(GetItemDetailSubtitle(item), smallStyle);
             if (!string.IsNullOrEmpty(item.Item.StatString))
             {
                 GUILayout.Label("Stats: " + item.Item.StatString, smallStyle);
             }
 
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(8f * GetPixelScale());
             if (item.MaxCharges > 0)
             {
                 GUILayout.Label("Charges: " + item.Charges + "/" + item.MaxCharges, smallStyle);
@@ -902,6 +901,19 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             GUILayout.EndVertical();
+        }
+
+        private static string GetItemDetailSubtitle(ItemInstance item)
+        {
+            if (item == null)
+            {
+                return "";
+            }
+
+            var subtitle = item.Type == ItemType.Quest
+                ? item.Type.ToString()
+                : item.Rarity + " " + item.Type;
+            return item.IsEquipped ? subtitle + "  Equipped" : subtitle;
         }
 
         private bool HasTransferTarget(Hero source)

@@ -22,6 +22,7 @@ namespace Redpoint.DungeonEscape.Unity
         public readonly GUIStyle LabelStyle;
         public readonly GUIStyle SmallStyle;
         public readonly GUIStyle ButtonStyle;
+        public readonly GUIStyle TextFieldStyle;
         public readonly GUIStyle CheckboxStyle;
         public readonly GUIStyle CheckboxBoxStyle;
         public readonly GUIStyle CheckboxCheckedBoxStyle;
@@ -136,6 +137,18 @@ namespace Redpoint.DungeonEscape.Unity
                 onActive = { background = selectedActiveTexture, textColor = HighlightColor },
                 onFocused = { background = selectedRowTexture, textColor = HighlightColor },
                 border = border
+            };
+            TextFieldStyle = new GUIStyle(GUI.skin.textField)
+            {
+                fontSize = Mathf.RoundToInt(15f * scale),
+                fontStyle = FontStyle.Normal,
+                alignment = TextAnchor.MiddleLeft,
+                normal = { background = buttonTexture, textColor = TextColor },
+                hover = { background = hoverTexture, textColor = TextColor },
+                active = { background = activeTexture, textColor = TextColor },
+                focused = { background = selectedRowTexture, textColor = TextColor },
+                border = border,
+                padding = new RectOffset(8, 8, 4, 4)
             };
             CheckboxStyle = new GUIStyle(ButtonStyle)
             {

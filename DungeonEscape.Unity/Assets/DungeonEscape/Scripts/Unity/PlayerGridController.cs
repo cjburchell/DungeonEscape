@@ -85,6 +85,18 @@ namespace Redpoint.DungeonEscape.Unity
             get { return isMoving; }
         }
 
+        public bool IsMovementActive
+        {
+            get
+            {
+                return isMoving ||
+                       isTransitioningMap ||
+                       hasPendingTurnMove ||
+                       DungeonEscapeInput.GetMoveX() != 0 ||
+                       DungeonEscapeInput.GetMoveY() != 0;
+            }
+        }
+
         private void Awake()
         {
             spriteRenderer = gameObject.AddComponent<SpriteRenderer>();

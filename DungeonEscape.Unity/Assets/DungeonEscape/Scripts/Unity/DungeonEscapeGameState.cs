@@ -51,7 +51,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         public ISounds Sounds
         {
-            get { return NullSounds.Instance; }
+            get { return DungeonEscapeAudio.GetOrCreate(); }
         }
 
         private void Awake()
@@ -258,17 +258,20 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             var message = new StringBuilder();
+            var appliedDamage = false;
             foreach (var hero in Party.ActiveMembers.Where(member => member != null && !member.IsDead))
             {
                 hero.Health = Math.Max(0, hero.Health - damage);
+                appliedDamage = true;
                 if (hero.IsDead)
                 {
                     message.AppendLine(hero.Name + " has died.");
                 }
             }
 
-            if (damage > 0)
+            if (appliedDamage)
             {
+                Sounds.PlaySoundEffect("receive-damage");
                 MarkDirty();
             }
 
@@ -412,6 +415,7 @@ namespace Redpoint.DungeonEscape.Unity
                 }
 
                 MarkDirty();
+                Sounds.PlaySoundEffect("level-up");
                 if (!string.IsNullOrEmpty(levelUpMessage))
                 {
                     message.Append(levelUpMessage);

@@ -745,7 +745,7 @@ namespace Redpoint.DungeonEscape.Unity
             foreach (var spell in spells)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(spell.Name + "  MP " + spell.Cost + "  " + spell.Type + "  " + spell.Targets, smallStyle);
+                GUILayout.Label(spell.Name, smallStyle);
                 SetMenuGuiEnabled(gameState != null && CanCastSpellFromPartyMenu(hero, spell));
                 if (GUILayout.Button("Cast", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
                 {
@@ -887,6 +887,42 @@ namespace Redpoint.DungeonEscape.Unity
 
             var reserveIndex = selectedRowIndex - activeMembers.Count;
             return reserveIndex >= 0 && reserveIndex < inactiveMembers.Count ? inactiveMembers[reserveIndex] : null;
+        }
+
+        private Hero GetSelectedPartyHero()
+        {
+            var party = GetParty();
+            if (party == null)
+            {
+                return null;
+            }
+
+            return GetSelectedPartyHero(party.ActiveMembers.ToList(), party.InactiveMembers.ToList());
+        }
+
+        private void EnsureVisiblePartyDetailTab(Hero hero)
+        {
+            if (currentPartyDetailTab == PartyDetailTab.Skills && !HasKnownSkills(hero) ||
+                currentPartyDetailTab == PartyDetailTab.Spells && !HasKnownSpells(hero))
+            {
+                currentPartyDetailTab = PartyDetailTab.Status;
+            }
+        }
+
+        private static bool HasKnownSkills(Hero hero)
+        {
+            return hero != null &&
+                   DungeonEscapeGameDataCache.Current != null &&
+                   DungeonEscapeGameDataCache.Current.Skills != null &&
+                   hero.GetSkills(DungeonEscapeGameDataCache.Current.Skills).Any();
+        }
+
+        private static bool HasKnownSpells(Hero hero)
+        {
+            return hero != null &&
+                   DungeonEscapeGameDataCache.Current != null &&
+                   DungeonEscapeGameDataCache.Current.Spells != null &&
+                   hero.GetSpells(DungeonEscapeGameDataCache.Current.Spells).Any();
         }
 
         private static ItemInstance GetEquippedItem(Hero hero, Slot slot)

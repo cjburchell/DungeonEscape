@@ -103,14 +103,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUI.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), Texture2D.whiteTexture);
             GUI.color = previousColor;
 
+            var alpha = GetSplashAlpha();
             if (splashTexture == null)
             {
-                var alpha = GetSplashAlpha();
                 var style = new GUIStyle(GUI.skin.label)
                 {
                     alignment = TextAnchor.MiddleCenter,
                     fontSize = Mathf.Max(24, Mathf.RoundToInt(Screen.height * 0.08f)),
-                    normal = { textColor = new Color(1f, 1f, 1f, alpha) }
+                    normal = { textColor = Color.white }
                 };
                 GUI.Label(new Rect(0f, 0f, Screen.width, Screen.height), "Dungeon Escape", style);
             }
@@ -122,11 +122,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 var width = imageWidth * scale;
                 var height = imageHeight * scale;
                 var rect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
-                GUI.color = new Color(1f, 1f, 1f, GetSplashAlpha());
                 GUI.DrawTexture(rect, splashTexture, ScaleMode.ScaleToFit, true);
-                GUI.color = previousColor;
             }
 
+            GUI.color = new Color(0f, 0f, 0f, 1f - alpha);
+            GUI.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), Texture2D.whiteTexture);
+            GUI.color = previousColor;
             GUI.depth = previousDepth;
         }
 

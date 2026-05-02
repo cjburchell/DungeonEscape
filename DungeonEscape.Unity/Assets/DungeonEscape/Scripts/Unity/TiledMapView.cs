@@ -16,10 +16,10 @@ namespace Redpoint.DungeonEscape.Unity
         private string mapAssetPath = "Assets/DungeonEscape/Maps/overworld.tmx";
 
         [SerializeField]
-        private int columns = 20;
+        private int columns = 32;
 
         [SerializeField]
-        private int rows = 15;
+        private int rows = 18;
 
         [SerializeField]
         private int startColumn = 25;

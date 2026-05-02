@@ -7,6 +7,7 @@ namespace Redpoint.DungeonEscape.Unity
 {
     public sealed class DungeonEscapePartyStatusWindow : MonoBehaviour
     {
+        private const int CombatStatusDepth = -3000;
         private DungeonEscapeGameState gameState;
         private PlayerGridController player;
         private DungeonEscapeUiSettings uiSettings;
@@ -19,16 +20,17 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void OnGUI()
         {
+            var combatOpen = DungeonEscapeCombatPreviewWindow.IsOpen;
             if (DungeonEscapeTitleMenu.IsOpen ||
                 DungeonEscapeGameMenu.IsOpen ||
                 DungeonEscapeStoreWindow.IsOpen ||
-                DungeonEscapeMessageBox.IsAnyVisible)
+                !combatOpen && DungeonEscapeMessageBox.IsAnyVisible)
             {
                 return;
             }
 
             EnsureReferences();
-            if (player != null && player.IsMovementActive)
+            if (!combatOpen && player != null && player.IsMovementActive)
             {
                 return;
             }
@@ -46,7 +48,14 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             EnsureStyles();
+            var previousDepth = GUI.depth;
+            if (combatOpen)
+            {
+                GUI.depth = CombatStatusDepth;
+            }
+
             DrawWindow(members);
+            GUI.depth = previousDepth;
         }
 
         private void DrawWindow(IList<Hero> members)

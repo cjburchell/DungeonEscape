@@ -305,6 +305,7 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             Debug.Log("Random encounter in " + biomeInfo.Type + " on " + TiledMapLoader.NormalizeMapId(mapId) + ": " + FormatMonsterList(monsters));
+            DungeonEscapeCombatPreviewWindow.Open(monsters, biomeInfo.Type);
         }
 
         public string StartQuest(string questId)
@@ -2983,6 +2984,7 @@ namespace Redpoint.DungeonEscape.Unity
         private static bool IsAutoSaveBlocked()
         {
             return AutoSaveBlocked ||
+                   DungeonEscapeCombatPreviewWindow.IsOpen ||
                    DungeonEscapeTitleMenu.IsOpen ||
                    DungeonEscapeGameMenu.IsOpen ||
                    DungeonEscapeStoreWindow.IsOpen ||

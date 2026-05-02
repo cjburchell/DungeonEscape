@@ -200,9 +200,13 @@ Status: Started
 
 - Partial: Biome random encounter check runs after completed map steps and logs selected monsters to the Unity Console.
 - Done: Carry forward old biome encounter metadata, including min/max monster level, for random encounter filtering.
-- Partial: Random encounters by biome. Current pass logs encounters only; it does not enter combat.
+- Partial: Random encounters by biome. Current pass logs encounters and opens a temporary combat preview screen.
 - Partial: Per-map random encounter tables from `Content/data/{mapId}_monsters.json`. Current pass loads copied Unity data from `Assets/DungeonEscape/Data/maps/{mapId}_monsters.json`.
-- Pending: Monster loading/spawning.
+- Partial: Monster loading/spawning. Current pass resolves monster images from `allmonsters.tsx`, displays each monster instance, rolls preview HP, and keeps relative monster sprite sizes without full combat state.
+- Partial: Biome combat backgrounds. Current pass displays the old fight background image for the selected biome.
+- Partial: Combat preview layout shows full-screen aspect-preserved biome backgrounds with a bottom message box.
+- Done: Gold window is hidden during combat preview, and the party status window remains visible during combat preview.
+- Done: Autosave is blocked while the temporary combat preview is open.
 - Pending: Combat UI.
 - Pending: Turn system.
 - Pending: Skills in combat.

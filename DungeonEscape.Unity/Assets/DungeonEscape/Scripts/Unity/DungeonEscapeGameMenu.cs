@@ -1040,9 +1040,16 @@ namespace Redpoint.DungeonEscape.Unity
             GUILayout.EndHorizontal();
         }
 
-        private void DrawInventoryItemDetail(Hero hero, ItemInstance item)
+        private void DrawInventoryItemDetail(Hero hero, ItemInstance item, bool framed = true)
         {
-            GUILayout.BeginVertical(panelStyle, GUILayout.Width(320f * GetPixelScale()));
+            if (framed)
+            {
+                GUILayout.BeginVertical(panelStyle, GUILayout.Width(320f * GetPixelScale()));
+            }
+            else
+            {
+                GUILayout.BeginVertical();
+            }
             if (item == null)
             {
                 GUILayout.Label("No item selected.", labelStyle);
@@ -1871,6 +1878,13 @@ namespace Redpoint.DungeonEscape.Unity
             settings.IsFullScreen = DrawCheckboxRow(settings.IsFullScreen, "Fullscreen");
             EndSelectableRow();
             BeginSelectableRow();
+            settings.MusicVolume = DrawSliderRow("Music Volume: " + Mathf.Clamp01(settings.MusicVolume).ToString("0.00"), Mathf.Clamp01(settings.MusicVolume), 0f, 1f);
+            EndSelectableRow();
+            BeginSelectableRow();
+            settings.SoundEffectsVolume = DrawSliderRow("Sound Effects Volume: " + Mathf.Clamp01(settings.SoundEffectsVolume).ToString("0.00"), Mathf.Clamp01(settings.SoundEffectsVolume), 0f, 1f);
+            EndSelectableRow();
+            GUILayout.Space(8f * GetPixelScale());
+            BeginSelectableRow();
             settings.SprintBoost = DrawSliderRow("Sprint Boost: " + settings.SprintBoost.ToString("0.00"), settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost, 1f, 3f);
             EndSelectableRow();
             GUILayout.Space(8f * GetPixelScale());
@@ -2224,7 +2238,7 @@ namespace Redpoint.DungeonEscape.Unity
             switch (currentSettingsTab)
             {
                 case SettingsTab.General:
-                    return 7;
+                    return 9;
                 case SettingsTab.Ui:
                     return 9;
                 case SettingsTab.Input:

@@ -499,6 +499,34 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return style;
         }
 
+        private GUIStyle GetCenteredRarityStyle(Item item)
+        {
+            var style = GetRarityStyle(item, labelStyle);
+            if (style == null)
+            {
+                return null;
+            }
+
+            var centered = new GUIStyle(style)
+            {
+                alignment = TextAnchor.MiddleLeft
+            };
+            return centered;
+        }
+
+        private static GUIStyle GetRightAlignedStyle(GUIStyle fallback)
+        {
+            if (fallback == null)
+            {
+                return null;
+            }
+
+            return new GUIStyle(fallback)
+            {
+                alignment = TextAnchor.MiddleRight
+            };
+        }
+
         private bool StoreWillBuyItems()
         {
             return !IsKeyStoreObject() && GetBoolProperty("WillBuyItems", true);
@@ -508,40 +536,26 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (InputManager.GetCommandDown(InputCommand.MenuPreviousTab))
             {
-                if (currentTab == StoreTab.Sell && GetPartyMembers().Count > 1)
-                {
-                    SetSelectedHeroIndex(Mathf.Max(0, selectedHeroIndex - 1));
-                }
-                else
-                {
-                    SetCurrentTab(StoreTab.Buy);
-                }
-
+                currentFocus = StoreFocus.Items;
+                SetCurrentTab(StoreTab.Buy);
                 return;
             }
 
             if (InputManager.GetCommandDown(InputCommand.MenuNextTab) && StoreWillBuyItems())
             {
-                if (currentTab == StoreTab.Sell && GetPartyMembers().Count > 1)
-                {
-                    SetSelectedHeroIndex(Mathf.Min(GetPartyMembers().Count - 1, selectedHeroIndex + 1));
-                }
-                else
-                {
-                    SetCurrentTab(StoreTab.Sell);
-                }
-
+                currentFocus = StoreFocus.Items;
+                SetCurrentTab(StoreTab.Sell);
                 return;
             }
 
-            var moveX = InputManager.GetMoveXDown();
+            var moveX = GetStoreMoveX();
             if (moveX != 0)
             {
                 HandleHorizontalNavigation(moveX);
                 return;
             }
 
-            var moveY = InputManager.GetMoveYDown();
+            var moveY = GetStoreMoveY();
             if (moveY != 0)
             {
                 HandleVerticalNavigation(moveY);
@@ -558,21 +572,15 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (currentTab == StoreTab.Buy)
             {
-                if (moveX > 0 && StoreWillBuyItems())
-                {
-                    SetCurrentTab(StoreTab.Sell);
-                }
-
                 return;
             }
 
             var members = GetPartyMembers();
-            if (members.Count == 0)
+            if (members.Count > 0)
             {
-                return;
+                currentFocus = StoreFocus.SellMembers;
+                SetSelectedHeroIndex(Mathf.Clamp(selectedHeroIndex + moveX, 0, members.Count - 1));
             }
-
-            SetSelectedHeroIndex(Mathf.Clamp(selectedHeroIndex + moveX, 0, members.Count - 1));
         }
 
         private void HandleVerticalNavigation(int moveY)
@@ -582,6 +590,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 var inventory = gameState == null ? new List<Item>() : gameState.GetStoreInventory(storeObject);
                 if (inventory.Count > 0)
                 {
+                    currentFocus = StoreFocus.Items;
                     SetSelectedBuyIndex(Mathf.Clamp(selectedBuyIndex + moveY, 0, inventory.Count - 1));
                 }
 
@@ -598,6 +607,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var items = GetSellableItems(hero).ToList();
             if (items.Count > 0)
             {
+                currentFocus = StoreFocus.Items;
                 SetSelectedSellIndex(Mathf.Clamp(selectedSellIndex + moveY, 0, items.Count - 1));
             }
         }
@@ -639,6 +649,46 @@ namespace Redpoint.DungeonEscape.Unity.UI
             ShowSellConfirmation(hero, items[Mathf.Clamp(selectedSellIndex, 0, items.Count - 1)]);
         }
 
+        private void HandleBuyRowMouse(Rect rowRect, Item item, int index)
+        {
+            if (Event.current == null ||
+                Event.current.type != EventType.MouseDown ||
+                Event.current.button != 0 ||
+                !rowRect.Contains(Event.current.mousePosition))
+            {
+                return;
+            }
+
+            if (Event.current.clickCount >= 2 && CanBuy(item))
+            {
+                currentFocus = StoreFocus.Items;
+                selectedBuyIndex = index;
+                UiControls.PlayConfirmSound();
+                ShowRecipientPicker(item);
+                Event.current.Use();
+            }
+        }
+
+        private void HandleSellRowMouse(Rect rowRect, Hero hero, ItemInstance item, int index)
+        {
+            if (Event.current == null ||
+                Event.current.type != EventType.MouseDown ||
+                Event.current.button != 0 ||
+                !rowRect.Contains(Event.current.mousePosition))
+            {
+                return;
+            }
+
+            if (Event.current.clickCount >= 2)
+            {
+                currentFocus = StoreFocus.Items;
+                selectedSellIndex = index;
+                UiControls.PlayConfirmSound();
+                ShowSellConfirmation(hero, item);
+                Event.current.Use();
+            }
+        }
+
         private void HandleModalInput()
         {
             if (InputManager.GetCommandDown(InputCommand.Cancel))
@@ -649,13 +699,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             var choiceCount = modalChoices == null || modalChoices.Count == 0 ? 1 : modalChoices.Count;
-            var moveY = InputManager.GetMoveYDown();
+            var moveY = GetStoreMoveY();
             if (moveY != 0 && choiceCount > 1)
             {
                 SetSelectedModalIndex(Mathf.Clamp(selectedModalIndex + moveY, 0, choiceCount - 1));
             }
 
-            var moveX = InputManager.GetMoveXDown();
+            var moveX = GetStoreMoveX();
             if (moveX != 0 && choiceCount > 1)
             {
                 SetSelectedModalIndex(Mathf.Clamp(selectedModalIndex + moveX, 0, choiceCount - 1));
@@ -720,6 +770,23 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return selected ? uiTheme.SelectedRowStyle : uiTheme.RowStyle;
         }
 
+        private void DrawTabFocusIndicator(Rect rect, bool focused)
+        {
+            if (!focused || uiTheme == null || Event.current == null || Event.current.type != EventType.Repaint)
+            {
+                return;
+            }
+
+            var previousColor = GUI.color;
+            GUI.color = uiTheme.HighlightColor;
+            var thickness = Mathf.Max(2f, uiTheme.BorderThickness);
+            GUI.DrawTexture(new Rect(rect.x, rect.y, rect.width, thickness), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(rect.x, rect.yMax - thickness, rect.width, thickness), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(rect.x, rect.y, thickness, rect.height), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(rect.xMax - thickness, rect.y, thickness, rect.height), Texture2D.whiteTexture);
+            GUI.color = previousColor;
+        }
+
         private void SetCurrentTab(StoreTab tab)
         {
             if (tab == StoreTab.Sell && !StoreWillBuyItems())
@@ -757,6 +824,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             selectedBuyIndex = index;
+            buyScroll.y = GetScrollYForSelectedIndex(selectedBuyIndex, buyScroll.y, buyListHeight);
             UiControls.PlaySelectSound();
         }
 
@@ -768,7 +836,36 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             selectedSellIndex = index;
+            sellScroll.y = GetScrollYForSelectedIndex(selectedSellIndex, sellScroll.y, sellListHeight);
             UiControls.PlaySelectSound();
+        }
+
+        private float GetScrollYForSelectedIndex(int index, float currentScrollY, float visibleHeight)
+        {
+            if (visibleHeight <= 0f)
+            {
+                return currentScrollY;
+            }
+
+            var rowHeight = GetStoreRowHeight();
+            var rowTop = index * rowHeight;
+            var rowBottom = rowTop + rowHeight;
+            if (rowTop < currentScrollY)
+            {
+                return rowTop;
+            }
+
+            if (rowBottom > currentScrollY + visibleHeight)
+            {
+                return Mathf.Max(0f, rowBottom - visibleHeight);
+            }
+
+            return currentScrollY;
+        }
+
+        private float GetStoreRowHeight()
+        {
+            return 44f * GetPixelScale();
         }
 
         private void SetSelectedModalIndex(int index)
@@ -807,6 +904,49 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             waitForInteractRelease = false;
             return true;
+        }
+
+        private int GetStoreMoveX()
+        {
+            return GetRepeatedMove(InputManager.GetUiMoveXWithRightStick(), ref repeatingMoveX, ref nextMoveXTime);
+        }
+
+        private int GetStoreMoveY()
+        {
+            return GetRepeatedMove(InputManager.GetUiMoveYWithRightStick(), ref repeatingMoveY, ref nextMoveYTime);
+        }
+
+        private static int GetRepeatedMove(int held, ref int repeatingMove, ref float nextMoveTime)
+        {
+            if (held == 0)
+            {
+                repeatingMove = 0;
+                nextMoveTime = 0f;
+                return 0;
+            }
+
+            if (held != repeatingMove)
+            {
+                repeatingMove = held;
+                nextMoveTime = Time.unscaledTime + InitialNavigationRepeatDelay;
+                return held;
+            }
+
+            if (Time.unscaledTime < nextMoveTime)
+            {
+                return 0;
+            }
+
+            nextMoveTime = Time.unscaledTime + NavigationRepeatDelay;
+            return held;
+        }
+
+        private void ResetNavigationRepeat()
+        {
+            repeatingMoveX = 0;
+            repeatingMoveY = 0;
+            nextMoveXTime = 0f;
+            nextMoveYTime = 0f;
         }
 
         private bool IsKeyStoreObject()

@@ -253,6 +253,26 @@ namespace Redpoint.DungeonEscape.Unity
             new GameObject("DungeonEscapeGameMenu").AddComponent<DungeonEscapeGameMenu>();
         }
 
+        private static void EnsurePartyStatusWindow()
+        {
+            if (FindAnyObjectByType<DungeonEscapePartyStatusWindow>() != null)
+            {
+                return;
+            }
+
+            new GameObject("DungeonEscapePartyStatusWindow").AddComponent<DungeonEscapePartyStatusWindow>();
+        }
+
+        private static void EnsureGoldWindow()
+        {
+            if (FindAnyObjectByType<DungeonEscapeGoldWindow>() != null)
+            {
+                return;
+            }
+
+            new GameObject("DungeonEscapeGoldWindow").AddComponent<DungeonEscapeGoldWindow>();
+        }
+
         private static void EnsureTitleMenu()
         {
             if (FindAnyObjectByType<DungeonEscapeTitleMenu>() != null)

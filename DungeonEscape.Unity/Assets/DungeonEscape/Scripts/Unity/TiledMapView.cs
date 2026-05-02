@@ -954,7 +954,7 @@ namespace Redpoint.DungeonEscape.Unity
         {
             StopViewportScroll();
 
-            transform.position = startOffset;
+            transform.position = SnapToPixelGrid(startOffset);
             viewportScroll = StartCoroutine(AnimateViewportScroll(startOffset, scrollDuration));
         }
 
@@ -967,12 +967,32 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 elapsed += Time.deltaTime;
                 var progress = Mathf.Clamp01(elapsed / duration);
-                transform.position = Vector3.Lerp(startOffset, Vector3.zero, progress);
+                transform.position = SnapToPixelGrid(Vector3.Lerp(startOffset, Vector3.zero, progress));
                 yield return null;
             }
 
             transform.position = Vector3.zero;
             viewportScroll = null;
+        }
+
+        private static Vector3 SnapToPixelGrid(Vector3 position)
+        {
+            var camera = Camera.main;
+            if (camera == null || Screen.height <= 0 || camera.orthographicSize <= 0f)
+            {
+                return position;
+            }
+
+            var unitsPerPixel = camera.orthographicSize * 2f / Screen.height;
+            if (unitsPerPixel <= 0f)
+            {
+                return position;
+            }
+
+            return new Vector3(
+                Mathf.Round(position.x / unitsPerPixel) * unitsPerPixel,
+                Mathf.Round(position.y / unitsPerPixel) * unitsPerPixel,
+                position.z);
         }
 
         private void StopViewportScroll()

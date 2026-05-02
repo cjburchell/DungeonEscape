@@ -4,6 +4,9 @@ using System.Linq;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Tools;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 using Redpoint.DungeonEscape.Unity.Core;
 using Redpoint.DungeonEscape.Unity.UI;
@@ -74,6 +77,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private bool focusCreateNameNextGui;
         private Texture2D mainMenuBackground;
         private Texture2D secondaryMenuBackground;
+        private bool ownsMainMenuBackground;
+        private bool ownsSecondaryMenuBackground;
 
         public static bool IsOpen
         {
@@ -218,17 +223,20 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void OnDestroy()
         {
-            if (mainMenuBackground != null)
+            if (mainMenuBackground != null && ownsMainMenuBackground)
             {
                 Destroy(mainMenuBackground);
-                mainMenuBackground = null;
             }
 
-            if (secondaryMenuBackground != null)
+            if (secondaryMenuBackground != null && ownsSecondaryMenuBackground)
             {
                 Destroy(secondaryMenuBackground);
-                secondaryMenuBackground = null;
             }
+
+            mainMenuBackground = null;
+            secondaryMenuBackground = null;
+            ownsMainMenuBackground = false;
+            ownsSecondaryMenuBackground = false;
         }
 
         private void DrawBackgroundForCurrentMode()
@@ -250,7 +258,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (mainMenuBackground == null)
             {
-                mainMenuBackground = LoadTexture(MainMenuBackgroundAssetPath, "DungeonEscapeMainMenuBackground");
+                mainMenuBackground = LoadTexture(MainMenuBackgroundAssetPath, "DungeonEscapeMainMenuBackground", out ownsMainMenuBackground);
             }
 
             return mainMenuBackground;
@@ -260,14 +268,24 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (secondaryMenuBackground == null)
             {
-                secondaryMenuBackground = LoadTexture(SecondaryMenuBackgroundAssetPath, "DungeonEscapeSecondaryMenuBackground");
+                secondaryMenuBackground = LoadTexture(SecondaryMenuBackgroundAssetPath, "DungeonEscapeSecondaryMenuBackground", out ownsSecondaryMenuBackground);
             }
 
             return secondaryMenuBackground;
         }
 
-        private static Texture2D LoadTexture(string assetPath, string textureName)
+        private static Texture2D LoadTexture(string assetPath, string textureName, out bool ownsTexture)
         {
+            ownsTexture = false;
+
+#if UNITY_EDITOR
+            var editorTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
+            if (editorTexture != null)
+            {
+                return editorTexture;
+            }
+#endif
+
             var fullPath = UnityAssetPath.ToRuntimePath(assetPath);
             if (!File.Exists(fullPath))
             {
@@ -283,6 +301,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             texture.name = textureName;
+            ownsTexture = true;
             return texture;
         }
 

@@ -190,7 +190,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             currentMusicName = name;
             pendingMusicName = null;
             musicSource.Play();
-            Debug.Log("Playing music: " + name + " volume " + musicSource.volume.ToString("0.00"));
         }
 
         private IEnumerator LoadAndPlayEffect(string name, bool stopCurrent)
@@ -208,7 +207,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             }
 
             effectsSource.PlayOneShot(clip);
-            Debug.Log("Playing sound effect: " + name + " volume " + effectsSource.volume.ToString("0.00"));
         }
 
         private IEnumerator LoadClip(string key, string assetPath, Action<AudioClip> onLoaded)

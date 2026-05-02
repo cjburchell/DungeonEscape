@@ -326,7 +326,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return;
             }
 
-            Debug.Log("Random encounter in " + biomeInfo.Type + " on " + Loader.NormalizeMapId(mapId) + ": " + FormatMonsterList(monsters));
             CombatWindow.Open(monsters, biomeInfo.Type);
         }
 
@@ -2597,7 +2596,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
         public void SaveQuick()
         {
             EnsureInitialized();
-            SaveQuick(false, "Quick saved to ");
+            SaveQuickInternal();
         }
 
         public void SaveAfterMapTransitionIfNeeded(string sourceMapId, string targetMapId)
@@ -2608,7 +2607,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return;
             }
 
-            SaveQuick(true, "Transition saved to ");
+            SaveQuickInternal();
         }
 
         public int ManualSaveSlotCount
@@ -2654,7 +2653,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             SaveGameFile();
             saveDirty = false;
             autoSaveCountdown = 0f;
-            Debug.Log("Saved manual quest " + (slotIndex + 1) + " to " + GetSaveFilePath());
             return true;
         }
 
@@ -2682,7 +2680,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             ShouldApplyInitialSpawn = false;
             saveDirty = false;
             autoSaveCountdown = 0f;
-            Debug.Log("Loaded manual quest " + (slotIndex + 1) + ": " + CurrentSave.Name);
             if (SaveLoaded != null)
             {
                 SaveLoaded(CurrentSave);
@@ -2719,11 +2716,10 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             GameFile.Saves.RemoveAt(existingIndex);
             SaveGameFile();
-            Debug.Log("Deleted manual quest " + (slotIndex + 1) + ".");
             return true;
         }
 
-        private void SaveQuick(bool autoSave, string logPrefix)
+        private void SaveQuickInternal()
         {
             EnsureInitialized();
             var quickSave = CloneGameSave(CurrentSave);
@@ -2733,7 +2729,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             SaveGameFile();
             saveDirty = false;
             autoSaveCountdown = 0f;
-            Debug.Log((string.IsNullOrEmpty(logPrefix) ? autoSave ? "Auto saved to " : "Quick saved to " : logPrefix) + GetSaveFilePath());
         }
 
         public bool LoadQuick()
@@ -2750,7 +2745,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             ShouldApplyInitialSpawn = false;
             saveDirty = false;
             autoSaveCountdown = 0f;
-            Debug.Log("Quick loaded: " + CurrentSave.Name);
             if (SaveLoaded != null)
             {
                 SaveLoaded(CurrentSave);
@@ -2803,7 +2797,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             CurrentSave.IsQuick = false;
             ShouldApplyInitialSpawn = true;
             MarkDirty();
-            Debug.Log("Started a new game without loading a saved level.");
             if (SaveLoaded != null)
             {
                 SaveLoaded(CurrentSave);
@@ -3095,7 +3088,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return;
             }
 
-            SaveQuick(true, "Auto saved to ");
+            SaveQuickInternal();
         }
 
         private static bool IsAutoSaveEnabled()
@@ -3423,18 +3416,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
                     monsters.Remove(monster);
                 }
             }
-        }
-
-        private static string FormatMonsterList(IEnumerable<Monster> monsters)
-        {
-            return string.Join(
-                ", ",
-                monsters
-                    .Where(monster => monster != null)
-                    .GroupBy(monster => monster.Name)
-                    .OrderBy(group => group.Key)
-                    .Select(group => group.Count() == 1 ? group.Key : group.Count() + "x " + group.Key)
-                    .ToArray());
         }
 
         private static GameSave GetQuickSave(GameFile file)

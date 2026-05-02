@@ -10,8 +10,6 @@ Map-mode gameplay, party systems, UI, persistence, audio, and combat are migrate
 
 - Expand automated tests: shared core unit tests, Unity edit mode tests, and quest/dialog regression tests.
 - Review ReSharper warnings and fix actionable issues.
-- Replace remaining runtime filesystem asset loading with Unity-native asset references where appropriate.
-- Remove remaining temporary/debug code when no longer needed.
 
 ## 1. Validate Current Gameplay Loop
 
@@ -189,7 +187,7 @@ Status: In progress
 
 ## 9. Unity Project Cleanup
 
-Status: In progress
+Status: Done
 
 - Done: Unity project folder created.
 - Done: Unity asset folders created.
@@ -199,19 +197,20 @@ Status: In progress
 - Done: Temporary test-map debug screen removed.
 - Done: `Boot.unity` added to Unity Build Settings.
 - Done: Built player runtime asset paths now resolve through `StreamingAssets`.
+- Done: Static UI and combat image loading uses Unity editor asset references where appropriate, with `StreamingAssets` fallback retained for built players.
+- Done: Remaining file-backed asset loading is intentional for external TMX, TSX, JSON, audio, and image assets staged into `StreamingAssets`.
 - Done: Confirmed File > Build And Run renders the map correctly outside the editor.
 - Done: Unity scripts reorganized into `Core`, `Map`, `Rendering`, `Map/Tiled`, and `UI` folders with matching namespaces.
 - Done: Most Unity script class/file names no longer carry the `DungeonEscape` prefix; Tiled-specific script class/file names no longer carry the `Tiled` prefix and live under `Redpoint.DungeonEscape.Unity.Map.Tiled`.
-- Pending: Replace remaining runtime filesystem asset loading with Unity-native asset references where appropriate.
-- Pending: Remove remaining temporary/debug code when no longer needed.
+- Done: Removed noisy temporary migration/debug logs from audio playback, startup data loading, splash startup, and random encounter startup.
 
 ## 10. Encounter And Combat Migration
 
 Status: Done
 
-- Done: Biome random encounter check runs after completed map steps and logs selected monsters to the Unity Console.
+- Done: Biome random encounter check runs after completed map steps and opens combat with the selected monsters.
 - Done: Carry forward old biome encounter metadata, including min/max monster level, for random encounter filtering.
-- Done: Random encounters by biome. Current pass logs encounters and opens the combat screen.
+- Done: Random encounters by biome open the combat screen.
 - Done: Per-map random encounter tables from `Content/data/{mapId}_monsters.json`. Current pass loads copied Unity data from `Assets/DungeonEscape/Data/maps/{mapId}_monsters.json`.
 - Done: Monster loading/spawning. Current pass resolves monster images from `allmonsters.tsx`, displays each monster instance, rolls monster stats through `MonsterInstance`, and keeps relative monster sprite sizes.
 - Done: Biome combat backgrounds. Current pass displays the old fight background image for the selected biome.

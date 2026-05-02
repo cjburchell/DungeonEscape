@@ -5,6 +5,9 @@ using System.Linq;
 using System.Xml.Linq;
 using Redpoint.DungeonEscape.State;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 using Redpoint.DungeonEscape.Unity.Core;
 using Redpoint.DungeonEscape.Unity.UI;
@@ -2288,6 +2291,15 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 return texture;
             }
+
+#if UNITY_EDITOR
+            texture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
+            if (texture != null)
+            {
+                Textures[assetPath] = texture;
+                return texture;
+            }
+#endif
 
             var fullPath = UnityAssetPath.ToRuntimePath(assetPath);
             if (!File.Exists(fullPath))

@@ -60,8 +60,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             UiSettings.GetOrCreate().ApplySettings(Settings);
             Audio.GetOrCreate().ApplySettings(Settings);
 
-            Debug.Log("Dungeon Escape Unity bootstrap starting.");
-
             Data = new DungeonEscapeDataSet
             {
                 ItemDefinitions = LoadJson<List<ItemDefinition>>(itemDefinitionsJson, "item definitions"),
@@ -89,8 +87,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 {
                     gameState.LoadQuick();
                 }
-
-                Debug.Log("Skipping splash/title startup and loading quick save because SkipSplashAndLoadQuickSave is enabled.");
             }
             else
             {
@@ -99,17 +95,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             }
 
             ValidateTilesets(Data.TestMap, testMapAssetPath);
-
-            Debug.Log("Dungeon Escape data loaded. Item definitions: " + Count(Data.ItemDefinitions) +
-                      ", custom items: " + Count(Data.CustomItems) +
-                      ", skills: " + Count(Data.Skills) +
-                      ", spells: " + Count(Data.Spells) +
-                      ", monsters: " + Count(Data.Monsters) +
-                      ", quests: " + Count(Data.Quests) +
-                      ", dialog sets: " + Count(Data.Dialogs) +
-                      ", class levels: " + Count(Data.ClassLevels) +
-                      ", stat names: " + Count(Data.StatNames) +
-                      ", test map: " + (Data.TestMap == null ? "none" : Data.TestMap.Width + "x" + Data.TestMap.Height));
         }
 
         private static T LoadJson<T>(TextAsset asset, string label)
@@ -123,7 +108,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             try
             {
                 var data = UnityJsonLoader.LoadFromTextAsset<T>(asset);
-                Debug.Log("Loaded " + label + " JSON: " + asset.name);
                 return data;
             }
             catch (Exception exception)
@@ -161,7 +145,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             try
             {
                 var map = TiledMapInfo.Parse(text);
-                Debug.Log("Loaded " + label + " TMX: " + sourceName);
                 return map;
             }
             catch (Exception exception)

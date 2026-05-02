@@ -677,24 +677,24 @@ Status legend:
 
 ## Encounter And Combat
 
-### [x] Random Encounter Logs Monsters By Biome
+### [x] Random Encounter Opens Combat By Biome
 
 - Open Settings > Debug and turn `Monster encounters` off.
 - Walk for several dozen completed steps on an encounter-enabled map or biome.
-- Expected: no random encounter logs appear and combat does not open.
+- Expected: combat does not open.
 - Open Settings > Debug and turn `Monster encounters` back on.
 - Start or load a quest and walk around the overworld across grassland, forest, hills, swamp, or water.
-- Expected: random encounters occasionally log to the Unity Console in the format `Random encounter in <Biome> on <MapId>: <monster list>`.
+- Expected: random encounters occasionally open combat with monsters matching the current biome.
 - Walk inside a dungeon, tower, tunnel, shrine, or other map with a copied `*_monsters.json` table.
 - Expected: random encounters use that map's monster table instead of the overworld biome monster list.
-- Keep walking after an encounter log appears and close combat if it opens.
+- Keep walking after combat opens and close combat.
 - Expected: map movement resumes after combat is closed.
-- If no logs appear after many steps, confirm Settings > Debug > `Monster encounters` is enabled.
+- If no combat opens after many steps, confirm Settings > Debug > `Monster encounters` is enabled.
 
 ### [x] Combat Shows Biome Background And Monsters
 
 - Start or load a quest and walk until a random encounter triggers.
-- Expected: a full-screen combat view opens after the Unity Console random encounter log.
+- Expected: a full-screen combat view opens.
 - Expected: the biome battlefield image fills the screen while maintaining its aspect ratio.
 - Expected: the battlefield image matches the encounter biome, such as field, forest, ocean, mountain, desert, swamp, cave, castle, or tower.
 - Expected: each selected monster is shown with its own image from `allmonsters.tsx`, including duplicate monsters of the same type.

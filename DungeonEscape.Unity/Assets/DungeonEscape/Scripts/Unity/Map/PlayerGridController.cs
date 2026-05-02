@@ -432,7 +432,6 @@ namespace Redpoint.DungeonEscape.Unity.Map
                 return false;
             }
 
-            Debug.Log("Warping to " + warp.MapId + (string.IsNullOrEmpty(warp.SpawnId) ? "" : " at " + warp.SpawnId));
             ApplyMapTransition(warp);
             return true;
         }
@@ -547,12 +546,10 @@ namespace Redpoint.DungeonEscape.Unity.Map
             TiledObjectInfo mapObject;
             if (!mapView.TryGetObjectAt(target, out mapObject))
             {
-                Debug.Log("No interactable object at " + target.X + "," + target.Y + ".");
                 return;
             }
 
             mapView.FaceNpcAt(target, GetOppositeDirection(currentDirection));
-            Debug.Log(BuildInteractionMessage(mapObject, target));
             ShowInteractionMessage(mapObject);
         }
 
@@ -1031,11 +1028,7 @@ namespace Redpoint.DungeonEscape.Unity.Map
                 : questContext;
             if (dialogHead != null && dialogHead.StartQuest && gameState != null)
             {
-                var startMessage = gameState.StartQuest(dialogHead.Quest);
-                if (!string.IsNullOrEmpty(startMessage))
-                {
-                    Debug.Log(startMessage);
-                }
+                gameState.StartQuest(dialogHead.Quest);
             }
 
             if (choices.Count == 0)
@@ -1242,40 +1235,6 @@ namespace Redpoint.DungeonEscape.Unity.Map
             }
 
             return mapObject.Name;
-        }
-
-        private static string BuildInteractionMessage(TiledObjectInfo mapObject, WorldPosition target)
-        {
-            var message = new StringBuilder();
-            message.Append("Interact ");
-            message.Append(target.X);
-            message.Append(",");
-            message.Append(target.Y);
-            message.Append(": ");
-            message.Append(string.IsNullOrEmpty(mapObject.Name) ? "(unnamed)" : mapObject.Name);
-            message.Append(" [");
-            message.Append(string.IsNullOrEmpty(mapObject.Class) ? "no class" : mapObject.Class);
-            message.Append("]");
-
-            if (mapObject.Properties != null && mapObject.Properties.Count > 0)
-            {
-                message.Append(" properties: ");
-                var first = true;
-                foreach (var property in mapObject.Properties)
-                {
-                    if (!first)
-                    {
-                        message.Append(", ");
-                    }
-
-                    message.Append(property.Key);
-                    message.Append("=");
-                    message.Append(property.Value);
-                    first = false;
-                }
-            }
-
-            return message.ToString();
         }
 
         private Direction GetDirection(int deltaX, int deltaY)

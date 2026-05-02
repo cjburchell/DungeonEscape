@@ -1,5 +1,8 @@
 using System.IO;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 using Redpoint.DungeonEscape.Unity.Core;
 using Redpoint.DungeonEscape.Unity.UI;
@@ -52,7 +55,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
             startTime = -1f;
             splashTexture = LoadTexture(SplashTextureAssetPath);
             Audio.GetOrCreate().PlayMusic("first-story");
-            Debug.Log("Dungeon Escape splash screen starting.");
         }
 
         private void Update()
@@ -151,6 +153,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private static Texture2D LoadTexture(string assetPath)
         {
+#if UNITY_EDITOR
+            var editorTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
+            if (editorTexture != null)
+            {
+                return editorTexture;
+            }
+#endif
+
             var fullPath = UnityAssetPath.ToRuntimePath(assetPath);
             if (!File.Exists(fullPath))
             {

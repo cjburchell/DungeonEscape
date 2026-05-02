@@ -575,6 +575,7 @@ namespace Redpoint.DungeonEscape.Unity
             objectState.IsOpen = true;
             objectState.Collideable = false;
             MarkDirty();
+            Sounds.PlaySoundEffect("door");
             return "The door opened.";
         }
 
@@ -600,6 +601,7 @@ namespace Redpoint.DungeonEscape.Unity
                 objectState.IsOpen = true;
                 objectState.Collideable = false;
                 MarkDirty();
+                Sounds.PlaySoundEffect("door");
                 return "The door opened.";
             }
 
@@ -622,6 +624,7 @@ namespace Redpoint.DungeonEscape.Unity
             objectState.IsOpen = true;
             objectState.Collideable = false;
             MarkDirty();
+            Sounds.PlaySoundEffect("door");
             return keyOwner.Name + " used " + key.Name + ".\nThe door opened.";
         }
 
@@ -662,7 +665,13 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (!IsLockedMapObject(mapObject))
             {
-                return PickupMapObject(mapObject);
+                var result = PickupMapObject(mapObject);
+                if (objectState.IsOpen == true)
+                {
+                    Sounds.PlaySoundEffect("treasure");
+                }
+
+                return result;
             }
 
             if (!CanOpenWithKey(mapObject))
@@ -678,7 +687,13 @@ namespace Redpoint.DungeonEscape.Unity
                 return "You do not have a key for this chest.";
             }
 
-            return keyOwner.Name + " used " + key.Name + ".\n" + PickupMapObject(mapObject);
+            var pickupMessage = PickupMapObject(mapObject);
+            if (objectState.IsOpen == true)
+            {
+                Sounds.PlaySoundEffect("treasure");
+            }
+
+            return keyOwner.Name + " used " + key.Name + ".\n" + pickupMessage;
         }
 
         public bool TryGetObjectPosition(string mapId, int objectId, out WorldPosition position)
@@ -3131,15 +3146,6 @@ namespace Redpoint.DungeonEscape.Unity
             state = new GameObject("DungeonEscapeGameState").AddComponent<DungeonEscapeGameState>();
             state.EnsureInitialized();
             return state;
-        }
-
-        private sealed class NullSounds : ISounds
-        {
-            public static readonly NullSounds Instance = new NullSounds();
-
-            public void PlaySoundEffect(string name, bool stopCurrent = false)
-            {
-            }
         }
     }
 }

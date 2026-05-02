@@ -2224,7 +2224,7 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item));
             }
-            else
+            else if (hero.CanEquipItem(item))
             {
                 ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item));
             }

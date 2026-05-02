@@ -13,7 +13,6 @@ namespace Redpoint.DungeonEscape.Unity
     public sealed class DungeonEscapeGameState : MonoBehaviour, IGame
     {
         private const string SaveFileVersion = "1.0";
-        private const int MaxSaveSlots = 5;
         private const float DefaultAutoSaveIntervalSeconds = 5f;
         private static readonly System.Random Random = new System.Random();
 

@@ -81,6 +81,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             window.targetSelectionCandidates.Clear();
             window.targetSelectionDone = null;
             window.gameState = GameState.GetOrCreate();
+            Audio.GetOrCreate().PlayCombatMusic();
             if (encounterMonsters != null)
             {
                 window.CreateMonsterInstances(encounterMonsters.Where(monster => monster != null));
@@ -434,6 +435,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (!AliveHeroes().Any())
             {
+                Audio.GetOrCreate().PlaySoundEffect("receive-damage");
                 ShowMessage("The party has been defeated.", null);
                 return;
             }
@@ -716,6 +718,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return "";
             }
 
+            Audio.GetOrCreate().PlaySoundEffect("spell", true);
             var message = spell.Cast(targets ?? new List<IFighter>(), new BaseState[0], actingHero, gameState, round);
             return string.IsNullOrEmpty(message) ? actingHero.Name + " casts " + spell.Name + "." : message.TrimEnd();
         }
@@ -727,6 +730,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return "";
             }
 
+            Audio.GetOrCreate().PlaySoundEffect(skill.IsAttackSkill || skill.DoAttack ? "prepare-attack" : "spell", true);
             var message = actingHero.Name + " uses " + skill.Name + ".\n";
             var selectedTargets = targets ?? new List<IFighter>();
             if (selectedTargets.Count == 0)
@@ -757,6 +761,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return "";
             }
 
+            Audio.GetOrCreate().PlaySoundEffect("confirm");
             var message = "";
             var worked = false;
             var selectedTargets = targets == null || targets.Count == 0
@@ -793,6 +798,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private string Fight(IFighter source, IFighter target)
         {
+            Audio.GetOrCreate().PlaySoundEffect("prepare-attack", true);
             var message = source.Name + " attacks " + target.Name + ".\n";
             var damage = 0;
             if (source.CanCriticalHit(target))
@@ -1105,6 +1111,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             IsOpen = false;
             GameState.AutoSaveBlocked = false;
+            var currentBiome = gameState == null || gameState.Party == null ? biome : gameState.Party.CurrentBiome;
+            Audio.GetOrCreate().RestoreMapOrBiomeMusic(currentBiome);
         }
 
         private void EnsureStyles()

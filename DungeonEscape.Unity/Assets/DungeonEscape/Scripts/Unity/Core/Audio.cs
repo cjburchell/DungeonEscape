@@ -21,8 +21,16 @@ namespace Redpoint.DungeonEscape.Unity.Core
     {
         private const string MusicFolder = "Assets/DungeonEscape/Audio/music/";
         private const string EffectsFolder = "Assets/DungeonEscape/Audio/fx/";
+        private static readonly string[] CombatSongs =
+        {
+            "battleground",
+            "like-totally-rad",
+            "sword-metal",
+            "unprepared"
+        };
 
         private static Audio instance;
+        private static readonly System.Random Random = new System.Random();
 
         private readonly Dictionary<string, AudioClip> clips = new Dictionary<string, AudioClip>();
         private AudioSource musicSource;
@@ -122,6 +130,16 @@ namespace Redpoint.DungeonEscape.Unity.Core
         {
             var biomeMusicName = GetBiomeMusicName(biome);
             PlayMusic(string.IsNullOrEmpty(biomeMusicName) ? currentMapMusicName : biomeMusicName);
+        }
+
+        public void PlayCombatMusic()
+        {
+            PlayMusic(CombatSongs[Random.Next(CombatSongs.Length)]);
+        }
+
+        public void RestoreMapOrBiomeMusic(Biome biome)
+        {
+            PlayBiomeMusic(biome);
         }
 
         public void PlayMusic(string name)

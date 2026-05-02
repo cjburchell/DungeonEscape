@@ -273,7 +273,7 @@ Status legend:
 - Navigate Settings > General with keyboard or gamepad.
 - Expected: Fullscreen participates in the normal settings row navigation and does not prevent changing Autosave or Autosave Period.
 
-### [ ] Hidden Settings Tabs Can Be Disabled
+### [x] Hidden Settings Tabs Can Be Disabled
 
 - Start with default settings.
 - Expected: Settings does not show the UI or Debug tabs.
@@ -657,7 +657,7 @@ Status legend:
 - Expected: map movement resumes after combat is closed.
 - If no logs appear after many steps, confirm `NoMonsters` is `false` in the settings file.
 
-### [ ] Combat Shows Biome Background And Monsters
+### [x] Combat Shows Biome Background And Monsters
 
 - Start or load a quest and walk until a random encounter triggers.
 - Expected: a full-screen combat view opens after the Unity Console random encounter log.
@@ -673,7 +673,7 @@ Status legend:
 - Set a short autosave interval, then wait in combat longer than that interval.
 - Expected: no autosave happens while combat is open.
 
-### [ ] Combat Fight Loop And Rewards
+### [x] Combat Fight Loop And Rewards
 
 - Trigger a random encounter.
 - Press OK on the encounter message.
@@ -687,7 +687,7 @@ Status legend:
 - Expected: a defeat/victory message is shown and OK closes the combat view.
 - If the party wins, expected: living active party members gain XP, party gold increases, level-up messages appear when relevant, and any monster/item rewards are added to party inventory if there is room.
 
-### [ ] Combat Action Menu Shows Available Options
+### [x] Combat Action Menu Shows Available Options
 
 - Trigger a random encounter with a party member that knows at least one encounter spell, one encounter skill, or has an item with an encounter skill.
 - Press OK on the encounter message until a hero action prompt appears.
@@ -699,7 +699,7 @@ Status legend:
 - Use keyboard or gamepad up/down and Interact/Cancel across the action, spell, item, and target lists.
 - Expected: the selected row is highlighted, Interact activates the selected row, and Cancel returns from sub-lists to the action menu.
 
-### [ ] Combat Spell And Item Icons
+### [x] Combat Spell And Item Icons
 
 - Open the Party tab and switch to a member's Spells sub-tab.
 - Expected: each spell row shows the icon from `items.tsx` using the spell's `ImageId`, matching the old SpellWindow behavior.
@@ -713,7 +713,7 @@ Status legend:
 - Choose Item from the action panel with a usable combat item available.
 - Expected: each item row shows its item icon and name/stats.
 
-### [ ] Combat Spells, Skills, Items, And Run
+### [x] Combat Spells, Skills, Items, And Run
 
 - Trigger combat with a spellcaster that has an attack spell such as Blaze.
 - Choose Spell, then choose an attack spell.
@@ -727,3 +727,20 @@ Status legend:
 - Expected: the item effect runs, charges update, and one-use or depleted items are removed when consumed.
 - Choose Run.
 - Expected: success closes combat with a getaway message; failure consumes the hero turn and combat continues.
+
+### [ ] Combat Audio
+
+- Trigger a random encounter.
+- Expected: combat starts one of the old combat tracks: `battleground`, `like-totally-rad`, `sword-metal`, or `unprepared`.
+- Choose Fight and resolve at least one hit and one miss if possible.
+- Expected: attack wind-up, damage, and miss sound effects play.
+- Cast a spell and use a combat item if available.
+- Expected: spell and item sound effects play.
+- Win a fight.
+- Expected: victory and level-up sounds play when applicable, then closing combat restores the current map or biome music.
+- Lose a fight or let the party be defeated if practical.
+- Expected: a defeat/damage sound plays and closing combat restores the current map or biome music.
+- Set Music Volume and Sound Effects Volume to `0.00`, then repeat a short combat.
+- Expected: combat music and sound effects are muted.
+- Set both volumes back to `1.00`.
+- Expected: combat music and sound effects are audible again.

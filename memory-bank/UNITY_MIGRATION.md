@@ -201,24 +201,27 @@ Status: In progress
 
 ## 10. Encounter And Combat Migration
 
-Status: Started
+Status: In progress
 
-- Partial: Biome random encounter check runs after completed map steps and logs selected monsters to the Unity Console.
+- Done: Biome random encounter check runs after completed map steps and logs selected monsters to the Unity Console.
 - Done: Carry forward old biome encounter metadata, including min/max monster level, for random encounter filtering.
-- Partial: Random encounters by biome. Current pass logs encounters and opens the combat screen.
-- Partial: Per-map random encounter tables from `Content/data/{mapId}_monsters.json`. Current pass loads copied Unity data from `Assets/DungeonEscape/Data/maps/{mapId}_monsters.json`.
-- Partial: Monster loading/spawning. Current pass resolves monster images from `allmonsters.tsx`, displays each monster instance, rolls monster stats through `MonsterInstance`, and keeps relative monster sprite sizes.
-- Partial: Biome combat backgrounds. Current pass displays the old fight background image for the selected biome.
-- Partial: Combat layout shows full-screen aspect-preserved biome backgrounds with a bottom message box.
+- Done: Random encounters by biome. Current pass logs encounters and opens the combat screen.
+- Done: Per-map random encounter tables from `Content/data/{mapId}_monsters.json`. Current pass loads copied Unity data from `Assets/DungeonEscape/Data/maps/{mapId}_monsters.json`.
+- Done: Monster loading/spawning. Current pass resolves monster images from `allmonsters.tsx`, displays each monster instance, rolls monster stats through `MonsterInstance`, and keeps relative monster sprite sizes.
+- Done: Biome combat backgrounds. Current pass displays the old fight background image for the selected biome.
+- Done: Combat layout shows full-screen aspect-preserved biome backgrounds with a bottom message box.
 - Done: Gold window is hidden during combat, and the party status window remains visible during combat.
 - Done: Autosave is blocked while combat is open.
-- Partial: Combat UI. Current pass supports encounter message, old-style action menu, spell/item icon lists, target buttons, HP bars, and round messages.
-- Partial: Turn system. Current pass rolls initiative and resolves hero Fight, Spell, Skill, Item, Run, and monster attack turns.
-- Partial: Combat rewards. Current pass awards XP, gold, monster item drops, rare chest-style drops, and level-up messages on victory.
-- Partial: Skills in combat. Current pass can run encounter skills through shared core `Skill.Do`; needs broader effect play-testing.
-- Partial: Spells in combat. Current pass can cast encounter spells through shared core `Spell.Cast`; non-revive spells target living members only, revive spells target dead members, and broader effect play-testing is still needed.
-- Partial: Items in combat. Current pass can use encounter items with item icons and shared core item/skill effects; needs broader charge/consume play-testing.
-- Pending: Combat music selection, including `battleground` or map/encounter-specific combat tracks.
-- Pending: Restore the correct map or biome music after combat ends.
-- Pending: Combat sound effects for attacks, misses, spells, item use, victory, defeat, and monster/player damage.
-- Pending: Confirm combat audio respects the existing Music Volume and Sound Effects Volume settings.
+- Done: Current combat UI pass supports encounter message, old-style action menu, spell/item icon lists, target buttons, HP bars, and round messages.
+- Done: Current turn system pass rolls initiative and resolves hero Fight, Spell, Skill, Item, Run, and monster attack turns.
+- Done: Combat rewards award XP, gold, monster item drops, rare chest-style drops, and level-up messages on victory.
+- Done: Skills in combat can run encounter skills through shared core `Skill.Do`.
+- Done: Spells in combat can cast encounter spells through shared core `Spell.Cast`; non-revive spells target living members only and revive spells target dead members.
+- Done: Items in combat can use encounter items with item icons and shared core item/skill effects.
+- Done: Manual Unity combat validation passed for random encounters, biome backgrounds, monster display, Fight loop, rewards, action menu, spell/item icons, spell targeting, skills, items, and Run.
+- Pending: Restore old combat round-planning flow: choose all monster and hero actions first, queue them, then resolve queued actions in agility order.
+- Done: Combat music selection uses the old battle track pool: `battleground`, `like-totally-rad`, `sword-metal`, and `unprepared`.
+- Done: Combat close restores the current map or biome music.
+- Done: Combat sound effects use existing audio for attacks, misses, spells, item use, victory, defeat, and monster/player damage where matching assets exist.
+- Done: Combat audio flows through the existing `Audio` service, so Music Volume and Sound Effects Volume apply to combat.
+- Pending: Combat UI polish pass after the combat rules settle.

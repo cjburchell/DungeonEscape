@@ -410,19 +410,27 @@ Status legend:
 ### [ ] Store Keyboard And Gamepad Navigation
 
 - Visit a regular store with keyboard only or gamepad only.
-- Press right or Menu Next Tab.
+- Press Menu Next Tab (`]` / right shoulder).
 - Expected: the selected tab changes from Buy to Sell if the store buys items.
-- Press left or Menu Previous Tab.
+- Press Menu Previous Tab (`[` / left shoulder).
 - Expected: the selected tab changes back to Buy.
 - On the Buy tab, press up/down.
 - Expected: the highlighted item row changes and selection sounds play once per step.
 - Press Interact on an affordable item.
 - Expected: the recipient picker opens without using the mouse.
+- Single-click a Buy row.
+- Expected: the row is not selected and the item is not bought.
+- Double-click an affordable Buy row.
+- Expected: the recipient picker opens.
 - Use up/down to choose a recipient and press Interact.
 - Expected: the item is bought for that party member, and any equip-now prompt can also be handled with keyboard/gamepad.
 - On the Sell tab, press left/right.
 - Expected: party member tabs change without using the mouse.
 - Press up/down to select a sellable item, then press Interact.
+- Expected: the sell confirmation opens.
+- Single-click a Sell row.
+- Expected: the row is not selected and the sell confirmation does not open.
+- Double-click a Sell row.
 - Expected: the sell confirmation opens.
 - Use up/down or left/right to choose Sell or Cancel, then press Interact.
 - Expected: Sell completes the sale and Cancel closes only the confirmation.

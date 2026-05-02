@@ -1019,7 +1019,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
             titleStyle = uiTheme.TitleStyle;
             labelStyle = uiTheme.LabelStyle;
             smallStyle = uiTheme.SmallStyle;
-            buttonStyle = uiTheme.ButtonStyle;
         }
 
         private float GetPixelScale()

@@ -323,15 +323,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private Vector3 GetVisualPosition(WorldPosition value)
         {
-            if (mapView == null)
-            {
-                return new Vector3(value.X, -value.Y, -0.2f);
-            }
-
-            return new Vector3(
-                value.X - mapView.StartColumn,
-                -(value.Y - mapView.StartRow),
-                -0.2f) + mapView.ViewportOffset;
+            return new Vector3(value.X, -value.Y, -0.2f);
         }
 
         private IEnumerator MoveOneTile(Direction direction, int nextX, int nextY)
@@ -341,10 +333,6 @@ namespace Redpoint.DungeonEscape.Unity
             var startPosition = position;
             var nextPosition = new WorldPosition(nextX, nextY);
             var duration = GetMoveDuration();
-            if (mapView != null)
-            {
-                mapView.EnsureVisible(nextPosition, duration);
-            }
 
             var elapsed = 0f;
 
@@ -352,15 +340,26 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 elapsed += Time.deltaTime;
                 var progress = Mathf.Clamp01(elapsed / duration);
-                var start = GetVisualPosition(startPosition);
-                var end = GetVisualPosition(nextPosition);
-                transform.position = Vector3.Lerp(start, end, progress);
+                var interpolatedPosition = new WorldPosition(
+                    Mathf.Lerp(startPosition.X, nextPosition.X, progress),
+                    Mathf.Lerp(startPosition.Y, nextPosition.Y, progress));
+                if (mapView != null)
+                {
+                    mapView.FollowPosition(interpolatedPosition);
+                }
+
+                transform.position = GetVisualPosition(interpolatedPosition);
                 ApplyMoveSprite(direction, progress);
                 UpdatePartyFollowers(nextPosition, direction, progress);
                 yield return null;
             }
 
             position = nextPosition;
+            if (mapView != null)
+            {
+                mapView.FollowPosition(position);
+            }
+
             if (gameState != null)
             {
                 gameState.SetCurrentPosition(position);

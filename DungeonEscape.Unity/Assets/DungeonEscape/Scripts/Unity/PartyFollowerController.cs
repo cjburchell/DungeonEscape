@@ -85,15 +85,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private Vector3 GetVisualPosition(WorldPosition value)
         {
-            if (mapView == null)
-            {
-                return new Vector3(value.X, -value.Y, -0.21f);
-            }
-
-            return new Vector3(
-                value.X - mapView.StartColumn,
-                -(value.Y - mapView.StartRow),
-                -0.21f) + mapView.ViewportOffset;
+            return new Vector3(value.X, -value.Y, -0.21f);
         }
     }
 }

@@ -1,7 +1,4 @@
 using System;
-using Redpoint.DungeonEscape.State;
-using UnityEngine;
-
 namespace Redpoint.DungeonEscape.Unity
 {
     public sealed class TiledMapViewport
@@ -24,61 +21,12 @@ namespace Redpoint.DungeonEscape.Unity
             StartRow = ClampRow(startRow);
         }
 
-        public bool PanBy(int columnDelta, int rowDelta, out Vector3 startOffset)
+        public bool SetStart(int newStartColumn, int newStartRow)
         {
-            return SetViewport(StartColumn + columnDelta, StartRow + rowDelta, out startOffset);
-        }
-
-        public bool CenterOn(WorldPosition position, out Vector3 startOffset)
-        {
-            return SetViewport(
-                (int)position.X - Columns / 2,
-                (int)position.Y - Rows / 2,
-                out startOffset);
-        }
-
-        public bool EnsureVisible(WorldPosition position, out Vector3 startOffset)
-        {
-            const int margin = 4;
-            var column = (int)position.X;
-            var row = (int)position.Y;
-            var newStartColumn = StartColumn;
-            var newStartRow = StartRow;
-
-            if (column < StartColumn + margin)
-            {
-                newStartColumn = column - margin;
-            }
-            else if (column >= StartColumn + Columns - margin)
-            {
-                newStartColumn = column - Columns + margin + 1;
-            }
-
-            if (row < StartRow + margin)
-            {
-                newStartRow = row - margin;
-            }
-            else if (row >= StartRow + Rows - margin)
-            {
-                newStartRow = row - Rows + margin + 1;
-            }
-
-            return SetViewport(newStartColumn, newStartRow, out startOffset);
-        }
-
-        private bool SetViewport(int newStartColumn, int newStartRow, out Vector3 startOffset)
-        {
-            var oldStartColumn = StartColumn;
-            var oldStartRow = StartRow;
+            var changed = StartColumn != ClampColumn(newStartColumn) || StartRow != ClampRow(newStartRow);
             StartColumn = ClampColumn(newStartColumn);
             StartRow = ClampRow(newStartRow);
-
-            startOffset = new Vector3(
-                StartColumn - oldStartColumn,
-                oldStartRow - StartRow,
-                0f);
-
-            return oldStartColumn != StartColumn || oldStartRow != StartRow;
+            return changed;
         }
 
         private int ClampColumn(int value)

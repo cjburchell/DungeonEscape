@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -11,6 +10,7 @@ namespace Redpoint.DungeonEscape.Unity
     public sealed class TiledMapView : MonoBehaviour
     {
         private const uint TiledGidMask = 0x1FFFFFFF;
+        private const float CameraMarginTiles = 4f;
 
         [SerializeField]
         private string mapAssetPath = "Assets/DungeonEscape/Maps/overworld.tmx";
@@ -27,9 +27,6 @@ namespace Redpoint.DungeonEscape.Unity
         [SerializeField]
         private int startRow = 20;
 
-        [SerializeField]
-        private bool keyboardPanningEnabled;
-
         private int mapWidth;
         private int mapHeight;
         private int objectSortingOrder = 10;
@@ -37,13 +34,17 @@ namespace Redpoint.DungeonEscape.Unity
         private TiledLoadedMap currentMap;
         private string pooledMapAssetPath;
         private HashSet<int> blockedTiles = new HashSet<int>();
-        private Coroutine viewportScroll;
         private TiledSpriteRendererPool rendererPool;
         private DungeonEscapeGameState gameState;
         private readonly TiledMapViewport viewport = new TiledMapViewport();
         private readonly List<TiledNpcController> runtimeNpcs = new List<TiledNpcController>();
         private readonly Dictionary<int, TiledNpcController> occupiedNpcTiles = new Dictionary<int, TiledNpcController>();
         private string runtimeNpcMapAssetPath;
+        private bool cameraWindowInitialized;
+        private float cameraStartColumn;
+        private float cameraStartRow;
+        private float targetCameraStartColumn;
+        private float targetCameraStartRow;
 
         public int StartColumn
         {
@@ -53,11 +54,6 @@ namespace Redpoint.DungeonEscape.Unity
         public int StartRow
         {
             get { return viewport.StartRow; }
-        }
-
-        public Vector3 ViewportOffset
-        {
-            get { return transform.position; }
         }
 
         public int ObjectSortingOrder
@@ -72,6 +68,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Start()
         {
+            transform.position = Vector3.zero;
             ClearRenderedChildren();
             rendererPool = new TiledSpriteRendererPool(transform);
             RenderPreview();
@@ -79,60 +76,79 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Update()
         {
-            if (!keyboardPanningEnabled)
-            {
-                if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.ReloadMap))
-                {
-                    ReloadMapAssets();
-                }
-
-                return;
-            }
-
             if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.ReloadMap))
             {
                 ReloadMapAssets();
-                return;
             }
+        }
 
-            var columnDelta = DungeonEscapeInput.GetMoveXDown();
-            var rowDelta = columnDelta == 0 ? DungeonEscapeInput.GetMoveYDown() : 0;
-
-            if (columnDelta == 0 && rowDelta == 0)
+        private void LateUpdate()
+        {
+            if (!cameraWindowInitialized || mapWidth <= 0 || mapHeight <= 0)
             {
                 return;
             }
 
-            Vector3 startOffset;
-            if (viewport.PanBy(columnDelta, rowDelta, out startOffset))
-            {
-                SetViewport(startOffset, true);
-            }
+            cameraStartColumn = targetCameraStartColumn;
+            cameraStartRow = targetCameraStartRow;
+            ApplyCameraPosition();
         }
 
         public void CenterOn(Redpoint.DungeonEscape.State.WorldPosition position)
         {
             EnsureMapLoaded();
 
-            Vector3 startOffset;
-            viewport.CenterOn(position, out startOffset);
-            SetViewport(startOffset, false);
+            cameraStartColumn = ClampCameraStartColumn(position.X - viewport.Columns / 2f + 0.5f);
+            cameraStartRow = ClampCameraStartRow(position.Y - viewport.Rows / 2f + 0.5f);
+            targetCameraStartColumn = cameraStartColumn;
+            targetCameraStartRow = cameraStartRow;
+            cameraWindowInitialized = true;
+            viewport.SetStart(Mathf.FloorToInt(cameraStartColumn), Mathf.FloorToInt(cameraStartRow));
+            mapLoaded = false;
+            RenderPreview();
+            ApplyCameraPosition();
         }
 
-        public void EnsureVisible(Redpoint.DungeonEscape.State.WorldPosition position)
-        {
-            EnsureVisible(position, 0.15f);
-        }
-
-        public void EnsureVisible(Redpoint.DungeonEscape.State.WorldPosition position, float scrollDuration)
+        public void FollowPosition(Redpoint.DungeonEscape.State.WorldPosition position)
         {
             EnsureMapLoaded();
 
-            Vector3 startOffset;
-            if (viewport.EnsureVisible(position, out startOffset))
+            if (!cameraWindowInitialized)
             {
-                SetViewport(startOffset, true, scrollDuration);
+                cameraStartColumn = viewport.StartColumn;
+                cameraStartRow = viewport.StartRow;
+                targetCameraStartColumn = cameraStartColumn;
+                targetCameraStartRow = cameraStartRow;
+                cameraWindowInitialized = true;
             }
+
+            var columns = Math.Max(1, viewport.Columns);
+            var rows = Math.Max(1, viewport.Rows);
+            var deadzoneLeft = targetCameraStartColumn + CameraMarginTiles;
+            var deadzoneRight = targetCameraStartColumn + columns - CameraMarginTiles - 1f;
+            var deadzoneTop = targetCameraStartRow + CameraMarginTiles;
+            var deadzoneBottom = targetCameraStartRow + rows - CameraMarginTiles - 1f;
+
+            if (position.X < deadzoneLeft)
+            {
+                targetCameraStartColumn += position.X - deadzoneLeft;
+            }
+            else if (position.X > deadzoneRight)
+            {
+                targetCameraStartColumn += position.X - deadzoneRight;
+            }
+
+            if (position.Y < deadzoneTop)
+            {
+                targetCameraStartRow += position.Y - deadzoneTop;
+            }
+            else if (position.Y > deadzoneBottom)
+            {
+                targetCameraStartRow += position.Y - deadzoneBottom;
+            }
+
+            targetCameraStartColumn = ClampCameraStartColumn(targetCameraStartColumn);
+            targetCameraStartRow = ClampCameraStartRow(targetCameraStartRow);
         }
 
         public bool CanMoveTo(int column, int row)
@@ -306,6 +322,7 @@ namespace Redpoint.DungeonEscape.Unity
         public void LoadMap(string mapIdOrAssetPath, string spawnId, bool centerOnSpawn)
         {
             mapAssetPath = TiledMapLoader.NormalizeMapAssetPath(mapIdOrAssetPath);
+            cameraWindowInitialized = false;
             ClearRuntimeNpcs();
             ClearRenderedChildren();
             rendererPool = new TiledSpriteRendererPool(transform);
@@ -314,7 +331,6 @@ namespace Redpoint.DungeonEscape.Unity
             mapWidth = 0;
             mapHeight = 0;
             RenderPreview();
-            StopViewportScroll();
             transform.position = Vector3.zero;
 
             WorldPosition spawnPosition;
@@ -695,10 +711,6 @@ namespace Redpoint.DungeonEscape.Unity
                 mapHeight,
                 loadedMap.TileWidth,
                 loadedMap.TileHeight,
-                viewport.StartColumn,
-                viewport.StartRow,
-                viewport.Columns,
-                rows,
                 DungeonEscapeSettingsCache.Current.ShowHiddenObjects,
                 TiledMapLoader.NormalizeMapId(loadedMap.AssetPath),
                 gameState,
@@ -708,7 +720,38 @@ namespace Redpoint.DungeonEscape.Unity
             objectSortingOrder = spritesSortingOrder;
             SyncRuntimeNpcs(loadedMap, spriteSets);
             PositionCamera(Math.Min(viewport.Columns, mapWidth), rows);
+            if (cameraWindowInitialized)
+            {
+                ApplyCameraPosition();
+            }
+
             mapLoaded = true;
+        }
+
+        private void ApplyCameraPosition()
+        {
+            var camera = Camera.main;
+            if (camera == null)
+            {
+                return;
+            }
+
+            var visibleColumns = Math.Min(viewport.Columns, Math.Max(1, mapWidth));
+            var visibleRows = Math.Min(viewport.Rows, Math.Max(1, mapHeight));
+            camera.transform.position = new Vector3(
+                cameraStartColumn + (visibleColumns - 1) / 2f,
+                -(cameraStartRow + (visibleRows - 1) / 2f),
+                -10f);
+        }
+
+        private float ClampCameraStartColumn(float value)
+        {
+            return Mathf.Clamp(value, 0f, Math.Max(0, mapWidth - viewport.Columns));
+        }
+
+        private float ClampCameraStartRow(float value)
+        {
+            return Mathf.Clamp(value, 0f, Math.Max(0, mapHeight - viewport.Rows));
         }
 
         private void EnsureRendererPool()
@@ -930,82 +973,6 @@ namespace Redpoint.DungeonEscape.Unity
             return runtimeNpcs.Any(npc => npc != null);
         }
 
-        private void SetViewport(Vector3 startOffset, bool animate)
-        {
-            SetViewport(startOffset, animate, 0.15f);
-        }
-
-        private void SetViewport(Vector3 startOffset, bool animate, float scrollDuration)
-        {
-            mapLoaded = false;
-            RenderPreview();
-
-            if (!animate)
-            {
-                StopViewportScroll();
-                transform.position = Vector3.zero;
-                return;
-            }
-
-            StartViewportScroll(startOffset, scrollDuration);
-        }
-
-        private void StartViewportScroll(Vector3 startOffset, float scrollDuration)
-        {
-            StopViewportScroll();
-
-            transform.position = SnapToPixelGrid(startOffset);
-            viewportScroll = StartCoroutine(AnimateViewportScroll(startOffset, scrollDuration));
-        }
-
-        private IEnumerator AnimateViewportScroll(Vector3 startOffset, float scrollDuration)
-        {
-            var duration = Mathf.Max(0.01f, scrollDuration);
-            var elapsed = 0f;
-
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-                var progress = Mathf.Clamp01(elapsed / duration);
-                transform.position = SnapToPixelGrid(Vector3.Lerp(startOffset, Vector3.zero, progress));
-                yield return null;
-            }
-
-            transform.position = Vector3.zero;
-            viewportScroll = null;
-        }
-
-        private static Vector3 SnapToPixelGrid(Vector3 position)
-        {
-            var camera = Camera.main;
-            if (camera == null || Screen.height <= 0 || camera.orthographicSize <= 0f)
-            {
-                return position;
-            }
-
-            var unitsPerPixel = camera.orthographicSize * 2f / Screen.height;
-            if (unitsPerPixel <= 0f)
-            {
-                return position;
-            }
-
-            return new Vector3(
-                Mathf.Round(position.x / unitsPerPixel) * unitsPerPixel,
-                Mathf.Round(position.y / unitsPerPixel) * unitsPerPixel,
-                position.z);
-        }
-
-        private void StopViewportScroll()
-        {
-            if (viewportScroll == null)
-            {
-                return;
-            }
-
-            StopCoroutine(viewportScroll);
-            viewportScroll = null;
-        }
-
         private bool ContainsTile(TiledObjectInfo mapObject, WorldPosition position)
         {
             if (currentMap == null || currentMap.Info == null)
@@ -1079,7 +1046,6 @@ namespace Redpoint.DungeonEscape.Unity
 
             camera.orthographic = true;
             camera.orthographicSize = visibleRows / 2f;
-            camera.transform.position = new Vector3((visibleColumns - 1) / 2f, -(visibleRows - 1) / 2f, -10);
         }
 
     }

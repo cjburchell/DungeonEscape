@@ -256,8 +256,8 @@ namespace Redpoint.DungeonEscape.Unity
         private Vector3 GetLocalPosition(int targetColumn, int targetRow)
         {
             return new Vector3(
-                targetColumn - mapView.StartColumn,
-                -(targetRow - mapView.StartRow) + visualYOffset,
+                targetColumn,
+                -targetRow + visualYOffset,
                 -0.15f);
         }
 

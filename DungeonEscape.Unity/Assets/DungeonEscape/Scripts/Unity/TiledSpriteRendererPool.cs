@@ -5,6 +5,39 @@ namespace Redpoint.DungeonEscape.Unity
 {
     public sealed class TiledSpriteRendererPool
     {
+        private sealed class GeneratedSpriteOwner : MonoBehaviour
+        {
+            private Sprite sprite;
+            private Texture2D texture;
+
+            public void Replace(Sprite newSprite, Texture2D newTexture)
+            {
+                Clear();
+                sprite = newSprite;
+                texture = newTexture;
+            }
+
+            public void Clear()
+            {
+                if (sprite != null)
+                {
+                    Object.Destroy(sprite);
+                    sprite = null;
+                }
+
+                if (texture != null)
+                {
+                    Object.Destroy(texture);
+                    texture = null;
+                }
+            }
+
+            private void OnDestroy()
+            {
+                Clear();
+            }
+        }
+
         private readonly Transform parent;
         private readonly Dictionary<string, SpriteRenderer> renderers = new Dictionary<string, SpriteRenderer>();
         private readonly HashSet<string> activeKeys = new HashSet<string>();
@@ -54,9 +87,44 @@ namespace Redpoint.DungeonEscape.Unity
             renderer.gameObject.name = name;
             renderer.transform.localPosition = localPosition;
             renderer.transform.localScale = localScale;
+            ClearGeneratedSprite(renderer);
             renderer.sprite = sprite;
             renderer.sortingOrder = sortingOrder;
             ApplyAnimation(renderer, animationFrames);
+            renderer.gameObject.SetActive(true);
+        }
+
+        public void ShowGeneratedTexture(
+            string key,
+            Texture2D texture,
+            Vector3 localPosition,
+            int sortingOrder,
+            string name,
+            int pixelsPerUnit)
+        {
+            activeKeys.Add(key);
+            var renderer = GetRenderer(key);
+            renderer.gameObject.name = name;
+            renderer.transform.localPosition = localPosition;
+            renderer.transform.localScale = Vector3.one;
+            ApplyAnimation(renderer, null);
+
+            var sprite = Sprite.Create(
+                texture,
+                new Rect(0, 0, texture.width, texture.height),
+                new Vector2(0.5f, 0.5f),
+                pixelsPerUnit,
+                1,
+                SpriteMeshType.FullRect);
+            var owner = renderer.GetComponent<GeneratedSpriteOwner>();
+            if (owner == null)
+            {
+                owner = renderer.gameObject.AddComponent<GeneratedSpriteOwner>();
+            }
+
+            owner.Replace(sprite, texture);
+            renderer.sprite = sprite;
+            renderer.sortingOrder = sortingOrder;
             renderer.gameObject.SetActive(true);
         }
 
@@ -121,6 +189,15 @@ namespace Redpoint.DungeonEscape.Unity
 
             player.enabled = true;
             player.Configure(renderer, animationFrames);
+        }
+
+        private static void ClearGeneratedSprite(SpriteRenderer renderer)
+        {
+            var owner = renderer.GetComponent<GeneratedSpriteOwner>();
+            if (owner != null)
+            {
+                owner.Clear();
+            }
         }
     }
 }

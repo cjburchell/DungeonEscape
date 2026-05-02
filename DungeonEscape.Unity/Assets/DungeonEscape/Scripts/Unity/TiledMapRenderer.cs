@@ -9,92 +9,11 @@ namespace Redpoint.DungeonEscape.Unity
 {
     public static class TiledMapRenderer
     {
-        private const int RenderBufferTiles = 2;
         private const float TileLayerOverlapScale = 1.006f;
         private const uint TiledGidMask = 0x1FFFFFFF;
         private static Sprite hiddenObjectSprite;
 
         public static int RenderVisibleLayers(
-            Transform parent,
-            IEnumerable<XElement> elements,
-            IList<TiledTilesetSpriteSet> spriteSets,
-            int mapWidth,
-            int mapHeight,
-            int tileWidth,
-            int tileHeight,
-            int startColumn,
-            int startRow,
-            int columns,
-            int rows,
-            bool showHiddenObjects,
-            string mapId,
-            DungeonEscapeGameState gameState,
-            out int spritesSortingOrder)
-        {
-            var renderedSpriteCount = 0;
-            var sortingOrder = 0;
-            spritesSortingOrder = 0;
-            var clampedStartColumn = Math.Max(0, Math.Min(startColumn, mapWidth - 1));
-            var clampedStartRow = Math.Max(0, Math.Min(startRow, mapHeight - 1));
-            var renderStartColumn = Math.Max(0, clampedStartColumn - RenderBufferTiles);
-            var renderStartRow = Math.Max(0, clampedStartRow - RenderBufferTiles);
-            var renderEndColumn = Math.Min(mapWidth, clampedStartColumn + columns + RenderBufferTiles);
-            var renderEndRow = Math.Min(mapHeight, clampedStartRow + rows + RenderBufferTiles);
-            var renderColumns = renderEndColumn - renderStartColumn;
-            var renderRows = renderEndRow - renderStartRow;
-
-            foreach (var element in elements)
-            {
-                if (element.Name.LocalName == "layer")
-                {
-                    renderedSpriteCount += RenderTileLayer(
-                        parent,
-                        element,
-                        spriteSets,
-                        mapWidth,
-                        renderStartColumn,
-                        renderStartRow,
-                        renderColumns,
-                        renderRows,
-                        clampedStartColumn,
-                        clampedStartRow,
-                        sortingOrder,
-                        showHiddenObjects,
-                        mapId,
-                        gameState);
-                }
-                else if (element.Name.LocalName == "objectgroup")
-                {
-                    if (HasPropertyValue(element, "RenderRole", "Sprites"))
-                    {
-                        spritesSortingOrder = sortingOrder;
-                    }
-
-                    renderedSpriteCount += RenderObjectGroup(
-                        parent,
-                        element,
-                        spriteSets,
-                        tileWidth,
-                        tileHeight,
-                        renderStartColumn,
-                        renderStartRow,
-                        renderColumns,
-                        renderRows,
-                        clampedStartColumn,
-                        clampedStartRow,
-                        sortingOrder,
-                        showHiddenObjects,
-                        mapId,
-                        gameState);
-                }
-
-                sortingOrder++;
-            }
-
-            return renderedSpriteCount;
-        }
-
-        public static int RenderVisibleLayers(
             TiledSpriteRendererPool pool,
             IEnumerable<XElement> elements,
             IList<TiledTilesetSpriteSet> spriteSets,
@@ -102,10 +21,6 @@ namespace Redpoint.DungeonEscape.Unity
             int mapHeight,
             int tileWidth,
             int tileHeight,
-            int startColumn,
-            int startRow,
-            int columns,
-            int rows,
             bool showHiddenObjects,
             string mapId,
             DungeonEscapeGameState gameState,
@@ -114,12 +29,10 @@ namespace Redpoint.DungeonEscape.Unity
             var renderedSpriteCount = 0;
             var sortingOrder = 0;
             spritesSortingOrder = 0;
-            var clampedStartColumn = Math.Max(0, Math.Min(startColumn, mapWidth - 1));
-            var clampedStartRow = Math.Max(0, Math.Min(startRow, mapHeight - 1));
-            var renderStartColumn = Math.Max(0, clampedStartColumn - RenderBufferTiles);
-            var renderStartRow = Math.Max(0, clampedStartRow - RenderBufferTiles);
-            var renderEndColumn = Math.Min(mapWidth, clampedStartColumn + columns + RenderBufferTiles);
-            var renderEndRow = Math.Min(mapHeight, clampedStartRow + rows + RenderBufferTiles);
+            var renderStartColumn = 0;
+            var renderStartRow = 0;
+            var renderEndColumn = mapWidth;
+            var renderEndRow = mapHeight;
             var renderColumns = renderEndColumn - renderStartColumn;
             var renderRows = renderEndRow - renderStartRow;
 
@@ -132,16 +45,13 @@ namespace Redpoint.DungeonEscape.Unity
                         element,
                         spriteSets,
                         mapWidth,
+                        tileWidth,
+                        tileHeight,
                         renderStartColumn,
                         renderStartRow,
                         renderColumns,
                         renderRows,
-                        clampedStartColumn,
-                        clampedStartRow,
-                        sortingOrder,
-                        showHiddenObjects,
-                        mapId,
-                        gameState);
+                        sortingOrder);
                 }
                 else if (element.Name.LocalName == "objectgroup")
                 {
@@ -160,8 +70,6 @@ namespace Redpoint.DungeonEscape.Unity
                         renderStartRow,
                         renderColumns,
                         renderRows,
-                        clampedStartColumn,
-                        clampedStartRow,
                         sortingOrder,
                         showHiddenObjects,
                         mapId,
@@ -175,30 +83,40 @@ namespace Redpoint.DungeonEscape.Unity
         }
 
         private static int RenderTileLayer(
-            Transform parent,
+            TiledSpriteRendererPool pool,
             XElement layer,
             IList<TiledTilesetSpriteSet> spriteSets,
             int mapWidth,
-            int clampedStartColumn,
-            int clampedStartRow,
+            int tileWidth,
+            int tileHeight,
+            int startColumn,
+            int startRow,
             int visibleColumns,
             int visibleRows,
-            int viewportStartColumn,
-            int viewportStartRow,
-            int sortingOrder,
-            bool showHiddenObjects,
-            string mapId,
-            DungeonEscapeGameState gameState)
+            int sortingOrder)
         {
             var renderedTileCount = 0;
             var gids = ParseCsvTileData(layer);
+            var layerTexture = new Texture2D(
+                Math.Max(1, visibleColumns * tileWidth),
+                Math.Max(1, visibleRows * tileHeight));
+            layerTexture.filterMode = FilterMode.Point;
+            layerTexture.wrapMode = TextureWrapMode.Clamp;
+            var clearPixels = new Color[layerTexture.width * layerTexture.height];
+            for (var i = 0; i < clearPixels.Length; i++)
+            {
+                clearPixels[i] = Color.clear;
+            }
+
+            layerTexture.SetPixels(clearPixels);
+            var animatedTiles = new List<TileSpriteRenderInfo>();
 
             for (var row = 0; row < visibleRows; row++)
             {
                 for (var column = 0; column < visibleColumns; column++)
                 {
-                    var sourceColumn = clampedStartColumn + column;
-                    var sourceRow = clampedStartRow + row;
+                    var sourceColumn = startColumn + column;
+                    var sourceRow = startRow + row;
                     var gid = gids[sourceRow * mapWidth + sourceColumn];
                     if (gid == 0)
                     {
@@ -214,174 +132,48 @@ namespace Redpoint.DungeonEscape.Unity
                     List<TiledSpriteAnimationFrame> animationFrames;
                     TiledTilesetSprites.TryGetAnimation(gid, spriteSets, out animationFrames);
 
-                    var tileObject = new GameObject("Tile_" + GetString(layer, "name") + "_" + sourceColumn + "_" + sourceRow);
-                    tileObject.transform.SetParent(parent, false);
-                    tileObject.transform.localPosition = new Vector3(sourceColumn - viewportStartColumn, -(sourceRow - viewportStartRow), 0);
+                    BlitSprite(layerTexture, sprite, column, row, visibleRows);
+                    if (animationFrames != null && animationFrames.Count > 1)
+                    {
+                        animatedTiles.Add(new TileSpriteRenderInfo
+                        {
+                            Sprite = sprite,
+                            AnimationFrames = animationFrames,
+                            SourceColumn = sourceColumn,
+                            SourceRow = sourceRow
+                        });
+                    }
 
-                    var renderer = tileObject.AddComponent<SpriteRenderer>();
-                    renderer.sprite = sprite;
-                    renderer.sortingOrder = GetLayerSortingOrder(sortingOrder);
-                    tileObject.transform.localScale = GetTileLayerScale();
-                    ApplyAnimation(renderer, animationFrames);
                     renderedTileCount++;
                 }
             }
 
-            return renderedTileCount;
-        }
+            layerTexture.Apply(false, false);
+            var layerName = GetString(layer, "name");
+            var layerKey = "TileLayer|" + sortingOrder + "|" + layerName;
+            pool.ShowGeneratedTexture(
+                layerKey,
+                layerTexture,
+                GetLayerTextureLocalPosition(
+                    startColumn,
+                    startRow,
+                    visibleColumns,
+                    visibleRows),
+                GetLayerSortingOrder(sortingOrder),
+                "TileLayer_" + layerName,
+                tileWidth);
 
-        private static int RenderObjectGroup(
-            Transform parent,
-            XElement objectGroup,
-            IList<TiledTilesetSpriteSet> spriteSets,
-            int tileWidth,
-            int tileHeight,
-            int startColumn,
-            int startRow,
-            int columns,
-            int rows,
-            int viewportStartColumn,
-            int viewportStartRow,
-            int sortingOrder,
-            bool showHiddenObjects,
-            string mapId,
-            DungeonEscapeGameState gameState)
-        {
-            var renderedObjectCount = 0;
-            var groupName = GetString(objectGroup, "name");
-
-            foreach (var mapObject in objectGroup.Elements("object"))
+            foreach (var tile in animatedTiles)
             {
-                if (IsRuntimeNpc(mapObject))
-                {
-                    continue;
-                }
-
-                if (IsOpenDoor(mapObject, mapId, gameState))
-                {
-                    continue;
-                }
-
-                if (!CanRenderPickupObject(mapObject, mapId, gameState))
-                {
-                    continue;
-                }
-
-                var gid = GetGid(mapObject, "gid");
-                if (gid == 0 && !showHiddenObjects)
-                {
-                    continue;
-                }
-
-                Sprite sprite;
-                if (gid == 0)
-                {
-                    sprite = GetHiddenObjectSprite();
-                }
-                else if (!TryGetObjectSprite(gid, mapObject, spriteSets, mapId, gameState, out sprite))
-                {
-                    continue;
-                }
-
-                List<TiledSpriteAnimationFrame> animationFrames = null;
-                if (gid != 0)
-                {
-                    TryGetObjectAnimation(gid, mapObject, spriteSets, mapId, gameState, out animationFrames);
-                }
-
-                var x = GetFloat(mapObject, "x");
-                var y = GetFloat(mapObject, "y");
-                var width = GetFloat(mapObject, "width");
-                var height = GetFloat(mapObject, "height");
-                int minColumn;
-                int minRow;
-                int maxColumn;
-                int maxRow;
-                GetObjectTileBounds(x, y, width, height, tileWidth, tileHeight, gid == 0, out minColumn, out minRow, out maxColumn, out maxRow);
-
-                if (maxColumn < startColumn || minColumn >= startColumn + columns ||
-                    maxRow < startRow || minRow >= startRow + rows)
-                {
-                    continue;
-                }
-
-                var markerObject = new GameObject("Object_" + groupName + "_" + GetString(mapObject, "name"));
-                markerObject.transform.SetParent(parent, false);
-                markerObject.transform.localPosition = GetObjectLocalPosition(
-                    x,
-                    y,
-                    width,
-                    height,
-                    tileWidth,
-                    tileHeight,
-                    viewportStartColumn,
-                    viewportStartRow,
-                    gid == 0);
-                markerObject.transform.localScale = GetObjectLocalScale(width, height, tileWidth, tileHeight, gid == 0);
-
-                var renderer = markerObject.AddComponent<SpriteRenderer>();
-                renderer.sprite = sprite;
-                renderer.sortingOrder = GetObjectSortingOrder(
-                    sortingOrder,
-                    GetObjectSortRow(mapObject, y, height, tileHeight, gid == 0));
-                ApplyAnimation(renderer, animationFrames);
-                renderedObjectCount++;
-            }
-
-            return renderedObjectCount;
-        }
-
-        private static int RenderTileLayer(
-            TiledSpriteRendererPool pool,
-            XElement layer,
-            IList<TiledTilesetSpriteSet> spriteSets,
-            int mapWidth,
-            int clampedStartColumn,
-            int clampedStartRow,
-            int visibleColumns,
-            int visibleRows,
-            int viewportStartColumn,
-            int viewportStartRow,
-            int sortingOrder,
-            bool showHiddenObjects,
-            string mapId,
-            DungeonEscapeGameState gameState)
-        {
-            var renderedTileCount = 0;
-            var gids = ParseCsvTileData(layer);
-
-            for (var row = 0; row < visibleRows; row++)
-            {
-                for (var column = 0; column < visibleColumns; column++)
-                {
-                    var sourceColumn = clampedStartColumn + column;
-                    var sourceRow = clampedStartRow + row;
-                    var gid = gids[sourceRow * mapWidth + sourceColumn];
-                    if (gid == 0)
-                    {
-                        continue;
-                    }
-
-                    Sprite sprite;
-                    if (!TiledTilesetSprites.TryGetSprite(gid, spriteSets, out sprite))
-                    {
-                        continue;
-                    }
-
-                    List<TiledSpriteAnimationFrame> animationFrames;
-                    TiledTilesetSprites.TryGetAnimation(gid, spriteSets, out animationFrames);
-
-                    var key = "Tile|" + sortingOrder + "|" + GetString(layer, "name") + "|" + sourceColumn + "|" + sourceRow;
-                    pool.Show(
-                        key,
-                        sprite,
-                        animationFrames,
-                        new Vector3(sourceColumn - viewportStartColumn, -(sourceRow - viewportStartRow), 0),
-                        GetTileLayerScale(),
-                        GetLayerSortingOrder(sortingOrder),
-                        "Tile_" + GetString(layer, "name") + "_" + sourceColumn + "_" + sourceRow);
-                    renderedTileCount++;
-                }
+                var key = "TileAnimation|" + sortingOrder + "|" + layerName + "|" + tile.SourceColumn + "|" + tile.SourceRow;
+                pool.Show(
+                    key,
+                    tile.Sprite,
+                    tile.AnimationFrames,
+                    new Vector3(tile.SourceColumn, -tile.SourceRow, 0),
+                    GetTileLayerScale(),
+                    GetLayerSortingOrder(sortingOrder) + 1,
+                    "Tile_" + layerName + "_" + tile.SourceColumn + "_" + tile.SourceRow);
             }
 
             return renderedTileCount;
@@ -397,8 +189,6 @@ namespace Redpoint.DungeonEscape.Unity
             int startRow,
             int columns,
             int rows,
-            int viewportStartColumn,
-            int viewportStartRow,
             int sortingOrder,
             bool showHiddenObjects,
             string mapId,
@@ -474,8 +264,6 @@ namespace Redpoint.DungeonEscape.Unity
                         height,
                         tileWidth,
                         tileHeight,
-                        viewportStartColumn,
-                        viewportStartRow,
                         gid == 0),
                     GetObjectLocalScale(width, height, tileWidth, tileHeight, gid == 0),
                     GetObjectSortingOrder(
@@ -667,8 +455,6 @@ namespace Redpoint.DungeonEscape.Unity
             float height,
             int tileWidth,
             int tileHeight,
-            int viewportStartColumn,
-            int viewportStartRow,
             bool useObjectBounds)
         {
             var objectWidth = width <= 0f ? tileWidth : width;
@@ -681,14 +467,14 @@ namespace Redpoint.DungeonEscape.Unity
             if (!useObjectBounds)
             {
                 return new Vector3(
-                    centerX - viewportStartColumn - 0.5f,
-                    -(centerY - viewportStartRow) + 0.5f,
+                    centerX - 0.5f,
+                    -centerY + 0.5f,
                     -0.1f);
             }
 
             return new Vector3(
-                centerX - viewportStartColumn - 0.5f,
-                -(centerY - viewportStartRow) + 0.5f,
+                centerX - 0.5f,
+                -centerY + 0.5f,
                 -0.1f);
         }
 
@@ -707,6 +493,54 @@ namespace Redpoint.DungeonEscape.Unity
         private static Vector3 GetTileLayerScale()
         {
             return new Vector3(TileLayerOverlapScale, TileLayerOverlapScale, 1f);
+        }
+
+        private static Vector3 GetLayerTextureLocalPosition(
+            int startColumn,
+            int startRow,
+            int columns,
+            int rows)
+        {
+            return new Vector3(
+                startColumn + (columns - 1) / 2f,
+                -startRow - (rows - 1) / 2f,
+                0f);
+        }
+
+        private static void BlitSprite(Texture2D target, Sprite sprite, int column, int row, int visibleRows)
+        {
+            if (target == null || sprite == null || sprite.texture == null)
+            {
+                return;
+            }
+
+            var rect = sprite.textureRect;
+            var width = Mathf.RoundToInt(rect.width);
+            var height = Mathf.RoundToInt(rect.height);
+            if (width <= 0 || height <= 0)
+            {
+                return;
+            }
+
+            var pixels = sprite.texture.GetPixels(
+                Mathf.RoundToInt(rect.x),
+                Mathf.RoundToInt(rect.y),
+                width,
+                height);
+            target.SetPixels(
+                column * width,
+                (visibleRows - row - 1) * height,
+                width,
+                height,
+                pixels);
+        }
+
+        private sealed class TileSpriteRenderInfo
+        {
+            public Sprite Sprite { get; set; }
+            public List<TiledSpriteAnimationFrame> AnimationFrames { get; set; }
+            public int SourceColumn { get; set; }
+            public int SourceRow { get; set; }
         }
 
         private static void GetObjectTileBounds(

@@ -58,15 +58,17 @@ Status legend:
 - Expected: no visible error or movement hitch.
 - Expected: the debug window shows the current biome changing as the party enters each biome.
 
-### [x] Viewport Scrolling And Sprint Stay Acceptable
+### [x] Camera Window Scrolling Is Smooth In Every Direction
 
 - Hold a movement key or stick for 20-30 seconds on the overworld.
 - Move near viewport edges horizontally and vertically.
-- Expected: no major hitching from layer parsing, and scrolling should be at least as smooth as before.
+- Expected: the camera scrolls smoothly when moving up, down, left, and right.
+- Expected: the map does not jump by a full tile when the visible tile window advances.
+- Expected: NPCs, objects, party followers, and animated tiles stay aligned while the camera scrolls.
 - Hold sprint while moving across viewport edges horizontally and vertically.
 - Expected: player animation and viewport scrolling stay in sync without visible stutter from mismatched movement/scroll timing.
 
-### [ ] Viewport Shows Old 32 By 18 Tile Baseline
+### [x] Viewport Shows Old 32 By 18 Tile Baseline
 
 - Start or load a game in Play Mode or a built player at a 16:9 resolution.
 - Compare the visible map area against the old MonoGame version.
@@ -76,7 +78,7 @@ Status legend:
 - Resize the window taller than 16:9.
 - Expected: tile aspect ratio remains correct and the map remains centered.
 
-### [ ] Tile Seams Do Not Flicker During Movement
+### [x] Tile Seams Do Not Flicker During Movement
 
 - Start or load a game on the overworld or a map with repeated terrain tiles.
 - Stand still and inspect tile edges near the center and viewport edges.
@@ -235,7 +237,7 @@ Status legend:
 - Save and load while the party has reserve members.
 - Expected: cart visibility is restored according to the loaded map and current tile.
 
-### [ ] Dead Party Member Uses Coffin Visual
+### [x] Dead Party Member Uses Coffin Visual
 
 - Load or create a party with at least two active members.
 - Reduce one active follower's HP to `0`, for example by stepping on damage tiles until that party member dies.
@@ -253,7 +255,7 @@ Status legend:
 
 ## UI, Inventory, Stores, And Healers
 
-### [ ] Fullscreen Setting Applies
+### [x] Fullscreen Setting Applies
 
 - Open the in-game menu and go to Settings > General.
 - Toggle `Fullscreen`.
@@ -273,7 +275,7 @@ Status legend:
 - Close and reopen the menu, then switch to Inventory again.
 - Expected: repeated opens remain quick and item/hero icons still render.
 
-### [ ] Inventory Detail Shows Only Available Actions
+### [x] Inventory Detail Shows Only Available Actions
 
 - Open the Inventory tab with a mix of equippable, non-equippable, usable, quest, and regular items.
 - Select a non-equippable item.
@@ -394,7 +396,7 @@ Status legend:
 - Trigger a dialog choice that warps to another map, if available.
 - Expected: the same fade transition is used.
 
-### [ ] Splash And Title Startup Flow
+### [x] Splash And Title Startup Flow
 
 - Start Play Mode from `Boot.unity`.
 - Expected: the old `splash.png` image fades in centered on a black screen, holds briefly, then fades out.
@@ -410,7 +412,7 @@ Status legend:
 - Set `SkipSplashAndLoadQuickSave` back to `false`.
 - Expected: normal splash/title startup returns.
 
-### [ ] Title Menu Hides Unavailable Continue And Load Quest
+### [x] Title Menu Hides Unavailable Continue And Load Quest
 
 - Start Play Mode from `Boot.unity` with `SkipSplashAndLoadQuickSave` set to `false`.
 - Expected: title menu appears after the splash.
@@ -421,7 +423,7 @@ Status legend:
 - If a quick save exists, select Continue.
 - Expected: the quick save loads and the title menu closes.
 
-### [ ] New Quest Create Player Flow
+### [x] New Quest Create Player Flow
 
 - Return to the title menu from the in-game menu.
 - Select New Quest.
@@ -450,7 +452,7 @@ Status legend:
 - Select Start.
 - Expected: a new game starts with the chosen player name/class/gender and the title menu closes.
 
-### [ ] Variable Manual Save Flow
+### [x] Variable Manual Save Flow
 
 - Open the in-game Save tab.
 - Expected: existing manual saves are listed, plus a `New Save` row.
@@ -462,7 +464,7 @@ Status legend:
 - Save over an existing manual save.
 - Expected: the save is overwritten after confirmation.
 
-### [ ] Load Quest Screen Flow
+### [x] Load Quest Screen Flow
 
 - Return to the title menu again and select Load Quest.
 - Expected: Load Quest screen appears on a black background with a centered title, manual saves on the left, and a Delete button beside each save.
@@ -482,7 +484,7 @@ Status legend:
 - Delete all manual saves and return to the title menu.
 - Expected: Load Quest is hidden.
 
-### [ ] In-Game Main Menu And Quit Flow
+### [x] In-Game Main Menu And Quit Flow
 
 - Open the in-game menu while playing.
 - Expected: Main Menu and Quit buttons appear in the header.
@@ -493,7 +495,7 @@ Status legend:
 - Expected: the confirmation buttons are side by side and labelled `Quit` and `Back`.
 - Expected: built player exits. In the editor, Unity may ignore `Application.Quit()`.
 
-### [ ] Title Controls Block Gameplay And Support Keyboard/Gamepad
+### [x] Title Controls Block Gameplay And Support Keyboard/Gamepad
 
 - Start Play Mode or launch a built player.
 - Expected: a `Dungeon Escape` title window appears before map controls are usable.
@@ -514,7 +516,7 @@ Status legend:
 - Choose Quit in a built player.
 - Expected: the player application exits.
 
-### [ ] Unity Save Version Policy Archives Unsupported Saves
+### [x] Unity Save Version Policy Archives Unsupported Saves
 
 - Locate the Unity save file under `%APPDATA%/Redpoint/DungeonEscape/save.json`.
 - Back up the file manually before testing this case.
@@ -524,7 +526,7 @@ Status legend:
 - Expected: the original save is copied to a file named like `save.unsupported-0.0-YYYYMMDDHHMMSS.json`.
 - Expected: the game creates a fresh Unity save file instead of trying to migrate old or unsupported save data.
 
-### [ ] Autosave And Transition Save Policy
+### [x] Autosave And Transition Save Policy
 
 - Enable autosave and set a short autosave interval in Settings.
 - Move around on one non-overworld map without opening dialogs.

@@ -151,16 +151,22 @@ Status: Deferred until after combat
 Status: In progress
 
 - Done: Quick save/load.
-- Done: Manual save slots.
+- Done: Variable manual saves without fixed save slots.
 - Done: New game reset without loading saved level.
 - Done: Autosave enabled setting.
 - Done: Autosave interval setting.
-- Done: Main title/load game flow with Continue, New Game, Load Game, and Quit.
+- Done: Main title/load game flow with Continue, New Quest, Load Quest, and Quit.
 - Done: Unity splash screen recreated using `Images/ui/splash.png` before the title menu.
 - Done: Title/startup UI draws over a black backdrop instead of showing the map behind it.
 - Done: Hidden `SkipSplashAndLoadQuickSave` setting for fast test startup without exposing it in the Settings UI.
-- Partial: Unity equivalent for old main menu/continue quest flow.
-- Pending: Create player flow.
+- Done: Unity equivalent for old main menu/continue quest flow, including Continue, New Quest, Load Quest, and Quit.
+- Done: New Quest create-player flow with player name, random-name generation, gender/class dropdowns, character preview, starter stat panel, Re-roll, and selected player name/class/gender.
+- Done: In-game menu can return to the main menu or quit the game.
+- Done: Title Load Quest screen lists only existing manual saves, hides when no manual saves exist, and supports loading/deleting old manual saves.
+- Done: Title Load Quest supports per-save Delete buttons, click-to-load, Enter-to-load, and gamepad confirm-to-load.
+- Done: Main Menu, Load Quest, and Create Quest title screens support keyboard/gamepad navigation across actionable controls.
+- Done: Continue is hidden when no quick save exists.
+- Done: Save summaries no longer display map, position, gold, or steps.
 - Done: Unity save version policy: unsupported versions are archived and ignored; forward migrations will be added only when the Unity save schema changes.
 - Done: Final autosave policy: timer autosave is kept, but autosave is skipped while title/menu/store/dialog UI is active; combat can also block autosave through `DungeonEscapeGameState.AutoSaveBlocked`.
 - Done: Final transition-save policy: transition saves only occur when moving to or from the overworld.

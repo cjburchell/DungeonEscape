@@ -1,20 +1,23 @@
-# Manual Test Plans
+# Manual Test Plan
 
 This file tracks manual Unity play-test checks for migrated gameplay. Update it after each implemented migration step so verification stays tied to the work that changed.
 
-## Movement And Collision Rules
+Status legend:
 
-Status: Done
+- `[x]` Tested and passed.
+- `[ ]` Not tested yet, or needs another pass after recent changes.
 
-### Collision
+## Movement And Collision
+
+### [x] Collision Blocks Walls, Water Edges, Doors, Chests, And NPCs
 
 - Start or load a game on a town or dungeon map.
-- Walk into walls, water edges, counters, closed doors, and NPCs.
+- Walk into walls, water edges, counters, closed doors, closed chests, and NPCs.
 - Expected: the player cannot enter blocked tiles or occupied NPC tiles.
 - Open a door that should be openable.
 - Expected: after opening, the door no longer blocks movement and is not rendered.
 
-### Object Bounds
+### [x] Object Bounds Match Tiled Rectangles
 
 - Find larger objects or wide hidden, warp, or static object rectangles.
 - Try walking through every tile covered by the object.
@@ -22,14 +25,14 @@ Status: Done
 - Try non-blocking warps and exits.
 - Expected: `Collideable=false` objects do not block movement.
 
-### Water Without Ship
+### [x] Water Blocks Movement Before Ship Deed
 
 - Start a new game or load a save before getting `Deed to the ship`.
 - Go to the overworld or any map with water.
 - Try walking onto water.
 - Expected: movement is blocked.
 
-### Water With Ship
+### [x] Water Allows Movement After Ship Deed
 
 - Load a save after completing `Find_Ship` and receiving `Deed to the ship`.
 - Go to overworld or coast water.
@@ -38,7 +41,7 @@ Status: Done
 - Try walking from water back to land.
 - Expected: movement back to land is allowed.
 
-### Damage Layer
+### [x] Damage Layer Applies Step Damage
 
 - Find a known damage tile area, likely swamp or damage-marked overworld tiles.
 - Note active party members' HP.
@@ -49,32 +52,31 @@ Status: Done
 - Continue stepping on damage tiles until a party member reaches `0` HP.
 - Expected: a terrain message appears only when a party member dies.
 
-### Biome Tracking
+### [x] Biome Layer Updates Current Biome
 
 - Walk across overworld terrain types: grassland, forest, hills, desert, and water.
 - Expected: no visible error or movement hitch.
 - Expected: the debug window shows the current biome changing as the party enters each biome.
 
-### Performance And Scrolling
+### [x] Viewport Scrolling And Sprint Stay Acceptable
 
 - Hold a movement key or stick for 20-30 seconds on the overworld.
 - Move near viewport edges horizontally and vertically.
 - Expected: no major hitching from layer parsing, and scrolling should be at least as smooth as before.
 - Hold sprint while moving across viewport edges horizontally and vertically.
 - Expected: player animation and viewport scrolling stay in sync without visible stutter from mismatched movement/scroll timing.
+
+### [x] Turn Delay Only Applies When Changing Facing
+
 - Open Settings > General and adjust Turn Delay.
-- Expected: changing direction only turns first, then moves after the configured delay; moving while already facing that direction has no extra turn delay.
+- Press a direction different from the current facing direction.
+- Expected: changing direction only turns first, then moves after the configured delay.
+- Hold movement while already facing the movement direction.
+- Expected: moving while already facing that direction has no extra turn delay.
 
-### Save And Load
+## Map Objects And Interactions
 
-- Pick up a hidden item or open a door.
-- Save.
-- Load.
-- Expected: removed/open object state still affects rendering and collision.
-
-## Chest Collision
-
-Status: Done
+### [x] Chest Collision And Opened Chest Behavior
 
 - Load a map with chests, such as `dungeon/first`, `tunnel/area1`, or `towns/isis`.
 - Try walking directly onto a closed chest tile.
@@ -84,6 +86,9 @@ Status: Done
 - Expected: the chest opens and gives its contents or says it is empty.
 - Try walking onto the opened chest tile.
 - Expected: movement is still blocked because the chest remains a physical object.
+
+### [x] Chest Loot Uses Fixed, Random, Or Empty Item Rules
+
 - Open a chest with `ItemId="#Random#"`.
 - Expected: the chest gives random loot or gold generated once for that map/save.
 - Open a chest with a fixed `ItemId`, such as an `Iron Key` chest.
@@ -91,40 +96,7 @@ Status: Done
 - Inspect an object named `Open Chest`.
 - Expected: it has no `ItemId`, starts/appears empty, and gives no random loot.
 
-## Stairs And Flipped Tiled Objects
-
-Status: Done
-
-- Load maps with stairs that previously looked misplaced, such as `dungeon/first`, `forest_tower/floor1`, `forest_tower/floor2`, `island_tower/floor1`, `pyramid/basement`, `tunnel/area1`, or `tunnel/area2`.
-- Compare the stair sprite location in Unity with the same `.tmx` map in Tiled.
-- Expected: stair objects render on the same tile as Tiled, not as hidden markers or one tile off.
-- Step onto each stair/warp tile.
-- Expected: the warp triggers from the visible stair tile.
-
-## Door Key Interaction
-
-Status: Done
-
-- Add or find a door with `Locked=false`.
-- Stand next to it, face it, and press interact.
-- Expected: the door opens without requiring a key.
-- Load a map with key-locked doors, such as `towns/walled`, `tunnel/area1`, or `island_tower/floor1`.
-- Stand next to a closed door without a matching key and press interact.
-- Expected: a message says the party does not have a key for the door, and the door stays closed.
-- Pick up an `Iron Key` from a key chest.
-- Stand next to the closed door, face it, and press interact.
-- Expected: the door opens, disappears from the map view, and no longer blocks movement.
-- Save and reload after opening a door.
-- Expected: the door remains open and non-blocking.
-- Go to the locked ship door in `towns/coast` before completing the old man's key handoff.
-- Press interact while carrying a normal key.
-- Expected: the message says the door is locked and the door does not open.
-- Complete the old man's key handoff.
-- Expected: the old man's dialog opens the ship door.
-
-## Locked And Unlocked Chests
-
-Status: Done
+### [x] Locked And Unlocked Chests Use Key Rules
 
 - Open an existing chest that does not define `Locked`.
 - Expected: the chest opens without a key, matching existing chest behavior.
@@ -138,9 +110,54 @@ Status: Done
 - Add or find a chest with `Locked=true` and `KeyItemId` set to a specific key item.
 - Expected: only that key item opens the chest.
 
-## Ship Over Water Visual
+### [x] Doors Open With Correct Lock And Key Behavior
 
-Status: Done
+- Add or find a door with `Locked=false`.
+- Stand next to it, face it, and press interact.
+- Expected: the door opens without requiring a key.
+- Load a map with key-locked doors, such as `towns/walled`, `tunnel/area1`, or `island_tower/floor1`.
+- Stand next to a closed door without a matching key and press interact.
+- Expected: a message says the party does not have a key for the door, and the door stays closed.
+- Pick up an `Iron Key` from a key chest.
+- Stand next to the closed door, face it, and press interact.
+- Expected: the door opens, disappears from the map view, and no longer blocks movement.
+- Save and reload after opening a door.
+- Expected: the door remains open and non-blocking.
+
+### [x] Ship Quest Door Opens Only Through Quest Handoff
+
+- Go to the locked ship door in `towns/coast` before completing the old man's key handoff.
+- Press interact while carrying a normal key.
+- Expected: the message says the door is locked and the door does not open.
+- Complete the old man's key handoff.
+- Expected: the old man's dialog opens the ship door.
+
+### [x] Stairs And Flipped Tiled Objects Render And Warp Correctly
+
+- Load maps with stairs that previously looked misplaced, such as `dungeon/first`, `forest_tower/floor1`, `forest_tower/floor2`, `island_tower/floor1`, `pyramid/basement`, `tunnel/area1`, or `tunnel/area2`.
+- Compare the stair sprite location in Unity with the same `.tmx` map in Tiled.
+- Expected: stair objects render on the same tile as Tiled, not as hidden markers or one tile off.
+- Step onto each stair/warp tile.
+- Expected: the warp triggers from the visible stair tile.
+
+### [x] Hidden Item Quest Conditions And Removal Persist
+
+- Pick up a hidden item or open a door.
+- Save.
+- Load.
+- Expected: removed/open object state still affects rendering and collision.
+
+### [x] Pickup Level Gating Matches Party Level
+
+- Find a chest or hidden item with a `ChestLevel` or `Level` above the active party's level.
+- Press interact while facing it.
+- Expected: the pickup does not open and the message says the party is not experienced enough.
+- Raise the party level or test with a lower-level object.
+- Expected: the same object can be opened or picked up when a living active member meets the required level.
+
+## Party And Map Visuals
+
+### [x] Ship Visual Replaces Party While On Water
 
 - Load a save before receiving `Deed to the ship`.
 - Try moving onto water.
@@ -153,9 +170,7 @@ Status: Done
 - Change facing direction while on water.
 - Expected: the ship sprite changes to match the current direction.
 
-## Cart Follower Visual
-
-Status: Done
+### [x] Cart Follower Appears For Reserve Party Members
 
 - Start or load a game on the overworld with no reserve party members.
 - Expected: no cart is shown.
@@ -176,9 +191,7 @@ Status: Done
 - Save and load while the party has reserve members.
 - Expected: cart visibility is restored according to the loaded map and current tile.
 
-## Dead Party Member Coffin Visual
-
-Status: Pending
+### [ ] Dead Party Member Uses Coffin Visual
 
 - Load or create a party with at least two active members.
 - Reduce one active follower's HP to `0`, for example by stepping on damage tiles until that party member dies.
@@ -194,9 +207,9 @@ Status: Pending
 - Save and load with a dead active party member.
 - Expected: the coffin visual is restored after loading.
 
-## Inventory First-Open Performance
+## UI, Inventory, Stores, And Healers
 
-Status: Done
+### [x] Inventory First Open Is Responsive
 
 - Start the Unity scene and wait a few seconds after the map appears.
 - Open the game menu and switch to Inventory for the first time.
@@ -204,24 +217,23 @@ Status: Done
 - Close and reopen the menu, then switch to Inventory again.
 - Expected: repeated opens remain quick and item/hero icons still render.
 
-## Map Fade Transitions
+### [ ] Inventory Detail Shows Only Available Actions
 
-Status: Done
+- Open the Inventory tab with a mix of equippable, non-equippable, usable, quest, and regular items.
+- Select a non-equippable item.
+- Expected: Equip and Unequip buttons are not shown.
+- Select an equipped item.
+- Expected: Unequip is shown and Equip is not shown.
+- Select an equippable item that is not equipped.
+- Expected: Equip is shown and Unequip is not shown.
+- Select an item that cannot currently be used.
+- Expected: Use is not shown.
+- Select a quest item.
+- Expected: Drop is not shown.
+- Inspect the item detail panel.
+- Expected: internal slot/class metadata is not shown in the right panel.
 
-- Step onto a warp or stairs that changes maps.
-- Expected: the screen fades to black, the new map loads while black, then fades back in.
-- During the fade, hold a movement key or stick.
-- Expected: the player does not move or trigger another interaction until the transition completes.
-- Test returning to the overworld through a warp that uses the remembered overworld position.
-- Expected: the fade still runs and the party appears at the remembered overworld position.
-- Trigger a dialog choice that warps to another map, if available.
-- Expected: the same fade transition is used.
-
-## Store, Healer, And Object Target Parity
-
-Status: Done
-
-### Regular Stores
+### [x] Regular Store Buy Flow Uses Tabbed Store UI
 
 - Visit a regular `NpcStore`, such as a merchant in `towns/isis`, `towns/coast`, or `towns/walled`.
 - Expected: a store window opens directly with `Buy` and `Sell` tabs instead of a buy/sell message prompt.
@@ -239,7 +251,7 @@ Status: Done
 - Save and reload.
 - Expected: the store stock remains the same for that save.
 
-### Key Stores
+### [x] Key Store Buy Flow Lists Only Keys
 
 - Visit an `NpcKey` merchant, such as `towns/oasis` or `towns/walled`.
 - Expected: only key items are listed.
@@ -247,7 +259,7 @@ Status: Done
 - Buy a key.
 - Expected: gold is deducted and the key is added to the party inventory.
 
-### Store Selling
+### [x] Store Sell Flow Uses Party Member Tabs
 
 - Visit a regular store with a non-quest, sellable item in inventory.
 - Open the Sell tab.
@@ -262,7 +274,7 @@ Status: Done
 - While the store window is open, complete a buy or sell confirmation.
 - Expected: confirmation messages appear over the store, and the store window does not close until Close or Cancel is used.
 
-### Healers
+### [x] Healer Services Use Cost And Relevant Options
 
 - Damage one active party member, then visit an `NpcHeal`.
 - Expected: Heal is shown with the healer's `Cost` property or 25 gold by default.
@@ -275,7 +287,9 @@ Status: Done
 - Try a service without enough gold.
 - Expected: the healer refuses and no party state changes.
 
-### Object-Target Items And Spells
+## Object-Target Skills And Map Skills
+
+### [x] Open Skill And Open Items Target Facing Objects
 
 - Stand next to a closed door and face it.
 - Open Inventory and use a key item or other item with the `Open` skill.
@@ -292,106 +306,7 @@ Status: Done
 - Stand facing an NPC, hidden item, warp, or other non-door/non-chest object and use `Open`.
 - Expected: the message says the object cannot be opened.
 
-### Pickup Level Gating
-
-- Find a chest or hidden item with a `ChestLevel` or `Level` above the active party's level.
-- Press interact while facing it.
-- Expected: the pickup does not open and the message says the party is not experienced enough.
-- Raise the party level or test with a lower-level object.
-- Expected: the same object can be opened or picked up when a living active member meets the required level.
-
-## Unity Build And Run
-
-Status: Done
-
-- Open Unity and wait for scripts to finish compiling.
-- Open `File > Build Settings`.
-- Expected: `Assets/DungeonEscape/Scenes/Boot.unity` is listed and checked.
-- Use `File > Build And Run`.
-- Expected: the built Windows player opens to the same map view as Play Mode, not only the debug window.
-- Expected: terrain, objects, NPC sprites, player sprites, item icons, and UI images are visible.
-- Move, warp to another map, and open the inventory.
-- Expected: map TMX files, TSX files, tileset images, character images, and item images continue loading in the built player.
-- Result: Confirmed. `File > Build And Run` renders the map correctly outside the editor.
-
-## Splash And Title Startup
-
-Status: Pending
-
-- Start Play Mode from `Boot.unity`.
-- Expected: the old `splash.png` image fades in centered on a black screen, holds briefly, then fades out.
-- Expected: the map is not visible behind the splash.
-- Wait for the title menu.
-- Expected: the title menu appears on a black background, not over the rendered map.
-- Choose Continue, New Game, or Load Game.
-- Expected: the title menu closes and the map becomes visible only after entering gameplay.
-- Use File > Build And Run.
-- Expected: the built player follows the same splash, black title background, and map reveal behavior.
-- Set `SkipSplashAndLoadQuickSave` to `true` in the user settings file.
-- Expected: Play Mode starts directly from the quick save without showing the splash or title menu.
-- Set `SkipSplashAndLoadQuickSave` back to `false`.
-- Expected: normal splash/title startup returns.
-
-## Title And Load Flow
-
-Status: Pending
-
-- Start Play Mode or launch a built player.
-- Expected: a `Dungeon Escape` title window appears before map controls are usable.
-- Try moving while the title window is open.
-- Expected: the player does not move.
-- If no quick save exists, inspect the Continue button.
-- Expected: Continue is disabled.
-- Choose New Game.
-- Expected: the title window closes, a fresh party starts at the map default spawn, and map controls work.
-- Save into a manual slot from the in-game Save tab, then return to the title flow by restarting Play Mode or the built player.
-- Choose Load Game.
-- Expected: manual save slots are listed with save time, level, and map.
-- Select a populated manual slot.
-- Expected: the title window closes and the saved map, position, party, inventory, quest, and object state are restored.
-- Create or wait for a quick save, then restart.
-- Choose Continue.
-- Expected: the title window closes and the quick save is loaded.
-- Use keyboard or gamepad up/down and interact on the title and load screens.
-- Expected: selection changes visibly and activates the selected command.
-- Choose Quit in a built player.
-- Expected: the player application exits.
-
-## Unity Save Version Policy
-
-Status: Pending
-
-- Locate the Unity save file under `%APPDATA%/Redpoint/DungeonEscape/save.json`.
-- Back up the file manually before testing this case.
-- Edit the save JSON `Version` value to an unsupported value such as `0.0`.
-- Start Play Mode or a built player.
-- Expected: the game logs that the save version is unsupported.
-- Expected: the original save is copied to a file named like `save.unsupported-0.0-YYYYMMDDHHMMSS.json`.
-- Expected: the game creates a fresh Unity save file instead of trying to migrate old or unsupported save data.
-
-## Autosave And Transition Save Policy
-
-Status: Pending
-
-- Enable autosave and set a short autosave interval in Settings.
-- Move around on one non-overworld map without opening dialogs.
-- Expected: timer autosave still occurs after the configured interval.
-- Open a dialog or message box and wait longer than the autosave interval.
-- Expected: no autosave happens while the dialog is visible.
-- Close the dialog and keep playing.
-- Expected: autosave can occur again after gameplay resumes.
-- Open the title menu, game menu, or store window and wait longer than the autosave interval.
-- Expected: no autosave happens while that UI is open.
-- Warp between two non-overworld maps.
-- Expected: no transition save occurs only because of that warp.
-- Warp from the overworld into a town, dungeon, or other map.
-- Expected: a transition save occurs after the destination map and final player position are applied.
-- Warp from a town, dungeon, or other map back to the overworld.
-- Expected: a transition save occurs after the party reaches the overworld.
-
-## Outside And Return Skills
-
-Status: Pending
+### [ ] Outside, Return, And Wings Travel Skills
 
 - Get access to the `Outside` spell on a party member.
 - Enter a non-overworld map, then open the party menu and cast `Outside`.
@@ -409,3 +324,178 @@ Status: Pending
 - Expected: the spell is disabled, or if triggered directly, it reports that Return can only be used outside.
 - Use a `Wings` item from the inventory on the overworld after visiting at least one return location.
 - Expected: the same visited-location picker appears, and selecting a location consumes the item and transports the party.
+
+## Persistence, Startup, And Save Flow
+
+### [x] Map Fade Transitions Wrap Map Changes
+
+- Step onto a warp or stairs that changes maps.
+- Expected: the screen fades to black, the new map loads while black, then fades back in.
+- During the fade, hold a movement key or stick.
+- Expected: the player does not move or trigger another interaction until the transition completes.
+- Test returning to the overworld through a warp that uses the remembered overworld position.
+- Expected: the fade still runs and the party appears at the remembered overworld position.
+- Trigger a dialog choice that warps to another map, if available.
+- Expected: the same fade transition is used.
+
+### [ ] Splash And Title Startup Flow
+
+- Start Play Mode from `Boot.unity`.
+- Expected: the old `splash.png` image fades in centered on a black screen, holds briefly, then fades out.
+- Expected: the map is not visible behind the splash.
+- Wait for the title menu.
+- Expected: the title menu appears on a black background, not over the rendered map.
+- Choose Continue, New Quest, or Load Quest if those options are available.
+- Expected: the title menu closes and the map becomes visible only after entering gameplay.
+- Use File > Build And Run.
+- Expected: the built player follows the same splash, black title background, and map reveal behavior.
+- Set `SkipSplashAndLoadQuickSave` to `true` in the user settings file.
+- Expected: Play Mode starts directly from the quick save without showing the splash or title menu.
+- Set `SkipSplashAndLoadQuickSave` back to `false`.
+- Expected: normal splash/title startup returns.
+
+### [ ] Title Menu Hides Unavailable Continue And Load Quest
+
+- Start Play Mode from `Boot.unity` with `SkipSplashAndLoadQuickSave` set to `false`.
+- Expected: title menu appears after the splash.
+- If no quick save exists, inspect the title menu.
+- Expected: Continue is hidden.
+- If no manual saves exist, inspect the title menu.
+- Expected: Load Quest is hidden.
+- If a quick save exists, select Continue.
+- Expected: the quick save loads and the title menu closes.
+
+### [ ] New Quest Create Player Flow
+
+- Return to the title menu from the in-game menu.
+- Select New Quest.
+- Expected: New Quest screen appears on a black background with compact Name/Gender/Class controls, portrait, and stat panel.
+- Enter a player name or press Random.
+- Expected: Random fills the name field with a generated name for the selected gender.
+- Open the Gender dropdown and choose a gender.
+- Open the Class dropdown and choose a class.
+- Expected: dropdown choices overlay the screen without shifting the rest of the UI.
+- Expected: long dropdowns show a scrollbar when not all choices fit.
+- Use keyboard or gamepad up/down and interact on Name, Generate Name, Gender, Class, Re-roll, Start, and Back.
+- Expected: each Create Quest control can be selected and activated without using the mouse.
+- Press down from Generate Name.
+- Expected: selection moves to Re-roll.
+- Press left from Generate Name.
+- Expected: selection moves to Name.
+- Press left/right on Start or Back.
+- Expected: selection moves horizontally between Start and Back.
+- Press up/down from Start or Back.
+- Expected: selection follows the same visual column instead of moving through every control linearly.
+- With a dropdown open, use keyboard or gamepad up/down and interact.
+- Expected: dropdown choices can be selected without using the mouse.
+- Expected: the character preview updates for the selected gender/class and keeps the sprite aspect ratio.
+- Press Re-roll.
+- Expected: the displayed starter stats change without changing the selected name, gender, or class.
+- Select Start.
+- Expected: a new game starts with the chosen player name/class/gender and the title menu closes.
+
+### [ ] Variable Manual Save Flow
+
+- Open the in-game Save tab.
+- Expected: existing manual saves are listed, plus a `New Save` row.
+- Select `New Save` and save.
+- Expected: a new manual save is appended; no fixed numbered save slot is required.
+- Expected: the `New Save` detail only shows Save; it does not show Load, Delete, or New Game.
+- Select an existing manual save.
+- Expected: the detail panel shows only the save name, save time, and level; it does not show map, position, gold, or steps.
+- Save over an existing manual save.
+- Expected: the save is overwritten after confirmation.
+
+### [ ] Load Quest Screen Flow
+
+- Return to the title menu again and select Load Quest.
+- Expected: Load Quest screen appears on a black background with a centered title, manual saves on the left, and a Delete button beside each save.
+- Expected: the centered Back button is fully visible below the save list.
+- Press up/down while a save or Delete button is selected.
+- Expected: selection moves to the previous/next save row, not sideways into Delete.
+- Press right on a selected save row.
+- Expected: selection moves to that save's Delete button.
+- Press left on a selected Delete button.
+- Expected: selection moves back to that save row.
+- Click a populated manual save once with the mouse.
+- Expected: that save loads and the title menu closes.
+- Select a populated manual save and press Enter, Interact, or the gamepad confirm button.
+- Expected: that save loads and the title menu closes.
+- Select a populated manual save's Delete button by keyboard/gamepad or click it with the mouse.
+- Expected: the save is removed from the list.
+- Delete all manual saves and return to the title menu.
+- Expected: Load Quest is hidden.
+
+### [ ] In-Game Main Menu And Quit Flow
+
+- Open the in-game menu while playing.
+- Expected: Main Menu and Quit buttons appear in the header.
+- Select Main Menu and confirm.
+- Expected: the confirmation buttons are side by side and labelled `OK` and `Back`.
+- Expected: the game returns to the black-background title menu.
+- Select Quit and confirm.
+- Expected: the confirmation buttons are side by side and labelled `Quit` and `Back`.
+- Expected: built player exits. In the editor, Unity may ignore `Application.Quit()`.
+
+### [ ] Title Controls Block Gameplay And Support Keyboard/Gamepad
+
+- Start Play Mode or launch a built player.
+- Expected: a `Dungeon Escape` title window appears before map controls are usable.
+- Try moving while the title window is open.
+- Expected: the player does not move.
+- Choose New Quest.
+- Expected: the title window closes, a fresh party starts at the map default spawn, and map controls work.
+- Save from the in-game Save tab, then return to the title flow by restarting Play Mode or the built player.
+- Choose Load Quest.
+- Expected: manual saves are listed with save time and level.
+- Select a populated manual save.
+- Expected: the title window closes and the saved map, position, party, inventory, quest, and object state are restored.
+- Create or wait for a quick save, then restart.
+- Choose Continue.
+- Expected: the title window closes and the quick save is loaded.
+- Use keyboard or gamepad up/down and interact on the Main Menu, Load Quest, and Create Quest screens.
+- Expected: every actionable item can be selected visibly and activated.
+- Choose Quit in a built player.
+- Expected: the player application exits.
+
+### [ ] Unity Save Version Policy Archives Unsupported Saves
+
+- Locate the Unity save file under `%APPDATA%/Redpoint/DungeonEscape/save.json`.
+- Back up the file manually before testing this case.
+- Edit the save JSON `Version` value to an unsupported value such as `0.0`.
+- Start Play Mode or a built player.
+- Expected: the game logs that the save version is unsupported.
+- Expected: the original save is copied to a file named like `save.unsupported-0.0-YYYYMMDDHHMMSS.json`.
+- Expected: the game creates a fresh Unity save file instead of trying to migrate old or unsupported save data.
+
+### [ ] Autosave And Transition Save Policy
+
+- Enable autosave and set a short autosave interval in Settings.
+- Move around on one non-overworld map without opening dialogs.
+- Expected: timer autosave still occurs after the configured interval.
+- Open a dialog or message box and wait longer than the autosave interval.
+- Expected: no autosave happens while the dialog is visible.
+- Close the dialog and keep playing.
+- Expected: autosave can occur again after gameplay resumes.
+- Open the title menu, game menu, or store window and wait longer than the autosave interval.
+- Expected: no autosave happens while that UI is open.
+- Warp between two non-overworld maps.
+- Expected: no transition save occurs only because of that warp.
+- Warp from the overworld into a town, dungeon, or other map.
+- Expected: a transition save occurs after the destination map and final player position are applied.
+- Warp from a town, dungeon, or other map back to the overworld.
+- Expected: a transition save occurs after the party reaches the overworld.
+
+## Build And Runtime Packaging
+
+### [x] Unity Build And Run Loads Runtime Assets
+
+- Open Unity and wait for scripts to finish compiling.
+- Open `File > Build Settings`.
+- Expected: `Assets/DungeonEscape/Scenes/Boot.unity` is listed and checked.
+- Use `File > Build And Run`.
+- Expected: the built Windows player opens to the same map view as Play Mode, not only the debug window.
+- Expected: terrain, objects, NPC sprites, player sprites, item icons, and UI images are visible.
+- Move, warp to another map, and open the inventory.
+- Expected: map TMX files, TSX files, tileset images, character images, and item images continue loading in the built player.
+- Result: Confirmed. `File > Build And Run` renders the map correctly outside the editor.

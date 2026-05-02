@@ -13,6 +13,7 @@ The migration is past the first playable Unity map-mode loop. Recent work focuse
 - Startup now shows the old splash image before the title menu.
 - Splash/title UI draws on a black backdrop so the map is not visible until gameplay starts.
 - Hidden `SkipSplashAndLoadQuickSave` can be enabled in the settings file for fast Play Mode testing.
+- Title flow now includes create-player, variable manual-save load/delete, hidden Continue/Load Quest buttons when unavailable, and in-game return-to-main-menu/quit actions.
 
 ## Important Current Constraint
 

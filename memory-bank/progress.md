@@ -17,6 +17,7 @@
 - Implemented `Outside`, `Return`, `Wings`, and `Open` map-mode behavior.
 - Recreated the old splash screen in Unity and hid the map behind a black startup/title backdrop.
 - Added hidden fast-start setting to skip splash/title and load the quick save for testing.
+- Added title New Quest create-player flow with random names/dropdowns/portrait/stats/re-roll, variable manual-save load/delete, and in-game Main Menu/Quit actions.
 - Added GitLab CI solution build/test and Unity validation/build artifact support.
 - Added memory-bank docs.
 - Removed the old `DungeonEscape.Test` project from the solution; migration tests should live in `DungeonEscape.Core.Test` or future Unity test assemblies.

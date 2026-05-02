@@ -16,9 +16,15 @@ namespace Redpoint.DungeonEscape.Unity.UI
     public sealed class CombatWindow : MonoBehaviour
     {
         private const int WindowDepth = -2500;
+        private const float InitialNavigationRepeatDelay = 0.35f;
+        private const float NavigationRepeatDelay = 0.12f;
+        private const float DamageFlashDuration = 0.65f;
+        private const float DamageFlashInterval = 0.08f;
         private const string MonsterTilesetAssetPath = "Assets/DungeonEscape/Tilesets/allmonsters.tsx";
         private static readonly Dictionary<int, string> MonsterImagePaths = new Dictionary<int, string>();
         private static readonly Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, float> DamageFlashEndTimes = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, float> HealFlashEndTimes = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
         private static readonly System.Random CombatRandom = new System.Random();
 
         private enum CombatState
@@ -88,9 +94,67 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private List<IFighter> targetSelectionCandidates = new List<IFighter>();
         private string targetSelectionTitle;
         private int selectedMenuIndex;
+        private int visibleMessageCharacters;
+        private float revealCharacterAccumulator;
+        private Vector2 messageScrollPosition;
+        private int repeatingMenuMoveY;
+        private float nextMenuMoveYTime;
+        private int acceptMenuInteractAfterFrame;
+        private bool waitForMenuInteractRelease;
         private int round;
 
         public static bool IsOpen { get; private set; }
+
+        public static bool IsFighterFlashing(string fighterName)
+        {
+            return IsFighterDamageFlashing(fighterName);
+        }
+
+        public static bool IsFighterDamageFlashing(string fighterName)
+        {
+            if (string.IsNullOrEmpty(fighterName))
+            {
+                return false;
+            }
+
+            float endTime;
+            if (!DamageFlashEndTimes.TryGetValue(fighterName, out endTime))
+            {
+                return false;
+            }
+
+            if (Time.unscaledTime >= endTime)
+            {
+                DamageFlashEndTimes.Remove(fighterName);
+                return false;
+            }
+
+            var elapsed = DamageFlashDuration - (endTime - Time.unscaledTime);
+            return Mathf.FloorToInt(elapsed / DamageFlashInterval) % 2 == 0;
+        }
+
+        public static bool IsFighterHealFlashing(string fighterName)
+        {
+            if (string.IsNullOrEmpty(fighterName))
+            {
+                return false;
+            }
+
+            float endTime;
+            if (!HealFlashEndTimes.TryGetValue(fighterName, out endTime))
+            {
+                return false;
+            }
+
+            if (Time.unscaledTime >= endTime)
+            {
+                HealFlashEndTimes.Remove(fighterName);
+                return false;
+            }
+
+            var elapsed = DamageFlashDuration - (endTime - Time.unscaledTime);
+            return Mathf.FloorToInt(elapsed / DamageFlashInterval) % 2 == 0;
+        }
 
         public static void Open(IEnumerable<Monster> encounterMonsters, Biome encounterBiome)
         {
@@ -104,6 +168,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             window.roundActions.Clear();
             window.pendingHeroes.Clear();
             window.heroSelections.Clear();
+            DamageFlashEndTimes.Clear();
+            HealFlashEndTimes.Clear();
             window.targetSelectionCandidates.Clear();
             window.targetSelectionDone = null;
             window.gameState = GameState.GetOrCreate();
@@ -137,6 +203,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (state == CombatState.Message)
             {
+                AdvanceTextReveal();
                 if (InputManager.GetCommandDown(InputCommand.Interact) ||
                     InputManager.GetCommandDown(InputCommand.Cancel))
                 {
@@ -152,13 +219,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            var moveY = InputManager.GetMoveYDown();
+            var moveY = GetCombatMenuMoveY();
             if (moveY != 0)
             {
                 MoveSelection(moveY);
             }
 
-            if (InputManager.GetCommandDown(InputCommand.Interact))
+            if (CanAcceptMenuInteract() && InputManager.GetCommandDown(InputCommand.Interact))
             {
                 ActivateSelection();
             }
@@ -237,7 +304,18 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 var slotRect = new Rect(startX + i * (slotWidth + gap), y, slotWidth, slotHeight);
                 if (texture != null)
                 {
+                    var previousColor = GUI.color;
+                    if (IsFighterHealFlashing(monster.Instance.Name))
+                    {
+                        GUI.color = Color.blue;
+                    }
+                    else if (IsFighterDamageFlashing(monster.Instance.Name))
+                    {
+                        GUI.color = Color.red;
+                    }
+
                     DrawTextureAtNativeCombatSize(texture, slotRect, scale);
+                    GUI.color = previousColor;
                 }
 
                 DrawHealthBar(
@@ -255,10 +333,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var panelRect = new Rect(8f * scale, Screen.height - panelHeight - 8f * scale, panelWidth, panelHeight);
             GUI.Box(panelRect, GUIContent.none, panelStyle);
 
-            GUI.Label(
-                new Rect(panelRect.x + 14f * scale, panelRect.y + 12f * scale, panelRect.width - 28f * scale, 70f * scale),
-                messageText,
-                labelStyle);
+            if (state == CombatState.Message)
+            {
+                var messageBottomPadding = IsTextFullyRevealed ? 56f * scale : 16f * scale;
+                var messageRect = new Rect(
+                    panelRect.x + 14f * scale,
+                    panelRect.y + 12f * scale,
+                    panelRect.width - 28f * scale,
+                    panelRect.height - 24f * scale - messageBottomPadding);
+                DrawScrollableMessage(messageRect, DisplayedMessage, scale);
+            }
 
             if (state == CombatState.ChooseAction)
             {
@@ -284,7 +368,32 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            DrawCenteredButtons(panelRect, scale, new[] { new CombatButton("OK", ContinueMessage) });
+            if (IsTextFullyRevealed)
+            {
+                DrawCenteredButtons(panelRect, scale, new[] { new CombatButton("OK", ContinueMessage) });
+            }
+        }
+
+        private void DrawScrollableMessage(Rect rect, string text, float scale)
+        {
+            var content = text ?? "";
+            var contentHeight = Mathf.Max(
+                rect.height,
+                labelStyle.CalcHeight(new GUIContent(content), rect.width - 18f * scale) + 4f * scale);
+            if (contentHeight <= rect.height + 1f)
+            {
+                GUI.Label(rect, content, labelStyle);
+                return;
+            }
+
+            messageScrollPosition = GUI.BeginScrollView(
+                rect,
+                messageScrollPosition,
+                new Rect(0f, 0f, rect.width - 18f * scale, contentHeight),
+                false,
+                true);
+            GUI.Label(new Rect(0f, 0f, rect.width - 18f * scale, contentHeight), content, labelStyle);
+            GUI.EndScrollView();
         }
 
         private static Rect GetBattlefieldRect(float scale)
@@ -329,12 +438,20 @@ namespace Redpoint.DungeonEscape.Unity.UI
             selectedMenuIndex = 0;
             messageText = text;
             afterMessage = next;
+            messageScrollPosition = Vector2.zero;
+            StartTextReveal();
         }
 
         private void ContinueMessage()
         {
             if (state != CombatState.Message)
             {
+                return;
+            }
+
+            if (!IsTextFullyRevealed)
+            {
+                FinishTextReveal();
                 return;
             }
 
@@ -347,6 +464,69 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             next();
+        }
+
+        private bool IsTextFullyRevealed
+        {
+            get { return string.IsNullOrEmpty(messageText) || visibleMessageCharacters >= messageText.Length; }
+        }
+
+        private string DisplayedMessage
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(messageText) || IsTextFullyRevealed)
+                {
+                    return messageText;
+                }
+
+                return messageText.Substring(0, Mathf.Clamp(visibleMessageCharacters, 0, messageText.Length));
+            }
+        }
+
+        private void StartTextReveal()
+        {
+            revealCharacterAccumulator = 0f;
+            visibleMessageCharacters = GetTextRevealSpeed() <= 0f || string.IsNullOrEmpty(messageText)
+                ? string.IsNullOrEmpty(messageText) ? 0 : messageText.Length
+                : 0;
+        }
+
+        private void AdvanceTextReveal()
+        {
+            if (IsTextFullyRevealed)
+            {
+                return;
+            }
+
+            var speed = GetTextRevealSpeed();
+            if (speed <= 0f)
+            {
+                FinishTextReveal();
+                return;
+            }
+
+            revealCharacterAccumulator += speed * Time.unscaledDeltaTime;
+            var charactersToAdd = Mathf.FloorToInt(revealCharacterAccumulator);
+            if (charactersToAdd <= 0)
+            {
+                return;
+            }
+
+            revealCharacterAccumulator -= charactersToAdd;
+            visibleMessageCharacters = Mathf.Min(messageText.Length, visibleMessageCharacters + charactersToAdd);
+        }
+
+        private void FinishTextReveal()
+        {
+            visibleMessageCharacters = string.IsNullOrEmpty(messageText) ? 0 : messageText.Length;
+            revealCharacterAccumulator = 0f;
+        }
+
+        private static float GetTextRevealSpeed()
+        {
+            var settings = SettingsCache.Current;
+            return settings == null ? 60f : settings.DialogTextCharactersPerSecond;
         }
 
         private void MoveSelection(int moveY)
@@ -600,6 +780,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             state = CombatState.ChooseSpell;
             selectedMenuIndex = GetRememberedSpellIndex(spells);
             messageText = "Choose a spell for " + actingHero.Name + ".";
+            BlockMenuInteractUntilRelease();
         }
 
         private void BeginItemSelection()
@@ -619,6 +800,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             state = CombatState.ChooseItem;
             selectedMenuIndex = GetRememberedItemIndex(items);
             messageText = "Choose an item for " + actingHero.Name + ".";
+            BlockMenuInteractUntilRelease();
         }
 
         private void BeginTargetSelection(
@@ -657,6 +839,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             state = CombatState.ChooseTarget;
             selectedMenuIndex = GetRememberedTargetIndex(candidates);
             messageText = title;
+            BlockMenuInteractUntilRelease();
         }
 
         private void ResolveHeroSpell(Spell spell)
@@ -1170,7 +1353,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             Audio.GetOrCreate().PlaySoundEffect("spell", true);
+            var startingHealth = CaptureTargetHealth(targets);
             var message = spell.Cast(targets ?? new List<IFighter>(), new BaseState[0], caster, gameState, round);
+            FlashHealthChangedTargets(startingHealth, targets);
             return string.IsNullOrEmpty(message) ? caster.Name + " casts " + spell.Name + "." : message.TrimEnd();
         }
 
@@ -1195,7 +1380,17 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             foreach (var target in selectedTargets)
             {
+                var startingHealth = target == null ? 0 : target.Health;
                 var result = skill.Do(target, source, null, gameState, round);
+                if (target != null && target.Health < startingHealth)
+                {
+                    StartDamageFlash(target);
+                }
+                else if (target != null && target.Health > startingHealth)
+                {
+                    StartHealFlash(target);
+                }
+
                 if (!string.IsNullOrEmpty(result.Item1))
                 {
                     message += result.Item1;
@@ -1220,7 +1415,17 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 : targets;
             foreach (var target in selectedTargets)
             {
+                var startingHealth = target == null ? 0 : target.Health;
                 var result = item.Use(source, target, null, gameState, round);
+                if (target != null && target.Health < startingHealth)
+                {
+                    StartDamageFlash(target);
+                }
+                else if (target != null && target.Health > startingHealth)
+                {
+                    StartHealFlash(target);
+                }
+
                 if (result.Item2)
                 {
                     worked = true;
@@ -1245,6 +1450,72 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             return string.IsNullOrEmpty(message) ? source.Name + " used " + item.Name + "." : message.TrimEnd();
+        }
+
+        private static Dictionary<string, int> CaptureTargetHealth(IEnumerable<IFighter> targets)
+        {
+            var health = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            if (targets == null)
+            {
+                return health;
+            }
+
+            foreach (var target in targets)
+            {
+                if (target != null && !string.IsNullOrEmpty(target.Name))
+                {
+                    health[target.Name] = target.Health;
+                }
+            }
+
+            return health;
+        }
+
+        private static void FlashHealthChangedTargets(IDictionary<string, int> startingHealth, IEnumerable<IFighter> targets)
+        {
+            if (startingHealth == null || targets == null)
+            {
+                return;
+            }
+
+            foreach (var target in targets)
+            {
+                int previousHealth;
+                if (target != null &&
+                    !string.IsNullOrEmpty(target.Name) &&
+                    startingHealth.TryGetValue(target.Name, out previousHealth) &&
+                    target.Health < previousHealth)
+                {
+                    StartDamageFlash(target);
+                }
+                else if (target != null &&
+                         !string.IsNullOrEmpty(target.Name) &&
+                         startingHealth.TryGetValue(target.Name, out previousHealth) &&
+                         target.Health > previousHealth)
+                {
+                    StartHealFlash(target);
+                }
+            }
+        }
+
+        private static void StartDamageFlash(IFighter target)
+        {
+            if (target == null || string.IsNullOrEmpty(target.Name))
+            {
+                return;
+            }
+
+            DamageFlashEndTimes[target.Name] = Time.unscaledTime + DamageFlashDuration;
+        }
+
+        private static void StartHealFlash(IFighter target)
+        {
+            if (target == null || string.IsNullOrEmpty(target.Name))
+            {
+                return;
+            }
+
+            HealFlashEndTimes[target.Name] = Time.unscaledTime + DamageFlashDuration;
         }
 
         private string Fight(IFighter source, IFighter target)
@@ -1281,6 +1552,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 target.Health -= damage;
                 target.PlayDamageAnimation();
+                StartDamageFlash(target);
                 message += " took " + damage + " points of damage";
                 message += "\n" + target.HitCheck().TrimEnd();
             }
@@ -1412,11 +1684,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
             TryGetSpriteDelegate<T> getSprite,
             Action<T> onSelect)
         {
-            var rowHeight = 38f * scale;
-            var menuWidth = Mathf.Min(360f * scale, panelRect.width - 28f * scale);
+            var rowHeight = GetCombatMenuRowHeight(scale);
+            var menuWidth = GetCombatMenuWidth(panelRect, scale);
             var x = panelRect.x + 14f * scale;
-            var y = panelRect.y + 82f * scale;
+            var y = GetCombatMenuY(panelRect, scale);
             GUI.Label(new Rect(x, y - 30f * scale, menuWidth, 24f * scale), title, titleStyle);
+            var itemTextStyle = new GUIStyle(labelStyle)
+            {
+                alignment = TextAnchor.MiddleLeft,
+                wordWrap = false
+            };
 
             for (var i = 0; i < values.Count; i++)
             {
@@ -1430,28 +1707,24 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 Sprite sprite;
                 if (getSprite(values[i], out sprite) && sprite != null && sprite.texture != null)
                 {
-                    DrawSprite(sprite, new Rect(rect.x + 6f * scale, rect.y + 3f * scale, 32f * scale, 32f * scale));
+                    var iconSize = 26f * scale;
+                    DrawSprite(sprite, new Rect(rect.x + 6f * scale, rect.y + (rect.height - iconSize) / 2f, iconSize, iconSize));
                 }
 
                 GUI.Label(
-                    new Rect(rect.x + 44f * scale, rect.y, rect.width - 50f * scale, rect.height),
+                    new Rect(rect.x + 40f * scale, rect.y, rect.width - 46f * scale, rect.height),
                     getLabel(values[i]),
-                    labelStyle);
+                    itemTextStyle);
             }
 
-            var backRect = new Rect(x, panelRect.yMax - 40f * scale, 112f * scale, 30f * scale);
-            if (GUI.Button(backRect, "Back", buttonStyle))
-            {
-                ReturnToActionMenu();
-            }
         }
 
         private void DrawMenuButtons(Rect panelRect, float scale, string title, IList<CombatButton> buttons)
         {
-            var menuWidth = 240f * scale;
-            var rowHeight = 32f * scale;
+            var menuWidth = GetCombatMenuWidth(panelRect, scale);
+            var rowHeight = GetCombatMenuRowHeight(scale);
             var x = panelRect.x + 14f * scale;
-            var y = panelRect.y + 82f * scale;
+            var y = GetCombatMenuY(panelRect, scale);
             GUI.Label(new Rect(x, y - 30f * scale, menuWidth, 24f * scale), title, titleStyle);
             for (var i = 0; i < buttons.Count; i++)
             {
@@ -1463,6 +1736,21 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     buttons[i].Action();
                 }
             }
+        }
+
+        private static float GetCombatMenuWidth(Rect panelRect, float scale)
+        {
+            return Mathf.Min(310f * scale, panelRect.width - 28f * scale);
+        }
+
+        private static float GetCombatMenuRowHeight(float scale)
+        {
+            return 32f * scale;
+        }
+
+        private static float GetCombatMenuY(Rect panelRect, float scale)
+        {
+            return panelRect.y + 20f * scale;
         }
 
         private HeroCombatSelection GetHeroSelection()
@@ -1629,17 +1917,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var targets = targetSelectionCandidates == null
                 ? new List<IFighter>()
                 : targetSelectionCandidates.ToList();
-            var buttonWidth = 126f * scale;
-            var buttonHeight = 32f * scale;
-            var gap = 8f * scale;
-            var totalWidth = targets.Count * buttonWidth + Math.Max(0, targets.Count - 1) * gap;
-            var startX = panelRect.x + (panelRect.width - totalWidth) / 2f;
-            var y = panelRect.yMax - buttonHeight - 16f * scale;
+            var rowHeight = GetCombatMenuRowHeight(scale);
+            var listWidth = GetCombatMenuWidth(panelRect, scale);
+            var x = panelRect.x + 14f * scale;
+            var y = GetCombatMenuY(panelRect, scale);
+
             for (var i = 0; i < targets.Count; i++)
             {
                 var target = targets[i];
-                var rect = new Rect(startX + i * (buttonWidth + gap), y, buttonWidth, buttonHeight);
-                if (GUI.Button(rect, target.Name, GetMenuButtonStyle(i == selectedMenuIndex)))
+                var rect = new Rect(x, y + i * (rowHeight + 4f * scale), listWidth, rowHeight);
+                if (GUI.Button(rect, target.Name, GetTargetButtonStyle(target, i == selectedMenuIndex)))
                 {
                     selectedMenuIndex = i;
                     ActivateTargetSelection(i);
@@ -1696,7 +1983,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             panelStyle = uiTheme.PanelStyle;
             labelStyle = new GUIStyle(uiTheme.LabelStyle)
             {
-                alignment = TextAnchor.MiddleCenter,
+                alignment = TextAnchor.UpperLeft,
                 wordWrap = true
             };
             titleStyle = new GUIStyle(uiTheme.TitleStyle)
@@ -1707,6 +1994,64 @@ namespace Redpoint.DungeonEscape.Unity.UI
             buttonStyle = uiTheme.ButtonStyle;
         }
 
+        private int GetCombatMenuMoveY()
+        {
+            var held = InputManager.GetUiMoveYWithRightStick();
+            if (held == 0)
+            {
+                ResetMenuMoveRepeat();
+                return 0;
+            }
+
+            if (held != repeatingMenuMoveY)
+            {
+                repeatingMenuMoveY = held;
+                nextMenuMoveYTime = Time.unscaledTime + InitialNavigationRepeatDelay;
+                return held;
+            }
+
+            if (Time.unscaledTime < nextMenuMoveYTime)
+            {
+                return 0;
+            }
+
+            nextMenuMoveYTime = Time.unscaledTime + NavigationRepeatDelay;
+            return held;
+        }
+
+        private void ResetMenuMoveRepeat()
+        {
+            repeatingMenuMoveY = 0;
+            nextMenuMoveYTime = 0f;
+        }
+
+        private void BlockMenuInteractUntilRelease()
+        {
+            acceptMenuInteractAfterFrame = Time.frameCount + 1;
+            waitForMenuInteractRelease = true;
+        }
+
+        private bool CanAcceptMenuInteract()
+        {
+            if (Time.frameCount <= acceptMenuInteractAfterFrame)
+            {
+                return false;
+            }
+
+            if (!waitForMenuInteractRelease)
+            {
+                return true;
+            }
+
+            if (InputManager.GetCommand(InputCommand.Interact))
+            {
+                return false;
+            }
+
+            waitForMenuInteractRelease = false;
+            return true;
+        }
+
         private GUIStyle GetMenuButtonStyle(bool selected)
         {
             if (uiTheme == null)
@@ -1715,6 +2060,17 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             return selected ? uiTheme.SelectedTabStyle : uiTheme.ButtonStyle;
+        }
+
+        private GUIStyle GetTargetButtonStyle(IFighter target, bool selected)
+        {
+            var style = new GUIStyle(GetMenuButtonStyle(selected));
+            var color = GetHealthColor(target == null ? 0 : target.Health, target == null ? 0 : target.MaxHealth);
+            style.normal.textColor = color;
+            style.hover.textColor = color;
+            style.active.textColor = color;
+            style.focused.textColor = color;
+            return style;
         }
 
         private float GetPixelScale()
@@ -1903,7 +2259,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             GUI.Box(rect, GUIContent.none, buttonStyle);
             var previousColor = GUI.color;
-            GUI.color = Color.white;
+            GUI.color = GetHealthColor(currentHealth, maxHealth);
             var inset = Mathf.Max(1f, uiTheme.BorderThickness);
             var progress = maxHealth <= 0 ? 0f : Mathf.Clamp01((float)currentHealth / maxHealth);
             GUI.DrawTexture(
@@ -1914,6 +2270,22 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     Mathf.Max(0f, rect.height - inset * 2f)),
                 Texture2D.whiteTexture);
             GUI.color = previousColor;
+        }
+
+        private static Color GetHealthColor(int currentHealth, int maxHealth)
+        {
+            if (maxHealth <= 0 || currentHealth <= 0)
+            {
+                return Color.red;
+            }
+
+            var progress = Mathf.Clamp01((float)currentHealth / maxHealth);
+            if (progress < 0.1f)
+            {
+                return new Color(1f, 0.55f, 0f, 1f);
+            }
+
+            return progress < 0.5f ? Color.yellow : Color.green;
         }
 
         private static string GetBackgroundAssetPath(Biome biome)

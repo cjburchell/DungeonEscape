@@ -6,6 +6,7 @@
   "MusicVolume": 0.5,
   "IsFullScreen": true,
   "UiScale": 1.0,
+  "DialogTextCharactersPerSecond": 60.0,
   "SprintBoost": 1.5,
   "TurnMoveDelaySeconds": 0.12,
   "AutoSaveEnabled": true,

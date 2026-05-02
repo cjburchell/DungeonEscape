@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Redpoint.DungeonEscape.State;
@@ -19,7 +20,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private UiTheme uiTheme;
         private GUIStyle statusStyle;
         private GUIStyle deadStyle;
-        private GUIStyle lowHealthStyle;
         private float lastPixelScale;
         private string lastThemeSignature;
 
@@ -104,7 +104,18 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 GUILayout.Height(portraitHeight));
             if (UiAssetResolver.TryGetHeroSprite(member, out sprite))
             {
+                var previousColor = GUI.color;
+                if (CombatWindow.IsFighterHealFlashing(member.Name))
+                {
+                    GUI.color = Color.blue;
+                }
+                else if (CombatWindow.IsFighterDamageFlashing(member.Name))
+                {
+                    GUI.color = Color.red;
+                }
+
                 DrawSprite(spriteRect, sprite);
+                GUI.color = previousColor;
             }
 
             GUILayout.Space(5f * scale);
@@ -146,13 +157,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawProgressRow(string label, int value, int maxValue, GUIStyle style, float width, float scale)
         {
+            var fillColor = string.Equals(label, "HP", StringComparison.OrdinalIgnoreCase)
+                ? GetHealthColor(value, maxValue)
+                : Color.blue;
             GUILayout.BeginHorizontal(GUILayout.Width(width), GUILayout.Height(GetLineHeight(scale)));
             GUILayout.Label(label + ":", style, GUILayout.Width(24f * scale), GUILayout.Height(GetLineHeight(scale)));
-            DrawProgressBar(maxValue <= 0 ? 0f : Mathf.Clamp01((float)value / maxValue), width - 28f * scale, 10f * scale);
+            DrawProgressBar(maxValue <= 0 ? 0f : Mathf.Clamp01((float)value / maxValue), width - 28f * scale, 10f * scale, fillColor);
             GUILayout.EndHorizontal();
         }
 
-        private void DrawProgressBar(float progress, float width, float height)
+        private void DrawProgressBar(float progress, float width, float height, Color fillColor)
         {
             var rect = GUILayoutUtility.GetRect(width, height, GUILayout.Width(width), GUILayout.Height(GetLineHeight(GetPixelScale())));
             rect.y += (rect.height - height) / 2f;
@@ -160,7 +174,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUI.Box(rect, GUIContent.none, uiTheme.ButtonStyle);
 
             var previousColor = GUI.color;
-            GUI.color = Color.white;
+            GUI.color = fillColor;
             var inset = Mathf.Max(1f, uiTheme.BorderThickness);
             GUI.DrawTexture(
                 new Rect(
@@ -182,11 +196,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
             if (member.IsDead)
             {
                 return deadStyle;
-            }
-
-            if (member.MaxHealth > 0 && member.Health < member.MaxHealth / 10)
-            {
-                return lowHealthStyle;
             }
 
             return statusStyle;
@@ -256,12 +265,22 @@ namespace Redpoint.DungeonEscape.Unity.UI
             deadStyle.active.textColor = Color.red;
             deadStyle.focused.textColor = Color.red;
 
-            lowHealthStyle = new GUIStyle(statusStyle);
-            var orange = new Color(1f, 0.55f, 0f, 1f);
-            lowHealthStyle.normal.textColor = orange;
-            lowHealthStyle.hover.textColor = orange;
-            lowHealthStyle.active.textColor = orange;
-            lowHealthStyle.focused.textColor = orange;
+        }
+
+        private static Color GetHealthColor(int currentHealth, int maxHealth)
+        {
+            if (maxHealth <= 0 || currentHealth <= 0)
+            {
+                return Color.red;
+            }
+
+            var progress = Mathf.Clamp01((float)currentHealth / maxHealth);
+            if (progress < 0.1f)
+            {
+                return new Color(1f, 0.55f, 0f, 1f);
+            }
+
+            return progress < 0.5f ? Color.yellow : Color.green;
         }
 
         private float GetPixelScale()

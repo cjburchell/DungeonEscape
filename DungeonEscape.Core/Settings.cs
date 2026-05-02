@@ -26,6 +26,7 @@ namespace Redpoint.DungeonEscape
         public string Version { get; set; }
         public int MaxPartyMembers { get; set; } = 4;
         public float UiScale { get; set; } = 1f;
+        public float DialogTextCharactersPerSecond { get; set; } = 60f;
         public float SprintBoost { get; set; } = 1.5f;
         public float TurnMoveDelaySeconds { get; set; } = 0.12f;
         public bool AutoSaveEnabled { get; set; } = true;

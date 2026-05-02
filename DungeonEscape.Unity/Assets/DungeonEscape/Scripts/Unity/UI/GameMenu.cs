@@ -1944,9 +1944,17 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var oldSoundEffectsVolume = settings.SoundEffectsVolume;
             var oldAutoSaveEnabled = settings.AutoSaveEnabled;
             var oldAutoSaveInterval = settings.AutoSaveIntervalSeconds;
+            var oldDialogTextSpeed = settings.DialogTextCharactersPerSecond;
 
             BeginSelectableRow();
             settings.UiScale = DrawSliderRow("UI Scale: " + settings.UiScale.ToString("0.00"), settings.UiScale <= 0f ? 1f : settings.UiScale, MinUiScale, MaxUiScale);
+            EndSelectableRow();
+            BeginSelectableRow();
+            settings.DialogTextCharactersPerSecond = DrawSliderRow(
+                "Dialog Text Speed: " + GetDialogTextSpeedLabel(settings.DialogTextCharactersPerSecond),
+                Mathf.Clamp(settings.DialogTextCharactersPerSecond, 0f, 120f),
+                0f,
+                120f);
             EndSelectableRow();
             GUILayout.Space(8f * GetPixelScale());
             BeginSelectableRow();
@@ -1975,7 +1983,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 !Mathf.Approximately(oldUiScale, settings.UiScale) ||
                 oldFullScreen != settings.IsFullScreen ||
                 oldAutoSaveEnabled != settings.AutoSaveEnabled ||
-                !Mathf.Approximately(oldAutoSaveInterval, settings.AutoSaveIntervalSeconds);
+                !Mathf.Approximately(oldAutoSaveInterval, settings.AutoSaveIntervalSeconds) ||
+                !Mathf.Approximately(oldDialogTextSpeed, settings.DialogTextCharactersPerSecond);
 
             if (otherChanged)
             {
@@ -2053,6 +2062,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private static float GetAutoSaveInterval(Settings settings)
         {
             return settings.AutoSaveIntervalSeconds <= 0f ? 5f : settings.AutoSaveIntervalSeconds;
+        }
+
+        private static string GetDialogTextSpeedLabel(float speed)
+        {
+            return speed <= 0f ? "Instant" : Mathf.RoundToInt(speed) + " chars/sec";
         }
 
         private static float GetTurnMoveDelay(Settings settings)
@@ -2331,7 +2345,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             switch (currentSettingsTab)
             {
                 case SettingsTab.General:
-                    return 7;
+                    return 8;
                 case SettingsTab.Ui:
                     return 9;
                 case SettingsTab.Input:
@@ -2599,15 +2613,19 @@ namespace Redpoint.DungeonEscape.Unity.UI
                         settings.UiScale = Mathf.Clamp((settings.UiScale <= 0f ? 1f : settings.UiScale) + 0.05f * delta, MinUiScale, MaxUiScale);
                         ApplySettings(settings);
                         break;
-                    case 2:
+                    case 1:
+                        settings.DialogTextCharactersPerSecond = Mathf.Clamp(settings.DialogTextCharactersPerSecond + 5f * delta, 0f, 120f);
+                        ApplySettings(settings);
+                        break;
+                    case 3:
                         settings.MusicVolume = Mathf.Clamp01(settings.MusicVolume + 0.01f * delta);
                         ApplyAudioSettings(settings);
                         break;
-                    case 3:
+                    case 4:
                         settings.SoundEffectsVolume = Mathf.Clamp01(settings.SoundEffectsVolume + 0.01f * delta);
                         ApplyAudioSettings(settings);
                         break;
-                    case 5:
+                    case 6:
                         settings.AutoSaveIntervalSeconds = Mathf.Clamp(GetAutoSaveInterval(settings) + 5f * delta, 5f, 300f);
                         ApplySettings(settings);
                         break;
@@ -2661,12 +2679,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             var settingsRowIndex = selectedRowIndex - 1;
-            if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 1)
+            if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 2)
             {
                 settings.IsFullScreen = !settings.IsFullScreen;
                 ApplySettings(settings);
             }
-            else if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 4)
+            else if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 5)
             {
                 settings.AutoSaveEnabled = !settings.AutoSaveEnabled;
                 ApplySettings(settings);

@@ -261,6 +261,18 @@ Status legend:
 
 ## UI, Inventory, Stores, And Healers
 
+### [ ] Dialog Text Reveal Speed
+
+- Open Settings > General.
+- Change Dialog Text Speed to a slow value, then talk to an NPC or open a dialog with choices.
+- Expected: dialog text writes out gradually and choices are hidden until the full text is visible.
+- Press Interact while the text is still writing.
+- Expected: the full text appears immediately, but the dialog choice or OK action is not selected by that same press.
+- Set Dialog Text Speed to Instant and open another dialog.
+- Expected: the full dialog text and choices appear immediately.
+- Trigger a combat message.
+- Expected: combat footer messages use the same reveal speed and the OK button appears only after the text is complete.
+
 ### [x] Fullscreen Setting Applies
 
 - Open the in-game menu and go to Settings > General.
@@ -680,8 +692,19 @@ Status legend:
 - Expected: combat rolls monster stats, queues monster actions, then asks every living active party member to choose an action before resolving the round.
 - Choose Fight.
 - If more than one monster is alive, choose a monster target.
+- Expected: target choices appear in a vertical black list with a white border and a gray highlighted row.
+- Use keyboard, D-pad, and right stick up/down while choosing actions, spells, items, and targets.
+- Expected: the highlighted row moves one row at a time, does not skip rows on D-pad presses, and Interact confirms the highlighted row.
+- Damage a monster below half health and below ten percent health if practical.
+- Expected: monster target text keeps the existing health threshold colors, and monster health bar fill is green above 50%, yellow below 50%, orange below 10%, and red at 0 HP, while the progress bar border stays white.
+- Damage an active party member below the same thresholds if practical.
+- Expected: party HP bar fill uses the same green/yellow/orange/red threshold colors, MP bar fill is blue, and party status text only changes color when a party member is dead.
 - Expected: after all party members have chosen actions, queued hero and monster actions resolve in agility order.
 - Expected: attacks use the old hit, critical hit, and damage rules, and target HP bars update as actions resolve.
+- Expected: when a monster takes damage, that monster sprite flashes briefly a few times.
+- Expected: when a party member takes damage, that member's portrait in the party status window flashes briefly a few times.
+- Heal a damaged party member during combat.
+- Expected: the healed party member's portrait flashes blue briefly a few times.
 - Continue through monster turns.
 - Expected: monsters use their queued actions and the party status window updates HP as damage is applied.
 - Continue rounds until either all monsters or all active party members are defeated.

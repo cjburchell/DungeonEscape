@@ -140,6 +140,23 @@ namespace Redpoint.DungeonEscape.Unity.Core
             return axis < -AxisDeadZone ? 1 : 0;
         }
 
+        public static int GetUiMoveYWithRightStick()
+        {
+            var moveY = GetMoveY();
+            if (moveY != 0)
+            {
+                return moveY;
+            }
+
+            var axis = GetGamepadRightStickY();
+            if (axis > AxisDeadZone)
+            {
+                return -1;
+            }
+
+            return axis < -AxisDeadZone ? 1 : 0;
+        }
+
         public static int GetMoveXDown()
         {
             if (GetCommandDown(InputCommand.MoveLeft))
@@ -612,6 +629,24 @@ namespace Redpoint.DungeonEscape.Unity.Core
             }
 
             return GetLegacyAxis("Vertical");
+        }
+
+        private static float GetGamepadRightStickY()
+        {
+            var gamepad = Gamepad.current;
+            if (gamepad != null)
+            {
+                return gamepad.rightStick.ReadValue().y;
+            }
+
+            return GetFirstActiveLegacyAxis(
+                "Right Stick Y",
+                "Right Y",
+                "RightVertical",
+                "Right Vertical",
+                "4th Axis",
+                "5th Axis",
+                "RZ");
         }
 
         private static string TryCaptureGamepadButton()

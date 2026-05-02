@@ -807,15 +807,12 @@ namespace Redpoint.DungeonEscape.Unity
                         ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item));
                     }
                 }
-                else
+                else if (hero.CanEquipItem(item))
                 {
-                    SetMenuGuiEnabled(hero.CanEquipItem(item));
                     if (GUILayout.Button("Equip", buttonStyle, GUILayout.Width(96f * GetPixelScale())))
                     {
                         ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item));
                     }
-
-                    SetMenuGuiEnabled(true);
                 }
 
                 GUILayout.EndHorizontal();
@@ -859,54 +856,60 @@ namespace Redpoint.DungeonEscape.Unity
                 GUILayout.Label("Stats: " + item.Item.StatString, smallStyle);
             }
 
-            if (item.Slots != null && item.Slots.Count > 0)
-            {
-                GUILayout.Label("Slots: " + string.Join(", ", item.Slots.Select(slot => slot.ToString()).ToArray()), smallStyle);
-            }
-
-            if (item.Classes != null && item.Classes.Count > 0)
-            {
-                GUILayout.Label("Classes: " + string.Join(", ", item.Classes.Select(itemClass => itemClass.ToString()).ToArray()), smallStyle);
-            }
-
             if (item.MaxCharges > 0)
             {
                 GUILayout.Label("Charges: " + item.Charges + "/" + item.MaxCharges, smallStyle);
             }
 
             GUILayout.Space(8f * GetPixelScale());
-            SetMenuGuiEnabled(gameState != null && CanUseItemFromInventory(hero, item));
-            if (GUILayout.Button("Use", buttonStyle))
+            if (gameState != null && CanUseItemFromInventory(hero, item))
             {
-                ShowUseItemTargetPicker(hero, item);
+                if (GUILayout.Button("Use", buttonStyle))
+                {
+                    ShowUseItemTargetPicker(hero, item);
+                }
             }
 
-            SetMenuGuiEnabled(item.IsEquipped);
-            if (GUILayout.Button("Unequip", buttonStyle))
+            if (item.IsEquipped)
             {
-                ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item));
+                if (GUILayout.Button("Unequip", buttonStyle))
+                {
+                    ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item));
+                }
+            }
+            else if (hero.CanEquipItem(item))
+            {
+                if (GUILayout.Button("Equip", buttonStyle))
+                {
+                    ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item));
+                }
             }
 
-            SetMenuGuiEnabled(!item.IsEquipped && hero.CanEquipItem(item));
-            if (GUILayout.Button("Equip", buttonStyle))
+            if (HasTransferTarget(hero))
             {
-                ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item));
+                if (GUILayout.Button("Transfer", buttonStyle))
+                {
+                    ShowTransferItemTargetPicker(hero, item);
+                }
             }
 
-            SetMenuGuiEnabled(true);
-            if (GUILayout.Button("Transfer", buttonStyle))
+            if (item.Type != ItemType.Quest)
             {
-                ShowTransferItemTargetPicker(hero, item);
+                if (GUILayout.Button("Drop", buttonStyle))
+                {
+                    ShowDropItemConfirmation(hero, item);
+                }
             }
 
-            SetMenuGuiEnabled(item.Type != ItemType.Quest);
-            if (GUILayout.Button("Drop", buttonStyle))
-            {
-                ShowDropItemConfirmation(hero, item);
-            }
-
-            SetMenuGuiEnabled(true);
             GUILayout.EndVertical();
+        }
+
+        private bool HasTransferTarget(Hero source)
+        {
+            var party = GetParty();
+            return party != null &&
+                   source != null &&
+                   GetInventoryMembers(party).Any(member => !ReferenceEquals(member, source) && member.Items.Count < Party.MaxItems);
         }
 
         private void ShowTransferItemTargetPicker(Hero source, ItemInstance item)
@@ -1408,22 +1411,17 @@ namespace Redpoint.DungeonEscape.Unity
                 ConfirmSaveManual(selectedRowIndex, save);
             }
 
-            SetMenuGuiEnabled(IsUsableSave(save));
-            if (GUILayout.Button("Load", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
+            if (IsUsableSave(save))
             {
-                ConfirmLoadManual(selectedRowIndex);
-            }
+                if (GUILayout.Button("Load", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
+                {
+                    ConfirmLoadManual(selectedRowIndex);
+                }
 
-            if (GUILayout.Button("Delete", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
-            {
-                ConfirmDeleteManual(selectedRowIndex);
-            }
-
-            SetMenuGuiEnabled(true);
-            GUILayout.Space(12f * GetPixelScale());
-            if (GUILayout.Button("New Game", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
-            {
-                ConfirmRestartNewGame();
+                if (GUILayout.Button("Delete", buttonStyle, GUILayout.Height(32f * GetPixelScale())))
+                {
+                    ConfirmDeleteManual(selectedRowIndex);
+                }
             }
 
             GUILayout.EndVertical();
@@ -1435,7 +1433,7 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 ShowMenuModal(
                     "Save",
-                    "Save over slot " + (slotIndex + 1) + "?",
+                    "Save over this quest?",
                     new[] { "Save", "Cancel" },
                     index =>
                     {
@@ -1453,15 +1451,15 @@ namespace Redpoint.DungeonEscape.Unity
         private void SaveManual(int slotIndex)
         {
             ShowSaveMessage(gameState != null && gameState.SaveManual(slotIndex)
-                ? "Saved slot " + (slotIndex + 1) + "."
-                : "Could not save slot " + (slotIndex + 1) + ".");
+                ? "Saved quest."
+                : "Could not save quest.");
         }
 
         private void ConfirmLoadManual(int slotIndex)
         {
             ShowMenuModal(
                 "Load",
-                "Load slot " + (slotIndex + 1) + "? Unsaved progress will be lost.",
+                "Load this quest? Unsaved progress will be lost.",
                 new[] { "Load", "Cancel" },
                 index =>
                 {
@@ -1473,7 +1471,7 @@ namespace Redpoint.DungeonEscape.Unity
                         }
                         else
                         {
-                            ShowSaveMessage("Could not load slot " + (slotIndex + 1) + ".");
+                            ShowSaveMessage("Could not load quest.");
                         }
                     }
                 });
@@ -1483,15 +1481,15 @@ namespace Redpoint.DungeonEscape.Unity
         {
             ShowMenuModal(
                 "Delete",
-                "Delete slot " + (slotIndex + 1) + "?",
+                "Delete this quest?",
                 new[] { "Delete", "Cancel" },
                 index =>
                 {
                     if (index == 0)
                     {
                         ShowSaveMessage(gameState != null && gameState.DeleteManual(slotIndex)
-                            ? "Deleted slot " + (slotIndex + 1) + "."
-                            : "Could not delete slot " + (slotIndex + 1) + ".");
+                            ? "Deleted quest."
+                            : "Could not delete quest.");
                     }
                 });
         }

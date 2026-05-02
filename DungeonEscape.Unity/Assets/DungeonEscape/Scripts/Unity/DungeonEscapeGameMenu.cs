@@ -809,7 +809,7 @@ namespace Redpoint.DungeonEscape.Unity
                 }
                 else if (hero.CanEquipItem(item))
                 {
-                    if (GUILayout.Button("Equip", buttonStyle, GUILayout.Width(96f * GetPixelScale())))
+                    if (GUILayout.Button("Equip", buttonStyle, GUILayout.Width(112f * GetPixelScale())))
                     {
                         ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item));
                     }

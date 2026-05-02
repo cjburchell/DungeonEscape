@@ -8,11 +8,13 @@ namespace Redpoint.DungeonEscape.Unity
     public static class DungeonEscapeUiAssetResolver
     {
         private const string ItemsTilesetAssetPath = "Assets/DungeonEscape/Tilesets/items2.tsx";
+        private const string SpellsTilesetAssetPath = "Assets/DungeonEscape/Tilesets/items.tsx";
         private const string HeroTextureAssetPath = "Assets/DungeonEscape/Images/sprites/hero.png";
         private const int HeroWidth = 32;
         private const int HeroHeight = 48;
 
         private static IList<TiledTilesetSpriteSet> itemSpriteSets;
+        private static IList<TiledTilesetSpriteSet> spellSpriteSets;
         private static readonly Dictionary<string, Sprite> HeroSprites = new Dictionary<string, Sprite>();
 
         public static void Preload(Party party)
@@ -67,8 +69,8 @@ namespace Redpoint.DungeonEscape.Unity
                 return false;
             }
 
-            EnsureItemSpriteSets();
-            return itemSpriteSets != null && TiledTilesetSprites.TryGetSprite(spell.ImageId, itemSpriteSets, out sprite);
+            EnsureSpellSpriteSets();
+            return spellSpriteSets != null && TiledTilesetSprites.TryGetSprite(spell.ImageId, spellSpriteSets, out sprite);
         }
 
         public static bool TryGetHeroSprite(Hero hero, out Sprite sprite)
@@ -128,6 +130,38 @@ namespace Redpoint.DungeonEscape.Unity
             };
 
             itemSpriteSets = TiledTilesetSprites.LoadSpriteSets(
+                new[] { tileset },
+                document.TileWidth,
+                document.TileHeight);
+        }
+
+        private static void EnsureSpellSpriteSets()
+        {
+            if (spellSpriteSets != null)
+            {
+                return;
+            }
+
+            var tilesetPath = ToFullAssetPath(SpellsTilesetAssetPath);
+            if (!File.Exists(tilesetPath))
+            {
+                Debug.LogWarning("Spell tileset not found: " + SpellsTilesetAssetPath);
+                spellSpriteSets = new List<TiledTilesetSpriteSet>();
+                return;
+            }
+
+            var document = TiledTilesetDocumentInfo.Parse(File.ReadAllText(tilesetPath));
+            var tileset = new TiledTilesetInfo
+            {
+                FirstGid = 0,
+                Name = document.Name,
+                Source = SpellsTilesetAssetPath,
+                Document = document,
+                UnityTilesetPath = SpellsTilesetAssetPath,
+                UnityImagePath = ResolveTilesetImageAssetPath(document.ImageSource)
+            };
+
+            spellSpriteSets = TiledTilesetSprites.LoadSpriteSets(
                 new[] { tileset },
                 document.TileWidth,
                 document.TileHeight);

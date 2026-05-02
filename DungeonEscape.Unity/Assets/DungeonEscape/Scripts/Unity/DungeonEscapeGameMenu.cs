@@ -875,7 +875,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            var targets = party.ActiveMembers.ToList();
+            var targets = GetValidSpellTargets(party, spell).ToList();
             if (targets.Count == 0)
             {
                 ShowPartyMessage("No party members can be targeted.");
@@ -893,6 +893,18 @@ namespace Redpoint.DungeonEscape.Unity
 
                 ShowPartyMessage(gameState.CastHeroSpell(caster, spell, targets[selectedIndex]));
             });
+        }
+
+        private static IEnumerable<Hero> GetValidSpellTargets(Party party, Spell spell)
+        {
+            if (party == null)
+            {
+                return Enumerable.Empty<Hero>();
+            }
+
+            return spell != null && spell.Type == SkillType.Revive
+                ? party.DeadMembers
+                : party.AliveMembers;
         }
 
         private Hero GetSelectedPartyHero(IList<Hero> activeMembers, IList<Hero> inactiveMembers)

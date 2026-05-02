@@ -166,7 +166,7 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void ApplyPartySprite(Party party)
         {
-            var hero = party.ActiveMembers.FirstOrDefault();
+            var hero = GetVisualActiveMembers(party).FirstOrDefault();
             if (hero == null ||
                 directionSprites == null ||
                 hero.Class == loadedHeroClass &&
@@ -1371,7 +1371,7 @@ namespace Redpoint.DungeonEscape.Unity
             var party = gameState == null ? null : gameState.Party;
             var members = party == null
                 ? new List<Hero>()
-                : party.ActiveMembers.Skip(1).ToList();
+                : GetVisualActiveMembers(party).Skip(1).ToList();
 
             while (followers.Count > members.Count)
             {
@@ -1538,7 +1538,16 @@ namespace Redpoint.DungeonEscape.Unity
         private int GetPartyFollowerCount()
         {
             var party = gameState == null ? null : gameState.Party;
-            return party == null ? 0 : Math.Max(0, party.ActiveMembers.Count() - 1);
+            return party == null ? 0 : Math.Max(0, GetVisualActiveMembers(party).Count - 1);
+        }
+
+        private static List<Hero> GetVisualActiveMembers(Party party)
+        {
+            return party == null
+                ? new List<Hero>()
+                : party.ActiveMembers
+                    .OrderBy(member => member.IsDead)
+                    .ToList();
         }
 
         private int GetTrailFollowerCount()

@@ -247,7 +247,9 @@ Status legend:
 - Reduce one active follower's HP to `0`, for example by stepping on damage tiles until that party member dies.
 - Expected: that party member's map follower changes from the hero sprite to the coffin visual.
 - Continue moving in all four directions.
-- Expected: the coffin follows in the normal party order and animates/faces consistently with the movement direction.
+- Expected: living active party members remain visually in front of coffin followers.
+- Expected: coffin followers are visually moved behind living active party members without changing the actual party order.
+- Expected: if the cart is visible, coffin followers appear before the cart and the cart remains last.
 - Reduce the active leader's HP to `0`, if possible.
 - Expected: the player visual changes to the coffin visual while on land.
 - Move onto water after obtaining `Deed to the ship`.
@@ -700,7 +702,11 @@ Status legend:
 ### [ ] Combat Spell And Item Icons
 
 - Open the Party tab and switch to a member's Spells sub-tab.
-- Expected: each spell row shows the icon from `items2` using the spell's `ImageId`.
+- Expected: each spell row shows the icon from `items.tsx` using the spell's `ImageId`, matching the old SpellWindow behavior.
+- Cast a single-target non-revive spell such as Heal while one active party member is dead.
+- Expected: dead party members are not shown as valid targets.
+- Cast a revive spell while one active party member is dead.
+- Expected: only dead party members are shown as valid targets.
 - Trigger combat with a spellcaster.
 - Choose Spell from the action panel.
 - Expected: each available spell row shows the same icon, name, and MP cost.
@@ -715,7 +721,8 @@ Status legend:
 - Expected: MP is deducted, the shared spell effect runs, damage/status text is shown, and monster HP updates.
 - Trigger combat with a hero that has a non-attack encounter spell or skill such as Heal, Revive, Clear, Buff, or a similar skill.
 - Choose the spell or skill.
-- Expected: party-member targets are offered when needed, dead members are valid targets for revive effects, and the party status window updates after the effect.
+- Expected: party-member targets are offered when needed, dead members are valid targets only for revive effects, and the party status window updates after the effect.
+- Expected: non-revive spells and skills do not show dead party members in the target list.
 - Use a combat item with an encounter skill.
 - Expected: the item effect runs, charges update, and one-use or depleted items are removed when consumed.
 - Choose Run.

@@ -1252,7 +1252,7 @@ namespace Redpoint.DungeonEscape.Unity
         public string CastHeroSpell(Hero caster, Spell spell, Hero target)
         {
             EnsureInitialized();
-            if (!CanCastHeroSpell(caster, spell) || target == null || !Party.Members.Contains(target))
+            if (!CanCastHeroSpell(caster, spell) || !IsValidHeroSpellTarget(spell, target))
             {
                 return "Cannot cast spell.";
             }
@@ -1270,7 +1270,7 @@ namespace Redpoint.DungeonEscape.Unity
                 return "Cannot cast spell.";
             }
 
-            var targets = Party.ActiveMembers.Cast<IFighter>().ToList();
+            var targets = GetValidHeroSpellTargets(spell).Cast<IFighter>().ToList();
             if (targets.Count == 0)
             {
                 return "No party members can be targeted.";
@@ -1279,6 +1279,22 @@ namespace Redpoint.DungeonEscape.Unity
             var message = spell.Cast(targets, new BaseState[0], caster, this);
             MarkDirty();
             return string.IsNullOrEmpty(message) ? caster.Name + " casts " + spell.Name + "." : message.TrimEnd();
+        }
+
+        private IEnumerable<Hero> GetValidHeroSpellTargets(Spell spell)
+        {
+            EnsureSpellLinked(spell);
+            return spell != null && spell.Type == SkillType.Revive
+                ? Party.DeadMembers
+                : Party.AliveMembers;
+        }
+
+        private bool IsValidHeroSpellTarget(Spell spell, Hero target)
+        {
+            return target != null &&
+                   Party != null &&
+                   Party.Members.Contains(target) &&
+                   GetValidHeroSpellTargets(spell).Contains(target);
         }
 
         public string CastHeroSpellWithoutTarget(Hero caster, Spell spell)

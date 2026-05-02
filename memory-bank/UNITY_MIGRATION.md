@@ -39,6 +39,7 @@ Status: Done
 - Done: Followers follow after movement, warp, and load.
 - Done: Party members animate.
 - Done: Dead active party members render with the old coffin visual instead of their hero sprite.
+- Done: Dead active party members are visually followed behind living active party members and before the cart, without changing saved party order.
 - Done: Level-up progression validated with shared core tests.
 - Done: Skill/spell progression validated with shared core tests. Class skills are assigned from `classlevels.json`; spells unlock dynamically by level and class.
 
@@ -52,7 +53,7 @@ Status: Done
 - Done: Inventory item detail panel.
 - Done: Item rarity text coloring.
 - Done: Item and character sprites in UI where available.
-- Done: Spell icons are shown in the Party spell tab using each spell's `ImageId`.
+- Done: Spell icons are shown in the Party spell tab using each spell's `ImageId` from the old spell icon tileset `items.tsx`.
 - Done: Quest log.
 - Done: Settings UI.
 - Done: Settings tabs: General, UI, Input Bindings, Debug.
@@ -98,6 +99,7 @@ Status: Done
 - Done: Healer parity with old healers: paid heal one, heal all, renew magic, cure status, and revive options based on healer `Cost`.
 - Done: Object-target item/spell actions, especially old `Target.Object` behavior for using map-facing skills/items on nearby objects.
 - Done: `Open` skill/items use the object the player is facing directly, without party-member targeting, and can open doors or chests.
+- Done: Non-combat party spell targeting filters invalid dead/living targets; only revive spells can target dead party members.
 - Done: Chests support optional locking with `Locked=true`; current chests remain unlocked by default.
 - Done: Chest and hidden-item level gating parity with old `Party.CanOpenChest(level)` behavior.
 - Done: Old cart follower visual migrated. The cart appears behind the party on the overworld when reserve party members exist, and hides while on water.
@@ -212,7 +214,7 @@ Status: Started
 - Partial: Turn system. Current pass rolls initiative and resolves hero Fight, Spell, Skill, Item, Run, and monster attack turns.
 - Partial: Combat rewards. Current pass awards XP, gold, monster item drops, rare chest-style drops, and level-up messages on victory.
 - Partial: Skills in combat. Current pass can run encounter skills through shared core `Skill.Do`; needs broader effect play-testing.
-- Partial: Spells in combat. Current pass can cast encounter spells through shared core `Spell.Cast`; needs broader target/effect play-testing.
+- Partial: Spells in combat. Current pass can cast encounter spells through shared core `Spell.Cast`; non-revive spells target living members only, revive spells target dead members, and broader effect play-testing is still needed.
 - Partial: Items in combat. Current pass can use encounter items with item icons and shared core item/skill effects; needs broader charge/consume play-testing.
 - Pending: Combat music selection, including `battleground` or map/encounter-specific combat tracks.
 - Pending: Restore the correct map or biome music after combat ends.

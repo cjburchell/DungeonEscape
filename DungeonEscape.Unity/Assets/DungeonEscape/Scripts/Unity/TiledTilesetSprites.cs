@@ -462,9 +462,12 @@ namespace Redpoint.DungeonEscape.Unity
         private static Texture2D LoadTexture(string path)
         {
             var bytes = File.ReadAllBytes(path);
-            var texture = new Texture2D(2, 2);
-            texture.filterMode = FilterMode.Point;
+            var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            texture.wrapMode = TextureWrapMode.Clamp;
             texture.LoadImage(bytes);
+            texture.filterMode = FilterMode.Point;
+            texture.wrapMode = TextureWrapMode.Clamp;
+            texture.Apply(false, false);
             return texture;
         }
 
@@ -503,7 +506,13 @@ namespace Redpoint.DungeonEscape.Unity
                         tileWidth,
                         tileHeight);
 
-                    sprites[tileId] = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f), tileWidth);
+                    sprites[tileId] = Sprite.Create(
+                        texture,
+                        rect,
+                        new Vector2(0.5f, 0.5f),
+                        tileWidth,
+                        1,
+                        SpriteMeshType.FullRect);
                 }
             }
 

@@ -157,6 +157,30 @@ Status legend:
 
 ## Party And Map Visuals
 
+### [x] Active Party Status Window
+
+- Start or load a game with at least one active party member.
+- Stop moving.
+- Expected: a compact status window appears in the top-left corner and shows active party members only, not reserve members.
+- Hold movement in any direction.
+- Expected: the status window hides while the player is moving, then returns after movement stops.
+- Open the title menu, game menu, store window, or a dialog/message box.
+- Expected: the status window is hidden while blocking UI is visible.
+- Damage a party member, spend magic, or revive/death-test a member if available.
+- Expected: HP, MP, class, level, dead red text, and low-health orange text update without reopening the scene.
+
+### [x] Gold Status Window
+
+- Start or load a game.
+- Stop moving.
+- Expected: a compact gold window appears in the bottom-left corner and shows the current party gold.
+- Hold movement in any direction.
+- Expected: the gold window hides while the player is moving, then returns after movement stops.
+- Open the title menu, game menu, store window, or a dialog/message box.
+- Expected: the gold window is hidden while blocking UI is visible.
+- Buy, sell, receive quest rewards, or otherwise change party gold.
+- Expected: the gold value updates without reopening the scene.
+
 ### [x] Ship Visual Replaces Party While On Water
 
 - Load a save before receiving `Deed to the ship`.

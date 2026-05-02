@@ -34,12 +34,17 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private string lastThemeSignature;
         private StoreTab currentTab = StoreTab.Buy;
         private int selectedHeroIndex;
+        private int selectedBuyIndex;
+        private int selectedSellIndex;
+        private int selectedModalIndex;
         private Vector2 buyScroll;
         private Vector2 sellScroll;
         private string modalTitle;
         private string modalMessage;
         private List<string> modalChoices;
         private Action<int> modalSelected;
+        private int acceptInteractAfterFrame;
+        private bool waitForInteractRelease;
 
         public static bool IsOpen
         {
@@ -74,9 +79,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
             storeObject = mapObject;
             currentTab = StoreTab.Buy;
             selectedHeroIndex = 0;
+            selectedBuyIndex = 0;
+            selectedSellIndex = 0;
             buyScroll = Vector2.zero;
             sellScroll = Vector2.zero;
             HideModal();
+            BlockInteractUntilRelease();
         }
 
         private void Update()
@@ -86,10 +94,20 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            if (!IsModalVisible() && InputManager.GetCommandDown(InputCommand.Cancel))
+            if (IsModalVisible())
             {
-                Close();
+                HandleModalInput();
+                return;
             }
+
+            if (InputManager.GetCommandDown(InputCommand.Cancel))
+            {
+                UiControls.PlayConfirmSound();
+                Close();
+                return;
+            }
+
+            HandleStoreInput();
         }
 
         private void OnGUI()
@@ -139,11 +157,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.Label(GetStoreName(), titleStyle);
             GUILayout.FlexibleSpace();
             GUILayout.Label("Gold: " + (gameState == null || gameState.Party == null ? 0 : gameState.Party.Gold), labelStyle);
-            if (UiControls.Button("Close", buttonStyle, GUILayout.Width(96f * GetPixelScale())))
-            {
-                Close();
-            }
-
             GUILayout.EndHorizontal();
             GUILayout.Label(GetStoreText(), smallStyle);
         }
@@ -154,13 +167,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.BeginHorizontal();
             if (UiControls.TabButton("Buy", currentTab == StoreTab.Buy, uiTheme, 34f * scale))
             {
-                currentTab = StoreTab.Buy;
+                SetCurrentTab(StoreTab.Buy);
             }
 
             GUI.enabled = StoreWillBuyItems();
             if (UiControls.TabButton("Sell", currentTab == StoreTab.Sell, uiTheme, 34f * scale))
             {
-                currentTab = StoreTab.Sell;
+                SetCurrentTab(StoreTab.Sell);
             }
 
             GUI.enabled = true;
@@ -170,6 +183,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void DrawBuyTab(float height)
         {
             var inventory = gameState == null ? new List<Item>() : gameState.GetStoreInventory(storeObject);
+            selectedBuyIndex = Mathf.Clamp(selectedBuyIndex, 0, Mathf.Max(inventory.Count - 1, 0));
             if (inventory.Count == 0)
             {
                 GUILayout.Label("I have nothing to sell right now.", labelStyle);
@@ -177,17 +191,17 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             buyScroll = BeginThemedScroll(buyScroll, height);
-            foreach (var item in inventory.ToList())
+            for (var i = 0; i < inventory.Count; i++)
             {
-                DrawBuyItemRow(item);
+                DrawBuyItemRow(inventory[i], i);
             }
 
             GUILayout.EndScrollView();
         }
 
-        private void DrawBuyItemRow(Item item)
+        private void DrawBuyItemRow(Item item, int index)
         {
-            GUILayout.BeginHorizontal(uiTheme == null ? GUI.skin.box : uiTheme.RowStyle);
+            GUILayout.BeginHorizontal(GetRowStyle(index == selectedBuyIndex));
             Sprite sprite;
             UiControls.SpriteIcon(
                 UiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null,
@@ -198,9 +212,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.Label(item.Type + "  Level " + item.MinLevel + "  " + item.Cost + "g", smallStyle);
             GUILayout.EndVertical();
             GUILayout.FlexibleSpace();
-            GUI.enabled = gameState != null && gameState.Party != null && gameState.Party.Gold >= item.Cost && GetBuyRecipients().Count > 0;
+            var canBuy = CanBuy(item);
+            GUI.enabled = canBuy;
             if (UiControls.Button("Buy", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
             {
+                selectedBuyIndex = index;
                 ShowRecipientPicker(item);
             }
 
@@ -229,8 +245,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 if (UiControls.TabButton(members[i].Name, selectedHeroIndex == i, uiTheme, 34f * GetPixelScale()))
                 {
-                    selectedHeroIndex = i;
-                    sellScroll = Vector2.zero;
+                    SetSelectedHeroIndex(i);
                 }
             }
 
@@ -239,6 +254,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             var hero = members[selectedHeroIndex];
             var items = GetSellableItems(hero).ToList();
+            selectedSellIndex = Mathf.Clamp(selectedSellIndex, 0, Mathf.Max(items.Count - 1, 0));
             if (items.Count == 0)
             {
                 GUILayout.Label(hero.Name + " has no sellable items.", labelStyle);
@@ -246,17 +262,17 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             sellScroll = BeginThemedScroll(sellScroll, height - 44f * GetPixelScale());
-            foreach (var item in items)
+            for (var i = 0; i < items.Count; i++)
             {
-                DrawSellItemRow(hero, item);
+                DrawSellItemRow(hero, items[i], i);
             }
 
             GUILayout.EndScrollView();
         }
 
-        private void DrawSellItemRow(Hero hero, ItemInstance item)
+        private void DrawSellItemRow(Hero hero, ItemInstance item, int index)
         {
-            GUILayout.BeginHorizontal(uiTheme == null ? GUI.skin.box : uiTheme.RowStyle);
+            GUILayout.BeginHorizontal(GetRowStyle(index == selectedSellIndex));
             Sprite sprite;
             UiControls.SpriteIcon(
                 UiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null,
@@ -269,17 +285,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.FlexibleSpace();
             if (UiControls.Button("Sell", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
             {
-                ShowModal(
-                    "Sell " + item.Name,
-                    "Sell " + item.Name + " for " + GetSalePrice(item) + " gold?",
-                    new[] { "Sell", "Cancel" },
-                    index =>
-                    {
-                        if (index == 0)
-                        {
-                            ShowModal("Store", gameState.SellHeroItem(storeObject, hero, item), null, null);
-                        }
-                    });
+                selectedSellIndex = index;
+                ShowSellConfirmation(hero, item);
             }
 
             GUILayout.EndHorizontal();
@@ -357,6 +364,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             modalMessage = message;
             modalChoices = choices == null ? null : choices.ToList();
             modalSelected = selected;
+            selectedModalIndex = 0;
+            BlockInteractUntilRelease();
         }
 
         private bool IsModalVisible()
@@ -390,8 +399,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 foreach (var choice in modalChoices.Select((label, index) => new { label, index }))
                 {
-                    if (UiControls.Button(choice.label, false, uiTheme))
+                    if (UiControls.Button(choice.label, choice.index == selectedModalIndex, uiTheme))
                     {
+                        selectedModalIndex = choice.index;
                         var selected = modalSelected;
                         HideModal();
                         if (selected != null)
@@ -403,7 +413,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     }
                 }
             }
-            else if (UiControls.Button("OK", buttonStyle, GUILayout.Width(120f * scale)))
+            else if (UiControls.Button("OK", true, uiTheme, GUILayout.Width(120f * scale)))
             {
                 HideModal();
             }
@@ -460,6 +470,311 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private bool StoreWillBuyItems()
         {
             return !IsKeyStoreObject() && GetBoolProperty("WillBuyItems", true);
+        }
+
+        private void HandleStoreInput()
+        {
+            if (InputManager.GetCommandDown(InputCommand.MenuPreviousTab))
+            {
+                if (currentTab == StoreTab.Sell && GetPartyMembers().Count > 1)
+                {
+                    SetSelectedHeroIndex(Mathf.Max(0, selectedHeroIndex - 1));
+                }
+                else
+                {
+                    SetCurrentTab(StoreTab.Buy);
+                }
+
+                return;
+            }
+
+            if (InputManager.GetCommandDown(InputCommand.MenuNextTab) && StoreWillBuyItems())
+            {
+                if (currentTab == StoreTab.Sell && GetPartyMembers().Count > 1)
+                {
+                    SetSelectedHeroIndex(Mathf.Min(GetPartyMembers().Count - 1, selectedHeroIndex + 1));
+                }
+                else
+                {
+                    SetCurrentTab(StoreTab.Sell);
+                }
+
+                return;
+            }
+
+            var moveX = InputManager.GetMoveXDown();
+            if (moveX != 0)
+            {
+                HandleHorizontalNavigation(moveX);
+                return;
+            }
+
+            var moveY = InputManager.GetMoveYDown();
+            if (moveY != 0)
+            {
+                HandleVerticalNavigation(moveY);
+                return;
+            }
+
+            if (CanAcceptInteract() && InputManager.GetCommandDown(InputCommand.Interact))
+            {
+                ActivateSelectedStoreItem();
+            }
+        }
+
+        private void HandleHorizontalNavigation(int moveX)
+        {
+            if (currentTab == StoreTab.Buy)
+            {
+                if (moveX > 0 && StoreWillBuyItems())
+                {
+                    SetCurrentTab(StoreTab.Sell);
+                }
+
+                return;
+            }
+
+            var members = GetPartyMembers();
+            if (members.Count == 0)
+            {
+                return;
+            }
+
+            SetSelectedHeroIndex(Mathf.Clamp(selectedHeroIndex + moveX, 0, members.Count - 1));
+        }
+
+        private void HandleVerticalNavigation(int moveY)
+        {
+            if (currentTab == StoreTab.Buy)
+            {
+                var inventory = gameState == null ? new List<Item>() : gameState.GetStoreInventory(storeObject);
+                if (inventory.Count > 0)
+                {
+                    SetSelectedBuyIndex(Mathf.Clamp(selectedBuyIndex + moveY, 0, inventory.Count - 1));
+                }
+
+                return;
+            }
+
+            var members = GetPartyMembers();
+            if (members.Count == 0)
+            {
+                return;
+            }
+
+            var hero = members[Mathf.Clamp(selectedHeroIndex, 0, members.Count - 1)];
+            var items = GetSellableItems(hero).ToList();
+            if (items.Count > 0)
+            {
+                SetSelectedSellIndex(Mathf.Clamp(selectedSellIndex + moveY, 0, items.Count - 1));
+            }
+        }
+
+        private void ActivateSelectedStoreItem()
+        {
+            if (currentTab == StoreTab.Buy)
+            {
+                var inventory = gameState == null ? new List<Item>() : gameState.GetStoreInventory(storeObject);
+                if (inventory.Count == 0)
+                {
+                    return;
+                }
+
+                var item = inventory[Mathf.Clamp(selectedBuyIndex, 0, inventory.Count - 1)];
+                if (CanBuy(item))
+                {
+                    UiControls.PlayConfirmSound();
+                    ShowRecipientPicker(item);
+                }
+
+                return;
+            }
+
+            var members = GetPartyMembers();
+            if (members.Count == 0)
+            {
+                return;
+            }
+
+            var hero = members[Mathf.Clamp(selectedHeroIndex, 0, members.Count - 1)];
+            var items = GetSellableItems(hero).ToList();
+            if (items.Count == 0)
+            {
+                return;
+            }
+
+            UiControls.PlayConfirmSound();
+            ShowSellConfirmation(hero, items[Mathf.Clamp(selectedSellIndex, 0, items.Count - 1)]);
+        }
+
+        private void HandleModalInput()
+        {
+            if (InputManager.GetCommandDown(InputCommand.Cancel))
+            {
+                UiControls.PlayConfirmSound();
+                HideModal();
+                return;
+            }
+
+            var choiceCount = modalChoices == null || modalChoices.Count == 0 ? 1 : modalChoices.Count;
+            var moveY = InputManager.GetMoveYDown();
+            if (moveY != 0 && choiceCount > 1)
+            {
+                SetSelectedModalIndex(Mathf.Clamp(selectedModalIndex + moveY, 0, choiceCount - 1));
+            }
+
+            var moveX = InputManager.GetMoveXDown();
+            if (moveX != 0 && choiceCount > 1)
+            {
+                SetSelectedModalIndex(Mathf.Clamp(selectedModalIndex + moveX, 0, choiceCount - 1));
+            }
+
+            if (!CanAcceptInteract() || !InputManager.GetCommandDown(InputCommand.Interact))
+            {
+                return;
+            }
+
+            UiControls.PlayConfirmSound();
+            if (modalChoices == null || modalChoices.Count == 0)
+            {
+                HideModal();
+                return;
+            }
+
+            SelectModalChoice(selectedModalIndex);
+        }
+
+        private void SelectModalChoice(int index)
+        {
+            var selected = modalSelected;
+            HideModal();
+            if (selected != null)
+            {
+                selected(index);
+            }
+        }
+
+        private void ShowSellConfirmation(Hero hero, ItemInstance item)
+        {
+            ShowModal(
+                "Sell " + item.Name,
+                "Sell " + item.Name + " for " + GetSalePrice(item) + " gold?",
+                new[] { "Sell", "Cancel" },
+                index =>
+                {
+                    if (index == 0)
+                    {
+                        ShowModal("Store", gameState.SellHeroItem(storeObject, hero, item), null, null);
+                    }
+                });
+        }
+
+        private bool CanBuy(Item item)
+        {
+            return item != null &&
+                   gameState != null &&
+                   gameState.Party != null &&
+                   gameState.Party.Gold >= item.Cost &&
+                   GetBuyRecipients().Count > 0;
+        }
+
+        private GUIStyle GetRowStyle(bool selected)
+        {
+            if (uiTheme == null)
+            {
+                return GUI.skin.box;
+            }
+
+            return selected ? uiTheme.SelectedRowStyle : uiTheme.RowStyle;
+        }
+
+        private void SetCurrentTab(StoreTab tab)
+        {
+            if (tab == StoreTab.Sell && !StoreWillBuyItems())
+            {
+                return;
+            }
+
+            if (currentTab == tab)
+            {
+                return;
+            }
+
+            currentTab = tab;
+            UiControls.PlaySelectSound();
+        }
+
+        private void SetSelectedHeroIndex(int index)
+        {
+            if (selectedHeroIndex == index)
+            {
+                return;
+            }
+
+            selectedHeroIndex = index;
+            selectedSellIndex = 0;
+            sellScroll = Vector2.zero;
+            UiControls.PlaySelectSound();
+        }
+
+        private void SetSelectedBuyIndex(int index)
+        {
+            if (selectedBuyIndex == index)
+            {
+                return;
+            }
+
+            selectedBuyIndex = index;
+            UiControls.PlaySelectSound();
+        }
+
+        private void SetSelectedSellIndex(int index)
+        {
+            if (selectedSellIndex == index)
+            {
+                return;
+            }
+
+            selectedSellIndex = index;
+            UiControls.PlaySelectSound();
+        }
+
+        private void SetSelectedModalIndex(int index)
+        {
+            if (selectedModalIndex == index)
+            {
+                return;
+            }
+
+            selectedModalIndex = index;
+            UiControls.PlaySelectSound();
+        }
+
+        private void BlockInteractUntilRelease()
+        {
+            acceptInteractAfterFrame = Time.frameCount + 1;
+            waitForInteractRelease = true;
+        }
+
+        private bool CanAcceptInteract()
+        {
+            if (Time.frameCount <= acceptInteractAfterFrame)
+            {
+                return false;
+            }
+
+            if (!waitForInteractRelease)
+            {
+                return true;
+            }
+
+            if (InputManager.GetCommand(InputCommand.Interact))
+            {
+                return false;
+            }
+
+            waitForInteractRelease = false;
+            return true;
         }
 
         private bool IsKeyStoreObject()

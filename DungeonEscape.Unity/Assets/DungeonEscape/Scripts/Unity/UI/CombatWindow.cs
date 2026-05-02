@@ -1715,7 +1715,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void DrawActionMenu(Rect panelRect, float scale)
         {
             var actions = BuildActionButtons().ToList();
-            DrawMenuButtons(panelRect, scale, actingHero == null ? "Action" : actingHero.Name + " Action", actions);
+            DrawMenuButtons(panelRect, scale, actingHero == null ? string.Empty : actingHero.Name, actions);
         }
 
         private IEnumerable<CombatButton> BuildActionButtons()
@@ -1787,7 +1787,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var menuWidth = GetCombatMenuWidth(panelRect, scale);
             var x = panelRect.x + 14f * scale;
             var y = GetCombatMenuY(panelRect, scale);
-            GUI.Label(new Rect(x, y - 30f * scale, menuWidth, 24f * scale), title, titleStyle);
+            DrawCombatMenuTitle(x, panelRect.y, menuWidth, scale, title);
             var itemTextStyle = new GUIStyle(labelStyle)
             {
                 alignment = TextAnchor.MiddleLeft,
@@ -1824,7 +1824,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var rowHeight = GetCombatMenuRowHeight(scale);
             var x = panelRect.x + 14f * scale;
             var y = GetCombatMenuY(panelRect, scale);
-            GUI.Label(new Rect(x, y - 30f * scale, menuWidth, 24f * scale), title, titleStyle);
+            DrawCombatMenuTitle(x, panelRect.y, menuWidth, scale, title);
             for (var i = 0; i < buttons.Count; i++)
             {
                 var rect = new Rect(x, y + i * (rowHeight + 4f * scale), menuWidth, rowHeight);
@@ -1847,9 +1847,19 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return 32f * scale;
         }
 
+        private void DrawCombatMenuTitle(float x, float panelY, float width, float scale, string title)
+        {
+            if (string.IsNullOrEmpty(title))
+            {
+                return;
+            }
+
+            GUI.Label(new Rect(x, panelY + 8f * scale, width, 24f * scale), title, titleStyle);
+        }
+
         private static float GetCombatMenuY(Rect panelRect, float scale)
         {
-            return panelRect.y + 20f * scale;
+            return panelRect.y + 40f * scale;
         }
 
         private HeroCombatSelection GetHeroSelection()

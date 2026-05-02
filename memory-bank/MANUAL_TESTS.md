@@ -405,7 +405,31 @@ Status legend:
 - Visit a store with `WillBuyItems=false`, if one exists.
 - Expected: the Sell tab is disabled.
 - While the store window is open, complete a buy or sell confirmation.
-- Expected: confirmation messages appear over the store, and the store window does not close until Close or Cancel is used.
+- Expected: confirmation messages appear over the store, and the store window does not close until Cancel/Escape is used outside a modal.
+
+### [ ] Store Keyboard And Gamepad Navigation
+
+- Visit a regular store with keyboard only or gamepad only.
+- Press right or Menu Next Tab.
+- Expected: the selected tab changes from Buy to Sell if the store buys items.
+- Press left or Menu Previous Tab.
+- Expected: the selected tab changes back to Buy.
+- On the Buy tab, press up/down.
+- Expected: the highlighted item row changes and selection sounds play once per step.
+- Press Interact on an affordable item.
+- Expected: the recipient picker opens without using the mouse.
+- Use up/down to choose a recipient and press Interact.
+- Expected: the item is bought for that party member, and any equip-now prompt can also be handled with keyboard/gamepad.
+- On the Sell tab, press left/right.
+- Expected: party member tabs change without using the mouse.
+- Press up/down to select a sellable item, then press Interact.
+- Expected: the sell confirmation opens.
+- Use up/down or left/right to choose Sell or Cancel, then press Interact.
+- Expected: Sell completes the sale and Cancel closes only the confirmation.
+- Press Cancel/Escape while a store modal is open.
+- Expected: only the modal closes and the store remains open.
+- Press Cancel/Escape while no store modal is open.
+- Expected: the store closes.
 
 ### [x] Healer Services Use Cost And Relevant Options
 

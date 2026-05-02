@@ -799,7 +799,7 @@ namespace Redpoint.DungeonEscape.Unity
                     DungeonEscapeUiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null,
                     36f * GetPixelScale(),
                     uiTheme);
-                GUILayout.Label(item.NameWithStats + equipped + "    " + item.Type + "    " + item.Gold + "g", GetRarityStyle(item, labelStyle));
+                GUILayout.Label(item.NameWithStats + equipped, GetRarityStyle(item, labelStyle));
                 if (item.IsEquipped)
                 {
                     if (GUILayout.Button("Unequip", buttonStyle, GUILayout.Width(112f * GetPixelScale())))

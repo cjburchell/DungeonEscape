@@ -51,6 +51,7 @@ namespace Redpoint.DungeonEscape.Unity
         {
             EnsureCamera();
             Settings = DungeonEscapeSettingsCache.Load();
+            DungeonEscapeDisplaySettings.Apply(Settings);
             DungeonEscapeUiSettings.GetOrCreate().ApplySettings(Settings);
 
             Debug.Log("Dungeon Escape Unity bootstrap starting.");

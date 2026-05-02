@@ -65,8 +65,8 @@ Status: In progress
 - Done: Initial shop/healer/save NPC UI through map interaction message boxes.
 - Done: Inventory UI icon assets are prewarmed so the first Inventory open does not stall.
 - Done: Current UI migration manual tests passed.
-- Pending: Wire fullscreen setting into Unity runtime and settings UI if still desired.
-- Pending: Review whether old map command shortcuts should remain consolidated or return as direct UI actions.
+- Done: Fullscreen setting is applied at Unity startup and exposed on Settings > General.
+- Reviewed: Old direct map command shortcuts remain consolidated into the tabbed Menu action for now; direct Inventory/Quest/Settings shortcuts can be reintroduced later if playtesting shows the tab flow is too slow.
 - Pending: Any future UI layout polish discovered during later gameplay migration.
 
 ## 4. Map Gameplay

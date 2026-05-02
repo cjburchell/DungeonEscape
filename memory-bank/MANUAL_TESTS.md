@@ -233,6 +233,16 @@ Status legend:
 
 ## UI, Inventory, Stores, And Healers
 
+### [ ] Fullscreen Setting Applies
+
+- Open the in-game menu and go to Settings > General.
+- Toggle `Fullscreen`.
+- Expected: the Unity player switches between fullscreen and windowed mode.
+- Close and restart Play Mode or the built player.
+- Expected: the saved fullscreen setting is applied during startup.
+- Navigate Settings > General with keyboard or gamepad.
+- Expected: Fullscreen participates in the normal settings row navigation and does not prevent changing Sprint Boost, Turn Delay, Autosave, or Autosave Period.
+
 ### [x] Inventory First Open Is Responsive
 
 - Start the Unity scene and wait a few seconds after the map appears.

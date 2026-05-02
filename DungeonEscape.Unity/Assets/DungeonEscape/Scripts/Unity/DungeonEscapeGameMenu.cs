@@ -1655,6 +1655,9 @@ namespace Redpoint.DungeonEscape.Unity
             EndSelectableRow();
             GUILayout.Space(8f * GetPixelScale());
             BeginSelectableRow();
+            settings.IsFullScreen = DrawCheckboxRow(settings.IsFullScreen, "Fullscreen");
+            EndSelectableRow();
+            BeginSelectableRow();
             settings.SprintBoost = DrawSliderRow("Sprint Boost: " + settings.SprintBoost.ToString("0.00"), settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost, 1f, 3f);
             EndSelectableRow();
             GUILayout.Space(8f * GetPixelScale());
@@ -2008,7 +2011,7 @@ namespace Redpoint.DungeonEscape.Unity
             switch (currentSettingsTab)
             {
                 case SettingsTab.General:
-                    return 6;
+                    return 7;
                 case SettingsTab.Ui:
                     return 9;
                 case SettingsTab.Input:
@@ -2264,15 +2267,15 @@ namespace Redpoint.DungeonEscape.Unity
                         settings.UiScale = Mathf.Clamp((settings.UiScale <= 0f ? 1f : settings.UiScale) + 0.05f * delta, MinUiScale, MaxUiScale);
                         ApplySettings(settings);
                         break;
-                    case 1:
+                    case 2:
                         settings.SprintBoost = Mathf.Clamp((settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost) + 0.05f * delta, 1f, 3f);
                         ApplySettings(settings);
                         break;
-                    case 2:
+                    case 3:
                         settings.TurnMoveDelaySeconds = Mathf.Clamp(GetTurnMoveDelay(settings) + 0.01f * delta, 0f, 0.3f);
                         ApplySettings(settings);
                         break;
-                    case 4:
+                    case 5:
                         settings.AutoSaveIntervalSeconds = Mathf.Clamp(GetAutoSaveInterval(settings) + 5f * delta, 5f, 300f);
                         ApplySettings(settings);
                         break;
@@ -2312,7 +2315,12 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             var settingsRowIndex = selectedRowIndex - 1;
-            if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 3)
+            if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 1)
+            {
+                settings.IsFullScreen = !settings.IsFullScreen;
+                ApplySettings(settings);
+            }
+            else if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 4)
             {
                 settings.AutoSaveEnabled = !settings.AutoSaveEnabled;
                 ApplySettings(settings);
@@ -2455,6 +2463,7 @@ namespace Redpoint.DungeonEscape.Unity
         {
             DungeonEscapeSettingsCache.Set(settings);
             DungeonEscapeSettingsCache.Save();
+            DungeonEscapeDisplaySettings.Apply(settings);
             DungeonEscapeUiSettings.GetOrCreate().ApplySettings(settings);
             lastThemeSignature = null;
             if (mapView == null)

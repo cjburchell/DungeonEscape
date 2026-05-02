@@ -715,6 +715,17 @@ Status legend:
 - Use a group attack spell or skill where some chosen targets are defeated before the action resolves.
 - Expected: defeated targets are ignored and the action still applies to remaining living targets.
 
+### [ ] Combat Remembers Last Selections
+
+- Trigger combat with at least one active party member.
+- In the first round, choose Fight and pick a monster target.
+- Advance to the same hero's next action prompt.
+- Expected: Fight is already highlighted.
+- If multiple monster targets are available, open the target selector again.
+- Expected: the previously selected monster is highlighted if it is still alive.
+- Repeat with a combat spell, skill, or combat item when available.
+- Expected: the action row, spell/item row, and valid target row default to the last choices for that hero, so pressing Interact can quickly repeat the previous round's selection.
+
 ### [x] Combat Action Menu Shows Available Options
 
 - Trigger a random encounter with a party member that knows at least one encounter spell, one encounter skill, or has an item with an encounter skill.

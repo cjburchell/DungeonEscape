@@ -56,9 +56,20 @@ namespace Redpoint.DungeonEscape.Unity.UI
             public List<IFighter> Targets { get; set; }
         }
 
+        private sealed class HeroCombatSelection
+        {
+            public string ActionLabel { get; set; }
+            public string SpellName { get; set; }
+            public string ItemId { get; set; }
+            public string ItemName { get; set; }
+            public string TargetName { get; set; }
+        }
+
         private readonly List<CombatMonster> monsters = new List<CombatMonster>();
         private readonly List<RoundAction> roundActions = new List<RoundAction>();
         private readonly List<Hero> pendingHeroes = new List<Hero>();
+        private readonly Dictionary<string, HeroCombatSelection> heroSelections =
+            new Dictionary<string, HeroCombatSelection>(StringComparer.OrdinalIgnoreCase);
         private Biome biome;
         private GameState gameState;
         private UiSettings uiSettings;
@@ -92,6 +103,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             window.monsters.Clear();
             window.roundActions.Clear();
             window.pendingHeroes.Clear();
+            window.heroSelections.Clear();
             window.targetSelectionCandidates.Clear();
             window.targetSelectionDone = null;
             window.gameState = GameState.GetOrCreate();
@@ -374,6 +386,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     var actions = BuildActionButtons().ToList();
                     if (selectedMenuIndex >= 0 && selectedMenuIndex < actions.Count)
                     {
+                        RememberAction(actions[selectedMenuIndex].Label);
                         actions[selectedMenuIndex].Action();
                     }
 
@@ -410,7 +423,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             targetSelectionDone = null;
             targetSelectionCandidates.Clear();
             state = CombatState.ChooseAction;
-            selectedMenuIndex = 0;
+            selectedMenuIndex = GetRememberedActionIndex(BuildActionButtons().ToList());
             messageText = actingHero == null ? "Choose an action." : actingHero.Name + "'s turn.";
         }
 
@@ -488,7 +501,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 }
 
                 state = CombatState.ChooseAction;
-                selectedMenuIndex = 0;
+                selectedMenuIndex = GetRememberedActionIndex(BuildActionButtons().ToList());
                 messageText = actingHero.Name + "'s action.";
                 return;
             }
@@ -585,7 +598,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             state = CombatState.ChooseSpell;
-            selectedMenuIndex = 0;
+            selectedMenuIndex = GetRememberedSpellIndex(spells);
             messageText = "Choose a spell for " + actingHero.Name + ".";
         }
 
@@ -604,7 +617,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             state = CombatState.ChooseItem;
-            selectedMenuIndex = 0;
+            selectedMenuIndex = GetRememberedItemIndex(items);
             messageText = "Choose an item for " + actingHero.Name + ".";
         }
 
@@ -633,6 +646,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (candidates.Count == 1)
             {
+                RememberTarget(candidates[0]);
                 done(new List<IFighter> { candidates[0] });
                 return;
             }
@@ -641,7 +655,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             targetSelectionCandidates = candidates;
             targetSelectionDone = done;
             state = CombatState.ChooseTarget;
-            selectedMenuIndex = 0;
+            selectedMenuIndex = GetRememberedTargetIndex(candidates);
             messageText = title;
         }
 
@@ -653,6 +667,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
+            RememberAction("Spell");
+            RememberSpell(spell);
             spell.Setup(GameDataCache.Current == null ? null : GameDataCache.Current.Skills);
             var candidates = spell.IsAttackSpell
                 ? AliveMonsters().Select(monster => monster.Instance).Cast<IFighter>().ToList()
@@ -680,6 +696,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
+            RememberAction(skill.Name);
             var candidates = skill.IsAttackSkill
                 ? AliveMonsters().Select(monster => monster.Instance).Cast<IFighter>().ToList()
                 : GetPartySkillTargets(skill);
@@ -706,6 +723,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
+            RememberAction("Item");
+            RememberItem(item);
             EnsureItemLinked(item);
             var skill = item.Item.Skill;
             if (skill == null)
@@ -740,6 +759,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
+            RememberAction("Run");
             QueueHeroAction(new RoundAction
             {
                 Source = actingHero,
@@ -1439,9 +1459,115 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 if (GUI.Button(rect, buttons[i].Label, GetMenuButtonStyle(i == selectedMenuIndex)))
                 {
                     selectedMenuIndex = i;
+                    RememberAction(buttons[i].Label);
                     buttons[i].Action();
                 }
             }
+        }
+
+        private HeroCombatSelection GetHeroSelection()
+        {
+            if (actingHero == null || string.IsNullOrEmpty(actingHero.Name))
+            {
+                return null;
+            }
+
+            HeroCombatSelection selection;
+            if (!heroSelections.TryGetValue(actingHero.Name, out selection))
+            {
+                selection = new HeroCombatSelection();
+                heroSelections[actingHero.Name] = selection;
+            }
+
+            return selection;
+        }
+
+        private void RememberAction(string label)
+        {
+            var selection = GetHeroSelection();
+            if (selection != null && !string.IsNullOrEmpty(label))
+            {
+                selection.ActionLabel = label;
+            }
+        }
+
+        private void RememberSpell(Spell spell)
+        {
+            var selection = GetHeroSelection();
+            if (selection != null && spell != null)
+            {
+                selection.SpellName = spell.Name;
+            }
+        }
+
+        private void RememberItem(ItemInstance item)
+        {
+            var selection = GetHeroSelection();
+            if (selection != null && item != null)
+            {
+                selection.ItemId = item.Id;
+                selection.ItemName = item.Name;
+            }
+        }
+
+        private void RememberTarget(IFighter target)
+        {
+            var selection = GetHeroSelection();
+            if (selection != null && target != null)
+            {
+                selection.TargetName = target.Name;
+            }
+        }
+
+        private int GetRememberedActionIndex(IList<CombatButton> actions)
+        {
+            var selection = GetHeroSelection();
+            return GetIndexOrDefault(actions, action => action.Label, selection == null ? null : selection.ActionLabel);
+        }
+
+        private int GetRememberedSpellIndex(IList<Spell> spells)
+        {
+            var selection = GetHeroSelection();
+            return GetIndexOrDefault(spells, spell => spell.Name, selection == null ? null : selection.SpellName);
+        }
+
+        private int GetRememberedItemIndex(IList<ItemInstance> items)
+        {
+            var selection = GetHeroSelection();
+            if (selection == null)
+            {
+                return 0;
+            }
+
+            var byId = GetIndexOrDefault(items, item => item.Id, selection.ItemId);
+            return byId != 0 || string.IsNullOrEmpty(selection.ItemId)
+                ? byId
+                : GetIndexOrDefault(items, item => item.Name, selection.ItemName);
+        }
+
+        private int GetRememberedTargetIndex(IList<IFighter> targets)
+        {
+            var selection = GetHeroSelection();
+            return GetIndexOrDefault(targets, target => target.Name, selection == null ? null : selection.TargetName);
+        }
+
+        private static int GetIndexOrDefault<T>(IList<T> values, Func<T, string> getKey, string rememberedKey)
+        {
+            if (values == null || values.Count == 0 || string.IsNullOrEmpty(rememberedKey))
+            {
+                return 0;
+            }
+
+            for (var i = 0; i < values.Count; i++)
+            {
+                var value = values[i];
+                if (value != null && string.Equals(getKey(value), rememberedKey, StringComparison.OrdinalIgnoreCase))
+                {
+                    return i;
+                }
+            }
+
+            return 0;
         }
 
         private IEnumerable<Spell> GetAvailableEncounterSpells(Hero hero)
@@ -1529,6 +1655,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             var target = targetSelectionCandidates[index];
+            RememberTarget(target);
             var done = targetSelectionDone;
             targetSelectionDone = null;
             targetSelectionCandidates.Clear();

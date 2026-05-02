@@ -37,6 +37,11 @@ namespace Redpoint.DungeonEscape.Unity
             get { return dataSet.Spells; }
         }
 
+        public IList<Monster> Monsters
+        {
+            get { return dataSet.Monsters; }
+        }
+
         public IList<StatName> StatNames
         {
             get { return dataSet.StatNames; }

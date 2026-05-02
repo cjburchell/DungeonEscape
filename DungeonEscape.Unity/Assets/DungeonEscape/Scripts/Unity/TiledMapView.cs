@@ -228,10 +228,15 @@ namespace Redpoint.DungeonEscape.Unity
 
         public Biome GetBiomeAt(WorldPosition position)
         {
+            return GetBiomeInfoAt(position).Type;
+        }
+
+        public BiomeInfo GetBiomeInfoAt(WorldPosition position)
+        {
             EnsureMapLoaded();
             if (currentMap == null || currentMap.Root == null)
             {
-                return Biome.None;
+                return new BiomeInfo { Type = Biome.None };
             }
 
             var column = Mathf.FloorToInt(position.X);
@@ -250,11 +255,21 @@ namespace Redpoint.DungeonEscape.Unity
                     !string.IsNullOrEmpty(tileInfo.Class) &&
                     TryParseBiome(tileInfo.Class, out biome))
                 {
-                    return biome;
+                    return new BiomeInfo
+                    {
+                        Type = biome,
+                        MinMonsterLevel = GetTileIntProperty(tileInfo, "MinMonsterLevel"),
+                        MaxMonsterLevel = GetTileIntProperty(tileInfo, "MaxMonsterLevel")
+                    };
                 }
             }
 
-            return GetMapBiome();
+            return GetMapBiomeInfo();
+        }
+
+        public string CurrentMapId
+        {
+            get { return currentMap == null ? TiledMapLoader.NormalizeMapId(mapAssetPath) : TiledMapLoader.NormalizeMapId(currentMap.AssetPath); }
         }
 
         public void UpdateNpcTile(TiledNpcController npc, int oldColumn, int oldRow, int newColumn, int newRow)
@@ -910,16 +925,45 @@ namespace Redpoint.DungeonEscape.Unity
 
         private Biome GetMapBiome()
         {
+            return GetMapBiomeInfo().Type;
+        }
+
+        private BiomeInfo GetMapBiomeInfo()
+        {
             if (currentMap == null || currentMap.Info == null || currentMap.Info.Properties == null)
             {
-                return Biome.None;
+                return new BiomeInfo { Type = Biome.None };
             }
 
             string value;
             Biome biome;
-            return currentMap.Info.Properties.TryGetValue("biome", out value) && TryParseBiome(value, out biome)
-                ? biome
-                : Biome.None;
+            var info = new BiomeInfo
+            {
+                Type = currentMap.Info.Properties.TryGetValue("biome", out value) && TryParseBiome(value, out biome)
+                    ? biome
+                    : Biome.None
+            };
+
+            info.MinMonsterLevel = GetIntProperty(currentMap.Info.Properties, "MinMonsterLevel");
+            info.MaxMonsterLevel = GetIntProperty(currentMap.Info.Properties, "MaxMonsterLevel");
+            return info;
+        }
+
+        private static int GetTileIntProperty(TiledTileInfo tileInfo, string key)
+        {
+            return tileInfo == null || tileInfo.Properties == null ? 0 : GetIntProperty(tileInfo.Properties, key);
+        }
+
+        private static int GetIntProperty(IDictionary<string, string> properties, string key)
+        {
+            if (properties == null)
+            {
+                return 0;
+            }
+
+            string value;
+            int result;
+            return properties.TryGetValue(key, out value) && int.TryParse(value, out result) ? result : 0;
         }
 
         private static bool TryParseBiome(string value, out Biome biome)

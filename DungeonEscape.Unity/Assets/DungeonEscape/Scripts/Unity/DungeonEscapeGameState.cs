@@ -33,6 +33,7 @@ namespace Redpoint.DungeonEscape.Unity
         private bool saveDirty;
         private float autoSaveCountdown;
         private NameGenerator nameGenerator;
+        private readonly Dictionary<string, List<RandomMonster>> randomMonsterCache = new Dictionary<string, List<RandomMonster>>(StringComparer.OrdinalIgnoreCase);
 
         public Party Party
         {
@@ -276,6 +277,34 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return message.ToString().TrimEnd();
+        }
+
+        public void TryLogRandomEncounter(string mapId, BiomeInfo biomeInfo)
+        {
+            EnsureInitialized();
+            if (Party == null ||
+                Party.AliveMembers == null ||
+                DungeonEscapeSettingsCache.Current.NoMonsters ||
+                biomeInfo == null)
+            {
+                return;
+            }
+
+            var randomMonsters = GetRandomMonstersForMap(mapId);
+            if (randomMonsters.Count == 0 ||
+                !randomMonsters.Any(monster => monster != null && monster.Data != null && monster.InBiome(biomeInfo.Type)) ||
+                Random.NextDouble() >= 0.1d)
+            {
+                return;
+            }
+
+            var monsters = BuildRandomEncounter(randomMonsters, biomeInfo);
+            if (monsters.Count == 0)
+            {
+                return;
+            }
+
+            Debug.Log("Random encounter in " + biomeInfo.Type + " on " + TiledMapLoader.NormalizeMapId(mapId) + ": " + FormatMonsterList(monsters));
         }
 
         public string StartQuest(string questId)
@@ -3086,6 +3115,193 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             return result;
+        }
+
+        private List<RandomMonster> GetRandomMonstersForMap(string mapId)
+        {
+            var normalizedMapId = TiledMapLoader.NormalizeMapId(mapId);
+            List<RandomMonster> cached;
+            if (randomMonsterCache.TryGetValue(normalizedMapId, out cached))
+            {
+                return cached;
+            }
+
+            var monsters = LoadRandomMonstersForMap(normalizedMapId);
+            randomMonsterCache[normalizedMapId] = monsters;
+            return monsters;
+        }
+
+        private List<RandomMonster> LoadRandomMonstersForMap(string mapId)
+        {
+            var data = DungeonEscapeGameDataCache.Current;
+            if (data == null || data.Monsters == null)
+            {
+                return new List<RandomMonster>();
+            }
+
+            if (string.Equals(mapId, "overworld", StringComparison.OrdinalIgnoreCase))
+            {
+                return data.Monsters
+                    .Where(monster => monster != null && monster.Biomes != null && monster.Biomes.Any())
+                    .Select(monster => new RandomMonster
+                    {
+                        Data = monster,
+                        Name = monster.Name,
+                        Rarity = monster.Rarity,
+                        IsOverworld = true
+                    })
+                    .ToList();
+            }
+
+            var assetPath = "Assets/DungeonEscape/Data/maps/" + mapId + "_monsters.json";
+            var fullPath = UnityAssetPath.ToRuntimePath(assetPath);
+            if (!File.Exists(fullPath))
+            {
+                return new List<RandomMonster>();
+            }
+
+            try
+            {
+                var randomMonsters = JsonConvert.DeserializeObject<List<RandomMonster>>(File.ReadAllText(fullPath)) ?? new List<RandomMonster>();
+                foreach (var randomMonster in randomMonsters)
+                {
+                    if (randomMonster == null || string.IsNullOrEmpty(randomMonster.Name))
+                    {
+                        continue;
+                    }
+
+                    randomMonster.Data = data.Monsters.FirstOrDefault(monster =>
+                        string.Equals(monster.Name, randomMonster.Name, StringComparison.OrdinalIgnoreCase));
+                }
+
+                return randomMonsters
+                    .Where(monster => monster != null && monster.Data != null)
+                    .ToList();
+            }
+            catch (Exception exception)
+            {
+                Debug.LogWarning("Failed to load random monsters from " + assetPath + ": " + exception.Message);
+                return new List<RandomMonster>();
+            }
+        }
+
+        private List<Monster> BuildRandomEncounter(IEnumerable<RandomMonster> randomMonsters, BiomeInfo biomeInfo)
+        {
+            var level = Party == null ? 1 : Math.Max(1, Party.MaxLevel());
+            var weightedMonsters = new List<Monster>();
+            foreach (var randomMonster in randomMonsters.Where(monster =>
+                         monster != null &&
+                         monster.Data != null &&
+                         monster.InBiome(biomeInfo.Type) &&
+                         (biomeInfo.MaxMonsterLevel == 0 || monster.Data.MinLevel < biomeInfo.MaxMonsterLevel) &&
+                         monster.Data.MinLevel >= biomeInfo.MinMonsterLevel))
+            {
+                var probability = GetMonsterProbability(randomMonster.Rarity);
+                for (var i = 0; i < probability; i++)
+                {
+                    weightedMonsters.Add(randomMonster.Data);
+                }
+            }
+
+            if (weightedMonsters.Count == 0)
+            {
+                return new List<Monster>();
+            }
+
+            const int maxMonstersToFight = 10;
+            const int maxMonsterGroups = 3;
+            var maxMonsters = Math.Min(maxMonstersToFight, Math.Max(1, level / 4 + Party.AliveMembers.Count()));
+            var numberOfMonsters = Random.Next(maxMonsters) + 1;
+            var monsters = new List<Monster>();
+            var totalMonsters = 0;
+            var usedMonsters = new List<string>();
+            for (var group = 0; group < maxMonsterGroups - 1 && totalMonsters < numberOfMonsters; group++)
+            {
+                var available = weightedMonsters.Where(monster => !usedMonsters.Contains(monster.Name)).ToArray();
+                if (available.Length == 0)
+                {
+                    break;
+                }
+
+                var monster = available[Random.Next(available.Length)];
+                usedMonsters.Add(monster.Name);
+                var groupSize = Math.Max(1, monster.GroupSize);
+                var numberInGroup = Random.Next(Math.Min(numberOfMonsters - totalMonsters, groupSize)) + 1;
+                AddMonsterGroup(monsters, monster, numberInGroup);
+                totalMonsters += numberInGroup;
+            }
+
+            if (totalMonsters < numberOfMonsters)
+            {
+                var available = weightedMonsters.Where(monster => !usedMonsters.Contains(monster.Name)).ToArray();
+                if (available.Length > 0)
+                {
+                    var monster = available[Random.Next(available.Length)];
+                    var numberInGroup = Math.Min(numberOfMonsters - totalMonsters, Math.Max(1, monster.GroupSize));
+                    AddMonsterGroup(monsters, monster, numberInGroup);
+                }
+            }
+
+            ApplyRepel(monsters);
+            return monsters;
+        }
+
+        private static int GetMonsterProbability(Rarity rarity)
+        {
+            switch (rarity)
+            {
+                case Rarity.Common:
+                    return 20;
+                case Rarity.Uncommon:
+                    return 5;
+                case Rarity.Rare:
+                    return 2;
+                case Rarity.Epic:
+                    return 1;
+                case Rarity.Legendary:
+                    return Dice.RollD20() > 14 ? 1 : 0;
+                default:
+                    return 0;
+            }
+        }
+
+        private static void AddMonsterGroup(ICollection<Monster> monsters, Monster monster, int count)
+        {
+            for (var i = 0; i < count; i++)
+            {
+                monsters.Add(monster);
+            }
+        }
+
+        private void ApplyRepel(ICollection<Monster> monsters)
+        {
+            if (Party == null ||
+                !Party.AliveMembers.Any(partyMember => partyMember.Status != null && partyMember.Status.Any(status => status.Type == EffectType.Repel)))
+            {
+                return;
+            }
+
+            var maxHealth = Party.AliveMembers.Max(member => member.MaxHealth);
+            foreach (var monster in monsters.ToList())
+            {
+                var monsterHealth = Dice.Roll(monster.HealthRandom, monster.HealthTimes, monster.HealthConst);
+                if (monsterHealth < maxHealth)
+                {
+                    monsters.Remove(monster);
+                }
+            }
+        }
+
+        private static string FormatMonsterList(IEnumerable<Monster> monsters)
+        {
+            return string.Join(
+                ", ",
+                monsters
+                    .Where(monster => monster != null)
+                    .GroupBy(monster => monster.Name)
+                    .OrderBy(group => group.Key)
+                    .Select(group => group.Count() == 1 ? group.Key : group.Count() + "x " + group.Key)
+                    .ToArray());
         }
 
         private static GameSave GetQuickSave(GameFile file)

@@ -303,7 +303,7 @@ Status legend:
 - Inspect the item detail panel.
 - Expected: internal slot/class metadata is not shown in the right panel.
 
-### [ ] Combined Party And Inventory Menu
+### [x] Combined Party And Inventory Menu
 
 - Open the in-game menu.
 - Expected: there is no separate top-level Inventory tab.
@@ -639,3 +639,15 @@ Status legend:
 - Expected: music becomes silent without stopping the game.
 - Set Music Volume to `1.00`.
 - Expected: the currently playing track becomes audible again.
+
+## Encounter And Combat
+
+### [ ] Random Encounter Logs Monsters By Biome
+
+- Start or load a quest and walk around the overworld across grassland, forest, hills, swamp, or water.
+- Expected: random encounters occasionally log to the Unity Console in the format `Random encounter in <Biome> on <MapId>: <monster list>`.
+- Walk inside a dungeon, tower, tunnel, shrine, or other map with a copied `*_monsters.json` table.
+- Expected: random encounters use that map's monster table instead of the overworld biome monster list.
+- Keep walking after an encounter log appears.
+- Expected: no combat UI opens yet; this first pass only logs selected monsters.
+- If no logs appear after many steps, confirm `NoMonsters` is `false` in the settings file.

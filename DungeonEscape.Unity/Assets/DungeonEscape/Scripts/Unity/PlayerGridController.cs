@@ -434,9 +434,11 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            var biome = mapView.GetBiomeAt(position);
+            var biomeInfo = mapView.GetBiomeInfoAt(position);
+            var biome = biomeInfo.Type;
             var message = gameState.ApplyMapStepEffects(mapView.GetDamageAt(position), biome);
             DungeonEscapeAudio.GetOrCreate().PlayBiomeMusic(biome);
+            gameState.TryLogRandomEncounter(mapView.CurrentMapId, biomeInfo);
             RefreshPartyVisuals();
             if (!string.IsNullOrEmpty(message) && messageBox != null)
             {

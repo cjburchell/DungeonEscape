@@ -196,11 +196,12 @@ Status: In progress
 
 ## 10. Encounter And Combat Migration
 
-Status: Deferred until map mode is mostly complete
+Status: Started
 
-- Pending: Carry forward old biome encounter metadata, including min/max monster level, before random encounters are implemented.
-- Pending: Random encounters by biome.
-- Pending: Per-map random encounter tables from `Content/data/{mapId}_monsters.json`.
+- Partial: Biome random encounter check runs after completed map steps and logs selected monsters to the Unity Console.
+- Done: Carry forward old biome encounter metadata, including min/max monster level, for random encounter filtering.
+- Partial: Random encounters by biome. Current pass logs encounters only; it does not enter combat.
+- Partial: Per-map random encounter tables from `Content/data/{mapId}_monsters.json`. Current pass loads copied Unity data from `Assets/DungeonEscape/Data/maps/{mapId}_monsters.json`.
 - Pending: Monster loading/spawning.
 - Pending: Combat UI.
 - Pending: Turn system.

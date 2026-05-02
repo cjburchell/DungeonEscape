@@ -52,6 +52,7 @@ Status: Done
 - Done: Inventory item detail panel.
 - Done: Item rarity text coloring.
 - Done: Item and character sprites in UI where available.
+- Done: Spell icons are shown in the Party spell tab using each spell's `ImageId`.
 - Done: Quest log.
 - Done: Settings UI.
 - Done: Settings tabs: General, UI, Input Bindings, Debug.
@@ -207,12 +208,12 @@ Status: Started
 - Partial: Combat layout shows full-screen aspect-preserved biome backgrounds with a bottom message box.
 - Done: Gold window is hidden during combat, and the party status window remains visible during combat.
 - Done: Autosave is blocked while combat is open.
-- Partial: Combat UI. Current pass supports encounter message, Attack button, target buttons, HP bars, and round messages.
-- Partial: Turn system. Current pass rolls initiative and resolves attack-only hero and monster turns.
+- Partial: Combat UI. Current pass supports encounter message, old-style action menu, spell/item icon lists, target buttons, HP bars, and round messages.
+- Partial: Turn system. Current pass rolls initiative and resolves hero Fight, Spell, Skill, Item, Run, and monster attack turns.
 - Partial: Combat rewards. Current pass awards XP, gold, monster item drops, rare chest-style drops, and level-up messages on victory.
-- Pending: Skills in combat.
-- Pending: Spells in combat.
-- Pending: Items in combat.
+- Partial: Skills in combat. Current pass can run encounter skills through shared core `Skill.Do`; needs broader effect play-testing.
+- Partial: Spells in combat. Current pass can cast encounter spells through shared core `Spell.Cast`; needs broader target/effect play-testing.
+- Partial: Items in combat. Current pass can use encounter items with item icons and shared core item/skill effects; needs broader charge/consume play-testing.
 - Pending: Combat music selection, including `battleground` or map/encounter-specific combat tracks.
 - Pending: Restore the correct map or biome music after combat ends.
 - Pending: Combat sound effects for attacks, misses, spells, item use, victory, defeat, and monster/player damage.

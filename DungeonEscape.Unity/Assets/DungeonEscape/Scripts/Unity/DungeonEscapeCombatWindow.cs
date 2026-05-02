@@ -20,7 +20,9 @@ namespace Redpoint.DungeonEscape.Unity
         {
             Message,
             ChooseAction,
-            ChooseTarget
+            ChooseTarget,
+            ChooseSpell,
+            ChooseItem
         }
 
         private sealed class CombatMonster
@@ -52,6 +54,10 @@ namespace Redpoint.DungeonEscape.Unity
         private string messageText;
         private Action afterMessage;
         private Hero actingHero;
+        private Action<List<IFighter>> targetSelectionDone;
+        private List<IFighter> targetSelectionCandidates = new List<IFighter>();
+        private string targetSelectionTitle;
+        private int selectedMenuIndex;
         private int round;
         private int turnIndex;
 
@@ -67,6 +73,8 @@ namespace Redpoint.DungeonEscape.Unity
 
             window.monsters.Clear();
             window.turnOrder.Clear();
+            window.targetSelectionCandidates.Clear();
+            window.targetSelectionDone = null;
             window.gameState = DungeonEscapeGameState.GetOrCreate();
             if (encounterMonsters != null)
             {
@@ -76,6 +84,7 @@ namespace Redpoint.DungeonEscape.Unity
             window.biome = encounterBiome;
             window.round = 0;
             window.turnIndex = 0;
+            window.selectedMenuIndex = 0;
             window.actingHero = null;
             window.ShowMessage(window.GetEncounterMessage(), window.BeginRound);
             IsOpen = window.monsters.Count > 0;
@@ -95,10 +104,32 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Interact) ||
-                DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Cancel))
+            if (state == CombatState.Message)
             {
-                ContinueMessage();
+                if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Interact) ||
+                    DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Cancel))
+                {
+                    ContinueMessage();
+                }
+
+                return;
+            }
+
+            if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Cancel))
+            {
+                ReturnToActionMenu();
+                return;
+            }
+
+            var moveY = DungeonEscapeInput.GetMoveYDown();
+            if (moveY != 0)
+            {
+                MoveSelection(moveY);
+            }
+
+            if (DungeonEscapeInput.GetCommandDown(DungeonEscapeInputCommand.Interact))
+            {
+                ActivateSelection();
             }
         }
 
@@ -195,13 +226,25 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (state == CombatState.ChooseAction)
             {
-                DrawCenteredButtons(panelRect, scale, new[] { new CombatButton("Attack", BeginTargetSelection) });
+                DrawActionMenu(panelRect, scale);
                 return;
             }
 
             if (state == CombatState.ChooseTarget)
             {
                 DrawTargetButtons(panelRect, scale);
+                return;
+            }
+
+            if (state == CombatState.ChooseSpell)
+            {
+                DrawSpellMenu(panelRect, scale);
+                return;
+            }
+
+            if (state == CombatState.ChooseItem)
+            {
+                DrawItemMenu(panelRect, scale);
                 return;
             }
 
@@ -247,6 +290,7 @@ namespace Redpoint.DungeonEscape.Unity
         private void ShowMessage(string text, Action next)
         {
             state = CombatState.Message;
+            selectedMenuIndex = 0;
             messageText = text;
             afterMessage = next;
         }
@@ -267,6 +311,83 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             next();
+        }
+
+        private void MoveSelection(int moveY)
+        {
+            var count = GetCurrentSelectionCount();
+            if (count <= 0)
+            {
+                selectedMenuIndex = 0;
+                return;
+            }
+
+            selectedMenuIndex = Mathf.Clamp(selectedMenuIndex + (moveY > 0 ? 1 : -1), 0, count - 1);
+        }
+
+        private int GetCurrentSelectionCount()
+        {
+            switch (state)
+            {
+                case CombatState.ChooseAction:
+                    return BuildActionButtons().Count();
+                case CombatState.ChooseSpell:
+                    return actingHero == null ? 0 : GetAvailableEncounterSpells(actingHero).Count();
+                case CombatState.ChooseItem:
+                    return actingHero == null ? 0 : GetAvailableEncounterItems(actingHero).Count();
+                case CombatState.ChooseTarget:
+                    return targetSelectionCandidates == null ? 0 : targetSelectionCandidates.Count;
+                default:
+                    return 0;
+            }
+        }
+
+        private void ActivateSelection()
+        {
+            switch (state)
+            {
+                case CombatState.ChooseAction:
+                    var actions = BuildActionButtons().ToList();
+                    if (selectedMenuIndex >= 0 && selectedMenuIndex < actions.Count)
+                    {
+                        actions[selectedMenuIndex].Action();
+                    }
+
+                    return;
+                case CombatState.ChooseSpell:
+                    var spells = actingHero == null ? new List<Spell>() : GetAvailableEncounterSpells(actingHero).ToList();
+                    if (selectedMenuIndex >= 0 && selectedMenuIndex < spells.Count)
+                    {
+                        ResolveHeroSpell(spells[selectedMenuIndex]);
+                    }
+
+                    return;
+                case CombatState.ChooseItem:
+                    var items = actingHero == null ? new List<ItemInstance>() : GetAvailableEncounterItems(actingHero).ToList();
+                    if (selectedMenuIndex >= 0 && selectedMenuIndex < items.Count)
+                    {
+                        ResolveHeroItem(items[selectedMenuIndex]);
+                    }
+
+                    return;
+                case CombatState.ChooseTarget:
+                    ActivateTargetSelection(selectedMenuIndex);
+                    return;
+            }
+        }
+
+        private void ReturnToActionMenu()
+        {
+            if (state == CombatState.ChooseAction)
+            {
+                return;
+            }
+
+            targetSelectionDone = null;
+            targetSelectionCandidates.Clear();
+            state = CombatState.ChooseAction;
+            selectedMenuIndex = 0;
+            messageText = actingHero == null ? "Choose an action." : actingHero.Name + "'s turn.";
         }
 
         private void BeginRound()
@@ -330,7 +451,27 @@ namespace Redpoint.DungeonEscape.Unity
                 if (turn.IsHero)
                 {
                     actingHero = turn.Actor as Hero;
+                    if (actingHero != null && actingHero.Status.Any(effect => effect.Type == EffectType.Sleep))
+                    {
+                        ShowMessage(actingHero.Name + " is asleep.", AdvanceTurn);
+                        return;
+                    }
+
+                    if (actingHero != null && actingHero.Status.Any(effect => effect.Type == EffectType.Confusion))
+                    {
+                        var confusedTargets = AliveMonsters().Select(monster => monster.Instance).Cast<IFighter>()
+                            .Concat(AliveHeroes().Cast<IFighter>())
+                            .Where(target => target != actingHero)
+                            .ToList();
+                        if (confusedTargets.Count > 0)
+                        {
+                            ResolveHeroAttack(confusedTargets[CombatRandom.Next(confusedTargets.Count)]);
+                            return;
+                        }
+                    }
+
                     state = CombatState.ChooseAction;
+                    selectedMenuIndex = 0;
                     messageText = actingHero == null ? "Choose an action." : actingHero.Name + "'s turn.";
                     return;
                 }
@@ -363,15 +504,87 @@ namespace Redpoint.DungeonEscape.Unity
                 return;
             }
 
-            var targets = AliveMonsters().ToList();
-            if (targets.Count == 1)
+            BeginTargetSelection(
+                "Choose a target for " + actingHero.Name + ".",
+                AliveMonsters().Select(monster => monster.Instance).Cast<IFighter>().ToList(),
+                Target.Single,
+                1,
+                targets => ResolveHeroAttack(targets.FirstOrDefault()));
+        }
+
+        private void BeginSpellSelection()
+        {
+            if (actingHero == null)
             {
-                ResolveHeroAttack(targets[0].Instance);
                 return;
             }
 
+            var spells = GetAvailableEncounterSpells(actingHero).ToList();
+            if (spells.Count == 0)
+            {
+                ShowMessage(actingHero.Name + " cannot cast any combat spells.", AdvanceTurn);
+                return;
+            }
+
+            state = CombatState.ChooseSpell;
+            selectedMenuIndex = 0;
+            messageText = "Choose a spell for " + actingHero.Name + ".";
+        }
+
+        private void BeginItemSelection()
+        {
+            if (actingHero == null)
+            {
+                return;
+            }
+
+            var items = GetAvailableEncounterItems(actingHero).ToList();
+            if (items.Count == 0)
+            {
+                ShowMessage(actingHero.Name + " has no combat items.", AdvanceTurn);
+                return;
+            }
+
+            state = CombatState.ChooseItem;
+            selectedMenuIndex = 0;
+            messageText = "Choose an item for " + actingHero.Name + ".";
+        }
+
+        private void BeginTargetSelection(
+            string title,
+            List<IFighter> candidates,
+            Target targetMode,
+            int maxTargets,
+            Action<List<IFighter>> done,
+            bool allowDead = false)
+        {
+            candidates = candidates == null
+                ? new List<IFighter>()
+                : candidates.Where(candidate => allowDead ? candidate != null : CanBeAttacked(candidate)).ToList();
+            if (targetMode == Target.None || candidates.Count == 0)
+            {
+                done(new List<IFighter>());
+                return;
+            }
+
+            if (targetMode == Target.Group)
+            {
+                done(maxTargets > 0 ? candidates.Take(maxTargets).ToList() : candidates);
+                return;
+            }
+
+            if (candidates.Count == 1)
+            {
+                done(new List<IFighter> { candidates[0] });
+                return;
+            }
+
+            targetSelectionTitle = title;
+            targetSelectionCandidates = candidates;
+            targetSelectionDone = done;
             state = CombatState.ChooseTarget;
-            messageText = "Choose a target for " + actingHero.Name + ".";
+            selectedMenuIndex = 0;
+            messageText = title;
         }
 
         private void ResolveHeroAttack(IFighter target)
@@ -383,6 +596,194 @@ namespace Redpoint.DungeonEscape.Unity
             }
 
             ShowMessage(Fight(actingHero, target), AdvanceTurn);
+        }
+
+        private void ResolveHeroSpell(Spell spell)
+        {
+            if (actingHero == null || spell == null)
+            {
+                AdvanceTurn();
+                return;
+            }
+
+            spell.Setup(DungeonEscapeGameDataCache.Current == null ? null : DungeonEscapeGameDataCache.Current.Skills);
+            var candidates = spell.IsAttackSpell
+                ? AliveMonsters().Select(monster => monster.Instance).Cast<IFighter>().ToList()
+                : GetPartySpellTargets(spell);
+            BeginTargetSelection(
+                "Choose a target for " + spell.Name + ".",
+                candidates,
+                spell.Targets,
+                spell.MaxTargets,
+                targets => ShowMessage(CastSpell(spell, targets), AdvanceTurn),
+                spell.Type == SkillType.Revive);
+        }
+
+        private void ResolveHeroSkill(Skill skill)
+        {
+            if (actingHero == null || skill == null)
+            {
+                AdvanceTurn();
+                return;
+            }
+
+            var candidates = skill.IsAttackSkill
+                ? AliveMonsters().Select(monster => monster.Instance).Cast<IFighter>().ToList()
+                : GetPartySkillTargets(skill);
+            BeginTargetSelection(
+                "Choose a target for " + skill.Name + ".",
+                candidates,
+                skill.Targets,
+                skill.MaxTargets,
+                targets => ShowMessage(DoSkill(skill, targets), AdvanceTurn),
+                skill.Type == SkillType.Revive);
+        }
+
+        private void ResolveHeroItem(ItemInstance item)
+        {
+            if (actingHero == null || item == null || item.Item == null)
+            {
+                AdvanceTurn();
+                return;
+            }
+
+            EnsureItemLinked(item);
+            var skill = item.Item.Skill;
+            if (skill == null)
+            {
+                ShowMessage(item.Name + " cannot be used in combat.", AdvanceTurn);
+                return;
+            }
+
+            var candidates = skill.IsAttackSkill
+                ? AliveMonsters().Select(monster => monster.Instance).Cast<IFighter>().ToList()
+                : GetPartySkillTargets(skill);
+            BeginTargetSelection(
+                "Choose a target for " + item.Name + ".",
+                candidates,
+                item.Target,
+                skill.MaxTargets,
+                targets => ShowMessage(UseItem(item, targets), AdvanceTurn),
+                skill.Type == SkillType.Revive);
+        }
+
+        private void ResolveHeroRun()
+        {
+            if (actingHero == null)
+            {
+                AdvanceTurn();
+                return;
+            }
+
+            var fastestMonster = AliveMonsters()
+                .Select(monster => monster.Instance)
+                .OrderByDescending(monster => monster.Agility)
+                .FirstOrDefault();
+            var message = actingHero.Name + " tried to run.\n";
+            if (fastestMonster == null || actingHero.CanHit(fastestMonster))
+            {
+                DungeonEscapeAudio.GetOrCreate().PlaySoundEffect("stairs-up");
+                ShowMessage(message + "And got away.", null);
+                return;
+            }
+
+            ShowMessage(message + "But could not get away.", AdvanceTurn);
+        }
+
+        private List<IFighter> GetPartySpellTargets(Spell spell)
+        {
+            return spell != null && spell.Type == SkillType.Revive
+                ? DeadHeroes().Cast<IFighter>().ToList()
+                : AliveHeroes().Cast<IFighter>().ToList();
+        }
+
+        private List<IFighter> GetPartySkillTargets(Skill skill)
+        {
+            return skill != null && skill.Type == SkillType.Revive
+                ? DeadHeroes().Cast<IFighter>().ToList()
+                : AliveHeroes().Cast<IFighter>().ToList();
+        }
+
+        private string CastSpell(Spell spell, List<IFighter> targets)
+        {
+            if (actingHero == null || spell == null)
+            {
+                return "";
+            }
+
+            var message = spell.Cast(targets ?? new List<IFighter>(), new BaseState[0], actingHero, gameState, round);
+            return string.IsNullOrEmpty(message) ? actingHero.Name + " casts " + spell.Name + "." : message.TrimEnd();
+        }
+
+        private string DoSkill(Skill skill, List<IFighter> targets)
+        {
+            if (actingHero == null || skill == null)
+            {
+                return "";
+            }
+
+            var message = actingHero.Name + " uses " + skill.Name + ".\n";
+            var selectedTargets = targets ?? new List<IFighter>();
+            if (selectedTargets.Count == 0)
+            {
+                var result = skill.Do(null, actingHero, null, gameState, round);
+                if (!string.IsNullOrEmpty(result.Item1))
+                {
+                    message += result.Item1;
+                }
+            }
+
+            foreach (var target in selectedTargets)
+            {
+                var result = skill.Do(target, actingHero, null, gameState, round);
+                if (!string.IsNullOrEmpty(result.Item1))
+                {
+                    message += result.Item1;
+                }
+            }
+
+            return message.TrimEnd();
+        }
+
+        private string UseItem(ItemInstance item, List<IFighter> targets)
+        {
+            if (actingHero == null || item == null)
+            {
+                return "";
+            }
+
+            var message = "";
+            var worked = false;
+            var selectedTargets = targets == null || targets.Count == 0
+                ? new List<IFighter> { actingHero }
+                : targets;
+            foreach (var target in selectedTargets)
+            {
+                var result = item.Use(actingHero, target, null, gameState, round);
+                if (result.Item2)
+                {
+                    worked = true;
+                }
+
+                if (!string.IsNullOrEmpty(result.Item1))
+                {
+                    message += result.Item1 + "\n";
+                }
+            }
+
+            if (worked && item.Type == ItemType.OneUse)
+            {
+                item.UnEquip(gameState.Party.Members);
+                actingHero.Items.Remove(item);
+            }
+            else if (!item.HasCharges)
+            {
+                item.UnEquip(gameState.Party.Members);
+                actingHero.Items.Remove(item);
+                message += item.Name + " has been destroyed.\n";
+            }
+
+            return string.IsNullOrEmpty(message) ? actingHero.Name + " used " + item.Name + "." : message.TrimEnd();
         }
 
         private string Fight(IFighter source, IFighter target)
@@ -437,6 +838,16 @@ namespace Redpoint.DungeonEscape.Unity
             return Dice.RollD20() + (fighter == null ? 0 : fighter.Agility);
         }
 
+        private static void EnsureItemLinked(ItemInstance item)
+        {
+            if (item == null || item.Item == null || DungeonEscapeGameDataCache.Current == null)
+            {
+                return;
+            }
+
+            item.Item.Setup(DungeonEscapeGameDataCache.Current.Skills);
+        }
+
         private static bool CanBeAttacked(IFighter fighter)
         {
             return fighter != null && !fighter.IsDead && !fighter.RanAway;
@@ -454,11 +865,176 @@ namespace Redpoint.DungeonEscape.Unity
                 : gameState.Party.AliveMembers.Where(CanBeAttacked);
         }
 
+        private IEnumerable<Hero> DeadHeroes()
+        {
+            return gameState == null || gameState.Party == null
+                ? Enumerable.Empty<Hero>()
+                : gameState.Party.DeadMembers.Where(hero => hero != null);
+        }
+
         private string GetVictoryMessage()
         {
             return gameState == null
                 ? "The enemies have been defeated."
                 : gameState.ApplyCombatRewards(monsters.Select(monster => monster.Instance));
+        }
+
+        private void DrawActionMenu(Rect panelRect, float scale)
+        {
+            var actions = BuildActionButtons().ToList();
+            DrawMenuButtons(panelRect, scale, actingHero == null ? "Action" : actingHero.Name + " Action", actions);
+        }
+
+        private IEnumerable<CombatButton> BuildActionButtons()
+        {
+            yield return new CombatButton("Fight", BeginTargetSelection);
+
+            if (actingHero != null &&
+                !actingHero.Status.Any(effect => effect.Type == EffectType.StopSpell) &&
+                GetAvailableEncounterSpells(actingHero).Any())
+            {
+                yield return new CombatButton("Spell", BeginSpellSelection);
+            }
+
+            if (actingHero != null)
+            {
+                foreach (var skill in GetAvailableEncounterSkills(actingHero))
+                {
+                    var selectedSkill = skill;
+                    yield return new CombatButton(selectedSkill.Name, () => ResolveHeroSkill(selectedSkill));
+                }
+            }
+
+            if (actingHero != null && GetAvailableEncounterItems(actingHero).Any())
+            {
+                yield return new CombatButton("Item", BeginItemSelection);
+            }
+
+            yield return new CombatButton("Run", ResolveHeroRun);
+        }
+
+        private void DrawSpellMenu(Rect panelRect, float scale)
+        {
+            var spells = actingHero == null ? new List<Spell>() : GetAvailableEncounterSpells(actingHero).ToList();
+            DrawIconList(
+                panelRect,
+                scale,
+                "Spell",
+                spells,
+                spell => spell.Name + "  " + spell.Cost + " MP",
+                (Spell spell, out Sprite sprite) => DungeonEscapeUiAssetResolver.TryGetSpellSprite(spell, out sprite),
+                ResolveHeroSpell);
+        }
+
+        private void DrawItemMenu(Rect panelRect, float scale)
+        {
+            var items = actingHero == null ? new List<ItemInstance>() : GetAvailableEncounterItems(actingHero).ToList();
+            DrawIconList(
+                panelRect,
+                scale,
+                "Item",
+                items,
+                item => item.NameWithStats,
+                (ItemInstance item, out Sprite sprite) => DungeonEscapeUiAssetResolver.TryGetItemSprite(item, out sprite),
+                ResolveHeroItem);
+        }
+
+        private delegate bool TryGetSpriteDelegate<T>(T value, out Sprite sprite);
+
+        private void DrawIconList<T>(
+            Rect panelRect,
+            float scale,
+            string title,
+            IList<T> values,
+            Func<T, string> getLabel,
+            TryGetSpriteDelegate<T> getSprite,
+            Action<T> onSelect)
+        {
+            var rowHeight = 38f * scale;
+            var menuWidth = Mathf.Min(360f * scale, panelRect.width - 28f * scale);
+            var x = panelRect.x + 14f * scale;
+            var y = panelRect.y + 82f * scale;
+            GUI.Label(new Rect(x, y - 30f * scale, menuWidth, 24f * scale), title, titleStyle);
+
+            for (var i = 0; i < values.Count; i++)
+            {
+                var rect = new Rect(x, y + i * (rowHeight + 4f * scale), menuWidth, rowHeight);
+                if (GUI.Button(rect, GUIContent.none, GetMenuButtonStyle(i == selectedMenuIndex)))
+                {
+                    selectedMenuIndex = i;
+                    onSelect(values[i]);
+                }
+
+                Sprite sprite;
+                if (getSprite(values[i], out sprite) && sprite != null && sprite.texture != null)
+                {
+                    DrawSprite(sprite, new Rect(rect.x + 6f * scale, rect.y + 3f * scale, 32f * scale, 32f * scale));
+                }
+
+                GUI.Label(
+                    new Rect(rect.x + 44f * scale, rect.y, rect.width - 50f * scale, rect.height),
+                    getLabel(values[i]),
+                    labelStyle);
+            }
+
+            var backRect = new Rect(x, panelRect.yMax - 40f * scale, 112f * scale, 30f * scale);
+            if (GUI.Button(backRect, "Back", buttonStyle))
+            {
+                ReturnToActionMenu();
+            }
+        }
+
+        private void DrawMenuButtons(Rect panelRect, float scale, string title, IList<CombatButton> buttons)
+        {
+            var menuWidth = 240f * scale;
+            var rowHeight = 32f * scale;
+            var x = panelRect.x + 14f * scale;
+            var y = panelRect.y + 82f * scale;
+            GUI.Label(new Rect(x, y - 30f * scale, menuWidth, 24f * scale), title, titleStyle);
+            for (var i = 0; i < buttons.Count; i++)
+            {
+                var rect = new Rect(x, y + i * (rowHeight + 4f * scale), menuWidth, rowHeight);
+                if (GUI.Button(rect, buttons[i].Label, GetMenuButtonStyle(i == selectedMenuIndex)))
+                {
+                    selectedMenuIndex = i;
+                    buttons[i].Action();
+                }
+            }
+        }
+
+        private IEnumerable<Spell> GetAvailableEncounterSpells(Hero hero)
+        {
+            return hero == null ||
+                   DungeonEscapeGameDataCache.Current == null ||
+                   DungeonEscapeGameDataCache.Current.Spells == null
+                ? Enumerable.Empty<Spell>()
+                : hero.GetSpells(DungeonEscapeGameDataCache.Current.Spells)
+                    .Where(spell => spell != null && spell.IsEncounterSpell && spell.Cost <= hero.Magic);
+        }
+
+        private IEnumerable<Skill> GetAvailableEncounterSkills(Hero hero)
+        {
+            return hero == null ||
+                   DungeonEscapeGameDataCache.Current == null ||
+                   DungeonEscapeGameDataCache.Current.Skills == null
+                ? Enumerable.Empty<Skill>()
+                : hero.GetSkills(DungeonEscapeGameDataCache.Current.Skills)
+                    .Where(skill => skill != null && skill.IsEncounterSkill);
+        }
+
+        private IEnumerable<ItemInstance> GetAvailableEncounterItems(Hero hero)
+        {
+            return hero == null || hero.Items == null
+                ? Enumerable.Empty<ItemInstance>()
+                : hero.Items.Where(item =>
+                {
+                    EnsureItemLinked(item);
+                    return item != null &&
+                           item.Item != null &&
+                           item.Item.Skill != null &&
+                           item.Item.Skill.IsEncounterSkill &&
+                           item.HasCharges;
+                });
         }
 
         private void DrawCenteredButtons(Rect panelRect, float scale, IEnumerable<CombatButton> buttons)
@@ -482,7 +1058,9 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void DrawTargetButtons(Rect panelRect, float scale)
         {
-            var targets = AliveMonsters().ToList();
+            var targets = targetSelectionCandidates == null
+                ? new List<IFighter>()
+                : targetSelectionCandidates.ToList();
             var buttonWidth = 126f * scale;
             var buttonHeight = 32f * scale;
             var gap = 8f * scale;
@@ -493,10 +1071,28 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 var target = targets[i];
                 var rect = new Rect(startX + i * (buttonWidth + gap), y, buttonWidth, buttonHeight);
-                if (GUI.Button(rect, target.Instance.Name, buttonStyle))
+                if (GUI.Button(rect, target.Name, GetMenuButtonStyle(i == selectedMenuIndex)))
                 {
-                    ResolveHeroAttack(target.Instance);
+                    selectedMenuIndex = i;
+                    ActivateTargetSelection(i);
                 }
+            }
+        }
+
+        private void ActivateTargetSelection(int index)
+        {
+            if (targetSelectionCandidates == null || index < 0 || index >= targetSelectionCandidates.Count)
+            {
+                return;
+            }
+
+            var target = targetSelectionCandidates[index];
+            var done = targetSelectionDone;
+            targetSelectionDone = null;
+            targetSelectionCandidates.Clear();
+            if (done != null)
+            {
+                done(new List<IFighter> { target });
             }
         }
 
@@ -538,6 +1134,16 @@ namespace Redpoint.DungeonEscape.Unity
                 fontSize = Mathf.RoundToInt(22f * scale)
             };
             buttonStyle = uiTheme.ButtonStyle;
+        }
+
+        private GUIStyle GetMenuButtonStyle(bool selected)
+        {
+            if (uiTheme == null)
+            {
+                return buttonStyle;
+            }
+
+            return selected ? uiTheme.SelectedTabStyle : uiTheme.ButtonStyle;
         }
 
         private float GetPixelScale()
@@ -687,6 +1293,39 @@ namespace Redpoint.DungeonEscape.Unity
                 width,
                 height);
             GUI.DrawTexture(drawRect, texture, ScaleMode.StretchToFill, true);
+        }
+
+        private static void DrawSprite(Sprite sprite, Rect rect)
+        {
+            if (sprite == null || sprite.texture == null)
+            {
+                return;
+            }
+
+            var drawRect = FitRect(sprite.rect.width, sprite.rect.height, rect);
+            var texCoords = new Rect(
+                sprite.rect.x / sprite.texture.width,
+                sprite.rect.y / sprite.texture.height,
+                sprite.rect.width / sprite.texture.width,
+                sprite.rect.height / sprite.texture.height);
+            GUI.DrawTextureWithTexCoords(drawRect, sprite.texture, texCoords);
+        }
+
+        private static Rect FitRect(float sourceWidth, float sourceHeight, Rect target)
+        {
+            if (sourceWidth <= 0f || sourceHeight <= 0f)
+            {
+                return target;
+            }
+
+            var scale = Mathf.Min(target.width / sourceWidth, target.height / sourceHeight);
+            var width = sourceWidth * scale;
+            var height = sourceHeight * scale;
+            return new Rect(
+                target.x + (target.width - width) / 2f,
+                target.y + (target.height - height) / 2f,
+                width,
+                height);
         }
 
         private void DrawHealthBar(int currentHealth, int maxHealth, Rect rect)

@@ -758,7 +758,12 @@ namespace Redpoint.DungeonEscape.Unity
             foreach (var spell in spells)
             {
                 var canCast = gameState != null && CanCastSpellFromPartyMenu(hero, spell);
+                Sprite sprite;
                 GUILayout.BeginHorizontal();
+                DungeonEscapeUiControls.SpriteIcon(
+                    DungeonEscapeUiAssetResolver.TryGetSpellSprite(spell, out sprite) ? sprite : null,
+                    32f * GetPixelScale(),
+                    uiTheme);
                 GUILayout.Label(spell.Name, labelStyle);
                 if (canCast && GUILayout.Button("Cast", buttonStyle, GUILayout.Width(86f * GetPixelScale())))
                 {

@@ -327,7 +327,7 @@ Status legend:
 - Expected: the Equipment sub-tab shows item images beside equipped item names.
 - Expected: item icons, rarity coloring, details, and available actions match the old Inventory behavior.
 - Expected: Use actions are hidden when the selected item cannot currently be used.
-- Expected: spell rows show only the spell name and a Cast button; Cast is disabled when the member does not have enough MP or cannot currently cast it.
+- Expected: spell rows show a spell icon, the spell name, and a Cast button; Cast is disabled when the member does not have enough MP or cannot currently cast it.
 - Expected: party ordering buttons are labelled `Up` and `Down`.
 - Use Transfer, Drop, Equip, Unequip, and Use where available.
 - Expected: actions still work through the existing modal overlays and update the selected member afterward.
@@ -671,12 +671,12 @@ Status legend:
 - Set a short autosave interval, then wait in combat longer than that interval.
 - Expected: no autosave happens while combat is open.
 
-### [ ] Attack-Only Combat Loop
+### [ ] Combat Fight Loop And Rewards
 
 - Trigger a random encounter.
 - Press OK on the encounter message.
 - Expected: combat rolls monster stats and initiative, then shows the first living hero action prompt when that hero's turn arrives.
-- Choose Attack.
+- Choose Fight.
 - If more than one monster is alive, choose a monster target.
 - Expected: the hero attacks using the old hit, critical hit, and damage rules, and the target monster HP bar updates.
 - Continue through monster turns.
@@ -684,3 +684,39 @@ Status legend:
 - Continue rounds until either all monsters or all active party members are defeated.
 - Expected: a defeat/victory message is shown and OK closes the combat view.
 - If the party wins, expected: living active party members gain XP, party gold increases, level-up messages appear when relevant, and any monster/item rewards are added to party inventory if there is room.
+
+### [ ] Combat Action Menu Shows Available Options
+
+- Trigger a random encounter with a party member that knows at least one encounter spell, one encounter skill, or has an item with an encounter skill.
+- Press OK on the encounter message until a hero action prompt appears.
+- Expected: the action panel is titled `<HeroName> Action`.
+- Expected: Fight and Run are always shown.
+- Expected: Spell appears only when the hero has an encounter spell, enough MP, and is not affected by StopSpell.
+- Expected: known encounter skills are shown as action rows.
+- Expected: Item appears only when the hero has at least one usable combat item with charges.
+- Use keyboard or gamepad up/down and Interact/Cancel across the action, spell, item, and target lists.
+- Expected: the selected row is highlighted, Interact activates the selected row, and Cancel returns from sub-lists to the action menu.
+
+### [ ] Combat Spell And Item Icons
+
+- Open the Party tab and switch to a member's Spells sub-tab.
+- Expected: each spell row shows the icon from `items2` using the spell's `ImageId`.
+- Trigger combat with a spellcaster.
+- Choose Spell from the action panel.
+- Expected: each available spell row shows the same icon, name, and MP cost.
+- Choose Item from the action panel with a usable combat item available.
+- Expected: each item row shows its item icon and name/stats.
+
+### [ ] Combat Spells, Skills, Items, And Run
+
+- Trigger combat with a spellcaster that has an attack spell such as Blaze.
+- Choose Spell, then choose an attack spell.
+- If multiple monsters are alive, choose a monster target.
+- Expected: MP is deducted, the shared spell effect runs, damage/status text is shown, and monster HP updates.
+- Trigger combat with a hero that has a non-attack encounter spell or skill such as Heal, Revive, Clear, Buff, or a similar skill.
+- Choose the spell or skill.
+- Expected: party-member targets are offered when needed, dead members are valid targets for revive effects, and the party status window updates after the effect.
+- Use a combat item with an encounter skill.
+- Expected: the item effect runs, charges update, and one-use or depleted items are removed when consumed.
+- Choose Run.
+- Expected: success closes combat with a getaway message; failure consumes the hero turn and combat continues.

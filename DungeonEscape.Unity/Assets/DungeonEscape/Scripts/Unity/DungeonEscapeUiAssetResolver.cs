@@ -59,6 +59,18 @@ namespace Redpoint.DungeonEscape.Unity
             return itemSpriteSets != null && TiledTilesetSprites.TryGetSprite(item.ImageId, itemSpriteSets, out sprite);
         }
 
+        public static bool TryGetSpellSprite(Spell spell, out Sprite sprite)
+        {
+            sprite = null;
+            if (spell == null || spell.ImageId < 0)
+            {
+                return false;
+            }
+
+            EnsureItemSpriteSets();
+            return itemSpriteSets != null && TiledTilesetSprites.TryGetSprite(spell.ImageId, itemSpriteSets, out sprite);
+        }
+
         public static bool TryGetHeroSprite(Hero hero, out Sprite sprite)
         {
             sprite = null;

@@ -85,6 +85,8 @@ namespace Redpoint.DungeonEscape.Unity
         private int heldSettingsTabMoveX;
         private bool menuControlsBlocked;
         private bool uiAssetsPrewarmed;
+        private bool pendingSettingsSave;
+        private float pendingSettingsSaveTime;
 
         public static bool IsOpen
         {
@@ -100,6 +102,8 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void Update()
         {
+            UpdateDeferredSettingsSave();
+
             if (DungeonEscapeStoreWindow.IsOpen)
             {
                 return;
@@ -364,15 +368,16 @@ namespace Redpoint.DungeonEscape.Unity
 
             GUILayout.Label("Gold: " + party.Gold + "    Map: " + party.CurrentMapId + "    Steps: " + party.StepCount, labelStyle);
             GUILayout.Space(8f * GetPixelScale());
+            var partyPanelHeight = Mathf.Max(120f * GetPixelScale(), menuBodyHeight - 34f * GetPixelScale());
             var activeMembers = party.ActiveMembers.ToList();
             var inactive = party.InactiveMembers.ToList();
             selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Mathf.Max(activeMembers.Count + inactive.Count - 1, 0));
 
             GUILayout.BeginHorizontal();
-            GUILayout.BeginVertical(panelStyle, GUILayout.Width(340f * GetPixelScale()), GUILayout.Height(menuBodyHeight));
+            GUILayout.BeginVertical(panelStyle, GUILayout.Width(340f * GetPixelScale()), GUILayout.Height(partyPanelHeight));
             partyScrollPosition = BeginThemedScroll(
                 partyScrollPosition,
-                Mathf.Max(120f * GetPixelScale(), menuBodyHeight - 28f * GetPixelScale()));
+                Mathf.Max(100f * GetPixelScale(), partyPanelHeight - 28f * GetPixelScale()));
             GUILayout.Label("Active Party (" + activeMembers.Count + "/" + GetMaxPartyMembers() + ")", titleStyle);
             for (var i = 0; i < activeMembers.Count; i++)
             {
@@ -403,7 +408,7 @@ namespace Redpoint.DungeonEscape.Unity
             if (selectedHero != null)
             {
                 GUILayout.Space(10f * GetPixelScale());
-                DrawPartyDetail(selectedHero);
+                DrawPartyDetail(selectedHero, partyPanelHeight);
             }
 
             GUILayout.EndHorizontal();
@@ -452,16 +457,16 @@ namespace Redpoint.DungeonEscape.Unity
             GUILayout.Label(hero.Name + (active ? "" : "  Reserve"), labelStyle);
         }
 
-        private void DrawPartyDetail(Hero hero)
+        private void DrawPartyDetail(Hero hero, float height)
         {
             EnsureVisiblePartyDetailTab(hero);
-            GUILayout.BeginVertical(panelStyle, GUILayout.Height(menuBodyHeight), GUILayout.ExpandWidth(true));
+            GUILayout.BeginVertical(panelStyle, GUILayout.Height(height), GUILayout.ExpandWidth(true));
             GUILayout.Label(hero.Name, titleStyle);
             DrawPartyDetailTabs();
             GUILayout.Space(8f * GetPixelScale());
             partyDetailScrollPosition = BeginThemedScroll(
                 partyDetailScrollPosition,
-                Mathf.Max(120f * GetPixelScale(), menuBodyHeight - 86f * GetPixelScale()));
+                Mathf.Max(100f * GetPixelScale(), height - 86f * GetPixelScale()));
             switch (currentPartyDetailTab)
             {
                 case PartyDetailTab.Status:
@@ -541,8 +546,11 @@ namespace Redpoint.DungeonEscape.Unity
                 uiTheme);
             GUILayout.BeginVertical();
             GUILayout.Label("Level " + hero.Level + " " + hero.Class + "  " + hero.Gender, labelStyle);
+            GUILayout.Space(4f * GetPixelScale());
             DrawProgressValue("HP", hero.Health, hero.MaxHealth, hero.Health + " / " + hero.MaxHealth);
+            GUILayout.Space(3f * GetPixelScale());
             DrawProgressValue("MP", hero.Magic, hero.MaxMagic, hero.Magic + " / " + hero.MaxMagic);
+            GUILayout.Space(3f * GetPixelScale());
             DrawProgressValue("XP", hero.Xp, hero.NextLevel, hero.Xp + " / " + hero.NextLevel + " (" + GetXpToNextLevel(hero) + " to next)");
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
@@ -1869,7 +1877,15 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void DrawGeneralSettings(Settings settings)
         {
-            GUI.changed = false;
+            var oldUiScale = settings.UiScale;
+            var oldFullScreen = settings.IsFullScreen;
+            var oldMusicVolume = settings.MusicVolume;
+            var oldSoundEffectsVolume = settings.SoundEffectsVolume;
+            var oldSprintBoost = settings.SprintBoost;
+            var oldTurnDelay = settings.TurnMoveDelaySeconds;
+            var oldAutoSaveEnabled = settings.AutoSaveEnabled;
+            var oldAutoSaveInterval = settings.AutoSaveIntervalSeconds;
+
             BeginSelectableRow();
             settings.UiScale = DrawSliderRow("UI Scale: " + settings.UiScale.ToString("0.00"), settings.UiScale <= 0f ? 1f : settings.UiScale, MinUiScale, MaxUiScale);
             EndSelectableRow();
@@ -1901,9 +1917,24 @@ namespace Redpoint.DungeonEscape.Unity
             SetMenuGuiEnabled(true);
             EndSelectableRow();
 
-            if (GUI.changed)
+            var volumeChanged =
+                !Mathf.Approximately(oldMusicVolume, settings.MusicVolume) ||
+                !Mathf.Approximately(oldSoundEffectsVolume, settings.SoundEffectsVolume);
+            var otherChanged =
+                !Mathf.Approximately(oldUiScale, settings.UiScale) ||
+                oldFullScreen != settings.IsFullScreen ||
+                !Mathf.Approximately(oldSprintBoost, settings.SprintBoost) ||
+                !Mathf.Approximately(oldTurnDelay, settings.TurnMoveDelaySeconds) ||
+                oldAutoSaveEnabled != settings.AutoSaveEnabled ||
+                !Mathf.Approximately(oldAutoSaveInterval, settings.AutoSaveIntervalSeconds);
+
+            if (otherChanged)
             {
                 ApplySettings(settings);
+            }
+            else if (volumeChanged)
+            {
+                ApplyAudioSettings(settings);
             }
         }
 
@@ -1953,7 +1984,7 @@ namespace Redpoint.DungeonEscape.Unity
 
             if (GUI.changed)
             {
-                ApplySettings(settings);
+                ApplySettings(settings, true);
             }
         }
 
@@ -2507,12 +2538,12 @@ namespace Redpoint.DungeonEscape.Unity
                         ApplySettings(settings);
                         break;
                     case 2:
-                        settings.MusicVolume = Mathf.Clamp01(settings.MusicVolume + 0.05f * delta);
-                        ApplySettings(settings);
+                        settings.MusicVolume = Mathf.Clamp01(settings.MusicVolume + 0.01f * delta);
+                        ApplyAudioSettings(settings);
                         break;
                     case 3:
-                        settings.SoundEffectsVolume = Mathf.Clamp01(settings.SoundEffectsVolume + 0.05f * delta);
-                        ApplySettings(settings);
+                        settings.SoundEffectsVolume = Mathf.Clamp01(settings.SoundEffectsVolume + 0.01f * delta);
+                        ApplyAudioSettings(settings);
                         break;
                     case 4:
                         settings.SprintBoost = Mathf.Clamp((settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost) + 0.05f * delta, 1f, 3f);
@@ -2565,7 +2596,7 @@ namespace Redpoint.DungeonEscape.Unity
             if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 1)
             {
                 settings.IsFullScreen = !settings.IsFullScreen;
-                ApplySettings(settings);
+                ApplySettings(settings, settingsRowIndex == 1);
             }
             else if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 6)
             {
@@ -2708,12 +2739,22 @@ namespace Redpoint.DungeonEscape.Unity
 
         private void ApplySettings(Settings settings)
         {
+            ApplySettings(settings, false);
+        }
+
+        private void ApplySettings(Settings settings, bool refreshMap)
+        {
             DungeonEscapeSettingsCache.Set(settings);
-            DungeonEscapeSettingsCache.Save();
+            ScheduleSettingsSave();
             DungeonEscapeDisplaySettings.Apply(settings);
             DungeonEscapeUiSettings.GetOrCreate().ApplySettings(settings);
             DungeonEscapeAudio.GetOrCreate().ApplySettings(settings);
             lastThemeSignature = null;
+            if (!refreshMap)
+            {
+                return;
+            }
+
             if (mapView == null)
             {
                 mapView = FindAnyObjectByType<TiledMapView>();
@@ -2723,6 +2764,30 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 mapView.RefreshRender();
             }
+        }
+
+        private void ApplyAudioSettings(Settings settings)
+        {
+            DungeonEscapeSettingsCache.Set(settings);
+            DungeonEscapeAudio.GetOrCreate().ApplySettings(settings);
+            ScheduleSettingsSave();
+        }
+
+        private void ScheduleSettingsSave()
+        {
+            pendingSettingsSave = true;
+            pendingSettingsSaveTime = Time.unscaledTime + 0.5f;
+        }
+
+        private void UpdateDeferredSettingsSave()
+        {
+            if (!pendingSettingsSave || Time.unscaledTime < pendingSettingsSaveTime)
+            {
+                return;
+            }
+
+            pendingSettingsSave = false;
+            DungeonEscapeSettingsCache.Save();
         }
 
         private static string GetThemeValue(string value, string fallback)

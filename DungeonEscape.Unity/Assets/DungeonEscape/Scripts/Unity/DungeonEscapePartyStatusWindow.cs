@@ -108,7 +108,7 @@ namespace Redpoint.DungeonEscape.Unity
                 GUILayout.Label(" ", style, GUILayout.Width(statusWidth), GUILayout.Height(GetLineHeight(scale)));
             }
 
-            DrawSplitLabel(GetClassPrefix(member.Class) + ":", member.Level.ToString(), style, statusWidth, scale);
+            DrawLevelLabel(GetClassPrefix(member.Class) + ":", member.Level.ToString(), style, statusWidth, scale);
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();
@@ -119,6 +119,14 @@ namespace Redpoint.DungeonEscape.Unity
             GUILayout.BeginHorizontal(GUILayout.Width(width), GUILayout.Height(GetLineHeight(scale)));
             GUILayout.Label(label, style, GUILayout.Width(width / 2f), GUILayout.Height(GetLineHeight(scale)));
             GUILayout.Label(value, style, GUILayout.Width(width / 2f), GUILayout.Height(GetLineHeight(scale)));
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawLevelLabel(string label, string value, GUIStyle style, float width, float scale)
+        {
+            GUILayout.BeginHorizontal(GUILayout.Width(width), GUILayout.Height(GetLineHeight(scale)));
+            GUILayout.Label(label, style, GUILayout.Width(34f * scale), GUILayout.Height(GetLineHeight(scale)));
+            GUILayout.Label(value, style, GUILayout.Width(width - 34f * scale), GUILayout.Height(GetLineHeight(scale)));
             GUILayout.EndHorizontal();
         }
 

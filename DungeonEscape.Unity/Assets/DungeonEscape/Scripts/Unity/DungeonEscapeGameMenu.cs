@@ -2290,7 +2290,7 @@ namespace Redpoint.DungeonEscape.Unity
         {
             if (currentTab == MenuTab.Party)
             {
-                AdjustSelectedPartyMember(delta);
+                CyclePartyDetailTab(delta);
                 return;
             }
 
@@ -2304,6 +2304,18 @@ namespace Redpoint.DungeonEscape.Unity
             {
                 AdjustSelectedSetting(delta);
             }
+        }
+
+        private void CyclePartyDetailTab(int delta)
+        {
+            var tabs = GetVisiblePartyDetailTabs(GetSelectedPartyHero());
+            var currentIndex = tabs.IndexOf(currentPartyDetailTab);
+            if (currentIndex < 0)
+            {
+                currentIndex = 0;
+            }
+
+            currentPartyDetailTab = tabs[(currentIndex + delta + tabs.Count) % tabs.Count];
         }
 
         private void ActivateSelectedRow()
@@ -2495,14 +2507,22 @@ namespace Redpoint.DungeonEscape.Unity
                         ApplySettings(settings);
                         break;
                     case 2:
-                        settings.SprintBoost = Mathf.Clamp((settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost) + 0.05f * delta, 1f, 3f);
+                        settings.MusicVolume = Mathf.Clamp01(settings.MusicVolume + 0.05f * delta);
                         ApplySettings(settings);
                         break;
                     case 3:
-                        settings.TurnMoveDelaySeconds = Mathf.Clamp(GetTurnMoveDelay(settings) + 0.01f * delta, 0f, 0.3f);
+                        settings.SoundEffectsVolume = Mathf.Clamp01(settings.SoundEffectsVolume + 0.05f * delta);
+                        ApplySettings(settings);
+                        break;
+                    case 4:
+                        settings.SprintBoost = Mathf.Clamp((settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost) + 0.05f * delta, 1f, 3f);
                         ApplySettings(settings);
                         break;
                     case 5:
+                        settings.TurnMoveDelaySeconds = Mathf.Clamp(GetTurnMoveDelay(settings) + 0.01f * delta, 0f, 0.3f);
+                        ApplySettings(settings);
+                        break;
+                    case 7:
                         settings.AutoSaveIntervalSeconds = Mathf.Clamp(GetAutoSaveInterval(settings) + 5f * delta, 5f, 300f);
                         ApplySettings(settings);
                         break;
@@ -2547,7 +2567,7 @@ namespace Redpoint.DungeonEscape.Unity
                 settings.IsFullScreen = !settings.IsFullScreen;
                 ApplySettings(settings);
             }
-            else if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 4)
+            else if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 6)
             {
                 settings.AutoSaveEnabled = !settings.AutoSaveEnabled;
                 ApplySettings(settings);
@@ -2692,6 +2712,7 @@ namespace Redpoint.DungeonEscape.Unity
             DungeonEscapeSettingsCache.Save();
             DungeonEscapeDisplaySettings.Apply(settings);
             DungeonEscapeUiSettings.GetOrCreate().ApplySettings(settings);
+            DungeonEscapeAudio.GetOrCreate().ApplySettings(settings);
             lastThemeSignature = null;
             if (mapView == null)
             {

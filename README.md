@@ -1,8 +1,8 @@
 # Dungeon Escape
 
-Dungeon Escape is a retro-inspired 2D RPG being migrated from the original MonoGame/Nez implementation to Unity.
+Dungeon Escape is a retro-inspired 2D RPG migrated from the original MonoGame/Nez implementation to Unity.
 
-In this branch, the active target is the Unity project. The old `DungeonEscape/` MonoGame project remains in the repository for reference while the migration is completed, but migration work should happen in `DungeonEscape.Unity/`, `DungeonEscape.Core/`, tests, CI, and `memory-bank/`.
+The active target is the Unity project. The old MonoGame/Nez project has been removed from this branch; use `main` if old implementation reference is needed.
 
 ## Current Project Layout
 
@@ -10,8 +10,6 @@ In this branch, the active target is the Unity project. The old `DungeonEscape/`
 DungeonEscape.Unity/        # Active Unity project
 DungeonEscape.Core/         # Unity-friendly shared domain/state code
 DungeonEscape.Core.Test/    # Migration-relevant shared core tests
-DungeonEscape/              # Old MonoGame/Nez project, reference only in this branch
-Nez.Portable/               # Old Nez dependency used by the old project
 memory-bank/                # Migration status, manual tests, architecture, handoff docs
 ```
 

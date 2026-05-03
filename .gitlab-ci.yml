@@ -3,7 +3,7 @@ variables:
   NUGET_PACKAGES_DIRECTORY: ".nuget"
   SOURCE_CODE_PATH: "*/*/"
   RESHARPER_SOLUTION_NAME: "DungeonEscape.sln"
-  RESHARPER_EXCLUDE: "Nez.Portable/**;DungeonEscape/Content/*.tsx"
+  RESHARPER_EXCLUDE: ""
   RESHARPER_THRESHOLD: 0
   RESHARPER_TOOL_VERSION: "2026.1.0.1"
   DOTNET_SDK_IMAGE: "mcr.microsoft.com/dotnet/sdk:10.0"
@@ -26,7 +26,11 @@ stages:
   - mkdir -p /root/.local/share/unity3d/Unity
   - |
     if [ -n "$UNITY_LICENSE_B64" ]; then
-      echo "$UNITY_LICENSE_B64" | base64 -d > /root/.local/share/unity3d/Unity/Unity_lic.ulf
+      if [ -f "$UNITY_LICENSE_B64" ]; then
+        tr -d '\r\n\t ' < "$UNITY_LICENSE_B64" | base64 -d > /root/.local/share/unity3d/Unity/Unity_lic.ulf
+      else
+        printf '%s' "$UNITY_LICENSE_B64" | tr -d '\r\n\t ' | base64 -d > /root/.local/share/unity3d/Unity/Unity_lic.ulf
+      fi
       echo "Unity license file written from UNITY_LICENSE_B64."
     elif [ -n "$UNITY_LICENSE" ]; then
       if [ -f "$UNITY_LICENSE" ]; then

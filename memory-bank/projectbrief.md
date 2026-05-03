@@ -6,7 +6,7 @@ Migrate Dungeon Escape from the old MonoGame/Nez implementation into a Unity pro
 
 ## Current Direction
 
-The active game target is `DungeonEscape.Unity`. The old `DungeonEscape` project remains in the repository for reference but should not receive migration work unless explicitly requested.
+The active game target is `DungeonEscape.Unity`. The old MonoGame/Nez project has been removed from this branch; use `main` if old implementation reference is needed.
 
 The migration strategy is:
 
@@ -19,9 +19,7 @@ The migration strategy is:
 ## Non-Goals
 
 - Do not migrate old MonoGame save files.
-- Do not continue maintaining the old MonoGame project in this branch.
 - Do not add Unity, MonoGame, or Nez references to `DungeonEscape.Core`.
-- Do not start combat/audio before map-mode migration is stable unless priorities change.
 
 ## Handoff Rule
 

@@ -21,25 +21,24 @@
 - Added GitLab CI solution build/test and Unity validation/build artifact support.
 - Added memory-bank docs.
 - Removed the old `DungeonEscape.Test` project from the solution; migration tests should live in `DungeonEscape.Core.Test` or future Unity test assemblies.
+- Removed the old MonoGame/Nez project and `Nez.Portable` from this branch; use `main` if old implementation reference is needed.
 
 ## In Progress
 
 - UI migration polish.
-- Persistence/title/create-player flow decisions.
+- Persistence/title/create-player polish.
 - Unity project cleanup.
 - Build/test automation expansion.
 
 ## Deferred
 
-- Encounter/combat migration.
-- Audio/music/sound effects, until after combat.
+- Non-critical polish that can wait until after the current Unity flow is stable.
 
 ## Current Known Pending Items
 
 See `memory-bank/UNITY_MIGRATION.md` for the authoritative list. Main pending groups:
 
 - Fullscreen setting runtime/UI wiring if still desired.
-- Decide whether old splash/create-player flow should be recreated.
 - Expand shared core unit tests.
 - Add Unity edit mode tests for map loading, hidden item conditions, save/load behavior.
 - Review ReSharper warnings and fix actionable issues.

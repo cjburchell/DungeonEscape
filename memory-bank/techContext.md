@@ -6,7 +6,6 @@
 - Unity 6.0 line, currently using Unity project under `DungeonEscape.Unity`
 - .NET solution with `dotnet build` and `dotnet test`
 - Shared core targets `netstandard2.0`
-- Old game targets modern .NET but is not the migration target
 
 ## Key Dependencies
 
@@ -53,7 +52,7 @@ Relevant variables:
 
 - `UNITY_CI_ENABLED`
 - `UNITY_BUILD_WINDOWS_ENABLED`
-- `UNITY_LICENSE` or Unity serial/email/password variables
+- `UNITY_LICENSE_B64`, `UNITY_LICENSE`, or Unity serial/email/password variables
 
 The old `DungeonEscape.Test` project has been removed. `dotnet test DungeonEscape.sln --no-restore` should run the remaining migration-relevant tests, currently `DungeonEscape.Core.Test`.
 

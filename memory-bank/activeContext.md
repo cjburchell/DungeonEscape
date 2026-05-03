@@ -17,7 +17,7 @@ The migration is past the first playable Unity map-mode loop. Recent work focuse
 
 ## Important Current Constraint
 
-Do not modify files under the old `DungeonEscape/` project unless explicitly requested. Work should target:
+The old MonoGame/Nez project was removed from this branch. Use `main` if old implementation reference is needed. Work should target:
 
 - `DungeonEscape.Unity/`
 - `DungeonEscape.Core/`
@@ -59,6 +59,6 @@ Continue from `memory-bank/UNITY_MIGRATION.md`. Likely upcoming work is still in
 - Persistence/title/create-player polish.
 - Unity cleanup.
 - Build/test automation expansion.
-- Eventually encounter/combat migration.
+- Remaining map/UI/combat polish and cleanup listed in `memory-bank/UNITY_MIGRATION.md`.
 
 After every implemented gameplay step, update `memory-bank/MANUAL_TESTS.md` with manual verification steps.

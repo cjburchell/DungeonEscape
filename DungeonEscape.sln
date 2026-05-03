@@ -3,15 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonEscape", "DungeonEscape\DungeonEscape.csproj", "{4831E7C3-6114-4F19-9FED-BC4D57A9E95A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nez.MG38", "Nez.Portable\Nez.MG38.csproj", "{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonEscape.Core", "DungeonEscape.Core\DungeonEscape.Core.csproj", "{DCFFBBFD-CBDD-4DD3-A070-356B26426F22}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonEscape.Core.Test", "DungeonEscape.Core.Test\DungeonEscape.Core.Test.csproj", "{CFA455DD-4E10-4F62-AA0F-B7298871F45E}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OldCode", "OldCode", "{41F2E964-ECF8-4B3D-B481-484374106991}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,30 +17,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4831E7C3-6114-4F19-9FED-BC4D57A9E95A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4831E7C3-6114-4F19-9FED-BC4D57A9E95A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4831E7C3-6114-4F19-9FED-BC4D57A9E95A}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4831E7C3-6114-4F19-9FED-BC4D57A9E95A}.Debug|x64.Build.0 = Debug|Any CPU
-		{4831E7C3-6114-4F19-9FED-BC4D57A9E95A}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4831E7C3-6114-4F19-9FED-BC4D57A9E95A}.Debug|x86.Build.0 = Debug|Any CPU
-		{4831E7C3-6114-4F19-9FED-BC4D57A9E95A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4831E7C3-6114-4F19-9FED-BC4D57A9E95A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4831E7C3-6114-4F19-9FED-BC4D57A9E95A}.Release|x64.ActiveCfg = Release|Any CPU
-		{4831E7C3-6114-4F19-9FED-BC4D57A9E95A}.Release|x64.Build.0 = Release|Any CPU
-		{4831E7C3-6114-4F19-9FED-BC4D57A9E95A}.Release|x86.ActiveCfg = Release|Any CPU
-		{4831E7C3-6114-4F19-9FED-BC4D57A9E95A}.Release|x86.Build.0 = Release|Any CPU
-		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Debug|x64.Build.0 = Debug|Any CPU
-		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Debug|x86.Build.0 = Debug|Any CPU
-		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Release|x64.ActiveCfg = Release|Any CPU
-		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Release|x64.Build.0 = Release|Any CPU
-		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Release|x86.ActiveCfg = Release|Any CPU
-		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC}.Release|x86.Build.0 = Release|Any CPU
 		{DCFFBBFD-CBDD-4DD3-A070-356B26426F22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DCFFBBFD-CBDD-4DD3-A070-356B26426F22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCFFBBFD-CBDD-4DD3-A070-356B26426F22}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -77,9 +47,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BBB4A64F-6545-4227-9AC1-10A6058F3161}
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{4831E7C3-6114-4F19-9FED-BC4D57A9E95A} = {41F2E964-ECF8-4B3D-B481-484374106991}
-		{BCB62A0C-7842-4766-9BF3-1C5D911D33DC} = {41F2E964-ECF8-4B3D-B481-484374106991}
 	EndGlobalSection
 EndGlobal

@@ -413,14 +413,26 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
+            var previousVerticalScrollbar = GUI.skin.verticalScrollbar;
+            var previousVerticalThumb = GUI.skin.verticalScrollbarThumb;
+            if (uiTheme != null)
+            {
+                GUI.skin.verticalScrollbar = uiTheme.VerticalScrollbarStyle;
+                GUI.skin.verticalScrollbarThumb = uiTheme.VerticalScrollbarThumbStyle;
+            }
+
             messageScrollPosition = GUI.BeginScrollView(
                 rect,
                 messageScrollPosition,
                 new Rect(0f, 0f, rect.width - 18f * scale, contentHeight),
                 false,
-                true);
+                true,
+                GUIStyle.none,
+                uiTheme == null ? GUI.skin.verticalScrollbar : uiTheme.VerticalScrollbarStyle);
             GUI.Label(new Rect(0f, 0f, rect.width - 18f * scale, contentHeight), content, labelStyle);
             GUI.EndScrollView();
+            GUI.skin.verticalScrollbar = previousVerticalScrollbar;
+            GUI.skin.verticalScrollbarThumb = previousVerticalThumb;
         }
 
         private static Rect GetBattlefieldRect(float scale)

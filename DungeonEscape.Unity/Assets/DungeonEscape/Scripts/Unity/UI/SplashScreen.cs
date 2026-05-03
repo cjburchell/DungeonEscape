@@ -1,8 +1,5 @@
 using System.IO;
 using UnityEngine;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 using Redpoint.DungeonEscape.Unity.Core;
 using Redpoint.DungeonEscape.Unity.UI;
@@ -14,7 +11,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
     public sealed class SplashScreen : MonoBehaviour
     {
         private const float FadeInSeconds = 1f;
-        private const float HoldSeconds = 1.5f;
+        private const float HoldSeconds = 10f;
         private const float FadeOutSeconds = 0.5f;
         private const float DurationSeconds = FadeInSeconds + HoldSeconds + FadeOutSeconds;
         private const int SplashGuiDepth = -4000;
@@ -31,24 +28,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
             get { return isVisible; }
         }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void CreateBeforeSceneLoad()
-        {
-            if (SettingsCache.Current.SkipSplashAndLoadQuickSave)
-            {
-                return;
-            }
-
-            if (isVisible || FindAnyObjectByType<SplashScreen>() != null)
-            {
-                return;
-            }
-
-            var splashScreen = new GameObject("SplashScreen");
-            DontDestroyOnLoad(splashScreen);
-            splashScreen.AddComponent<SplashScreen>();
-        }
-
         private void Awake()
         {
             isVisible = true;
@@ -59,6 +38,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void Update()
         {
+            if (InputManager.GetCommandDown(InputCommand.Interact) ||
+                Input.GetKeyDown(KeyCode.Space))
+            {
+                isVisible = false;
+                Destroy(gameObject);
+                return;
+            }
+
             if (!hasDrawn)
             {
                 return;
@@ -103,14 +90,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUI.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), Texture2D.whiteTexture);
             GUI.color = previousColor;
 
-            var alpha = GetSplashAlpha();
             if (splashTexture == null)
             {
+                var alpha = GetSplashAlpha();
                 var style = new GUIStyle(GUI.skin.label)
                 {
                     alignment = TextAnchor.MiddleCenter,
                     fontSize = Mathf.Max(24, Mathf.RoundToInt(Screen.height * 0.08f)),
-                    normal = { textColor = Color.white }
+                    normal = { textColor = new Color(1f, 1f, 1f, alpha) }
                 };
                 GUI.Label(new Rect(0f, 0f, Screen.width, Screen.height), "Dungeon Escape", style);
             }
@@ -122,12 +109,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 var width = imageWidth * scale;
                 var height = imageHeight * scale;
                 var rect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
+                GUI.color = new Color(1f, 1f, 1f, GetSplashAlpha());
                 GUI.DrawTexture(rect, splashTexture, ScaleMode.ScaleToFit, true);
+                GUI.color = previousColor;
             }
 
-            GUI.color = new Color(0f, 0f, 0f, 1f - alpha);
-            GUI.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), Texture2D.whiteTexture);
-            GUI.color = previousColor;
             GUI.depth = previousDepth;
         }
 
@@ -154,14 +140,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private static Texture2D LoadTexture(string assetPath)
         {
-#if UNITY_EDITOR
-            var editorTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
-            if (editorTexture != null)
-            {
-                return editorTexture;
-            }
-#endif
-
             var fullPath = UnityAssetPath.ToRuntimePath(assetPath);
             if (!File.Exists(fullPath))
             {

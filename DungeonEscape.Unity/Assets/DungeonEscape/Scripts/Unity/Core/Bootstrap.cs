@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Redpoint.DungeonEscape.State;
@@ -51,6 +52,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         public DungeonEscapeDataSet Data { get; private set; }
         public Settings Settings { get; private set; }
+        private bool startupComplete;
 
         private void Awake()
         {
@@ -60,6 +62,24 @@ namespace Redpoint.DungeonEscape.Unity.Core
             UiSettings.GetOrCreate().ApplySettings(Settings);
             Audio.GetOrCreate().ApplySettings(Settings);
 
+            if (Settings.SkipSplashAndLoadQuickSave)
+            {
+                LoadGameDataAndStart();
+            }
+            else
+            {
+                EnsureSplashScreen();
+            }
+        }
+
+        private void LoadGameDataAndStart()
+        {
+            if (startupComplete)
+            {
+                return;
+            }
+
+            startupComplete = true;
             Data = new DungeonEscapeDataSet
             {
                 ItemDefinitions = LoadJson<List<ItemDefinition>>(itemDefinitionsJson, "item definitions"),
@@ -88,13 +108,27 @@ namespace Redpoint.DungeonEscape.Unity.Core
                     gameState.LoadQuick();
                 }
             }
-            else
-            {
-                EnsureSplashScreen();
-                EnsureTitleMenu();
-            }
 
             ValidateTilesets(Data.TestMap, testMapAssetPath);
+        }
+
+        private IEnumerator Start()
+        {
+            if (Settings == null || Settings.SkipSplashAndLoadQuickSave)
+            {
+                yield break;
+            }
+
+            yield return null;
+            yield return null;
+            LoadGameDataAndStart();
+
+            while (SplashScreen.IsVisible)
+            {
+                yield return null;
+            }
+
+            EnsureTitleMenu();
         }
 
         private static T LoadJson<T>(TextAsset asset, string label)

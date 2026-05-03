@@ -61,7 +61,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private string lastThemeSignature;
         private TitleMode mode;
         private int selectedIndex;
+        private int repeatingMoveX;
         private int repeatingMoveY;
+        private float nextMoveXTime;
         private float nextMoveYTime;
         private string createPlayerName = "Player";
         private bool createPlayerNameInitialized;
@@ -172,13 +174,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (InputManager.GetCommandDown(InputCommand.Cancel))
             {
-                UiControls.PlayConfirmSound();
-                if (mode == TitleMode.Load)
+                if (mode == TitleMode.Load || mode == TitleMode.Create)
                 {
-                    mode = TitleMode.Main;
-                    selectedIndex = 0;
-                    WaitForConfirmRelease();
-                    ResetNavigationRepeat();
+                    UiControls.PlayConfirmSound();
+                    ShowMainMenu();
                 }
             }
             else if (GetConfirmDown())
@@ -461,7 +460,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             EnsureCreatePreviewHero();
 
             var width = Mathf.Min(660f * scale, Screen.width - 32f * scale);
-            var height = 230f * scale;
+            var height = 266f * scale;
             var titleHeight = 44f * scale;
             var titleGap = 8f * scale;
             var totalHeight = titleHeight + titleGap + height;
@@ -509,20 +508,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.BeginHorizontal();
             GUILayout.Label("Class:", labelStyle, GUILayout.Width(74f * scale), GUILayout.Height(32f * scale));
             DrawClassDropdown(selectedIndex == CreateClassIndex);
-            GUILayout.Space(34f * scale);
-            GUI.enabled = previousEnabled && !dropdownOpen;
-            if (UiControls.Button("Re-roll", selectedIndex == CreateRerollIndex, uiTheme, GUILayout.Width(92f * scale), GUILayout.Height(32f * scale)) &&
-                !waitingForConfirmRelease)
-            {
-                selectedIndex = CreateRerollIndex;
-                RerollCreatePreviewHero();
-            }
-
-            GUI.enabled = previousEnabled;
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
             GUILayout.Space(8f * scale);
-            DrawCreateStatsPanel(scale);
+            DrawCreateStatsPanel(scale, previousEnabled && !dropdownOpen);
             GUILayout.EndHorizontal();
 
             GUILayout.Space(12f * scale);
@@ -728,9 +717,23 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 localRect.height);
         }
 
-        private void DrawCreateStatsPanel(float scale)
+        private void DrawCreateStatsPanel(float scale, bool controlsEnabled)
         {
-            GUILayout.BeginVertical(panelStyle, GUILayout.Width(268f * scale), GUILayout.Height(132f * scale));
+            GUILayout.BeginVertical(panelStyle, GUILayout.Width(268f * scale), GUILayout.Height(164f * scale));
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Stats:", labelStyle, GUILayout.Width(76f * scale), GUILayout.Height(28f * scale));
+            var previousEnabled = GUI.enabled;
+            GUI.enabled = controlsEnabled;
+            if (UiControls.Button("Re-Roll", selectedIndex == CreateRerollIndex, uiTheme, GUILayout.Width(96f * scale), GUILayout.Height(28f * scale)) &&
+                !waitingForConfirmRelease)
+            {
+                selectedIndex = CreateRerollIndex;
+                RerollCreatePreviewHero();
+            }
+
+            GUI.enabled = previousEnabled;
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             Sprite sprite;
             if (UiAssetResolver.TryGetHeroSprite(createPlayerClass, createPlayerGender, out sprite))
@@ -926,15 +929,42 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 SetSelectedIndex(GetCreateDownIndex(selectedIndex));
             }
 
-            var moveX = InputManager.GetMoveXDown();
+            var moveX = GetMenuMoveX();
             if (moveX < 0)
             {
+                if (TryCycleCreateSelection(-1))
+                {
+                    return;
+                }
+
                 SetSelectedIndex(GetCreateLeftIndex(selectedIndex));
             }
             else if (moveX > 0)
             {
+                if (TryCycleCreateSelection(1))
+                {
+                    return;
+                }
+
                 SetSelectedIndex(GetCreateRightIndex(selectedIndex));
             }
+        }
+
+        private bool TryCycleCreateSelection(int delta)
+        {
+            if (selectedIndex == CreateGenderIndex)
+            {
+                CycleCreateGender(delta);
+                return true;
+            }
+
+            if (selectedIndex == CreateClassIndex)
+            {
+                CycleCreateClass(delta);
+                return true;
+            }
+
+            return false;
         }
 
         private static int GetCreateUpIndex(int index)
@@ -945,10 +975,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     return CreateNameIndex;
                 case CreateClassIndex:
                     return CreateGenderIndex;
-                case CreateStartIndex:
-                    return CreateClassIndex;
                 case CreateRerollIndex:
-                    return CreateGenerateNameIndex;
+                    return CreateClassIndex;
+                case CreateStartIndex:
+                    return CreateRerollIndex;
                 case CreateBackIndex:
                     return CreateRerollIndex;
                 default:
@@ -965,11 +995,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 case CreateGenderIndex:
                     return CreateClassIndex;
                 case CreateClassIndex:
-                    return CreateStartIndex;
+                    return CreateRerollIndex;
                 case CreateGenerateNameIndex:
                     return CreateRerollIndex;
                 case CreateRerollIndex:
-                    return CreateBackIndex;
+                    return CreateStartIndex;
                 default:
                     return index;
             }
@@ -981,8 +1011,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 case CreateGenerateNameIndex:
                     return CreateNameIndex;
-                case CreateRerollIndex:
-                    return CreateClassIndex;
                 case CreateBackIndex:
                     return CreateStartIndex;
                 default:
@@ -996,8 +1024,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 case CreateNameIndex:
                     return CreateGenerateNameIndex;
-                case CreateClassIndex:
-                    return CreateRerollIndex;
                 case CreateStartIndex:
                     return CreateBackIndex;
                 default:
@@ -1035,7 +1061,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 }
             }
 
-            var moveX = InputManager.GetMoveXDown();
+            var moveX = GetMenuMoveX();
             if (moveX == 0 || selectedIndex >= backIndex)
             {
                 return;
@@ -1116,13 +1142,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     RerollCreatePreviewHero();
                     break;
                 case CreateGenderIndex:
-                    activeCreateDropdown = CreateDropdown.Gender;
-                    selectedDropdownIndex = (int)createPlayerGender;
+                    CycleCreateGender(1);
                     WaitForConfirmRelease();
                     break;
                 case CreateClassIndex:
-                    activeCreateDropdown = CreateDropdown.Class;
-                    selectedDropdownIndex = System.Array.IndexOf(System.Enum.GetValues(typeof(Class)), createPlayerClass);
+                    CycleCreateClass(1);
                     WaitForConfirmRelease();
                     break;
                 case CreateRerollIndex:
@@ -1195,6 +1219,41 @@ namespace Redpoint.DungeonEscape.Unity.UI
             activeCreateDropdown = CreateDropdown.None;
             WaitForConfirmRelease();
             ResetNavigationRepeat();
+        }
+
+        private void CycleCreateGender(int delta)
+        {
+            var values = System.Enum.GetValues(typeof(Gender));
+            var currentIndex = System.Array.IndexOf(values, createPlayerGender);
+            var nextIndex = WrapIndex(currentIndex + delta, values.Length);
+            createPlayerGender = (Gender)values.GetValue(nextIndex);
+            RerollCreatePreviewHero();
+            UiControls.PlaySelectSound();
+        }
+
+        private void CycleCreateClass(int delta)
+        {
+            var values = System.Enum.GetValues(typeof(Class));
+            var currentIndex = System.Array.IndexOf(values, createPlayerClass);
+            var nextIndex = WrapIndex(currentIndex + delta, values.Length);
+            createPlayerClass = (Class)values.GetValue(nextIndex);
+            RerollCreatePreviewHero();
+            UiControls.PlaySelectSound();
+        }
+
+        private static int WrapIndex(int index, int count)
+        {
+            if (count <= 0)
+            {
+                return 0;
+            }
+
+            while (index < 0)
+            {
+                index += count;
+            }
+
+            return index % count;
         }
 
         private static bool GetConfirmDown()
@@ -1340,9 +1399,37 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return held;
         }
 
+        private int GetMenuMoveX()
+        {
+            var held = InputManager.GetUiMoveXWithRightStick();
+            if (held == 0)
+            {
+                repeatingMoveX = 0;
+                nextMoveXTime = 0f;
+                return 0;
+            }
+
+            if (held != repeatingMoveX)
+            {
+                repeatingMoveX = held;
+                nextMoveXTime = Time.unscaledTime + InitialNavigationRepeatDelay;
+                return held;
+            }
+
+            if (Time.unscaledTime < nextMoveXTime)
+            {
+                return 0;
+            }
+
+            nextMoveXTime = Time.unscaledTime + NavigationRepeatDelay;
+            return held;
+        }
+
         private void ResetNavigationRepeat()
         {
+            repeatingMoveX = 0;
             repeatingMoveY = 0;
+            nextMoveXTime = 0f;
             nextMoveYTime = 0f;
         }
 

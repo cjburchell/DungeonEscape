@@ -25,6 +25,7 @@ stages:
 .unity-license-before-script: &unity-license-before-script
   - mkdir -p /root/.local/share/unity3d/Unity
   - |
+    echo "Unity CI variable presence: UNITY_LICENSE_B64=$([ -n "$UNITY_LICENSE_B64" ] && echo set || echo unset), UNITY_LICENSE=$([ -n "$UNITY_LICENSE" ] && echo set || echo unset), UNITY_SERIAL=$([ -n "$UNITY_SERIAL" ] && echo set || echo unset), UNITY_EMAIL=$([ -n "$UNITY_EMAIL" ] && echo set || echo unset), UNITY_PASSWORD=$([ -n "$UNITY_PASSWORD" ] && echo set || echo unset), UNITY_LICENSING_SERVER=$([ -n "$UNITY_LICENSING_SERVER" ] && echo set || echo unset)"
     if [ -n "$UNITY_LICENSE_B64" ]; then
       if [ -f "$UNITY_LICENSE_B64" ]; then
         tr -d '\r\n\t ' < "$UNITY_LICENSE_B64" | base64 -d > /root/.local/share/unity3d/Unity/Unity_lic.ulf

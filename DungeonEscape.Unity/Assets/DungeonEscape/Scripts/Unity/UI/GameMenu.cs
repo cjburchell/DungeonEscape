@@ -153,7 +153,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            if (StoreWindow.IsOpen)
+            if (StoreWindow.IsOpen || HealerWindow.IsOpen)
             {
                 return;
             }

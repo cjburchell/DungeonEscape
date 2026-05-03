@@ -3142,6 +3142,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                    TitleMenu.IsOpen ||
                    GameMenu.IsOpen ||
                    StoreWindow.IsOpen ||
+                   HealerWindow.IsOpen ||
                    MessageBox.IsAnyVisible;
         }
 

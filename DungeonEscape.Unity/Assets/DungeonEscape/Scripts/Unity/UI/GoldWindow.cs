@@ -21,6 +21,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (TitleMenu.IsOpen ||
                 StoreWindow.IsOpen ||
+                HealerWindow.IsOpen ||
                 CombatWindow.IsOpen ||
                 MessageBox.IsAnyVisible)
             {

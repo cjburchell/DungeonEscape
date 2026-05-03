@@ -219,7 +219,7 @@ namespace Redpoint.DungeonEscape.Unity.Map
                 return;
             }
 
-            if (StoreWindow.IsOpen)
+            if (StoreWindow.IsOpen || HealerWindow.IsOpen)
             {
                 return;
             }

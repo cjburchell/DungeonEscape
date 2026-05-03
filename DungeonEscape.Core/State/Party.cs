@@ -143,9 +143,15 @@ namespace Redpoint.DungeonEscape.State
             return key.Use(itemMember, itemMember, door, game, 0).Item1;
         }
 
-        public int MaxLevel()
+        public int AverageActiveLevel()
         {
-            return AliveMembers.Max(item => item.Level);
+            var members = AliveMembers.ToList();
+            if (members.Count == 0)
+            {
+                return 1;
+            }
+
+            return Math.Max(1, (int)Math.Round(members.Average(member => member.Level), MidpointRounding.AwayFromZero));
         }
 
         public Hero GetOrderedHero(int order)

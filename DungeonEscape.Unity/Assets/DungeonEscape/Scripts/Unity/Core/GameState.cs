@@ -396,7 +396,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             if (Dice.RollD20() > 18)
             {
-                foundItems.Add(CreateChestItem(Party.MaxLevel(), defeatedMonsters.Max(monster => monster.Rarity)));
+                foundItems.Add(CreateChestItem(GetAverageActivePartyLevel(), defeatedMonsters.Max(monster => monster.Rarity)));
             }
 
             AppendCombatItems(message, foundItems);
@@ -618,7 +618,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             EnsureInitialized();
             if (string.Equals(itemId, "#Random#", StringComparison.OrdinalIgnoreCase))
             {
-                return GiveGeneratedItem(CreateRandomItem(GetPartyMaxLevel()));
+                return GiveGeneratedItem(CreateRandomItem(GetAverageActivePartyLevel()));
             }
 
             Item item;
@@ -1521,7 +1521,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 if (string.Equals(itemId, "#Random#", StringComparison.OrdinalIgnoreCase))
                 {
                     var randomLevel = GetIntProperty(mapObject, mapObject.Class == "Chest" ? "ChestLevel" : "Level");
-                    var randomItem = CreateChestItem(randomLevel == 0 ? GetPartyMaxLevel() : randomLevel);
+                    var randomItem = CreateChestItem(randomLevel == 0 ? GetAverageActivePartyLevel() : randomLevel);
                     if (randomItem != null)
                     {
                         items.Add(randomItem);
@@ -1591,7 +1591,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return items.OrderBy(item => item.Cost).ToList();
             }
 
-            var level = GetPartyMaxLevel();
+            var level = GetAverageActivePartyLevel();
             for (var i = 0; i < 10; i++)
             {
                 var item = CreateRandomItem(level);
@@ -1795,9 +1795,9 @@ namespace Redpoint.DungeonEscape.Unity.Core
             return item;
         }
 
-        private int GetPartyMaxLevel()
+        private int GetAverageActivePartyLevel()
         {
-            return Party.ActiveMembers.Any() ? Party.ActiveMembers.Max(member => member.Level) : 1;
+            return Party == null ? 1 : Party.AverageActiveLevel();
         }
 
         public Item CreateGold(int gold)
@@ -1941,7 +1941,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
         {
             EnsureInitialized();
             var inventory = new List<Item>();
-            var maxLevel = GetPartyMaxLevel();
+            var maxLevel = GetAverageActivePartyLevel();
             for (var i = 0; i < itemCount; i++)
             {
                 var item = CreateRandomItem(maxLevel + 2, Math.Max(1, maxLevel - 2));
@@ -3344,7 +3344,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private List<Monster> BuildRandomEncounter(IEnumerable<RandomMonster> randomMonsters, BiomeInfo biomeInfo)
         {
-            var level = Party == null ? 1 : Math.Max(1, Party.MaxLevel());
+            var level = GetAverageActivePartyLevel();
             var weightedMonsters = new List<Monster>();
             foreach (var randomMonster in randomMonsters.Where(monster =>
                          monster != null &&

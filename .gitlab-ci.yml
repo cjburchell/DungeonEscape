@@ -124,6 +124,7 @@ unity-validate:
       -projectPath "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH"
       -executeMethod Redpoint.DungeonEscape.UnityEditor.UnityCiValidation.ValidateProject
       -logFile "$UNITY_LOG_FILE"
+    - find "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH" -maxdepth 1 \( -name '*.sln' -o -name '*.csproj' \) -print
   after_script: *unity-license-after-script
   artifacts:
     when: always
@@ -205,7 +206,7 @@ resharper-scan:
 
         REPORT_ISSUES=$(grep -o '<Issue ' "$REPORT" | wc -l | tr -d ' ')
         ISSUE_COUNT=$((ISSUE_COUNT + REPORT_ISSUES))
-        ERROR_TYPES=$(grep '<IssueType ' "$REPORT" | grep 'Severity="ERROR"' | sed -n 's/.*Id="\([^"]*\)".*/\1/p')
+        ERROR_TYPES=$(grep '<IssueType ' "$REPORT" | grep 'Severity="ERROR"' | sed -n 's/.*Id="\([^"]*\)".*/\1/p' || true)
         for TYPE_ID in $ERROR_TYPES; do
           TYPE_COUNT=$(grep -c "TypeId=\"$TYPE_ID\"" "$REPORT" || true)
           ERROR_COUNT=$((ERROR_COUNT + TYPE_COUNT))

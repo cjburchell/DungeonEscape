@@ -745,7 +745,7 @@ namespace Redpoint.DungeonEscape.Unity.Map
         {
             if (IsHealerObject(mapObject))
             {
-                ShowHealerDialog(mapObject);
+                HealerWindow.Show(gameState, mapObject, RefreshPartyVisuals);
                 return;
             }
 

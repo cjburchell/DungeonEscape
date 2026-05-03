@@ -13,6 +13,7 @@ variables:
   UNITY_EXECUTABLE: "unity-editor"
   UNITY_CI_ENABLED: "true"
   UNITY_BUILD_WINDOWS_ENABLED: "true"
+  UNITY_LICENSE_B64: ""
 
 stages:
   - restore
@@ -24,7 +25,10 @@ stages:
 .unity-license-before-script: &unity-license-before-script
   - mkdir -p /root/.local/share/unity3d/Unity
   - |
-    if [ -n "$UNITY_LICENSE" ]; then
+    if [ -n "$UNITY_LICENSE_B64" ]; then
+      echo "$UNITY_LICENSE_B64" | base64 -d > /root/.local/share/unity3d/Unity/Unity_lic.ulf
+      echo "Unity license file written from UNITY_LICENSE_B64."
+    elif [ -n "$UNITY_LICENSE" ]; then
       if [ -f "$UNITY_LICENSE" ]; then
         tr -d '\r' < "$UNITY_LICENSE" > /root/.local/share/unity3d/Unity/Unity_lic.ulf
       else
@@ -43,12 +47,12 @@ stages:
     elif [ -n "$UNITY_LICENSING_SERVER" ]; then
       echo "UNITY_LICENSING_SERVER is configured; Unity will attempt license server activation."
     else
-      echo "No Unity license variables configured. Set UNITY_LICENSE or UNITY_SERIAL, UNITY_EMAIL, and UNITY_PASSWORD in GitLab CI/CD variables."
+      echo "No Unity license variables configured. Set UNITY_LICENSE_B64, UNITY_LICENSE, or UNITY_SERIAL, UNITY_EMAIL, and UNITY_PASSWORD in GitLab CI/CD variables."
     fi
 
 .unity-license-after-script: &unity-license-after-script
   - |
-    if [ -n "$UNITY_SERIAL" ] && [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ] && [ -z "$UNITY_LICENSE" ]; then
+    if [ -n "$UNITY_SERIAL" ] && [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ] && [ -z "$UNITY_LICENSE" ] && [ -z "$UNITY_LICENSE_B64" ]; then
       "$UNITY_EXECUTABLE" \
         -batchmode \
         -nographics \

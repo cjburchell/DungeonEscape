@@ -48,6 +48,8 @@ git diff --check
 
 GitLab CI is configured for solution restore/build/test and Unity validation/build when enabled. Unity Windows build artifacts can be downloaded from CI.
 
+ReSharper CI scans `DungeonEscape.sln` and, when Unity validation runs, the Unity-generated solution/project files produced by the validation job.
+
 Relevant variables:
 
 - `UNITY_CI_ENABLED`

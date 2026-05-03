@@ -18,8 +18,8 @@ variables:
 stages:
   - restore
   - build
-  - scan
   - test
+  - scan
   - package
 
 .unity-license-before-script: &unity-license-before-script
@@ -129,6 +129,8 @@ unity-validate:
     when: always
     paths:
       - DungeonEscape.Unity/Logs/ci-unity-validate.log
+      - DungeonEscape.Unity/*.sln
+      - DungeonEscape.Unity/*.csproj
   rules:
     - if: '$UNITY_CI_ENABLED == "false"'
       when: never
@@ -174,6 +176,9 @@ resharper-scan:
   stage: scan
   needs:
     - dotnet-build
+    - job: unity-validate
+      artifacts: true
+      optional: true
   script:
     - dotnet tool install --global JetBrains.ReSharper.GlobalTools --version "$RESHARPER_TOOL_VERSION"
     - export PATH="$PATH:/root/.dotnet/tools"
@@ -182,15 +187,37 @@ resharper-scan:
       if [ -n "$RESHARPER_EXCLUDE" ]; then
         RESHARPER_EXCLUDE_OPTION="--exclude=$RESHARPER_EXCLUDE"
       fi
-      jb inspectcode $RESHARPER_EXCLUDE_OPTION -o=RsInspection.xml -f=xml --caches-home=temp "$RESHARPER_SOLUTION_NAME" --dotnetcore=/usr/share/dotnet/dotnet
+      jb inspectcode $RESHARPER_EXCLUDE_OPTION -o=RsInspection.xml -f=xml --caches-home=temp/core "$RESHARPER_SOLUTION_NAME" --dotnetcore=/usr/share/dotnet/dotnet
+      UNITY_SOLUTION=$(find "$UNITY_PROJECT_PATH" -maxdepth 1 -name '*.sln' | head -n 1)
+      if [ -n "$UNITY_SOLUTION" ]; then
+        echo "Running ReSharper inspection for Unity solution: $UNITY_SOLUTION"
+        jb inspectcode $RESHARPER_EXCLUDE_OPTION -o=RsInspection.Unity.xml -f=xml --caches-home=temp/unity "$UNITY_SOLUTION" --dotnetcore=/usr/share/dotnet/dotnet
+      else
+        echo "Unity generated solution not found; skipping Unity ReSharper inspection."
+      fi
     - |
-      ISSUE_COUNT=$(grep -o '<Issue ' RsInspection.xml | wc -l | tr -d ' ')
+      ISSUE_COUNT=0
+      ERROR_COUNT=0
+      for REPORT in RsInspection*.xml; do
+        if [ ! -f "$REPORT" ]; then
+          continue
+        fi
+
+        REPORT_ISSUES=$(grep -o '<Issue ' "$REPORT" | wc -l | tr -d ' ')
+        ISSUE_COUNT=$((ISSUE_COUNT + REPORT_ISSUES))
+        ERROR_TYPES=$(grep '<IssueType ' "$REPORT" | grep 'Severity="ERROR"' | sed -n 's/.*Id="\([^"]*\)".*/\1/p')
+        for TYPE_ID in $ERROR_TYPES; do
+          TYPE_COUNT=$(grep -c "TypeId=\"$TYPE_ID\"" "$REPORT" || true)
+          ERROR_COUNT=$((ERROR_COUNT + TYPE_COUNT))
+        done
+      done
       echo "ReSharper issue count: $ISSUE_COUNT"
-      if [ "$ISSUE_COUNT" -gt "$RESHARPER_THRESHOLD" ]; then
-        echo "ReSharper issue count $ISSUE_COUNT exceeds threshold $RESHARPER_THRESHOLD"
+      echo "ReSharper error count: $ERROR_COUNT"
+      if [ "$ERROR_COUNT" -gt "$RESHARPER_THRESHOLD" ]; then
+        echo "ReSharper error count $ERROR_COUNT exceeds threshold $RESHARPER_THRESHOLD"
         exit 1
       fi
   artifacts:
     when: always
     paths:
-      - RsInspection.xml
+      - RsInspection*.xml

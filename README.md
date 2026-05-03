@@ -98,3 +98,5 @@ GitLab CI restores, builds, and tests the solution. Unity validation and Windows
 - `UNITY_BUILD_WINDOWS_ENABLED`
 
 Unity license variables are required for Unity CI jobs.
+
+The ReSharper scan inspects `DungeonEscape.sln` and, when Unity validation is enabled, also inspects the Unity-generated solution/project files created by the Unity validation job.

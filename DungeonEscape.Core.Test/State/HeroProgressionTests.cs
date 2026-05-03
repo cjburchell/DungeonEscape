@@ -51,9 +51,8 @@ namespace DungeonEscape.Core.Test.State
         {
             var hero = CreateHero();
             hero.Xp = hero.NextLevel;
-            string ignored;
 
-            hero.CheckLevelUp(CreateClassLevels(), CreateSpells(), out ignored);
+            hero.CheckLevelUp(CreateClassLevels(), CreateSpells(), out _);
 
             Assert.Equal(new[] { "Swipe" }, hero.Skills);
             Assert.Equal(new[] { "Swipe" }, hero.GetSkills(CreateSkills()).Select(skill => skill.Name).ToArray());

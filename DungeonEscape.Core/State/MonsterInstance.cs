@@ -5,11 +5,11 @@ namespace Redpoint.DungeonEscape.State
 {
     public class MonsterInstance : Fighter
     {
-        private readonly Monster info;
+        private readonly Monster _info;
 
         public MonsterInstance(Monster info, IGame gameState)
         {
-            this.info = info;
+            _info = info;
             Health = Dice.Roll(info.HealthRandom, info.HealthTimes, info.HealthConst);
             MaxHealth = Health;
             Magic = Dice.Roll(info.MagicRandom, info.MagicTimes, info.MagicConst);
@@ -32,18 +32,18 @@ namespace Redpoint.DungeonEscape.State
             }
         }
 
-        public Rarity Rarity { get { return info.Rarity; } }
+        public Rarity Rarity { get { return _info.Rarity; } }
         public int Gold { get; set; }
 
         public override IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells)
         {
-            return info.SpellList.Select(spellId => availableSpells.FirstOrDefault(item => item.Name == spellId))
+            return _info.SpellList.Select(spellId => availableSpells.FirstOrDefault(item => item.Name == spellId))
                 .Where(spell => spell != null).ToList();
         }
 
         public override IEnumerable<Skill> GetSkills(IEnumerable<Skill> availableSkills)
         {
-            return info.SkillList.Select(id => availableSkills.FirstOrDefault(item => item.Name == id))
+            return _info.SkillList.Select(id => availableSkills.FirstOrDefault(item => item.Name == id))
                 .Where(skill => skill != null).ToList();
         }
     }

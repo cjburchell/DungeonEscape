@@ -61,8 +61,7 @@ namespace Redpoint.DungeonEscape.State
             while (Level < level)
             {
                 Xp = NextLevel;
-                string ignored;
-                CheckLevelUp(classStatList, null, out ignored);
+                CheckLevelUp(classStatList, null, out _);
             }
 
             if (!generateItems)

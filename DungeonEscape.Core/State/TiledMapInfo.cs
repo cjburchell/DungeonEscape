@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace Redpoint.DungeonEscape.State
@@ -41,7 +42,7 @@ namespace Redpoint.DungeonEscape.State
                 Properties = ReadProperties(map)
             };
 
-            foreach (var tileset in map.Elements("tileset"))
+            foreach (var tileset in map == null ? Enumerable.Empty<XElement>() : map.Elements("tileset"))
             {
                 info.Tilesets.Add(new TiledTilesetInfo
                 {
@@ -157,13 +158,7 @@ namespace Redpoint.DungeonEscape.State
 
         private static int CountElements(XElement element, string name)
         {
-            var count = 0;
-            foreach (var ignored in element.Elements(name))
-            {
-                count++;
-            }
-
-            return count;
+            return element.Elements(name).Count();
         }
     }
 
@@ -199,6 +194,16 @@ namespace Redpoint.DungeonEscape.State
         {
             var document = XDocument.Parse(xml);
             var tileset = document.Root;
+            if (tileset == null)
+            {
+                return new TiledTilesetDocumentInfo
+                {
+                    Properties = new Dictionary<string, string>(),
+                    Tiles = new Dictionary<int, TiledTileInfo>(),
+                    Animations = new Dictionary<int, List<TiledTileAnimationFrameInfo>>()
+                };
+            }
+
             var image = tileset.Element("image");
 
             return new TiledTilesetDocumentInfo

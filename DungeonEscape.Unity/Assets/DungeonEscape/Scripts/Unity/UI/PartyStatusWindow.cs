@@ -27,7 +27,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             var combatOpen = CombatWindow.IsOpen;
             if (TitleMenu.IsOpen ||
-                GameMenu.IsOpen ||
                 StoreWindow.IsOpen ||
                 !combatOpen && MessageBox.IsAnyVisible)
             {
@@ -35,7 +34,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             EnsureReferences();
-            if (!combatOpen && player != null && player.IsMovementActive)
+            if (!combatOpen && !GameMenu.IsOpen && player != null && player.IsMovementActive)
             {
                 return;
             }

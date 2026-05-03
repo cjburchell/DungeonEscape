@@ -16,11 +16,11 @@ The menu should open from the bound `Menu` command, default `E`, and present a s
 - Gold is shown at the bottom, matching the map gold window style.
 - Main actions:
   - Items
-  - Spells
+  - Spells, only shown when at least one party member has a usable map spell.
   - Equipment
-  - Abilities
+  - Abilities, only shown when at least one party member has a usable map ability.
   - Status
-  - Party
+  - Party, only shown when there is more than one party member.
   - Misc.
 
 Navigation:
@@ -43,22 +43,24 @@ Navigation:
   - Action from member list moves focus to item list.
   - Action from item list opens the item action modal.
 - Spells screen:
-  - Left: party members.
-  - Middle: selected member's spells.
+  - Left: party members who have usable map spells.
+  - Middle: selected member's usable map spells.
   - Right: selected spell details.
   - Action from spell list casts/opens the existing target flow.
 - Abilities screen:
-  - Left: party members.
-  - Middle: selected member's abilities.
+  - Left: party members who have usable map abilities.
+  - Middle: selected member's usable map abilities.
   - Right: selected ability details.
 - Equipment screen:
   - Left: party members.
-  - Middle: equipment slots.
-  - Right: current equipment detail.
-  - Action from equipment slot opens valid equip/unequip choices.
+  - Middle: equipment slots with each equipped item name and icon.
+  - Right: compatible equipment for the selected slot.
+  - Action from equipment slot moves focus to compatible equipment and selects the currently equipped item when present.
+  - Action on the currently equipped item unequips it; action on a different compatible item equips it.
 - Status screen:
   - Left: party members.
   - Right: detailed status.
+  - HP and MP use the same progress-bar styling as other status values.
 - Party screen:
   - Left: party members.
   - Action opens existing party action modal for move/reserve/add.
@@ -74,10 +76,6 @@ Navigation:
 ## Pending Polish
 
 - Verify all screens in Play Mode with keyboard and gamepad.
-- Decide whether `Abilities` should support usable non-combat skills from this menu or remain display-only.
-- Improve Equipment flow if needed:
-  - Current pass opens a slot action modal with unequip/equip choices.
-  - A fuller version could show a dedicated compatible-gear picker for the selected slot.
 - Confirm page state resets correctly when switching members and screens.
 - Confirm long item/spell/ability names fit without clipping.
 - Confirm the status and gold summaries fit at all supported UI scale values.
@@ -92,4 +90,3 @@ The primary manual test is tracked in:
 Section:
 
 - `Redesigned Game Menu Action Flow`
-

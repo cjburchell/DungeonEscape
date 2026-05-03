@@ -177,6 +177,25 @@ namespace Redpoint.DungeonEscape.Unity.Core
             StartCoroutine(LoadAndPlayEffect(normalizedName, stopCurrent));
         }
 
+        public void PrewarmSoundEffects(params string[] names)
+        {
+            if (names == null)
+            {
+                return;
+            }
+
+            foreach (var name in names)
+            {
+                var normalizedName = NormalizeName(name);
+                if (string.IsNullOrEmpty(normalizedName) || clips.ContainsKey(GetEffectKey(normalizedName)))
+                {
+                    continue;
+                }
+
+                StartCoroutine(PrewarmEffect(normalizedName));
+            }
+        }
+
         private IEnumerator LoadAndPlayMusic(string name)
         {
             AudioClip clip = null;
@@ -207,6 +226,12 @@ namespace Redpoint.DungeonEscape.Unity.Core
             }
 
             effectsSource.PlayOneShot(clip);
+        }
+
+        private IEnumerator PrewarmEffect(string name)
+        {
+            AudioClip ignored = null;
+            yield return LoadClip(GetEffectKey(name), EffectsFolder + name + ".wav", loaded => ignored = loaded);
         }
 
         private IEnumerator LoadClip(string key, string assetPath, Action<AudioClip> onLoaded)

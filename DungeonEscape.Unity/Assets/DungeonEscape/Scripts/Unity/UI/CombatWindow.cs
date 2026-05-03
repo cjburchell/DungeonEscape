@@ -30,6 +30,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private static readonly Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, float> DamageFlashEndTimes = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, float> HealFlashEndTimes = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<IFighter, float> DefeatedFighterVisibleEndTimes = new Dictionary<IFighter, float>();
         private static readonly System.Random CombatRandom = new System.Random();
 
         private enum CombatState
@@ -117,6 +118,19 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         public static bool IsFighterDamageFlashing(string fighterName)
         {
+            if (!IsFighterDamageFlashActive(fighterName))
+            {
+                return false;
+            }
+
+            float endTime;
+            DamageFlashEndTimes.TryGetValue(fighterName, out endTime);
+            var elapsed = DamageFlashDuration - (endTime - Time.unscaledTime);
+            return Mathf.FloorToInt(elapsed / DamageFlashInterval) % 2 == 0;
+        }
+
+        private static bool IsFighterDamageFlashActive(string fighterName)
+        {
             if (string.IsNullOrEmpty(fighterName))
             {
                 return false;
@@ -134,8 +148,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return false;
             }
 
-            var elapsed = DamageFlashDuration - (endTime - Time.unscaledTime);
-            return Mathf.FloorToInt(elapsed / DamageFlashInterval) % 2 == 0;
+            return true;
         }
 
         public static bool IsFighterHealFlashing(string fighterName)
@@ -175,6 +188,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             window.heroSelections.Clear();
             DamageFlashEndTimes.Clear();
             HealFlashEndTimes.Clear();
+            DefeatedFighterVisibleEndTimes.Clear();
             window.targetSelectionCandidates.Clear();
             window.targetSelectionDone = null;
             window.gameState = GameState.GetOrCreate();
@@ -302,7 +316,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
             for (var i = 0; i < encounterMonsters.Count; i++)
             {
                 var monster = encounterMonsters[i];
-                if (monster.Instance == null || monster.Instance.IsDead || monster.Instance.RanAway)
+                if (monster.Instance == null || monster.Instance.RanAway)
+                {
+                    continue;
+                }
+
+                var damageFlashActive = IsFighterDamageFlashActive(monster.Instance.Name);
+                if (monster.Instance.IsDead && !IsDefeatedFighterVisible(monster.Instance))
                 {
                     continue;
                 }
@@ -316,7 +336,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     {
                         GUI.color = Color.blue;
                     }
-                    else if (IsFighterDamageFlashing(monster.Instance.Name))
+                    else if (damageFlashActive && IsFighterDamageFlashing(monster.Instance.Name))
                     {
                         GUI.color = Color.red;
                     }
@@ -1570,6 +1590,32 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             DamageFlashEndTimes[target.Name] = Time.unscaledTime + DamageFlashDuration;
+            if (target.IsDead)
+            {
+                DefeatedFighterVisibleEndTimes[target] = Time.unscaledTime + DamageFlashDuration;
+            }
+        }
+
+        private static bool IsDefeatedFighterVisible(IFighter target)
+        {
+            if (target == null)
+            {
+                return false;
+            }
+
+            float endTime;
+            if (!DefeatedFighterVisibleEndTimes.TryGetValue(target, out endTime))
+            {
+                return false;
+            }
+
+            if (Time.unscaledTime >= endTime)
+            {
+                DefeatedFighterVisibleEndTimes.Remove(target);
+                return false;
+            }
+
+            return true;
         }
 
         private static void StartHealFlash(IFighter target)
@@ -1788,17 +1834,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var x = panelRect.x + 14f * scale;
             var y = GetCombatMenuY(panelRect, scale);
             DrawCombatMenuTitle(x, panelRect.y, menuWidth, scale, title);
-            var itemTextStyle = new GUIStyle(labelStyle)
-            {
-                alignment = TextAnchor.MiddleLeft,
-                wordWrap = false
-            };
-
             for (var i = 0; i < values.Count; i++)
             {
                 var rect = new Rect(x, y + i * (rowHeight + 4f * scale), menuWidth, rowHeight);
-                if (UiControls.Button(rect, GUIContent.none, GetMenuButtonStyle(i == selectedMenuIndex)))
+                var selected = i == selectedMenuIndex;
+                if (GUI.Button(rect, GUIContent.none, GetCombatRowStyle(selected)))
                 {
+                    UiControls.PlayConfirmSound();
                     selectedMenuIndex = i;
                     onSelect(values[i]);
                 }
@@ -1813,7 +1855,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 GUI.Label(
                     new Rect(rect.x + 40f * scale, rect.y, rect.width - 46f * scale, rect.height),
                     getLabel(values[i]),
-                    itemTextStyle);
+                    GetCombatRowLabelStyle(selected));
             }
 
         }
@@ -1828,12 +1870,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
             for (var i = 0; i < buttons.Count; i++)
             {
                 var rect = new Rect(x, y + i * (rowHeight + 4f * scale), menuWidth, rowHeight);
-                if (UiControls.Button(rect, buttons[i].Label, GetMenuButtonStyle(i == selectedMenuIndex)))
+                var selected = i == selectedMenuIndex;
+                if (GUI.Button(rect, GUIContent.none, GetCombatRowStyle(selected)))
                 {
+                    UiControls.PlayConfirmSound();
                     selectedMenuIndex = i;
                     RememberAction(buttons[i].Label);
                     buttons[i].Action();
                 }
+
+                GUI.Label(new Rect(rect.x + 8f * scale, rect.y, rect.width - 16f * scale, rect.height), buttons[i].Label, GetCombatRowLabelStyle(selected));
             }
         }
 
@@ -2036,8 +2082,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 var target = targets[i];
                 var rect = new Rect(x, y + i * (rowHeight + 4f * scale), listWidth, rowHeight);
                 var selected = i == selectedMenuIndex;
-                if (GUI.Button(rect, GUIContent.none, GetTargetButtonStyle(target, selected)))
+                if (GUI.Button(rect, GUIContent.none, GetCombatRowStyle(selected)))
                 {
+                    UiControls.PlayConfirmSound();
                     selectedMenuIndex = i;
                     ActivateTargetSelection(i);
                 }
@@ -2068,7 +2115,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 normal = { background = null },
                 hover = { background = null },
                 active = { background = null },
-                focused = { background = null }
+                focused = { background = null },
+                border = new RectOffset()
             };
             GUI.Label(contentRect, target == null ? string.Empty : target.Name, style);
         }
@@ -2228,9 +2276,37 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return selected ? uiTheme.SelectedTabStyle : uiTheme.ButtonStyle;
         }
 
+        private GUIStyle GetCombatRowStyle(bool selected)
+        {
+            if (uiTheme == null)
+            {
+                return selected ? GUI.skin.box : GUIStyle.none;
+            }
+
+            return selected ? uiTheme.SelectedRowStyle : GUIStyle.none;
+        }
+
+        private GUIStyle GetCombatRowLabelStyle(bool selected)
+        {
+            var style = new GUIStyle(labelStyle)
+            {
+                alignment = TextAnchor.MiddleLeft,
+                wordWrap = false
+            };
+            if (selected && uiTheme != null)
+            {
+                style.normal.textColor = uiTheme.HighlightColor;
+                style.hover.textColor = uiTheme.HighlightColor;
+                style.active.textColor = uiTheme.HighlightColor;
+                style.focused.textColor = uiTheme.HighlightColor;
+            }
+
+            return style;
+        }
+
         private GUIStyle GetTargetButtonStyle(IFighter target, bool selected)
         {
-            var style = new GUIStyle(GetMenuButtonStyle(selected));
+            var style = new GUIStyle(GetCombatRowLabelStyle(selected));
             var color = GetHealthColor(target == null ? 0 : target.Health, target == null ? 0 : target.MaxHealth);
             style.normal.textColor = color;
             style.hover.textColor = color;

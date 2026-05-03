@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -80,6 +82,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private bool ownsMainMenuBackground;
         private bool ownsSecondaryMenuBackground;
         private bool waitingForConfirmRelease;
+        private bool titleActionPending;
 
         public static bool IsOpen
         {
@@ -98,6 +101,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             menu.selectedIndex = 0;
             menu.WaitForConfirmRelease();
             menu.ResetNavigationRepeat();
+            Audio.GetOrCreate().PrewarmSoundEffects("confirm", "select");
             isOpen = true;
         }
 
@@ -340,7 +344,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     selectedIndex = i;
                     if (enabled)
                     {
-                        rows[i].Action();
+                        ActivateTitleAction(rows[i].Action);
                     }
                 }
 
@@ -1077,7 +1081,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 var slotIndex = selectedIndex / 2;
                 if (selectedIndex % 2 == 0)
                 {
-                    TryLoadSlot(slotIndex);
+                    ActivateTitleAction(() => TryLoadSlot(slotIndex));
                 }
                 else
                 {
@@ -1096,7 +1100,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var rows = GetMainRows().ToList();
             if (selectedIndex >= 0 && selectedIndex < rows.Count && rows[selectedIndex].Enabled)
             {
-                rows[selectedIndex].Action();
+                ActivateTitleAction(rows[selectedIndex].Action);
             }
         }
 
@@ -1125,13 +1129,32 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     RerollCreatePreviewHero();
                     break;
                 case CreateStartIndex:
-                    StartCreatedGame();
+                    ActivateTitleAction(StartCreatedGame);
                     break;
                 case CreateBackIndex:
                 default:
                     ShowMainMenu();
                     break;
             }
+        }
+
+        private void ActivateTitleAction(Action action)
+        {
+            if (titleActionPending || action == null)
+            {
+                return;
+            }
+
+            UiControls.PlayConfirmSound();
+            StartCoroutine(RunTitleActionAfterConfirmFrame(action));
+        }
+
+        private IEnumerator RunTitleActionAfterConfirmFrame(Action action)
+        {
+            titleActionPending = true;
+            yield return null;
+            titleActionPending = false;
+            action();
         }
 
         private void HandleCreateDropdownInput()

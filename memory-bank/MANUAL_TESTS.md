@@ -272,7 +272,9 @@ Status legend:
 ### [ ] Redesigned Game Menu Action Flow
 
 - Open the in-game menu with the bound Menu key, default `E`.
-- Expected: party status appears at the top, gold appears at the bottom, and the center shows `Items`, `Spells`, `Equipment`, `Abilities`, `Status`, `Party`, and `Misc.`.
+- Expected: party status appears at the top, gold appears at the bottom, and the center shows visible actions such as `Items`, `Equipment`, `Status`, and `Misc.`.
+- Expected: `Spells` and `Abilities` are only shown when at least one party member can use matching non-combat actions.
+- Expected: `Party` is hidden when there is only one party member, and shown when there is more than one party member.
 - Use keyboard up/down, gamepad D-pad up/down, left stick, and right stick.
 - Expected: selection moves through the visible action list.
 - Select `Items`.
@@ -284,13 +286,21 @@ Status legend:
 - Press Cancel from the item list.
 - Expected: focus returns to party-member selection.
 - Repeat the same focus flow for `Spells` and `Abilities`.
+- Expected: only members with usable non-combat spells or abilities appear in those screens.
 - Expected: spells and abilities show 10 entries per page and `[` / `]` page through longer lists.
 - Select `Equipment`.
-- Expected: party members appear on the left, equipment slots appear beside them, and current equipment details appear on the right.
+- Expected: party members appear on the left, equipment slots appear beside them, and each slot shows the equipped item name and icon or `Empty`.
 - Select an equipment slot and press Action.
-- Expected: an equipment action modal opens with valid equip or unequip choices.
+- Expected: focus moves to the compatible equipment list on the right and selects the currently equipped item when present.
+- Select the currently equipped item and press Action.
+- Expected: the item is unequipped.
+- Select a different compatible item and press Action.
+- Expected: the selected item is equipped into that slot.
+- Press Cancel from the compatible equipment list.
+- Expected: focus returns to the equipment slot list.
 - Select `Status`.
 - Expected: party members appear on the left and detailed status appears on the right.
+- Expected: HP and MP use progress bars styled consistently with the other status progress bars.
 - Select `Party`.
 - Expected: selecting a party member opens party actions such as moving order, reserve, or add to party.
 - Select `Misc.`.

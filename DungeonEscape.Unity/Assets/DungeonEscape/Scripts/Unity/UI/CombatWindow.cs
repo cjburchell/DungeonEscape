@@ -2035,12 +2035,42 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 var target = targets[i];
                 var rect = new Rect(x, y + i * (rowHeight + 4f * scale), listWidth, rowHeight);
-                if (UiControls.Button(rect, target.Name, GetTargetButtonStyle(target, i == selectedMenuIndex)))
+                var selected = i == selectedMenuIndex;
+                if (GUI.Button(rect, GUIContent.none, GetTargetButtonStyle(target, selected)))
                 {
                     selectedMenuIndex = i;
                     ActivateTargetSelection(i);
                 }
+
+                DrawTargetButtonContent(rect, target, selected, scale);
             }
+        }
+
+        private void DrawTargetButtonContent(Rect rect, IFighter target, bool selected, float scale)
+        {
+            var contentRect = new Rect(rect.x + 8f * scale, rect.y, rect.width - 16f * scale, rect.height);
+            var hero = target as Hero;
+            if (hero != null)
+            {
+                Sprite sprite;
+                if (UiAssetResolver.TryGetHeroSprite(hero, out sprite))
+                {
+                    DrawSprite(sprite, new Rect(contentRect.x, contentRect.y + 2f * scale, 32f * scale, rect.height - 4f * scale));
+                }
+
+                contentRect.x += 38f * scale;
+                contentRect.width -= 38f * scale;
+            }
+
+            var style = new GUIStyle(GetTargetButtonStyle(target, selected))
+            {
+                alignment = TextAnchor.MiddleLeft,
+                normal = { background = null },
+                hover = { background = null },
+                active = { background = null },
+                focused = { background = null }
+            };
+            GUI.Label(contentRect, target == null ? string.Empty : target.Name, style);
         }
 
         private void ActivateTargetSelection(int index)

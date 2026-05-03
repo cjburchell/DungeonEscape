@@ -41,6 +41,27 @@ namespace Redpoint.DungeonEscape.Unity.UI
             Spells
         }
 
+        private enum MenuScreen
+        {
+            Main,
+            Items,
+            Spells,
+            Equipment,
+            Abilities,
+            Status,
+            Party,
+            Misc,
+            Save,
+            Load,
+            Settings
+        }
+
+        private enum MenuFocus
+        {
+            Primary,
+            Detail
+        }
+
         private const float MinUiScale = 0.5f;
         private const float MaxUiScale = 3f;
         private const float InitialNavigationRepeatDelay = 0.35f;
@@ -60,6 +81,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private UiTheme uiTheme;
         private float lastPixelScale;
         private string lastThemeSignature;
+        private MenuScreen currentScreen = MenuScreen.Main;
+        private MenuFocus currentFocus = MenuFocus.Primary;
         private MenuTab currentTab = MenuTab.Party;
         private SettingsTab currentSettingsTab = SettingsTab.General;
         private PartyDetailTab currentPartyDetailTab = PartyDetailTab.Status;
@@ -72,6 +95,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private float menuBodyHeight;
         private int selectedHeroIndex;
         private int selectedPartyItemIndex;
+        private int selectedDetailIndex;
+        private int detailPageIndex;
         private int selectedRowIndex;
         private int selectedBindingSlotIndex;
         private int drawingRowIndex;
@@ -81,6 +106,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private string menuModalTitle;
         private string menuModalMessage;
         private List<string> menuModalChoices;
+        private List<Hero> menuModalChoiceHeroes;
         private Action<int> menuModalSelected;
         private int menuModalSelectedIndex;
         private bool menuModalWaitingForConfirmRelease;
@@ -89,6 +115,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private int repeatingMenuMoveY;
         private float nextMenuMoveYTime;
         private int heldSettingsTabMoveX;
+        private bool waitForMenuInteractRelease;
+        private int acceptMenuInteractAfterFrame;
         private bool menuControlsBlocked;
         private bool uiAssetsPrewarmed;
         private bool pendingSettingsSave;
@@ -145,20 +173,22 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
+            UpdateMenuInteractRelease();
+
             if (isOpen && InputManager.GetCommandDown(InputCommand.MenuPreviousTab))
             {
                 UiControls.PlaySelectSound();
-                CycleTab(-1);
+                HandleMenuPageCommand(-1);
             }
             else if (isOpen && InputManager.GetCommandDown(InputCommand.MenuNextTab))
             {
                 UiControls.PlaySelectSound();
-                CycleTab(1);
+                HandleMenuPageCommand(1);
             }
             else if (isOpen && InputManager.GetCommandDown(InputCommand.Cancel))
             {
                 UiControls.PlayConfirmSound();
-                isOpen = false;
+                CancelCurrentScreen();
             }
             else if (InputManager.GetCommandDown(InputCommand.Menu))
             {
@@ -167,8 +197,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
             else if (isOpen && InputManager.GetCommandDown(InputCommand.Interact))
             {
-                UiControls.PlayConfirmSound();
-                ActivateSelectedRow();
+                if (CanAcceptMenuInteract())
+                {
+                    UiControls.PlayConfirmSound();
+                    ActivateSelectedRow();
+                }
             }
 
             UpdateGamepadMenuNavigation();
@@ -193,19 +226,19 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUI.depth = 1000;
             var scale = GetPixelScale();
             var width = Mathf.Min(Screen.width - 32f * scale, 980f * scale);
-            var height = Mathf.Min(Screen.height - 32f * scale, 680f * scale);
+            var height = Mathf.Min(Screen.height - 32f * scale, 720f * scale);
             var rect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
 
             GUI.Box(rect, GUIContent.none, panelStyle);
             var areaHeight = rect.height - 28f * scale;
-            menuBodyHeight = Mathf.Max(160f * scale, areaHeight - 90f * scale);
+            menuBodyHeight = Mathf.Max(160f * scale, areaHeight - 170f * scale);
             GUILayout.BeginArea(new Rect(rect.x + 16f * scale, rect.y + 14f * scale, rect.width - 32f * scale, areaHeight));
             var previousEnabled = GUI.enabled;
             var previousMenuControlsBlocked = menuControlsBlocked;
             menuControlsBlocked = rebindingInput != null || IsMenuModalVisible();
             SetMenuGuiEnabled(previousEnabled);
-            DrawHeader();
-            DrawTabs();
+            DrawMenuStatusSummary();
+            GUILayout.Space(8f * scale);
             var previousVerticalThumb = GUI.skin.verticalScrollbarThumb;
             if (uiTheme != null)
             {
@@ -213,6 +246,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             DrawCurrentTab();
+            GUILayout.FlexibleSpace();
+            DrawMenuGoldSummary();
             GUI.skin.verticalScrollbarThumb = previousVerticalThumb;
             GUI.enabled = previousEnabled;
             menuControlsBlocked = previousMenuControlsBlocked;
@@ -230,15 +265,19 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void Toggle(MenuTab tab)
         {
             PrewarmUiAssets();
-            if (isOpen && currentTab == tab)
+            if (isOpen)
             {
                 isOpen = false;
                 return;
             }
 
             currentTab = tab;
+            currentScreen = MenuScreen.Main;
+            currentFocus = MenuFocus.Primary;
             isOpen = true;
             selectedRowIndex = 0;
+            selectedDetailIndex = 0;
+            detailPageIndex = 0;
             ResetMenuNavigationRepeat();
         }
 
@@ -292,10 +331,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var moveY = GetMenuMoveY();
             if (moveY != 0)
             {
-                MoveSelectedRow(moveY);
+                MoveMenuSelection(moveY);
             }
 
-            var moveX = currentTab == MenuTab.Settings && selectedRowIndex == 0
+            var moveX = currentScreen == MenuScreen.Settings && selectedRowIndex == 0
                 ? GetSettingsTabMoveX()
                 : GetMenuMoveX();
             if (moveX == 0)
@@ -303,7 +342,113 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            AdjustSelectedRow(moveX);
+            AdjustMenuSelection(moveX);
+        }
+
+        private void HandleMenuPageCommand(int delta)
+        {
+            if (currentScreen == MenuScreen.Settings)
+            {
+                CycleSettingsTab(delta);
+                return;
+            }
+
+            if (IsPagedDetailScreen(currentScreen))
+            {
+                ChangeDetailPage(delta);
+            }
+        }
+
+        private void CancelCurrentScreen()
+        {
+            if (currentFocus == MenuFocus.Detail)
+            {
+                currentFocus = MenuFocus.Primary;
+                selectedDetailIndex = 0;
+                return;
+            }
+
+            if (currentScreen != MenuScreen.Main)
+            {
+                currentScreen = MenuScreen.Main;
+                selectedRowIndex = 0;
+                selectedDetailIndex = 0;
+                detailPageIndex = 0;
+                return;
+            }
+
+            isOpen = false;
+        }
+
+        private void DrawMenuGoldSummary()
+        {
+            var party = GetParty();
+            if (party == null)
+            {
+                return;
+            }
+
+            GUILayout.Space(8f * GetPixelScale());
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            GUILayout.BeginVertical(panelStyle, GUILayout.Width(150f * GetPixelScale()), GUILayout.Height(42f * GetPixelScale()));
+            GUILayout.FlexibleSpace();
+            GUILayout.Label("Gold: " + party.Gold, labelStyle);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndVertical();
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawMenuStatusSummary()
+        {
+            var party = GetParty();
+            if (party == null)
+            {
+                return;
+            }
+
+            var members = party.ActiveMembers.ToList();
+            if (members.Count == 0)
+            {
+                return;
+            }
+
+            GUILayout.BeginHorizontal(panelStyle, GUILayout.Height(78f * GetPixelScale()));
+            foreach (var member in members)
+            {
+                DrawMenuStatusMember(member);
+            }
+
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawMenuStatusMember(Hero member)
+        {
+            var scale = GetPixelScale();
+            GUILayout.BeginHorizontal(GUILayout.Width(155f * scale));
+            Sprite sprite;
+            UiControls.SpriteIcon(UiAssetResolver.TryGetHeroSprite(member, out sprite) ? sprite : null, 42f * scale, uiTheme);
+            GUILayout.BeginVertical(GUILayout.Width(104f * scale));
+            GUILayout.Label(member.Name, smallStyle);
+            DrawMiniProgress("HP", member.Health, member.MaxHealth, GetHealthColor(member.Health, member.MaxHealth));
+            if (member.MaxMagic > 0)
+            {
+                DrawMiniProgress("MP", member.Magic, member.MaxMagic, Color.blue);
+            }
+
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawMiniProgress(string label, int value, int maxValue, Color color)
+        {
+            var scale = GetPixelScale();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(label, smallStyle, GUILayout.Width(22f * scale));
+            DrawProgressBar(maxValue <= 0 ? 0f : Mathf.Clamp01((float)value / maxValue), 70f * scale, 10f * scale, color);
+            GUILayout.EndHorizontal();
         }
 
         private void DrawHeader()
@@ -353,24 +498,100 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             drawingRowIndex = 0;
             selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Mathf.Max(GetSelectableRowCount() - 1, 0));
-            switch (currentTab)
+            switch (currentScreen)
             {
-                case MenuTab.Party:
-                    DrawParty();
+                case MenuScreen.Main:
+                    DrawMainActionList();
                     break;
-                case MenuTab.Inventory:
-                    DrawInventory();
+                case MenuScreen.Items:
+                    DrawMemberDetailScreen("Items", DrawMenuItemsList, DrawSelectedMenuItemDetail);
                     break;
-                case MenuTab.Quests:
-                    DrawQuests();
+                case MenuScreen.Spells:
+                    DrawMemberDetailScreen("Spells", DrawMenuSpellsList, DrawSelectedMenuSpellDetail);
                     break;
-                case MenuTab.Save:
+                case MenuScreen.Abilities:
+                    DrawMemberDetailScreen("Abilities", DrawMenuAbilitiesList, DrawSelectedMenuAbilityDetail);
+                    break;
+                case MenuScreen.Equipment:
+                    DrawMemberDetailScreen("Equipment", DrawMenuEquipmentList, DrawSelectedMenuEquipmentDetail);
+                    break;
+                case MenuScreen.Status:
+                    DrawMemberDetailScreen("Status", null, DrawSelectedMenuStatusDetail);
+                    break;
+                case MenuScreen.Party:
+                    DrawMemberDetailScreen("Party", null, DrawSelectedMenuStatusDetail);
+                    break;
+                case MenuScreen.Misc:
+                    DrawMiscActionList();
+                    break;
+                case MenuScreen.Save:
                     DrawSave();
                     break;
-                case MenuTab.Settings:
+                case MenuScreen.Load:
+                    DrawLoad();
+                    break;
+                case MenuScreen.Settings:
                     DrawSettings();
                     break;
             }
+        }
+
+        private void DrawMainActionList()
+        {
+            var actions = GetMainMenuActions();
+            DrawActionList(actions, selectedRowIndex);
+        }
+
+        private void DrawMiscActionList()
+        {
+            var actions = GetMiscMenuActions();
+            DrawActionList(actions, selectedRowIndex);
+        }
+
+        private void DrawActionList(IList<string> actions, int selectedIndex)
+        {
+            var width = 260f * GetPixelScale();
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            GUILayout.BeginVertical(panelStyle, GUILayout.Width(width));
+            for (var i = 0; i < actions.Count; i++)
+            {
+                var selected = i == selectedIndex;
+                GUILayout.BeginHorizontal(GetListRowStyle(selected), GUILayout.Height(30f * GetPixelScale()));
+                GUILayout.Label(actions[i], GetMenuListLabelStyle(selected));
+                GUILayout.EndHorizontal();
+                SelectMenuRowOnMouseClick(i, ActivateSelectedRow);
+            }
+
+            GUILayout.EndVertical();
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+        }
+
+        private static List<string> GetMainMenuActions()
+        {
+            return new List<string>
+            {
+                "Items",
+                "Spells",
+                "Equipment",
+                "Abilities",
+                "Status",
+                "Party",
+                "Misc."
+            };
+        }
+
+        private static List<string> GetMiscMenuActions()
+        {
+            return new List<string>
+            {
+                "Save",
+                "Load",
+                "Settings",
+                "Exit to Main",
+                "Quit"
+            };
         }
 
         private void DrawParty()
@@ -431,6 +652,320 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void DrawHeroStatus(Hero hero, bool active)
         {
             GUILayout.Label(hero.Name + (active ? "" : "  Reserve"), labelStyle);
+        }
+
+        private void DrawMemberDetailScreen(
+            string title,
+            Action<Hero> drawDetailList,
+            Action<Hero> drawDetail)
+        {
+            var party = GetParty();
+            if (party == null)
+            {
+                GUILayout.Label("No party loaded.", labelStyle);
+                return;
+            }
+
+            var members = GetInventoryMembers(party);
+            if (members.Count == 0)
+            {
+                GUILayout.Label("No party members.", labelStyle);
+                return;
+            }
+
+            selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, members.Count - 1);
+            var hero = members[selectedRowIndex];
+            GUILayout.Label(title, titleStyle);
+            GUILayout.Space(6f * GetPixelScale());
+            GUILayout.BeginHorizontal();
+            GUILayout.BeginVertical(panelStyle, GUILayout.Width(230f * GetPixelScale()), GUILayout.Height(menuBodyHeight));
+            for (var i = 0; i < members.Count; i++)
+            {
+                DrawMenuMemberRow(members[i], i);
+                SelectMenuRowOnMouseClick(i, ActivateCurrentMemberDetailScreen);
+            }
+
+            GUILayout.EndVertical();
+            GUILayout.Space(10f * GetPixelScale());
+
+            if (drawDetailList != null)
+            {
+                GUILayout.BeginVertical(panelStyle, GUILayout.Width(310f * GetPixelScale()), GUILayout.Height(menuBodyHeight));
+                drawDetailList(hero);
+                GUILayout.EndVertical();
+                GUILayout.Space(10f * GetPixelScale());
+            }
+
+            var showDetailPanel = !(currentScreen == MenuScreen.Items && currentFocus != MenuFocus.Detail);
+            if (showDetailPanel)
+            {
+                GUILayout.BeginVertical(panelStyle, GUILayout.ExpandWidth(true), GUILayout.Height(menuBodyHeight));
+                if (drawDetail != null)
+                {
+                    drawDetail(hero);
+                }
+
+                GUILayout.EndVertical();
+            }
+
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawMenuItemsList(Hero hero)
+        {
+            var items = hero == null || hero.Items == null ? new List<ItemInstance>() : hero.Items.ToList();
+            DrawPagedItemList(hero, items);
+        }
+
+        private void DrawSelectedMenuItemDetail(Hero hero)
+        {
+            if (currentFocus != MenuFocus.Detail)
+            {
+                return;
+            }
+
+            var items = hero == null || hero.Items == null ? new List<ItemInstance>() : hero.Items.ToList();
+            if (items.Count == 0)
+            {
+                GUILayout.Label("No items.", labelStyle);
+                return;
+            }
+
+            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex, 0, items.Count - 1);
+            DrawInventoryItemDetail(hero, items[selectedDetailIndex], false, false);
+        }
+
+        private void DrawMenuSpellsList(Hero hero)
+        {
+            var spells = GetKnownSpells(hero);
+            DrawPagedIconList(spells.Count, i => spells[i].Name, i =>
+            {
+                Sprite sprite;
+                return UiAssetResolver.TryGetSpellSprite(spells[i], out sprite) ? sprite : null;
+            }, i =>
+            {
+                selectedDetailIndex = i;
+                currentFocus = MenuFocus.Detail;
+            });
+        }
+
+        private void DrawSelectedMenuSpellDetail(Hero hero)
+        {
+            var spells = GetKnownSpells(hero);
+            if (spells.Count == 0)
+            {
+                GUILayout.Label("No spells.", labelStyle);
+                return;
+            }
+
+            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex, 0, spells.Count - 1);
+            var spell = spells[selectedDetailIndex];
+            DrawSpellDetailHeader(spell);
+        }
+
+        private void DrawMenuAbilitiesList(Hero hero)
+        {
+            var skills = GetKnownSkills(hero);
+            DrawPagedIconList(skills.Count, i => skills[i].Name, i => GetSkillSprite(skills[i]), i =>
+            {
+                selectedDetailIndex = i;
+                currentFocus = MenuFocus.Detail;
+            });
+        }
+
+        private void DrawSelectedMenuAbilityDetail(Hero hero)
+        {
+            var skills = GetKnownSkills(hero);
+            if (skills.Count == 0)
+            {
+                GUILayout.Label("No abilities.", labelStyle);
+                return;
+            }
+
+            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex, 0, skills.Count - 1);
+            var skill = skills[selectedDetailIndex];
+            DrawSkillDetailHeader(skill);
+        }
+
+        private void DrawMenuEquipmentList(Hero hero)
+        {
+            var slots = GetEquipmentSlots();
+            DrawPagedList(slots.Count, i => slots[i].ToString(), i =>
+            {
+                selectedDetailIndex = i;
+                currentFocus = MenuFocus.Detail;
+            });
+        }
+
+        private void DrawSelectedMenuEquipmentDetail(Hero hero)
+        {
+            DrawPartyEquipmentDetail(hero);
+        }
+
+        private void DrawSelectedMenuStatusDetail(Hero hero)
+        {
+            DrawPartyStatusDetail(hero);
+        }
+
+        private void DrawMenuMemberRow(Hero hero, int index)
+        {
+            if (hero == null)
+            {
+                return;
+            }
+
+            var selected = currentFocus == MenuFocus.Primary && index == selectedRowIndex;
+            var rowHeight = 38f * GetPixelScale();
+            GUILayout.BeginHorizontal(GetListRowStyle(selected), GUILayout.Height(rowHeight));
+            Sprite sprite;
+            DrawSpriteIconNoFrame(UiAssetResolver.TryGetHeroSprite(hero, out sprite) ? sprite : null, 32f * GetPixelScale());
+
+            GUILayout.Label(hero.Name + (hero.IsActive ? string.Empty : "  Reserve"), GetMenuListLabelStyle(selected), GUILayout.Height(rowHeight));
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawPagedItemList(Hero hero, IList<ItemInstance> items)
+        {
+            if (items == null || items.Count == 0)
+            {
+                GUILayout.Label("None.", labelStyle);
+                return;
+            }
+
+            const int pageSize = 10;
+            var maxPage = Math.Max(0, (items.Count - 1) / pageSize);
+            detailPageIndex = Mathf.Clamp(detailPageIndex, 0, maxPage);
+            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex, 0, items.Count - 1);
+            var start = detailPageIndex * pageSize;
+            var end = Math.Min(items.Count, start + pageSize);
+            for (var i = start; i < end; i++)
+            {
+                DrawMenuItemRow(hero, items[i], i);
+            }
+
+            GUILayout.FlexibleSpace();
+            GUILayout.Label("Page " + (detailPageIndex + 1) + "/" + (maxPage + 1), smallStyle);
+        }
+
+        private void DrawMenuItemRow(Hero hero, ItemInstance item, int index)
+        {
+            var selected = currentFocus == MenuFocus.Detail && index == selectedDetailIndex;
+            var rowHeight = 36f * GetPixelScale();
+            GUILayout.BeginHorizontal(GetListRowStyle(selected), GUILayout.Height(rowHeight));
+            Sprite sprite;
+            DrawSpriteIconNoFrame(UiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null, 32f * GetPixelScale());
+            GUILayout.Label(item.NameWithStats, GetItemRowLabelStyle(item), GUILayout.Height(rowHeight));
+            GUILayout.FlexibleSpace();
+            if (item.IsEquipped)
+            {
+                GUILayout.Label("E", GetEquippedMarkerStyle(selected), GUILayout.Width(18f * GetPixelScale()), GUILayout.Height(rowHeight));
+            }
+
+            GUILayout.EndHorizontal();
+            HandleDetailRowMouseClick(index, () => ShowPartyItemActionModal(hero, item));
+        }
+
+        private void DrawPagedList(int count, Func<int, string> getLabel, Action<int> clicked)
+        {
+            if (count == 0)
+            {
+                GUILayout.Label("None.", labelStyle);
+                return;
+            }
+
+            const int pageSize = 10;
+            var maxPage = Math.Max(0, (count - 1) / pageSize);
+            detailPageIndex = Mathf.Clamp(detailPageIndex, 0, maxPage);
+            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex, 0, count - 1);
+            var start = detailPageIndex * pageSize;
+            var end = Math.Min(count, start + pageSize);
+            for (var i = start; i < end; i++)
+            {
+                var selected = currentFocus == MenuFocus.Detail && i == selectedDetailIndex;
+                GUILayout.BeginHorizontal(GetListRowStyle(selected), GUILayout.Height(30f * GetPixelScale()));
+                GUILayout.Label(getLabel(i), GetMenuListLabelStyle(selected));
+                GUILayout.EndHorizontal();
+                HandleDetailRowMouseClick(i, () => clicked(i));
+            }
+
+            GUILayout.FlexibleSpace();
+            GUILayout.Label("Page " + (detailPageIndex + 1) + "/" + (maxPage + 1), smallStyle);
+        }
+
+        private void DrawPagedIconList(int count, Func<int, string> getLabel, Func<int, Sprite> getSprite, Action<int> clicked)
+        {
+            if (count == 0)
+            {
+                GUILayout.Label("None.", labelStyle);
+                return;
+            }
+
+            const int pageSize = 10;
+            var maxPage = Math.Max(0, (count - 1) / pageSize);
+            detailPageIndex = Mathf.Clamp(detailPageIndex, 0, maxPage);
+            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex, 0, count - 1);
+            var start = detailPageIndex * pageSize;
+            var end = Math.Min(count, start + pageSize);
+            var rowHeight = 36f * GetPixelScale();
+            for (var i = start; i < end; i++)
+            {
+                var selected = currentFocus == MenuFocus.Detail && i == selectedDetailIndex;
+                GUILayout.BeginHorizontal(GetListRowStyle(selected), GUILayout.Height(rowHeight));
+                DrawSpriteIconNoFrame(getSprite == null ? null : getSprite(i), 32f * GetPixelScale());
+                GUILayout.Label(getLabel(i), GetMenuListLabelStyle(selected), GUILayout.Height(rowHeight));
+                GUILayout.EndHorizontal();
+                HandleDetailRowMouseClick(i, () => clicked(i));
+            }
+
+            GUILayout.FlexibleSpace();
+            GUILayout.Label("Page " + (detailPageIndex + 1) + "/" + (maxPage + 1), smallStyle);
+        }
+
+        private void DrawSpellDetailHeader(Spell spell)
+        {
+            if (spell == null)
+            {
+                return;
+            }
+
+            GUILayout.BeginHorizontal();
+            Sprite sprite;
+            DrawSpriteIconNoFrame(UiAssetResolver.TryGetSpellSprite(spell, out sprite) ? sprite : null, 48f * GetPixelScale());
+            GUILayout.BeginVertical();
+            GUILayout.Label(spell.Name, labelStyle);
+            GUILayout.Label(spell.Type + "  " + spell.Targets, smallStyle);
+            GUILayout.Label("MP: " + spell.Cost, smallStyle);
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawSkillDetailHeader(Skill skill)
+        {
+            if (skill == null)
+            {
+                return;
+            }
+
+            GUILayout.BeginHorizontal();
+            DrawSpriteIconNoFrame(GetSkillSprite(skill), 48f * GetPixelScale());
+            GUILayout.BeginVertical();
+            GUILayout.Label(skill.Name, labelStyle);
+            GUILayout.Label(skill.Type + "  " + skill.Targets, smallStyle);
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+        }
+
+        private static Sprite GetSkillSprite(Skill skill)
+        {
+            if (skill == null || GameDataCache.Current == null || GameDataCache.Current.Spells == null)
+            {
+                return null;
+            }
+
+            var spell = GameDataCache.Current.Spells.FirstOrDefault(item =>
+                item != null && string.Equals(item.SkillId, skill.Name, StringComparison.OrdinalIgnoreCase));
+            Sprite sprite;
+            return UiAssetResolver.TryGetSpellSprite(spell, out sprite) ? sprite : null;
         }
 
         private void DrawPartyDetail(Hero hero, float height)
@@ -545,6 +1080,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.EndHorizontal();
 
             DrawStatusEffects(hero);
+            DrawStatusSpellAbilityColumns(hero);
         }
 
         private void DrawPartyEquipmentDetail(Hero hero)
@@ -627,11 +1163,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawProgressBar(float progress, float width, float height)
         {
+            DrawProgressBar(progress, width, height, Color.white);
+        }
+
+        private void DrawProgressBar(float progress, float width, float height, Color fillColor)
+        {
             var rect = GUILayoutUtility.GetRect(width, height, GUILayout.Width(width), GUILayout.Height(height));
             GUI.Box(rect, GUIContent.none, uiTheme == null ? GUI.skin.box : uiTheme.ButtonStyle);
 
             var previousColor = GUI.color;
-            GUI.color = Color.white;
+            GUI.color = fillColor;
             var inset = uiTheme == null ? 2f : Mathf.Max(2f, uiTheme.BorderThickness);
             GUI.DrawTexture(
                 new Rect(
@@ -643,6 +1184,22 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUI.color = previousColor;
         }
 
+        private static Color GetHealthColor(int currentHealth, int maxHealth)
+        {
+            if (maxHealth <= 0 || currentHealth <= 0)
+            {
+                return Color.red;
+            }
+
+            var progress = Mathf.Clamp01((float)currentHealth / maxHealth);
+            if (progress < 0.1f)
+            {
+                return new Color(1f, 0.55f, 0f, 1f);
+            }
+
+            return progress < 0.5f ? Color.yellow : Color.green;
+        }
+
         private GUIStyle GetLeftAlignedButtonStyle(bool selected)
         {
             var style = new GUIStyle(uiTheme == null
@@ -652,6 +1209,84 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 alignment = TextAnchor.MiddleLeft
             };
             return style;
+        }
+
+        private GUIStyle GetHighlightedMenuLabelStyle()
+        {
+            return GetMenuListLabelStyle(true);
+        }
+
+        private GUIStyle GetMenuListLabelStyle(bool selected)
+        {
+            var style = new GUIStyle(labelStyle)
+            {
+                alignment = TextAnchor.MiddleLeft
+            };
+            if (selected && uiTheme != null)
+            {
+                style.normal.textColor = uiTheme.HighlightColor;
+            }
+
+            return style;
+        }
+
+        private GUIStyle GetItemRowLabelStyle(ItemInstance item)
+        {
+            var style = new GUIStyle(GetRarityStyle(item, labelStyle))
+            {
+                alignment = TextAnchor.MiddleLeft
+            };
+            return style;
+        }
+
+        private GUIStyle GetEquippedMarkerStyle(bool selected)
+        {
+            var style = GetMenuListLabelStyle(selected);
+            style.alignment = TextAnchor.MiddleRight;
+            return style;
+        }
+
+        private GUIStyle GetListRowStyle(bool selected)
+        {
+            if (!selected)
+            {
+                return GUIStyle.none;
+            }
+
+            return uiTheme == null ? GUI.skin.box : uiTheme.SelectedRowStyle;
+        }
+
+        private static void DrawSpriteIconNoFrame(Sprite sprite, float size)
+        {
+            var rect = GUILayoutUtility.GetRect(size, size, GUILayout.Width(size), GUILayout.Height(size));
+            if (sprite == null || sprite.texture == null)
+            {
+                return;
+            }
+
+            var texture = sprite.texture;
+            var textureRect = sprite.textureRect;
+            var texCoords = new Rect(
+                textureRect.x / texture.width,
+                textureRect.y / texture.height,
+                textureRect.width / texture.width,
+                textureRect.height / texture.height);
+
+            var aspect = textureRect.height <= 0f ? 1f : textureRect.width / textureRect.height;
+            var drawWidth = rect.width;
+            var drawHeight = aspect <= 0f ? rect.height : drawWidth / aspect;
+            if (drawHeight > rect.height)
+            {
+                drawHeight = rect.height;
+                drawWidth = drawHeight * aspect;
+            }
+
+            var drawRect = new Rect(
+                rect.x + (rect.width - drawWidth) / 2f,
+                rect.y + (rect.height - drawHeight) / 2f,
+                drawWidth,
+                drawHeight);
+            GUI.DrawTextureWithTexCoords(drawRect, texture, texCoords, true);
         }
 
         private static ulong GetXpToNextLevel(Hero hero)
@@ -691,6 +1326,57 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 var duration = effect.Duration <= 0 ? "" : "  " + effect.Duration + " " + effect.DurationType;
                 var stat = effect.StatType == StatType.None ? "" : "  " + effect.StatType + " " + effect.StatValue;
                 GUILayout.Label(effect.Name + "  " + effect.Type + stat + duration, smallStyle);
+            }
+        }
+
+        private void DrawStatusSpellAbilityColumns(Hero hero)
+        {
+            GUILayout.Space(8f * GetPixelScale());
+            GUILayout.BeginHorizontal();
+            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+            GUILayout.Label("Spells", labelStyle);
+            DrawStatusSpellList(GetKnownSpells(hero));
+            GUILayout.EndVertical();
+            GUILayout.Space(12f * GetPixelScale());
+            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+            GUILayout.Label("Abilities", labelStyle);
+            DrawStatusSkillList(GetKnownSkills(hero));
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawStatusSpellList(IList<Spell> spells)
+        {
+            if (spells == null || spells.Count == 0)
+            {
+                GUILayout.Label("None", smallStyle);
+                return;
+            }
+
+            foreach (var spell in spells)
+            {
+                GUILayout.BeginHorizontal(GUILayout.Height(28f * GetPixelScale()));
+                Sprite sprite;
+                DrawSpriteIconNoFrame(UiAssetResolver.TryGetSpellSprite(spell, out sprite) ? sprite : null, 24f * GetPixelScale());
+                GUILayout.Label(spell.Name, smallStyle);
+                GUILayout.EndHorizontal();
+            }
+        }
+
+        private void DrawStatusSkillList(IList<Skill> skills)
+        {
+            if (skills == null || skills.Count == 0)
+            {
+                GUILayout.Label("None", smallStyle);
+                return;
+            }
+
+            foreach (var skill in skills)
+            {
+                GUILayout.BeginHorizontal(GUILayout.Height(28f * GetPixelScale()));
+                DrawSpriteIconNoFrame(GetSkillSprite(skill), 24f * GetPixelScale());
+                GUILayout.Label(skill.Name, smallStyle);
+                GUILayout.EndHorizontal();
             }
         }
 
@@ -855,7 +1541,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             var labels = targets.Select(target => target.Name).ToList();
             labels.Add("Cancel");
-            ShowMenuModal("Cast " + spell.Name, "Choose a target.", labels, selectedIndex =>
+            var choiceHeroes = targets.Cast<Hero>().Concat(new Hero[] { null }).ToList();
+            ShowMenuModal("Cast " + spell.Name, "Choose a target.", labels, choiceHeroes, selectedIndex =>
             {
                 if (selectedIndex < 0 || selectedIndex >= targets.Count)
                 {
@@ -898,6 +1585,118 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             return GetSelectedPartyHero(party.ActiveMembers.ToList(), party.InactiveMembers.ToList());
+        }
+
+        private Hero GetSelectedMenuHero()
+        {
+            var party = GetParty();
+            if (party == null)
+            {
+                return null;
+            }
+
+            var members = GetInventoryMembers(party);
+            return selectedRowIndex >= 0 && selectedRowIndex < members.Count ? members[selectedRowIndex] : null;
+        }
+
+        private static bool IsMemberDetailScreen(MenuScreen screen)
+        {
+            return screen == MenuScreen.Items ||
+                   screen == MenuScreen.Spells ||
+                   screen == MenuScreen.Equipment ||
+                   screen == MenuScreen.Abilities ||
+                   screen == MenuScreen.Status ||
+                   screen == MenuScreen.Party;
+        }
+
+        private static bool IsPagedDetailScreen(MenuScreen screen)
+        {
+            return screen == MenuScreen.Items ||
+                   screen == MenuScreen.Spells ||
+                   screen == MenuScreen.Equipment ||
+                   screen == MenuScreen.Abilities;
+        }
+
+        private int GetCurrentDetailCount()
+        {
+            var hero = GetSelectedMenuHero();
+            if (hero == null)
+            {
+                return 0;
+            }
+
+            switch (currentScreen)
+            {
+                case MenuScreen.Items:
+                    return hero.Items == null ? 0 : hero.Items.Count;
+                case MenuScreen.Spells:
+                    return GetKnownSpells(hero).Count;
+                case MenuScreen.Abilities:
+                    return GetKnownSkills(hero).Count;
+                case MenuScreen.Equipment:
+                    return GetEquipmentSlots().Count;
+                default:
+                    return 0;
+            }
+        }
+
+        private static List<Spell> GetKnownSpells(Hero hero)
+        {
+            return hero == null || GameDataCache.Current == null || GameDataCache.Current.Spells == null
+                ? new List<Spell>()
+                : hero.GetSpells(GameDataCache.Current.Spells).ToList();
+        }
+
+        private static List<Skill> GetKnownSkills(Hero hero)
+        {
+            return hero == null || GameDataCache.Current == null || GameDataCache.Current.Skills == null
+                ? new List<Skill>()
+                : hero.GetSkills(GameDataCache.Current.Skills).ToList();
+        }
+
+        private static List<Slot> GetEquipmentSlots()
+        {
+            return Enum.GetValues(typeof(Slot)).Cast<Slot>().ToList();
+        }
+
+        private void ShowEquipmentActionModal(Hero hero)
+        {
+            var slots = GetEquipmentSlots();
+            if (hero == null || selectedDetailIndex < 0 || selectedDetailIndex >= slots.Count)
+            {
+                return;
+            }
+
+            var slot = slots[selectedDetailIndex];
+            var equipped = GetEquippedItem(hero, slot);
+            var choices = new List<string>();
+            var actions = new List<Action>();
+            if (equipped != null)
+            {
+                choices.Add("Unequip");
+                actions.Add(() => ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, equipped)));
+            }
+
+            var candidates = hero.Items == null
+                ? new List<ItemInstance>()
+                : hero.Items
+                    .Where(item => item != null && !item.IsEquipped && item.Slots != null && item.Slots.Contains(slot) && hero.CanEquipItem(item))
+                    .ToList();
+            foreach (var candidate in candidates)
+            {
+                var item = candidate;
+                choices.Add("Equip " + item.NameWithStats);
+                actions.Add(() => ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item)));
+            }
+
+            choices.Add("Cancel");
+            ShowMenuModal(slot.ToString(), "Choose equipment.", choices, index =>
+            {
+                if (index >= 0 && index < actions.Count)
+                {
+                    actions[index]();
+                }
+            });
         }
 
         private void EnsureVisiblePartyDetailTab(Hero hero)
@@ -1169,7 +1968,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             var labels = targets.Select(target => target.Name).ToList();
             labels.Add("Cancel");
-            ShowMenuModal("Transfer " + item.Name, "Choose who should carry this item.", labels, selectedIndex =>
+            var choiceHeroes = targets.Cast<Hero>().Concat(new Hero[] { null }).ToList();
+            ShowMenuModal("Transfer " + item.Name, "Choose who should carry this item.", labels, choiceHeroes, selectedIndex =>
             {
                 if (selectedIndex < 0 || selectedIndex >= targets.Count)
                 {
@@ -1306,7 +2106,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             var labels = targets.Select(target => target.Name).ToList();
             labels.Add("Cancel");
-            ShowMenuModal("Use " + item.Name, "Choose a target.", labels, selectedIndex =>
+            var choiceHeroes = targets.Cast<Hero>().Concat(new Hero[] { null }).ToList();
+            ShowMenuModal("Use " + item.Name, "Choose a target.", labels, choiceHeroes, selectedIndex =>
             {
                 if (selectedIndex < 0 || selectedIndex >= targets.Count)
                 {
@@ -1380,9 +2181,15 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ShowMenuModal(string title, string message, IEnumerable<string> choices, Action<int> selected)
         {
+            ShowMenuModal(title, message, choices, null, selected);
+        }
+
+        private void ShowMenuModal(string title, string message, IEnumerable<string> choices, IEnumerable<Hero> choiceHeroes, Action<int> selected)
+        {
             menuModalTitle = title;
             menuModalMessage = message;
             menuModalChoices = choices == null ? null : choices.ToList();
+            menuModalChoiceHeroes = choiceHeroes == null ? null : choiceHeroes.ToList();
             menuModalSelected = selected;
             menuModalSelectedIndex = 0;
             menuModalWaitingForConfirmRelease =
@@ -1405,6 +2212,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             menuModalTitle = null;
             menuModalMessage = null;
             menuModalChoices = null;
+            menuModalChoiceHeroes = null;
             menuModalSelected = null;
             menuModalSelectedIndex = 0;
             menuModalWaitingForConfirmRelease = false;
@@ -1480,6 +2288,35 @@ namespace Redpoint.DungeonEscape.Unity.UI
             if (selected != null)
             {
                 selected(index);
+            }
+        }
+
+        private void BlockMenuInteractUntilRelease()
+        {
+            acceptMenuInteractAfterFrame = Time.frameCount + 1;
+            waitForMenuInteractRelease = true;
+        }
+
+        private bool CanAcceptMenuInteract()
+        {
+            if (Time.frameCount <= acceptMenuInteractAfterFrame)
+            {
+                return false;
+            }
+
+            return !waitForMenuInteractRelease;
+        }
+
+        private void UpdateMenuInteractRelease()
+        {
+            if (!waitForMenuInteractRelease || Time.frameCount <= acceptMenuInteractAfterFrame)
+            {
+                return;
+            }
+
+            if (!InputManager.GetCommand(InputCommand.Interact))
+            {
+                waitForMenuInteractRelease = false;
             }
         }
 
@@ -1654,6 +2491,35 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             EndThemedScroll();
             GUILayout.EndVertical();
+        }
+
+        private void DrawLoad()
+        {
+            EnsureReferences();
+            if (gameState == null)
+            {
+                GUILayout.Label("Game state is not loaded.", labelStyle);
+                return;
+            }
+
+            var saves = gameState.GetManualSaveSlots();
+            selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(saves.Count - 1, 0));
+            if (saves.Count == 0)
+            {
+                GUILayout.Label("No saves.", labelStyle);
+                return;
+            }
+
+            saveScrollPosition = BeginThemedScroll(saveScrollPosition, Mathf.Max(120f * GetPixelScale(), menuBodyHeight));
+            for (var i = 0; i < saves.Count; i++)
+            {
+                BeginSelectableRow();
+                DrawSaveRow(saves[i]);
+                EndSelectableRow();
+                SelectRowOnMouseClick(i);
+            }
+
+            EndThemedScroll();
         }
 
         private void DrawSaveRow(GameSave save)
@@ -2193,7 +3059,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (hasChoices)
             {
-                if (menuModalChoices.Count <= 2)
+                if (menuModalChoiceHeroes != null)
+                {
+                    for (var i = 0; i < menuModalChoices.Count; i++)
+                    {
+                        DrawMenuModalChoiceRow(i, 38f * scale);
+                    }
+                }
+                else if (menuModalChoices.Count <= 2)
                 {
                     GUILayout.BeginHorizontal();
                     GUILayout.FlexibleSpace();
@@ -2240,6 +3113,50 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             GUILayout.EndArea();
+        }
+
+        private void DrawMenuModalChoiceRow(int index, float height)
+        {
+            var selected = index == menuModalSelectedIndex;
+            GUILayout.BeginHorizontal(GetListRowStyle(selected), GUILayout.Height(height));
+            var hero = index >= 0 && menuModalChoiceHeroes != null && index < menuModalChoiceHeroes.Count
+                ? menuModalChoiceHeroes[index]
+                : null;
+            if (hero != null)
+            {
+                Sprite sprite;
+                DrawSpriteIconNoFrame(UiAssetResolver.TryGetHeroSprite(hero, out sprite) ? sprite : null, 32f * GetPixelScale());
+            }
+            else
+            {
+                GUILayout.Space(32f * GetPixelScale());
+            }
+
+            GUILayout.Label(menuModalChoices[index], GetMenuListLabelStyle(selected), GUILayout.Height(height));
+            GUILayout.EndHorizontal();
+            SelectMenuModalChoiceOnMouseClick(index);
+        }
+
+        private void SelectMenuModalChoiceOnMouseClick(int index)
+        {
+            var currentEvent = Event.current;
+            if (currentEvent == null || currentEvent.type != EventType.MouseDown || currentEvent.button != 0)
+            {
+                return;
+            }
+
+            if (!GUILayoutUtility.GetLastRect().Contains(currentEvent.mousePosition))
+            {
+                return;
+            }
+
+            menuModalSelectedIndex = index;
+            if (!menuModalWaitingForConfirmRelease)
+            {
+                SelectMenuModalChoice(index);
+            }
+
+            currentEvent.Use();
         }
 
         private void DrawRebindingOverlay()
@@ -2321,6 +3238,63 @@ namespace Redpoint.DungeonEscape.Unity.UI
             selectedRowIndex = rowIndex;
         }
 
+        private void SelectMenuRowOnMouseClick(int rowIndex, Action doubleClickAction)
+        {
+            var currentEvent = Event.current;
+            if (currentEvent == null || currentEvent.type != EventType.MouseDown || currentEvent.button != 0)
+            {
+                return;
+            }
+
+            if (!GUILayoutUtility.GetLastRect().Contains(currentEvent.mousePosition))
+            {
+                return;
+            }
+
+            selectedRowIndex = rowIndex;
+            currentFocus = MenuFocus.Primary;
+            if (currentEvent.clickCount >= 2 && doubleClickAction != null)
+            {
+                UiControls.PlayConfirmSound();
+                doubleClickAction();
+            }
+            else
+            {
+                UiControls.PlaySelectSound();
+            }
+
+            currentEvent.Use();
+        }
+
+        private void HandleDetailRowMouseClick(int rowIndex, Action doubleClickAction)
+        {
+            var currentEvent = Event.current;
+            if (currentEvent == null || currentEvent.type != EventType.MouseDown || currentEvent.button != 0)
+            {
+                return;
+            }
+
+            if (!GUILayoutUtility.GetLastRect().Contains(currentEvent.mousePosition))
+            {
+                return;
+            }
+
+            selectedDetailIndex = rowIndex;
+            detailPageIndex = rowIndex / 10;
+            currentFocus = MenuFocus.Detail;
+            if (currentEvent.clickCount >= 2 && doubleClickAction != null)
+            {
+                UiControls.PlayConfirmSound();
+                doubleClickAction();
+            }
+            else
+            {
+                UiControls.PlaySelectSound();
+            }
+
+            currentEvent.Use();
+        }
+
         private void SelectSaveRowOnMouseClick(int rowIndex)
         {
             var currentEvent = Event.current;
@@ -2366,17 +3340,24 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private int GetSelectableRowCount()
         {
             var party = GetParty();
-            switch (currentTab)
+            switch (currentScreen)
             {
-                case MenuTab.Party:
+                case MenuScreen.Main:
+                    return GetMainMenuActions().Count;
+                case MenuScreen.Misc:
+                    return GetMiscMenuActions().Count;
+                case MenuScreen.Items:
+                case MenuScreen.Spells:
+                case MenuScreen.Equipment:
+                case MenuScreen.Abilities:
+                case MenuScreen.Status:
+                case MenuScreen.Party:
                     return party == null ? 0 : party.Members.Count;
-                case MenuTab.Inventory:
-                    return GetSelectedInventoryHero() == null ? 0 : GetSelectedInventoryHero().Items.Count;
-                case MenuTab.Quests:
-                    return party == null || party.ActiveQuests == null ? 0 : party.ActiveQuests.Count;
-                case MenuTab.Save:
+                case MenuScreen.Save:
                     return gameState == null ? 0 : gameState.ManualSaveSlotCount;
-                case MenuTab.Settings:
+                case MenuScreen.Load:
+                    return gameState == null ? 0 : gameState.GetManualSaveSlots().Count;
+                case MenuScreen.Settings:
                     return GetSettingsSelectableRowCount();
                 default:
                     return 0;
@@ -2417,6 +3398,35 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             ScrollActiveListToSelectedRow();
+        }
+
+        private void MoveMenuSelection(int delta)
+        {
+            if (currentFocus == MenuFocus.Detail)
+            {
+                MoveDetailSelection(delta);
+                return;
+            }
+
+            MoveSelectedRow(delta);
+        }
+
+        private void MoveDetailSelection(int delta)
+        {
+            var count = GetCurrentDetailCount();
+            if (count <= 0)
+            {
+                selectedDetailIndex = 0;
+                return;
+            }
+
+            var previousIndex = selectedDetailIndex;
+            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex + delta, 0, count - 1);
+            detailPageIndex = selectedDetailIndex / 10;
+            if (selectedDetailIndex != previousIndex)
+            {
+                UiControls.PlaySelectSound();
+            }
         }
 
         private void ScrollActiveListToSelectedRow()
@@ -2479,8 +3489,77 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
         }
 
+        private void AdjustMenuSelection(int delta)
+        {
+            if (currentScreen == MenuScreen.Settings)
+            {
+                AdjustSelectedSetting(delta);
+            }
+        }
+
+        private void ChangeDetailPage(int delta)
+        {
+            var count = GetCurrentDetailCount();
+            if (count <= 0)
+            {
+                detailPageIndex = 0;
+                selectedDetailIndex = 0;
+                return;
+            }
+
+            var maxPage = Math.Max(0, (count - 1) / 10);
+            var previousPage = detailPageIndex;
+            detailPageIndex = Mathf.Clamp(detailPageIndex + delta, 0, maxPage);
+            selectedDetailIndex = Mathf.Clamp(detailPageIndex * 10, 0, count - 1);
+            if (detailPageIndex != previousPage)
+            {
+                UiControls.PlaySelectSound();
+            }
+        }
+
         private void ActivateSelectedRow()
         {
+            if (currentScreen == MenuScreen.Main)
+            {
+                ActivateMainAction();
+                return;
+            }
+
+            if (currentScreen == MenuScreen.Misc)
+            {
+                ActivateMiscAction();
+                return;
+            }
+
+            if (currentScreen == MenuScreen.Save)
+            {
+                ActivateSelectedSaveSlot();
+                return;
+            }
+
+            if (currentScreen == MenuScreen.Load)
+            {
+                var saves = gameState == null ? new List<GameSave>() : gameState.GetManualSaveSlots().ToList();
+                if (selectedRowIndex >= 0 && selectedRowIndex < saves.Count)
+                {
+                    ConfirmLoadManual(selectedRowIndex);
+                }
+
+                return;
+            }
+
+            if (currentScreen == MenuScreen.Settings)
+            {
+                ActivateSelectedSetting();
+                return;
+            }
+
+            if (IsMemberDetailScreen(currentScreen))
+            {
+                ActivateCurrentMemberDetailScreen();
+                return;
+            }
+
             if (currentTab == MenuTab.Party)
             {
                 ActivateSelectedPartyMember();
@@ -2502,6 +3581,121 @@ namespace Redpoint.DungeonEscape.Unity.UI
             if (currentTab == MenuTab.Save)
             {
                 ActivateSelectedSaveSlot();
+            }
+        }
+
+        private void ActivateMainAction()
+        {
+            switch (selectedRowIndex)
+            {
+                case 0:
+                    OpenMenuScreen(MenuScreen.Items);
+                    break;
+                case 1:
+                    OpenMenuScreen(MenuScreen.Spells);
+                    break;
+                case 2:
+                    OpenMenuScreen(MenuScreen.Equipment);
+                    break;
+                case 3:
+                    OpenMenuScreen(MenuScreen.Abilities);
+                    break;
+                case 4:
+                    OpenMenuScreen(MenuScreen.Status);
+                    break;
+                case 5:
+                    OpenMenuScreen(MenuScreen.Party);
+                    break;
+                case 6:
+                    OpenMenuScreen(MenuScreen.Misc);
+                    break;
+            }
+        }
+
+        private void ActivateMiscAction()
+        {
+            switch (selectedRowIndex)
+            {
+                case 0:
+                    OpenMenuScreen(MenuScreen.Save);
+                    break;
+                case 1:
+                    OpenMenuScreen(MenuScreen.Load);
+                    break;
+                case 2:
+                    OpenMenuScreen(MenuScreen.Settings);
+                    break;
+                case 3:
+                    ConfirmReturnToMainMenu();
+                    break;
+                case 4:
+                    ConfirmQuitGame();
+                    break;
+            }
+        }
+
+        private void OpenMenuScreen(MenuScreen screen)
+        {
+            currentScreen = screen;
+            currentFocus = MenuFocus.Primary;
+            selectedRowIndex = 0;
+            selectedDetailIndex = 0;
+            detailPageIndex = 0;
+            saveScrollPosition = Vector2.zero;
+            settingsScrollPosition = Vector2.zero;
+            BlockMenuInteractUntilRelease();
+        }
+
+        private void ActivateCurrentMemberDetailScreen()
+        {
+            var hero = GetSelectedMenuHero();
+            if (hero == null)
+            {
+                return;
+            }
+
+            if (currentFocus == MenuFocus.Primary)
+            {
+                if (currentScreen == MenuScreen.Status)
+                {
+                    return;
+                }
+
+                if (currentScreen == MenuScreen.Party)
+                {
+                    ShowPartyMemberActionModal(hero);
+                    return;
+                }
+
+                currentFocus = MenuFocus.Detail;
+                selectedDetailIndex = 0;
+                detailPageIndex = 0;
+                BlockMenuInteractUntilRelease();
+                return;
+            }
+
+            switch (currentScreen)
+            {
+                case MenuScreen.Items:
+                    var items = hero.Items == null ? new List<ItemInstance>() : hero.Items.ToList();
+                    if (selectedDetailIndex >= 0 && selectedDetailIndex < items.Count)
+                    {
+                        ShowPartyItemActionModal(hero, items[selectedDetailIndex]);
+                    }
+                    break;
+                case MenuScreen.Spells:
+                    var spells = GetKnownSpells(hero);
+                    if (selectedDetailIndex >= 0 && selectedDetailIndex < spells.Count)
+                    {
+                        ShowSpellTargetPicker(hero, spells[selectedDetailIndex]);
+                    }
+                    break;
+                case MenuScreen.Abilities:
+                    ShowPartyMessage("Abilities are shown for reference.");
+                    break;
+                case MenuScreen.Equipment:
+                    ShowEquipmentActionModal(hero);
+                    break;
             }
         }
 

@@ -269,6 +269,37 @@ Status legend:
 
 ## UI, Inventory, Stores, And Healers
 
+### [ ] Redesigned Game Menu Action Flow
+
+- Open the in-game menu with the bound Menu key, default `E`.
+- Expected: party status appears at the top, gold appears at the bottom, and the center shows `Items`, `Spells`, `Equipment`, `Abilities`, `Status`, `Party`, and `Misc.`.
+- Use keyboard up/down, gamepad D-pad up/down, left stick, and right stick.
+- Expected: selection moves through the visible action list.
+- Select `Items`.
+- Expected: party members appear on the left, that member's items appear beside them, and item details appear on the right.
+- Press Action once while a party member is selected.
+- Expected: focus moves to the item list without immediately using an item.
+- Select an item and press Action.
+- Expected: the valid item action modal opens.
+- Press Cancel from the item list.
+- Expected: focus returns to party-member selection.
+- Repeat the same focus flow for `Spells` and `Abilities`.
+- Expected: spells and abilities show 10 entries per page and `[` / `]` page through longer lists.
+- Select `Equipment`.
+- Expected: party members appear on the left, equipment slots appear beside them, and current equipment details appear on the right.
+- Select an equipment slot and press Action.
+- Expected: an equipment action modal opens with valid equip or unequip choices.
+- Select `Status`.
+- Expected: party members appear on the left and detailed status appears on the right.
+- Select `Party`.
+- Expected: selecting a party member opens party actions such as moving order, reserve, or add to party.
+- Select `Misc.`.
+- Expected: `Save`, `Load`, `Settings`, `Exit to Main`, and `Quit` are shown.
+- Open `Settings`.
+- Expected: existing settings controls work, and `[` / `]` change settings pages.
+- Open `Save` and `Load`.
+- Expected: save and load lists are keyboard/gamepad navigable and use the existing confirmation modals.
+
 ### [ ] Dialog Text Reveal Speed
 
 - Open Settings > General.

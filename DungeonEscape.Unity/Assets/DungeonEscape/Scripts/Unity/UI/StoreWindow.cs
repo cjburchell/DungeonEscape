@@ -51,6 +51,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private string modalTitle;
         private string modalMessage;
         private List<string> modalChoices;
+        private List<Hero> modalChoiceHeroes;
         private Action<int> modalSelected;
         private int acceptInteractAfterFrame;
         private bool waitForInteractRelease;
@@ -310,7 +311,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var recipients = GetBuyRecipients();
             var labels = recipients.Select(hero => hero.Name + " (" + hero.Items.Count + "/" + Party.MaxItems + ")").ToList();
             labels.Add("Cancel");
-            ShowModal("Buy " + item.Name, "Who should carry this item?", labels, index =>
+            var choiceHeroes = recipients.Cast<Hero>().Concat(new Hero[] { null }).ToList();
+            ShowModal("Buy " + item.Name, "Who should carry this item?", labels, choiceHeroes, index =>
             {
                 if (index < 0 || index >= recipients.Count)
                 {
@@ -373,9 +375,15 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ShowModal(string title, string message, IEnumerable<string> choices, Action<int> selected)
         {
+            ShowModal(title, message, choices, null, selected);
+        }
+
+        private void ShowModal(string title, string message, IEnumerable<string> choices, IEnumerable<Hero> choiceHeroes, Action<int> selected)
+        {
             modalTitle = title;
             modalMessage = message;
             modalChoices = choices == null ? null : choices.ToList();
+            modalChoiceHeroes = choiceHeroes == null ? null : choiceHeroes.ToList();
             modalSelected = selected;
             selectedModalIndex = 0;
             BlockInteractUntilRelease();
@@ -391,6 +399,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             modalTitle = null;
             modalMessage = null;
             modalChoices = null;
+            modalChoiceHeroes = null;
             modalSelected = null;
         }
 
@@ -412,7 +421,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 foreach (var choice in modalChoices.Select((label, index) => new { label, index }))
                 {
-                    if (UiControls.Button(choice.label, choice.index == selectedModalIndex, uiTheme))
+                    if (modalChoiceHeroes != null)
+                    {
+                        DrawModalChoiceRow(choice.label, choice.index);
+                    }
+                    else if (UiControls.Button(choice.label, choice.index == selectedModalIndex, uiTheme))
                     {
                         selectedModalIndex = choice.index;
                         var selected = modalSelected;
@@ -434,12 +447,78 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.EndArea();
         }
 
+        private void DrawModalChoiceRow(string label, int index)
+        {
+            var scale = GetPixelScale();
+            var rowHeight = 38f * scale;
+            GUILayout.BeginHorizontal(GetRowStyle(index == selectedModalIndex), GUILayout.Height(rowHeight));
+            var hero = index >= 0 && modalChoiceHeroes != null && index < modalChoiceHeroes.Count
+                ? modalChoiceHeroes[index]
+                : null;
+            if (hero != null)
+            {
+                Sprite sprite;
+                DrawSpriteNoFrame(UiAssetResolver.TryGetHeroSprite(hero, out sprite) ? sprite : null, 32f * scale);
+            }
+            else
+            {
+                GUILayout.Space(32f * scale);
+            }
+
+            GUILayout.Label(label, labelStyle, GUILayout.Height(rowHeight));
+            GUILayout.EndHorizontal();
+            var rowRect = GUILayoutUtility.GetLastRect();
+            if (Event.current == null ||
+                Event.current.type != EventType.MouseDown ||
+                Event.current.button != 0 ||
+                !rowRect.Contains(Event.current.mousePosition))
+            {
+                return;
+            }
+
+            selectedModalIndex = index;
+            SelectModalChoice(index);
+            Event.current.Use();
+        }
+
         private static void DrawModalBackdrop()
         {
             var previousColor = GUI.color;
             GUI.color = new Color(0f, 0f, 0f, 0.6f);
             GUI.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), Texture2D.whiteTexture);
             GUI.color = previousColor;
+        }
+
+        private static void DrawSpriteNoFrame(Sprite sprite, float size)
+        {
+            var rect = GUILayoutUtility.GetRect(size, size, GUILayout.Width(size), GUILayout.Height(size));
+            if (sprite == null || sprite.texture == null)
+            {
+                return;
+            }
+
+            var texture = sprite.texture;
+            var textureRect = sprite.textureRect;
+            var texCoords = new Rect(
+                textureRect.x / texture.width,
+                textureRect.y / texture.height,
+                textureRect.width / texture.width,
+                textureRect.height / texture.height);
+            var aspect = textureRect.height <= 0f ? 1f : textureRect.width / textureRect.height;
+            var drawWidth = rect.width;
+            var drawHeight = aspect <= 0f ? rect.height : drawWidth / aspect;
+            if (drawHeight > rect.height)
+            {
+                drawHeight = rect.height;
+                drawWidth = drawHeight * aspect;
+            }
+
+            var drawRect = new Rect(
+                rect.x + (rect.width - drawWidth) / 2f,
+                rect.y + (rect.height - drawHeight) / 2f,
+                drawWidth,
+                drawHeight);
+            GUI.DrawTextureWithTexCoords(drawRect, texture, texCoords, true);
         }
 
         private Vector2 BeginThemedScroll(Vector2 position, float height)

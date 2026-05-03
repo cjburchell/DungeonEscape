@@ -189,5 +189,3 @@ resharper-scan:
     when: always
     paths:
       - RsInspection.xml
-  rules:
-    - when: never

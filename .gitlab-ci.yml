@@ -177,7 +177,12 @@ resharper-scan:
   script:
     - dotnet tool install --global JetBrains.ReSharper.GlobalTools --version "$RESHARPER_TOOL_VERSION"
     - export PATH="$PATH:/root/.dotnet/tools"
-    - jb inspectcode --exclude="$RESHARPER_EXCLUDE" -o=RsInspection.xml -f=xml --caches-home=temp "$RESHARPER_SOLUTION_NAME" --dotnetcore=/usr/share/dotnet/dotnet
+    - |
+      RESHARPER_EXCLUDE_OPTION=""
+      if [ -n "$RESHARPER_EXCLUDE" ]; then
+        RESHARPER_EXCLUDE_OPTION="--exclude=$RESHARPER_EXCLUDE"
+      fi
+      jb inspectcode $RESHARPER_EXCLUDE_OPTION -o=RsInspection.xml -f=xml --caches-home=temp "$RESHARPER_SOLUTION_NAME" --dotnetcore=/usr/share/dotnet/dotnet
     - |
       ISSUE_COUNT=$(grep -o '<Issue ' RsInspection.xml | wc -l | tr -d ' ')
       echo "ReSharper issue count: $ISSUE_COUNT"

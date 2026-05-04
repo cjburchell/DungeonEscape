@@ -66,6 +66,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
             get { return instance != null && instance.healerObject != null; }
         }
 
+        public static bool IsOpenFor(string mapId, int objectId)
+        {
+            return instance != null &&
+                   instance.healerObject != null &&
+                   instance.healerObject.Id == objectId &&
+                   instance.gameState != null &&
+                   instance.gameState.Party != null &&
+                   string.Equals(instance.gameState.Party.CurrentMapId, mapId, StringComparison.OrdinalIgnoreCase);
+        }
+
         public static void Show(GameState state, TiledObjectInfo mapObject, Action onChanged)
         {
             GetOrCreate().Open(state, mapObject, onChanged);

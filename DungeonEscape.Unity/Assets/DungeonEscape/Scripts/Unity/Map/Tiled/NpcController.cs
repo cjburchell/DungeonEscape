@@ -124,7 +124,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                 PlayIdleAnimation();
             }
 
-            if (moveRadius == 0 || messageBox != null && messageBox.IsVisible)
+            if (moveRadius == 0 || IsInteractionLocked())
             {
                 return;
             }
@@ -187,6 +187,13 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                 StartCoroutine(MoveTo(option, nextColumn, nextRow));
                 return;
             }
+        }
+
+        private bool IsInteractionLocked()
+        {
+            return messageBox != null && messageBox.IsVisible ||
+                   StoreWindow.IsOpenFor(mapId, ObjectId) ||
+                   HealerWindow.IsOpenFor(mapId, ObjectId);
         }
 
         public void Face(Direction selectedDirection)

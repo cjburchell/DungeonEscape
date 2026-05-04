@@ -1,76 +1,251 @@
 variables:
-  OBJECTS_DIRECTORY: 'obj'
-  NUGET_PACKAGES_DIRECTORY: '.nuget'
-  SOURCE_CODE_PATH: '*/*/'
-  RESHARPER_SOLUTION_NAME: 'DungeonEscape.sln'
-  RESHARPER_EXCLUDE: 'Nez.Portable/**;DungeonEscape/Content/*.tsx'
+  OBJECTS_DIRECTORY: "obj"
+  NUGET_PACKAGES_DIRECTORY: ".nuget"
+  SOURCE_CODE_PATH: "*/*/"
+  RESHARPER_SOLUTION_NAME: "DungeonEscape.sln"
+  RESHARPER_EXCLUDE: ""
   RESHARPER_THRESHOLD: 0
-  RESHARPER_TOOL_VERSION: '2026.1.0.1'
-  PUBLISH_PROJECT: 'DungeonEscape/DungeonEscape.csproj'
-  DOTNET_SDK_IMAGE: 'mcr.microsoft.com/dotnet/sdk:10.0'
+  RESHARPER_TOOL_VERSION: "2026.1.0.1"
+  DOTNET_SDK_IMAGE: "mcr.microsoft.com/dotnet/sdk:10.0"
+  UNITY_PROJECT_PATH: "DungeonEscape.Unity"
+  UNITY_CI_IMAGE: "unityci/editor:ubuntu-6000.4.4f1-base-3.2.2"
+  UNITY_WINDOWS_BUILD_IMAGE: "unityci/editor:ubuntu-6000.4.4f1-windows-mono-3.2.2"
+  UNITY_EXECUTABLE: "unity-editor"
+  UNITY_CI_ENABLED: "true"
+  UNITY_BUILD_WINDOWS_ENABLED: "true"
+  UNITY_LICENSE_B64: ""
 
 stages:
+  - restore
   - build
-  - scan
   - test
-  - publish
+  - scan
+  - package
+
+.unity-license-before-script: &unity-license-before-script
+  - mkdir -p /root/.local/share/unity3d/Unity
+  - |
+    echo "Unity CI variable presence: UNITY_LICENSE_B64=$([ -n "$UNITY_LICENSE_B64" ] && echo set || echo unset), UNITY_LICENSE=$([ -n "$UNITY_LICENSE" ] && echo set || echo unset), UNITY_SERIAL=$([ -n "$UNITY_SERIAL" ] && echo set || echo unset), UNITY_EMAIL=$([ -n "$UNITY_EMAIL" ] && echo set || echo unset), UNITY_PASSWORD=$([ -n "$UNITY_PASSWORD" ] && echo set || echo unset), UNITY_LICENSING_SERVER=$([ -n "$UNITY_LICENSING_SERVER" ] && echo set || echo unset)"
+    if [ -n "$UNITY_LICENSE_B64" ]; then
+      if [ -f "$UNITY_LICENSE_B64" ]; then
+        tr -d '\r\n\t ' < "$UNITY_LICENSE_B64" | base64 -d > /root/.local/share/unity3d/Unity/Unity_lic.ulf
+      else
+        printf '%s' "$UNITY_LICENSE_B64" | tr -d '\r\n\t ' | base64 -d > /root/.local/share/unity3d/Unity/Unity_lic.ulf
+      fi
+      echo "Unity license file written from UNITY_LICENSE_B64."
+    elif [ -n "$UNITY_LICENSE" ]; then
+      if [ -f "$UNITY_LICENSE" ]; then
+        tr -d '\r' < "$UNITY_LICENSE" > /root/.local/share/unity3d/Unity/Unity_lic.ulf
+      else
+        echo "$UNITY_LICENSE" | tr -d '\r' > /root/.local/share/unity3d/Unity/Unity_lic.ulf
+      fi
+      echo "Unity license file written from UNITY_LICENSE."
+    elif [ -n "$UNITY_SERIAL" ] && [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then
+      "$UNITY_EXECUTABLE" \
+        -batchmode \
+        -nographics \
+        -quit \
+        -logFile /dev/stdout \
+        -username "$UNITY_EMAIL" \
+        -password "$UNITY_PASSWORD" \
+        -serial "$UNITY_SERIAL"
+    elif [ -n "$UNITY_LICENSING_SERVER" ]; then
+      echo "UNITY_LICENSING_SERVER is configured; Unity will attempt license server activation."
+    else
+      echo "No Unity license variables configured. Set UNITY_LICENSE_B64, UNITY_LICENSE, or UNITY_SERIAL, UNITY_EMAIL, and UNITY_PASSWORD in GitLab CI/CD variables."
+    fi
+
+.unity-license-after-script: &unity-license-after-script
+  - |
+    if [ -n "$UNITY_SERIAL" ] && [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ] && [ -z "$UNITY_LICENSE" ] && [ -z "$UNITY_LICENSE_B64" ]; then
+      "$UNITY_EXECUTABLE" \
+        -batchmode \
+        -nographics \
+        -quit \
+        -logFile /dev/stdout \
+        -username "$UNITY_EMAIL" \
+        -password "$UNITY_PASSWORD" \
+        -returnlicense || true
+    fi
 
 cache:
   key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
   paths:
-    - '$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/project.assets.json'
-    - '$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/*.csproj.nuget.*'
-    - '$NUGET_PACKAGES_DIRECTORY'
-
+    - "$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/project.assets.json"
+    - "$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/*.csproj.nuget.*"
+    - "$NUGET_PACKAGES_DIRECTORY"
   policy: pull-push
 
-before_script:
-  - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
+dotnet-restore:
+  image: $DOTNET_SDK_IMAGE
+  stage: restore
+  script:
+    - dotnet restore DungeonEscape.sln --packages "$NUGET_PACKAGES_DIRECTORY"
 
-build:
+dotnet-build:
   image: $DOTNET_SDK_IMAGE
   stage: build
+  needs:
+    - dotnet-restore
   script:
-    - 'dotnet build --no-restore'
+    - dotnet restore DungeonEscape.sln --packages "$NUGET_PACKAGES_DIRECTORY"
+    - dotnet build DungeonEscape.sln --no-restore
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - DungeonEscape.Unity/Assets/DungeonEscape/Plugins/DungeonEscape.Core.dll
+      - DungeonEscape.Unity/Assets/DungeonEscape/Plugins/DungeonEscape.Core.pdb
 
-tests:
+dotnet-tests:
   image: $DOTNET_SDK_IMAGE
   stage: test
+  needs:
+    - dotnet-build
   script:
-    - 'dotnet test --no-restore'
+    - dotnet restore DungeonEscape.sln --packages "$NUGET_PACKAGES_DIRECTORY"
+    - dotnet test DungeonEscape.sln --no-restore
+
+unity-validate:
+  image: $UNITY_CI_IMAGE
+  stage: test
+  needs:
+    - job: dotnet-build
+      artifacts: true
+  variables:
+    UNITY_LOG_FILE: "$CI_PROJECT_DIR/DungeonEscape.Unity/Logs/ci-unity-validate.log"
+  before_script: *unity-license-before-script
+  script:
+    - mkdir -p "$CI_PROJECT_DIR/DungeonEscape.Unity/Logs"
+    - >
+      "$UNITY_EXECUTABLE"
+      -batchmode
+      -nographics
+      -quit
+      -projectPath "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH"
+      -executeMethod Redpoint.DungeonEscape.UnityEditor.UnityCiValidation.ValidateProject
+      -logFile "$UNITY_LOG_FILE"
+    - mkdir -p "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH/Logs/ReSharperReferences"
+    - find /opt/unity/Editor/Data/Managed -name '*.dll' -exec cp {} "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH/Logs/ReSharperReferences/" \;
+    - find "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH/Library/PackageCache" -name '*.dll' -exec cp {} "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH/Logs/ReSharperReferences/" \; || true
+  after_script: *unity-license-after-script
+  artifacts:
+    when: always
+    paths:
+      - DungeonEscape.Unity/Logs/ci-unity-validate.log
+      - DungeonEscape.Unity/Logs/ReSharperReferences/*.dll
+      - DungeonEscape.Unity/*.sln
+      - DungeonEscape.Unity/*.csproj
+  rules:
+    - if: '$UNITY_CI_ENABLED == "false"'
+      when: never
+    - when: on_success
+
+unity-build-windows:
+  image: $UNITY_WINDOWS_BUILD_IMAGE
+  stage: package
+  needs:
+    - job: dotnet-build
+      artifacts: true
+    - dotnet-tests
+  variables:
+    UNITY_LOG_FILE: "$CI_PROJECT_DIR/DungeonEscape.Unity/Logs/ci-unity-build-windows.log"
+    UNITY_WINDOWS_BUILD_PATH: "DungeonEscape.Unity/Builds/Windows"
+  before_script: *unity-license-before-script
+  script:
+    - mkdir -p "$CI_PROJECT_DIR/DungeonEscape.Unity/Logs"
+    - rm -rf "$CI_PROJECT_DIR/$UNITY_WINDOWS_BUILD_PATH"
+    - >
+      "$UNITY_EXECUTABLE"
+      -batchmode
+      -nographics
+      -quit
+      -projectPath "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH"
+      -executeMethod Redpoint.DungeonEscape.UnityEditor.UnityCiBuild.BuildWindows64
+      -logFile "$UNITY_LOG_FILE"
+  after_script: *unity-license-after-script
+  artifacts:
+    when: on_success
+    expire_in: 1 week
+    name: "DungeonEscape-Windows-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - DungeonEscape.Unity/Builds/Windows/
+      - DungeonEscape.Unity/Logs/ci-unity-build-windows.log
+  rules:
+    - if: '$UNITY_BUILD_WINDOWS_ENABLED == "false"'
+      when: never
+    - when: on_success
 
 resharper-scan:
   image: $DOTNET_SDK_IMAGE
   stage: scan
+  needs:
+    - dotnet-build
+    - job: unity-validate
+      artifacts: true
+      optional: true
   script:
-    - 'dotnet tool install --global JetBrains.ReSharper.GlobalTools --version $RESHARPER_TOOL_VERSION'
-    - 'export PATH="$PATH:/root/.dotnet/tools"'
-    - 'jb inspectcode --exclude=$RESHARPER_EXCLUDE -o=RsInspection.xml -f=xml --caches-home=temp $RESHARPER_SOLUTION_NAME --dotnetcore=/usr/share/dotnet/dotnet'
+    - dotnet tool install --global JetBrains.ReSharper.GlobalTools --version "$RESHARPER_TOOL_VERSION"
+    - export PATH="$PATH:/root/.dotnet/tools"
     - |
-      ISSUE_COUNT=$(grep -o '<Issue ' RsInspection.xml | wc -l | tr -d ' ')
+      RESHARPER_EXCLUDE_OPTION=""
+      if [ -n "$RESHARPER_EXCLUDE" ]; then
+        RESHARPER_EXCLUDE_OPTION="--exclude=$RESHARPER_EXCLUDE"
+      fi
+      jb inspectcode $RESHARPER_EXCLUDE_OPTION -o=RsInspection.xml -f=xml --caches-home=temp/core "$RESHARPER_SOLUTION_NAME" --dotnetcore=/usr/share/dotnet/dotnet
+      UNITY_SCRIPT_COUNT=$(find "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Scripts" "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Editor" -name '*.cs' | wc -l | tr -d ' ')
+      if [ "$UNITY_SCRIPT_COUNT" -gt 0 ]; then
+        echo "Creating CI ReSharper project for $UNITY_SCRIPT_COUNT Unity scripts."
+        mkdir -p .ci/resharper-unity
+        cp "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Plugins/DungeonEscape.Core.dll" .ci/resharper-unity/DungeonEscape.Core.dll
+        UNITY_REFERENCES_DIR="$UNITY_PROJECT_PATH/Logs/ReSharperReferences"
+        {
+          printf '%s\n' '<Project Sdk="Microsoft.NET.Sdk">'
+          printf '%s\n' '  <PropertyGroup>'
+          printf '%s\n' '    <TargetFramework>netstandard2.1</TargetFramework>'
+          printf '%s\n' '    <LangVersion>9.0</LangVersion>'
+          printf '%s\n' '    <Nullable>disable</Nullable>'
+          printf '%s\n' '    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>'
+          printf '%s\n' '  </PropertyGroup>'
+          printf '%s\n' '  <ItemGroup>'
+          printf '%s\n' "    <Compile Include=\"../../$UNITY_PROJECT_PATH/Assets/DungeonEscape/Scripts/**/*.cs\" />"
+          printf '%s\n' "    <Compile Include=\"../../$UNITY_PROJECT_PATH/Assets/DungeonEscape/Editor/**/*.cs\" />"
+          printf '%s\n' '    <Reference Include="DungeonEscape.Core">'
+          printf '%s\n' '      <HintPath>DungeonEscape.Core.dll</HintPath>'
+          printf '%s\n' '    </Reference>'
+          printf '%s\n' '  </ItemGroup>'
+        } > .ci/resharper-unity/DungeonEscape.Unity.ReSharper.csproj
+        find "$UNITY_REFERENCES_DIR" -maxdepth 1 -name '*.dll' | while read -r DLL; do
+          NAME=$(basename "$DLL" .dll)
+          printf '        <ItemGroup><Reference Include="%s"><HintPath>../../%s</HintPath></Reference></ItemGroup>\n' "$NAME" "$DLL" >> .ci/resharper-unity/DungeonEscape.Unity.ReSharper.csproj
+        done
+        printf '%s\n' '</Project>' >> .ci/resharper-unity/DungeonEscape.Unity.ReSharper.csproj
+        jb inspectcode $RESHARPER_EXCLUDE_OPTION -o=RsInspection.Unity.xml -f=xml --caches-home=temp/unity .ci/resharper-unity/DungeonEscape.Unity.ReSharper.csproj --dotnetcore=/usr/share/dotnet/dotnet
+      else
+        echo "No Unity scripts found; skipping Unity ReSharper inspection."
+      fi
+    - |
+      ISSUE_COUNT=0
+      ERROR_COUNT=0
+      for REPORT in RsInspection*.xml; do
+        if [ ! -f "$REPORT" ]; then
+          continue
+        fi
+
+        REPORT_ISSUES=$(grep -o '<Issue ' "$REPORT" | wc -l | tr -d ' ')
+        ISSUE_COUNT=$((ISSUE_COUNT + REPORT_ISSUES))
+        ERROR_TYPES=$(grep '<IssueType ' "$REPORT" | grep 'Severity="ERROR"' | sed -n 's/.*Id="\([^"]*\)".*/\1/p' || true)
+        for TYPE_ID in $ERROR_TYPES; do
+          TYPE_COUNT=$(grep -c "TypeId=\"$TYPE_ID\"" "$REPORT" || true)
+          ERROR_COUNT=$((ERROR_COUNT + TYPE_COUNT))
+        done
+      done
       echo "ReSharper issue count: $ISSUE_COUNT"
-      if [ "$ISSUE_COUNT" -gt "$RESHARPER_THRESHOLD" ]; then
-        echo "ReSharper issue count $ISSUE_COUNT exceeds threshold $RESHARPER_THRESHOLD"
+      echo "ReSharper error count: $ERROR_COUNT"
+      if [ "$ERROR_COUNT" -gt "$RESHARPER_THRESHOLD" ]; then
+        echo "ReSharper error count $ERROR_COUNT exceeds threshold $RESHARPER_THRESHOLD"
         exit 1
       fi
-  dependencies:
-    - build
   artifacts:
     when: always
     paths:
-      - RsInspection.xml
-
-publish-windows:
-  image: $DOTNET_SDK_IMAGE
-  stage: publish
-  only:
-    - tags
-  except:
-    - branches
-  artifacts:
-    when: always
-    paths:
-      - de
-  script:
-    - 'dotnet publish -c Release -o de -r win10-x64 $PUBLISH_PROJECT'
-
+      - RsInspection*.xml

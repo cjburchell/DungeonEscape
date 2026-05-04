@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Redpoint.DungeonEscape</RootNamespace>
+    <LangVersion>7.3</LangVersion>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+
+  <Target Name="CopyCoreToUnity" AfterTargets="Build" Condition="Exists('..\DungeonEscape.Unity\Assets')">
+    <PropertyGroup>
+      <UnityPluginDir>..\DungeonEscape.Unity\Assets\DungeonEscape\Plugins</UnityPluginDir>
+    </PropertyGroup>
+    <MakeDir Directories="$(UnityPluginDir)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(UnityPluginDir)" />
+    <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(UnityPluginDir)" Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
+  </Target>
+</Project>

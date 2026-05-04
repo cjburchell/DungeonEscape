@@ -1,0 +1,236 @@
+# Unity Migration Status
+
+This file tracks the Dungeon Escape Unity migration. Update it as each area moves from pending to implemented, tested, or deliberately deferred.
+
+## Guiding Priority
+
+Map-mode gameplay, party systems, UI, persistence, audio, and combat are migrated. Remaining work is focused on automation coverage and final Unity cleanup.
+
+## Remaining Work
+
+- Expand automated tests: shared core unit tests, Unity edit mode tests, and quest/dialog regression tests.
+- Review ReSharper warnings and fix actionable issues.
+
+## 1. Validate Current Gameplay Loop
+
+Status: Done
+
+- Done: New game starts at the map `DefaultSpawn`.
+- Done: Warps with `SpawnId` work.
+- Done: Overworld fallback position is remembered when returning without a spawn point.
+- Done: Map changes use a fade-out/fade-in transition.
+- Done: Chests generate once when first entering a map.
+- Done: Chest contents persist until picked up.
+- Done: Chests open visually.
+- Done: Chest state survives save/load.
+- Done: Dialog choices can trigger recruitment.
+- Done: Dialog choices advance quests, including nested dialog choices.
+- Done: Dialog choices can give items.
+- Done: Dialog choices can take items when the party has the required item.
+- Done: Item transfer/drop/use dialogs work through the game menu overlay.
+- Done: `Outside` spell returns to the last remembered overworld position without party-member targeting.
+- Done: `Return` spell and `Wings` item show a visited-location picker on the overworld.
+- Done: Play-tested the `Lost_Sea_Shell` dialog path end to end in Unity.
+- Done: Play-tested the `Find_Ship` dialog path end to end in Unity, including the ship deed reward.
+
+## 2. Party Creation
+
+Status: Done
+
+- Done: Starter hero uses class/stat generation from `classlevels.json`.
+- Done: Starting equipment added.
+- Done: Party member recruitment added.
+- Done: Party followers render on the map.
+- Done: Followers follow after movement, warp, and load.
+- Done: Party members animate.
+- Done: Dead active party members render with the old coffin visual instead of their hero sprite.
+- Done: Dead active party members are visually followed behind living active party members and before the cart, without changing saved party order.
+- Done: Level-up progression validated with shared core tests.
+- Done: Skill/spell progression validated with shared core tests. Class skills are assigned from `classlevels.json`; spells unlock dynamically by level and class.
+
+## 3. UI Migration
+
+Status: Done
+
+- Done: Party/status window.
+- Done: Inventory view.
+- Done: Party and Inventory are combined into one Party tab with member detail sub-tabs for Status, Equipment, Items, Skills, and Spells.
+- Done: Inventory item detail panel.
+- Done: Item rarity text coloring.
+- Done: Item and character sprites in UI where available.
+- Done: Spell icons are shown in the Party spell tab using each spell's `ImageId` from the old spell icon tileset `items.tsx`.
+- Done: Quest log.
+- Done: Settings UI.
+- Done: Settings tabs: General, UI, Input Bindings, Debug.
+- Done: UI scale setting.
+- Done: Hidden settings can show/hide the UI and Debug settings tabs.
+- Done: Configurable UI colors, border thickness, hover color, and highlight color.
+- Done: Standard UI selection and confirm sounds use `select.wav` and `confirm.wav` through common UI controls and keyboard/gamepad navigation paths.
+- Done: Gamepad navigation through main menu UI.
+- Done: Keyboard and gamepad input rebinding.
+- Done: Modal overlay for menu actions, including use/transfer/drop/bind prompts.
+- Done: Manual save slots in the Save tab.
+- Done: New game action in the Save tab.
+- Done: Fuller party/status detail polish pass with clearer vitals, attributes, XP-to-next, equipment, skills, and spells.
+- Done: Initial shop/healer/save NPC UI through map interaction message boxes.
+- Done: Inventory UI icon assets are prewarmed so the first Inventory open does not stall.
+- Done: Current UI migration manual tests passed.
+- Done: Fullscreen setting is applied at Unity startup and exposed on Settings > General.
+
+## 4. Map Gameplay
+
+Status: Done
+
+- Done: NPC dialog works.
+- Done: Recruitable NPCs can join the party.
+- Done: Static NPCs turn toward the player during dialog and turn back afterward.
+- Done: Open chest visuals.
+- Done: Chest loot is explicit: `ItemId="#Random#"` generates random loot, fixed `ItemId` gives a fixed item, and missing `ItemId` means empty.
+- Done: Layer rendering follows TMX layer order.
+- Done: Player renders at the sprite layer level.
+- Done: Hidden object debug rendering is controlled by settings.
+- Done: Doors and open-door actions.
+- Done: Direct door interaction uses matching party keys.
+- Done: Doors can be explicitly unlocked with `Locked=false`; unlocked doors open without a key.
+- Done: Opened doors stop blocking movement and are hidden from the map.
+- Done: NPC heal behavior.
+- Done: NPC store buy/sell behavior.
+- Done: Store UI uses a persistent tabbed Buy/Sell window with item icons, party-member sell tabs, selected purchase recipient, and optional equip-after-buy prompt.
+- Done: NPC save behavior through quick-save service interaction.
+- Done: Hidden item quest conditions using the hidden item's quest/stage metadata.
+- Done: Removed hidden items no longer render or interact after pickup.
+- Done: Store parity with old map stores: support `NpcKey`, fixed `Items`, persistent generated inventory, `WillBuyItems`, item removal after buy, and old sell-price behavior.
+- Done: Healer parity with old healers: paid heal one, heal all, renew magic, cure status, and revive options based on healer `Cost`.
+- Done: Object-target item/spell actions, especially old `Target.Object` behavior for using map-facing skills/items on nearby objects.
+- Done: `Open` skill/items use the object the player is facing directly, without party-member targeting, and can open doors or chests.
+- Done: Non-combat party spell targeting filters invalid dead/living targets; only revive spells can target dead party members.
+- Done: Chests support optional locking with `Locked=true`; current chests remain unlocked by default.
+- Done: Chest and hidden-item level gating parity with old `Party.CanOpenChest(level)` behavior.
+- Done: Old cart follower visual migrated. The cart appears behind the party on the overworld when reserve party members exist, and hides while on water.
+- Done: Manual Unity play-test pass for store, healer, object-target use, and level-gated pickups.
+- Done: Manual Unity play-test pass for cart follower visibility and following behavior.
+
+## 5. Movement And Collision Rules
+
+Status: Done
+
+- Done: Continuous movement while a key or stick is held.
+- Done: Turning before moving when changing facing direction.
+- Done: Sprint boost setting, exposed on Settings > Debug.
+- Done: Turn delay setting, exposed on Settings > Debug.
+- Done: Smooth viewport scrolling pass.
+- Done: Tile collision rules use TMX `Collideable` layer data.
+- Done: Object collision rules use TMX `Collideable` object bounds and persisted open/removed object state.
+- Done: Damage and biome layers are data-only and do not render.
+- Done: Step/distance status effects are checked and updated after map movement, matching the old map-step status path.
+- Done: Water movement uses the TMX `Water` layer property and allows travel only on the overworld when the party has the ship deed.
+- Done: When the party has the ship deed and is on overworld water, followers are hidden and the player renders as the ship.
+- Done: Damage layer tile properties apply step damage to active party members.
+- Done: Biome layer tile classes update the party's current biome for future encounter logic.
+- Done: Cached TMX layer tile data for movement/gameplay queries to reduce repeated CSV parsing during movement.
+- Done: Tiled flipped object GIDs are normalized for map parsing, rendering, collision, and gameplay queries.
+- Done: Manual collision, water, damage, biome, stairs, doors, ship visual, save/load, and scrolling checks passed.
+
+## 6. Audio
+
+Status: Done
+
+- Done: Startup music begins on the recreated splash/title flow using `first-story`.
+- Done: Music by map through each TMX map's `song` property.
+- Done: Biome music hooks for town, cave, tower, and desert biome transitions, with other biomes falling back to map music.
+- Done: Separate settings-backed music and sound effect volume sliders on Settings > General.
+- Done: Sound effects for chests.
+- Done: Sound effects for warps.
+- Done: Sound effects for dialog.
+- Done: Sound effects for damage.
+- Done: Sound effects for level-up.
+- Done: Manual Unity audio validation passed for current map-mode music and sound effects.
+
+## 7. Persistence Hardening
+
+Status: Done
+
+- Done: Quick save/load.
+- Done: Variable manual saves without fixed save slots.
+- Done: New game reset without loading saved level.
+- Done: Autosave enabled setting.
+- Done: Autosave interval setting.
+- Done: Main title/load game flow with Continue, New Quest, Load Quest, and Quit.
+- Done: Unity splash screen recreated using `Images/ui/splash.png` before the title menu.
+- Done: Title/startup UI draws over a black backdrop instead of showing the map behind it.
+- Done: Hidden `SkipSplashAndLoadQuickSave` setting for fast test startup without exposing it in the Settings UI.
+- Done: Unity equivalent for old main menu/continue quest flow, including Continue, New Quest, Load Quest, and Quit.
+- Done: New Quest create-player flow with player name, random-name generation, gender/class dropdowns, character preview, starter stat panel, Re-roll, and selected player name/class/gender.
+- Done: In-game menu can return to the main menu or quit the game.
+- Done: Title Load Quest screen lists only existing manual saves, hides when no manual saves exist, and supports loading/deleting old manual saves.
+- Done: Title Load Quest supports per-save Delete buttons, click-to-load, Enter-to-load, and gamepad confirm-to-load.
+- Done: Main Menu, Load Quest, and Create Quest title screens support keyboard/gamepad navigation across actionable controls.
+- Done: Continue is hidden when no quick save exists.
+- Done: Save summaries no longer display map, position, gold, or steps.
+- Done: Unity save version policy: unsupported versions are archived and ignored; forward migrations will be added only when the Unity save schema changes.
+- Done: Final autosave policy: timer autosave is kept, but autosave is skipped while title/menu/store/dialog UI is active; combat can also block autosave through `GameState.AutoSaveBlocked`.
+- Done: Final transition-save policy: transition saves only occur when moving to or from the overworld.
+
+## 8. Build And Test Automation
+
+Status: In progress
+
+- Done: Add GitLab CI pipeline for solution restore/build/test.
+- Done: Add Unity project validation to CI by default. Disable with `UNITY_CI_ENABLED=false` if needed.
+- Done: Add Unity Windows artifact build to CI by default. Disable with `UNITY_BUILD_WINDOWS_ENABLED=false`; output is stored as a downloadable GitLab artifact.
+- Done: Stage runtime map, tileset, image, and data files into `StreamingAssets` during Unity builds.
+- Done: Removed the old `DungeonEscape.Test` project from the solution; migration tests now run through `DungeonEscape.Core.Test` and future Unity test assemblies.
+- Pending: Expand shared core unit tests beyond level-up and skill/spell progression.
+- Pending: Add Unity-side edit mode tests for map loading, hidden item conditions, and save/load behavior.
+- Pending: Add regression tests for quest dialog actions and item rewards.
+- Pending: Review ReSharper warnings and fix actionable issues where they improve correctness or maintainability.
+
+## 9. Unity Project Cleanup
+
+Status: Done
+
+- Done: Unity project folder created.
+- Done: Unity asset folders created.
+- Done: Unity-compatible assets copied.
+- Done: Shared `DungeonEscape.Core` project created.
+- Done: Initial portable state/core migration.
+- Done: Temporary test-map debug screen removed.
+- Done: `Boot.unity` added to Unity Build Settings.
+- Done: Built player runtime asset paths now resolve through `StreamingAssets`.
+- Done: Static UI and combat image loading uses Unity editor asset references where appropriate, with `StreamingAssets` fallback retained for built players.
+- Done: Remaining file-backed asset loading is intentional for external TMX, TSX, JSON, audio, and image assets staged into `StreamingAssets`.
+- Done: Confirmed File > Build And Run renders the map correctly outside the editor.
+- Done: Unity scripts reorganized into `Core`, `Map`, `Rendering`, `Map/Tiled`, and `UI` folders with matching namespaces.
+- Done: Most Unity script class/file names no longer carry the `DungeonEscape` prefix; Tiled-specific script class/file names no longer carry the `Tiled` prefix and live under `Redpoint.DungeonEscape.Unity.Map.Tiled`.
+- Done: Removed noisy temporary migration/debug logs from audio playback, startup data loading, splash startup, and random encounter startup.
+
+## 10. Encounter And Combat Migration
+
+Status: Done
+
+- Done: Biome random encounter check runs after completed map steps and opens combat with the selected monsters.
+- Done: Carry forward old biome encounter metadata, including min/max monster level, for random encounter filtering.
+- Done: Random encounters by biome open the combat screen.
+- Done: Per-map random encounter tables from `Content/data/{mapId}_monsters.json`. Current pass loads copied Unity data from `Assets/DungeonEscape/Data/maps/{mapId}_monsters.json`.
+- Done: Monster loading/spawning. Current pass resolves monster images from `allmonsters.tsx`, displays each monster instance, rolls monster stats through `MonsterInstance`, and keeps relative monster sprite sizes.
+- Done: Biome combat backgrounds. Current pass displays the old fight background image for the selected biome.
+- Done: Combat layout shows full-screen aspect-preserved biome backgrounds with a bottom message box.
+- Done: Gold window is hidden during combat, and the party status window remains visible during combat.
+- Done: Autosave is blocked while combat is open.
+- Done: Current combat UI pass supports encounter message, old-style action menu, spell/item icon lists, target buttons, HP bars, and round messages.
+- Done: Combat round flow now matches the old game model: monster actions and all living hero actions are chosen first, then queued actions resolve in agility order.
+- Done: Combat rewards award XP, gold, monster item drops, rare chest-style drops, and level-up messages on victory.
+- Done: Skills in combat can run encounter skills through shared core `Skill.Do`.
+- Done: Spells in combat can cast encounter spells through shared core `Spell.Cast`; non-revive spells target living members only and revive spells target dead members.
+- Done: Items in combat can use encounter items with item icons and shared core item/skill effects.
+- Done: Manual Unity combat validation passed for random encounters, biome backgrounds, monster display, Fight loop, rewards, action menu, spell/item icons, spell targeting, skills, items, and Run.
+- Done: Combat music selection uses the old battle track pool: `battleground`, `like-totally-rad`, `sword-metal`, and `unprepared`.
+- Done: Combat close restores the current map or biome music.
+- Done: Combat victory and successful Run play the old end-fight track `not-in-vain` while the result message is shown, then restore map/biome music after closing combat.
+- Done: Combat defeat shows `Everyone has died!` and returns to the title menu with title music instead of returning to map play.
+- Done: Round-duration status effects are cleared from party members when combat exits.
+- Done: Attack-style skills now run the old normal attack hit/damage step before applying the skill effect when `DoAttack` or `SkillType.Attack` requires it.
+- Done: Combat sound effects use existing audio for attacks, misses, spells, item use, victory, defeat, and monster/player damage where matching assets exist.
+- Done: Combat audio flows through the existing `Audio` service, so Music Volume and Sound Effects Volume apply to combat.
+- Done: Monster encounters can be enabled/disabled from Settings > Debug through the existing `NoMonsters` setting.
+- Done: Combat UI polish pass after the combat rules settled.

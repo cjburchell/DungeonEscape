@@ -1,0 +1,931 @@
+# Manual Test Plan
+
+This file tracks manual Unity play-test checks for migrated gameplay. Update it after each implemented migration step so verification stays tied to the work that changed.
+
+Status legend:
+
+- `[x]` Tested and passed.
+- `[ ]` Not tested yet, or needs another pass after recent changes.
+
+## Movement And Collision
+
+### [x] Collision Blocks Walls, Water Edges, Doors, Chests, And NPCs
+
+- Start or load a game on a town or dungeon map.
+- Walk into walls, water edges, counters, closed doors, closed chests, and NPCs.
+- Expected: the player cannot enter blocked tiles or occupied NPC tiles.
+- Open a door that should be openable.
+- Expected: after opening, the door no longer blocks movement and is not rendered.
+
+### [x] Object Bounds Match Tiled Rectangles
+
+- Find larger objects or wide hidden, warp, or static object rectangles.
+- Try walking through every tile covered by the object.
+- Expected: if `Collideable=true`, every covered tile blocks movement.
+- Try non-blocking warps and exits.
+- Expected: `Collideable=false` objects do not block movement.
+
+### [x] Water Blocks Movement Before Ship Deed
+
+- Start a new game or load a save before getting `Deed to the ship`.
+- Go to the overworld or any map with water.
+- Try walking onto water.
+- Expected: movement is blocked.
+
+### [x] Water Allows Movement After Ship Deed
+
+- Load a save after completing `Find_Ship` and receiving `Deed to the ship`.
+- Go to overworld water.
+- Try walking onto water.
+- Expected: movement onto water is allowed.
+- Try walking from water back to land.
+- Expected: movement back to land is allowed.
+- Go to any non-overworld map with a water layer.
+- Try walking onto water.
+- Expected: movement is blocked even with `Deed to the ship`, and the player does not change to the ship visual.
+
+### [x] Damage Layer Applies Step Damage
+
+- Find a known damage tile area, likely swamp or damage-marked overworld tiles.
+- Note active party members' HP.
+- Step onto the damage tile.
+- Expected: active living party members lose HP and no blocking terrain dialog appears.
+- Step again.
+- Expected: damage applies once per completed step, not while standing still.
+- Continue stepping on damage tiles until a party member reaches `0` HP.
+- Expected: a terrain message appears only when a party member dies.
+
+### [x] Biome Layer Updates Current Biome
+
+- Walk across overworld terrain types: grassland, forest, hills, desert, and water.
+- Expected: no visible error or movement hitch.
+- Expected: the debug window shows the current biome changing as the party enters each biome.
+
+### [ ] Distance Status Effects Update On Map Steps
+
+- Cast Fairy Water/Repel or another non-combat skill that creates a distance-duration status effect.
+- Walk enough completed steps for the effect duration to expire.
+- Expected: the effect expires after movement and the status message reports that it has worn off.
+- If a party member has an over-time status effect outside combat, walk one completed step.
+- Expected: the status effect updates on step completion, including damage/heal and death messaging when applicable.
+
+### [x] Camera Window Scrolling Is Smooth In Every Direction
+
+- Hold a movement key or stick for 20-30 seconds on the overworld.
+- Move near viewport edges horizontally and vertically.
+- Expected: the camera scrolls smoothly when moving up, down, left, and right.
+- Expected: the map does not jump by a full tile when the visible tile window advances.
+- Expected: NPCs, objects, party followers, and animated tiles stay aligned while the camera scrolls.
+- Hold sprint while moving across viewport edges horizontally and vertically.
+- Expected: player animation and viewport scrolling stay in sync without visible stutter from mismatched movement/scroll timing.
+
+### [x] Viewport Shows Old 32 By 18 Tile Baseline
+
+- Start or load a game in Play Mode or a built player at a 16:9 resolution.
+- Compare the visible map area against the old MonoGame version.
+- Expected: Unity shows roughly 32 columns by 18 rows at 16:9, matching the old map scene zoom level.
+- Resize the window wider than 16:9.
+- Expected: Unity shows extra horizontal columns instead of stretching tiles.
+- Resize the window taller than 16:9.
+- Expected: tile aspect ratio remains correct and the map remains centered.
+
+### [x] Tile Seams Do Not Flicker During Movement
+
+- Start or load a game on the overworld or a map with repeated terrain tiles.
+- Stand still and inspect tile edges near the center and viewport edges.
+- Expected: no white/black/transparent lines appear between adjacent tiles.
+- Hold movement horizontally and vertically, including near viewport scroll edges.
+- Expected: tile-edge artifacts do not appear and disappear while the viewport scrolls.
+- Toggle fullscreen/windowed mode and resize the window.
+- Expected: tile edges remain stable and tiles keep the correct aspect ratio.
+
+### [x] Turn Delay Only Applies When Changing Facing
+
+- Open Settings > Debug and adjust Turn Delay.
+- Press a direction different from the current facing direction.
+- Expected: changing direction only turns first, then moves after the configured delay.
+- Hold movement while already facing the movement direction.
+- Expected: moving while already facing that direction has no extra turn delay.
+
+## Map Objects And Interactions
+
+### [x] Chest Collision And Opened Chest Behavior
+
+- Load a map with chests, such as `dungeon/first`, `tunnel/area1`, or `towns/isis`.
+- Try walking directly onto a closed chest tile.
+- Expected: movement is blocked.
+- Stand next to the chest and face it.
+- Press interact.
+- Expected: the chest opens and gives its contents or says it is empty.
+- Try walking onto the opened chest tile.
+- Expected: movement is still blocked because the chest remains a physical object.
+
+### [x] Chest Loot Uses Fixed, Random, Or Empty Item Rules
+
+- Open a chest with `ItemId="#Random#"`.
+- Expected: the chest gives random loot or gold generated once for that map/save.
+- Open a chest with a fixed `ItemId`, such as an `Iron Key` chest.
+- Expected: the chest gives that fixed item.
+- Inspect an object named `Open Chest`.
+- Expected: it has no `ItemId`, starts/appears empty, and gives no random loot.
+
+### [x] Locked And Unlocked Chests Use Key Rules
+
+- Open an existing chest that does not define `Locked`.
+- Expected: the chest opens without a key, matching existing chest behavior.
+- Add or find a chest with `Locked=false`.
+- Expected: the chest opens without a key.
+- Add or find a chest with `Locked=true` and `ChestLevel=0`.
+- Stand next to it without a level-0 key item and press interact.
+- Expected: the chest stays closed and says the party does not have a key for the chest.
+- Give the party an `Iron Key`, stand next to the same chest, and press interact.
+- Expected: the chest opens and gives its normal persisted contents.
+- Add or find a chest with `Locked=true` and `KeyItemId` set to a specific key item.
+- Expected: only that key item opens the chest.
+
+### [x] Doors Open With Correct Lock And Key Behavior
+
+- Add or find a door with `Locked=false`.
+- Stand next to it, face it, and press interact.
+- Expected: the door opens without requiring a key.
+- Load a map with key-locked doors, such as `towns/walled`, `tunnel/area1`, or `island_tower/floor1`.
+- Stand next to a closed door without a matching key and press interact.
+- Expected: a message says the party does not have a key for the door, and the door stays closed.
+- Pick up an `Iron Key` from a key chest.
+- Stand next to the closed door, face it, and press interact.
+- Expected: the door opens, disappears from the map view, and no longer blocks movement.
+- Save and reload after opening a door.
+- Expected: the door remains open and non-blocking.
+
+### [x] Ship Quest Door Opens Only Through Quest Handoff
+
+- Go to the locked ship door in `towns/coast` before completing the old man's key handoff.
+- Press interact while carrying a normal key.
+- Expected: the message says the door is locked and the door does not open.
+- Complete the old man's key handoff.
+- Expected: the old man's dialog opens the ship door.
+
+### [x] Stairs And Flipped Tiled Objects Render And Warp Correctly
+
+- Load maps with stairs that previously looked misplaced, such as `dungeon/first`, `forest_tower/floor1`, `forest_tower/floor2`, `island_tower/floor1`, `pyramid/basement`, `tunnel/area1`, or `tunnel/area2`.
+- Compare the stair sprite location in Unity with the same `.tmx` map in Tiled.
+- Expected: stair objects render on the same tile as Tiled, not as hidden markers or one tile off.
+- Step onto each stair/warp tile.
+- Expected: the warp triggers from the visible stair tile.
+
+### [x] Hidden Item Quest Conditions And Removal Persist
+
+- Pick up a hidden item or open a door.
+- Save.
+- Load.
+- Expected: removed/open object state still affects rendering and collision.
+
+### [x] Pickup Level Gating Matches Party Level
+
+- Find a chest or hidden item with a `ChestLevel` or `Level` above the active party's level.
+- Press interact while facing it.
+- Expected: the pickup does not open and the message says the party is not experienced enough.
+- Raise the party level or test with a lower-level object.
+- Expected: the same object can be opened or picked up when a living active member meets the required level.
+
+## Party And Map Visuals
+
+### [x] Active Party Status Window
+
+- Start or load a game with at least one active party member.
+- Stop moving.
+- Expected: a compact status window appears in the top-left corner and shows active party members only, not reserve members.
+- Expected: HP and MP are shown as compact progress bars rather than text-only values.
+- Hold movement in any direction.
+- Expected: the status window hides while the player is moving, then returns after movement stops.
+- Open the title menu, game menu, store window, or a dialog/message box.
+- Expected: the status window is hidden while blocking UI is visible.
+- Damage a party member, spend magic, or revive/death-test a member if available.
+- Expected: HP, MP, class, level, dead red text, and low-health orange text update without reopening the scene.
+
+### [x] Gold Status Window
+
+- Start or load a game.
+- Stop moving.
+- Expected: a compact gold window appears in the bottom-left corner and shows the current party gold.
+- Hold movement in any direction.
+- Expected: the gold window hides while the player is moving, then returns after movement stops.
+- Open the title menu, game menu, store window, or a dialog/message box.
+- Expected: the gold window is hidden while blocking UI is visible.
+- Buy, sell, receive quest rewards, or otherwise change party gold.
+- Expected: the gold value updates without reopening the scene.
+
+### [x] Ship Visual Replaces Party While On Water
+
+- Load a save before receiving `Deed to the ship`.
+- Try moving onto water.
+- Expected: movement is blocked and the player sprite remains the normal party leader.
+- Load or play to a save after receiving `Deed to the ship`.
+- Move from land onto water.
+- Expected: the party followers are hidden and the player is rendered as the ship sprite while on water.
+- Move from water back onto land.
+- Expected: the normal player sprite and followers return.
+- Change facing direction while on water.
+- Expected: the ship sprite changes to match the current direction.
+
+### [x] Cart Follower Appears For Reserve Party Members
+
+- Start or load a game on the overworld with no reserve party members.
+- Expected: no cart is shown.
+- Recruit enough party members that at least one member is in reserve, or move an active member to reserve from the Party UI.
+- Expected: a cart appears behind the active party followers on the overworld.
+- Hold movement for several tiles in each direction.
+- Expected: the cart follows behind the last visible active follower, or behind the player if there are no active followers after the leader.
+- Walk behind and in front of NPCs, walls, and tall sprite objects.
+- Expected: the cart sorts like other sprite-layer characters and does not draw over objects it should be behind.
+- Move onto water after obtaining `Deed to the ship`.
+- Expected: the player changes to the ship visual and the cart is hidden.
+- Move from water back to land.
+- Expected: the cart returns if a reserve party member still exists.
+- Warp from the overworld to a town, dungeon, or other non-overworld map.
+- Expected: the cart is hidden.
+- Warp back to the overworld.
+- Expected: the cart appears again if a reserve party member still exists.
+- Save and load while the party has reserve members.
+- Expected: cart visibility is restored according to the loaded map and current tile.
+
+### [x] Dead Party Member Uses Coffin Visual
+
+- Load or create a party with at least two active members.
+- Reduce one active follower's HP to `0`, for example by stepping on damage tiles until that party member dies.
+- Expected: that party member's map follower changes from the hero sprite to the coffin visual.
+- Continue moving in all four directions.
+- Expected: living active party members remain visually in front of coffin followers.
+- Expected: coffin followers are visually moved behind living active party members without changing the actual party order.
+- Expected: if the cart is visible, coffin followers appear before the cart and the cart remains last.
+- Reduce the active leader's HP to `0`, if possible.
+- Expected: the player visual changes to the coffin visual while on land.
+- Move onto water after obtaining `Deed to the ship`.
+- Expected: the ship visual still takes precedence over the coffin/player visual while on water.
+- Visit a healer and revive the dead member.
+- Expected: the revived member changes back from the coffin to their class/gender hero sprite.
+- Save and load with a dead active party member.
+- Expected: the coffin visual is restored after loading.
+
+## UI, Inventory, Stores, And Healers
+
+### [ ] Redesigned Game Menu Action Flow
+
+- Open the in-game menu with the bound Menu key, default `E`.
+- Expected: party status appears at the top, gold appears at the bottom, and the center shows visible actions such as `Items`, `Equipment`, `Status`, and `Misc.`.
+- Expected: `Spells` and `Abilities` are only shown when at least one party member can use matching non-combat actions.
+- Expected: `Party` is hidden when there is only one party member, and shown when there is more than one party member.
+- Use keyboard up/down, gamepad D-pad up/down, left stick, and right stick.
+- Expected: selection moves through the visible action list.
+- Select `Items`.
+- Expected: party members appear on the left, that member's items appear beside them, and item details appear on the right.
+- Press Action once while a party member is selected.
+- Expected: focus moves to the item list without immediately using an item.
+- Select an item and press Action.
+- Expected: the valid item action modal opens.
+- Press Cancel from the item list.
+- Expected: focus returns to party-member selection.
+- Repeat the same focus flow for `Spells` and `Abilities`.
+- Expected: only members with usable non-combat spells or abilities appear in those screens.
+- Expected: spells and abilities show 10 entries per page and `[` / `]` page through longer lists.
+- Select `Equipment`.
+- Expected: party members appear on the left, equipment slots appear beside them, and each slot shows the equipped item name and icon or `Empty`.
+- Select an equipment slot and press Action.
+- Expected: focus moves to the compatible equipment list on the right and selects the currently equipped item when present.
+- Select the currently equipped item and press Action.
+- Expected: the item is unequipped.
+- Select a different compatible item and press Action.
+- Expected: the selected item is equipped into that slot.
+- Press Cancel from the compatible equipment list.
+- Expected: focus returns to the equipment slot list.
+- Select `Status`.
+- Expected: party members appear on the left and detailed status appears on the right.
+- Expected: HP and MP use progress bars styled consistently with the other status progress bars.
+- Select `Party`.
+- Expected: selecting a party member opens party actions such as moving order, reserve, or add to party.
+- Select `Misc.`.
+- Expected: `Save`, `Load`, `Settings`, `Exit to Main`, and `Quit` are shown.
+- Open `Settings`.
+- Expected: existing settings controls work, and `[` / `]` change settings pages.
+- Open `Save` and `Load`.
+- Expected: save and load lists are keyboard/gamepad navigable and use the existing confirmation modals.
+
+### [ ] Dialog Text Reveal Speed
+
+- Open Settings > General.
+- Change Dialog Text Speed to a slow value, then talk to an NPC or open a dialog with choices.
+- Expected: dialog text writes out gradually and choices are hidden until the full text is visible.
+- Press Interact while the text is still writing.
+- Expected: the full text appears immediately, but the dialog choice or OK action is not selected by that same press.
+- Set Dialog Text Speed to Instant and open another dialog.
+- Expected: the full dialog text and choices appear immediately.
+- Trigger a combat message.
+- Expected: combat footer messages use the same reveal speed and the OK button appears only after the text is complete.
+
+### [ ] Standard UI Selection And Confirm Sounds
+
+- Open the title menu, new quest screen, load quest screen, in-game menu, store window, dialog choices, and combat action/target lists.
+- Move selection with keyboard arrows, WASD, D-pad, and stick where each UI supports it.
+- Expected: changing the highlighted row/tab plays `select.wav` once per selection step.
+- Press Interact, Enter, a gamepad confirm button, or click a button with the mouse.
+- Expected: activating a button, choice, tab, checkbox, dialog OK, or combat action plays `confirm.wav`.
+- Hold a direction in a menu with repeated navigation.
+- Expected: select sounds follow the repeated selection changes and do not spam while the selected row is pinned at the first or last item.
+
+### [x] Fullscreen Setting Applies
+
+- Open the in-game menu and go to Settings > General.
+- Toggle `Fullscreen`.
+- Expected: the Unity player switches between fullscreen and windowed mode.
+- When windowed, resize the game window by dragging the window edge or corner.
+- Expected: the built player window resizes and the map/UI remain visible without changing tile aspect ratio.
+- Close and restart Play Mode or the built player.
+- Expected: the saved fullscreen setting is applied during startup.
+- Navigate Settings > General with keyboard or gamepad.
+- Expected: Fullscreen participates in the normal settings row navigation and does not prevent changing Autosave or Autosave Period.
+
+### [x] Hidden Settings Tabs Can Be Disabled
+
+- Start with default settings.
+- Expected: Settings does not show the UI or Debug tabs.
+- In the settings file, set `ShowUiSettingsTab` to `true` and restart the game.
+- Expected: Settings shows the UI tab.
+- Set `ShowDebugSettingsTab` to `true` and restart the game.
+- Expected: Settings shows the Debug tab.
+- Restore both values to `false`.
+- Expected: Settings shows only General and Input Bindings tabs again.
+
+### [x] Inventory First Open Is Responsive
+
+- Start the Unity scene and wait a few seconds after the map appears.
+- Open the game menu and switch to Inventory for the first time.
+- Expected: the Inventory tab opens without a long first-time stall from item icon loading.
+- Close and reopen the menu, then switch to Inventory again.
+- Expected: repeated opens remain quick and item/hero icons still render.
+
+### [x] Inventory Detail Shows Only Available Actions
+
+- Open the Party tab, select a member, and switch to the Items sub-tab with a mix of equippable, non-equippable, usable, quest, and regular items.
+- Select a non-equippable item.
+- Expected: Equip and Unequip buttons are not shown.
+- Select an equipped item.
+- Expected: Unequip is shown and Equip is not shown.
+- Select an equippable item that is not equipped.
+- Expected: Equip is shown and Unequip is not shown.
+- Select an item that cannot currently be used.
+- Expected: Use is not shown.
+- Select a quest item.
+- Expected: Drop is not shown.
+- Inspect the item detail panel.
+- Expected: internal slot/class metadata is not shown in the right panel.
+
+### [ ] Combined Party And Inventory Menu
+
+- Open the in-game menu.
+- Expected: there is no separate top-level Inventory tab.
+- Select different active and reserve party members in the Party tab.
+- Expected: the detail panel on the right updates for the selected member.
+- Expected: the party member selection list shows only member names, plus reserve labels where applicable.
+- Use the detail sub-tabs: Status, Equipment, Items, Skills, and Spells.
+- Expected: each sub-tab shows only that selected member's information.
+- Expected: each detail sub-tab uses a consistent height matching the menu body.
+- Expected: the selected sub-tab text is bold.
+- Expected: the selected member's name is shown once above the detail sub-tabs and is not repeated in Status.
+- Expected: HP, MP, and XP show progress bars with current/max text.
+- Expected: HP, MP, and XP progress bar fill is white on black, with text shown to the right of the bar.
+- Expected: Skills and Spells tabs are hidden for members that do not know any.
+- Expected: Effects is hidden when the selected member has no status effects.
+- On the Items sub-tab, select items with a mix of equippable, usable, quest, and regular items.
+- Expected: item names in the item selection list are left-aligned.
+- Expected: the Equipment sub-tab shows item images beside equipped item names.
+- Expected: item icons, rarity coloring, details, and available actions match the old Inventory behavior.
+- Expected: Use actions are hidden when the selected item cannot currently be used.
+- Expected: spell rows show a spell icon, the spell name, and a Cast button; Cast is disabled when the member does not have enough MP or cannot currently cast it.
+- Expected: party ordering buttons are not shown inline in the member list.
+- Use keyboard/gamepad up/down in the Party tab.
+- Expected: selection moves only between active and reserve party members.
+- Use keyboard/gamepad left/right while on the Party tab.
+- Expected: the selected detail sub-tab changes without changing the selected party member.
+- Press Interact/Enter/confirm on Status or Equipment.
+- Expected: a modal opens for party-member actions such as `Up`, `Down`, `Reserve`, or `Add To Party`, depending on the selected member.
+- Press Interact/Enter/confirm on Items.
+- Expected: an item picker modal opens, then an item action modal offers only valid actions such as `Use`, `Equip`, `Unequip`, `Transfer`, or `Drop`.
+- Press Interact/Enter/confirm on Spells.
+- Expected: a spell picker modal opens with currently castable spells, then follows the existing target picker when needed.
+- Use Transfer, Drop, Equip, Unequip, and Use where available.
+- Expected: actions still work through the existing modal overlays and update the selected member afterward.
+
+### [x] Regular Store Buy Flow Uses Tabbed Store UI
+
+- Visit a regular `NpcStore`, such as a merchant in `towns/isis`, `towns/coast`, or `towns/walled`.
+- Expected: a store window opens directly with `Buy` and `Sell` tabs instead of a buy/sell message prompt.
+- Expected: item rows show item icons, names, stats, type/level, and price.
+- Expected: the store shows a persistent stock list of roughly 10 generated items, or the fixed `Items` list if the map object defines one.
+- Expected: generated regular stores do not show `Gold`, quest items, or hidden/chest reward items as store stock.
+- Buy an item.
+- Expected: the store asks which party member should carry it.
+- Choose a party member.
+- Expected: gold is deducted, the item goes to that party member, and the item is removed from that store's stock.
+- If the purchased item can be equipped by that party member, choose Equip.
+- Expected: the item is equipped immediately and the store window remains open.
+- Leave the store and talk to the same merchant again.
+- Expected: the purchased item is still gone from that store's stock.
+- Save and reload.
+- Expected: the store stock remains the same for that save.
+
+### [x] Key Store Buy Flow Lists Only Keys
+
+- Visit an `NpcKey` merchant, such as `towns/oasis` or `towns/walled`.
+- Expected: only key items are listed.
+- Expected: the Sell tab is disabled.
+- Buy a key.
+- Expected: gold is deducted and the key is added to the party inventory.
+
+### [x] Store Sell Flow Uses Party Member Tabs
+
+- Visit a regular store with a non-quest, sellable item in inventory.
+- Open the Sell tab.
+- Expected: party members are shown as tabs.
+- Select each party member.
+- Expected: only that member's sellable items are shown, and each row has an item icon.
+- Expected: the sell price is 75% of item cost, rounded down with a minimum of 1 gold.
+- Sell an equipped item.
+- Expected: the item is unequipped, removed from the hero inventory, gold is added, and the item can appear in the store stock if the store has room.
+- Visit a store with `WillBuyItems=false`, if one exists.
+- Expected: the Sell tab is disabled.
+- While the store window is open, complete a buy or sell confirmation.
+- Expected: confirmation messages appear over the store, and the store window does not close until Cancel/Escape is used outside a modal.
+
+### [ ] Store Keyboard And Gamepad Navigation
+
+- Visit a regular store with keyboard only or gamepad only.
+- Press Menu Next Tab (`]` / right shoulder).
+- Expected: the selected tab changes from Buy to Sell if the store buys items.
+- Press Menu Previous Tab (`[` / left shoulder).
+- Expected: the selected tab changes back to Buy.
+- On the Buy tab, press up/down.
+- Expected: the highlighted item row changes and selection sounds play once per step.
+- Press Interact on an affordable item.
+- Expected: the recipient picker opens without using the mouse.
+- Single-click a Buy row.
+- Expected: the row is not selected and the item is not bought.
+- Double-click an affordable Buy row.
+- Expected: the recipient picker opens.
+- Use up/down to choose a recipient and press Interact.
+- Expected: the item is bought for that party member, and any equip-now prompt can also be handled with keyboard/gamepad.
+- On the Sell tab, press left/right.
+- Expected: party member tabs change without using the mouse.
+- Press up/down to select a sellable item, then press Interact.
+- Expected: the sell confirmation opens.
+- Single-click a Sell row.
+- Expected: the row is not selected and the sell confirmation does not open.
+- Double-click a Sell row.
+- Expected: the sell confirmation opens.
+- Use up/down or left/right to choose Sell or Cancel, then press Interact.
+- Expected: Sell completes the sale and Cancel closes only the confirmation.
+- Press Cancel/Escape while a store modal is open.
+- Expected: only the modal closes and the store remains open.
+- Press Cancel/Escape while no store modal is open.
+- Expected: the store closes.
+
+### [x] Healer Services Use Cost And Relevant Options
+
+- Damage one active party member, then visit an `NpcHeal`.
+- Expected: Heal is shown with the healer's `Cost` property or 25 gold by default.
+- Heal one member.
+- Expected: only that member's HP is restored and gold is deducted.
+- Damage multiple active party members.
+- Expected: Heal All appears and costs `Cost * wounded member count`.
+- Spend magic, add a negative status, or kill a member using test setup if available.
+- Expected: Renew Magic, Cure, and Revive appear only when relevant and charge `Cost * 2`, `Cost * 2`, and `Cost * 10` respectively.
+- Try a service without enough gold.
+- Expected: the healer refuses and no party state changes.
+
+## Object-Target Skills And Map Skills
+
+### [x] Open Skill And Open Items Target Facing Objects
+
+- Stand next to a closed door and face it.
+- Open Inventory and use a key item or other item with the `Open` skill.
+- Expected: no party-member target picker appears.
+- Expected: the facing door opens, collision/rendering refreshes, and the inventory item is consumed if it is a one-use item.
+- Stand facing empty space and use the same kind of object-target item or spell.
+- Expected: the message says there is nothing there.
+- If a hero has an `Open` spell, stand next to a closed door and cast it from the Party spell list.
+- Expected: no party-member target picker appears.
+- Expected: MP is deducted, the door opens, and the map refreshes.
+- Stand next to a closed chest and face it.
+- Use the `Open` spell or an item with the `Open` skill.
+- Expected: the facing chest opens with the same contents, level-gating, and persistence behavior as pressing interact.
+- Stand facing an NPC, hidden item, warp, or other non-door/non-chest object and use `Open`.
+- Expected: the message says the object cannot be opened.
+
+### [ ] Outside, Return, And Wings Travel Skills
+
+- Get access to the `Outside` spell on a party member.
+- Enter a non-overworld map, then open the party menu and cast `Outside`.
+- Expected: no party member target picker appears.
+- Expected: the party is warped to the last remembered overworld position.
+- Expected: the previous non-overworld map is added to the return location list.
+- Try casting `Outside` while already on the overworld.
+- Expected: the spell is disabled, or if triggered directly, it reports that the party is already outside.
+- Visit multiple non-overworld locations from the overworld.
+- Return to the overworld and cast `Return`.
+- Expected: the user is shown a list of visited locations.
+- Select one location.
+- Expected: the party is transported to that map and the remembered location on that map.
+- Try casting `Return` while not on the overworld.
+- Expected: the spell is disabled, or if triggered directly, it reports that Return can only be used outside.
+- Use a `Wings` item from the inventory on the overworld after visiting at least one return location.
+- Expected: the same visited-location picker appears, and selecting a location consumes the item and transports the party.
+
+## Persistence, Startup, And Save Flow
+
+### [x] Map Fade Transitions Wrap Map Changes
+
+- Step onto a warp or stairs that changes maps.
+- Expected: the screen fades to black, the new map loads while black, then fades back in.
+- During the fade, hold a movement key or stick.
+- Expected: the player does not move or trigger another interaction until the transition completes.
+- Test returning to the overworld through a warp that uses the remembered overworld position.
+- Expected: the fade still runs and the party appears at the remembered overworld position.
+- Trigger a dialog choice that warps to another map, if available.
+- Expected: the same fade transition is used.
+
+### [x] Splash And Title Startup Flow
+
+- Start Play Mode from `Boot.unity`.
+- Expected: the old `splash.png` image fades in centered on a black screen, holds briefly, then fades out.
+- Expected: the map is not visible behind the splash.
+- Wait for the title menu.
+- Expected: the title menu appears over `mainmenue.png`, with no separate game title text and with menu buttons vertically centered in the bottom half of the screen.
+- Choose Continue, New Quest, or Load Quest if those options are available.
+- Expected: the title menu closes and the map becomes visible only after entering gameplay.
+- Use File > Build And Run.
+- Expected: the built player follows the same splash, image-backed title background, and map reveal behavior.
+- Set `SkipSplashAndLoadQuickSave` to `true` in the user settings file.
+- Expected: Play Mode starts directly from the quick save without showing the splash or title menu.
+- Set `SkipSplashAndLoadQuickSave` back to `false`.
+- Expected: normal splash/title startup returns.
+
+### [x] Title Menu Hides Unavailable Continue And Load Quest
+
+- Start Play Mode from `Boot.unity` with `SkipSplashAndLoadQuickSave` set to `false`.
+- Expected: title menu appears after the splash.
+- If no quick save exists, inspect the title menu.
+- Expected: Continue is hidden.
+- If no manual saves exist, inspect the title menu.
+- Expected: Load Quest is hidden.
+- If a quick save exists, select Continue.
+- Expected: the quick save loads and the title menu closes.
+
+### [x] New Quest Create Player Flow
+
+- Return to the title menu from the in-game menu.
+- Select New Quest.
+- Expected: New Quest screen appears over `menu2.png` with vertically centered compact Name/Gender/Class controls, portrait, and stat panel inside a black panel with a white border.
+- Enter a player name or press Random.
+- Expected: Random fills the name field with a generated name for the selected gender.
+- Open the Gender dropdown and choose a gender.
+- Open the Class dropdown and choose a class.
+- Expected: dropdown choices overlay the screen without shifting the rest of the UI.
+- Expected: long dropdowns show a scrollbar when not all choices fit.
+- Use keyboard or gamepad up/down and interact on Name, Generate Name, Gender, Class, Re-roll, Start, and Back.
+- Expected: each Create Quest control can be selected and activated without using the mouse.
+- Press down from Generate Name.
+- Expected: selection moves to Re-roll.
+- Press left from Generate Name.
+- Expected: selection moves to Name.
+- Press left/right on Start or Back.
+- Expected: selection moves horizontally between Start and Back.
+- Press up/down from Start or Back.
+- Expected: selection follows the same visual column instead of moving through every control linearly.
+- With a dropdown open, use keyboard or gamepad up/down and interact.
+- Expected: dropdown choices can be selected without using the mouse.
+- Expected: the character preview updates for the selected gender/class and keeps the sprite aspect ratio.
+- Press Re-roll.
+- Expected: the displayed starter stats change without changing the selected name, gender, or class.
+- Select Start.
+- Expected: a new game starts with the chosen player name/class/gender and the title menu closes.
+
+### [ ] In-Game Save Modal Flow
+
+- Open the in-game Save tab.
+- Expected: existing manual saves are listed, plus a `New Save` row.
+- Expected: there is no right-side status/action panel; the save list fills the tab body.
+- Select `New Save` with keyboard or gamepad and press Interact/Enter/confirm.
+- Expected: a modal opens with `Save` and `Cancel`.
+- Choose `Save`.
+- Expected: a new manual save is appended; no fixed numbered save slot is required.
+- Select an existing manual save.
+- Press Interact/Enter/confirm.
+- Expected: a modal opens with `Save Over`, `Load`, `Delete`, and `Cancel`.
+- Choose `Save Over`.
+- Expected: the save is overwritten after confirmation.
+- Reopen the same action modal, choose `Load`, then confirm.
+- Expected: the selected save loads and the in-game menu closes.
+- Reopen the Save tab, choose `Delete` for an existing save, then confirm.
+- Expected: the save is removed and selection remains on a valid save row or `New Save`.
+- Double-click an existing save with the mouse.
+- Expected: the same action modal opens.
+
+### [x] Load Quest Screen Flow
+
+- Return to the title menu again and select Load Quest.
+- Expected: Load Quest screen appears over `menu2.png` with vertically centered title, manual saves on the left, and a Delete button beside each save inside a black panel with a white border.
+- Expected: the centered Back button is fully visible below the save list.
+- Press up/down while a save or Delete button is selected.
+- Expected: selection moves to the previous/next save row, not sideways into Delete.
+- Press right on a selected save row.
+- Expected: selection moves to that save's Delete button.
+- Press left on a selected Delete button.
+- Expected: selection moves back to that save row.
+- Click a populated manual save once with the mouse.
+- Expected: that save loads and the title menu closes.
+- Select a populated manual save and press Enter, Interact, or the gamepad confirm button.
+- Expected: that save loads and the title menu closes.
+- Select a populated manual save's Delete button by keyboard/gamepad or click it with the mouse.
+- Expected: the save is removed from the list.
+- Delete all manual saves and return to the title menu.
+- Expected: Load Quest is hidden.
+
+### [x] In-Game Main Menu And Quit Flow
+
+- Open the in-game menu while playing.
+- Expected: Main Menu and Quit buttons appear in the header.
+- Select Main Menu and confirm.
+- Expected: the confirmation buttons are side by side and labelled `OK` and `Back`.
+- Expected: the game returns to the black-background title menu.
+- Select Quit and confirm.
+- Expected: the confirmation buttons are side by side and labelled `Quit` and `Back`.
+- Expected: built player exits. In the editor, Unity may ignore `Application.Quit()`.
+
+### [x] Title Controls Block Gameplay And Support Keyboard/Gamepad
+
+- Start Play Mode or launch a built player.
+- Expected: a `Dungeon Escape` title window appears before map controls are usable.
+- Try moving while the title window is open.
+- Expected: the player does not move.
+- Choose New Quest.
+- Expected: the title window closes, a fresh party starts at the map default spawn, and map controls work.
+- Save from the in-game Save tab, then return to the title flow by restarting Play Mode or the built player.
+- Choose Load Quest.
+- Expected: manual saves are listed with save time and level.
+- Select a populated manual save.
+- Expected: the title window closes and the saved map, position, party, inventory, quest, and object state are restored.
+- Create or wait for a quick save, then restart.
+- Choose Continue.
+- Expected: the title window closes and the quick save is loaded.
+- Use keyboard or gamepad up/down and interact on the Main Menu, Load Quest, and Create Quest screens.
+- Expected: every actionable item can be selected visibly and activated.
+- Choose Quit in a built player.
+- Expected: the player application exits.
+
+### [x] Unity Save Version Policy Archives Unsupported Saves
+
+- Locate the Unity save file under `%APPDATA%/Redpoint/DungeonEscape/save.json`.
+- Back up the file manually before testing this case.
+- Edit the save JSON `Version` value to an unsupported value such as `0.0`.
+- Start Play Mode or a built player.
+- Expected: the game logs that the save version is unsupported.
+- Expected: the original save is copied to a file named like `save.unsupported-0.0-YYYYMMDDHHMMSS.json`.
+- Expected: the game creates a fresh Unity save file instead of trying to migrate old or unsupported save data.
+
+### [x] Autosave And Transition Save Policy
+
+- Enable autosave and set a short autosave interval in Settings.
+- Move around on one non-overworld map without opening dialogs.
+- Expected: timer autosave still occurs after the configured interval.
+- Open a dialog or message box and wait longer than the autosave interval.
+- Expected: no autosave happens while the dialog is visible.
+- Close the dialog and keep playing.
+- Expected: autosave can occur again after gameplay resumes.
+- Open the title menu, game menu, or store window and wait longer than the autosave interval.
+- Expected: no autosave happens while that UI is open.
+- Warp between two non-overworld maps.
+- Expected: no transition save occurs only because of that warp.
+- Warp from the overworld into a town, dungeon, or other map.
+- Expected: a transition save occurs after the destination map and final player position are applied.
+- Warp from a town, dungeon, or other map back to the overworld.
+- Expected: a transition save occurs after the party reaches the overworld.
+
+## Build And Runtime Packaging
+
+### [x] Unity Build And Run Loads Runtime Assets
+
+- Open Unity and wait for scripts to finish compiling.
+- Open `File > Build Settings`.
+- Expected: `Assets/DungeonEscape/Scenes/Boot.unity` is listed and checked.
+- Use `File > Build And Run`.
+- Expected: the built Windows player opens to the same map view as Play Mode, not only the debug window.
+- Expected: terrain, objects, NPC sprites, player sprites, item icons, and UI images are visible.
+- Move, warp to another map, and open the inventory.
+- Expected: map TMX files, TSX files, tileset images, character images, and item images continue loading in the built player.
+- Result: Confirmed. `File > Build And Run` renders the map correctly outside the editor.
+
+## Audio
+
+### [x] Startup Music Plays Through Splash And Title
+
+- Start Play Mode or launch a built player with `SkipSplashAndLoadQuickSave` disabled.
+- Expected: `first-story` music starts while the splash screen is shown.
+- Wait for the title menu.
+- Expected: the same music continues on the title menu without restarting repeatedly.
+
+### [x] Map Music Follows TMX Song Property
+
+- Start or load a quest and enter the overworld.
+- Expected: overworld music plays from the map `song` property.
+- Warp into a town, dungeon, tower, or shrine with a different `song` property.
+- Expected: the music changes to that map's configured song.
+- Warp back to the previous map.
+- Expected: the previous map music resumes.
+
+### [x] Biome Music Hook Does Not Interrupt Normal Movement
+
+- Move across the overworld and watch the Unity Console.
+- Expected: no missing-audio warnings appear while crossing grassland, forest, hills, swamp, or water.
+- Enter a map or biome identified as town, cave, tower, or desert.
+- Expected: the configured biome music may play, and repeated steps on the same biome do not restart the same track.
+
+### [x] Sound Effect Volume Controls Gameplay Effects
+
+- Open Settings > General.
+- Set Sound Effects Volume to `0.00`.
+- Open a chest, warp, trigger dialog, step on damage terrain, and trigger a level-up if available.
+- Expected: sound effects are muted.
+- Set Sound Effects Volume to `1.00` and repeat the available actions.
+- Expected: chest, warp, dialog, damage, and level-up effects are audible.
+
+### [x] Music Volume Controls Current Track
+
+- Open Settings > General while music is playing.
+- Set Music Volume to `0.00`.
+- Expected: music becomes silent without stopping the game.
+- Set Music Volume to `1.00`.
+- Expected: the currently playing track becomes audible again.
+
+## Encounter And Combat
+
+### [x] Random Encounter Opens Combat By Biome
+
+- Open Settings > Debug and turn `Monster encounters` off.
+- Walk for several dozen completed steps on an encounter-enabled map or biome.
+- Expected: combat does not open.
+- Open Settings > Debug and turn `Monster encounters` back on.
+- Start or load a quest and walk around the overworld across grassland, forest, hills, swamp, or water.
+- Expected: random encounters occasionally open combat with monsters matching the current biome.
+- Walk inside a dungeon, tower, tunnel, shrine, or other map with a copied `*_monsters.json` table.
+- Expected: random encounters use that map's monster table instead of the overworld biome monster list.
+- Keep walking after combat opens and close combat.
+- Expected: map movement resumes after combat is closed.
+- If no combat opens after many steps, confirm Settings > Debug > `Monster encounters` is enabled.
+
+### [x] Combat Shows Biome Background And Monsters
+
+- Start or load a quest and walk until a random encounter triggers.
+- Expected: a full-screen combat view opens.
+- Expected: the biome battlefield image fills the screen while maintaining its aspect ratio.
+- Expected: the battlefield image matches the encounter biome, such as field, forest, ocean, mountain, desert, swamp, cave, castle, or tower.
+- Expected: each selected monster is shown with its own image from `allmonsters.tsx`, including duplicate monsters of the same type.
+- Expected: monster sprites keep their relative source image sizes instead of being forced to a uniform size.
+- Expected: each monster shows a health progress bar instead of a name label.
+- Expected: the party status window remains visible in the upper-left while combat is open, including after using the directional pad.
+- Expected: the gold window is hidden while combat is open.
+- Press OK, Interact, or Cancel.
+- Expected: combat closes and map movement resumes.
+- Set a short autosave interval, then wait in combat longer than that interval.
+- Expected: no autosave happens while combat is open.
+
+### [x] Combat Fight Loop And Rewards
+
+- Trigger a random encounter.
+- Press OK on the encounter message.
+- Expected: combat rolls monster stats, queues monster actions, then asks every living active party member to choose an action before resolving the round.
+- Choose Fight.
+- If more than one monster is alive, choose a monster target.
+- Expected: target choices appear in a vertical black list with a white border and a gray highlighted row.
+- Use keyboard, D-pad, and right stick up/down while choosing actions, spells, items, and targets.
+- Expected: the highlighted row moves one row at a time, does not skip rows on D-pad presses, and Interact confirms the highlighted row.
+- Damage a monster below half health and below ten percent health if practical.
+- Expected: monster target text keeps the existing health threshold colors, and monster health bar fill is green above 50%, yellow below 50%, orange below 10%, and red at 0 HP, while the progress bar border stays white.
+- Damage an active party member below the same thresholds if practical.
+- Expected: party HP bar fill uses the same green/yellow/orange/red threshold colors, MP bar fill is blue, and party status text only changes color when a party member is dead.
+- Expected: after all party members have chosen actions, queued hero and monster actions resolve in agility order.
+- Expected: attacks use the old hit, critical hit, and damage rules, and target HP bars update as actions resolve.
+- Expected: when a monster takes damage, that monster sprite flashes briefly a few times.
+- Expected: when a party member takes damage, that member's portrait in the party status window flashes briefly a few times.
+- Heal a damaged party member during combat.
+- Expected: the healed party member's portrait flashes blue briefly a few times.
+- Continue through monster turns.
+- Expected: monsters use their queued actions and the party status window updates HP as damage is applied.
+- Continue rounds until either all monsters or all active party members are defeated.
+- Expected: a victory message is shown and `not-in-vain` plays until OK closes the combat view and restores map/biome music.
+- If the party wins, expected: living active party members gain XP, party gold increases, level-up messages appear when relevant, and any monster/item rewards are added to party inventory if there is room.
+- If the party is defeated, expected: `Everyone has died!` is shown, pressing OK closes combat, opens the title menu, and plays title music.
+
+### [ ] Combat Clears Round Effects On Exit
+
+- Trigger combat with a temporary round-duration buff, debuff, sleep, confusion, stop-spell, or similar status effect if test data makes one available.
+- Win the fight or successfully Run.
+- Expected: after combat closes, round-duration effects from combat are gone from party members.
+- Trigger another combat and allow the party to be defeated if practical.
+- Expected: after returning to the title menu, the defeated save state does not keep temporary round-duration effects.
+
+### [ ] Combat Round Action Queue
+
+- Trigger combat with at least two living active party members.
+- Choose an action for the first party member.
+- Expected: the action does not resolve immediately.
+- Expected: the next living party member is prompted for an action.
+- Choose actions for the remaining living party members.
+- Expected: only after the final party member chooses an action do combat messages begin resolving.
+- Compare action order with actor Agility values if visible in the Party tab or test data.
+- Expected: queued actions resolve from highest Agility to lowest Agility.
+- Kill a monster before its queued action resolves.
+- Expected: that monster's queued action is skipped.
+- Kill a party member before their queued action resolves.
+- Expected: that party member's queued action is skipped unless the action is no longer relevant.
+
+### [ ] Combat Retargets Unavailable Queued Targets
+
+- Trigger combat with at least two monsters.
+- Choose Fight or a single-target attack spell against a monster that can be defeated by an earlier queued party action.
+- Finish choosing actions for the round.
+- Expected: if the selected target is defeated before the later queued action resolves, the later action automatically targets another living monster instead of doing nothing.
+- Trigger combat with at least two living active party members.
+- Let a monster queue an attack against a party member who dies before that monster action resolves.
+- Expected: the monster action automatically targets another living party member.
+- Use a group attack spell or skill where some chosen targets are defeated before the action resolves.
+- Expected: defeated targets are ignored and the action still applies to remaining living targets.
+
+### [ ] Combat Remembers Last Selections
+
+- Trigger combat with at least one active party member.
+- In the first round, choose Fight and pick a monster target.
+- Advance to the same hero's next action prompt.
+- Expected: Fight is already highlighted.
+- If multiple monster targets are available, open the target selector again.
+- Expected: the previously selected monster is highlighted if it is still alive.
+- Repeat with a combat spell, skill, or combat item when available.
+- Expected: the action row, spell/item row, and valid target row default to the last choices for that hero, so pressing Interact can quickly repeat the previous round's selection.
+
+### [x] Combat Action Menu Shows Available Options
+
+- Trigger a random encounter with a party member that knows at least one encounter spell, one encounter skill, or has an item with an encounter skill.
+- Press OK on the encounter message until a hero action prompt appears.
+- Expected: the action panel is titled `<HeroName> Action`.
+- Expected: Fight and Run are always shown.
+- Expected: Spell appears only when the hero has an encounter spell, enough MP, and is not affected by StopSpell.
+- Expected: known encounter skills are shown as action rows.
+- Expected: Item appears only when the hero has at least one usable combat item with charges.
+- Use keyboard or gamepad up/down and Interact/Cancel across the action, spell, item, and target lists.
+- Expected: the selected row is highlighted, Interact activates the selected row, and Cancel returns from sub-lists to the action menu.
+
+### [x] Combat Spell And Item Icons
+
+- Open the Party tab and switch to a member's Spells sub-tab.
+- Expected: each spell row shows the icon from `items.tsx` using the spell's `ImageId`, matching the old SpellWindow behavior.
+- Cast a single-target non-revive spell such as Heal while one active party member is dead.
+- Expected: dead party members are not shown as valid targets.
+- Cast a revive spell while one active party member is dead.
+- Expected: only dead party members are shown as valid targets.
+- Trigger combat with a spellcaster.
+- Choose Spell from the action panel.
+- Expected: each available spell row shows the same icon, name, and MP cost.
+- Choose Item from the action panel with a usable combat item available.
+- Expected: each item row shows its item icon and name/stats.
+
+### [x] Combat Spells, Skills, Items, And Run
+
+- Trigger combat with a spellcaster that has an attack spell such as Blaze.
+- Choose Spell, then choose an attack spell.
+- If multiple monsters are alive, choose a monster target.
+- Expected: MP is deducted, the shared spell effect runs, damage/status text is shown, and monster HP updates.
+- Trigger combat with a hero that has a non-attack encounter spell or skill such as Heal, Revive, Clear, Buff, or a similar skill.
+- Choose the spell or skill.
+- Expected: party-member targets are offered when needed, dead members are valid targets only for revive effects, and the party status window updates after the effect.
+- Expected: non-revive spells and skills do not show dead party members in the target list.
+- Use a combat item with an encounter skill.
+- Expected: the item effect runs, charges update, and one-use or depleted items are removed when consumed.
+- Use an attack-style skill with `DoAttack` or `SkillType.Attack` if a party member or monster has one.
+- Expected: the skill first performs the normal attack hit, critical, dodge, and damage flow, then applies the skill effect when the target survives.
+- Choose Run.
+- Expected: success plays `not-in-vain` with the getaway message and closes combat after OK; failure consumes the hero turn and combat continues.
+
+### [ ] Combat Audio
+
+- Trigger a random encounter.
+- Expected: combat starts one of the old combat tracks: `battleground`, `like-totally-rad`, `sword-metal`, or `unprepared`.
+- Choose Fight and resolve at least one hit and one miss if possible.
+- Expected: attack wind-up, damage, and miss sound effects play.
+- Cast a spell and use a combat item if available.
+- Expected: spell and item sound effects play.
+- Win a fight.
+- Expected: victory and level-up sounds play when applicable, `not-in-vain` plays during the victory message, then closing combat restores the current map or biome music.
+- Lose a fight or let the party be defeated if practical.
+- Expected: a defeat/damage sound plays, pressing OK returns to the title menu, and title music plays.
+- Set Music Volume and Sound Effects Volume to `0.00`, then repeat a short combat.
+- Expected: combat music and sound effects are muted.
+- Set both volumes back to `1.00`.
+- Expected: combat music and sound effects are audible again.

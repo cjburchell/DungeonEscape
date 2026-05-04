@@ -1139,6 +1139,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return string.IsNullOrEmpty(message) ? action.Source.Name + " cannot act." : message.TrimEnd();
             }
 
+            if (action.State != RoundActionState.Nothing &&
+                action.Source.Status.Any(effect => effect.Type == EffectType.Sleep))
+            {
+                message += action.Source.Name + " is asleep.";
+                return message.TrimEnd();
+            }
+
             switch (action.State)
             {
                 case RoundActionState.Run:

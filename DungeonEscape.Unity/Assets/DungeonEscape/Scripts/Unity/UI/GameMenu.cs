@@ -1252,12 +1252,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 PartyDetailTab.Items
             };
 
-            if (HasKnownSkills(hero))
+            if (CanUseMapSkills(hero))
             {
                 tabs.Add(PartyDetailTab.Skills);
             }
 
-            if (HasKnownSpells(hero))
+            if (CanUseMapSpells(hero))
             {
                 tabs.Add(PartyDetailTab.Spells);
             }
@@ -1747,6 +1747,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
+            if (!CanCastSpellFromPartyMenu(caster, spell))
+            {
+                ShowPartyMessage("Cannot cast spell.");
+                return;
+            }
+
             if (spell.Type == SkillType.Outside)
             {
                 ShowPartyMessage(gameState.CastOutsideSpell(caster, spell));
@@ -1952,9 +1958,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
             switch (currentScreen)
             {
                 case MenuScreen.Spells:
-                    return members.Where(HasKnownSpells).ToList();
+                    return members.Where(CanUseMapSpells).ToList();
                 case MenuScreen.Abilities:
-                    return members.Where(HasKnownSkills).ToList();
+                    return members.Where(CanUseMapSkills).ToList();
                 default:
                     return members;
             }
@@ -1963,13 +1969,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private bool AnyMemberHasUsableMapSpells()
         {
             var party = GetParty();
-            return party != null && GetInventoryMembers(party).Any(HasKnownSpells);
+            return party != null && GetInventoryMembers(party).Any(CanUseMapSpells);
         }
 
         private bool AnyMemberHasUsableMapAbilities()
         {
             var party = GetParty();
-            return party != null && GetInventoryMembers(party).Any(HasKnownSkills);
+            return party != null && GetInventoryMembers(party).Any(CanUseMapSkills);
         }
 
         private bool CanManagePartyMembers()
@@ -2097,8 +2103,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void EnsureVisiblePartyDetailTab(Hero hero)
         {
-            if (currentPartyDetailTab == PartyDetailTab.Skills && !HasKnownSkills(hero) ||
-                currentPartyDetailTab == PartyDetailTab.Spells && !HasKnownSpells(hero))
+            if (currentPartyDetailTab == PartyDetailTab.Skills && !CanUseMapSkills(hero) ||
+                currentPartyDetailTab == PartyDetailTab.Spells && !CanUseMapSpells(hero))
             {
                 currentPartyDetailTab = PartyDetailTab.Status;
             }
@@ -2119,6 +2125,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
                    GameDataCache.Current != null &&
                    GameDataCache.Current.Spells != null &&
                    hero.GetSpells(GameDataCache.Current.Spells).Any(spell => spell != null && spell.IsNonEncounterSpell);
+        }
+
+        private static bool CanUseMapSkills(Hero hero)
+        {
+            return hero != null && !hero.IsDead && HasKnownSkills(hero);
+        }
+
+        private static bool CanUseMapSpells(Hero hero)
+        {
+            return hero != null && !hero.IsDead && HasKnownSpells(hero);
         }
 
         private static bool HeroHasMagic(Hero hero)

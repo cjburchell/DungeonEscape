@@ -811,8 +811,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void BeginSpellSelection()
         {
-            if (actingHero == null)
+            if (actingHero == null || actingHero.IsDead)
             {
+                ChooseNextHeroAction();
                 return;
             }
 
@@ -831,8 +832,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void BeginItemSelection()
         {
-            if (actingHero == null)
+            if (actingHero == null || actingHero.IsDead)
             {
+                ChooseNextHeroAction();
                 return;
             }
 
@@ -890,7 +892,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ResolveHeroSpell(Spell spell)
         {
-            if (actingHero == null || spell == null)
+            if (actingHero == null || actingHero.IsDead || spell == null)
             {
                 ChooseNextHeroAction();
                 return;
@@ -919,7 +921,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ResolveHeroSkill(Skill skill)
         {
-            if (actingHero == null || skill == null)
+            if (actingHero == null || actingHero.IsDead || skill == null)
             {
                 ChooseNextHeroAction();
                 return;
@@ -946,7 +948,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ResolveHeroItem(ItemInstance item)
         {
-            if (actingHero == null || item == null || item.Item == null)
+            if (actingHero == null || actingHero.IsDead || item == null || item.Item == null)
             {
                 ChooseNextHeroAction();
                 return;
@@ -982,7 +984,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ResolveHeroRun()
         {
-            if (actingHero == null)
+            if (actingHero == null || actingHero.IsDead)
             {
                 ChooseNextHeroAction();
                 return;
@@ -2028,6 +2030,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private IEnumerable<Spell> GetAvailableEncounterSpells(Hero hero)
         {
             return hero == null ||
+                   hero.IsDead ||
                    GameDataCache.Current == null ||
                    GameDataCache.Current.Spells == null
                 ? Enumerable.Empty<Spell>()
@@ -2038,6 +2041,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private IEnumerable<Skill> GetAvailableEncounterSkills(Hero hero)
         {
             return hero == null ||
+                   hero.IsDead ||
                    GameDataCache.Current == null ||
                    GameDataCache.Current.Skills == null
                 ? Enumerable.Empty<Skill>()
@@ -2047,7 +2051,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private IEnumerable<ItemInstance> GetAvailableEncounterItems(Hero hero)
         {
-            return hero == null || hero.Items == null
+            return hero == null || hero.IsDead || hero.Items == null
                 ? Enumerable.Empty<ItemInstance>()
                 : hero.Items.Where(item =>
                 {

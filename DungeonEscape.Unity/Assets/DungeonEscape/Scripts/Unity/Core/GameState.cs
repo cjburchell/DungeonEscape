@@ -1296,6 +1296,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                    GameDataCache.Current != null &&
                    GameDataCache.Current.Spells != null &&
                    Party.Members.Contains(caster) &&
+                   !caster.IsDead &&
                    spell.IsNonEncounterSpell &&
                    caster.GetSpells(GameDataCache.Current.Spells).Contains(spell);
         }

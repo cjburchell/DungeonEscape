@@ -198,29 +198,27 @@ resharper-scan:
         mkdir -p .ci/resharper-unity
         cp "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Plugins/DungeonEscape.Core.dll" .ci/resharper-unity/DungeonEscape.Core.dll
         UNITY_REFERENCES_DIR="$UNITY_PROJECT_PATH/Logs/ReSharperReferences"
-        cat > .ci/resharper-unity/DungeonEscape.Unity.ReSharper.csproj <<EOF
-      <Project Sdk="Microsoft.NET.Sdk">
-        <PropertyGroup>
-          <TargetFramework>netstandard2.1</TargetFramework>
-          <LangVersion>9.0</LangVersion>
-          <Nullable>disable</Nullable>
-          <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-        </PropertyGroup>
-        <ItemGroup>
-          <Compile Include="../../$UNITY_PROJECT_PATH/Assets/DungeonEscape/Scripts/**/*.cs" />
-          <Compile Include="../../$UNITY_PROJECT_PATH/Assets/DungeonEscape/Editor/**/*.cs" />
-          <Reference Include="DungeonEscape.Core">
-            <HintPath>DungeonEscape.Core.dll</HintPath>
-          </Reference>
-        </ItemGroup>
-EOF
+        {
+          printf '%s\n' '<Project Sdk="Microsoft.NET.Sdk">'
+          printf '%s\n' '  <PropertyGroup>'
+          printf '%s\n' '    <TargetFramework>netstandard2.1</TargetFramework>'
+          printf '%s\n' '    <LangVersion>9.0</LangVersion>'
+          printf '%s\n' '    <Nullable>disable</Nullable>'
+          printf '%s\n' '    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>'
+          printf '%s\n' '  </PropertyGroup>'
+          printf '%s\n' '  <ItemGroup>'
+          printf '%s\n' "    <Compile Include=\"../../$UNITY_PROJECT_PATH/Assets/DungeonEscape/Scripts/**/*.cs\" />"
+          printf '%s\n' "    <Compile Include=\"../../$UNITY_PROJECT_PATH/Assets/DungeonEscape/Editor/**/*.cs\" />"
+          printf '%s\n' '    <Reference Include="DungeonEscape.Core">'
+          printf '%s\n' '      <HintPath>DungeonEscape.Core.dll</HintPath>'
+          printf '%s\n' '    </Reference>'
+          printf '%s\n' '  </ItemGroup>'
+        } > .ci/resharper-unity/DungeonEscape.Unity.ReSharper.csproj
         find "$UNITY_REFERENCES_DIR" -maxdepth 1 -name '*.dll' | while read -r DLL; do
           NAME=$(basename "$DLL" .dll)
           printf '        <ItemGroup><Reference Include="%s"><HintPath>../../%s</HintPath></Reference></ItemGroup>\n' "$NAME" "$DLL" >> .ci/resharper-unity/DungeonEscape.Unity.ReSharper.csproj
         done
-        cat >> .ci/resharper-unity/DungeonEscape.Unity.ReSharper.csproj <<EOF
-      </Project>
-EOF
+        printf '%s\n' '</Project>' >> .ci/resharper-unity/DungeonEscape.Unity.ReSharper.csproj
         jb inspectcode $RESHARPER_EXCLUDE_OPTION -o=RsInspection.Unity.xml -f=xml --caches-home=temp/unity .ci/resharper-unity/DungeonEscape.Unity.ReSharper.csproj --dotnetcore=/usr/share/dotnet/dotnet
       else
         echo "No Unity scripts found; skipping Unity ReSharper inspection."

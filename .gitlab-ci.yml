@@ -124,12 +124,15 @@ unity-validate:
       -projectPath "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH"
       -executeMethod Redpoint.DungeonEscape.UnityEditor.UnityCiValidation.ValidateProject
       -logFile "$UNITY_LOG_FILE"
-    - find "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH" -maxdepth 1 \( -name '*.sln' -o -name '*.csproj' \) -print
+    - mkdir -p "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH/Logs/ReSharperReferences"
+    - find /opt/unity/Editor/Data/Managed -name '*.dll' -exec cp {} "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH/Logs/ReSharperReferences/" \;
+    - find "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH/Library/PackageCache" -name '*.dll' -exec cp {} "$CI_PROJECT_DIR/$UNITY_PROJECT_PATH/Logs/ReSharperReferences/" \; || true
   after_script: *unity-license-after-script
   artifacts:
     when: always
     paths:
       - DungeonEscape.Unity/Logs/ci-unity-validate.log
+      - DungeonEscape.Unity/Logs/ReSharperReferences/*.dll
       - DungeonEscape.Unity/*.sln
       - DungeonEscape.Unity/*.csproj
   rules:
@@ -189,12 +192,38 @@ resharper-scan:
         RESHARPER_EXCLUDE_OPTION="--exclude=$RESHARPER_EXCLUDE"
       fi
       jb inspectcode $RESHARPER_EXCLUDE_OPTION -o=RsInspection.xml -f=xml --caches-home=temp/core "$RESHARPER_SOLUTION_NAME" --dotnetcore=/usr/share/dotnet/dotnet
-      UNITY_SOLUTION=$(find "$UNITY_PROJECT_PATH" -maxdepth 1 -name '*.sln' | head -n 1)
-      if [ -n "$UNITY_SOLUTION" ]; then
-        echo "Running ReSharper inspection for Unity solution: $UNITY_SOLUTION"
-        jb inspectcode $RESHARPER_EXCLUDE_OPTION -o=RsInspection.Unity.xml -f=xml --caches-home=temp/unity "$UNITY_SOLUTION" --dotnetcore=/usr/share/dotnet/dotnet
+      UNITY_SCRIPT_COUNT=$(find "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Scripts" "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Editor" -name '*.cs' | wc -l | tr -d ' ')
+      if [ "$UNITY_SCRIPT_COUNT" -gt 0 ]; then
+        echo "Creating CI ReSharper project for $UNITY_SCRIPT_COUNT Unity scripts."
+        mkdir -p .ci/resharper-unity
+        cp "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Plugins/DungeonEscape.Core.dll" .ci/resharper-unity/DungeonEscape.Core.dll
+        UNITY_REFERENCES_DIR="$UNITY_PROJECT_PATH/Logs/ReSharperReferences"
+        cat > .ci/resharper-unity/DungeonEscape.Unity.ReSharper.csproj <<EOF
+      <Project Sdk="Microsoft.NET.Sdk">
+        <PropertyGroup>
+          <TargetFramework>netstandard2.1</TargetFramework>
+          <LangVersion>9.0</LangVersion>
+          <Nullable>disable</Nullable>
+          <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+        </PropertyGroup>
+        <ItemGroup>
+          <Compile Include="../../$UNITY_PROJECT_PATH/Assets/DungeonEscape/Scripts/**/*.cs" />
+          <Compile Include="../../$UNITY_PROJECT_PATH/Assets/DungeonEscape/Editor/**/*.cs" />
+          <Reference Include="DungeonEscape.Core">
+            <HintPath>DungeonEscape.Core.dll</HintPath>
+          </Reference>
+        </ItemGroup>
+EOF
+        find "$UNITY_REFERENCES_DIR" -maxdepth 1 -name '*.dll' | while read -r DLL; do
+          NAME=$(basename "$DLL" .dll)
+          printf '        <ItemGroup><Reference Include="%s"><HintPath>../../%s</HintPath></Reference></ItemGroup>\n' "$NAME" "$DLL" >> .ci/resharper-unity/DungeonEscape.Unity.ReSharper.csproj
+        done
+        cat >> .ci/resharper-unity/DungeonEscape.Unity.ReSharper.csproj <<EOF
+      </Project>
+EOF
+        jb inspectcode $RESHARPER_EXCLUDE_OPTION -o=RsInspection.Unity.xml -f=xml --caches-home=temp/unity .ci/resharper-unity/DungeonEscape.Unity.ReSharper.csproj --dotnetcore=/usr/share/dotnet/dotnet
       else
-        echo "Unity generated solution not found; skipping Unity ReSharper inspection."
+        echo "No Unity scripts found; skipping Unity ReSharper inspection."
       fi
     - |
       ISSUE_COUNT=0

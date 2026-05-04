@@ -56,17 +56,30 @@ namespace Redpoint.DungeonEscape.UnityEditor
                 return;
             }
 
+            if (TryExecuteOpenCSharpProjectMenu())
+            {
+                Debug.Log("Unity C# project files generated through Assets/Open C# Project menu command.");
+                return;
+            }
+
             Debug.LogWarning("Could not generate Unity C# project files for ReSharper scanning.");
         }
 
         private static bool TryInvokeSyncVs()
         {
             var syncVsType = Type.GetType("UnityEditor.SyncVS,UnityEditor");
+            if (syncVsType == null)
+            {
+                Debug.Log("UnityEditor.SyncVS type was not found.");
+                return false;
+            }
+
             var syncSolution = syncVsType == null
                 ? null
                 : syncVsType.GetMethod("SyncSolution", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
             if (syncSolution == null)
             {
+                Debug.Log("UnityEditor.SyncVS.SyncSolution method was not found.");
                 return false;
             }
 
@@ -77,20 +90,52 @@ namespace Redpoint.DungeonEscape.UnityEditor
         private static bool TryInvokeCodeEditorSync()
         {
             var codeEditorType = Type.GetType("UnityEditor.CodeEditor.CodeEditor,UnityEditor");
+            if (codeEditorType == null)
+            {
+                Debug.Log("UnityEditor.CodeEditor.CodeEditor type was not found.");
+                return false;
+            }
+
             var currentEditor = codeEditorType == null
                 ? null
                 : codeEditorType.GetProperty("CurrentEditor", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+            if (currentEditor == null)
+            {
+                Debug.Log("UnityEditor.CodeEditor.CodeEditor.CurrentEditor property was not found.");
+                return false;
+            }
+
             var editor = currentEditor == null ? null : currentEditor.GetValue(null, null);
+            if (editor == null)
+            {
+                Debug.Log("Unity current code editor was null.");
+                return false;
+            }
+
             var syncAll = editor == null
                 ? null
                 : editor.GetType().GetMethod("SyncAll", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (syncAll == null)
             {
+                Debug.Log("Unity current code editor SyncAll method was not found on " + editor.GetType().FullName + ".");
                 return false;
             }
 
             syncAll.Invoke(editor, null);
             return true;
+        }
+
+        private static bool TryExecuteOpenCSharpProjectMenu()
+        {
+            try
+            {
+                return EditorApplication.ExecuteMenuItem("Assets/Open C# Project");
+            }
+            catch (Exception exception)
+            {
+                Debug.Log("Assets/Open C# Project menu command failed: " + exception.Message);
+                return false;
+            }
         }
 
         private static bool ValidateAsset(string assetPath)

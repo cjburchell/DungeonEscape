@@ -66,6 +66,15 @@ Prefer the existing IMGUI helper layer:
 
 Keep modals on top and block unrelated controls while active.
 
+## Hero Sprite Pattern
+
+Do not infer a hero's current visual only from class/gender if explicit sprite data exists.
+
+- New player creation stores a selected hero-sheet base frame on `Hero.SpriteFrameIndex`.
+- Recruited `NpcPartyMember` heroes store `Hero.SpriteTilesetPath` and `Hero.SpriteTileId` based on the recruiting map object's `gid`.
+- `HeroSpriteResolver` is the shared Unity runtime path for converting saved hero sprite identity into map/UI sprites.
+- Class/gender remain valid fallback inputs for old saves or heroes without explicit sprite fields.
+
 ## Testing Pattern
 
 Use automated tests for shared core behavior and manual tests for Unity map-mode behavior until Unity edit/play mode tests are added.

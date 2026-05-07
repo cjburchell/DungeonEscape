@@ -157,7 +157,7 @@ namespace Redpoint.DungeonEscape.Unity.Rendering
             return Sprite.Create(texture, rect, new Vector2(0.5f, 0.33f), frameWidth);
         }
 
-        private static DirectionalSpriteSet CreateFallbackSet(Sprite fallback)
+        public static DirectionalSpriteSet CreateFallbackSet(Sprite fallback)
         {
             return new DirectionalSpriteSet(
                 new Dictionary<Direction, Sprite[]>

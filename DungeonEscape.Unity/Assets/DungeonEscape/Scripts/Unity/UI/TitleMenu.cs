@@ -40,9 +40,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private const int CreateGenerateNameIndex = 1;
         private const int CreateGenderIndex = 2;
         private const int CreateClassIndex = 3;
-        private const int CreateRerollIndex = 4;
-        private const int CreateStartIndex = 5;
-        private const int CreateBackIndex = 6;
+        private const int CreateImageIndex = 4;
+        private const int CreateRerollIndex = 5;
+        private const int CreateStartIndex = 6;
+        private const int CreateBackIndex = 7;
+        private const int FirstBlockedCreateSpriteIndex = 18;
+        private const int SecondBlockedCreateSpriteIndex = 19;
         private const string MainMenuBackgroundAssetPath = "Assets/DungeonEscape/Images/ui/mainmenue.png";
         private const string SecondaryMenuBackgroundAssetPath = "Assets/DungeonEscape/Images/ui/menu2.png";
 
@@ -69,6 +72,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private bool createPlayerNameInitialized;
         private Class createPlayerClass = Class.Hero;
         private Gender createPlayerGender = Gender.Male;
+        private int createPlayerSpriteIndex;
         private CreateDropdown activeCreateDropdown;
         private Rect createMenuAreaOffset;
         private Rect genderDropdownAnchor;
@@ -85,6 +89,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private bool ownsSecondaryMenuBackground;
         private bool waitingForConfirmRelease;
         private bool titleActionPending;
+        private Texture2D leftArrowTexture;
+        private Texture2D rightArrowTexture;
 
         public static bool IsOpen
         {
@@ -249,8 +255,20 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 Destroy(secondaryMenuBackground);
             }
 
+            if (leftArrowTexture != null)
+            {
+                Destroy(leftArrowTexture);
+            }
+
+            if (rightArrowTexture != null)
+            {
+                Destroy(rightArrowTexture);
+            }
+
             mainMenuBackground = null;
             secondaryMenuBackground = null;
+            leftArrowTexture = null;
+            rightArrowTexture = null;
             ownsMainMenuBackground = false;
             ownsSecondaryMenuBackground = false;
         }
@@ -509,6 +527,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.Label("Class:", labelStyle, GUILayout.Width(74f * scale), GUILayout.Height(32f * scale));
             DrawClassDropdown(selectedIndex == CreateClassIndex);
             GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Image:", labelStyle, GUILayout.Width(74f * scale), GUILayout.Height(32f * scale));
+            DrawImageSelector(selectedIndex == CreateImageIndex);
+            GUILayout.EndHorizontal();
             GUILayout.EndVertical();
             GUILayout.Space(8f * scale);
             DrawCreateStatsPanel(scale, previousEnabled && !dropdownOpen);
@@ -567,6 +589,39 @@ namespace Redpoint.DungeonEscape.Unity.UI
             classDropdownAnchor = ToScreenRect(GUILayoutUtility.GetLastRect());
         }
 
+        private void DrawImageSelector(bool selected)
+        {
+            var scale = GetPixelScale();
+            var rect = GUILayoutUtility.GetRect(170f * scale, 104f * scale, GUILayout.Width(170f * scale), GUILayout.Height(104f * scale));
+            GUI.Box(rect, GUIContent.none, selected ? uiTheme.SelectedRowStyle : panelStyle);
+
+            var arrowSize = 28f * scale;
+            var leftRect = new Rect(rect.x + 16f * scale, rect.y + (rect.height - arrowSize) / 2f, arrowSize, arrowSize);
+            var rightRect = new Rect(rect.xMax - 16f * scale - arrowSize, rect.y + (rect.height - arrowSize) / 2f, arrowSize, arrowSize);
+            DrawArrow(leftRect, false);
+            DrawArrow(rightRect, true);
+
+            Sprite sprite;
+            if (UiAssetResolver.TryGetHeroSprite(GetCreatePlayerSpriteFrameIndex(), out sprite))
+            {
+                DrawSprite(new Rect(rect.x + 58f * scale, rect.y + 10f * scale, 54f * scale, rect.height - 20f * scale), sprite);
+            }
+
+            if (GUI.Button(leftRect, GUIContent.none, GUIStyle.none) && !waitingForConfirmRelease)
+            {
+                selectedIndex = CreateImageIndex;
+                CycleCreateImage(-1);
+                WaitForConfirmRelease();
+            }
+
+            if (GUI.Button(rightRect, GUIContent.none, GUIStyle.none) && !waitingForConfirmRelease)
+            {
+                selectedIndex = CreateImageIndex;
+                CycleCreateImage(1);
+                WaitForConfirmRelease();
+            }
+        }
+
         private void DrawCreateDropdownOverlay()
         {
             if (mode != TitleMode.Create || activeCreateDropdown == CreateDropdown.None)
@@ -583,7 +638,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     value =>
                     {
                         createPlayerGender = value;
-                        RerollCreatePreviewHero();
+                        UpdateCreatePreviewHeroIdentity();
                         activeCreateDropdown = CreateDropdown.None;
                     },
                     ref genderDropdownScrollPosition,
@@ -720,8 +775,23 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void DrawCreateStatsPanel(float scale, bool controlsEnabled)
         {
             GUILayout.BeginVertical(panelStyle, GUILayout.Width(268f * scale), GUILayout.Height(164f * scale));
+            var title = new GUIStyle(labelStyle)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontStyle = FontStyle.Bold
+            };
+            GUILayout.Label("Stats", title, GUILayout.Height(24f * scale));
+            GUILayout.BeginVertical();
+            DrawStatRow("Health:", createPreviewHero == null ? 0 : createPreviewHero.MaxHealth);
+            DrawStatRow("Magic:", createPreviewHero == null ? 0 : createPreviewHero.MaxMagic);
+            DrawStatRow("Attack:", createPreviewHero == null ? 0 : createPreviewHero.Attack);
+            DrawStatRow("Defence:", createPreviewHero == null ? 0 : createPreviewHero.Defence);
+            DrawStatRow("Magic Defence:", createPreviewHero == null ? 0 : createPreviewHero.MagicDefence);
+            DrawStatRow("Agility:", createPreviewHero == null ? 0 : createPreviewHero.Agility);
+            GUILayout.EndVertical();
+            GUILayout.FlexibleSpace();
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Stats:", labelStyle, GUILayout.Width(76f * scale), GUILayout.Height(28f * scale));
+            GUILayout.FlexibleSpace();
             var previousEnabled = GUI.enabled;
             GUI.enabled = controlsEnabled;
             if (UiControls.Button("Re-Roll", selectedIndex == CreateRerollIndex, uiTheme, GUILayout.Width(96f * scale), GUILayout.Height(28f * scale)) &&
@@ -733,27 +803,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             GUI.enabled = previousEnabled;
             GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-            GUILayout.BeginHorizontal();
-            Sprite sprite;
-            if (UiAssetResolver.TryGetHeroSprite(createPlayerClass, createPlayerGender, out sprite))
-            {
-                var rect = GUILayoutUtility.GetRect(42f * scale, 88f * scale, GUILayout.Width(42f * scale));
-                DrawSprite(rect, sprite);
-            }
-            else
-            {
-                GUILayout.Space(42f * scale);
-            }
-
-            GUILayout.BeginVertical();
-            DrawStatRow("Health:", createPreviewHero == null ? 0 : createPreviewHero.MaxHealth);
-            DrawStatRow("Magic:", createPreviewHero == null ? 0 : createPreviewHero.MaxMagic);
-            DrawStatRow("Attack:", createPreviewHero == null ? 0 : createPreviewHero.Attack);
-            DrawStatRow("Defence:", createPreviewHero == null ? 0 : createPreviewHero.Defence);
-            DrawStatRow("Magic Defence:", createPreviewHero == null ? 0 : createPreviewHero.MagicDefence);
-            DrawStatRow("Agility:", createPreviewHero == null ? 0 : createPreviewHero.Agility);
-            GUILayout.EndVertical();
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
         }
@@ -802,6 +851,48 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUI.DrawTextureWithTexCoords(drawRect, texture, texCoords, true);
         }
 
+        private void DrawArrow(Rect rect, bool right)
+        {
+            var texture = right ? GetRightArrowTexture() : GetLeftArrowTexture();
+            if (texture != null)
+            {
+                GUI.DrawTexture(rect, texture, ScaleMode.ScaleToFit, true);
+            }
+        }
+
+        private Texture2D GetLeftArrowTexture()
+        {
+            return leftArrowTexture ?? (leftArrowTexture = CreateArrowTexture(false));
+        }
+
+        private Texture2D GetRightArrowTexture()
+        {
+            return rightArrowTexture ?? (rightArrowTexture = CreateArrowTexture(true));
+        }
+
+        private static Texture2D CreateArrowTexture(bool right)
+        {
+            const int size = 28;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            texture.filterMode = FilterMode.Point;
+            for (var y = 0; y < size; y++)
+            {
+                for (var x = 0; x < size; x++)
+                {
+                    var centerY = size / 2;
+                    var distanceFromCenter = Mathf.Abs(y - centerY);
+                    var limit = size / 2 - distanceFromCenter;
+                    var filled = right
+                        ? x >= size / 2 - limit / 2 && x <= size / 2 + limit
+                        : x <= size / 2 + limit / 2 && x >= size / 2 - limit;
+                    texture.SetPixel(x, y, filled ? Color.white : Color.clear);
+                }
+            }
+
+            texture.Apply();
+            return texture;
+        }
+
         private void GenerateRandomPlayerName()
         {
             var names = GameDataCache.Current == null ? null : GameDataCache.Current.Names;
@@ -842,7 +933,22 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             createPreviewHero = gameState == null
                 ? null
-                : gameState.CreatePlayerPreviewHero(createPlayerName, createPlayerClass, createPlayerGender);
+                : gameState.CreatePlayerPreviewHero(createPlayerName, createPlayerClass, createPlayerGender, GetCreatePlayerSpriteFrameIndex());
+        }
+
+        private void UpdateCreatePreviewHeroIdentity()
+        {
+            if (createPreviewHero == null)
+            {
+                RerollCreatePreviewHero();
+                return;
+            }
+
+            createPreviewHero.Name = string.IsNullOrEmpty(createPlayerName) ? "Player" : createPlayerName;
+            createPreviewHero.Gender = createPlayerGender;
+            createPreviewHero.SpriteFrameIndex = GetCreatePlayerSpriteFrameIndex();
+            createPreviewHero.SpriteTilesetPath = null;
+            createPreviewHero.SpriteTileId = null;
         }
 
         private IEnumerable<TitleRow> GetMainRows()
@@ -890,7 +996,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (mode == TitleMode.Create)
             {
-                return 7;
+                return 8;
             }
 
             return GetMainRows().Count();
@@ -964,6 +1070,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return true;
             }
 
+            if (selectedIndex == CreateImageIndex)
+            {
+                CycleCreateImage(delta);
+                return true;
+            }
+
             return false;
         }
 
@@ -976,6 +1088,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 case CreateClassIndex:
                     return CreateGenderIndex;
                 case CreateRerollIndex:
+                    return CreateImageIndex;
+                case CreateImageIndex:
                     return CreateClassIndex;
                 case CreateStartIndex:
                     return CreateRerollIndex;
@@ -995,6 +1109,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 case CreateGenderIndex:
                     return CreateClassIndex;
                 case CreateClassIndex:
+                    return CreateImageIndex;
+                case CreateImageIndex:
                     return CreateRerollIndex;
                 case CreateGenerateNameIndex:
                     return CreateRerollIndex;
@@ -1139,7 +1255,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     break;
                 case CreateGenerateNameIndex:
                     GenerateRandomPlayerName();
-                    RerollCreatePreviewHero();
+                    UpdateCreatePreviewHeroIdentity();
                     break;
                 case CreateGenderIndex:
                     CycleCreateGender(1);
@@ -1147,6 +1263,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     break;
                 case CreateClassIndex:
                     CycleCreateClass(1);
+                    WaitForConfirmRelease();
+                    break;
+                case CreateImageIndex:
+                    CycleCreateImage(1);
                     WaitForConfirmRelease();
                     break;
                 case CreateRerollIndex:
@@ -1208,14 +1328,15 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 var values = System.Enum.GetValues(typeof(Gender));
                 createPlayerGender = (Gender)values.GetValue(Mathf.Clamp(selectedDropdownIndex, 0, values.Length - 1));
+                UpdateCreatePreviewHeroIdentity();
             }
             else
             {
                 var values = System.Enum.GetValues(typeof(Class));
                 createPlayerClass = (Class)values.GetValue(Mathf.Clamp(selectedDropdownIndex, 0, values.Length - 1));
+                RerollCreatePreviewHero();
             }
 
-            RerollCreatePreviewHero();
             activeCreateDropdown = CreateDropdown.None;
             WaitForConfirmRelease();
             ResetNavigationRepeat();
@@ -1227,7 +1348,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var currentIndex = System.Array.IndexOf(values, createPlayerGender);
             var nextIndex = WrapIndex(currentIndex + delta, values.Length);
             createPlayerGender = (Gender)values.GetValue(nextIndex);
-            RerollCreatePreviewHero();
+            UpdateCreatePreviewHeroIdentity();
             UiControls.PlaySelectSound();
         }
 
@@ -1239,6 +1360,51 @@ namespace Redpoint.DungeonEscape.Unity.UI
             createPlayerClass = (Class)values.GetValue(nextIndex);
             RerollCreatePreviewHero();
             UiControls.PlaySelectSound();
+        }
+
+        private void CycleCreateImage(int delta)
+        {
+            createPlayerSpriteIndex = GetNextSelectableCreateImageIndex(createPlayerSpriteIndex, delta);
+            UpdateCreatePreviewHeroIdentity();
+            UiControls.PlaySelectSound();
+        }
+
+        private int GetCreatePlayerSpriteFrameIndex()
+        {
+            if (!IsSelectableCreateImageIndex(createPlayerSpriteIndex))
+            {
+                createPlayerSpriteIndex = GetNextSelectableCreateImageIndex(createPlayerSpriteIndex, 1);
+            }
+
+            return HeroSpriteResolver.GetBaseFrameIndexForCharacter(createPlayerSpriteIndex);
+        }
+
+        private static int GetNextSelectableCreateImageIndex(int currentIndex, int delta)
+        {
+            var count = HeroSpriteResolver.GetHeroCharacterCount();
+            if (count <= 0)
+            {
+                return 0;
+            }
+
+            var step = delta == 0 ? 1 : delta;
+            var nextIndex = currentIndex;
+            for (var i = 0; i < count; i++)
+            {
+                nextIndex = WrapIndex(nextIndex + step, count);
+                if (IsSelectableCreateImageIndex(nextIndex))
+                {
+                    return nextIndex;
+                }
+            }
+
+            return 0;
+        }
+
+        private static bool IsSelectableCreateImageIndex(int index)
+        {
+            return index != FirstBlockedCreateSpriteIndex &&
+                   index != SecondBlockedCreateSpriteIndex;
         }
 
         private static int WrapIndex(int index, int count)
@@ -1312,7 +1478,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (gameState != null)
             {
-                gameState.RestartNewGame(createPlayerName, createPlayerClass, createPlayerGender);
+                gameState.RestartNewGame(createPlayerName, createPlayerClass, createPlayerGender, GetCreatePlayerSpriteFrameIndex());
             }
 
             Close();

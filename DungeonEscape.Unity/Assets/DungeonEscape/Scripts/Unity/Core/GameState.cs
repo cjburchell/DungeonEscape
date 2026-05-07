@@ -1048,7 +1048,8 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 memberName = GenerateUniqueName(gender);
             }
 
-            var hero = CreateHero(memberName, memberClass, gender, level, true);
+            var hero = CreateHero(memberName, memberClass, gender, level, true, null);
+            ApplyMapObjectSprite(hero, currentMapId, mapObject);
             hero.IsActive = false;
             hero.Order = 0;
 
@@ -2818,13 +2819,18 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         public void RestartNewGame()
         {
-            RestartNewGame("Player", Class.Hero, Gender.Male);
+            RestartNewGame("Player", Class.Hero, Gender.Male, null);
         }
 
         public void RestartNewGame(string playerName, Class playerClass, Gender gender)
         {
+            RestartNewGame(playerName, playerClass, gender, null);
+        }
+
+        public void RestartNewGame(string playerName, Class playerClass, Gender gender, int? spriteFrameIndex)
+        {
             GameFile = LoadGameFile();
-            CurrentSave = CreateDefaultSave(playerName, playerClass, gender);
+            CurrentSave = CreateDefaultSave(playerName, playerClass, gender, spriteFrameIndex);
             CurrentSave.IsQuick = false;
             ShouldApplyInitialSpawn = true;
             MarkDirty();
@@ -2836,7 +2842,12 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         public Hero CreatePlayerPreviewHero(string playerName, Class playerClass, Gender gender)
         {
-            return CreateHero(playerName, playerClass, gender, 1, false);
+            return CreatePlayerPreviewHero(playerName, playerClass, gender, null);
+        }
+
+        public Hero CreatePlayerPreviewHero(string playerName, Class playerClass, Gender gender, int? spriteFrameIndex)
+        {
+            return CreateHero(playerName, playerClass, gender, 1, false, spriteFrameIndex);
         }
 
         public void MarkInitialSpawnApplied()
@@ -2846,10 +2857,10 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private GameSave CreateDefaultSave()
         {
-            return CreateDefaultSave("Player", Class.Hero, Gender.Male);
+            return CreateDefaultSave("Player", Class.Hero, Gender.Male, null);
         }
 
-        private GameSave CreateDefaultSave(string playerName, Class playerClass, Gender gender)
+        private GameSave CreateDefaultSave(string playerName, Class playerClass, Gender gender, int? spriteFrameIndex)
         {
             if (string.IsNullOrEmpty(playerName))
             {
@@ -2864,7 +2875,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             };
             party.CurrentMapIsOverWorld = party.CurrentMapId == "overworld";
             party.OverWorldPosition = party.CurrentPosition.Value;
-            party.Members.Add(CreateHero(party.PlayerName, playerClass, gender, 1, true));
+            party.Members.Add(CreateHero(party.PlayerName, playerClass, gender, 1, true, spriteFrameIndex));
 
             return new GameSave
             {
@@ -2874,13 +2885,14 @@ namespace Redpoint.DungeonEscape.Unity.Core
             };
         }
 
-        private Hero CreateHero(string heroName, Class heroClass, Gender gender, int level, bool generateItems)
+        private Hero CreateHero(string heroName, Class heroClass, Gender gender, int level, bool generateItems, int? spriteFrameIndex)
         {
             var hero = new Hero
             {
                 Name = string.IsNullOrEmpty(heroName) ? "Player" : heroName,
                 Class = heroClass,
                 Gender = gender,
+                SpriteFrameIndex = spriteFrameIndex,
                 IsActive = true,
                 Order = 0,
                 Level = 1,
@@ -3087,6 +3099,55 @@ namespace Redpoint.DungeonEscape.Unity.Core
             {
                 nameGenerator = new NameGenerator(names);
             }
+        }
+
+        private static void ApplyMapObjectSprite(Hero hero, string mapId, TiledObjectInfo mapObject)
+        {
+            if (hero == null || mapObject == null || mapObject.Gid <= 0)
+            {
+                return;
+            }
+
+            string tilesetPath;
+            int tileId;
+            if (!TryResolveMapObjectSprite(mapId, mapObject.Gid, out tilesetPath, out tileId))
+            {
+                return;
+            }
+
+            hero.SpriteFrameIndex = null;
+            hero.SpriteTilesetPath = tilesetPath;
+            hero.SpriteTileId = tileId;
+        }
+
+        private static bool TryResolveMapObjectSprite(string mapId, int gid, out string tilesetPath, out int tileId)
+        {
+            tilesetPath = null;
+            tileId = 0;
+
+            var loadedMap = Loader.Load(mapId);
+            if (loadedMap == null || loadedMap.Info == null || loadedMap.Info.Tilesets == null)
+            {
+                return false;
+            }
+
+            TiledTilesetInfo selected = null;
+            foreach (var tileset in loadedMap.Info.Tilesets.OrderBy(item => item.FirstGid))
+            {
+                if (tileset.FirstGid <= gid)
+                {
+                    selected = tileset;
+                }
+            }
+
+            if (selected == null || string.IsNullOrEmpty(selected.UnityTilesetPath))
+            {
+                return false;
+            }
+
+            tilesetPath = selected.UnityTilesetPath;
+            tileId = gid - selected.FirstGid;
+            return true;
         }
 
         private static T GetEnumProperty<T>(TiledObjectInfo mapObject, string propertyName, T defaultValue)

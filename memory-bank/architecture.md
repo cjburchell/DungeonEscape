@@ -41,6 +41,7 @@ Important scripts:
 - `Map/Tiled/Collision.cs`: tile/object collision queries.
 - `Map/PlayerGridController.cs`: movement, facing, interaction, warps, followers.
 - `Core/GameState.cs`: Unity-facing game state, party, object state, quests, shops, saves.
+- `Rendering/HeroSpriteResolver.cs`: resolves saved hero sprite identity into directional sprites for UI portraits, the player map sprite, and followers.
 - `UI/GameMenu.cs`: IMGUI party/inventory/quest/settings/save UI.
 - `UI/StoreWindow.cs`: tabbed buy/sell store UI.
 - `UI/MessageBox.cs`: modal map dialogs.
@@ -68,10 +69,17 @@ Current map object conventions:
 - Spawn points: `class="Spawn"` with `DefaultSpawn=true` where a map needs a default spawn.
 - Hidden items: `class="HiddenItem"` with quest/item metadata as needed.
 - NPCs/services use class values such as `Npc`, `NpcHeal`, `NpcStore`, `NpcSave`, `NpcKey`, and `NpcPartyMember`.
+- `NpcPartyMember` map objects should have a sprite `gid`; recruited heroes persist the source tileset and local tile id from that referenced map sprite.
 
 ## Save And Persistence
 
 Save data is Unity-side and uses the migrated shared state models. Unsupported future/old save versions are archived and ignored instead of trying to migrate old MonoGame save formats.
+
+Hero visual identity is persisted on `Hero` separately from class/gender:
+
+- Startup-created heroes can store a hero-sheet `SpriteFrameIndex`.
+- Recruited NPC party members can store `SpriteTilesetPath` and `SpriteTileId` resolved from the map object's `gid`.
+- Class and gender still drive gameplay stats/name generation/default fallback sprite choice, but should not be treated as the authoritative visual once explicit sprite fields exist.
 
 Autosave policy:
 

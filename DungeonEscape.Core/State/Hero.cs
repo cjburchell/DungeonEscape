@@ -19,6 +19,9 @@ namespace Redpoint.DungeonEscape.State
         public ulong NextLevel { get; set; }
         public bool IsActive { get; set; }
         public int Order { get; set; }
+        public int? SpriteFrameIndex { get; set; }
+        public string SpriteTilesetPath { get; set; }
+        public int? SpriteTileId { get; set; }
         public Dictionary<Slot, string> Slots { get; set; }
         public List<string> Skills { get; set; }
 

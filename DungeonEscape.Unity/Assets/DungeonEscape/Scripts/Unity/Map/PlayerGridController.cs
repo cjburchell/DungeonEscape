@@ -43,8 +43,7 @@ namespace Redpoint.DungeonEscape.Unity.Map
         private DirectionalSpriteSet cartDirectionSprites;
         private DirectionalSpriteSet deadHeroDirectionSprites;
         private Direction currentDirection = Direction.Down;
-        private Class loadedHeroClass = Class.Hero;
-        private Gender loadedHeroGender = Gender.Male;
+        private string loadedHeroSpriteKey;
         private bool loadedHeroIsDead;
         private GameState gameState;
         private MessageBox messageBox;
@@ -172,23 +171,37 @@ namespace Redpoint.DungeonEscape.Unity.Map
         private void ApplyPartySprite(Party party)
         {
             var hero = GetVisualActiveMembers(party).FirstOrDefault();
+            var heroSpriteKey = GetHeroSpriteKey(hero);
             if (hero == null ||
                 directionSprites == null ||
-                hero.Class == loadedHeroClass &&
-                hero.Gender == loadedHeroGender &&
+                string.Equals(heroSpriteKey, loadedHeroSpriteKey, StringComparison.Ordinal) &&
                 hero.IsDead == loadedHeroIsDead)
             {
                 return;
             }
 
-            loadedHeroClass = hero.Class;
-            loadedHeroGender = hero.Gender;
+            loadedHeroSpriteKey = heroSpriteKey;
             loadedHeroIsDead = hero.IsDead;
             heroDirectionSprites = LoadHeroSprites(hero);
             if (!showingShip)
             {
                 directionSprites = heroDirectionSprites;
             }
+        }
+
+        private static string GetHeroSpriteKey(Hero hero)
+        {
+            if (hero == null)
+            {
+                return "";
+            }
+
+            if (!string.IsNullOrEmpty(hero.SpriteTilesetPath) && hero.SpriteTileId.HasValue)
+            {
+                return "tileset:" + hero.SpriteTilesetPath + ":" + hero.SpriteTileId.Value;
+            }
+
+            return "hero:" + (hero.SpriteFrameIndex ?? HeroSpriteResolver.GetDefaultFrameIndex(hero.Class, hero.Gender));
         }
 
         private void ApplyInitialSpawnIfNeeded()
@@ -1573,7 +1586,9 @@ namespace Redpoint.DungeonEscape.Unity.Map
 
         private DirectionalSpriteSet LoadHeroSprites()
         {
-            return LoadHeroSprites(loadedHeroClass, loadedHeroGender);
+            return HeroSpriteResolver.GetHeroSpriteSet(
+                HeroSpriteResolver.GetDefaultFrameIndex(Class.Hero, Gender.Male),
+                CreateFallbackSprite());
         }
 
         private DirectionalSpriteSet LoadHeroSprites(Hero hero)
@@ -1583,28 +1598,14 @@ namespace Redpoint.DungeonEscape.Unity.Map
                 return deadHeroDirectionSprites ?? LoadDeadHeroSprites();
             }
 
-            return hero == null ? LoadHeroSprites() : LoadHeroSprites(hero.Class, hero.Gender);
+            return hero == null ? LoadHeroSprites() : HeroSpriteResolver.GetSpriteSet(hero, CreateFallbackSprite());
         }
 
         private DirectionalSpriteSet LoadHeroSprites(Class heroClass, Gender gender)
         {
-            var cacheKey = "hero:" + heroClass + ":" + gender;
-            DirectionalSpriteSet spriteSet;
-            if (heroSpriteCache.TryGetValue(cacheKey, out spriteSet))
-            {
-                return spriteSet;
-            }
-
-            const int heroWidth = 32;
-            const int heroHeight = 48;
-            spriteSet = DirectionalSpriteSheet.LoadCharacterSet(
-                heroTextureAssetPath,
-                heroWidth,
-                heroHeight,
-                DirectionalSpriteSheet.GetHeroBaseFrameIndex(heroClass, gender),
+            return HeroSpriteResolver.GetHeroSpriteSet(
+                HeroSpriteResolver.GetDefaultFrameIndex(heroClass, gender),
                 CreateFallbackSprite());
-            heroSpriteCache[cacheKey] = spriteSet;
-            return spriteSet;
         }
 
         private DirectionalSpriteSet LoadDeadHeroSprites()

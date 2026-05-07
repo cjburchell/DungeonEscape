@@ -14,10 +14,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
     {
         private const string ItemsTilesetAssetPath = "Assets/DungeonEscape/Tilesets/items2.tsx";
         private const string SpellsTilesetAssetPath = "Assets/DungeonEscape/Tilesets/items.tsx";
-        private const string HeroTextureAssetPath = "Assets/DungeonEscape/Images/sprites/hero.png";
-        private const int HeroWidth = 32;
-        private const int HeroHeight = 48;
-
         private static IList<TilesetSpriteSet> itemSpriteSets;
         private static IList<TilesetSpriteSet> spellSpriteSets;
         private static readonly Dictionary<string, Sprite> HeroSprites = new Dictionary<string, Sprite>();
@@ -86,26 +82,53 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return false;
             }
 
-            return TryGetHeroSprite(hero.Class, hero.Gender, out sprite);
-        }
-
-        public static bool TryGetHeroSprite(Class heroClass, Gender gender, out Sprite sprite)
-        {
-            var key = heroClass + "|" + gender;
+            var key = GetHeroSpriteKey(hero);
             if (HeroSprites.TryGetValue(key, out sprite))
             {
                 return sprite != null;
             }
 
-            var set = DirectionalSpriteSheet.LoadCharacterSet(
-                HeroTextureAssetPath,
-                HeroWidth,
-                HeroHeight,
-                DirectionalSpriteSheet.GetHeroBaseFrameIndex(heroClass, gender),
-                CreateFallbackSprite());
+            if (!HeroSpriteResolver.TryGetIdleSprite(hero, CreateFallbackSprite(), out sprite))
+            {
+                return false;
+            }
+
+            HeroSprites[key] = sprite;
+            return sprite != null;
+        }
+
+        public static bool TryGetHeroSprite(Class heroClass, Gender gender, out Sprite sprite)
+        {
+            return TryGetHeroSprite(HeroSpriteResolver.GetDefaultFrameIndex(heroClass, gender), out sprite);
+        }
+
+        public static bool TryGetHeroSprite(int baseFrameIndex, out Sprite sprite)
+        {
+            var key = "hero:" + baseFrameIndex;
+            if (HeroSprites.TryGetValue(key, out sprite))
+            {
+                return sprite != null;
+            }
+
+            var set = HeroSpriteResolver.GetHeroSpriteSet(baseFrameIndex, CreateFallbackSprite());
             sprite = set.GetIdle(Direction.Down);
             HeroSprites[key] = sprite;
             return sprite != null;
+        }
+
+        private static string GetHeroSpriteKey(Hero hero)
+        {
+            if (hero == null)
+            {
+                return "hero:null";
+            }
+
+            if (!string.IsNullOrEmpty(hero.SpriteTilesetPath) && hero.SpriteTileId.HasValue)
+            {
+                return "tileset:" + hero.SpriteTilesetPath + ":" + hero.SpriteTileId.Value;
+            }
+
+            return "hero:" + (hero.SpriteFrameIndex ?? HeroSpriteResolver.GetDefaultFrameIndex(hero.Class, hero.Gender));
         }
 
         private static void EnsureItemSpriteSets()

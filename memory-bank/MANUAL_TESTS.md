@@ -583,15 +583,22 @@ Status legend:
 
 - Return to the title menu from the in-game menu.
 - Select New Quest.
-- Expected: New Quest screen appears over `menu2.png` with vertically centered compact Name/Gender/Class controls, portrait, and stat panel inside a black panel with a white border.
+- Expected: New Quest screen appears over `menu2.png` with vertically centered compact Name/Gender/Class/Image controls, portrait, and stat panel inside a black panel with a white border.
 - Enter a player name or press Random.
 - Expected: Random fills the name field with a generated name for the selected gender.
 - Open the Gender dropdown and choose a gender.
 - Open the Class dropdown and choose a class.
 - Expected: dropdown choices overlay the screen without shifting the rest of the UI.
 - Expected: long dropdowns show a scrollbar when not all choices fit.
-- Use keyboard or gamepad up/down and interact on Name, Generate Name, Gender, Class, Re-roll, Start, and Back.
+- Use keyboard or gamepad up/down and interact on Name, Generate Name, Gender, Class, Image, Re-roll, Start, and Back.
 - Expected: each Create Quest control can be selected and activated without using the mouse.
+- Change Image with left/right or Interact.
+- Expected: the bordered image picker changes the centered portrait with left/right arrows while the selected class, gender, and starter stats remain driven by their own controls.
+- Expected: images 19 and 20 are skipped and cannot be selected.
+- Change Class and Gender after selecting an Image.
+- Expected: the selected portrait does not automatically reset to a class/gender-derived image.
+- Change Name, Gender, and Image repeatedly.
+- Expected: the displayed stats do not re-roll from those changes.
 - Press down from Generate Name.
 - Expected: selection moves to Re-roll.
 - Press left from Generate Name.
@@ -602,11 +609,26 @@ Status legend:
 - Expected: selection follows the same visual column instead of moving through every control linearly.
 - With a dropdown open, use keyboard or gamepad up/down and interact.
 - Expected: dropdown choices can be selected without using the mouse.
-- Expected: the character preview updates for the selected gender/class and keeps the sprite aspect ratio.
+- Expected: the image picker preview updates for the selected image and keeps the sprite aspect ratio.
 - Press Re-roll.
 - Expected: the displayed starter stats change without changing the selected name, gender, or class.
+- Expected: the stats panel has a `Stats` title, no portrait image inside the stats area, and the `Re-Roll` button at the bottom.
 - Select Start.
-- Expected: a new game starts with the chosen player name/class/gender and the title menu closes.
+- Expected: a new game starts with the chosen player name/class/gender/image and the title menu closes.
+- Save and reload.
+- Expected: the chosen player image is restored in the party status portrait, lead map sprite, and follower visuals where applicable.
+
+### [ ] Recruitable NPC Uses Map Sprite As Party Image
+
+- Find an `NpcPartyMember` object with a visible sprite from a Tiled tileset.
+- Recruit that NPC.
+- Expected: the recruited hero's portrait and follower/map visual use the same sprite referenced by the map object's `gid`, not a class/gender-derived hero-sheet image.
+- Save and reload after recruiting.
+- Expected: the recruited hero keeps the same map-derived image.
+- Move the recruit between active and reserve party slots if the party UI is available.
+- Expected: the same image follows the hero in portraits and follower visuals when active.
+- Walk with the recruited hero visible as leader or follower.
+- Expected: the recruited hero sprite stays aligned to the same tile baseline as normal hero-sheet party sprites and does not appear shifted down while walking.
 
 ### [ ] In-Game Save Modal Flow
 

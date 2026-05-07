@@ -12,6 +12,7 @@
 - Implemented chests, hidden items, opened doors, removed objects, object persistence, and save/load behavior.
 - Implemented quest/dialog item give/take/progression paths for known starter quests.
 - Implemented party creation, starter equipment, recruitment, followers, cart visual, coffin visual, party animations.
+- Implemented persisted hero sprite selection independent from class/gender, including New Quest image selection and map-gid-based recruit sprites.
 - Implemented party, inventory, quest, settings, save, store, healer, title/load UI.
 - Implemented configurable UI scale/style and gamepad/keyboard input rebinding.
 - Implemented `Outside`, `Return`, `Wings`, and `Open` map-mode behavior.
@@ -26,7 +27,7 @@
 ## In Progress
 
 - UI migration polish.
-- Persistence/title/create-player polish.
+- Persistence/title/create-player polish, including manual verification of the latest independent hero image selection work.
 - Unity project cleanup.
 - Build/test automation expansion.
 

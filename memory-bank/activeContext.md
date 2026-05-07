@@ -14,6 +14,9 @@ The migration is past the first playable Unity map-mode loop. Recent work focuse
 - Splash/title UI draws on a black backdrop so the map is not visible until gameplay starts.
 - Hidden `SkipSplashAndLoadQuickSave` can be enabled in the settings file for fast Play Mode testing.
 - Title flow now includes create-player, variable manual-save load/delete, hidden Continue/Load Quest buttons when unavailable, and in-game return-to-main-menu/quit actions.
+- New Quest create-player now lets the player choose a hero-sheet image independently from class and gender.
+- Hero save data now persists explicit sprite selection fields. UI portraits, player map sprite, and party followers resolve from that stored sprite data.
+- Recruited `NpcPartyMember` heroes copy their sprite from the map object's referenced Tiled sprite `gid`, storing the resolved tileset path and local tile id.
 
 ## Important Current Constraint
 
@@ -30,6 +33,7 @@ The old MonoGame/Nez project was removed from this branch. Use `main` if old imp
 - `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/GameMenu.cs`
 - `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/GameState.cs`
 - `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/PlayerGridController.cs`
+- `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/Rendering/HeroSpriteResolver.cs`
 - `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/TitleMenu.cs`
 - `DungeonEscape.sln`
 - `memory-bank/MANUAL_TESTS.md`
@@ -43,6 +47,11 @@ Recent checks passed:
 - `dotnet build DungeonEscape.sln`
 - `dotnet test DungeonEscape.sln --no-restore`
 - `git diff --check`
+
+Latest local verification for hero sprite selection/recruit sprite work:
+
+- `dotnet test DungeonEscape.sln`
+- Unity batch validation was blocked because another Unity editor instance already had `DungeonEscape.Unity` open.
 
 Unity map metadata validation showed:
 

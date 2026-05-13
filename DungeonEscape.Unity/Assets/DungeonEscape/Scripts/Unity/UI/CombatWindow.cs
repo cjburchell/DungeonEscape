@@ -104,12 +104,33 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private float revealCharacterAccumulator;
         private Vector2 messageScrollPosition;
         private int repeatingMenuMoveY;
+        private int repeatingMenuMoveX;
         private float nextMenuMoveYTime;
+        private float nextMenuMoveXTime;
         private int acceptMenuInteractAfterFrame;
         private bool waitForMenuInteractRelease;
         private int round;
+        private static CombatWindow currentWindow;
 
         public static bool IsOpen { get; private set; }
+
+        public static bool IsPartyTargetCandidate(Hero hero)
+        {
+            return currentWindow != null && currentWindow.IsCurrentTargetCandidate(hero);
+        }
+
+        public static bool IsPartyTargetSelected(Hero hero)
+        {
+            return currentWindow != null && ReferenceEquals(currentWindow.GetSelectedTarget(), hero);
+        }
+
+        public static void SelectPartyTarget(Hero hero)
+        {
+            if (currentWindow != null)
+            {
+                currentWindow.SelectTarget(hero);
+            }
+        }
 
         public static bool IsFighterFlashing(string fighterName)
         {
@@ -202,6 +223,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             window.round = 0;
             window.selectedMenuIndex = 0;
             window.actingHero = null;
+            currentWindow = window;
             window.ShowMessage(window.GetEncounterMessage(), window.BeginRound);
             IsOpen = window.monsters.Count > 0;
             GameState.AutoSaveBlocked = IsOpen;
@@ -211,6 +233,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private static void ResetStaticState()
         {
             IsOpen = false;
+            currentWindow = null;
         }
 
         private void Update()
@@ -245,6 +268,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 MoveSelection(moveY);
             }
+            else if (state == CombatState.ChooseTarget)
+            {
+                var moveX = GetCombatMenuMoveX();
+                if (moveX != 0)
+                {
+                    MoveSelection(moveX);
+                }
+            }
 
             if (CanAcceptMenuInteract() && InputManager.GetCommandDown(InputCommand.Interact))
             {
@@ -258,6 +289,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 IsOpen = false;
                 GameState.AutoSaveBlocked = false;
+            }
+
+            if (ReferenceEquals(currentWindow, this))
+            {
+                currentWindow = null;
             }
         }
 
@@ -313,6 +349,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var totalWidth = encounterMonsters.Count * slotWidth + Math.Max(0, encounterMonsters.Count - 1) * gap;
             var startX = battlefield.x + (battlefield.width - totalWidth) / 2f;
             var y = battlefield.y + battlefield.height * 0.56f;
+            var selectedTarget = GetSelectedTarget();
             for (var i = 0; i < encounterMonsters.Count; i++)
             {
                 var monster = encounterMonsters[i];
@@ -329,6 +366,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
                 var texture = LoadMonsterTexture(monster.Data);
                 var slotRect = new Rect(startX + i * (slotWidth + gap), y, slotWidth, slotHeight);
+                var targetRect = new Rect(slotRect.x, slotRect.y, slotRect.width, slotRect.height + 28f * scale);
+                var selectable = IsCurrentTargetCandidate(monster.Instance);
+                var selected = ReferenceEquals(monster.Instance, selectedTarget);
+                if (selectable && GUI.Button(targetRect, GUIContent.none, GUIStyle.none))
+                {
+                    SelectTarget(monster.Instance);
+                }
+
                 if (texture != null)
                 {
                     var previousColor = GUI.color;
@@ -345,10 +390,25 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     GUI.color = previousColor;
                 }
 
+                if (state == CombatState.ChooseTarget && selectable)
+                {
+                    var nameStyle = new GUIStyle(GetTargetButtonStyle(monster.Instance, selected))
+                    {
+                        alignment = TextAnchor.MiddleCenter,
+                        wordWrap = false
+                    };
+                    GUI.Label(new Rect(slotRect.x, slotRect.y - 24f * scale, slotRect.width, 22f * scale), monster.Instance.Name, nameStyle);
+                }
+
                 DrawHealthBar(
                     monster.Instance.Health,
                     monster.Instance.MaxHealth,
                     new Rect(slotRect.x + 8f * scale, slotRect.yMax + 10f * scale, slotRect.width - 16f * scale, 14f * scale));
+
+                if (selected)
+                {
+                    DrawSelectionBorder(targetRect, scale);
+                }
             }
         }
 
@@ -379,7 +439,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (state == CombatState.ChooseTarget)
             {
-                DrawTargetButtons(panelRect, scale);
+                DrawTargetSelectionFooter(panelRect, scale);
                 return;
             }
 
@@ -579,11 +639,29 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             var previousIndex = selectedMenuIndex;
-            selectedMenuIndex = Mathf.Clamp(selectedMenuIndex + (moveY > 0 ? 1 : -1), 0, count - 1);
+            var nextIndex = selectedMenuIndex + (moveY > 0 ? 1 : -1);
+            selectedMenuIndex = IsMonsterTargetSelection()
+                ? WrapIndex(nextIndex, count)
+                : Mathf.Clamp(nextIndex, 0, count - 1);
             if (selectedMenuIndex != previousIndex)
             {
                 UiControls.PlaySelectSound();
             }
+        }
+
+        private static int WrapIndex(int index, int count)
+        {
+            if (count <= 0)
+            {
+                return 0;
+            }
+
+            if (index < 0)
+            {
+                return count - 1;
+            }
+
+            return index >= count ? 0 : index;
         }
 
         private int GetCurrentSelectionCount()
@@ -2090,58 +2168,77 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
         }
 
-        private void DrawTargetButtons(Rect panelRect, float scale)
+        private void DrawTargetSelectionFooter(Rect panelRect, float scale)
         {
-            var targets = targetSelectionCandidates == null
-                ? new List<IFighter>()
-                : targetSelectionCandidates.ToList();
-            var rowHeight = GetCombatMenuRowHeight(scale);
-            var listWidth = GetCombatMenuWidth(panelRect, scale);
-            var x = panelRect.x + 14f * scale;
-            var y = GetCombatMenuY(panelRect, scale);
-
-            for (var i = 0; i < targets.Count; i++)
+            if (!string.IsNullOrEmpty(targetSelectionTitle))
             {
-                var target = targets[i];
-                var rect = new Rect(x, y + i * (rowHeight + 4f * scale), listWidth, rowHeight);
-                var selected = i == selectedMenuIndex;
-                if (GUI.Button(rect, GUIContent.none, GetCombatRowStyle(selected)))
-                {
-                    UiControls.PlayConfirmSound();
-                    selectedMenuIndex = i;
-                    ActivateTargetSelection(i);
-                }
-
-                DrawTargetButtonContent(rect, target, selected, scale);
+                GUI.Label(
+                    new Rect(panelRect.x + 14f * scale, panelRect.y + 10f * scale, panelRect.width - 28f * scale, 26f * scale),
+                    targetSelectionTitle,
+                    titleStyle);
             }
+
         }
 
-        private void DrawTargetButtonContent(Rect rect, IFighter target, bool selected, float scale)
+        private void DrawSelectionBorder(Rect rect, float scale)
         {
-            var contentRect = new Rect(rect.x + 8f * scale, rect.y, rect.width - 16f * scale, rect.height);
-            var hero = target as Hero;
-            if (hero != null)
-            {
-                Sprite sprite;
-                if (UiAssetResolver.TryGetHeroSprite(hero, out sprite))
-                {
-                    DrawSprite(sprite, new Rect(contentRect.x, contentRect.y + 2f * scale, 32f * scale, rect.height - 4f * scale));
-                }
+            var previousColor = GUI.color;
+            GUI.color = uiTheme == null ? Color.yellow : uiTheme.HighlightColor;
+            var thickness = uiTheme == null ? Mathf.Max(1f, scale) : Mathf.Max(1f, uiTheme.BorderThickness);
+            GUI.DrawTexture(new Rect(rect.x, rect.y, rect.width, thickness), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(rect.x, rect.yMax - thickness, rect.width, thickness), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(rect.x, rect.y, thickness, rect.height), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(rect.xMax - thickness, rect.y, thickness, rect.height), Texture2D.whiteTexture);
+            GUI.color = previousColor;
+        }
 
-                contentRect.x += 38f * scale;
-                contentRect.width -= 38f * scale;
+        private IFighter GetSelectedTarget()
+        {
+            return targetSelectionCandidates != null &&
+                   selectedMenuIndex >= 0 &&
+                   selectedMenuIndex < targetSelectionCandidates.Count
+                ? targetSelectionCandidates[selectedMenuIndex]
+                : null;
+        }
+
+        private bool IsCurrentTargetCandidate(IFighter fighter)
+        {
+            return fighter != null &&
+                   state == CombatState.ChooseTarget &&
+                   targetSelectionCandidates != null &&
+                   targetSelectionCandidates.Any(target => ReferenceEquals(target, fighter));
+        }
+
+        private bool IsPartyTargetSelection()
+        {
+            return state == CombatState.ChooseTarget &&
+                   targetSelectionCandidates != null &&
+                   targetSelectionCandidates.Any(target => target is Hero);
+        }
+
+        private bool IsMonsterTargetSelection()
+        {
+            return state == CombatState.ChooseTarget &&
+                   targetSelectionCandidates != null &&
+                   targetSelectionCandidates.Any(target => target is MonsterInstance);
+        }
+
+        private void SelectTarget(IFighter target)
+        {
+            if (targetSelectionCandidates == null || target == null)
+            {
+                return;
             }
 
-            var style = new GUIStyle(GetTargetButtonStyle(target, selected))
+            var index = targetSelectionCandidates.FindIndex(candidate => ReferenceEquals(candidate, target));
+            if (index < 0)
             {
-                alignment = TextAnchor.MiddleLeft,
-                normal = { background = null },
-                hover = { background = null },
-                active = { background = null },
-                focused = { background = null },
-                border = new RectOffset()
-            };
-            GUI.Label(contentRect, target == null ? string.Empty : target.Name, style);
+                return;
+            }
+
+            UiControls.PlayConfirmSound();
+            selectedMenuIndex = index;
+            ActivateTargetSelection(index);
         }
 
         private void ActivateTargetSelection(int index)
@@ -2173,6 +2270,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             ClearRoundStatusEffects();
             IsOpen = false;
             GameState.AutoSaveBlocked = false;
+            if (ReferenceEquals(currentWindow, this))
+            {
+                currentWindow = null;
+            }
+
             if (restoreMapMusic)
             {
                 var currentBiome = gameState == null || gameState.Party == null ? biome : gameState.Party.CurrentBiome;
@@ -2260,6 +2362,37 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             repeatingMenuMoveY = 0;
             nextMenuMoveYTime = 0f;
+        }
+
+        private int GetCombatMenuMoveX()
+        {
+            var held = InputManager.GetUiMoveXWithRightStick();
+            if (held == 0)
+            {
+                ResetMenuMoveXRepeat();
+                return 0;
+            }
+
+            if (held != repeatingMenuMoveX)
+            {
+                repeatingMenuMoveX = held;
+                nextMenuMoveXTime = Time.unscaledTime + InitialNavigationRepeatDelay;
+                return held;
+            }
+
+            if (Time.unscaledTime < nextMenuMoveXTime)
+            {
+                return 0;
+            }
+
+            nextMenuMoveXTime = Time.unscaledTime + NavigationRepeatDelay;
+            return held;
+        }
+
+        private void ResetMenuMoveXRepeat()
+        {
+            repeatingMenuMoveX = 0;
+            nextMenuMoveXTime = 0f;
         }
 
         private void BlockMenuInteractUntilRelease()

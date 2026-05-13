@@ -324,11 +324,11 @@ Status legend:
 
 ### [ ] Standard UI Selection And Confirm Sounds
 
-- Open the title menu, new quest screen, load quest screen, in-game menu, store window, dialog choices, and combat action/target lists.
+- Open the title menu, new quest screen, load quest screen, in-game menu, store window, dialog choices, combat action lists, and combat target selectors.
 - Move selection with keyboard arrows, WASD, D-pad, and stick where each UI supports it.
 - Expected: changing the highlighted row/tab plays `select.wav` once per selection step.
 - Press Interact, Enter, a gamepad confirm button, or click a button with the mouse.
-- Expected: activating a button, choice, tab, checkbox, dialog OK, or combat action plays `confirm.wav`.
+- Expected: activating a button, choice, tab, checkbox, dialog OK, combat action, or combat target plays `confirm.wav`.
 - Hold a direction in a menu with repeated navigation.
 - Expected: select sounds follow the repeated selection changes and do not spam while the selected row is pinned at the first or last item.
 
@@ -826,9 +826,10 @@ Status legend:
 - Expected: combat rolls monster stats, queues monster actions, then asks every living active party member to choose an action before resolving the round.
 - Choose Fight.
 - If more than one monster is alive, choose a monster target.
-- Expected: target choices appear in a vertical black list with a white border and a gray highlighted row.
-- Use keyboard, D-pad, and right stick up/down while choosing actions, spells, items, and targets.
-- Expected: the highlighted row moves one row at a time, does not skip rows on D-pad presses, and Interact confirms the highlighted row.
+- Expected: enemy targets are selected from the displayed monster sprites instead of a separate target list.
+- Expected: the selected monster shows a highlight border, and clicking a monster confirms that target.
+- Use keyboard, D-pad, right stick up/down, and left/right while choosing actions, spells, items, and targets.
+- Expected: the highlighted target/action moves one entry at a time, does not skip entries on D-pad presses, monster target selection wraps from either end, and Interact confirms the highlighted entry.
 - Damage a monster below half health and below ten percent health if practical.
 - Expected: monster target text keeps the existing health threshold colors, and monster health bar fill is green above 50%, yellow below 50%, orange below 10%, and red at 0 HP, while the progress bar border stays white.
 - Damage an active party member below the same thresholds if practical.
@@ -901,8 +902,8 @@ Status legend:
 - Expected: Spell appears only when the hero has an encounter spell, enough MP, and is not affected by StopSpell.
 - Expected: known encounter skills are shown as action rows.
 - Expected: Item appears only when the hero has at least one usable combat item with charges.
-- Use keyboard or gamepad up/down and Interact/Cancel across the action, spell, item, and target lists.
-- Expected: the selected row is highlighted, Interact activates the selected row, and Cancel returns from sub-lists to the action menu.
+- Use keyboard or gamepad up/down and Interact/Cancel across the action, spell, item, and target selectors.
+- Expected: the selected row or target is highlighted, Interact activates it, and Cancel returns from sub-lists to the action menu.
 
 ### [x] Combat Spell And Item Icons
 
@@ -926,8 +927,8 @@ Status legend:
 - Expected: MP is deducted, the shared spell effect runs, damage/status text is shown, and monster HP updates.
 - Trigger combat with a hero that has a non-attack encounter spell or skill such as Heal, Revive, Clear, Buff, or a similar skill.
 - Choose the spell or skill.
-- Expected: party-member targets are offered when needed, dead members are valid targets only for revive effects, and the party status window updates after the effect.
-- Expected: non-revive spells and skills do not show dead party members in the target list.
+- Expected: party-member targets are selected from the always-visible party status window when needed, the selected member has a highlight border, dead members are valid targets only for revive effects, and the party status window updates after the effect.
+- Expected: non-revive spells and skills do not offer dead party members as selectable targets.
 - Use a combat item with an encounter skill.
 - Expected: the item effect runs, charges update, and one-use or depleted items are removed when consumed.
 - Use an attack-style skill with `DoAttack` or `SkillType.Attack` if a party member or monster has one.

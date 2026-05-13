@@ -217,7 +217,7 @@ Status: Done
 - Done: Combat layout shows full-screen aspect-preserved biome backgrounds with a bottom message box.
 - Done: Gold window is hidden during combat, and the party status window remains visible during combat.
 - Done: Autosave is blocked while combat is open.
-- Done: Current combat UI pass supports encounter message, old-style action menu, spell/item icon lists, target buttons, HP bars, and round messages.
+- Done: Current combat UI pass supports encounter message, old-style action menu, spell/item icon lists, direct monster-sprite enemy target selection, party-status-window target selection, HP bars, and round messages.
 - Done: Combat round flow now matches the old game model: monster actions and all living hero actions are chosen first, then queued actions resolve in agility order.
 - Done: Combat rewards award XP, gold, monster item drops, rare chest-style drops, and level-up messages on victory.
 - Done: Skills in combat can run encounter skills through shared core `Skill.Do`.
@@ -234,3 +234,4 @@ Status: Done
 - Done: Combat audio flows through the existing `Audio` service, so Music Volume and Sound Effects Volume apply to combat.
 - Done: Monster encounters can be enabled/disabled from Settings > Debug through the existing `NoMonsters` setting.
 - Done: Combat UI polish pass after the combat rules settled.
+- Done: Combat target selection now uses the rendered combat battlefield/status UI instead of opening a separate target list for monsters or party members.

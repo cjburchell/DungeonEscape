@@ -16,6 +16,7 @@
 - Implemented party, inventory, quest, settings, save, store, healer, title/load UI.
 - Implemented configurable UI scale/style and gamepad/keyboard input rebinding.
 - Implemented `Outside`, `Return`, `Wings`, and `Open` map-mode behavior.
+- Implemented combat target selection through displayed monster sprites for enemy targets and the always-visible party status window for party targets.
 - Recreated the old splash screen in Unity and hid the map behind a black startup/title backdrop.
 - Added hidden fast-start setting to skip splash/title and load the quick save for testing.
 - Added title New Quest create-player flow with random names/dropdowns/portrait/stats/re-roll, variable manual-save load/delete, and in-game Main Menu/Quit actions.

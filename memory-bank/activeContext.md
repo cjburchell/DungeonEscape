@@ -17,6 +17,7 @@ The migration is past the first playable Unity map-mode loop. Recent work focuse
 - New Quest create-player now lets the player choose a hero-sheet image independently from class and gender.
 - Hero save data now persists explicit sprite selection fields. UI portraits, player map sprite, and party followers resolve from that stored sprite data.
 - Recruited `NpcPartyMember` heroes copy their sprite from the map object's referenced Tiled sprite `gid`, storing the resolved tileset path and local tile id.
+- Combat target selection no longer opens a separate target list. Enemy targets are selected directly from the displayed monster sprites, while party targets are selected directly from the always-visible party status window with a highlight around the selected member. Keyboard/gamepad target selection still highlights and confirms the current target.
 
 ## Important Current Constraint
 
@@ -35,6 +36,7 @@ The old MonoGame/Nez project was removed from this branch. Use `main` if old imp
 - `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/PlayerGridController.cs`
 - `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/Rendering/HeroSpriteResolver.cs`
 - `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/TitleMenu.cs`
+- `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/UI/CombatWindow.cs`
 - `DungeonEscape.sln`
 - `memory-bank/MANUAL_TESTS.md`
 - `memory-bank/UNITY_MIGRATION.md`
@@ -52,6 +54,11 @@ Latest local verification for hero sprite selection/recruit sprite work:
 
 - `dotnet test DungeonEscape.sln`
 - Unity batch validation was blocked because another Unity editor instance already had `DungeonEscape.Unity` open.
+
+Latest local verification for combat target UI work:
+
+- `dotnet build DungeonEscape.sln`
+- `dotnet test DungeonEscape.sln --no-build`
 
 Unity map metadata validation showed:
 

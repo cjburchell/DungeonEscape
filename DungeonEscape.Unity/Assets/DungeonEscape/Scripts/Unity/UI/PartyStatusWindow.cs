@@ -85,16 +85,28 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.BeginHorizontal();
             for (var i = 0; i < members.Count; i++)
             {
-                DrawMember(members[i], portraitWidth, portraitHeight, statusWidth, scale);
+                DrawMember(
+                    members[i],
+                    new Rect(i * memberWidth, 0f, memberWidth, windowRect.height - 8f * scale),
+                    portraitWidth,
+                    portraitHeight,
+                    statusWidth,
+                    scale);
             }
 
             GUILayout.EndHorizontal();
             GUILayout.EndArea();
         }
 
-        private void DrawMember(Hero member, float portraitWidth, float portraitHeight, float statusWidth, float scale)
+        private void DrawMember(Hero member, Rect memberRect, float portraitWidth, float portraitHeight, float statusWidth, float scale)
         {
-            GUILayout.BeginHorizontal(GUILayout.Width(portraitWidth + statusWidth + 15f * scale));
+            var selectable = CombatWindow.IsPartyTargetCandidate(member);
+            if (selectable && GUI.Button(memberRect, GUIContent.none, GUIStyle.none))
+            {
+                CombatWindow.SelectPartyTarget(member);
+            }
+
+            GUILayout.BeginHorizontal(GUILayout.Width(memberRect.width));
 
             Sprite sprite;
             var spriteRect = GUILayoutUtility.GetRect(
@@ -137,6 +149,23 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();
+
+            if (selectable && CombatWindow.IsPartyTargetSelected(member))
+            {
+                DrawSelectionBorder(memberRect, scale);
+            }
+        }
+
+        private void DrawSelectionBorder(Rect rect, float scale)
+        {
+            var previousColor = GUI.color;
+            GUI.color = uiTheme == null ? Color.yellow : uiTheme.HighlightColor;
+            var thickness = uiTheme == null ? Mathf.Max(1f, scale) : Mathf.Max(1f, uiTheme.BorderThickness);
+            GUI.DrawTexture(new Rect(rect.x, rect.y, rect.width, thickness), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(rect.x, rect.yMax - thickness, rect.width, thickness), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(rect.x, rect.y, thickness, rect.height), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(rect.xMax - thickness, rect.y, thickness, rect.height), Texture2D.whiteTexture);
+            GUI.color = previousColor;
         }
 
         private void DrawSplitLabel(string label, string value, GUIStyle style, float width, float scale)

@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Tools;
 using Redpoint.DungeonEscape.ViewModels;
@@ -424,7 +423,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 ? new List<GameSave>()
                 : gameState.GetManualSaveSlots().ToList();
 
-            selectedIndex = Mathf.Clamp(selectedIndex, 0, GetLoadBackIndex(slots.Count));
+            viewModel.ClampLoadSelection(slots.Count);
             var width = Mathf.Min(640f * scale, Screen.width - 32f * scale);
             var height = 330f * scale;
             var titleHeight = 44f * scale;
@@ -472,7 +471,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.EndArea();
 
             var backRect = new Rect((Screen.width - backWidth) / 2f, area.yMax + backGap, backWidth, backHeight);
-            if (UiControls.Button(backRect, "Back", selectedIndex == GetLoadBackIndex(slots.Count) ? selectedMainMenuButtonStyle : mainMenuButtonStyle) &&
+            if (UiControls.Button(backRect, "Back", viewModel.IsLoadBackSelected(slots.Count) ? selectedMainMenuButtonStyle : mainMenuButtonStyle) &&
                 !waitingForConfirmRelease)
             {
                 ShowMainMenu();
@@ -481,27 +480,28 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawLoadSlotButtons(IList<GameSave> slots, float scale)
         {
-            for (var i = 0; i < slots.Count; i++)
+            var rows = viewModel.GetLoadSlotRows(slots);
+            for (var i = 0; i < rows.Count; i++)
             {
+                var row = rows[i];
                 GUILayout.BeginHorizontal();
                 if (UiControls.Button(
-                    GameSaveFormatter.GetTitle(slots[i]) + "\n" +
-                    GameSaveFormatter.GetSummary(slots[i]),
-                    selectedIndex == GetLoadSaveIndex(i),
+                    row.ButtonText,
+                    selectedIndex == row.LoadIndex,
                     uiTheme,
                     GUILayout.Height(48f * scale),
                     GUILayout.Width(500f * scale)) &&
                     !waitingForConfirmRelease)
                 {
-                    selectedIndex = GetLoadSaveIndex(i);
-                    TryLoadSlot(i);
+                    selectedIndex = row.LoadIndex;
+                    TryLoadSlot(row.SlotIndex);
                 }
 
-                if (UiControls.Button("Delete", selectedIndex == GetLoadDeleteIndex(i), uiTheme, GUILayout.Height(48f * scale), GUILayout.Width(92f * scale)) &&
+                if (UiControls.Button("Delete", selectedIndex == row.DeleteIndex, uiTheme, GUILayout.Height(48f * scale), GUILayout.Width(92f * scale)) &&
                     !waitingForConfirmRelease)
                 {
-                    selectedIndex = GetLoadDeleteIndex(i);
-                    DeleteSlot(i);
+                    selectedIndex = row.DeleteIndex;
+                    DeleteSlot(row.SlotIndex);
                 }
 
                 GUILayout.EndHorizontal();
@@ -1379,7 +1379,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             if (gameState != null)
             {
                 gameState.DeleteManual(slotIndex);
-                selectedIndex = Mathf.Clamp(selectedIndex, 0, GetOptionCount() - 1);
+                viewModel.ClampLoadSelection(gameState.GetManualSaveSlots().Count);
             }
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 
 namespace Redpoint.DungeonEscape.ViewModels
@@ -197,6 +198,43 @@ namespace Redpoint.DungeonEscape.ViewModels
 
             var saveIndex = SelectedIndex / 2;
             return moveX > 0 ? GetLoadDeleteIndex(saveIndex) : GetLoadSaveIndex(saveIndex);
+        }
+
+        public int ClampLoadSelection(int saveCount)
+        {
+            SelectedIndex = Clamp(SelectedIndex, 0, GetLoadBackIndex(Math.Max(0, saveCount)));
+            return SelectedIndex;
+        }
+
+        public List<TitleLoadSlotRow> GetLoadSlotRows(IList<GameSave> slots)
+        {
+            var rows = new List<TitleLoadSlotRow>();
+            if (slots == null)
+            {
+                return rows;
+            }
+
+            for (var i = 0; i < slots.Count; i++)
+            {
+                var title = GameSaveFormatter.GetTitle(slots[i]);
+                var summary = GameSaveFormatter.GetSummary(slots[i]);
+                rows.Add(new TitleLoadSlotRow
+                {
+                    SlotIndex = i,
+                    LoadIndex = GetLoadSaveIndex(i),
+                    DeleteIndex = GetLoadDeleteIndex(i),
+                    Title = title,
+                    Summary = summary,
+                    ButtonText = title + "\n" + summary
+                });
+            }
+
+            return rows;
+        }
+
+        public bool IsLoadBackSelected(int saveCount)
+        {
+            return SelectedIndex == GetLoadBackIndex(Math.Max(0, saveCount));
         }
 
         public bool CanCycleCreateSelection()

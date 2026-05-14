@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Collections.Generic;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.ViewModels;
 using Xunit;
@@ -88,6 +89,47 @@ namespace DungeonEscape.Core.Test.ViewModels
             viewModel.SetSelectedDropdownIndex(99);
 
             Assert.Equal(2, viewModel.ClampDropdownIndex(3));
+        }
+
+        [Fact]
+        public void LoadSlotRowsContainDisplayTextAndLoadDeleteIndexes()
+        {
+            var viewModel = new TitleViewModel();
+            var slots = new List<GameSave>
+            {
+                new GameSave
+                {
+                    Time = new System.DateTime(2026, 5, 14, 12, 0, 0),
+                    Party = new Party
+                    {
+                        PlayerName = "Quest One",
+                        CurrentMapId = "StartTown",
+                        CurrentPosition = WorldPosition.Zero,
+                        Gold = 42,
+                        StepCount = 7
+                    }
+                }
+            };
+            slots[0].Party.Members.Add(new Hero { Name = "Able", IsActive = true, Level = 3, Health = 10, MaxHealth = 10 });
+
+            var row = Assert.Single(viewModel.GetLoadSlotRows(slots));
+
+            Assert.Equal(0, row.SlotIndex);
+            Assert.Equal(TitleViewModel.GetLoadSaveIndex(0), row.LoadIndex);
+            Assert.Equal(TitleViewModel.GetLoadDeleteIndex(0), row.DeleteIndex);
+            Assert.Equal("Quest One", row.Title);
+            Assert.Contains("Level 3", row.Summary);
+            Assert.Equal(row.Title + "\n" + row.Summary, row.ButtonText);
+        }
+
+        [Fact]
+        public void ClampLoadSelectionUsesBackRowAsMaximum()
+        {
+            var viewModel = new TitleViewModel();
+            viewModel.SetSelectedIndex(99);
+
+            Assert.Equal(TitleViewModel.GetLoadBackIndex(2), viewModel.ClampLoadSelection(2));
+            Assert.True(viewModel.IsLoadBackSelected(2));
         }
     }
 }

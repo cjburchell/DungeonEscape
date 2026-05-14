@@ -85,7 +85,7 @@ Goal: reduce the size and coupling of Unity UI classes by separating drawing/lay
 - Added a plain C# `HealerViewModel` under `Redpoint.DungeonEscape.ViewModels` for healer metadata, service list construction, target filtering, costs, and selected service/target state.
 - Added unit tests for `HealerViewModel`.
 - `HealerWindow` still owns IMGUI drawing, Unity input repeat timing, sounds, and direct game command execution.
-- Added a plain C# `TitleViewModel` under `Redpoint.DungeonEscape.ViewModels` for title mode, main-row availability, create-player choices, load/create navigation, dropdown indexes, and blocked create-image selection.
+- Added a plain C# `TitleViewModel` under `Redpoint.DungeonEscape.ViewModels` for title mode, main-row availability, create-player choices, load/create navigation, dropdown indexes, blocked create-image selection, load-slot display rows, and load selection clamping.
 - Added unit tests for `TitleViewModel`.
 - `TitleMenu` still owns IMGUI drawing, background textures, audio, save/load/delete execution, random name generation, and Unity app quit/close behavior.
 - Added a plain C# `GameMenuViewModel` under `Redpoint.DungeonEscape.ViewModels` for menu screen/focus/tab state, selected indexes, row/detail clamping, page-based detail selection, main action availability, member ordering/filtering, settings/save/load row counts, detail counts, equipment slots, equipped item lookup, and equipment candidate selection.
@@ -117,8 +117,7 @@ Goal: reduce the size and coupling of Unity UI classes by separating drawing/lay
 - `StoreWindow` and `HealerWindow`:
   - Done for current scope: Split available actions, prices, recipient choices, service choices, and target choices from drawing code.
 - `TitleMenu`:
-  - In progress: Split create-player state and navigation state from drawing code.
-  - Continue splitting save-slot display data from drawing code.
+  - Done for current scope: Split create-player state, navigation state, and save-slot display data from drawing code.
 
 ### Suggested Steps
 

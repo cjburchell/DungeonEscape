@@ -219,7 +219,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 GUILayout.Space(32f * GetPixelScale());
             }
 
-            GUILayout.Label(viewModel.ModalChoices[index], GetMenuListLabelStyle(selected), GUILayout.Height(height));
+            GUILayout.Label(viewModel.GetModalChoiceLabel(index), GetMenuListLabelStyle(selected), GUILayout.Height(height));
             GUILayout.EndHorizontal();
             SelectMenuModalChoiceOnMouseClick(index);
         }

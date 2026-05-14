@@ -657,6 +657,13 @@ namespace Redpoint.DungeonEscape.ViewModels
                 : null;
         }
 
+        public string GetModalChoiceLabel(int index)
+        {
+            return ModalChoices != null && index >= 0 && index < ModalChoices.Count
+                ? ModalChoices[index]
+                : string.Empty;
+        }
+
         public int GetSaveSelectableRowCount(int manualSaveSlotCount)
         {
             return Math.Max(0, manualSaveSlotCount);

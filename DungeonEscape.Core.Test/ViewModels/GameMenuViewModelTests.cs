@@ -261,6 +261,8 @@ namespace DungeonEscape.Core.Test.ViewModels
             Assert.Equal("Title", viewModel.ModalTitle);
             Assert.Equal("Message", viewModel.ModalMessage);
             Assert.Equal(new[] { "Yes", "No" }, viewModel.ModalChoices);
+            Assert.Equal("Yes", viewModel.GetModalChoiceLabel(0));
+            Assert.Equal(string.Empty, viewModel.GetModalChoiceLabel(99));
             Assert.Same(hero, viewModel.GetModalChoiceHero(0));
             Assert.True(viewModel.ModalWaitingForConfirmRelease);
 

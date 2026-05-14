@@ -19,13 +19,3 @@ This file tracks bugs and rough edges to investigate later. Items are not triage
 ## Stores
 
 - Stores should keep a couple common items always in stock.
-
-## Exceptions
-
-- Intermittent `NullReferenceException` when using an item:
-
-```text
-NullReferenceException: Object reference not set to an instance of an object
-Redpoint.DungeonEscape.Unity.UI.GameMenu.DrawMenuModalOverlay () (at Assets/DungeonEscape/Scripts/Unity/UI/GameMenu.Modals.cs:158)
-Redpoint.DungeonEscape.Unity.UI.GameMenu.OnGUI () (at Assets/DungeonEscape/Scripts/Unity/UI/GameMenu.cs:280)
-```

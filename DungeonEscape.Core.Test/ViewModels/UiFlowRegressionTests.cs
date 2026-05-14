@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Redpoint.DungeonEscape;
+using Redpoint.DungeonEscape.Data;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.ViewModels;
 using Xunit;
@@ -33,22 +33,23 @@ namespace DungeonEscape.Core.Test.ViewModels
             var vm = new GameMenuViewModel();
             var hero = new Hero { Name = "Hero", IsActive = true, Health = 10, MaxHealth = 10, Magic = 10, MaxMagic = 10 };
 
-            var potion = new ItemInstance
+            var potion = new ItemInstance(new Item
             {
                 Name = "Potion",
                 Type = ItemType.OneUse,
-                Slot = Slot.PrimaryHand,
-                Item = new Data.Item { Target = Target.Single }
-            };
+                Slots = new List<Slot> { Slot.PrimaryHand },
+                Target = Target.Single
+            });
             hero.Items.Add(potion);
 
-            var wings = new ItemInstance
+            var wings = new ItemInstance(new Item
             {
                 Name = "Wings",
                 Type = ItemType.OneUse,
-                Slot = Slot.PrimaryHand,
-                Item = new Data.Item { SkillType = SkillType.Outside, Target = Target.None }
-            };
+                Slots = new List<Slot> { Slot.PrimaryHand },
+                Skill = new Skill { Type = SkillType.Outside },
+                Target = Target.None
+            });
 
             Assert.Equal(GameMenuUseAction.Single, vm.GetUseItemAction(potion));
             Assert.Equal(GameMenuUseAction.Outside, vm.GetUseItemAction(wings));
@@ -60,34 +61,34 @@ namespace DungeonEscape.Core.Test.ViewModels
         public void CombatFlow_ActionAndTargetSelectionStayInRange()
         {
             var vm = new CombatViewModel();
-            vm.SetMenuIndex(0);
-            vm.SetActionIndex(0);
-            vm.MoveActionIndex(1, 3);
-            Assert.Equal(1, vm.ActionIndex);
+            vm.SetSelectedMenuIndex(0);
+            vm.MoveSelection(1, 3, false);
+            Assert.Equal(1, vm.SelectedMenuIndex);
 
-            vm.SetTargetIndex(0);
-            vm.MoveTargetIndex(1, 2);
-            Assert.Equal(1, vm.TargetIndex);
-            vm.MoveTargetIndex(1, 2);
-            Assert.Equal(1, vm.TargetIndex);
+            vm.SetSelectedMenuIndex(0);
+            vm.MoveSelection(1, 2, false);
+            Assert.Equal(1, vm.SelectedMenuIndex);
+            vm.MoveSelection(1, 2, false);
+            Assert.Equal(1, vm.SelectedMenuIndex);
         }
 
         [Fact]
         public void StoreAndHealerFlows_ClampSelectionAndPreserveValidRows()
         {
             var storeVm = new StoreViewModel();
-            storeVm.SetSelectedTab(StoreTab.Buy);
-            storeVm.SetSelectedIndex(999);
-            Assert.Equal(1, storeVm.ClampSelectedTab());
-            Assert.True(storeVm.ClampSelectedIndex(4) <= 3);
+            storeVm.SetCurrentTab(StoreTab.Buy, true);
+            storeVm.SetSelectedBuyIndex(999);
+            storeVm.ClampBuySelection(new List<Item> { new Item(), new Item(), new Item(), new Item() });
+            Assert.Equal(StoreTab.Buy, storeVm.CurrentTab);
+            Assert.Equal(3, storeVm.SelectedBuyIndex);
 
             var healerVm = new HealerViewModel();
-            healerVm.SetSelectedIndex(10);
             healerVm.SetSelectedServiceIndex(5);
-            healerVm.ClampSelectedIndex(2);
-            healerVm.ClampSelectedServiceIndex(2);
-            Assert.Equal(1, healerVm.SelectedIndex);
+            healerVm.SetSelectedTargetIndex(5);
+            healerVm.ClampServiceSelection(new List<HealerServiceRow> { new HealerServiceRow(), new HealerServiceRow() });
+            healerVm.ClampTargetSelection(new HealerServiceRow { Targets = new List<Hero> { new Hero(), new Hero() } });
             Assert.Equal(1, healerVm.SelectedServiceIndex);
+            Assert.Equal(1, healerVm.SelectedTargetIndex);
         }
     }
 }

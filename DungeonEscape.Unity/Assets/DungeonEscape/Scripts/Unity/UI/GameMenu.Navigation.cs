@@ -148,19 +148,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private int GetSettingsSelectableRowCount()
         {
-            switch (currentSettingsTab)
-            {
-                case SettingsTab.General:
-                    return 8;
-                case SettingsTab.Ui:
-                    return 9;
-                case SettingsTab.Input:
-                    return InputManager.GetBindings().Length + 2;
-                case SettingsTab.Debug:
-                    return 6;
-                default:
-                    return 0;
-            }
+            return viewModel.GetSettingsSelectableRowCount((int)currentSettingsTab, InputManager.GetBindings().Length);
         }
 
         private void MoveSelectedRow(int delta)

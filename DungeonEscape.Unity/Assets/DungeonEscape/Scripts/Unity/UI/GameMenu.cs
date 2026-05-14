@@ -1813,13 +1813,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
             switch (currentScreen)
             {
                 case MenuScreen.Items:
-                    return hero.Items == null ? 0 : hero.Items.Count;
                 case MenuScreen.Spells:
-                    return GetKnownSpells(hero).Count;
                 case MenuScreen.Abilities:
-                    return GetKnownSkills(hero).Count;
                 case MenuScreen.Equipment:
-                    return GetEquipmentSlots().Count;
+                    return viewModel.GetCurrentDetailCount(
+                        (int)currentScreen,
+                        hero,
+                        GetKnownSpells(hero).Count,
+                        GetKnownSkills(hero).Count);
                 default:
                     return 0;
             }
@@ -1845,62 +1846,35 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private List<Hero> GetMenuMembers(Party party)
         {
-            var members = GetInventoryMembers(party);
-            switch (currentScreen)
-            {
-                case MenuScreen.Spells:
-                    return members.Where(CanUseMapSpells).ToList();
-                case MenuScreen.Abilities:
-                    return members.Where(CanUseMapSkills).ToList();
-                default:
-                    return members;
-            }
+            return viewModel.GetMenuMembers(party, (int)currentScreen, CanUseMapSpells, CanUseMapSkills);
         }
 
         private bool AnyMemberHasUsableMapSpells()
         {
             var party = GetParty();
-            return party != null && GetInventoryMembers(party).Any(CanUseMapSpells);
+            return viewModel.AnyMemberMatches(party, CanUseMapSpells);
         }
 
         private bool AnyMemberHasUsableMapAbilities()
         {
             var party = GetParty();
-            return party != null && GetInventoryMembers(party).Any(CanUseMapSkills);
+            return viewModel.AnyMemberMatches(party, CanUseMapSkills);
         }
 
         private bool CanManagePartyMembers()
         {
             var party = GetParty();
-            return party != null && GetInventoryMembers(party).Count > 1;
+            return viewModel.CanManagePartyMembers(party);
         }
 
-        private static List<Slot> GetEquipmentSlots()
+        private List<Slot> GetEquipmentSlots()
         {
-            return Enum.GetValues(typeof(Slot)).Cast<Slot>().ToList();
+            return viewModel.GetEquipmentSlots();
         }
 
         private List<ItemInstance> GetEquipmentCandidates(Hero hero, Slot slot)
         {
-            var candidates = new List<ItemInstance>();
-            if (hero == null || hero.Items == null)
-            {
-                return candidates;
-            }
-
-            var equipped = GetEquippedItem(hero, slot);
-            if (equipped != null)
-            {
-                candidates.Add(equipped);
-            }
-
-            candidates.AddRange(hero.Items.Where(item =>
-                item != null &&
-                !item.IsEquipped &&
-                item.Slots != null &&
-                item.Slots.Contains(slot) &&
-                hero.CanEquipItem(item)));
-            return candidates;
+            return viewModel.GetEquipmentCandidates(hero, slot);
         }
 
         private void SelectEquipmentSlot(Hero hero)
@@ -2033,20 +2007,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return hero != null && hero.MaxMagic > 0;
         }
 
-        private static ItemInstance GetEquippedItem(Hero hero, Slot slot)
+        private ItemInstance GetEquippedItem(Hero hero, Slot slot)
         {
-            if (hero == null || hero.Slots == null || hero.Items == null)
-            {
-                return null;
-            }
-
-            string itemId;
-            if (!hero.Slots.TryGetValue(slot, out itemId) || string.IsNullOrEmpty(itemId))
-            {
-                return null;
-            }
-
-            return hero.Items.FirstOrDefault(item => item != null && item.Id == itemId);
+            return viewModel.GetEquippedItem(hero, slot);
         }
 
         private void ApplyPartyChange(Func<bool> action)
@@ -2955,11 +2918,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
             selectedRowIndex = 0;
         }
 
-        private static List<Hero> GetInventoryMembers(Party party)
+        private List<Hero> GetInventoryMembers(Party party)
         {
-            return party == null
-                ? new List<Hero>()
-                : party.Members.OrderBy(member => member.IsActive ? 0 : 1).ThenBy(member => member.Order).ToList();
+            return viewModel.GetInventoryMembers(party);
         }
 
         private void ActivateSelectedInventoryItem()

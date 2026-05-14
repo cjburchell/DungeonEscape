@@ -19,7 +19,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             public override int GetSelectableRowCount()
             {
-                return Menu.gameState == null ? 0 : Menu.gameState.ManualSaveSlotCount;
+                return Menu.gameState == null ? 0 : Menu.viewModel.GetSaveSelectableRowCount(Menu.gameState.ManualSaveSlotCount);
             }
 
             public override void Draw()
@@ -86,7 +86,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             public override int GetSelectableRowCount()
             {
-                return Menu.gameState == null ? 0 : Menu.gameState.GetManualSaveSlots().Count;
+                return Menu.gameState == null ? 0 : Menu.viewModel.GetLoadSelectableRowCount(Menu.gameState.GetManualSaveSlots().Count);
             }
 
             public override void Draw()

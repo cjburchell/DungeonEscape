@@ -1,7 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Redpoint.DungeonEscape.State;
+
 namespace Redpoint.DungeonEscape.ViewModels
 {
     public sealed class GameMenuViewModel
     {
+        public const int ScreenItems = 1;
+        public const int ScreenSpells = 2;
+        public const int ScreenEquipment = 3;
+        public const int ScreenAbilities = 4;
+        public const int ScreenStatus = 5;
+        public const int ScreenParty = 7;
+        public const int SettingsGeneral = 0;
+        public const int SettingsUi = 1;
+        public const int SettingsInput = 2;
+        public const int SettingsDebug = 3;
+
         public int CurrentScreen { get; private set; }
         public int PreviousScreen { get; private set; }
         public int CurrentFocus { get; private set; }
@@ -85,6 +101,166 @@ namespace Redpoint.DungeonEscape.ViewModels
             DetailPageIndex = pageIndex < 0 ? 0 : pageIndex;
             SelectedDetailIndex = detailCount <= 0 ? 0 : Clamp(DetailPageIndex * pageSize, 0, detailCount - 1);
             return SelectedDetailIndex;
+        }
+
+        public int GetSettingsSelectableRowCount(int settingsTab, int bindingCount)
+        {
+            switch (settingsTab)
+            {
+                case SettingsGeneral:
+                    return 8;
+                case SettingsUi:
+                    return 9;
+                case SettingsInput:
+                    return Math.Max(0, bindingCount) + 2;
+                case SettingsDebug:
+                    return 6;
+                default:
+                    return 0;
+            }
+        }
+
+        public List<Hero> GetInventoryMembers(Party party)
+        {
+            return party == null
+                ? new List<Hero>()
+                : party.Members.OrderBy(member => member.IsActive ? 0 : 1).ThenBy(member => member.Order).ToList();
+        }
+
+        public List<Hero> GetMenuMembers(
+            Party party,
+            int screen,
+            Func<Hero, bool> canUseMapSpells,
+            Func<Hero, bool> canUseMapSkills)
+        {
+            var members = GetInventoryMembers(party);
+            switch (screen)
+            {
+                case ScreenSpells:
+                    return members.Where(member => canUseMapSpells != null && canUseMapSpells(member)).ToList();
+                case ScreenAbilities:
+                    return members.Where(member => canUseMapSkills != null && canUseMapSkills(member)).ToList();
+                default:
+                    return members;
+            }
+        }
+
+        public Hero GetSelectedMenuHero(IList<Hero> members)
+        {
+            return members != null && SelectedRowIndex >= 0 && SelectedRowIndex < members.Count
+                ? members[SelectedRowIndex]
+                : null;
+        }
+
+        public bool AnyMemberMatches(Party party, Func<Hero, bool> predicate)
+        {
+            return party != null && predicate != null && GetInventoryMembers(party).Any(predicate);
+        }
+
+        public bool CanManagePartyMembers(Party party)
+        {
+            return party != null && GetInventoryMembers(party).Count > 1;
+        }
+
+        public int GetCurrentDetailCount(int screen, Hero hero, int knownSpellCount, int knownSkillCount)
+        {
+            if (hero == null)
+            {
+                return 0;
+            }
+
+            switch (screen)
+            {
+                case ScreenItems:
+                    return hero.Items == null ? 0 : hero.Items.Count;
+                case ScreenSpells:
+                    return Math.Max(0, knownSpellCount);
+                case ScreenAbilities:
+                    return Math.Max(0, knownSkillCount);
+                case ScreenEquipment:
+                    return GetEquipmentSlots().Count;
+                default:
+                    return 0;
+            }
+        }
+
+        public List<Slot> GetEquipmentSlots()
+        {
+            return Enum.GetValues(typeof(Slot)).Cast<Slot>().ToList();
+        }
+
+        public ItemInstance GetEquippedItem(Hero hero, Slot slot)
+        {
+            if (hero == null || hero.Slots == null || hero.Items == null)
+            {
+                return null;
+            }
+
+            string itemId;
+            if (!hero.Slots.TryGetValue(slot, out itemId) || string.IsNullOrEmpty(itemId))
+            {
+                return null;
+            }
+
+            return hero.Items.FirstOrDefault(item => item != null && item.Id == itemId);
+        }
+
+        public List<ItemInstance> GetEquipmentCandidates(Hero hero, Slot slot)
+        {
+            var candidates = new List<ItemInstance>();
+            if (hero == null || hero.Items == null)
+            {
+                return candidates;
+            }
+
+            var equipped = GetEquippedItem(hero, slot);
+            if (equipped != null)
+            {
+                candidates.Add(equipped);
+            }
+
+            candidates.AddRange(hero.Items.Where(item =>
+                item != null &&
+                !item.IsEquipped &&
+                item.Slots != null &&
+                item.Slots.Contains(slot) &&
+                hero.CanEquipItem(item)));
+            return candidates;
+        }
+
+        public List<string> GetMainActions(bool hasMapSpells, bool hasMapAbilities, bool canManageParty)
+        {
+            var actions = new List<string> { "Items" };
+            if (hasMapSpells)
+            {
+                actions.Add("Spells");
+            }
+
+            actions.Add("Equipment");
+            if (hasMapAbilities)
+            {
+                actions.Add("Abilities");
+            }
+
+            actions.Add("Status");
+            actions.Add("Quests");
+            if (canManageParty)
+            {
+                actions.Add("Party");
+            }
+
+            actions.Add("Misc.");
+            return actions;
+        }
+
+        public int GetSaveSelectableRowCount(int manualSaveSlotCount)
+        {
+            return Math.Max(0, manualSaveSlotCount);
+        }
+
+        public int GetLoadSelectableRowCount(int manualSaveCount)
+        {
+            return Math.Max(0, manualSaveCount);
         }
 
         public void SetCurrentScreen(int value)

@@ -88,7 +88,7 @@ Goal: reduce the size and coupling of Unity UI classes by separating drawing/lay
 - Added a plain C# `TitleViewModel` under `Redpoint.DungeonEscape.ViewModels` for title mode, main-row availability, create-player choices, load/create navigation, dropdown indexes, and blocked create-image selection.
 - Added unit tests for `TitleViewModel`.
 - `TitleMenu` still owns IMGUI drawing, background textures, audio, save/load/delete execution, random name generation, and Unity app quit/close behavior.
-- Added a plain C# `GameMenuViewModel` under `Redpoint.DungeonEscape.ViewModels` for menu screen/focus/tab state, selected indexes, row/detail clamping, and page-based detail selection.
+- Added a plain C# `GameMenuViewModel` under `Redpoint.DungeonEscape.ViewModels` for menu screen/focus/tab state, selected indexes, row/detail clamping, page-based detail selection, main action availability, member ordering/filtering, settings/save/load row counts, detail counts, equipment slots, equipped item lookup, and equipment candidate selection.
 - Added unit tests for `GameMenuViewModel`.
 - `GameMenu` still owns IMGUI drawing, scroll positions, modal command execution, input rebinding capture, settings persistence, and gameplay actions.
 - Added a plain C# `CombatViewModel` under `Redpoint.DungeonEscape.ViewModels` for combat UI state and selected-index movement, including wraparound monster target selection.
@@ -108,8 +108,8 @@ Goal: reduce the size and coupling of Unity UI classes by separating drawing/lay
 ### Candidate Areas
 
 - `GameMenu`:
-  - In progress: Split menu screen state and selection clamping away from IMGUI drawing.
-  - Continue splitting action availability, item/spell/ability filtering, and modal state away from IMGUI drawing.
+  - In progress: Split menu screen state, selection clamping, action availability, member filtering, detail counts, save/load row counts, settings row counts, and equipment candidate selection away from IMGUI drawing.
+  - Continue splitting item/spell/ability modal action decisions and settings adjustment decisions away from IMGUI drawing.
   - Keep IMGUI files responsible for layout and control rendering only.
 - `CombatWindow`:
   - In progress: Split combat command selection state and round-flow rules away from battlefield/message rendering.

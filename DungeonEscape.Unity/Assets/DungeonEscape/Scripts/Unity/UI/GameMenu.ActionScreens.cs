@@ -19,14 +19,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             public override void Draw()
             {
                 var actions = GetActions();
-                Menu.selectedMainActionIndex = UnityEngine.Mathf.Clamp(
-                    Menu.selectedMainActionIndex,
-                    0,
-                    System.Math.Max(actions.Count - 1, 0));
-                Menu.selectedRowIndex = UnityEngine.Mathf.Clamp(
-                    Menu.selectedRowIndex,
-                    0,
-                    System.Math.Max(actions.Count - 1, 0));
+                Menu.viewModel.ClampSelectedMainActionIndex(actions.Count);
+                Menu.viewModel.ClampSelectedRowIndex(actions.Count);
                 Menu.DrawActionList(actions, Menu.selectedRowIndex, true);
             }
 
@@ -70,32 +64,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             public List<string> GetActions()
             {
-                var actions = new List<string>
-                {
-                    "Items"
-                };
-
-                if (Menu.AnyMemberHasUsableMapSpells())
-                {
-                    actions.Add("Spells");
-                }
-
-                actions.Add("Equipment");
-
-                if (Menu.AnyMemberHasUsableMapAbilities())
-                {
-                    actions.Add("Abilities");
-                }
-
-                actions.Add("Status");
-                actions.Add("Quests");
-                if (Menu.CanManagePartyMembers())
-                {
-                    actions.Add("Party");
-                }
-
-                actions.Add("Misc.");
-                return actions;
+                return Menu.viewModel.GetMainActions(
+                    Menu.AnyMemberHasUsableMapSpells(),
+                    Menu.AnyMemberHasUsableMapAbilities(),
+                    Menu.CanManagePartyMembers());
             }
         }
 

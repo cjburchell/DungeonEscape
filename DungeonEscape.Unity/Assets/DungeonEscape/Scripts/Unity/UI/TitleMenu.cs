@@ -443,8 +443,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 GUILayout.BeginHorizontal();
                 if (UiControls.Button(
-                    GameState.GetGameSaveTitle(slots[i]) + "\n" +
-                    GameState.GetGameSaveSummary(slots[i]),
+                    GameSaveFormatter.GetTitle(slots[i]) + "\n" +
+                    GameSaveFormatter.GetSummary(slots[i]),
                     selectedIndex == GetLoadSaveIndex(i),
                     uiTheme,
                     GUILayout.Height(48f * scale),

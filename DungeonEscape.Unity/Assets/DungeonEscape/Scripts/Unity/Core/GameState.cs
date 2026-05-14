@@ -213,7 +213,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 {
                     MapId = normalizedMapId,
                     Position = position,
-                    DisplayName = FormatLocationName(normalizedMapId)
+                    DisplayName = GameSaveFormatter.FormatLocationName(normalizedMapId)
                 });
             }
             else
@@ -221,7 +221,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 existing.Position = position;
                 if (string.IsNullOrEmpty(existing.DisplayName))
                 {
-                    existing.DisplayName = FormatLocationName(normalizedMapId);
+                    existing.DisplayName = GameSaveFormatter.FormatLocationName(normalizedMapId);
                 }
             }
 
@@ -2795,28 +2795,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             return GetQuickSave(LoadGameFile());
         }
 
-        public static bool IsUsableGameSave(GameSave save)
-        {
-            return IsUsableSave(save);
-        }
-
-        public static string GetGameSaveTitle(GameSave save)
-        {
-            return IsUsableSave(save) ? save.Name : "Empty";
-        }
-
-        public static string GetGameSaveSummary(GameSave save)
-        {
-            if (!IsUsableSave(save))
-            {
-                return "No save data.";
-            }
-
-            var time = save.Time.HasValue ? save.Time.Value.ToString("g") : "Unknown time";
-            var level = save.Level.HasValue ? "Level " + save.Level.Value : "No level";
-            return time + "    " + level;
-        }
-
         public void RestartNewGame()
         {
             RestartNewGame("Player", Class.Hero, Gender.Male, null);
@@ -3304,27 +3282,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             }
         }
 
-        private static string FormatLocationName(string mapId)
-        {
-            if (string.IsNullOrEmpty(mapId))
-            {
-                return "Unknown";
-            }
-
-            var name = mapId.Replace('\\', '/');
-            var slashIndex = name.LastIndexOf('/');
-            if (slashIndex >= 0 && slashIndex < name.Length - 1)
-            {
-                name = name.Substring(slashIndex + 1);
-            }
-
-            return string.Join(
-                " ",
-                name.Split(new[] { '_', '-' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(part => part.Length == 0 ? part : char.ToUpperInvariant(part[0]) + part.Substring(1))
-                    .ToArray());
-        }
-
         private static string SanitizeFileName(string value)
         {
             var result = value;
@@ -3538,10 +3495,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private static bool IsUsableSave(GameSave save)
         {
-            return save != null &&
-                   save.Party != null &&
-                   !string.IsNullOrEmpty(save.Party.CurrentMapId) &&
-                   save.Party.CurrentPosition.HasValue;
+            return GameSaveFormatter.IsUsableSave(save);
         }
 
         private static string GetSavePath()

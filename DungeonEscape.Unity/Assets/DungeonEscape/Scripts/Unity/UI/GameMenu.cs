@@ -2602,17 +2602,17 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private static string GetSaveTitle(GameSave save)
         {
-            return GameState.GetGameSaveTitle(save);
+            return GameSaveFormatter.GetTitle(save);
         }
 
         private static string GetSaveSummary(GameSave save)
         {
-            return GameState.GetGameSaveSummary(save);
+            return GameSaveFormatter.GetSummary(save);
         }
 
         private static bool IsUsableSave(GameSave save)
         {
-            return GameState.IsUsableGameSave(save);
+            return GameSaveFormatter.IsUsableSave(save);
         }
 
         private void AdjustSelectedPartyMember(int delta)

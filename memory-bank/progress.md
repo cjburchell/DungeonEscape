@@ -31,6 +31,7 @@
 - Feature development and architecture cleanup planning.
 - Core extraction ideas are tracked in `memory-bank/ARCHITECTURE_BACKLOG.md`.
 - First core extraction completed: Tiled map path helpers, tile data parsing, and object bounds tile math now live in `DungeonEscape.Core` with unit tests.
+- Save/location formatting extraction completed: save title/summary, usable-save checks, and return-location display names now live in `DungeonEscape.Core` with unit tests.
 - Future feature backlog has been captured in `memory-bank/FUTURE_FEATURES.md`.
 - Known bugs and rough edges are tracked in `memory-bank/BUGS.md`.
 

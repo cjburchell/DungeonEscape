@@ -11,6 +11,8 @@ Goal: separate engine-neutral rules from Unity scripts into `DungeonEscape.Core`
 - Extracted map path normalization, tileset path resolution, Tiled CSV/GID parsing, boolean parsing, and object-bounds tile index math into core helpers.
 - Added shared core unit tests for the extracted Tiled helper behavior.
 - Unity `Loader` and `Collision` still expose their existing APIs, but delegate the extracted pure logic to `DungeonEscape.Core`.
+- Extracted game save title/summary formatting, save usability checks, and return-location display-name formatting into `GameSaveFormatter`.
+- Added shared core unit tests for save summary/title formatting, usable-save detection, and location-name formatting.
 
 ### Good First Extractions
 
@@ -20,8 +22,8 @@ Goal: separate engine-neutral rules from Unity scripts into `DungeonEscape.Core`
   - Move CSV tile data and Tiled GID parsing out of `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/Map/Tiled/Collision.cs`.
   - Move object-bounds-to-blocked-tile coordinate math out of `Collision.cs`.
 - Save and display formatting:
-  - Move game save title/summary formatting out of `GameState`.
-  - Move return-location display-name formatting out of `GameState`.
+  - Done: Move game save title/summary formatting out of `GameState`.
+  - Done: Move return-location display-name formatting out of `GameState`.
 - Store and economy rules:
   - Move sellable item filtering and sale price rules out of `StoreWindow`.
   - Move store inventory generation and buy/sell operation rules out of `GameState`.

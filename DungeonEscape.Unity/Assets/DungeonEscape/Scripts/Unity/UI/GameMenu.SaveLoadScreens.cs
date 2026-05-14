@@ -62,8 +62,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             private void DrawSaveRow(GameSave save)
             {
                 GUILayout.BeginVertical();
-                GUILayout.Label(GameState.GetGameSaveTitle(save), Menu.labelStyle);
-                GUILayout.Label(GameState.GetGameSaveSummary(save), Menu.smallStyle);
+                GUILayout.Label(GameSaveFormatter.GetTitle(save), Menu.labelStyle);
+                GUILayout.Label(GameSaveFormatter.GetSummary(save), Menu.smallStyle);
                 GUILayout.EndVertical();
             }
 
@@ -133,8 +133,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             private void DrawSaveRow(GameSave save)
             {
                 GUILayout.BeginVertical();
-                GUILayout.Label(GameState.GetGameSaveTitle(save), Menu.labelStyle);
-                GUILayout.Label(GameState.GetGameSaveSummary(save), Menu.smallStyle);
+                GUILayout.Label(GameSaveFormatter.GetTitle(save), Menu.labelStyle);
+                GUILayout.Label(GameSaveFormatter.GetSummary(save), Menu.smallStyle);
                 GUILayout.EndVertical();
             }
         }

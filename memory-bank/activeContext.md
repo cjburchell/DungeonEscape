@@ -85,5 +85,7 @@ Latest architecture cleanup:
 
 - Extracted Tiled map path helpers, tile data parsing, and object bounds tile math into `DungeonEscape.Core`.
 - Added unit tests for the extracted Tiled helpers.
+- Extracted save/location formatting into `DungeonEscape.Core`.
+- Added unit tests for save title/summary, usable-save checks, and return-location display names.
 
 After every implemented gameplay step, update `memory-bank/MANUAL_TESTS.md` with manual verification steps.

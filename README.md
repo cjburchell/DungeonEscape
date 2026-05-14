@@ -1,6 +1,6 @@
 # Dungeon Escape
 
-Dungeon Escape is a retro-inspired 2D RPG migrated from the original MonoGame/Nez implementation to Unity.
+Dungeon Escape is a retro-inspired 2D RPG running on Unity after the migration from the original MonoGame/Nez implementation.
 
 The active target is the Unity project. The old MonoGame/Nez project has been removed from this branch; use `main` if old implementation reference is needed.
 
@@ -9,19 +9,19 @@ The active target is the Unity project. The old MonoGame/Nez project has been re
 ```text
 DungeonEscape.Unity/        # Active Unity project
 DungeonEscape.Core/         # Unity-friendly shared domain/state code
-DungeonEscape.Core.Test/    # Migration-relevant shared core tests
-memory-bank/                # Migration status, manual tests, architecture, handoff docs
+DungeonEscape.Core.Test/    # Shared core regression tests
+memory-bank/                # Current context, manual tests, architecture, handoff docs
 ```
 
 ## Memory Bank
 
-Use `memory-bank/` as the source of truth for migration context:
+Use `memory-bank/` as the source of truth for durable project context:
 
-- `memory-bank/UNITY_MIGRATION.md`: migration status and pending work.
+- `memory-bank/activeContext.md`: current working context.
+- `memory-bank/progress.md`: high-level progress and backlog summary.
+- `memory-bank/UNITY_MIGRATION.md`: final migration record and deferred post-migration backlog.
 - `memory-bank/MANUAL_TESTS.md`: manual play-test plans.
 - `memory-bank/architecture.md`: current architecture overview.
-- `memory-bank/activeContext.md`: current working context.
-- `memory-bank/progress.md`: high-level progress summary.
 
 ## Build And Test
 
@@ -33,7 +33,7 @@ dotnet build DungeonEscape.sln
 dotnet test DungeonEscape.sln --no-restore
 ```
 
-The old `DungeonEscape.Test` project has been removed. Current automated migration tests run through `DungeonEscape.Core.Test`; Unity edit/play mode tests can be added later.
+The old `DungeonEscape.Test` project has been removed. Current automated shared-core tests run through `DungeonEscape.Core.Test`; Unity edit/play mode tests are deferred backlog.
 
 ### Unity
 
@@ -62,7 +62,7 @@ DungeonEscape.Unity/Assets/DungeonEscape/
 
 ## Data And Maps
 
-The Unity migration uses data and assets under `DungeonEscape.Unity/Assets/DungeonEscape/`.
+The Unity runtime uses data and assets under `DungeonEscape.Unity/Assets/DungeonEscape/`.
 
 Tiled object metadata in Unity maps should use `class="..."`, not object `type="..."`. Chest and door locking is explicit:
 

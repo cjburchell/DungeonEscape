@@ -73,13 +73,12 @@ Navigation:
 - Save, Load, and Settings reuse existing behavior.
 - Menu modal confirm-release guard remains active to avoid action carryover.
 
-## Pending Polish
+## Verification Backlog
 
 - Verify all screens in Play Mode with keyboard and gamepad.
 - Confirm page state resets correctly when switching members and screens.
 - Confirm long item/spell/ability names fit without clipping.
 - Confirm the status and gold summaries fit at all supported UI scale values.
-- Update README keybind/menu instructions after the new flow is play-tested.
 
 ## Manual Tests
 

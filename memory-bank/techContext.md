@@ -22,7 +22,7 @@
 - Unity tilesets: `DungeonEscape.Unity/Assets/DungeonEscape/Tilesets/`
 - Shared core: `DungeonEscape.Core/`
 - Shared tests: `DungeonEscape.Core.Test/`
-- Migration docs: `memory-bank/`
+- Project docs: `memory-bank/`
 
 ## Commands
 
@@ -56,7 +56,7 @@ Relevant variables:
 - `UNITY_BUILD_WINDOWS_ENABLED`
 - `UNITY_LICENSE_B64`, `UNITY_LICENSE`, or Unity serial/email/password variables
 
-The old `DungeonEscape.Test` project has been removed. `dotnet test DungeonEscape.sln --no-restore` should run the remaining migration-relevant tests, currently `DungeonEscape.Core.Test`.
+The old `DungeonEscape.Test` project has been removed. `dotnet test DungeonEscape.sln --no-restore` should run the current automated shared-core tests in `DungeonEscape.Core.Test`.
 
 ## Editor Notes
 

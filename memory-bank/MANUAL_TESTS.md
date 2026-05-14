@@ -1,6 +1,6 @@
 # Manual Test Plan
 
-This file tracks manual Unity play-test checks for migrated gameplay. Update it after each implemented migration step so verification stays tied to the work that changed.
+This file tracks manual Unity play-test checks for gameplay. Update it after each implemented gameplay step so verification stays tied to the work that changed.
 
 Status legend:
 

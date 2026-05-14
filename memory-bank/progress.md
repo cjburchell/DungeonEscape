@@ -24,25 +24,26 @@
 - Added memory-bank docs.
 - Removed the old `DungeonEscape.Test` project from the solution; migration tests should live in `DungeonEscape.Core.Test` or future Unity test assemblies.
 - Removed the old MonoGame/Nez project and `Nez.Portable` from this branch; use `main` if old implementation reference is needed.
+- Unity migration is considered complete; remaining automation and warning-review items are accepted as post-migration backlog.
 
 ## In Progress
 
-- UI migration polish.
-- Persistence/title/create-player polish, including manual verification of the latest independent hero image selection work.
-- Unity project cleanup.
-- Build/test automation expansion.
+- Feature development and architecture cleanup planning.
 
 ## Deferred
 
-- Non-critical polish that can wait until after the current Unity flow is stable.
+- Expand shared core unit tests beyond level-up and skill/spell progression.
+- Add Unity-side edit mode tests for map loading, hidden item conditions, and save/load behavior.
+- Add regression tests for quest dialog actions and item rewards.
+- Review ReSharper warnings and fix actionable issues where they improve correctness or maintainability.
 
-## Current Known Pending Items
+## Current Known Backlog Items
 
-See `memory-bank/UNITY_MIGRATION.md` for the authoritative list. Main pending groups:
+See `memory-bank/UNITY_MIGRATION.md` for the final migration record. Main post-migration backlog groups:
 
-- Fullscreen setting runtime/UI wiring if still desired.
 - Expand shared core unit tests.
 - Add Unity edit mode tests for map loading, hidden item conditions, save/load behavior.
+- Add regression tests for quest dialog actions and item rewards.
 - Review ReSharper warnings and fix actionable issues.
 - Replace remaining runtime filesystem asset loading with Unity-native references where appropriate.
 - Remove remaining temporary/debug code when no longer needed.

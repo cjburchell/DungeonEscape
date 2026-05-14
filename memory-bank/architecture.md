@@ -2,12 +2,12 @@
 
 ## Repository Shape
 
-Dungeon Escape has been migrated from the old MonoGame/Nez project into a Unity project while preserving portable game/domain logic.
+Dungeon Escape now runs from the Unity project, with portable game/domain logic preserved in shared C# code.
 
 - `DungeonEscape.Unity/` is the active Unity project.
 - `DungeonEscape.Core/` is the shared portable C# domain layer.
 - `DungeonEscape.Core.Test/` contains shared core regression tests.
-- `memory-bank/` stores durable migration context for human or agent handoff.
+- `memory-bank/` stores durable project context for human or agent handoff.
 
 The old MonoGame/Nez project was removed from this branch. Use `main` if old implementation reference is needed.
 

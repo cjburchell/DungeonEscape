@@ -2,7 +2,7 @@
 
 ## Current Focus
 
-The migration is past the first playable Unity map-mode loop. Recent work focused on map object interaction parity:
+The Unity migration is considered complete. The project is moving from migration tracking to new feature work and architecture cleanup. Recent completed migration work included:
 
 - `Open` spell/items act on the object the player is facing.
 - `Open` does not ask for a party-member target.
@@ -70,11 +70,11 @@ Unity map metadata validation showed:
 
 ## Next Likely Work
 
-Continue from `memory-bank/UNITY_MIGRATION.md`. Likely upcoming work is still in:
+Move on from migration completion into new feature and architecture work. Current deferred migration backlog is accepted as non-blocking:
 
-- Persistence/title/create-player polish.
-- Unity cleanup.
-- Build/test automation expansion.
-- Remaining map/UI/combat polish and cleanup listed in `memory-bank/UNITY_MIGRATION.md`.
+- Expand shared core unit tests beyond level-up and skill/spell progression.
+- Add Unity-side edit mode tests for map loading, hidden item conditions, and save/load behavior.
+- Add regression tests for quest dialog actions and item rewards.
+- Review ReSharper warnings and fix actionable issues where they improve correctness or maintainability.
 
 After every implemented gameplay step, update `memory-bank/MANUAL_TESTS.md` with manual verification steps.

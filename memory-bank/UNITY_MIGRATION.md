@@ -4,12 +4,12 @@ This file tracks the Dungeon Escape Unity migration. Update it as each area move
 
 ## Guiding Priority
 
-Map-mode gameplay, party systems, UI, persistence, audio, and combat are migrated. Remaining work is focused on automation coverage and final Unity cleanup.
+The Unity migration is considered complete. Map-mode gameplay, party systems, UI, persistence, audio, combat, build automation, and Unity cleanup are migrated enough to move on to feature and architecture work.
 
-## Remaining Work
+## Post-Migration Backlog
 
-- Expand automated tests: shared core unit tests, Unity edit mode tests, and quest/dialog regression tests.
-- Review ReSharper warnings and fix actionable issues.
+- Deferred: Expand automated tests: shared core unit tests, Unity edit mode tests, and quest/dialog regression tests.
+- Deferred: Review ReSharper warnings and fix actionable issues.
 
 ## 1. Validate Current Gameplay Loop
 
@@ -173,17 +173,17 @@ Status: Done
 
 ## 8. Build And Test Automation
 
-Status: In progress
+Status: Done
 
 - Done: Add GitLab CI pipeline for solution restore/build/test.
 - Done: Add Unity project validation to CI by default. Disable with `UNITY_CI_ENABLED=false` if needed.
 - Done: Add Unity Windows artifact build to CI by default. Disable with `UNITY_BUILD_WINDOWS_ENABLED=false`; output is stored as a downloadable GitLab artifact.
 - Done: Stage runtime map, tileset, image, and data files into `StreamingAssets` during Unity builds.
 - Done: Removed the old `DungeonEscape.Test` project from the solution; migration tests now run through `DungeonEscape.Core.Test` and future Unity test assemblies.
-- Pending: Expand shared core unit tests beyond level-up and skill/spell progression.
-- Pending: Add Unity-side edit mode tests for map loading, hidden item conditions, and save/load behavior.
-- Pending: Add regression tests for quest dialog actions and item rewards.
-- Pending: Review ReSharper warnings and fix actionable issues where they improve correctness or maintainability.
+- Deferred: Expand shared core unit tests beyond level-up and skill/spell progression.
+- Deferred: Add Unity-side edit mode tests for map loading, hidden item conditions, and save/load behavior.
+- Deferred: Add regression tests for quest dialog actions and item rewards.
+- Deferred: Review ReSharper warnings and fix actionable issues where they improve correctness or maintainability.
 
 ## 9. Unity Project Cleanup
 

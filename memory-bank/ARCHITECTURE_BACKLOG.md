@@ -82,6 +82,9 @@ Goal: reduce the size and coupling of Unity UI classes by separating drawing/lay
 - Added a plain C# `StoreViewModel` under `Redpoint.DungeonEscape.ViewModels` for store metadata, selected tab/focus/index state, selection clamping, buy eligibility, sellable filtering, and price display.
 - Added unit tests for `StoreViewModel`.
 - `StoreWindow` still owns IMGUI drawing, modal rendering, scroll positions, Unity input repeat timing, sounds, and direct game command execution.
+- Added a plain C# `HealerViewModel` under `Redpoint.DungeonEscape.ViewModels` for healer metadata, service list construction, target filtering, costs, and selected service/target state.
+- Added unit tests for `HealerViewModel`.
+- `HealerWindow` still owns IMGUI drawing, Unity input repeat timing, sounds, and direct game command execution.
 
 ### Unity UI And MVVM Notes
 
@@ -102,7 +105,7 @@ Goal: reduce the size and coupling of Unity UI classes by separating drawing/lay
   - Split combat command selection, target selection state, and round-flow display state away from battlefield/message rendering.
   - Pair this with the larger combat round-rules extraction before adding battle tactics.
 - `StoreWindow` and `HealerWindow`:
-  - Split available actions, prices, recipient choices, and modal state from drawing code.
+  - In progress: Split available actions, prices, recipient choices, and modal state from drawing code.
 - `TitleMenu`:
   - Split create-player state, save-slot display data, and navigation state from drawing code.
 

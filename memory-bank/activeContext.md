@@ -91,5 +91,6 @@ Latest architecture cleanup:
 - Added unit tests for store metadata, inventory selection, buy/sell rules, sale prices, and sellable item filtering.
 - Split file-backed data contracts into `DungeonEscape.Core/Data` and `Redpoint.DungeonEscape.Data`; runtime/save objects remain in `State`.
 - Extracted random item generation, quest progression/rewards, and random encounter rules into core rule classes with unit tests.
+- Extracted combat round rules into `CombatRoundRules`; Unity combat UI still owns rendering, input, sound, and animation effects.
 
 After every implemented gameplay step, update `memory-bank/MANUAL_TESTS.md` with manual verification steps.

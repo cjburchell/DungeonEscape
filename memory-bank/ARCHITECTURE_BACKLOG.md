@@ -17,6 +17,7 @@ Goal: separate engine-neutral rules from Unity scripts into `DungeonEscape.Core`
 - Added shared core unit tests for store metadata, key stores, buy recipients, sellable filtering, sale prices, fixed/key inventory initialization, and buy/sell behavior.
 - Split file-backed data contracts out of `DungeonEscape.Core/State` into `DungeonEscape.Core/Data` with the `Redpoint.DungeonEscape.Data` namespace.
 - Extracted random item generation, quest progression/rewards, and random encounter selection/repel rules into core rule classes with focused unit tests.
+- Extracted combat round action choice, target resolution/fallback, run outcomes, and action execution dispatch into `CombatRoundRules` with focused unit tests.
 
 ### Good First Extractions
 
@@ -50,9 +51,9 @@ Goal: separate engine-neutral rules from Unity scripts into `DungeonEscape.Core`
 ### Larger Extractions
 
 - Combat round rules:
-  - Move monster action choice, action resolvability, target fallback, target selection helpers, run chance, and round action execution out of `CombatWindow.RoundFlow.cs`.
+  - Done: Move monster action choice, action resolvability, target fallback, target selection helpers, run chance, and round action execution out of `CombatWindow.RoundFlow.cs`.
   - Keep Unity combat UI responsible for rendering, input, animation, and sound orchestration.
-  - This should happen before adding battle tactics, because tactics need testable round/action selection rules.
+  - Done: This should happen before adding battle tactics, because tactics need testable round/action selection rules.
 
 ### Keep Unity-Side For Now
 
@@ -69,7 +70,7 @@ Goal: separate engine-neutral rules from Unity scripts into `DungeonEscape.Core`
 4. Done: Extract random item generation and add unit tests.
 5. Done: Extract quest progression/reward rules and add regression tests for known quest bugs.
 6. Done: Extract encounter generation and add unit tests before tuning random monsters/biomes.
-7. Extract combat round rules before implementing battle tactics.
+7. Done: Extract combat round rules before implementing battle tactics.
 
 ## Split UI Drawing From UI Logic
 

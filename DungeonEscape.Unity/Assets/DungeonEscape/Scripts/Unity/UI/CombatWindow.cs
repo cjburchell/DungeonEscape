@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 using UnityEngine;
 
@@ -29,34 +30,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
             ChooseItem
         }
 
-        private enum RoundActionState
-        {
-            Run,
-            Fight,
-            Spell,
-            Item,
-            Nothing,
-            Skill
-        }
-
         private sealed class CombatMonster
         {
             public Monster Data { get; set; }
             public MonsterInstance Instance { get; set; }
         }
 
-        private sealed class RoundAction
-        {
-            public IFighter Source { get; set; }
-            public RoundActionState State { get; set; }
-            public Spell Spell { get; set; }
-            public ItemInstance Item { get; set; }
-            public Skill Skill { get; set; }
-            public List<IFighter> Targets { get; set; }
-        }
-
         private readonly List<CombatMonster> monsters = new List<CombatMonster>();
-        private readonly List<RoundAction> roundActions = new List<RoundAction>();
+        private readonly List<CombatRoundAction> roundActions = new List<CombatRoundAction>();
         private readonly List<Hero> pendingHeroes = new List<Hero>();
         private readonly CombatSelectionMemory selectionMemory = new CombatSelectionMemory();
         private readonly CombatMenuInput menuInput = new CombatMenuInput();

@@ -16,6 +16,7 @@ Goal: separate engine-neutral rules from Unity scripts into `DungeonEscape.Core`
 - Extracted store/economy metadata, buy eligibility, sellable item filtering, sale prices, initial store inventory selection, invalid store inventory checks, and buy/sell mutation rules into `StoreRules`.
 - Added shared core unit tests for store metadata, key stores, buy recipients, sellable filtering, sale prices, fixed/key inventory initialization, and buy/sell behavior.
 - Split file-backed data contracts out of `DungeonEscape.Core/State` into `DungeonEscape.Core/Data` with the `Redpoint.DungeonEscape.Data` namespace.
+- Extracted random item generation, quest progression/rewards, and random encounter selection/repel rules into core rule classes with focused unit tests.
 
 ### Good First Extractions
 
@@ -37,14 +38,14 @@ Goal: separate engine-neutral rules from Unity scripts into `DungeonEscape.Core`
 ### Medium-Sized Extractions
 
 - Random item generation:
-  - Move `CreateRandomItem`, `CreateRandomEquipment`, rarity selection, stat selection, and equipment naming out of `GameState`.
-  - Add unit tests for generated item level ranges, rarity behavior, stat ranges, class/slot constraints, and name construction.
+  - Done: Move `CreateRandomItem`, `CreateRandomEquipment`, rarity selection, stat selection, and equipment naming out of `GameState`.
+  - Done: Add unit tests for generated item level ranges, rarity behavior, stat ranges, class/slot constraints, and name construction.
 - Quest progression and rewards:
-  - Move `StartQuest`, `AdvanceQuest`, XP/gold/item rewards, and completed-stage behavior out of `GameState`.
-  - Add unit tests for completed quests not restarting, reward grants, stage advancement, and item rewards.
+  - Done: Move `StartQuest`, `AdvanceQuest`, XP/gold/item rewards, and completed-stage behavior out of `GameState`.
+  - Done: Add unit tests for completed quests not restarting, reward grants, stage advancement, and item rewards.
 - Encounter generation:
-  - Move random encounter filtering, rarity weights, monster group selection, and repel filtering out of `GameState`.
-  - Add unit tests for biome filtering, min/max monster levels, rarity weighting, group limits, party-level scaling, and repel behavior.
+  - Done: Move random encounter filtering, rarity weights, monster group selection, and repel filtering out of `GameState`.
+  - Done: Add unit tests for biome filtering, min/max monster levels, rarity weighting, group limits, party-level scaling, and repel behavior.
 
 ### Larger Extractions
 
@@ -65,9 +66,9 @@ Goal: separate engine-neutral rules from Unity scripts into `DungeonEscape.Core`
 1. Extract map/Tiled helpers and add low-risk unit tests.
 2. Extract save/location formatting and add unit tests.
 3. Extract store/economy rules and add unit tests.
-4. Extract random item generation and add unit tests.
-5. Extract quest progression/reward rules and add regression tests for known quest bugs.
-6. Extract encounter generation and add unit tests before tuning random monsters/biomes.
+4. Done: Extract random item generation and add unit tests.
+5. Done: Extract quest progression/reward rules and add regression tests for known quest bugs.
+6. Done: Extract encounter generation and add unit tests before tuning random monsters/biomes.
 7. Extract combat round rules before implementing battle tactics.
 
 ## Split UI Drawing From UI Logic

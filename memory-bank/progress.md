@@ -34,6 +34,7 @@
 - Save/location formatting extraction completed: save title/summary, usable-save checks, and return-location display names now live in `DungeonEscape.Core` with unit tests.
 - Store/economy extraction completed: store metadata, inventory selection, buy/sell rules, sale prices, and sellable item filtering now live in `DungeonEscape.Core` with unit tests.
 - Core data/state split completed: file-backed data contracts and parsed Tiled map contracts now live under `DungeonEscape.Core/Data`; runtime/save objects remain under `State`.
+- Random item, quest progression/reward, and encounter generation extractions completed with focused core tests.
 - Future feature backlog has been captured in `memory-bank/FUTURE_FEATURES.md`.
 - Known bugs and rough edges are tracked in `memory-bank/BUGS.md`.
 

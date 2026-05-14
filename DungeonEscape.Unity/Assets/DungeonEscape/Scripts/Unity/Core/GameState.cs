@@ -345,9 +345,12 @@ namespace Redpoint.DungeonEscape.Unity.Core
             }
 
             var randomMonsters = GetRandomMonstersForMap(mapId);
-            if (randomMonsters.Count == 0 ||
-                !randomMonsters.Any(monster => monster != null && monster.Data != null && monster.InBiome(biomeInfo.Type)) ||
-                Random.NextDouble() >= 0.1d)
+            if (!EncounterRules.CanRollRandomEncounter(
+                    Party,
+                    biomeInfo,
+                    randomMonsters,
+                    SettingsCache.Current.NoMonsters,
+                    () => Random.NextDouble()))
             {
                 return;
             }
@@ -425,14 +428,14 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return "";
             }
 
-            if (Party.ActiveQuests.Any(activeQuest => activeQuest.Id == quest.Id))
+            bool changed;
+            var message = QuestRules.StartQuest(Party, quest, out changed);
+            if (changed)
             {
-                return "";
+                MarkDirty();
             }
 
-            Party.ActiveQuests.Add(CreateActiveQuest(quest));
-            MarkDirty();
-            return "Started quest: " + quest.Name;
+            return message;
         }
 
         public string AdvanceQuest(string questId, int? nextStage)
@@ -446,84 +449,21 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return "";
             }
 
-            var activeQuest = Party.ActiveQuests.FirstOrDefault(item => item.Id == quest.Id);
-            if (activeQuest == null)
+            bool changed;
+            var message = QuestRules.AdvanceQuest(
+                Party,
+                quest,
+                nextStage,
+                GameDataCache.Current == null ? null : GameDataCache.Current.ClassLevels,
+                GameDataCache.Current == null ? null : GameDataCache.Current.Spells,
+                GiveItem,
+                out changed);
+            if (changed)
             {
-                activeQuest = CreateActiveQuest(quest);
-                Party.ActiveQuests.Add(activeQuest);
                 MarkDirty();
             }
 
-            if (nextStage.HasValue)
-            {
-                activeQuest.CurrentStage = nextStage.Value;
-                MarkDirty();
-            }
-
-            var activeStage = activeQuest.Stages.FirstOrDefault(item => item.Number == activeQuest.CurrentStage);
-            if (activeStage != null)
-            {
-                activeStage.Completed = true;
-                MarkDirty();
-            }
-
-            var currentStage = quest.Stages == null
-                ? null
-                : quest.Stages.FirstOrDefault(item => item.Number == activeQuest.CurrentStage);
-
-            if (currentStage == null || !currentStage.CompleteQuest || activeQuest.Completed)
-            {
-                return "";
-            }
-
-            activeQuest.Completed = true;
-            MarkDirty();
-            var message = new StringBuilder();
-            message.AppendLine("You have completed the quest " + quest.Name);
-
-            if (quest.Xp != 0)
-            {
-                AppendQuestXpReward(message, quest.Xp);
-            }
-
-            if (quest.Gold != 0)
-            {
-                Party.Gold += quest.Gold;
-                MarkDirty();
-                message.AppendLine("The party got " + quest.Gold + " gold.");
-            }
-
-            if (quest.Items != null)
-            {
-                foreach (var itemId in quest.Items)
-                {
-                    message.Append(GiveItem(itemId));
-                }
-            }
-
-            return message.ToString().TrimEnd();
-        }
-
-        private void AppendQuestXpReward(StringBuilder message, int xp)
-        {
-            var activeMembers = Party.ActiveMembers.ToList();
-            if (activeMembers.Count == 0)
-            {
-                return;
-            }
-
-            var xpReward = (ulong)Math.Max(0, xp);
-            foreach (var hero in activeMembers)
-            {
-                hero.Xp += xpReward;
-            }
-
-            MarkDirty();
-            message.AppendLine("The party got " + xp + " XP.");
-            foreach (var hero in activeMembers)
-            {
-                AppendLevelUpMessages(message, hero);
-            }
+            return message;
         }
 
         private void AppendLevelUpMessages(StringBuilder message, Hero hero)
@@ -1586,27 +1526,17 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         public Item CreateRandomItem(int maxLevel, int minLevel = 1, Rarity? rarity = null)
         {
-            maxLevel = Math.Max(maxLevel, 1);
-            minLevel = Math.Max(minLevel, 1);
-
-            if (Chance(0.50f))
-            {
-                var staticItems = GameDataCache.Current == null
-                    ? new List<Item>()
-                    : GameDataCache.Current.CustomItems
-                        .Where(item => item != null &&
-                                       (item.Type == ItemType.OneUse || item.Type == ItemType.RepeatableUse) &&
-                                       !item.IsKey &&
-                                       item.MinLevel < maxLevel)
-                        .ToList();
-
-                if (staticItems.Count > 0)
-                {
-                    return staticItems[Random.Next(staticItems.Count)];
-                }
-            }
-
-            return CreateRandomEquipment(maxLevel, minLevel, rarity);
+            return RandomItemRules.CreateRandomItem(
+                maxLevel,
+                minLevel,
+                rarity,
+                GameDataCache.Current == null ? null : GameDataCache.Current.CustomItems,
+                GameDataCache.Current == null ? null : GameDataCache.Current.ItemDefinitions,
+                GameDataCache.Current == null ? null : GameDataCache.Current.StatNames,
+                GameDataCache.Current == null ? null : GameDataCache.Current.Skills,
+                () => Random.NextDouble(),
+                maxValue => Random.Next(maxValue),
+                () => Guid.NewGuid().ToString());
         }
 
         public Item CreateRandomEquipment(
@@ -1617,124 +1547,18 @@ namespace Redpoint.DungeonEscape.Unity.Core
             Class? itemClass = null,
             Slot? slot = null)
         {
-            maxLevel = Math.Max(maxLevel, 1);
-            minLevel = Math.Max(Math.Min(minLevel, maxLevel), 1);
-
-            var itemRarity = Random.Next(100);
-            if (!rarity.HasValue)
-            {
-                rarity = itemRarity > 75
-                    ? itemRarity > 90 ? itemRarity > 98 ? Rarity.Epic : Rarity.Rare : Rarity.Uncommon
-                    : Rarity.Common;
-            }
-
-            if (!type.HasValue)
-            {
-                var types = Item.EquippableItems;
-                type = types[Random.Next(types.Count)];
-            }
-
-            var item = new Item
-            {
-                Rarity = rarity.Value,
-                Type = type.Value,
-                ImageId = 202,
-                Id = Guid.NewGuid().ToString()
-            };
-
-            var availableItemDefinitions = GetAvailableItemDefinitions(type.Value, itemClass, slot).ToArray();
-            if (availableItemDefinitions.Length == 0)
-            {
-                return null;
-            }
-
-            var itemDefinition = availableItemDefinitions[Random.Next(availableItemDefinitions.Length)];
-            List<StatType> availableStats;
-            switch (type.Value)
-            {
-                case ItemType.Weapon:
-                    availableStats = new List<StatType> { StatType.Agility, StatType.Attack, StatType.Health, StatType.Magic };
-                    item.MinLevel = RandomLevel(maxLevel, minLevel);
-                    item.Stats.Add(new StatValue
-                    {
-                        Type = StatType.Attack,
-                        Value = Math.Max(item.MinLevel - 5 + Random.Next(6) + itemDefinition.BaseStat, Math.Max(itemDefinition.BaseStat, 1))
-                    });
-                    break;
-                case ItemType.Armor:
-                    availableStats = new List<StatType>
-                    {
-                        StatType.Agility,
-                        StatType.Defence,
-                        StatType.Health,
-                        StatType.Magic,
-                        StatType.MagicDefence
-                    };
-                    item.MinLevel = RandomLevel(maxLevel, minLevel);
-                    item.Stats.Add(new StatValue
-                    {
-                        Type = StatType.Defence,
-                        Value = Math.Max(item.MinLevel - 5 + Random.Next(6) + itemDefinition.BaseStat, Math.Max(itemDefinition.BaseStat, 1))
-                    });
-                    break;
-                default:
-                    return null;
-            }
-
-            if (itemDefinition.Names == null || itemDefinition.Names.Count == 0)
-            {
-                return null;
-            }
-
-            var baseStatLevel = Math.Min((int)(item.MinLevel / 25.0f * itemDefinition.Names.Count), itemDefinition.Names.Count - 1);
-            var baseName = itemDefinition.Names[baseStatLevel];
-            if (itemDefinition.Classes != null)
-            {
-                item.Classes = itemDefinition.Classes.ToList();
-            }
-
-            item.ImageId = baseName.ImageId;
-            item.Slots = itemDefinition.Slots;
-
-            var prefix = string.Empty;
-            var suffix = string.Empty;
-            var statCount = Math.Min((int)rarity.Value, availableStats.Count);
-            var chosenStats = new List<StatType>();
-            for (var i = 0; i < statCount; i++)
-            {
-                var index = Random.Next(availableStats.Count);
-                var stat = availableStats[index];
-                availableStats.Remove(stat);
-                chosenStats.Add(stat);
-            }
-
-            foreach (var stat in chosenStats.OrderBy(value => (int)value))
-            {
-                var itemLevel = RandomLevel(maxLevel, minLevel);
-                item.MinLevel = Math.Max(itemLevel, item.MinLevel);
-                var statValue = Math.Max(itemLevel - 5 + Random.Next(6), 1);
-                item.Stats.Add(new StatValue
-                {
-                    Type = stat,
-                    Value = statValue
-                });
-
-                ApplyStatName(stat, itemLevel, ref prefix, ref suffix);
-            }
-
-            item.Name = BuildEquipmentName(baseName.Name, prefix, suffix);
-            item.Cost = item.MinLevel * ((int)rarity.Value + 1) * 100;
-            if (item.Cost > 0)
-            {
-                item.Cost += Random.Next(Math.Max(1, item.Cost / 3));
-            }
-
-            if (GameDataCache.Current != null)
-            {
-                item.Setup(GameDataCache.Current.Skills);
-            }
-
-            return item;
+            return RandomItemRules.CreateRandomEquipment(
+                maxLevel,
+                minLevel,
+                rarity,
+                type,
+                itemClass,
+                slot,
+                GameDataCache.Current == null ? null : GameDataCache.Current.ItemDefinitions,
+                GameDataCache.Current == null ? null : GameDataCache.Current.StatNames,
+                GameDataCache.Current == null ? null : GameDataCache.Current.Skills,
+                maxValue => Random.Next(maxValue),
+                () => Guid.NewGuid().ToString());
         }
 
         private int GetAverageActivePartyLevel()
@@ -2108,102 +1932,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             return Random.NextDouble() < probability;
         }
 
-        private static int RandomLevel(int maxLevel, int minLevel)
-        {
-            maxLevel = Math.Max(maxLevel, 1);
-            minLevel = Math.Max(Math.Min(minLevel, maxLevel), 1);
-            return maxLevel <= minLevel ? minLevel : Random.Next(maxLevel - minLevel) + minLevel;
-        }
-
-        private static IEnumerable<ItemDefinition> GetAvailableItemDefinitions(ItemType type, Class? itemClass, Slot? slot)
-        {
-            if (GameDataCache.Current == null || GameDataCache.Current.ItemDefinitions == null)
-            {
-                return new List<ItemDefinition>();
-            }
-
-            return GameDataCache.Current.ItemDefinitions.Where(definition =>
-            {
-                if (definition == null)
-                {
-                    return false;
-                }
-
-                if (itemClass.HasValue && slot.HasValue)
-                {
-                    return definition.Slots != null &&
-                           definition.Classes != null &&
-                           definition.Type == type &&
-                           definition.Classes.Contains(itemClass.Value) &&
-                           definition.Slots.Contains(slot.Value);
-                }
-
-                if (itemClass.HasValue)
-                {
-                    return definition.Classes != null &&
-                           definition.Type == type &&
-                           definition.Classes.Contains(itemClass.Value);
-                }
-
-                if (slot.HasValue)
-                {
-                    return definition.Slots != null &&
-                           definition.Type == type &&
-                           definition.Slots.Contains(slot.Value);
-                }
-
-                return definition.Type == type;
-            });
-        }
-
-        private static void ApplyStatName(StatType stat, int itemLevel, ref string prefix, ref string suffix)
-        {
-            if (GameDataCache.Current == null || GameDataCache.Current.StatNames == null)
-            {
-                return;
-            }
-
-            var statName = GameDataCache.Current.StatNames.FirstOrDefault(item => item.Type == stat);
-            if (statName == null)
-            {
-                return;
-            }
-
-            if (string.IsNullOrEmpty(suffix) && statName.Suffix != null && statName.Suffix.Count > 0)
-            {
-                var statLevel = Math.Min((int)(itemLevel / 25.0f * statName.Suffix.Count), statName.Suffix.Count - 1);
-                suffix = statName.Suffix[statLevel];
-            }
-            else if (statName.Prefix != null && statName.Prefix.Count > 0)
-            {
-                var statLevel = Math.Min((int)(itemLevel / 25.0f * statName.Prefix.Count), statName.Prefix.Count - 1);
-                if (string.IsNullOrEmpty(prefix))
-                {
-                    prefix = statName.Prefix[statLevel];
-                }
-                else
-                {
-                    prefix += " " + statName.Prefix[statLevel];
-                }
-            }
-        }
-
-        private static string BuildEquipmentName(string baseName, string prefix, string suffix)
-        {
-            var name = baseName;
-            if (!string.IsNullOrWhiteSpace(prefix))
-            {
-                name = prefix + " " + name;
-            }
-
-            if (!string.IsNullOrWhiteSpace(suffix))
-            {
-                name = name + " of " + suffix;
-            }
-
-            return name;
-        }
-
         private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName)
         {
             return GetIntProperty(mapObject, propertyName, 0);
@@ -2520,18 +2248,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             }
 
             return mapState;
-        }
-
-        private static ActiveQuest CreateActiveQuest(Quest quest)
-        {
-            return new ActiveQuest
-            {
-                Id = quest.Id,
-                CurrentStage = 0,
-                Stages = quest.Stages == null
-                    ? new List<QuestStageState>()
-                    : quest.Stages.Select(item => new QuestStageState { Number = item.Number }).ToList()
-            };
         }
 
         public void SaveQuick()
@@ -3226,16 +2942,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             if (string.Equals(mapId, "overworld", StringComparison.OrdinalIgnoreCase))
             {
-                return data.Monsters
-                    .Where(monster => monster != null && monster.Biomes != null && monster.Biomes.Any())
-                    .Select(monster => new RandomMonster
-                    {
-                        Data = monster,
-                        Name = monster.Name,
-                        Rarity = monster.Rarity,
-                        IsOverworld = true
-                    })
-                    .ToList();
+                return EncounterRules.CreateOverworldRandomMonsters(data.Monsters);
             }
 
             var assetPath = "Assets/DungeonEscape/Data/maps/" + mapId + "_monsters.json";
@@ -3248,16 +2955,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             try
             {
                 var randomMonsters = JsonConvert.DeserializeObject<List<RandomMonster>>(File.ReadAllText(fullPath)) ?? new List<RandomMonster>();
-                foreach (var randomMonster in randomMonsters)
-                {
-                    if (randomMonster == null || string.IsNullOrEmpty(randomMonster.Name))
-                    {
-                        continue;
-                    }
-
-                    randomMonster.Data = data.Monsters.FirstOrDefault(monster =>
-                        string.Equals(monster.Name, randomMonster.Name, StringComparison.OrdinalIgnoreCase));
-                }
+                EncounterRules.LinkRandomMonsters(randomMonsters, data.Monsters);
 
                 return randomMonsters
                     .Where(monster => monster != null && monster.Data != null)
@@ -3272,109 +2970,20 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private List<Monster> BuildRandomEncounter(IEnumerable<RandomMonster> randomMonsters, BiomeInfo biomeInfo)
         {
-            var level = GetAverageActivePartyLevel();
-            var weightedMonsters = new List<Monster>();
-            foreach (var randomMonster in randomMonsters.Where(monster =>
-                         monster != null &&
-                         monster.Data != null &&
-                         monster.InBiome(biomeInfo.Type) &&
-                         (biomeInfo.MaxMonsterLevel == 0 || monster.Data.MinLevel < biomeInfo.MaxMonsterLevel) &&
-                         monster.Data.MinLevel >= biomeInfo.MinMonsterLevel))
-            {
-                var probability = GetMonsterProbability(randomMonster.Rarity);
-                for (var i = 0; i < probability; i++)
-                {
-                    weightedMonsters.Add(randomMonster.Data);
-                }
-            }
-
-            if (weightedMonsters.Count == 0)
-            {
-                return new List<Monster>();
-            }
-
-            const int maxMonstersToFight = 10;
-            const int maxMonsterGroups = 3;
-            var maxMonsters = Math.Min(maxMonstersToFight, Math.Max(1, level / 4 + Party.AliveMembers.Count()));
-            var numberOfMonsters = Random.Next(maxMonsters) + 1;
-            var monsters = new List<Monster>();
-            var totalMonsters = 0;
-            var usedMonsters = new List<string>();
-            for (var group = 0; group < maxMonsterGroups - 1 && totalMonsters < numberOfMonsters; group++)
-            {
-                var available = weightedMonsters.Where(monster => !usedMonsters.Contains(monster.Name)).ToArray();
-                if (available.Length == 0)
-                {
-                    break;
-                }
-
-                var monster = available[Random.Next(available.Length)];
-                usedMonsters.Add(monster.Name);
-                var groupSize = Math.Max(1, monster.GroupSize);
-                var numberInGroup = Random.Next(Math.Min(numberOfMonsters - totalMonsters, groupSize)) + 1;
-                AddMonsterGroup(monsters, monster, numberInGroup);
-                totalMonsters += numberInGroup;
-            }
-
-            if (totalMonsters < numberOfMonsters)
-            {
-                var available = weightedMonsters.Where(monster => !usedMonsters.Contains(monster.Name)).ToArray();
-                if (available.Length > 0)
-                {
-                    var monster = available[Random.Next(available.Length)];
-                    var numberInGroup = Math.Min(numberOfMonsters - totalMonsters, Math.Max(1, monster.GroupSize));
-                    AddMonsterGroup(monsters, monster, numberInGroup);
-                }
-            }
-
-            ApplyRepel(monsters);
-            return monsters;
-        }
-
-        private static int GetMonsterProbability(Rarity rarity)
-        {
-            switch (rarity)
-            {
-                case Rarity.Common:
-                    return 20;
-                case Rarity.Uncommon:
-                    return 5;
-                case Rarity.Rare:
-                    return 2;
-                case Rarity.Epic:
-                    return 1;
-                case Rarity.Legendary:
-                    return Dice.RollD20() > 14 ? 1 : 0;
-                default:
-                    return 0;
-            }
-        }
-
-        private static void AddMonsterGroup(ICollection<Monster> monsters, Monster monster, int count)
-        {
-            for (var i = 0; i < count; i++)
-            {
-                monsters.Add(monster);
-            }
-        }
-
-        private void ApplyRepel(ICollection<Monster> monsters)
-        {
-            if (Party == null ||
-                !Party.AliveMembers.Any(partyMember => partyMember.Status != null && partyMember.Status.Any(status => status.Type == EffectType.Repel)))
-            {
-                return;
-            }
-
-            var maxHealth = Party.AliveMembers.Max(member => member.MaxHealth);
-            foreach (var monster in monsters.ToList())
-            {
-                var monsterHealth = Dice.Roll(monster.HealthRandom, monster.HealthTimes, monster.HealthConst);
-                if (monsterHealth < maxHealth)
-                {
-                    monsters.Remove(monster);
-                }
-            }
+            var aliveMembers = Party == null ? new List<Hero>() : Party.AliveMembers.ToList();
+            var repelActive = aliveMembers.Any(partyMember =>
+                partyMember.Status != null && partyMember.Status.Any(status => status.Type == EffectType.Repel));
+            var repelMaxHealth = aliveMembers.Count == 0 ? 0 : aliveMembers.Max(member => member.MaxHealth);
+            return EncounterRules.BuildRandomEncounter(
+                randomMonsters,
+                biomeInfo,
+                GetAverageActivePartyLevel(),
+                aliveMembers.Count,
+                repelActive,
+                repelMaxHealth,
+                maxValue => Random.Next(maxValue),
+                () => Dice.RollD20(),
+                monster => Dice.Roll(monster.HealthRandom, monster.HealthTimes, monster.HealthConst));
         }
 
         private static GameSave GetQuickSave(GameFile file)

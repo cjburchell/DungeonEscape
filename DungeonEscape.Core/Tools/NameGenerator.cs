@@ -157,8 +157,14 @@ namespace Redpoint.DungeonEscape.Tools
     {
       if (!this._chainCache.ContainsKey(type))
       {
+        var names = type == Gender.Male ? this._data?.Male : this._data?.Female;
+        if (names == null || names.Count == 0)
+        {
+          return null;
+        }
+
         var chain = new Chain();
-        chain.Construct(type == Gender.Male ? this._data.Male : this._data.Female);
+        chain.Construct(names);
         this._chainCache.Add(type, chain);
       }
 

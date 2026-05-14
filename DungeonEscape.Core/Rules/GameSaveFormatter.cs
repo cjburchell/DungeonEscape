@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
+using Redpoint.DungeonEscape.State;
 
-namespace Redpoint.DungeonEscape.State
+namespace Redpoint.DungeonEscape.Rules
 {
     public static class GameSaveFormatter
     {

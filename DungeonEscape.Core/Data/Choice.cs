@@ -1,4 +1,5 @@
-﻿// ReSharper disable PropertyCanBeMadeInitOnly.Global
+using Redpoint.DungeonEscape.State;
+// ReSharper disable PropertyCanBeMadeInitOnly.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -6,7 +7,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Redpoint.DungeonEscape.State
+namespace Redpoint.DungeonEscape.Data
 {
     public class Choice
     {

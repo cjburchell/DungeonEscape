@@ -1,9 +1,10 @@
+using Redpoint.DungeonEscape.State;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Redpoint.DungeonEscape.State
+namespace Redpoint.DungeonEscape.Data
 {
     public class Item
     {

@@ -1,4 +1,6 @@
+﻿using Redpoint.DungeonEscape.Data;
 using System.Linq;
+using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 using Xunit;
 

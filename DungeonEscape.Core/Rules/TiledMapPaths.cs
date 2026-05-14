@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Redpoint.DungeonEscape.State
+namespace Redpoint.DungeonEscape.Rules
 {
     public static class TiledMapPaths
     {

@@ -1,7 +1,8 @@
-﻿// ReSharper disable ClassNeverInstantiated.Global
+using Redpoint.DungeonEscape.State;
+// ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
-namespace Redpoint.DungeonEscape.State
+namespace Redpoint.DungeonEscape.Data
 {
     using System.Collections.Generic;
 

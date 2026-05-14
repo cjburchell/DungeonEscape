@@ -1,6 +1,8 @@
+﻿using Redpoint.DungeonEscape.Data;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 
 using Redpoint.DungeonEscape.Unity.Core;

@@ -87,5 +87,8 @@ Latest architecture cleanup:
 - Added unit tests for the extracted Tiled helpers.
 - Extracted save/location formatting into `DungeonEscape.Core`.
 - Added unit tests for save title/summary, usable-save checks, and return-location display names.
+- Extracted store/economy rules into `DungeonEscape.Core`.
+- Added unit tests for store metadata, inventory selection, buy/sell rules, sale prices, and sellable item filtering.
+- Split file-backed data contracts into `DungeonEscape.Core/Data` and `Redpoint.DungeonEscape.Data`; runtime/save objects remain in `State`.
 
 After every implemented gameplay step, update `memory-bank/MANUAL_TESTS.md` with manual verification steps.

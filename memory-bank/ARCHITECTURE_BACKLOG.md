@@ -13,20 +13,26 @@ Goal: separate engine-neutral rules from Unity scripts into `DungeonEscape.Core`
 - Unity `Loader` and `Collision` still expose their existing APIs, but delegate the extracted pure logic to `DungeonEscape.Core`.
 - Extracted game save title/summary formatting, save usability checks, and return-location display-name formatting into `GameSaveFormatter`.
 - Added shared core unit tests for save summary/title formatting, usable-save detection, and location-name formatting.
+- Extracted store/economy metadata, buy eligibility, sellable item filtering, sale prices, initial store inventory selection, invalid store inventory checks, and buy/sell mutation rules into `StoreRules`.
+- Added shared core unit tests for store metadata, key stores, buy recipients, sellable filtering, sale prices, fixed/key inventory initialization, and buy/sell behavior.
+- Split file-backed data contracts out of `DungeonEscape.Core/State` into `DungeonEscape.Core/Data` with the `Redpoint.DungeonEscape.Data` namespace.
 
 ### Good First Extractions
 
 - Map path and Tiled helpers:
-  - Move map id/path normalization out of `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/Map/Tiled/Loader.cs`.
-  - Move tileset/image path resolution out of `Loader.cs`.
-  - Move CSV tile data and Tiled GID parsing out of `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/Map/Tiled/Collision.cs`.
-  - Move object-bounds-to-blocked-tile coordinate math out of `Collision.cs`.
+  - Done: Move map id/path normalization out of `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/Map/Tiled/Loader.cs`.
+  - Done: Move tileset/image path resolution out of `Loader.cs`.
+  - Done: Move CSV tile data and Tiled GID parsing out of `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/Map/Tiled/Collision.cs`.
+  - Done: Move object-bounds-to-blocked-tile coordinate math out of `Collision.cs`.
 - Save and display formatting:
   - Done: Move game save title/summary formatting out of `GameState`.
   - Done: Move return-location display-name formatting out of `GameState`.
 - Store and economy rules:
-  - Move sellable item filtering and sale price rules out of `StoreWindow`.
-  - Move store inventory generation and buy/sell operation rules out of `GameState`.
+  - Done: Move sellable item filtering and sale price rules out of `StoreWindow`.
+  - Done: Move store metadata, initial inventory selection, invalid inventory checks, and buy/sell operation rules out of `GameState`.
+- Core state/data organization:
+  - Done: Move file-backed data definitions and parsed Tiled contracts out of `State`.
+  - Keep save/runtime objects and shared gameplay value types in `State`.
 
 ### Medium-Sized Extractions
 

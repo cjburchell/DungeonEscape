@@ -1,8 +1,9 @@
+using Redpoint.DungeonEscape.State;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Redpoint.DungeonEscape.State
+namespace Redpoint.DungeonEscape.Data
 {
     public sealed class TiledMapInfo
     {

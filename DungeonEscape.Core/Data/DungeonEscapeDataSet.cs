@@ -1,6 +1,7 @@
+using Redpoint.DungeonEscape.State;
 using System.Collections.Generic;
 
-namespace Redpoint.DungeonEscape.State
+namespace Redpoint.DungeonEscape.Data
 {
     public sealed class DungeonEscapeDataSet
     {

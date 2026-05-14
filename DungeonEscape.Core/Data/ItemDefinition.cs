@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using Redpoint.DungeonEscape.State;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
@@ -7,7 +8,7 @@ using Newtonsoft.Json.Converters;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable CollectionNeverUpdated.Global
 
-namespace Redpoint.DungeonEscape.State
+namespace Redpoint.DungeonEscape.Data
 {
     public class ItemDefinition
     {

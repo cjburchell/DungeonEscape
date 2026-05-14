@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+using Redpoint.DungeonEscape.State;
+using System.Collections.Generic;
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace Redpoint.DungeonEscape.State
+namespace Redpoint.DungeonEscape.Data
 {
     public class DialogText
     {

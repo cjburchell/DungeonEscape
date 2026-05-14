@@ -1,9 +1,11 @@
+﻿using Redpoint.DungeonEscape.Data;
 using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Tools;
 using UnityEngine;
@@ -1559,79 +1561,17 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private List<Item> CreateInitialStoreInventory(TiledObjectInfo mapObject)
         {
-            var items = new List<Item>();
-            if (mapObject == null)
-            {
-                return items;
-            }
-
-            if (string.Equals(mapObject.Class, "NpcKey", StringComparison.OrdinalIgnoreCase))
-            {
-                return GameDataCache.Current == null || GameDataCache.Current.CustomItems == null
-                    ? items
-                    : GameDataCache.Current.CustomItems
-                        .Where(item => item != null && item.IsKey)
-                        .OrderBy(item => item.MinLevel)
-                        .ThenBy(item => item.Cost)
-                        .ToList();
-            }
-
-            string itemListString;
-            if (mapObject.Properties != null &&
-                mapObject.Properties.TryGetValue("Items", out itemListString) &&
-                !string.IsNullOrWhiteSpace(itemListString))
-            {
-                foreach (var itemId in itemListString.Split(',').Select(value => value.Trim()))
-                {
-                    var item = GetCustomItem(itemId);
-                    if (item != null)
-                    {
-                        items.Add(item);
-                    }
-                }
-
-                return items.OrderBy(item => item.Cost).ToList();
-            }
-
             var level = GetAverageActivePartyLevel();
-            for (var i = 0; i < 10; i++)
-            {
-                var item = CreateRandomItem(level);
-                if (item != null)
-                {
-                    items.Add(item);
-                }
-            }
-
-            return items.OrderBy(item => item.Cost).ToList();
+            return StoreRules.CreateInitialStoreInventory(
+                mapObject,
+                GameDataCache.Current == null ? null : GameDataCache.Current.CustomItems,
+                GetCustomItem,
+                () => CreateRandomItem(level));
         }
 
         private static bool ContainsInvalidStoreItems(TiledObjectInfo mapObject, List<Item> items)
         {
-            if (items == null)
-            {
-                return true;
-            }
-
-            if (string.Equals(mapObject.Class, "NpcKey", StringComparison.OrdinalIgnoreCase))
-            {
-                return items.Any(item => item == null || !item.IsKey);
-            }
-
-            string itemListString;
-            var hasFixedInventory = mapObject.Properties != null &&
-                                    mapObject.Properties.TryGetValue("Items", out itemListString) &&
-                                    !string.IsNullOrWhiteSpace(itemListString);
-            if (hasFixedInventory)
-            {
-                return false;
-            }
-
-            return items.Any(item =>
-                item == null ||
-                item.Type == ItemType.Gold ||
-                item.Type == ItemType.Quest ||
-                item.Type == ItemType.Unknown);
+            return StoreRules.ContainsInvalidStoreItems(mapObject, items);
         }
 
         public Item CreateChestItem(int level, Rarity? rarity = null)
@@ -1966,7 +1906,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             var spriteState = GetSpriteState(Party.CurrentMapId, mapObject.Id, true);
             spriteState.Name = mapObject.Name;
-            spriteState.Type = string.Equals(mapObject.Class, "NpcKey", StringComparison.OrdinalIgnoreCase)
+            spriteState.Type = StoreRules.IsKeyStoreObject(mapObject)
                 ? SpriteType.NpcKey
                 : SpriteType.NpcStore;
             if (spriteState.Items == null || ContainsInvalidStoreItems(mapObject, spriteState.Items))
@@ -2001,59 +1941,28 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return "That item is not available.";
             }
 
-            if (recipient == null || Party == null || !Party.Members.Contains(recipient) || recipient.Items.Count >= Party.MaxItems)
+            var inventory = mapObject == null ? null : GetStoreInventory(mapObject);
+            var message = StoreRules.BuyStoreItem(Party, item, recipient, inventory, out purchasedItem);
+            if (purchasedItem != null)
             {
-                return "No one has room to carry that.";
+                MarkDirty();
             }
 
-            if (Party.Gold < item.Cost)
-            {
-                return "You do not have enough gold.";
-            }
-
-            purchasedItem = new ItemInstance(item);
-            recipient.Items.Add(purchasedItem);
-
-            Party.Gold -= item.Cost;
-            if (mapObject != null)
-            {
-                var inventory = GetStoreInventory(mapObject);
-                inventory.Remove(item);
-            }
-
-            MarkDirty();
-            return recipient.Name + " bought " + item.Name + " for " + item.Cost + " gold.";
+            return message;
         }
 
         public string SellHeroItem(TiledObjectInfo mapObject, Hero hero, ItemInstance item)
         {
             EnsureInitialized();
-            if (hero == null || item == null || item.Item == null || !Party.Members.Contains(hero) || !hero.Items.Contains(item))
+            var inventory = mapObject == null ? null : GetStoreInventory(mapObject);
+            var hadItem = hero != null && hero.Items != null && hero.Items.Contains(item);
+            var message = StoreRules.SellHeroItem(Party, hero, item, inventory);
+            if (hadItem && hero != null && hero.Items != null && !hero.Items.Contains(item))
             {
-                return "That item cannot be sold.";
+                MarkDirty();
             }
 
-            if (!item.Item.CanBeSoldInStore || item.Type == ItemType.Quest)
-            {
-                return item.Name + " cannot be sold.";
-            }
-
-            var salePrice = Math.Max(1, item.Gold * 3 / 4);
-            item.UnEquip(Party.Members);
-            hero.Items.Remove(item);
-            Party.Gold += salePrice;
-            if (mapObject != null)
-            {
-                var inventory = GetStoreInventory(mapObject);
-                if (inventory.Count <= 15)
-                {
-                    inventory.Add(item.Item);
-                    inventory.Sort((left, right) => left.Cost.CompareTo(right.Cost));
-                }
-            }
-
-            MarkDirty();
-            return hero.Name + " sold " + item.Name + " for " + salePrice + " gold.";
+            return message;
         }
 
         public string BuyStoreItem(Item item)

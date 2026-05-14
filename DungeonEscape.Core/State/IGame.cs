@@ -1,3 +1,4 @@
+﻿using Redpoint.DungeonEscape.Data;
 using System.Collections.Generic;
 
 namespace Redpoint.DungeonEscape.State

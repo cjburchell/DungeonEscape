@@ -1,4 +1,5 @@
-﻿namespace Redpoint.DungeonEscape.State
+using Redpoint.DungeonEscape.State;
+namespace Redpoint.DungeonEscape.Data
 {
     public enum QuestAction
     {

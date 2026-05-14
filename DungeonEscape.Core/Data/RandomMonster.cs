@@ -1,4 +1,5 @@
-﻿
+using Redpoint.DungeonEscape.State;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable CollectionNeverUpdated.Global
@@ -7,7 +8,7 @@
 
 using Newtonsoft.Json.Converters;
 
-namespace Redpoint.DungeonEscape.State
+namespace Redpoint.DungeonEscape.Data
 {
     using Newtonsoft.Json;
 

@@ -1,6 +1,8 @@
+﻿using Redpoint.DungeonEscape.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 using UnityEngine;
 
@@ -359,9 +361,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private List<Hero> GetBuyRecipients()
         {
-            return gameState == null || gameState.Party == null
-                ? new List<Hero>()
-                : gameState.Party.AliveMembers.Where(hero => hero.Items.Count < Party.MaxItems).ToList();
+            return StoreRules.GetBuyRecipients(gameState == null ? null : gameState.Party);
         }
 
         private List<Hero> GetPartyMembers()
@@ -373,14 +373,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private static IEnumerable<ItemInstance> GetSellableItems(Hero hero)
         {
-            return hero == null || hero.Items == null
-                ? new List<ItemInstance>()
-                : hero.Items.Where(item => item != null && item.Item != null && item.Item.CanBeSoldInStore && item.Type != ItemType.Quest);
+            return StoreRules.GetSellableItems(hero);
         }
 
         private static int GetSalePrice(ItemInstance item)
         {
-            return item == null ? 0 : Math.Max(1, item.Gold * 3 / 4);
+            return StoreRules.GetSalePrice(item);
         }
 
         private void ShowModal(string title, string message, IEnumerable<string> choices, Action<int> selected)
@@ -618,7 +616,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private bool StoreWillBuyItems()
         {
-            return !IsKeyStoreObject() && GetBoolProperty("WillBuyItems", true);
+            return StoreRules.StoreWillBuyItems(storeObject);
         }
 
         private void HandleStoreInput()
@@ -842,11 +840,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private bool CanBuy(Item item)
         {
-            return item != null &&
-                   gameState != null &&
-                   gameState.Party != null &&
-                   gameState.Party.Gold >= item.Cost &&
-                   GetBuyRecipients().Count > 0;
+            return StoreRules.CanBuy(gameState == null ? null : gameState.Party, item);
         }
 
         private GUIStyle GetRowStyle(bool selected)
@@ -1038,48 +1032,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
             nextMoveYTime = 0f;
         }
 
-        private bool IsKeyStoreObject()
-        {
-            return storeObject != null &&
-                   string.Equals(storeObject.Class, "NpcKey", StringComparison.OrdinalIgnoreCase);
-        }
-
         private string GetStoreName()
         {
-            return storeObject == null || string.IsNullOrEmpty(storeObject.Name) ||
-                   string.Equals(storeObject.Name, "#Random#", StringComparison.OrdinalIgnoreCase)
-                ? "Store"
-                : storeObject.Name;
+            return StoreRules.GetStoreName(storeObject);
         }
 
         private string GetStoreText()
         {
-            return IsKeyStoreObject()
-                ? "Would you like to buy a key?"
-                : GetStringProperty("Text", "Welcome to my store. I buy and sell items.");
-        }
-
-        private string GetStringProperty(string propertyName, string defaultValue)
-        {
-            string value;
-            return storeObject != null &&
-                   storeObject.Properties != null &&
-                   storeObject.Properties.TryGetValue(propertyName, out value) &&
-                   !string.IsNullOrEmpty(value)
-                ? value
-                : defaultValue;
-        }
-
-        private bool GetBoolProperty(string propertyName, bool defaultValue)
-        {
-            string value;
-            bool result;
-            return storeObject != null &&
-                   storeObject.Properties != null &&
-                   storeObject.Properties.TryGetValue(propertyName, out value) &&
-                   bool.TryParse(value, out result)
-                ? result
-                : defaultValue;
+            return StoreRules.GetStoreText(storeObject);
         }
 
         private void Close()

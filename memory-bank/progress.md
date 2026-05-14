@@ -25,11 +25,6 @@
 - Removed the old `DungeonEscape.Test` project from the solution; migration tests should live in `DungeonEscape.Core.Test` or future Unity test assemblies.
 - Removed the old MonoGame/Nez project and `Nez.Portable` from this branch; use `main` if old implementation reference is needed.
 - Unity migration is considered complete; remaining automation and warning-review items are accepted as post-migration backlog.
-
-## In Progress
-
-- Feature development and architecture cleanup planning.
-- Core extraction ideas are tracked in `memory-bank/ARCHITECTURE_BACKLOG.md`.
 - First core extraction completed: Tiled map path helpers, tile data parsing, and object bounds tile math now live in `DungeonEscape.Core` with unit tests.
 - Save/location formatting extraction completed: save title/summary, usable-save checks, and return-location display names now live in `DungeonEscape.Core` with unit tests.
 - Store/economy extraction completed: store metadata, inventory selection, buy/sell rules, sale prices, and sellable item filtering now live in `DungeonEscape.Core` with unit tests.
@@ -43,6 +38,12 @@
 - Future feature backlog has been captured in `memory-bank/FUTURE_FEATURES.md`.
 - Known bugs and rough edges are tracked in `memory-bank/BUGS.md`.
 
+## In Progress
+
+- Feature development and next-phase architecture planning.
+- Active architecture ideas are tracked in `memory-bank/ARCHITECTURE_BACKLOG.md`.
+- Completed architecture work is archived in `memory-bank/ARCHITECTURE_COMPLETED.md`.
+
 ## Deferred
 
 - Expand shared core unit tests beyond level-up and skill/spell progression.
@@ -52,7 +53,7 @@
 
 ## Current Known Backlog Items
 
-See `memory-bank/UNITY_MIGRATION.md` for the final migration record. Main post-migration backlog groups:
+See `memory-bank/UNITY_MIGRATION_COMPLETED.md` for the final migration record and `memory-bank/UNITY_MIGRATION.md` for active post-migration follow-up. Main backlog groups:
 
 - Expand shared core unit tests.
 - Add Unity edit mode tests for map loading, hidden item conditions, save/load behavior.

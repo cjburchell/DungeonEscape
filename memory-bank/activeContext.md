@@ -77,4 +77,7 @@ Move on from migration completion into new feature and architecture work. Curren
 - Add regression tests for quest dialog actions and item rewards.
 - Review ReSharper warnings and fix actionable issues where they improve correctness or maintainability.
 
+Future feature ideas are now tracked in `memory-bank/FUTURE_FEATURES.md`.
+Known bugs and rough edges are tracked in `memory-bank/BUGS.md`.
+
 After every implemented gameplay step, update `memory-bank/MANUAL_TESTS.md` with manual verification steps.

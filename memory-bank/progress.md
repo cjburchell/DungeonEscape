@@ -29,6 +29,8 @@
 ## In Progress
 
 - Feature development and architecture cleanup planning.
+- Future feature backlog has been captured in `memory-bank/FUTURE_FEATURES.md`.
+- Known bugs and rough edges are tracked in `memory-bank/BUGS.md`.
 
 ## Deferred
 
@@ -48,3 +50,5 @@ See `memory-bank/UNITY_MIGRATION.md` for the final migration record. Main post-m
 - Replace remaining runtime filesystem asset loading with Unity-native references where appropriate.
 - Remove remaining temporary/debug code when no longer needed.
 - Decide whether old developer/debug console commands should be recreated.
+- Review and prioritize future feature ideas in `memory-bank/FUTURE_FEATURES.md`.
+- Triage and prioritize known issues in `memory-bank/BUGS.md`.

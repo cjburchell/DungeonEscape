@@ -31,7 +31,7 @@ namespace Redpoint.DungeonEscape.Data
         public static TiledMapInfo Parse(string xml)
         {
             var document = XDocument.Parse(xml);
-            var map = document.Root;
+            var map = document.Root ?? new XElement("map");
             var info = new TiledMapInfo
             {
                 Class = GetString(map, "class"),
@@ -43,7 +43,7 @@ namespace Redpoint.DungeonEscape.Data
                 Properties = ReadProperties(map)
             };
 
-            foreach (var tileset in map == null ? Enumerable.Empty<XElement>() : map.Elements("tileset"))
+            foreach (var tileset in map.Elements("tileset"))
             {
                 info.Tilesets.Add(new TiledTilesetInfo
                 {

@@ -40,7 +40,13 @@ namespace Redpoint.DungeonEscape.UnityEditor
 
         public static void CopyRuntimeAssets()
         {
-            var projectRoot = Directory.GetParent(Application.dataPath).FullName;
+            var projectDirectory = Directory.GetParent(Application.dataPath);
+            if (projectDirectory == null)
+            {
+                throw new InvalidOperationException("Unable to resolve the Unity project root.");
+            }
+
+            var projectRoot = projectDirectory.FullName;
             var targetRoot = Path.Combine(projectRoot, "Assets/StreamingAssets/DungeonEscape");
 
             if (Directory.Exists(targetRoot))

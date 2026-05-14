@@ -367,12 +367,16 @@ namespace Redpoint.DungeonEscape.Unity.Core
         public string ApplyCombatRewards(IEnumerable<MonsterInstance> monsters)
         {
             EnsureInitialized();
+            var party = Party;
             var defeatedMonsters = monsters == null
                 ? new List<MonsterInstance>()
                 : monsters.Where(monster => monster != null && monster.IsDead).ToList();
-            var aliveMembers = Party == null
-                ? new List<Hero>()
-                : Party.AliveMembers.Where(member => member != null && !member.IsDead).ToList();
+            if (party == null)
+            {
+                return "";
+            }
+
+            var aliveMembers = party.AliveMembers.Where(member => member != null && !member.IsDead).ToList();
             if (defeatedMonsters.Count == 0 || aliveMembers.Count == 0)
             {
                 return "";
@@ -387,7 +391,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             }
 
             var gold = defeatedMonsters.Sum(monster => monster.Gold);
-            Party.Gold += gold;
+            party.Gold += gold;
             message.AppendLine("You have defeated " + monsterName + ".");
             message.AppendLine("Each party member has gained " + xp + " XP.");
             message.AppendLine("The party got " + gold + " gold.");
@@ -1752,8 +1756,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             var recipient = Party == null
                 ? null
                 : Party.AliveMembers.FirstOrDefault(partyMember => partyMember.Items.Count < Party.MaxItems);
-            ItemInstance purchasedItem;
-            return BuyStoreItem(mapObject, item, recipient, out purchasedItem);
+            return BuyStoreItem(mapObject, item, recipient, out _);
         }
 
         public string BuyStoreItem(TiledObjectInfo mapObject, Item item, Hero recipient, out ItemInstance purchasedItem)
@@ -1779,9 +1782,10 @@ namespace Redpoint.DungeonEscape.Unity.Core
         {
             EnsureInitialized();
             var inventory = mapObject == null ? null : GetStoreInventory(mapObject);
-            var hadItem = hero != null && hero.Items != null && hero.Items.Contains(item);
+            var heroItems = hero == null ? null : hero.Items;
+            var hadItem = heroItems != null && heroItems.Contains(item);
             var message = StoreRules.SellHeroItem(Party, hero, item, inventory);
-            if (hadItem && hero != null && hero.Items != null && !hero.Items.Contains(item))
+            if (hadItem && !heroItems.Contains(item))
             {
                 MarkDirty();
             }
@@ -2509,11 +2513,10 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 while (hero.Level < level)
                 {
                     hero.Xp = hero.NextLevel;
-                    string ignored;
                     hero.CheckLevelUp(
                         classLevels,
                         GameDataCache.Current == null ? null : GameDataCache.Current.Spells,
-                        out ignored);
+                        out _);
                 }
             }
 

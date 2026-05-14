@@ -38,8 +38,8 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             var renderStartRow = 0;
             var renderEndColumn = mapWidth;
             var renderEndRow = mapHeight;
-            var renderColumns = renderEndColumn - renderStartColumn;
-            var renderRows = renderEndRow - renderStartRow;
+            var renderColumns = renderEndColumn;
+            var renderRows = renderEndRow;
 
             foreach (var element in elements)
             {
@@ -468,14 +468,6 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             var centerY = useObjectBounds
                 ? (y + objectHeight / 2f) / tileHeight
                 : (y - objectHeight / 2f) / tileHeight;
-
-            if (!useObjectBounds)
-            {
-                return new Vector3(
-                    centerX - 0.5f,
-                    -centerY + 0.5f,
-                    -0.1f);
-            }
 
             return new Vector3(
                 centerX - 0.5f,

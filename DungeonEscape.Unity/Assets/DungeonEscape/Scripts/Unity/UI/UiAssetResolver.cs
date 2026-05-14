@@ -29,8 +29,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             foreach (var hero in party.Members)
             {
-                Sprite heroSprite;
-                TryGetHeroSprite(hero, out heroSprite);
+                TryGetHeroSprite(hero, out _);
 
                 if (hero.Items == null)
                 {
@@ -39,8 +38,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
                 foreach (var item in hero.Items)
                 {
-                    Sprite itemSprite;
-                    TryGetItemSprite(item, out itemSprite);
+                    TryGetItemSprite(item, out _);
                 }
             }
         }

@@ -73,6 +73,7 @@ namespace Redpoint.DungeonEscape.Rules
         {
             maxLevel = Math.Max(maxLevel, 1);
             minLevel = Math.Max(Math.Min(minLevel, maxLevel), 1);
+            var statNameList = statNames as IList<StatName> ?? statNames?.ToList();
 
             if (!rarity.HasValue)
             {
@@ -170,7 +171,7 @@ namespace Redpoint.DungeonEscape.Rules
                     Value = statValue
                 });
 
-                ApplyStatName(statNames, stat, itemLevel, ref prefix, ref suffix);
+                ApplyStatName(statNameList, stat, itemLevel, ref prefix, ref suffix);
             }
 
             item.Name = BuildEquipmentName(baseName.Name, prefix, suffix);

@@ -74,9 +74,7 @@ namespace Redpoint.DungeonEscape.UnityEditor
                 return false;
             }
 
-            var syncSolution = syncVsType == null
-                ? null
-                : syncVsType.GetMethod("SyncSolution", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+            var syncSolution = syncVsType.GetMethod("SyncSolution", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
             if (syncSolution == null)
             {
                 Debug.Log("UnityEditor.SyncVS.SyncSolution method was not found.");
@@ -96,25 +94,21 @@ namespace Redpoint.DungeonEscape.UnityEditor
                 return false;
             }
 
-            var currentEditor = codeEditorType == null
-                ? null
-                : codeEditorType.GetProperty("CurrentEditor", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+            var currentEditor = codeEditorType.GetProperty("CurrentEditor", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
             if (currentEditor == null)
             {
                 Debug.Log("UnityEditor.CodeEditor.CodeEditor.CurrentEditor property was not found.");
                 return false;
             }
 
-            var editor = currentEditor == null ? null : currentEditor.GetValue(null, null);
+            var editor = currentEditor.GetValue(null, null);
             if (editor == null)
             {
                 Debug.Log("Unity current code editor was null.");
                 return false;
             }
 
-            var syncAll = editor == null
-                ? null
-                : editor.GetType().GetMethod("SyncAll", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var syncAll = editor.GetType().GetMethod("SyncAll", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (syncAll == null)
             {
                 Debug.Log("Unity current code editor SyncAll method was not found on " + editor.GetType().FullName + ".");

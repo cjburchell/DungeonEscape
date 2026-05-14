@@ -261,8 +261,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private string Fight(IFighter source, IFighter target)
         {
-            int damage;
-            return Fight(source, target, out damage, true);
+            return Fight(source, target, out _, true);
         }
 
         private string Fight(IFighter source, IFighter target, out int damage, bool playSounds)

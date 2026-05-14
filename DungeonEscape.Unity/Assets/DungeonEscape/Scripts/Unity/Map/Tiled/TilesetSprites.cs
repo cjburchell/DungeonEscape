@@ -179,6 +179,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
 
         private static int GetDirectionalFrameStart(TilesetSpriteSet selected, int localTileId, int directionIndex)
         {
+            var directionOrder = selected.DirectionOrder;
             if (selected.Columns > 0 && selected.DirectionalFrameCount != 3)
             {
                 var normalizedTileId = Math.Max(0, localTileId - selected.DirectionalFrameSetOffset);
@@ -190,21 +191,20 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             }
 
             if (selected.DirectionalFrameCount == 3 &&
-                selected.DirectionOrder != null &&
-                selected.DirectionOrder.Length == 4 &&
+                directionOrder != null &&
+                directionOrder.Length == 4 &&
                 selected.Columns > 0)
             {
                 var normalizedTileId = Math.Max(0, localTileId - selected.DirectionalFrameSetOffset);
                 var column = normalizedTileId % selected.Columns;
                 var row = normalizedTileId / selected.Columns;
                 var blockColumn = column / selected.DirectionalFrameCount;
-                var blockRow = row / selected.DirectionOrder.Length;
-                return blockRow * selected.Columns * selected.DirectionOrder.Length +
+                var blockRow = row / directionOrder.Length;
+                return blockRow * selected.Columns * directionOrder.Length +
                        directionIndex * selected.Columns +
                        blockColumn * selected.DirectionalFrameCount;
             }
 
-            var characterFrameCount = selected.DirectionalFrameCount * selected.DirectionOrder.Length;
             var characterStart = localTileId - selected.DirectionalFrameSetOffset;
             return characterStart + directionIndex * selected.DirectionalFrameCount;
         }
@@ -282,11 +282,6 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             }
 
             var start = column / stride * stride;
-            if (column >= start + selected.DirectionalFrameSetWidth)
-            {
-                return start;
-            }
-
             return start;
         }
 

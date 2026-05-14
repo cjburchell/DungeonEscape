@@ -132,7 +132,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private static DialogHead GetDialogHead(Dialog dialog, Party party)
         {
-            var dialogs = dialog.Dialogs;
+            var dialogs = (dialog.Dialogs ?? Enumerable.Empty<DialogHead>()).ToList();
             var startQuestDialog = dialogs.FirstOrDefault(item =>
                 item.StartQuest &&
                 party != null &&
@@ -166,7 +166,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             return GetDefaultDialogHead(dialogs);
         }
 
-        private static DialogHead GetDefaultDialogHead(IEnumerable<DialogHead> dialogs)
+        private static DialogHead GetDefaultDialogHead(IReadOnlyList<DialogHead> dialogs)
         {
             return dialogs.FirstOrDefault(item =>
                        !item.StartQuest &&

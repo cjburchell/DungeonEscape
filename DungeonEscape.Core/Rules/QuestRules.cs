@@ -138,10 +138,12 @@ namespace Redpoint.DungeonEscape.Rules
                 hero.Xp += xpReward;
             }
 
+            var classLevelList = classLevels as IList<ClassStats> ?? classLevels?.ToList();
+            var spellList = spells as IList<Spell> ?? spells?.ToList();
             message.AppendLine("The party got " + xp + " XP.");
             foreach (var hero in activeMembers)
             {
-                AppendLevelUpMessages(message, hero, classLevels, spells);
+                AppendLevelUpMessages(message, hero, classLevelList, spellList);
             }
         }
 
@@ -156,10 +158,12 @@ namespace Redpoint.DungeonEscape.Rules
                 return;
             }
 
+            var classLevelList = classLevels as IList<ClassStats> ?? classLevels.ToList();
+            var spellList = spells as IList<Spell> ?? spells?.ToList();
             while (true)
             {
                 string levelUpMessage;
-                if (!hero.CheckLevelUp(classLevels, spells, out levelUpMessage))
+                if (!hero.CheckLevelUp(classLevelList, spellList, out levelUpMessage))
                 {
                     break;
                 }

@@ -956,7 +956,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 GUILayout.BeginHorizontal(GetListRowStyle(selected), GUILayout.Height(30f * GetPixelScale()));
                 GUILayout.Label(getLabel(i), GetMenuListLabelStyle(selected));
                 GUILayout.EndHorizontal();
-                HandleDetailRowMouseClick(i, () => clicked(i));
+                var rowIndex = i;
+                HandleDetailRowMouseClick(rowIndex, () => clicked(rowIndex));
             }
 
             GUILayout.FlexibleSpace();
@@ -985,7 +986,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 DrawSpriteIconNoFrame(getSprite == null ? null : getSprite(i), 32f * GetPixelScale());
                 GUILayout.Label(getLabel(i), GetMenuListLabelStyle(selected), GUILayout.Height(rowHeight));
                 GUILayout.EndHorizontal();
-                HandleDetailRowMouseClick(i, () => clicked(i));
+                var rowIndex = i;
+                HandleDetailRowMouseClick(rowIndex, () => clicked(rowIndex));
             }
 
             GUILayout.FlexibleSpace();
@@ -1018,9 +1020,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 GUILayout.FlexibleSpace();
                 GUILayout.Label(spell.Cost + " MP", GetMenuListLabelStyle(selected), GUILayout.Width(58f * GetPixelScale()), GUILayout.Height(rowHeight));
                 GUILayout.EndHorizontal();
-                HandleDetailRowMouseClick(i, () =>
+                var rowIndex = i;
+                HandleDetailRowMouseClick(rowIndex, () =>
                 {
-                    selectedDetailIndex = i;
+                    selectedDetailIndex = rowIndex;
                     currentFocus = MenuFocus.Detail;
                 });
             }

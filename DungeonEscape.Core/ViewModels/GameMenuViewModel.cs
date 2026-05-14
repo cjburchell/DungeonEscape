@@ -503,6 +503,39 @@ namespace Redpoint.DungeonEscape.ViewModels
                 : audioChanged ? GameMenuSettingsEffect.ApplyAudioSettings : GameMenuSettingsEffect.None;
         }
 
+        public Settings CreateSettingsSnapshot(Settings settings)
+        {
+            if (settings == null)
+            {
+                return null;
+            }
+
+            return new Settings
+            {
+                NoMonsters = settings.NoMonsters,
+                MapDebugInfo = settings.MapDebugInfo,
+                MusicVolume = settings.MusicVolume,
+                SoundEffectsVolume = settings.SoundEffectsVolume,
+                IsFullScreen = settings.IsFullScreen,
+                MaxPartyMembers = settings.MaxPartyMembers,
+                UiScale = settings.UiScale,
+                DialogTextCharactersPerSecond = settings.DialogTextCharactersPerSecond,
+                SprintBoost = settings.SprintBoost,
+                TurnMoveDelaySeconds = settings.TurnMoveDelaySeconds,
+                AutoSaveEnabled = settings.AutoSaveEnabled,
+                AutoSaveIntervalSeconds = settings.AutoSaveIntervalSeconds,
+                ShowHiddenObjects = settings.ShowHiddenObjects,
+                UiBackgroundColor = settings.UiBackgroundColor,
+                UiBackgroundAlpha = settings.UiBackgroundAlpha,
+                UiHoverColor = settings.UiHoverColor,
+                UiActiveColor = settings.UiActiveColor,
+                UiBorderColor = settings.UiBorderColor,
+                UiBorderThickness = settings.UiBorderThickness,
+                UiTextColor = settings.UiTextColor,
+                UiHighlightColor = settings.UiHighlightColor
+            };
+        }
+
         public GameMenuSettingsEffect GetUiSettingsChangeEffect(Settings oldSettings, Settings newSettings)
         {
             if (oldSettings == null || newSettings == null)

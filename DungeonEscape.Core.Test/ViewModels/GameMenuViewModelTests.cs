@@ -324,6 +324,31 @@ namespace DungeonEscape.Core.Test.ViewModels
                 viewModel.GetDebugSettingsChangeEffect(oldSettings, false, false, true, 1.5f, 0.1f));
         }
 
+        [Fact]
+        public void CreateSettingsSnapshotCopiesUiAndGameplaySettings()
+        {
+            var viewModel = new GameMenuViewModel();
+            var settings = new Settings
+            {
+                NoMonsters = true,
+                UiScale = 1.5f,
+                UiBackgroundColor = "#111111",
+                UiBorderThickness = 5,
+                ShowHiddenObjects = true,
+                TurnMoveDelaySeconds = 0.2f
+            };
+
+            var snapshot = viewModel.CreateSettingsSnapshot(settings);
+
+            Assert.NotSame(settings, snapshot);
+            Assert.Equal(settings.NoMonsters, snapshot.NoMonsters);
+            Assert.Equal(settings.UiScale, snapshot.UiScale);
+            Assert.Equal(settings.UiBackgroundColor, snapshot.UiBackgroundColor);
+            Assert.Equal(settings.UiBorderThickness, snapshot.UiBorderThickness);
+            Assert.Equal(settings.ShowHiddenObjects, snapshot.ShowHiddenObjects);
+            Assert.Equal(settings.TurnMoveDelaySeconds, snapshot.TurnMoveDelaySeconds);
+        }
+
         private static Hero CreateHero(string name, bool isActive, int order)
         {
             return new Hero

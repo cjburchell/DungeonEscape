@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Unity.Core;
+using Redpoint.DungeonEscape.ViewModels;
 using UnityEngine;
 
 namespace Redpoint.DungeonEscape.Unity.UI
@@ -129,7 +130,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawGeneralSettings(Settings settings)
         {
-            var oldSettings = CloneSettings(settings);
+            var oldSettings = viewModel.CreateSettingsSnapshot(settings);
 
             BeginSelectableRow();
             settings.UiScale = DrawSliderRow("UI Scale: " + settings.UiScale.ToString("0.00"), settings.UiScale <= 0f ? 1f : settings.UiScale, MinUiScale, MaxUiScale);
@@ -177,7 +178,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawUiSettings(Settings settings)
         {
-            var oldSettings = CloneSettings(settings);
+            var oldSettings = viewModel.CreateSettingsSnapshot(settings);
             BeginSelectableRow();
             settings.UiBackgroundColor = DrawTextFieldRow("Background Colour", settings.UiBackgroundColor, "#000000");
             EndSelectableRow();
@@ -208,7 +209,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawDebugSettings(Settings settings)
         {
-            var oldSettings = CloneSettings(settings);
+            var oldSettings = viewModel.CreateSettingsSnapshot(settings);
             BeginSelectableRow();
             settings.MapDebugInfo = DrawCheckboxRow(settings.MapDebugInfo, "Map debug info");
             EndSelectableRow();
@@ -376,37 +377,5 @@ namespace Redpoint.DungeonEscape.Unity.UI
             StartRebinding(bindings[bindingIndex], viewModel.GetSelectedBindingSlotName());
         }
 
-        private static Settings CloneSettings(Settings settings)
-        {
-            if (settings == null)
-            {
-                return null;
-            }
-
-            return new Settings
-            {
-                NoMonsters = settings.NoMonsters,
-                MapDebugInfo = settings.MapDebugInfo,
-                MusicVolume = settings.MusicVolume,
-                SoundEffectsVolume = settings.SoundEffectsVolume,
-                IsFullScreen = settings.IsFullScreen,
-                MaxPartyMembers = settings.MaxPartyMembers,
-                UiScale = settings.UiScale,
-                DialogTextCharactersPerSecond = settings.DialogTextCharactersPerSecond,
-                SprintBoost = settings.SprintBoost,
-                TurnMoveDelaySeconds = settings.TurnMoveDelaySeconds,
-                AutoSaveEnabled = settings.AutoSaveEnabled,
-                AutoSaveIntervalSeconds = settings.AutoSaveIntervalSeconds,
-                ShowHiddenObjects = settings.ShowHiddenObjects,
-                UiBackgroundColor = settings.UiBackgroundColor,
-                UiBackgroundAlpha = settings.UiBackgroundAlpha,
-                UiHoverColor = settings.UiHoverColor,
-                UiActiveColor = settings.UiActiveColor,
-                UiBorderColor = settings.UiBorderColor,
-                UiBorderThickness = settings.UiBorderThickness,
-                UiTextColor = settings.UiTextColor,
-                UiHighlightColor = settings.UiHighlightColor
-            };
-        }
     }
 }

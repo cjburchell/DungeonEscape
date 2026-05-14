@@ -16,6 +16,7 @@ This folder keeps durable project context for Dungeon Escape after the Unity mig
 - `UNITY_MIGRATION_COMPLETED.md` archives the completed Unity migration record.
 - `GAME_MENU_REDESIGN.md` tracks current game-menu redesign status and follow-up.
 - `GAME_MENU_REDESIGN_COMPLETED.md` archives completed game-menu redesign details.
+- `UI_TOOLKIT_MIGRATION.md` tracks the planned migration from IMGUI drawing to UI Toolkit.
 - `MANUAL_TESTS.md` is the source of truth for manual play-test plans and verification notes.
 
 When project direction, architecture, backlog, or manual test coverage changes, update the documents in this folder.

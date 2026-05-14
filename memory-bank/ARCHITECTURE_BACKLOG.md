@@ -6,6 +6,12 @@ This file tracks architecture cleanup ideas that are not active work yet.
 
 Goal: separate engine-neutral rules from Unity scripts into `DungeonEscape.Core`, then add focused unit tests around the extracted logic.
 
+### Completed Extractions
+
+- Extracted map path normalization, tileset path resolution, Tiled CSV/GID parsing, boolean parsing, and object-bounds tile index math into core helpers.
+- Added shared core unit tests for the extracted Tiled helper behavior.
+- Unity `Loader` and `Collision` still expose their existing APIs, but delegate the extracted pure logic to `DungeonEscape.Core`.
+
 ### Good First Extractions
 
 - Map path and Tiled helpers:

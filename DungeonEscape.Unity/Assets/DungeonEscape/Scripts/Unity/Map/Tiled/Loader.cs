@@ -86,58 +86,12 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
 
         public static string NormalizeMapAssetPath(string mapIdOrAssetPath)
         {
-            if (string.IsNullOrEmpty(mapIdOrAssetPath))
-            {
-                return "Assets/DungeonEscape/Maps/overworld.tmx";
-            }
-
-            var normalized = mapIdOrAssetPath.Replace('\\', '/');
-            if (normalized.StartsWith("Assets/", StringComparison.OrdinalIgnoreCase))
-            {
-                return normalized.EndsWith(".tmx", StringComparison.OrdinalIgnoreCase)
-                    ? normalized
-                    : normalized + ".tmx";
-            }
-
-            const string mapsPrefix = "maps/";
-            if (normalized.StartsWith(mapsPrefix, StringComparison.OrdinalIgnoreCase))
-            {
-                normalized = normalized.Substring(mapsPrefix.Length);
-            }
-
-            if (!normalized.EndsWith(".tmx", StringComparison.OrdinalIgnoreCase))
-            {
-                normalized += ".tmx";
-            }
-
-            return "Assets/DungeonEscape/Maps/" + normalized;
+            return TiledMapPaths.NormalizeMapAssetPath(mapIdOrAssetPath);
         }
 
         public static string NormalizeMapId(string mapIdOrAssetPath)
         {
-            if (string.IsNullOrEmpty(mapIdOrAssetPath))
-            {
-                return "overworld";
-            }
-
-            var normalized = mapIdOrAssetPath.Replace('\\', '/');
-            if (normalized.StartsWith("Assets/DungeonEscape/Maps/", StringComparison.OrdinalIgnoreCase))
-            {
-                normalized = normalized.Substring("Assets/DungeonEscape/Maps/".Length);
-            }
-
-            const string mapsPrefix = "maps/";
-            if (normalized.StartsWith(mapsPrefix, StringComparison.OrdinalIgnoreCase))
-            {
-                normalized = normalized.Substring(mapsPrefix.Length);
-            }
-
-            if (normalized.EndsWith(".tmx", StringComparison.OrdinalIgnoreCase))
-            {
-                normalized = normalized.Substring(0, normalized.Length - ".tmx".Length);
-            }
-
-            return normalized;
+            return TiledMapPaths.NormalizeMapId(mapIdOrAssetPath);
         }
 
         private static void ValidateTilesets(TiledMapInfo map)
@@ -266,33 +220,12 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
 
         private static string ResolveTilesetAssetPath(string source)
         {
-            return "Assets/DungeonEscape/Tilesets/" + Path.GetFileName(source);
+            return TiledMapPaths.ResolveTilesetAssetPath(source);
         }
 
         private static string ResolveTilesetImageAssetPath(string source)
         {
-            if (string.IsNullOrEmpty(source))
-            {
-                return null;
-            }
-
-            var normalized = source.Replace('\\', '/');
-            const string imagesPrefix = "images/";
-            if (normalized.StartsWith(imagesPrefix, StringComparison.OrdinalIgnoreCase))
-            {
-                normalized = normalized.Substring(imagesPrefix.Length);
-            }
-            else
-            {
-                const string imagesSegment = "/Images/";
-                var imagesIndex = normalized.IndexOf(imagesSegment, StringComparison.OrdinalIgnoreCase);
-                if (imagesIndex >= 0)
-                {
-                    normalized = normalized.Substring(imagesIndex + imagesSegment.Length);
-                }
-            }
-
-            return "Assets/DungeonEscape/Images/" + normalized;
+            return TiledMapPaths.ResolveTilesetImageAssetPath(source);
         }
 
         private static bool IsRenderableLayer(XElement layer)

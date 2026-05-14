@@ -81,4 +81,9 @@ Core extraction ideas are tracked in `memory-bank/ARCHITECTURE_BACKLOG.md`.
 Future feature ideas are now tracked in `memory-bank/FUTURE_FEATURES.md`.
 Known bugs and rough edges are tracked in `memory-bank/BUGS.md`.
 
+Latest architecture cleanup:
+
+- Extracted Tiled map path helpers, tile data parsing, and object bounds tile math into `DungeonEscape.Core`.
+- Added unit tests for the extracted Tiled helpers.
+
 After every implemented gameplay step, update `memory-bank/MANUAL_TESTS.md` with manual verification steps.

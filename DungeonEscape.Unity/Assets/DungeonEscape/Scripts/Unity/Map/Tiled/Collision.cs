@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Linq;
 using Redpoint.DungeonEscape.State;
-using UnityEngine;
 
 using Redpoint.DungeonEscape.Unity.Core;
 using Redpoint.DungeonEscape.Unity.UI;
@@ -14,8 +12,6 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
 {
     public static class Collision
     {
-        private const uint TiledGidMask = 0x1FFFFFFF;
-
         public static HashSet<int> BuildBlockedTiles(
             XElement map,
             TiledMapInfo mapInfo,
@@ -79,7 +75,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                     string collideable;
                     if (mapObject.Properties == null ||
                         !mapObject.Properties.TryGetValue("Collideable", out collideable) ||
-                        !IsTrue(collideable))
+                        !TiledTileData.IsTrue(collideable))
                     {
                         continue;
                     }
@@ -96,32 +92,15 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             int mapWidth,
             int mapHeight)
         {
-            var width = mapObject.Width <= 0f ? mapInfo.TileWidth : mapObject.Width;
-            var height = mapObject.Height <= 0f ? mapInfo.TileHeight : mapObject.Height;
-            var minColumn = Mathf.FloorToInt(mapObject.X / mapInfo.TileWidth);
-            var maxColumn = Mathf.FloorToInt((mapObject.X + width - 0.001f) / mapInfo.TileWidth);
-            var top = mapObject.Gid == 0 ? mapObject.Y : mapObject.Y - height;
-            var bottom = mapObject.Gid == 0 ? mapObject.Y + height : mapObject.Y;
-            var minRow = Mathf.FloorToInt(top / mapInfo.TileHeight);
-            var maxRow = Mathf.FloorToInt((bottom - 0.001f) / mapInfo.TileHeight);
-
-            for (var row = minRow; row <= maxRow; row++)
+            foreach (var index in TiledTileData.GetObjectBoundsTileIndexes(
+                         mapObject,
+                         mapInfo.TileWidth,
+                         mapInfo.TileHeight,
+                         mapWidth,
+                         mapHeight))
             {
-                for (var column = minColumn; column <= maxColumn; column++)
-                {
-                    AddBlockedTile(blocked, column, row, mapWidth, mapHeight);
-                }
+                blocked.Add(index);
             }
-        }
-
-        private static void AddBlockedTile(HashSet<int> blocked, int column, int row, int mapWidth, int mapHeight)
-        {
-            if (column < 0 || row < 0 || column >= mapWidth || row >= mapHeight)
-            {
-                return;
-            }
-
-            blocked.Add(row * mapWidth + column);
         }
 
         private static bool IsBlockingLayer(XElement layer, GameState gameState, string mapId)
@@ -129,7 +108,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             var properties = ReadProperties(layer);
             string water;
             if (properties.TryGetValue("Water", out water) &&
-                IsTrue(water) &&
+                TiledTileData.IsTrue(water) &&
                 gameState != null &&
                 gameState.Party != null &&
                 IsOverworldMap(mapId) &&
@@ -141,7 +120,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             string collideable;
             if (properties.TryGetValue("Collideable", out collideable))
             {
-                return IsTrue(collideable);
+                return TiledTileData.IsTrue(collideable);
             }
 
             return false;
@@ -208,21 +187,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                 return new List<int>();
             }
 
-            return data.Value
-                .Split(new[] { ',', '\n', '\r', '\t', ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(ParseGid)
-                .ToList();
-        }
-
-        private static int ParseGid(string value)
-        {
-            uint result;
-            return uint.TryParse(value, out result) ? (int)(result & TiledGidMask) : 0;
-        }
-
-        private static bool IsTrue(string value)
-        {
-            return string.Equals(value, "true", StringComparison.OrdinalIgnoreCase) || value == "1";
+            return TiledTileData.ParseCsvTileData(data.Value);
         }
 
         private static string GetString(XElement element, string name)

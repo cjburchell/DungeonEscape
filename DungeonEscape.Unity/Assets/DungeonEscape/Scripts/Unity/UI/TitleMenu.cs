@@ -217,6 +217,17 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
+            if (IsCreateNameTextFocused())
+            {
+                if (InputManager.GetCommandDown(InputCommand.Cancel))
+                {
+                    GUI.FocusControl(null);
+                    ResetNavigationRepeat();
+                }
+
+                return;
+            }
+
             HandleNavigation();
 
             if (InputManager.GetCommandDown(InputCommand.Cancel))
@@ -546,6 +557,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUI.enabled = previousEnabled && !dropdownOpen;
             GUI.SetNextControlName("CreatePlayerName");
             createPlayerName = GUILayout.TextField(createPlayerName, 24, selectedIndex == CreateNameIndex ? uiTheme.SelectedTabStyle : GetTextFieldStyle(), GUILayout.Width(136f * scale), GUILayout.Height(32f * scale));
+            if (GUI.GetNameOfFocusedControl() == "CreatePlayerName")
+            {
+                selectedIndex = CreateNameIndex;
+            }
+
             if (focusCreateNameNextGui)
             {
                 GUI.FocusControl("CreatePlayerName");
@@ -606,7 +622,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void DrawGenderDropdown(bool selected)
         {
             if (UiControls.Button(createPlayerGender.ToString(), selected || activeCreateDropdown == CreateDropdown.Gender, uiTheme, GUILayout.Width(136f * GetPixelScale()), GUILayout.Height(32f * GetPixelScale())) &&
-                !waitingForConfirmRelease)
+                !waitingForConfirmRelease &&
+                (activeCreateDropdown == CreateDropdown.None || activeCreateDropdown == CreateDropdown.Gender))
             {
                 selectedIndex = CreateGenderIndex;
                 activeCreateDropdown = activeCreateDropdown == CreateDropdown.Gender ? CreateDropdown.None : CreateDropdown.Gender;
@@ -620,7 +637,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void DrawClassDropdown(bool selected)
         {
             if (UiControls.Button(createPlayerClass.ToString(), selected || activeCreateDropdown == CreateDropdown.Class, uiTheme, GUILayout.Width(136f * GetPixelScale()), GUILayout.Height(32f * GetPixelScale())) &&
-                !waitingForConfirmRelease)
+                !waitingForConfirmRelease &&
+                (activeCreateDropdown == CreateDropdown.None || activeCreateDropdown == CreateDropdown.Class))
             {
                 selectedIndex = CreateClassIndex;
                 activeCreateDropdown = activeCreateDropdown == CreateDropdown.Class ? CreateDropdown.None : CreateDropdown.Class;
@@ -1316,6 +1334,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return InputManager.GetCommand(InputCommand.Interact) ||
                    Input.GetKey(KeyCode.Return) ||
                    Input.GetKey(KeyCode.KeypadEnter);
+        }
+
+        private static bool IsCreateNameTextFocused()
+        {
+            return string.Equals(GUI.GetNameOfFocusedControl(), "CreatePlayerName", StringComparison.Ordinal);
         }
 
         private void WaitForConfirmRelease()

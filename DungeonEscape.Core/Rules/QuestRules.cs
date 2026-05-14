@@ -49,6 +49,10 @@ namespace Redpoint.DungeonEscape.Rules
                 party.ActiveQuests.Add(activeQuest);
                 changed = true;
             }
+            else if (activeQuest.Completed)
+            {
+                return "";
+            }
 
             if (nextStage.HasValue)
             {

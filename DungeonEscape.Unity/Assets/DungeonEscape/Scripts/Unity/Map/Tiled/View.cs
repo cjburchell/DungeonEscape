@@ -161,7 +161,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             var tileKey = row * mapWidth + column;
             if (occupiedNpcTiles.ContainsKey(tileKey))
             {
-                return false;
+                return IsDoorTile(column, row) && !blockedTiles.Contains(tileKey);
             }
 
             if (IsWaterTile(column, row))
@@ -195,6 +195,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             NpcController occupiedNpc;
             return !IsWaterTile(column, row) &&
                    !blockedTiles.Contains(tileKey) &&
+                   !IsDoorTile(column, row) &&
                    !IsPlayerAt(column, row) &&
                    (!occupiedNpcTiles.TryGetValue(tileKey, out occupiedNpc) || occupiedNpc == npc);
         }
@@ -848,6 +849,28 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                 }
 
                 return true;
+            }
+
+            return false;
+        }
+
+        private bool IsDoorTile(int column, int row)
+        {
+            if (currentMap == null || currentMap.Info == null || currentMap.Info.ObjectGroups == null)
+            {
+                return false;
+            }
+
+            var position = new WorldPosition(column, row);
+            foreach (var group in currentMap.Info.ObjectGroups)
+            {
+                foreach (var mapObject in group.Objects)
+                {
+                    if (IsDoorObject(mapObject) && ContainsTile(mapObject, position))
+                    {
+                        return true;
+                    }
+                }
             }
 
             return false;

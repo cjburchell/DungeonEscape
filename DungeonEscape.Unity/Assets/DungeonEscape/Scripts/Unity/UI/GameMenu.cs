@@ -1500,21 +1500,32 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawStatusSpellAbilityColumns(Hero hero)
         {
+            var spells = GetKnownSpells(hero);
+            var skills = GetKnownSkills(hero);
+            if (spells.Count == 0 && skills.Count == 0)
+            {
+                return;
+            }
+
             GUILayout.Space(8f * GetPixelScale());
             GUILayout.BeginHorizontal();
-            if (HeroHasMagic(hero))
+            if (spells.Count > 0)
             {
                 GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
                 GUILayout.Label("Spells", labelStyle);
-                DrawStatusSpellList(GetKnownSpells(hero));
+                DrawStatusSpellList(spells);
                 GUILayout.EndVertical();
                 GUILayout.Space(12f * GetPixelScale());
             }
 
-            GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-            GUILayout.Label("Abilities", labelStyle);
-            DrawStatusSkillList(GetKnownSkills(hero));
-            GUILayout.EndVertical();
+            if (skills.Count > 0)
+            {
+                GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+                GUILayout.Label("Abilities", labelStyle);
+                DrawStatusSkillList(skills);
+                GUILayout.EndVertical();
+            }
+
             GUILayout.EndHorizontal();
         }
 

@@ -105,6 +105,26 @@ namespace DungeonEscape.Core.Test.Rules
         }
 
         [Fact]
+        public void CreateInitialStoreInventoryAddsCommonStockBeforeRandomItems()
+        {
+            var herb = CreateItem("Medical Herb", ItemType.OneUse, 16);
+            var bag = CreateItem("Bag of Herbs", ItemType.RepeatableUse, 160);
+            var rare = CreateItem("Rare Tonic", ItemType.OneUse, 10);
+            rare.Rarity = Rarity.Rare;
+            var random = CreateItem("Random Sword", ItemType.Weapon, 200);
+
+            var inventory = StoreRules.CreateInitialStoreInventory(
+                new TiledObjectInfo(),
+                new[] { random, bag, rare, herb },
+                id => null,
+                () => random);
+
+            Assert.Contains(herb, inventory);
+            Assert.Contains(bag, inventory);
+            Assert.Equal(10, inventory.Count);
+        }
+
+        [Fact]
         public void BuyStoreItemTransfersGoldAndItem()
         {
             var party = new Party { Gold = 100 };

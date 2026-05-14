@@ -51,7 +51,6 @@ namespace DungeonEscape.Core.Test.Rules
             var repeat = QuestRules.AdvanceQuest(party, quest, 1, CreateClassLevels(), CreateSpells(), id => "", out var repeatChanged);
 
             Assert.True(changed);
-            Assert.True(repeatChanged);
             Assert.Equal(60, party.Gold);
             Assert.Equal((ulong)10, party.ActiveMembers.Single().Xp);
             Assert.Contains("You have completed the quest Find Gem", message);
@@ -59,7 +58,39 @@ namespace DungeonEscape.Core.Test.Rules
             Assert.Contains("The party got 50 gold.", message);
             Assert.Equal(new[] { "gem" }, grantedItems);
             Assert.Equal("", repeat);
+            Assert.False(repeatChanged);
             Assert.True(party.ActiveQuests.Single().Completed);
+        }
+
+        [Fact]
+        public void AdvanceQuestDoesNotChangeCompletedQuestStage()
+        {
+            var party = CreateParty();
+            var quest = CreateQuest(true);
+
+            QuestRules.AdvanceQuest(
+                party,
+                quest,
+                1,
+                CreateClassLevels(),
+                CreateSpells(),
+                _ => "",
+                out _);
+
+            var activeQuest = party.ActiveQuests.Single();
+            var message = QuestRules.AdvanceQuest(
+                party,
+                quest,
+                0,
+                CreateClassLevels(),
+                CreateSpells(),
+                _ => "",
+                out var changed);
+
+            Assert.Equal("", message);
+            Assert.False(changed);
+            Assert.True(activeQuest.Completed);
+            Assert.Equal(1, activeQuest.CurrentStage);
         }
 
         private static Party CreateParty()

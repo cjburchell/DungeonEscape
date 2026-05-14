@@ -138,7 +138,9 @@ namespace Redpoint.DungeonEscape.Rules
                 return items;
             }
 
-            for (var i = 0; i < 10; i++)
+            items.AddRange(GetCommonStoreStock(availableItems));
+
+            for (var i = items.Count; i < 10; i++)
             {
                 var item = createRandomItem();
                 if (item != null)
@@ -148,6 +150,22 @@ namespace Redpoint.DungeonEscape.Rules
             }
 
             return items.OrderBy(item => item.Cost).ToList();
+        }
+
+        private static IEnumerable<Item> GetCommonStoreStock(IEnumerable<Item> availableItems)
+        {
+            return availableItems
+                .Where(item =>
+                    item != null &&
+                    !item.IsKey &&
+                    item.Type != ItemType.Gold &&
+                    item.Type != ItemType.Quest &&
+                    item.Type != ItemType.Unknown &&
+                    item.Rarity == Rarity.Common &&
+                    item.MinLevel <= 0)
+                .OrderBy(item => item.Cost)
+                .ThenBy(item => item.Name)
+                .Take(2);
         }
 
         public static bool ContainsInvalidStoreItems(TiledObjectInfo storeObject, List<Item> items)

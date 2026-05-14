@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Redpoint.DungeonEscape.State;
-using UnityEngine;
 
 namespace Redpoint.DungeonEscape.Unity.UI
 {
@@ -19,29 +18,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             var previousIndex = selectedMenuIndex;
-            var nextIndex = selectedMenuIndex + (moveY > 0 ? 1 : -1);
-            selectedMenuIndex = IsMonsterTargetSelection()
-                ? WrapIndex(nextIndex, count)
-                : Mathf.Clamp(nextIndex, 0, count - 1);
+            viewModel.MoveSelection(moveY, count, IsMonsterTargetSelection());
             if (selectedMenuIndex != previousIndex)
             {
                 UiControls.PlaySelectSound();
             }
-        }
-
-        private static int WrapIndex(int index, int count)
-        {
-            if (count <= 0)
-            {
-                return 0;
-            }
-
-            if (index < 0)
-            {
-                return count - 1;
-            }
-
-            return index >= count ? 0 : index;
         }
 
         private int GetCurrentSelectionCount()

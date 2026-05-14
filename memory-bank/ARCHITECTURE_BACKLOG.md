@@ -85,6 +85,15 @@ Goal: reduce the size and coupling of Unity UI classes by separating drawing/lay
 - Added a plain C# `HealerViewModel` under `Redpoint.DungeonEscape.ViewModels` for healer metadata, service list construction, target filtering, costs, and selected service/target state.
 - Added unit tests for `HealerViewModel`.
 - `HealerWindow` still owns IMGUI drawing, Unity input repeat timing, sounds, and direct game command execution.
+- Added a plain C# `TitleViewModel` under `Redpoint.DungeonEscape.ViewModels` for title mode, main-row availability, create-player choices, load/create navigation, dropdown indexes, and blocked create-image selection.
+- Added unit tests for `TitleViewModel`.
+- `TitleMenu` still owns IMGUI drawing, background textures, audio, save/load/delete execution, random name generation, and Unity app quit/close behavior.
+- Added a plain C# `GameMenuViewModel` under `Redpoint.DungeonEscape.ViewModels` for menu screen/focus/tab state, selected indexes, row/detail clamping, and page-based detail selection.
+- Added unit tests for `GameMenuViewModel`.
+- `GameMenu` still owns IMGUI drawing, scroll positions, modal command execution, input rebinding capture, settings persistence, and gameplay actions.
+- Added a plain C# `CombatViewModel` under `Redpoint.DungeonEscape.ViewModels` for combat UI state and selected-index movement, including wraparound monster target selection.
+- Added unit tests for `CombatViewModel`.
+- `CombatWindow` still owns battlefield rendering, menu rendering, target click handling, message reveal timing, audio, animation flashes, and action execution orchestration.
 
 ### Unity UI And MVVM Notes
 
@@ -99,15 +108,17 @@ Goal: reduce the size and coupling of Unity UI classes by separating drawing/lay
 ### Candidate Areas
 
 - `GameMenu`:
-  - Split menu screen state, action availability, item/spell/ability filtering, and modal state away from IMGUI drawing.
+  - In progress: Split menu screen state and selection clamping away from IMGUI drawing.
+  - Continue splitting action availability, item/spell/ability filtering, and modal state away from IMGUI drawing.
   - Keep IMGUI files responsible for layout and control rendering only.
 - `CombatWindow`:
-  - Split combat command selection, target selection state, and round-flow display state away from battlefield/message rendering.
-  - Pair this with the larger combat round-rules extraction before adding battle tactics.
+  - In progress: Split combat command selection state and round-flow rules away from battlefield/message rendering.
+  - Continue splitting target display state and combat menu display data from rendering.
 - `StoreWindow` and `HealerWindow`:
-  - In progress: Split available actions, prices, recipient choices, and modal state from drawing code.
+  - Done for current scope: Split available actions, prices, recipient choices, service choices, and target choices from drawing code.
 - `TitleMenu`:
-  - Split create-player state, save-slot display data, and navigation state from drawing code.
+  - In progress: Split create-player state and navigation state from drawing code.
+  - Continue splitting save-slot display data from drawing code.
 
 ### Suggested Steps
 
@@ -116,4 +127,4 @@ Goal: reduce the size and coupling of Unity UI classes by separating drawing/lay
 3. In progress: Move filtering, labels, selected row clamping, and enabled-state decisions into those classes.
 4. Keep IMGUI code as a thin renderer that calls view-model commands.
 5. In progress: Add unit tests for view-model behavior where it does not require Unity.
-6. Apply the pattern to `GameMenu` and `CombatWindow` after the smaller surface proves useful.
+6. In progress: Apply the pattern to `GameMenu` and `CombatWindow` after the smaller surface proves useful.

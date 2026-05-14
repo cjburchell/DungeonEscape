@@ -32,7 +32,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     return;
                 }
 
-                Menu.selectedRowIndex = Mathf.Clamp(Menu.selectedRowIndex, 0, members.Count - 1);
+                Menu.viewModel.ClampSelectedRowIndex(members.Count);
                 var hero = members[Menu.selectedRowIndex];
                 var scale = Menu.GetPixelScale();
                 var panelHeight = Mathf.Max(120f * scale, Menu.GetMenuContentHeight() - 42f * scale);

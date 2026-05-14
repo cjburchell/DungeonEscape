@@ -94,5 +94,7 @@ Latest architecture cleanup:
 - Extracted combat round rules into `CombatRoundRules`; Unity combat UI still owns rendering, input, sound, and animation effects.
 - Began the UI drawing/logic split with `StoreViewModel` in `Redpoint.DungeonEscape.ViewModels` and matching `ViewModels` tests; `StoreWindow` now delegates selected store UI decisions to it.
 - Added `HealerViewModel` in `Redpoint.DungeonEscape.ViewModels` with matching tests; `HealerWindow` now delegates healer metadata, service list, target filtering, costs, and selection state to it.
+- Added `TitleViewModel` and `GameMenuViewModel` in `Redpoint.DungeonEscape.ViewModels` with matching tests; `TitleMenu` and `GameMenu` now delegate title navigation/create state and game-menu screen/selection state to core view models.
+- Added `CombatViewModel` in `Redpoint.DungeonEscape.ViewModels` with matching tests; `CombatWindow` now delegates combat UI state and selected-index movement to core.
 
 After every implemented gameplay step, update `memory-bank/MANUAL_TESTS.md` with manual verification steps.

@@ -168,12 +168,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var count = GetSelectableRowCount();
             if (count <= 0)
             {
-                selectedRowIndex = 0;
+                viewModel.MoveSelectedRowIndex(delta, count);
                 return;
             }
 
             var previousIndex = selectedRowIndex;
-            selectedRowIndex = Mathf.Clamp(selectedRowIndex + delta, 0, count - 1);
+            viewModel.MoveSelectedRowIndex(delta, count);
             if (selectedRowIndex != previousIndex)
             {
                 UiControls.PlaySelectSound();
@@ -204,13 +204,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var count = GetCurrentDetailCount();
             if (count <= 0)
             {
-                selectedDetailIndex = 0;
+                viewModel.MoveSelectedDetailIndex(delta, count, 10);
                 return;
             }
 
             var previousIndex = selectedDetailIndex;
-            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex + delta, 0, count - 1);
-            detailPageIndex = selectedDetailIndex / 10;
+            viewModel.MoveSelectedDetailIndex(delta, count, 10);
             if (selectedDetailIndex != previousIndex)
             {
                 UiControls.PlaySelectSound();
@@ -230,12 +229,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var count = GetEquipmentCandidates(hero, slots[selectedDetailIndex]).Count;
             if (count <= 0)
             {
-                selectedEquipmentItemIndex = 0;
+                viewModel.MoveSelectedEquipmentItemIndex(delta, count);
                 return;
             }
 
             var previousIndex = selectedEquipmentItemIndex;
-            selectedEquipmentItemIndex = Mathf.Clamp(selectedEquipmentItemIndex + delta, 0, count - 1);
+            viewModel.MoveSelectedEquipmentItemIndex(delta, count);
             if (selectedEquipmentItemIndex != previousIndex)
             {
                 UiControls.PlaySelectSound();
@@ -323,7 +322,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var maxPage = Math.Max(0, (count - 1) / 10);
             var previousPage = detailPageIndex;
             detailPageIndex = Mathf.Clamp(detailPageIndex + delta, 0, maxPage);
-            selectedDetailIndex = Mathf.Clamp(detailPageIndex * 10, 0, count - 1);
+            viewModel.SelectDetailPage(detailPageIndex, count, 10);
             if (detailPageIndex != previousPage)
             {
                 UiControls.PlaySelectSound();
@@ -419,7 +418,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return 0;
             }
 
-            selectedMainActionIndex = Mathf.Clamp(selectedMainActionIndex, 0, actions.Count - 1);
+            viewModel.ClampSelectedMainActionIndex(actions.Count);
             return selectedMainActionIndex;
         }
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
+using Redpoint.DungeonEscape.ViewModels;
 using UnityEngine;
 
 using Redpoint.DungeonEscape.Unity.Core;
@@ -41,6 +42,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private readonly List<Hero> pendingHeroes = new List<Hero>();
         private readonly CombatSelectionMemory selectionMemory = new CombatSelectionMemory();
         private readonly CombatMenuInput menuInput = new CombatMenuInput();
+        private readonly CombatViewModel viewModel = new CombatViewModel();
         private Biome biome;
         private GameState gameState;
         private UiSettings uiSettings;
@@ -51,14 +53,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private GUIStyle titleStyle;
         private float lastPixelScale;
         private string lastThemeSignature;
-        private CombatState state;
         private string messageText;
         private Action afterMessage;
         private Hero actingHero;
         private Action<List<IFighter>> targetSelectionDone;
         private List<IFighter> targetSelectionCandidates = new List<IFighter>();
         private string targetSelectionTitle;
-        private int selectedMenuIndex;
         private int visibleMessageCharacters;
         private float revealCharacterAccumulator;
         private Vector2 messageScrollPosition;
@@ -66,6 +66,18 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private static CombatWindow currentWindow;
 
         public static bool IsOpen { get; private set; }
+
+        private CombatState state
+        {
+            get { return (CombatState)viewModel.State; }
+            set { viewModel.SetState((int)value); }
+        }
+
+        private int selectedMenuIndex
+        {
+            get { return viewModel.SelectedMenuIndex; }
+            set { viewModel.SetSelectedMenuIndex(value); }
+        }
 
         public static bool IsPartyTargetCandidate(Hero hero)
         {
@@ -160,6 +172,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             window.roundActions.Clear();
             window.pendingHeroes.Clear();
             window.selectionMemory.Clear();
+            window.viewModel.Reset();
             DamageFlashEndTimes.Clear();
             HealFlashEndTimes.Clear();
             DefeatedFighterVisibleEndTimes.Clear();

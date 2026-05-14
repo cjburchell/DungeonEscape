@@ -6,6 +6,7 @@ using System.Linq;
 using Redpoint.DungeonEscape;
 using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
+using Redpoint.DungeonEscape.ViewModels;
 using UnityEngine;
 
 using Redpoint.DungeonEscape.Unity.Core;
@@ -73,6 +74,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private static bool isOpen;
 
+        private readonly GameMenuViewModel viewModel = new GameMenuViewModel();
         private GameState gameState;
         private MessageBox messageBox;
         private UiSettings uiSettings;
@@ -85,12 +87,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private UiTheme uiTheme;
         private float lastPixelScale;
         private string lastThemeSignature;
-        private MenuScreen currentScreen = MenuScreen.Main;
-        private MenuScreen previousScreen = MenuScreen.Main;
-        private MenuFocus currentFocus = MenuFocus.Primary;
-        private MenuTab currentTab = MenuTab.Party;
-        private SettingsTab currentSettingsTab = SettingsTab.General;
-        private PartyDetailTab currentPartyDetailTab = PartyDetailTab.Status;
         private Vector2 partyScrollPosition;
         private Vector2 inventoryScrollPosition;
         private Vector2 partyDetailScrollPosition;
@@ -99,15 +95,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private Vector2 settingsScrollPosition;
         private float menuContentHeight;
         private float menuBodyHeight;
-        private int selectedHeroIndex;
-        private int selectedPartyItemIndex;
-        private int selectedDetailIndex;
-        private int selectedEquipmentItemIndex;
-        private int selectedMainActionIndex;
-        private int selectedPreviousScreenRowIndex;
-        private int detailPageIndex;
-        private int selectedRowIndex;
-        private int selectedBindingSlotIndex;
         private int drawingRowIndex;
         private InputBinding rebindingInput;
         private string rebindingSlot;
@@ -134,6 +121,96 @@ namespace Redpoint.DungeonEscape.Unity.UI
         public static bool IsOpen
         {
             get { return isOpen; }
+        }
+
+        private MenuScreen currentScreen
+        {
+            get { return (MenuScreen)viewModel.CurrentScreen; }
+            set { viewModel.SetCurrentScreen((int)value); }
+        }
+
+        private MenuScreen previousScreen
+        {
+            get { return (MenuScreen)viewModel.PreviousScreen; }
+            set { viewModel.SetPreviousScreen((int)value); }
+        }
+
+        private MenuFocus currentFocus
+        {
+            get { return (MenuFocus)viewModel.CurrentFocus; }
+            set { viewModel.SetCurrentFocus((int)value); }
+        }
+
+        private MenuTab currentTab
+        {
+            get { return (MenuTab)viewModel.CurrentTab; }
+            set { viewModel.SetCurrentTab((int)value); }
+        }
+
+        private SettingsTab currentSettingsTab
+        {
+            get { return (SettingsTab)viewModel.CurrentSettingsTab; }
+            set { viewModel.SetCurrentSettingsTab((int)value); }
+        }
+
+        private PartyDetailTab currentPartyDetailTab
+        {
+            get { return (PartyDetailTab)viewModel.CurrentPartyDetailTab; }
+            set { viewModel.SetCurrentPartyDetailTab((int)value); }
+        }
+
+        private int selectedHeroIndex
+        {
+            get { return viewModel.SelectedHeroIndex; }
+            set { viewModel.SetSelectedHeroIndex(value); }
+        }
+
+        private int selectedPartyItemIndex
+        {
+            get { return viewModel.SelectedPartyItemIndex; }
+            set { viewModel.SetSelectedPartyItemIndex(value); }
+        }
+
+        private int selectedDetailIndex
+        {
+            get { return viewModel.SelectedDetailIndex; }
+            set { viewModel.SetSelectedDetailIndex(value); }
+        }
+
+        private int selectedEquipmentItemIndex
+        {
+            get { return viewModel.SelectedEquipmentItemIndex; }
+            set { viewModel.SetSelectedEquipmentItemIndex(value); }
+        }
+
+        private int selectedMainActionIndex
+        {
+            get { return viewModel.SelectedMainActionIndex; }
+            set { viewModel.SetSelectedMainActionIndex(value); }
+        }
+
+        private int selectedPreviousScreenRowIndex
+        {
+            get { return viewModel.SelectedPreviousScreenRowIndex; }
+            set { viewModel.SetSelectedPreviousScreenRowIndex(value); }
+        }
+
+        private int detailPageIndex
+        {
+            get { return viewModel.DetailPageIndex; }
+            set { viewModel.SetDetailPageIndex(value); }
+        }
+
+        private int selectedRowIndex
+        {
+            get { return viewModel.SelectedRowIndex; }
+            set { viewModel.SetSelectedRowIndex(value); }
+        }
+
+        private int selectedBindingSlotIndex
+        {
+            get { return viewModel.SelectedBindingSlotIndex; }
+            set { viewModel.SetSelectedBindingSlotIndex(value); }
         }
 
         private IEnumerator Start()
@@ -295,10 +372,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var actions = currentScreen == MenuScreen.Misc ? MiscActionScreen.GetActions() : MainActionScreen.GetActions();
             if (currentScreen == MenuScreen.Main)
             {
-                selectedMainActionIndex = Mathf.Clamp(selectedMainActionIndex, 0, Math.Max(actions.Count - 1, 0));
+                viewModel.ClampSelectedMainActionIndex(actions.Count);
             }
 
-            selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(actions.Count - 1, 0));
+            viewModel.ClampSelectedRowIndex(actions.Count);
             var rowHeight = GetLeftActionRowHeight(scale);
             var height = actions.Count * rowHeight + 8f * scale;
             var padding = 12f * scale;
@@ -510,7 +587,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void DrawCurrentTab()
         {
             drawingRowIndex = 0;
-            selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Mathf.Max(GetSelectableRowCount() - 1, 0));
+            viewModel.ClampSelectedRowIndex(GetSelectableRowCount());
             switch (currentScreen)
             {
                 case MenuScreen.Main:
@@ -599,7 +676,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var partyPanelHeight = Mathf.Max(120f * GetPixelScale(), menuBodyHeight - 34f * GetPixelScale());
             var activeMembers = party.ActiveMembers.ToList();
             var inactive = party.InactiveMembers.ToList();
-            selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Mathf.Max(activeMembers.Count + inactive.Count - 1, 0));
+            viewModel.ClampSelectedRowIndex(activeMembers.Count + inactive.Count);
 
             GUILayout.BeginHorizontal();
             GUILayout.BeginVertical(panelStyle, GUILayout.Width(340f * GetPixelScale()), GUILayout.Height(partyPanelHeight));
@@ -665,7 +742,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex, 0, items.Count - 1);
+            viewModel.ClampSelectedDetailIndex(items.Count);
             DrawInventoryItemDetail(hero, items[selectedDetailIndex], false, false);
         }
 
@@ -684,7 +761,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex, 0, spells.Count - 1);
+            viewModel.ClampSelectedDetailIndex(spells.Count);
             var spell = spells[selectedDetailIndex];
             DrawSpellDetailHeader(spell);
         }
@@ -708,7 +785,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex, 0, skills.Count - 1);
+            viewModel.ClampSelectedDetailIndex(skills.Count);
             var skill = skills[selectedDetailIndex];
             DrawSkillDetailHeader(skill);
         }
@@ -725,7 +802,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             const int pageSize = 10;
             var maxPage = Math.Max(0, (slots.Count - 1) / pageSize);
             detailPageIndex = Mathf.Clamp(detailPageIndex, 0, maxPage);
-            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex, 0, slots.Count - 1);
+            viewModel.ClampSelectedDetailIndex(slots.Count);
             var start = detailPageIndex * pageSize;
             var end = Math.Min(slots.Count, start + pageSize);
             for (var i = start; i < end; i++)
@@ -780,7 +857,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             const int pageSize = 10;
             var maxPage = Math.Max(0, (items.Count - 1) / pageSize);
             detailPageIndex = Mathf.Clamp(detailPageIndex, 0, maxPage);
-            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex, 0, items.Count - 1);
+            viewModel.ClampSelectedDetailIndex(items.Count);
             var start = detailPageIndex * pageSize;
             var end = Math.Min(items.Count, start + pageSize);
             for (var i = start; i < end; i++)
@@ -840,7 +917,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            selectedEquipmentItemIndex = Mathf.Clamp(selectedEquipmentItemIndex, 0, candidates.Count - 1);
+            viewModel.ClampSelectedEquipmentItemIndex(candidates.Count);
             for (var i = 0; i < candidates.Count; i++)
             {
                 DrawEquipmentCandidateRow(hero, candidates[i], i);
@@ -876,7 +953,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             const int pageSize = 10;
             var maxPage = Math.Max(0, (count - 1) / pageSize);
             detailPageIndex = Mathf.Clamp(detailPageIndex, 0, maxPage);
-            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex, 0, count - 1);
+            viewModel.ClampSelectedDetailIndex(count);
             var start = detailPageIndex * pageSize;
             var end = Math.Min(count, start + pageSize);
             for (var i = start; i < end; i++)
@@ -903,7 +980,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             const int pageSize = 10;
             var maxPage = Math.Max(0, (count - 1) / pageSize);
             detailPageIndex = Mathf.Clamp(detailPageIndex, 0, maxPage);
-            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex, 0, count - 1);
+            viewModel.ClampSelectedDetailIndex(count);
             var start = detailPageIndex * pageSize;
             var end = Math.Min(count, start + pageSize);
             var rowHeight = 36f * GetPixelScale();
@@ -932,7 +1009,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             const int pageSize = 10;
             var maxPage = Math.Max(0, (spells.Count - 1) / pageSize);
             detailPageIndex = Mathf.Clamp(detailPageIndex, 0, maxPage);
-            selectedDetailIndex = Mathf.Clamp(selectedDetailIndex, 0, spells.Count - 1);
+            viewModel.ClampSelectedDetailIndex(spells.Count);
             var start = detailPageIndex * pageSize;
             var end = Math.Min(spells.Count, start + pageSize);
             var rowHeight = 36f * GetPixelScale();
@@ -1872,7 +1949,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             var updatedCandidates = GetEquipmentCandidates(hero, slots[selectedDetailIndex]);
-            selectedEquipmentItemIndex = Mathf.Clamp(selectedEquipmentItemIndex, 0, Math.Max(updatedCandidates.Count - 1, 0));
+            viewModel.ClampSelectedEquipmentItemIndex(updatedCandidates.Count);
         }
 
         private void ShowEquipmentActionModal(Hero hero)
@@ -2028,7 +2105,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, hero.Items.Count - 1);
+                viewModel.ClampSelectedRowIndex(hero.Items.Count);
             GUILayout.BeginHorizontal();
             GUILayout.BeginVertical(GUILayout.MinWidth(420f * GetPixelScale()));
             inventoryScrollPosition = BeginThemedScroll(inventoryScrollPosition, Mathf.Max(120f * GetPixelScale(), menuBodyHeight - 82f * GetPixelScale()));
@@ -2429,7 +2506,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
             else
             {
-                selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, maxIndex);
+                viewModel.ClampSelectedRowIndex(maxIndex + 1);
             }
         }
 
@@ -2496,7 +2573,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                         var deleted = gameState != null && gameState.DeleteManual(slotIndex);
                         if (deleted && gameState != null)
                         {
-                            selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, gameState.GetManualSaveSlots().Count);
+                viewModel.ClampSelectedRowIndex(gameState.GetManualSaveSlots().Count + 1);
                         }
 
                         ShowSaveMessage(deleted ? "Deleted quest." : "Could not delete quest.");
@@ -2727,7 +2804,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     actions.Add(() =>
                     {
                         ApplyPartyChange(() => gameState.DeactivatePartyMember(hero));
-                        selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(GetSelectableRowCount() - 1, 0));
+                viewModel.ClampSelectedRowIndex(GetSelectableRowCount());
                     });
                 }
             }
@@ -2737,7 +2814,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 actions.Add(() =>
                 {
                     ApplyPartyChange(() => gameState.ActivatePartyMember(hero));
-                    selectedRowIndex = Mathf.Clamp(selectedRowIndex, 0, Math.Max(GetSelectableRowCount() - 1, 0));
+            viewModel.ClampSelectedRowIndex(GetSelectableRowCount());
                 });
             }
 

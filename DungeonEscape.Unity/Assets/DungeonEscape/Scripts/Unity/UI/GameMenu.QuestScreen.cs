@@ -36,7 +36,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     return;
                 }
 
-                Menu.selectedRowIndex = Mathf.Clamp(Menu.selectedRowIndex, 0, party.ActiveQuests.Count - 1);
+                Menu.viewModel.ClampSelectedRowIndex(party.ActiveQuests.Count);
                 GUILayout.BeginHorizontal();
                 var scale = Menu.GetPixelScale();
                 GUILayout.BeginVertical(GUILayout.MinWidth(420f * scale));

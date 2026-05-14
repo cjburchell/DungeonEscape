@@ -32,7 +32,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 }
 
                 var saves = Menu.gameState.GetManualSaveSlots();
-                Menu.selectedRowIndex = Mathf.Clamp(Menu.selectedRowIndex, 0, saves.Count);
+                Menu.viewModel.ClampSelectedRowIndex(saves.Count + 1);
 
                 GUILayout.BeginVertical();
                 Menu.saveScrollPosition = Menu.BeginThemedScroll(
@@ -99,7 +99,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 }
 
                 var saves = Menu.gameState.GetManualSaveSlots();
-                Menu.selectedRowIndex = Mathf.Clamp(Menu.selectedRowIndex, 0, Math.Max(saves.Count - 1, 0));
+                Menu.viewModel.ClampSelectedRowIndex(saves.Count);
                 if (saves.Count == 0)
                 {
                     GUILayout.Label("No saves.", Menu.labelStyle);

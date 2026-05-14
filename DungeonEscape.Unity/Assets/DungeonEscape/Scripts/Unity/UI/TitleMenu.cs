@@ -7,6 +7,7 @@ using System.Linq;
 using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Tools;
+using Redpoint.DungeonEscape.ViewModels;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -17,42 +18,28 @@ using Redpoint.DungeonEscape.Unity.UI;
 using Redpoint.DungeonEscape.Unity.Map;
 using Redpoint.DungeonEscape.Unity.Rendering;
 using Redpoint.DungeonEscape.Unity.Map.Tiled;
+using CreateDropdown = Redpoint.DungeonEscape.ViewModels.TitleCreateDropdown;
 namespace Redpoint.DungeonEscape.Unity.UI
 {
     public sealed class TitleMenu : MonoBehaviour
     {
-        private enum TitleMode
-        {
-            Main,
-            Load,
-            Create
-        }
-
-        private enum CreateDropdown
-        {
-            None,
-            Gender,
-            Class
-        }
-
         private const float InitialNavigationRepeatDelay = 0.35f;
         private const float NavigationRepeatDelay = 0.12f;
         private const int TitleGuiDepth = -3000;
-        private const int CreateNameIndex = 0;
-        private const int CreateGenerateNameIndex = 1;
-        private const int CreateGenderIndex = 2;
-        private const int CreateClassIndex = 3;
-        private const int CreateImageIndex = 4;
-        private const int CreateRerollIndex = 5;
-        private const int CreateStartIndex = 6;
-        private const int CreateBackIndex = 7;
-        private const int FirstBlockedCreateSpriteIndex = 18;
-        private const int SecondBlockedCreateSpriteIndex = 19;
+        private const int CreateNameIndex = TitleViewModel.CreateNameIndex;
+        private const int CreateGenerateNameIndex = TitleViewModel.CreateGenerateNameIndex;
+        private const int CreateGenderIndex = TitleViewModel.CreateGenderIndex;
+        private const int CreateClassIndex = TitleViewModel.CreateClassIndex;
+        private const int CreateImageIndex = TitleViewModel.CreateImageIndex;
+        private const int CreateRerollIndex = TitleViewModel.CreateRerollIndex;
+        private const int CreateStartIndex = TitleViewModel.CreateStartIndex;
+        private const int CreateBackIndex = TitleViewModel.CreateBackIndex;
         private const string MainMenuBackgroundAssetPath = "Assets/DungeonEscape/Images/ui/mainmenue.png";
         private const string SecondaryMenuBackgroundAssetPath = "Assets/DungeonEscape/Images/ui/menu2.png";
 
         private static bool isOpen;
 
+        private readonly TitleViewModel viewModel = new TitleViewModel();
         private GameState gameState;
         private UiSettings uiSettings;
         private UiTheme uiTheme;
@@ -64,18 +51,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private GUIStyle panelStyle;
         private float lastPixelScale;
         private string lastThemeSignature;
-        private TitleMode mode;
-        private int selectedIndex;
         private int repeatingMoveX;
         private int repeatingMoveY;
         private float nextMoveXTime;
         private float nextMoveYTime;
-        private string createPlayerName = "Player";
-        private bool createPlayerNameInitialized;
-        private Class createPlayerClass = Class.Hero;
-        private Gender createPlayerGender = Gender.Male;
-        private int createPlayerSpriteIndex;
-        private CreateDropdown activeCreateDropdown;
         private Rect createMenuAreaOffset;
         private Rect genderDropdownAnchor;
         private Rect classDropdownAnchor;
@@ -83,7 +62,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private Vector2 classDropdownScrollPosition;
         private Vector2 loadQuestScrollPosition;
         private Hero createPreviewHero;
-        private int selectedDropdownIndex;
         private bool focusCreateNameNextGui;
         private Texture2D mainMenuBackground;
         private Texture2D secondaryMenuBackground;
@@ -97,6 +75,68 @@ namespace Redpoint.DungeonEscape.Unity.UI
         public static bool IsOpen
         {
             get { return isOpen; }
+        }
+
+        private TitleMode mode
+        {
+            get { return viewModel.Mode; }
+            set
+            {
+                switch (value)
+                {
+                    case TitleMode.Load:
+                        viewModel.ShowLoadMenu();
+                        break;
+                    case TitleMode.Create:
+                        viewModel.ShowCreateMenu();
+                        break;
+                    default:
+                        viewModel.ShowMainMenu();
+                        break;
+                }
+            }
+        }
+
+        private int selectedIndex
+        {
+            get { return viewModel.SelectedIndex; }
+            set { viewModel.SetSelectedIndex(value); }
+        }
+
+        private string createPlayerName
+        {
+            get { return viewModel.CreatePlayerName; }
+            set { viewModel.SetCreatePlayerName(value); }
+        }
+
+        private Class createPlayerClass
+        {
+            get { return viewModel.CreatePlayerClass; }
+            set { viewModel.SetCreatePlayerClass(value); }
+        }
+
+        private Gender createPlayerGender
+        {
+            get { return viewModel.CreatePlayerGender; }
+            set { viewModel.SetCreatePlayerGender(value); }
+        }
+
+        private int createPlayerSpriteIndex
+        {
+            get { return viewModel.CreatePlayerSpriteIndex; }
+            set { viewModel.SetCreatePlayerSpriteIndex(value); }
+        }
+
+        private CreateDropdown activeCreateDropdown
+        {
+            get { return viewModel.ActiveCreateDropdown; }
+            set { viewModel.SetActiveCreateDropdown(value); }
+        }
+
+        private int selectedDropdownIndex
+        {
+            get { return viewModel.SelectedDropdownIndex; }
+            set { viewModel.SetSelectedDropdownIndex(value); }
         }
 
         public static void OpenMainMenu()
@@ -363,7 +403,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     selectedIndex = i;
                     if (enabled)
                     {
-                        ActivateTitleAction(rows[i].Action);
+                        ActivateMainAction(rows[i].Action);
                     }
                 }
 
@@ -913,12 +953,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void EnsureCreatePlayerName()
         {
-            if (createPlayerNameInitialized)
+            if (viewModel.CreatePlayerNameInitialized)
             {
                 return;
             }
 
-            createPlayerNameInitialized = true;
+            viewModel.MarkCreatePlayerNameInitialized();
             GenerateRandomPlayerName();
             RerollCreatePreviewHero();
         }
@@ -955,38 +995,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private IEnumerable<TitleRow> GetMainRows()
         {
-            if (gameState != null && gameState.HasQuickSave())
-            {
-                yield return new TitleRow
-                {
-                    Label = "Continue",
-                    Enabled = true,
-                    Action = ContinueGame
-                };
-            }
-
-            yield return new TitleRow
-            {
-                Label = "New Quest",
-                Enabled = true,
-                Action = ShowCreateMenu
-            };
-            if (gameState != null && gameState.GetManualSaveSlots().Count > 0)
-            {
-                yield return new TitleRow
-                {
-                    Label = "Load Quest",
-                    Enabled = true,
-                    Action = ShowLoadMenu
-                };
-            }
-
-            yield return new TitleRow
-            {
-                Label = "Quit",
-                Enabled = true,
-                Action = Quit
-            };
+            return viewModel.GetMainRows(
+                gameState != null && gameState.HasQuickSave(),
+                gameState == null ? 0 : gameState.GetManualSaveSlots().Count);
         }
 
         private int GetOptionCount()
@@ -1001,7 +1012,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return 8;
             }
 
-            return GetMainRows().Count();
+            return viewModel.GetOptionCount(
+                gameState != null && gameState.HasQuickSave(),
+                gameState == null ? 0 : gameState.GetManualSaveSlots().Count);
         }
 
         private void HandleNavigation()
@@ -1021,7 +1034,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var moveY = GetMenuMoveY();
             if (moveY != 0)
             {
-                SetSelectedIndex(Mathf.Clamp(selectedIndex + moveY, 0, Mathf.Max(GetOptionCount() - 1, 0)));
+                SetSelectedIndex(viewModel.GetMainNavigationIndex(
+                    moveY,
+                    gameState != null && gameState.HasQuickSave(),
+                    gameState == null ? 0 : gameState.GetManualSaveSlots().Count));
             }
         }
 
@@ -1030,11 +1046,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var moveY = GetMenuMoveY();
             if (moveY < 0)
             {
-                SetSelectedIndex(GetCreateUpIndex(selectedIndex));
+                SetSelectedIndex(viewModel.GetCreateNavigationIndex(0, moveY));
             }
             else if (moveY > 0)
             {
-                SetSelectedIndex(GetCreateDownIndex(selectedIndex));
+                SetSelectedIndex(viewModel.GetCreateNavigationIndex(0, moveY));
             }
 
             var moveX = GetMenuMoveX();
@@ -1045,7 +1061,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     return;
                 }
 
-                SetSelectedIndex(GetCreateLeftIndex(selectedIndex));
+                SetSelectedIndex(viewModel.GetCreateNavigationIndex(moveX, 0));
             }
             else if (moveX > 0)
             {
@@ -1054,7 +1070,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     return;
                 }
 
-                SetSelectedIndex(GetCreateRightIndex(selectedIndex));
+                SetSelectedIndex(viewModel.GetCreateNavigationIndex(moveX, 0));
             }
         }
 
@@ -1081,118 +1097,15 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return false;
         }
 
-        private static int GetCreateUpIndex(int index)
-        {
-            switch (index)
-            {
-                case CreateGenderIndex:
-                    return CreateNameIndex;
-                case CreateClassIndex:
-                    return CreateGenderIndex;
-                case CreateRerollIndex:
-                    return CreateImageIndex;
-                case CreateImageIndex:
-                    return CreateClassIndex;
-                case CreateStartIndex:
-                    return CreateRerollIndex;
-                case CreateBackIndex:
-                    return CreateRerollIndex;
-                default:
-                    return index;
-            }
-        }
-
-        private static int GetCreateDownIndex(int index)
-        {
-            switch (index)
-            {
-                case CreateNameIndex:
-                    return CreateGenderIndex;
-                case CreateGenderIndex:
-                    return CreateClassIndex;
-                case CreateClassIndex:
-                    return CreateImageIndex;
-                case CreateImageIndex:
-                    return CreateRerollIndex;
-                case CreateGenerateNameIndex:
-                    return CreateRerollIndex;
-                case CreateRerollIndex:
-                    return CreateStartIndex;
-                default:
-                    return index;
-            }
-        }
-
-        private static int GetCreateLeftIndex(int index)
-        {
-            switch (index)
-            {
-                case CreateGenerateNameIndex:
-                    return CreateNameIndex;
-                case CreateBackIndex:
-                    return CreateStartIndex;
-                default:
-                    return index;
-            }
-        }
-
-        private static int GetCreateRightIndex(int index)
-        {
-            switch (index)
-            {
-                case CreateNameIndex:
-                    return CreateGenerateNameIndex;
-                case CreateStartIndex:
-                    return CreateBackIndex;
-                default:
-                    return index;
-            }
-        }
-
         private void HandleLoadNavigation()
         {
             var saveCount = gameState == null ? 0 : gameState.GetManualSaveSlots().Count;
-            var backIndex = GetLoadBackIndex(saveCount);
             var moveY = GetMenuMoveY();
-            if (moveY != 0)
-            {
-                if (saveCount == 0)
-                {
-                    SetSelectedIndex(backIndex);
-                    return;
-                }
-
-                if (selectedIndex >= backIndex)
-                {
-                    SetSelectedIndex(moveY < 0 ? GetLoadSaveIndex(saveCount - 1) : backIndex);
-                    return;
-                }
-
-                var row = selectedIndex / 2;
-                if (moveY < 0)
-                {
-                    SetSelectedIndex(row <= 0 ? GetLoadSaveIndex(0) : GetLoadSaveIndex(row - 1));
-                }
-                else
-                {
-                    SetSelectedIndex(row >= saveCount - 1 ? backIndex : GetLoadSaveIndex(row + 1));
-                }
-            }
-
             var moveX = GetMenuMoveX();
-            if (moveX == 0 || selectedIndex >= backIndex)
+            var nextIndex = viewModel.GetLoadNavigationIndex(moveX, moveY, saveCount);
+            if (nextIndex != selectedIndex)
             {
-                return;
-            }
-
-            var saveIndex = selectedIndex / 2;
-            if (moveX > 0)
-            {
-                SetSelectedIndex(GetLoadDeleteIndex(saveIndex));
-            }
-            else
-            {
-                SetSelectedIndex(GetLoadSaveIndex(saveIndex));
+                SetSelectedIndex(nextIndex);
             }
         }
 
@@ -1244,7 +1157,26 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var rows = GetMainRows().ToList();
             if (selectedIndex >= 0 && selectedIndex < rows.Count && rows[selectedIndex].Enabled)
             {
-                ActivateTitleAction(rows[selectedIndex].Action);
+                ActivateMainAction(rows[selectedIndex].Action);
+            }
+        }
+
+        private void ActivateMainAction(TitleMainAction action)
+        {
+            switch (action)
+            {
+                case TitleMainAction.Continue:
+                    ActivateTitleAction(ContinueGame);
+                    break;
+                case TitleMainAction.NewQuest:
+                    ActivateTitleAction(ShowCreateMenu);
+                    break;
+                case TitleMainAction.LoadQuest:
+                    ActivateTitleAction(ShowLoadMenu);
+                    break;
+                case TitleMainAction.Quit:
+                    ActivateTitleAction(Quit);
+                    break;
             }
         }
 
@@ -1346,82 +1278,30 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void CycleCreateGender(int delta)
         {
-            var values = System.Enum.GetValues(typeof(Gender));
-            var currentIndex = System.Array.IndexOf(values, createPlayerGender);
-            var nextIndex = WrapIndex(currentIndex + delta, values.Length);
-            createPlayerGender = (Gender)values.GetValue(nextIndex);
+            viewModel.CycleCreateGender(delta);
             UpdateCreatePreviewHeroIdentity();
             UiControls.PlaySelectSound();
         }
 
         private void CycleCreateClass(int delta)
         {
-            var values = System.Enum.GetValues(typeof(Class));
-            var currentIndex = System.Array.IndexOf(values, createPlayerClass);
-            var nextIndex = WrapIndex(currentIndex + delta, values.Length);
-            createPlayerClass = (Class)values.GetValue(nextIndex);
+            viewModel.CycleCreateClass(delta);
             RerollCreatePreviewHero();
             UiControls.PlaySelectSound();
         }
 
         private void CycleCreateImage(int delta)
         {
-            createPlayerSpriteIndex = GetNextSelectableCreateImageIndex(createPlayerSpriteIndex, delta);
+            viewModel.CycleCreateImage(delta, HeroSpriteResolver.GetHeroCharacterCount());
             UpdateCreatePreviewHeroIdentity();
             UiControls.PlaySelectSound();
         }
 
         private int GetCreatePlayerSpriteFrameIndex()
         {
-            if (!IsSelectableCreateImageIndex(createPlayerSpriteIndex))
-            {
-                createPlayerSpriteIndex = GetNextSelectableCreateImageIndex(createPlayerSpriteIndex, 1);
-            }
+            viewModel.EnsureSelectableCreateImageIndex(HeroSpriteResolver.GetHeroCharacterCount());
 
             return HeroSpriteResolver.GetBaseFrameIndexForCharacter(createPlayerSpriteIndex);
-        }
-
-        private static int GetNextSelectableCreateImageIndex(int currentIndex, int delta)
-        {
-            var count = HeroSpriteResolver.GetHeroCharacterCount();
-            if (count <= 0)
-            {
-                return 0;
-            }
-
-            var step = delta == 0 ? 1 : delta;
-            var nextIndex = currentIndex;
-            for (var i = 0; i < count; i++)
-            {
-                nextIndex = WrapIndex(nextIndex + step, count);
-                if (IsSelectableCreateImageIndex(nextIndex))
-                {
-                    return nextIndex;
-                }
-            }
-
-            return 0;
-        }
-
-        private static bool IsSelectableCreateImageIndex(int index)
-        {
-            return index != FirstBlockedCreateSpriteIndex &&
-                   index != SecondBlockedCreateSpriteIndex;
-        }
-
-        private static int WrapIndex(int index, int count)
-        {
-            if (count <= 0)
-            {
-                return 0;
-            }
-
-            while (index < 0)
-            {
-                index += count;
-            }
-
-            return index % count;
         }
 
         private static bool GetConfirmDown()
@@ -1505,17 +1385,17 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private static int GetLoadSaveIndex(int saveIndex)
         {
-            return saveIndex * 2;
+            return TitleViewModel.GetLoadSaveIndex(saveIndex);
         }
 
         private static int GetLoadDeleteIndex(int saveIndex)
         {
-            return saveIndex * 2 + 1;
+            return TitleViewModel.GetLoadDeleteIndex(saveIndex);
         }
 
         private static int GetLoadBackIndex(int saveCount)
         {
-            return saveCount * 2;
+            return TitleViewModel.GetLoadBackIndex(saveCount);
         }
 
         private static void Quit()
@@ -1657,11 +1537,5 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return uiSettings == null ? 1f : uiSettings.PixelScale;
         }
 
-        private sealed class TitleRow
-        {
-            public string Label { get; set; }
-            public bool Enabled { get; set; }
-            public System.Action Action { get; set; }
-        }
     }
 }

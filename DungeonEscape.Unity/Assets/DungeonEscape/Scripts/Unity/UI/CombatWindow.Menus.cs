@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Unity.Core;
+using Redpoint.DungeonEscape.ViewModels;
 using UnityEngine;
 
 namespace Redpoint.DungeonEscape.Unity.UI
@@ -18,30 +19,37 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private IEnumerable<CombatButton> BuildActionButtons()
         {
-            yield return new CombatButton("Fight", BeginTargetSelection);
-
-            if (actingHero != null &&
-                !actingHero.Status.Any(effect => effect.Type == EffectType.StopSpell) &&
-                GetAvailableEncounterSpells(actingHero).Any())
+            var skills = actingHero == null ? new List<Skill>() : GetAvailableEncounterSkills(actingHero).ToList();
+            var rows = viewModel.GetActionRows(
+                actingHero,
+                actingHero != null && GetAvailableEncounterSpells(actingHero).Any(),
+                skills,
+                actingHero != null && GetAvailableEncounterItems(actingHero).Any());
+            foreach (var row in rows)
             {
-                yield return new CombatButton("Spell", BeginSpellSelection);
-            }
-
-            if (actingHero != null)
-            {
-                foreach (var skill in GetAvailableEncounterSkills(actingHero))
+                switch (row.Kind)
                 {
-                    var selectedSkill = skill;
-                    yield return new CombatButton(selectedSkill.Name, () => ResolveHeroSkill(selectedSkill));
+                    case CombatActionKind.Fight:
+                        yield return new CombatButton(row.Label, BeginTargetSelection);
+                        break;
+                    case CombatActionKind.Spell:
+                        yield return new CombatButton(row.Label, BeginSpellSelection);
+                        break;
+                    case CombatActionKind.Skill:
+                        if (row.SkillIndex >= 0 && row.SkillIndex < skills.Count)
+                        {
+                            var selectedSkill = skills[row.SkillIndex];
+                            yield return new CombatButton(row.Label, () => ResolveHeroSkill(selectedSkill));
+                        }
+                        break;
+                    case CombatActionKind.Item:
+                        yield return new CombatButton(row.Label, BeginItemSelection);
+                        break;
+                    case CombatActionKind.Run:
+                        yield return new CombatButton(row.Label, ResolveHeroRun);
+                        break;
                 }
             }
-
-            if (actingHero != null && GetAvailableEncounterItems(actingHero).Any())
-            {
-                yield return new CombatButton("Item", BeginItemSelection);
-            }
-
-            yield return new CombatButton("Run", ResolveHeroRun);
         }
 
         private void DrawSpellMenu(Rect panelRect, float scale)
@@ -52,7 +60,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 scale,
                 "Spell",
                 spells,
-                spell => spell.Name + "  " + spell.Cost + " MP",
+                viewModel.GetSpellRows(spells),
                 (Spell spell, out Sprite sprite) => UiAssetResolver.TryGetSpellSprite(spell, out sprite),
                 ResolveHeroSpell);
         }
@@ -65,7 +73,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 scale,
                 "Item",
                 items,
-                item => item.NameWithStats,
+                viewModel.GetItemRows(items),
                 (ItemInstance item, out Sprite sprite) => UiAssetResolver.TryGetItemSprite(item, out sprite),
                 ResolveHeroItem);
         }
@@ -77,7 +85,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             float scale,
             string title,
             IList<T> values,
-            Func<T, string> getLabel,
+            IList<CombatMenuRow> rows,
             TryGetSpriteDelegate<T> getSprite,
             Action<T> onSelect)
         {
@@ -86,19 +94,26 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var x = panelRect.x + 14f * scale;
             var y = GetCombatMenuY(panelRect, scale);
             DrawCombatMenuTitle(x, panelRect.y, menuWidth, scale, title);
-            for (var i = 0; i < values.Count; i++)
+            for (var i = 0; i < rows.Count; i++)
             {
+                var row = rows[i];
+                if (row.Index < 0 || row.Index >= values.Count)
+                {
+                    continue;
+                }
+
+                var value = values[row.Index];
                 var rect = new Rect(x, y + i * (rowHeight + 4f * scale), menuWidth, rowHeight);
-                var selected = i == selectedMenuIndex;
+                var selected = row.Index == selectedMenuIndex;
                 if (GUI.Button(rect, GUIContent.none, GetCombatRowStyle(selected)))
                 {
                     UiControls.PlayConfirmSound();
-                    selectedMenuIndex = i;
-                    onSelect(values[i]);
+                    selectedMenuIndex = row.Index;
+                    onSelect(value);
                 }
 
                 Sprite sprite;
-                if (getSprite(values[i], out sprite) && sprite != null && sprite.texture != null)
+                if (getSprite(value, out sprite) && sprite != null && sprite.texture != null)
                 {
                     var iconSize = 26f * scale;
                     DrawSprite(sprite, new Rect(rect.x + 6f * scale, rect.y + (rect.height - iconSize) / 2f, iconSize, iconSize));
@@ -106,7 +121,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
                 GUI.Label(
                     new Rect(rect.x + 40f * scale, rect.y, rect.width - 46f * scale, rect.height),
-                    getLabel(values[i]),
+                    row.Label,
                     GetCombatRowLabelStyle(selected));
             }
 
@@ -282,33 +297,25 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private IFighter GetSelectedTarget()
         {
-            return targetSelectionCandidates != null &&
-                   selectedMenuIndex >= 0 &&
-                   selectedMenuIndex < targetSelectionCandidates.Count
-                ? targetSelectionCandidates[selectedMenuIndex]
-                : null;
+            return viewModel.GetSelectedTarget(targetSelectionCandidates);
         }
 
         private bool IsCurrentTargetCandidate(IFighter fighter)
         {
-            return fighter != null &&
-                   state == CombatState.ChooseTarget &&
-                   targetSelectionCandidates != null &&
-                   targetSelectionCandidates.Any(target => ReferenceEquals(target, fighter));
+            return state == CombatState.ChooseTarget &&
+                   viewModel.IsTargetCandidate(targetSelectionCandidates, fighter);
         }
 
         private bool IsPartyTargetSelection()
         {
             return state == CombatState.ChooseTarget &&
-                   targetSelectionCandidates != null &&
-                   targetSelectionCandidates.Any(target => target is Hero);
+                   viewModel.HasPartyTargets(targetSelectionCandidates);
         }
 
         private bool IsMonsterTargetSelection()
         {
             return state == CombatState.ChooseTarget &&
-                   targetSelectionCandidates != null &&
-                   targetSelectionCandidates.Any(target => target is MonsterInstance);
+                   viewModel.HasMonsterTargets(targetSelectionCandidates);
         }
 
         private void SelectTarget(IFighter target)
@@ -318,7 +325,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            var index = targetSelectionCandidates.FindIndex(candidate => ReferenceEquals(candidate, target));
+            var index = viewModel.GetTargetIndex(targetSelectionCandidates, target);
             if (index < 0)
             {
                 return;

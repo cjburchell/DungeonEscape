@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Redpoint.DungeonEscape.Data;
 using Redpoint.DungeonEscape.State;
 
 namespace Redpoint.DungeonEscape.ViewModels
@@ -33,6 +34,12 @@ namespace Redpoint.DungeonEscape.ViewModels
         public int DetailPageIndex { get; private set; }
         public int SelectedRowIndex { get; private set; }
         public int SelectedBindingSlotIndex { get; private set; }
+        public string ModalTitle { get; private set; }
+        public string ModalMessage { get; private set; }
+        public List<string> ModalChoices { get; private set; }
+        public List<Hero> ModalChoiceHeroes { get; private set; }
+        public int ModalSelectedIndex { get; private set; }
+        public bool ModalWaitingForConfirmRelease { get; private set; }
 
         public void Reset()
         {
@@ -51,6 +58,7 @@ namespace Redpoint.DungeonEscape.ViewModels
             DetailPageIndex = 0;
             SelectedRowIndex = 0;
             SelectedBindingSlotIndex = 0;
+            HideModal();
         }
 
         public int ClampSelectedRowIndex(int rowCount)
@@ -253,6 +261,369 @@ namespace Redpoint.DungeonEscape.ViewModels
             return actions;
         }
 
+        public List<string> GetPartyItemActionLabels(bool canUse, ItemInstance item, bool canEquip, bool hasTransferTarget)
+        {
+            var choices = new List<string>();
+            if (canUse)
+            {
+                choices.Add("Use");
+            }
+
+            if (item != null && item.IsEquipped)
+            {
+                choices.Add("Unequip");
+            }
+            else if (canEquip)
+            {
+                choices.Add("Equip");
+            }
+
+            if (hasTransferTarget)
+            {
+                choices.Add("Transfer");
+            }
+
+            if (item != null && item.Type != ItemType.Quest)
+            {
+                choices.Add("Drop");
+            }
+
+            choices.Add("Cancel");
+            return choices;
+        }
+
+        public GameMenuUseAction GetUseItemAction(ItemInstance item)
+        {
+            if (item == null)
+            {
+                return GameMenuUseAction.CannotUse;
+            }
+
+            if (item.Item != null && item.Item.Skill != null)
+            {
+                switch (item.Item.Skill.Type)
+                {
+                    case SkillType.Outside:
+                        return GameMenuUseAction.Outside;
+                    case SkillType.Return:
+                        return GameMenuUseAction.Return;
+                    case SkillType.Open:
+                        return GameMenuUseAction.Open;
+                }
+            }
+
+            return GetTargetUseAction(item.Target);
+        }
+
+        public GameMenuUseAction GetCastSpellAction(Spell spell)
+        {
+            if (spell == null)
+            {
+                return GameMenuUseAction.CannotUse;
+            }
+
+            switch (spell.Type)
+            {
+                case SkillType.Outside:
+                    return GameMenuUseAction.Outside;
+                case SkillType.Return:
+                    return GameMenuUseAction.Return;
+                case SkillType.Open:
+                    return GameMenuUseAction.Open;
+                default:
+                    return GetTargetUseAction(spell.Targets);
+            }
+        }
+
+        public bool CanCastSpellFromPartyMenu(bool canCastHeroSpell, SkillType type, bool canCastOutside, bool canCastReturn)
+        {
+            if (!canCastHeroSpell)
+            {
+                return false;
+            }
+
+            if (type == SkillType.Outside)
+            {
+                return canCastOutside;
+            }
+
+            if (type == SkillType.Return)
+            {
+                return canCastReturn;
+            }
+
+            return true;
+        }
+
+        public GameMenuSettingsEffect AdjustSelectedSetting(Settings settings, int settingsTab, int selectedRowIndex, int delta)
+        {
+            if (settings == null)
+            {
+                return GameMenuSettingsEffect.None;
+            }
+
+            if (selectedRowIndex == 0)
+            {
+                return GameMenuSettingsEffect.CycleTab;
+            }
+
+            var rowIndex = selectedRowIndex - 1;
+            if (settingsTab == SettingsGeneral)
+            {
+                switch (rowIndex)
+                {
+                    case 0:
+                        settings.UiScale = ClampFloat((settings.UiScale <= 0f ? 1f : settings.UiScale) + 0.05f * delta, 0.5f, 3f);
+                        return GameMenuSettingsEffect.ApplySettings;
+                    case 1:
+                        settings.DialogTextCharactersPerSecond = ClampFloat(settings.DialogTextCharactersPerSecond + 5f * delta, 0f, 120f);
+                        return GameMenuSettingsEffect.ApplySettings;
+                    case 3:
+                        settings.MusicVolume = ClampFloat(settings.MusicVolume + 0.01f * delta, 0f, 1f);
+                        return GameMenuSettingsEffect.ApplyAudioSettings;
+                    case 4:
+                        settings.SoundEffectsVolume = ClampFloat(settings.SoundEffectsVolume + 0.01f * delta, 0f, 1f);
+                        return GameMenuSettingsEffect.ApplyAudioSettings;
+                    case 6:
+                        settings.AutoSaveIntervalSeconds = ClampFloat((settings.AutoSaveIntervalSeconds <= 0f ? 5f : settings.AutoSaveIntervalSeconds) + 5f * delta, 5f, 300f);
+                        return GameMenuSettingsEffect.ApplySettings;
+                }
+            }
+            else if (settingsTab == SettingsUi)
+            {
+                switch (rowIndex)
+                {
+                    case 1:
+                        settings.UiBackgroundAlpha = ClampFloat(settings.UiBackgroundAlpha + 0.05f * delta, 0f, 1f);
+                        return GameMenuSettingsEffect.ApplySettings;
+                    case 5:
+                        settings.UiBorderThickness = Clamp(settings.UiBorderThickness + delta, 2, 12);
+                        return GameMenuSettingsEffect.ApplySettings;
+                }
+            }
+            else if (settingsTab == SettingsInput)
+            {
+                SelectedBindingSlotIndex = (SelectedBindingSlotIndex + delta + 2) % 2;
+            }
+            else if (settingsTab == SettingsDebug)
+            {
+                switch (rowIndex)
+                {
+                    case 3:
+                        settings.SprintBoost = ClampFloat((settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost) + 0.05f * delta, 1f, 3f);
+                        return GameMenuSettingsEffect.ApplySettings;
+                    case 4:
+                        settings.TurnMoveDelaySeconds = ClampFloat(settings.TurnMoveDelaySeconds + 0.01f * delta, 0f, 0.3f);
+                        return GameMenuSettingsEffect.ApplySettings;
+                }
+            }
+
+            return GameMenuSettingsEffect.None;
+        }
+
+        public GameMenuSettingsEffect ActivateSelectedSetting(Settings settings, int settingsTab, int selectedRowIndex, int bindingCount)
+        {
+            if (settings == null || selectedRowIndex == 0)
+            {
+                return GameMenuSettingsEffect.None;
+            }
+
+            var settingsRowIndex = selectedRowIndex - 1;
+            if (settingsTab == SettingsGeneral && settingsRowIndex == 2)
+            {
+                settings.IsFullScreen = !settings.IsFullScreen;
+                return GameMenuSettingsEffect.ApplySettings;
+            }
+
+            if (settingsTab == SettingsGeneral && settingsRowIndex == 5)
+            {
+                settings.AutoSaveEnabled = !settings.AutoSaveEnabled;
+                return GameMenuSettingsEffect.ApplySettings;
+            }
+
+            if (settingsTab == SettingsDebug)
+            {
+                if (settingsRowIndex == 0)
+                {
+                    settings.MapDebugInfo = !settings.MapDebugInfo;
+                    return GameMenuSettingsEffect.ApplySettings;
+                }
+
+                if (settingsRowIndex == 1)
+                {
+                    settings.ShowHiddenObjects = !settings.ShowHiddenObjects;
+                    return GameMenuSettingsEffect.ApplySettingsAndRefreshVisibility;
+                }
+
+                if (settingsRowIndex == 2)
+                {
+                    settings.NoMonsters = !settings.NoMonsters;
+                    return GameMenuSettingsEffect.ApplySettings;
+                }
+            }
+
+            if (settingsTab == SettingsInput)
+            {
+                var bindingIndex = GetSelectedInputBindingIndex(selectedRowIndex);
+                return bindingIndex >= bindingCount
+                    ? GameMenuSettingsEffect.ResetBindings
+                    : bindingIndex < 0 ? GameMenuSettingsEffect.None : GameMenuSettingsEffect.StartRebinding;
+            }
+
+            return GameMenuSettingsEffect.None;
+        }
+
+        public GameMenuSettingsEffect GetGeneralSettingsChangeEffect(
+            Settings oldSettings,
+            float uiScale,
+            float dialogTextCharactersPerSecond,
+            bool isFullScreen,
+            float musicVolume,
+            float soundEffectsVolume,
+            bool autoSaveEnabled,
+            float autoSaveIntervalSeconds)
+        {
+            if (oldSettings == null)
+            {
+                return GameMenuSettingsEffect.None;
+            }
+
+            var audioChanged =
+                !NearlyEqual(oldSettings.MusicVolume, musicVolume) ||
+                !NearlyEqual(oldSettings.SoundEffectsVolume, soundEffectsVolume);
+            var otherChanged =
+                !NearlyEqual(oldSettings.UiScale, uiScale) ||
+                !NearlyEqual(oldSettings.DialogTextCharactersPerSecond, dialogTextCharactersPerSecond) ||
+                oldSettings.IsFullScreen != isFullScreen ||
+                oldSettings.AutoSaveEnabled != autoSaveEnabled ||
+                !NearlyEqual(oldSettings.AutoSaveIntervalSeconds, autoSaveIntervalSeconds);
+
+            return otherChanged
+                ? GameMenuSettingsEffect.ApplySettings
+                : audioChanged ? GameMenuSettingsEffect.ApplyAudioSettings : GameMenuSettingsEffect.None;
+        }
+
+        public GameMenuSettingsEffect GetUiSettingsChangeEffect(Settings oldSettings, Settings newSettings)
+        {
+            if (oldSettings == null || newSettings == null)
+            {
+                return GameMenuSettingsEffect.None;
+            }
+
+            return oldSettings.UiBackgroundColor != newSettings.UiBackgroundColor ||
+                   !NearlyEqual(oldSettings.UiBackgroundAlpha, newSettings.UiBackgroundAlpha) ||
+                   oldSettings.UiHoverColor != newSettings.UiHoverColor ||
+                   oldSettings.UiActiveColor != newSettings.UiActiveColor ||
+                   oldSettings.UiBorderColor != newSettings.UiBorderColor ||
+                   oldSettings.UiBorderThickness != newSettings.UiBorderThickness ||
+                   oldSettings.UiTextColor != newSettings.UiTextColor ||
+                   oldSettings.UiHighlightColor != newSettings.UiHighlightColor
+                ? GameMenuSettingsEffect.ApplySettings
+                : GameMenuSettingsEffect.None;
+        }
+
+        public GameMenuSettingsEffect GetDebugSettingsChangeEffect(
+            Settings oldSettings,
+            bool mapDebugInfo,
+            bool showHiddenObjects,
+            bool noMonsters,
+            float sprintBoost,
+            float turnMoveDelaySeconds)
+        {
+            if (oldSettings == null)
+            {
+                return GameMenuSettingsEffect.None;
+            }
+
+            if (oldSettings.ShowHiddenObjects != showHiddenObjects)
+            {
+                return GameMenuSettingsEffect.ApplySettingsAndRefreshVisibility;
+            }
+
+            return oldSettings.MapDebugInfo != mapDebugInfo ||
+                   oldSettings.NoMonsters != noMonsters ||
+                   !NearlyEqual(oldSettings.SprintBoost, sprintBoost) ||
+                   !NearlyEqual(oldSettings.TurnMoveDelaySeconds, turnMoveDelaySeconds)
+                ? GameMenuSettingsEffect.ApplySettings
+                : GameMenuSettingsEffect.None;
+        }
+
+        public int GetSelectedInputBindingIndex(int selectedRowIndex)
+        {
+            return selectedRowIndex - 1;
+        }
+
+        public string GetSelectedBindingSlotName()
+        {
+            return SelectedBindingSlotIndex == 0 ? "Primary" : "Gamepad";
+        }
+
+        public void ShowModal(string title, string message, IEnumerable<string> choices, IEnumerable<Hero> choiceHeroes, bool waitingForConfirmRelease)
+        {
+            ModalTitle = title;
+            ModalMessage = message;
+            ModalChoices = choices == null ? null : choices.ToList();
+            ModalChoiceHeroes = choiceHeroes == null ? null : choiceHeroes.ToList();
+            ModalSelectedIndex = 0;
+            ModalWaitingForConfirmRelease = waitingForConfirmRelease;
+        }
+
+        public bool IsModalVisible()
+        {
+            return !string.IsNullOrEmpty(ModalMessage);
+        }
+
+        public bool ModalHasChoices()
+        {
+            return ModalChoices != null && ModalChoices.Count > 0;
+        }
+
+        public void HideModal()
+        {
+            ModalTitle = null;
+            ModalMessage = null;
+            ModalChoices = null;
+            ModalChoiceHeroes = null;
+            ModalSelectedIndex = 0;
+            ModalWaitingForConfirmRelease = false;
+        }
+
+        public void ReleaseModalConfirmWait()
+        {
+            ModalWaitingForConfirmRelease = false;
+        }
+
+        public int MoveModalSelection(int delta)
+        {
+            if (!ModalHasChoices() || delta == 0)
+            {
+                return ModalSelectedIndex;
+            }
+
+            ModalSelectedIndex = Clamp(ModalSelectedIndex + delta, 0, ModalChoices.Count - 1);
+            return ModalSelectedIndex;
+        }
+
+        public bool TrySelectModalChoice(int index, out int selectedIndex)
+        {
+            selectedIndex = -1;
+            if (!ModalHasChoices() || index < 0 || index >= ModalChoices.Count)
+            {
+                return false;
+            }
+
+            selectedIndex = index;
+            HideModal();
+            return true;
+        }
+
+        public Hero GetModalChoiceHero(int index)
+        {
+            return ModalChoiceHeroes != null && index >= 0 && index < ModalChoiceHeroes.Count
+                ? ModalChoiceHeroes[index]
+                : null;
+        }
+
         public int GetSaveSelectableRowCount(int manualSaveSlotCount)
         {
             return Math.Max(0, manualSaveSlotCount);
@@ -346,6 +717,38 @@ namespace Redpoint.DungeonEscape.ViewModels
             }
 
             return value > max ? max : value;
+        }
+
+        private static float ClampFloat(float value, float min, float max)
+        {
+            if (value < min)
+            {
+                return min;
+            }
+
+            return value > max ? max : value;
+        }
+
+        private static bool NearlyEqual(float left, float right)
+        {
+            return Math.Abs(left - right) < 0.0001f;
+        }
+
+        private static GameMenuUseAction GetTargetUseAction(Target target)
+        {
+            switch (target)
+            {
+                case Target.Group:
+                    return GameMenuUseAction.Group;
+                case Target.None:
+                    return GameMenuUseAction.NoTarget;
+                case Target.Single:
+                    return GameMenuUseAction.Single;
+                case Target.Object:
+                    return GameMenuUseAction.Object;
+                default:
+                    return GameMenuUseAction.CannotUse;
+            }
         }
     }
 }

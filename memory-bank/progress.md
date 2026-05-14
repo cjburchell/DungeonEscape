@@ -38,8 +38,8 @@
 - Combat round rules extraction completed: action choice, target resolution/fallback, run outcomes, and execution dispatch now live in core with tests.
 - UI drawing/logic split started with `StoreViewModel` in the core `ViewModels` namespace; store selection, filtering, metadata, and price decisions have matching core tests.
 - `HealerViewModel` added under the core `ViewModels` namespace; healer service availability, costs, target filtering, metadata, and selection state have matching core tests.
-- `TitleViewModel` and `GameMenuViewModel` added under the core `ViewModels` namespace; title navigation/create state, save-slot display rows, game-menu screen state, selection clamping, action availability, member filtering, row counts, detail counts, and equipment candidate selection have matching core tests.
-- `CombatViewModel` added under the core `ViewModels` namespace; combat UI state and selected-index movement have matching core tests.
+- `TitleViewModel` and `GameMenuViewModel` added under the core `ViewModels` namespace; title navigation/create state, save-slot display rows, game-menu screen state, selection clamping, action availability, member filtering, row counts, detail counts, equipment candidate selection, item/spell use routing, item action labels, modal state, and settings adjustment/change effects have matching core tests.
+- `CombatViewModel` added under the core `ViewModels` namespace; combat UI state, selected-index movement, action/menu display rows, spell/item labels, selected target lookup, and target candidate/type checks have matching core tests.
 - Future feature backlog has been captured in `memory-bank/FUTURE_FEATURES.md`.
 - Known bugs and rough edges are tracked in `memory-bank/BUGS.md`.
 

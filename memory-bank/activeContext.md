@@ -94,7 +94,7 @@ Latest architecture cleanup:
 - Extracted combat round rules into `CombatRoundRules`; Unity combat UI still owns rendering, input, sound, and animation effects.
 - Began the UI drawing/logic split with `StoreViewModel` in `Redpoint.DungeonEscape.ViewModels` and matching `ViewModels` tests; `StoreWindow` now delegates selected store UI decisions to it.
 - Added `HealerViewModel` in `Redpoint.DungeonEscape.ViewModels` with matching tests; `HealerWindow` now delegates healer metadata, service list, target filtering, costs, and selection state to it.
-- Expanded `TitleViewModel` and `GameMenuViewModel` in `Redpoint.DungeonEscape.ViewModels` with matching tests; `TitleMenu` now delegates title navigation/create state and save-slot display rows to core, while `GameMenu` delegates screen state, selection clamping, action availability, member filtering, row counts, detail counts, and equipment candidate selection to core.
-- Added `CombatViewModel` in `Redpoint.DungeonEscape.ViewModels` with matching tests; `CombatWindow` now delegates combat UI state and selected-index movement to core.
+- Expanded `TitleViewModel` and `GameMenuViewModel` in `Redpoint.DungeonEscape.ViewModels` with matching tests; `TitleMenu` now delegates title navigation/create state and save-slot display rows to core, while `GameMenu` delegates screen state, selection clamping, action availability, member filtering, row counts, detail counts, equipment candidate selection, item/spell use routing, item action labels, modal state, and settings adjustment/change effects to core.
+- Expanded `CombatViewModel` in `Redpoint.DungeonEscape.ViewModels` with matching tests; `CombatWindow` now delegates combat UI state, selected-index movement, action/menu display rows, spell/item labels, selected target lookup, and target candidate/type checks to core.
 
 After every implemented gameplay step, update `memory-bank/MANUAL_TESTS.md` with manual verification steps.

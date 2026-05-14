@@ -99,13 +99,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private InputBinding rebindingInput;
         private string rebindingSlot;
         private int rebindingStartFrame;
-        private string menuModalTitle;
-        private string menuModalMessage;
-        private List<string> menuModalChoices;
-        private List<Hero> menuModalChoiceHeroes;
         private Action<int> menuModalSelected;
-        private int menuModalSelectedIndex;
-        private bool menuModalWaitingForConfirmRelease;
         private int repeatingMenuMoveX;
         private float nextMenuMoveXTime;
         private int repeatingMenuMoveY;
@@ -1612,22 +1606,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private bool CanCastSpellFromPartyMenu(Hero caster, Spell spell)
         {
-            if (gameState == null || !gameState.CanCastHeroSpell(caster, spell))
-            {
-                return false;
-            }
-
-            if (spell.Type == SkillType.Outside)
-            {
-                return gameState.CanCastOutside();
-            }
-
-            if (spell.Type == SkillType.Return)
-            {
-                return gameState.CanCastReturn();
-            }
-
-            return true;
+            return gameState != null &&
+                   spell != null &&
+                   viewModel.CanCastSpellFromPartyMenu(
+                       gameState.CanCastHeroSpell(caster, spell),
+                       spell.Type,
+                       gameState.CanCastOutside(),
+                       gameState.CanCastReturn());
         }
 
         private void ShowSpellTargetPicker(Hero caster, Spell spell)
@@ -1644,37 +1629,26 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            if (spell.Type == SkillType.Outside)
+            switch (viewModel.GetCastSpellAction(spell))
             {
-                ShowPartyMessage(gameState.CastOutsideSpell(caster, spell));
-                return;
-            }
-
-            if (spell.Type == SkillType.Return)
-            {
-                ShowReturnLocationPicker(caster, spell);
-                return;
-            }
-
-            if (spell.Type == SkillType.Open)
-            {
-                ShowPartyMessage(CastSpellOnFacingObject(caster, spell));
-                return;
-            }
-
-            switch (spell.Targets)
-            {
-                case Target.Group:
+                case GameMenuUseAction.Outside:
+                    ShowPartyMessage(gameState.CastOutsideSpell(caster, spell));
+                    return;
+                case GameMenuUseAction.Return:
+                    ShowReturnLocationPicker(caster, spell);
+                    return;
+                case GameMenuUseAction.Open:
+                case GameMenuUseAction.Object:
+                    ShowPartyMessage(CastSpellOnFacingObject(caster, spell));
+                    return;
+                case GameMenuUseAction.Group:
                     ShowPartyMessage(gameState.CastHeroSpellOnParty(caster, spell));
                     return;
-                case Target.None:
+                case GameMenuUseAction.NoTarget:
                     ShowPartyMessage(gameState.CastHeroSpellWithoutTarget(caster, spell));
                     return;
-                case Target.Single:
+                case GameMenuUseAction.Single:
                     ShowSingleSpellTargetPicker(caster, spell);
-                    return;
-                case Target.Object:
-                    ShowPartyMessage(CastSpellOnFacingObject(caster, spell));
                     return;
                 default:
                     ShowPartyMessage("That spell cannot be cast from the party menu.");
@@ -2301,42 +2275,30 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            if (item.Item != null && item.Item.Skill != null && item.Item.Skill.Type == SkillType.Outside)
+            switch (viewModel.GetUseItemAction(item))
             {
-                ShowInventoryMessage(gameState.UseOutsideItem(hero, item));
-                ClampSelectedItemIndex(hero);
-                return;
-            }
-
-            if (item.Item != null && item.Item.Skill != null && item.Item.Skill.Type == SkillType.Return)
-            {
-                ShowReturnLocationPicker(hero, item);
-                return;
-            }
-
-            if (item.Item != null && item.Item.Skill != null && item.Item.Skill.Type == SkillType.Open)
-            {
-                ShowInventoryMessage(UseItemOnFacingObject(hero, item));
-                ClampSelectedItemIndex(hero);
-                return;
-            }
-
-            switch (item.Target)
-            {
-                case Target.Group:
+                case GameMenuUseAction.Outside:
+                    ShowInventoryMessage(gameState.UseOutsideItem(hero, item));
+                    ClampSelectedItemIndex(hero);
+                    return;
+                case GameMenuUseAction.Return:
+                    ShowReturnLocationPicker(hero, item);
+                    return;
+                case GameMenuUseAction.Open:
+                case GameMenuUseAction.Object:
+                    ShowInventoryMessage(UseItemOnFacingObject(hero, item));
+                    ClampSelectedItemIndex(hero);
+                    return;
+                case GameMenuUseAction.Group:
                     ShowInventoryMessage(gameState.UseHeroItemOnParty(hero, item));
                     ClampSelectedItemIndex(hero);
                     return;
-                case Target.None:
+                case GameMenuUseAction.NoTarget:
                     ShowInventoryMessage(gameState.UseHeroItem(hero, item, hero));
                     ClampSelectedItemIndex(hero);
                     return;
-                case Target.Single:
+                case GameMenuUseAction.Single:
                     ShowSingleItemTargetPicker(hero, item);
-                    return;
-                case Target.Object:
-                    ShowInventoryMessage(UseItemOnFacingObject(hero, item));
-                    ClampSelectedItemIndex(hero);
                     return;
                 default:
                     ShowInventoryMessage("That item cannot be used from inventory.");
@@ -2820,43 +2782,35 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            var choices = new List<string>();
-            var actions = new List<Action>();
-            if (gameState != null && CanUseItemFromInventory(hero, item))
-            {
-                choices.Add("Use");
-                actions.Add(() => ShowUseItemTargetPicker(hero, item));
-            }
-
-            if (item.IsEquipped)
-            {
-                choices.Add("Unequip");
-                actions.Add(() => ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item)));
-            }
-            else if (hero.CanEquipItem(item))
-            {
-                choices.Add("Equip");
-                actions.Add(() => ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item)));
-            }
-
-            if (HasTransferTarget(hero))
-            {
-                choices.Add("Transfer");
-                actions.Add(() => ShowTransferItemTargetPicker(hero, item));
-            }
-
-            if (item.Type != ItemType.Quest)
-            {
-                choices.Add("Drop");
-                actions.Add(() => ShowDropItemConfirmation(hero, item));
-            }
-
-            choices.Add("Cancel");
+            var choices = viewModel.GetPartyItemActionLabels(
+                gameState != null && CanUseItemFromInventory(hero, item),
+                item,
+                hero.CanEquipItem(item),
+                HasTransferTarget(hero));
             ShowMenuModal(item.Name, "Choose an action.", choices, selectedIndex =>
             {
-                if (selectedIndex >= 0 && selectedIndex < actions.Count)
+                if (selectedIndex < 0 || selectedIndex >= choices.Count)
                 {
-                    actions[selectedIndex]();
+                    return;
+                }
+
+                switch (choices[selectedIndex])
+                {
+                    case "Use":
+                        ShowUseItemTargetPicker(hero, item);
+                        break;
+                    case "Unequip":
+                        ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item));
+                        break;
+                    case "Equip":
+                        ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item));
+                        break;
+                    case "Transfer":
+                        ShowTransferItemTargetPicker(hero, item);
+                        break;
+                    case "Drop":
+                        ShowDropItemConfirmation(hero, item);
+                        break;
                 }
             });
         }

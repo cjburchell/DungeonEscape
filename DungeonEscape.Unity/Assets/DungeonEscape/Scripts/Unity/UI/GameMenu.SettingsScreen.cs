@@ -129,13 +129,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawGeneralSettings(Settings settings)
         {
-            var oldUiScale = settings.UiScale;
-            var oldFullScreen = settings.IsFullScreen;
-            var oldMusicVolume = settings.MusicVolume;
-            var oldSoundEffectsVolume = settings.SoundEffectsVolume;
-            var oldAutoSaveEnabled = settings.AutoSaveEnabled;
-            var oldAutoSaveInterval = settings.AutoSaveIntervalSeconds;
-            var oldDialogTextSpeed = settings.DialogTextCharactersPerSecond;
+            var oldSettings = CloneSettings(settings);
 
             BeginSelectableRow();
             settings.UiScale = DrawSliderRow("UI Scale: " + settings.UiScale.ToString("0.00"), settings.UiScale <= 0f ? 1f : settings.UiScale, MinUiScale, MaxUiScale);
@@ -167,29 +161,23 @@ namespace Redpoint.DungeonEscape.Unity.UI
             SetMenuGuiEnabled(true);
             EndSelectableRow();
 
-            var volumeChanged =
-                !Mathf.Approximately(oldMusicVolume, settings.MusicVolume) ||
-                !Mathf.Approximately(oldSoundEffectsVolume, settings.SoundEffectsVolume);
-            var otherChanged =
-                !Mathf.Approximately(oldUiScale, settings.UiScale) ||
-                oldFullScreen != settings.IsFullScreen ||
-                oldAutoSaveEnabled != settings.AutoSaveEnabled ||
-                !Mathf.Approximately(oldAutoSaveInterval, settings.AutoSaveIntervalSeconds) ||
-                !Mathf.Approximately(oldDialogTextSpeed, settings.DialogTextCharactersPerSecond);
-
-            if (otherChanged)
-            {
-                ApplySettings(settings);
-            }
-            else if (volumeChanged)
-            {
-                ApplyAudioSettings(settings);
-            }
+            ApplySettingsEffect(
+                viewModel.GetGeneralSettingsChangeEffect(
+                    oldSettings,
+                    settings.UiScale,
+                    settings.DialogTextCharactersPerSecond,
+                    settings.IsFullScreen,
+                    settings.MusicVolume,
+                    settings.SoundEffectsVolume,
+                    settings.AutoSaveEnabled,
+                    settings.AutoSaveIntervalSeconds),
+                settings,
+                0);
         }
 
         private void DrawUiSettings(Settings settings)
         {
-            GUI.changed = false;
+            var oldSettings = CloneSettings(settings);
             BeginSelectableRow();
             settings.UiBackgroundColor = DrawTextFieldRow("Background Colour", settings.UiBackgroundColor, "#000000");
             EndSelectableRow();
@@ -215,19 +203,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
             settings.UiHighlightColor = DrawTextFieldRow("Highlighted Text/Border Colour", settings.UiHighlightColor, "#FFFF00");
             EndSelectableRow();
 
-            if (GUI.changed)
-            {
-                ApplySettings(settings);
-            }
+            ApplySettingsEffect(viewModel.GetUiSettingsChangeEffect(oldSettings, settings), settings, 0);
         }
 
         private void DrawDebugSettings(Settings settings)
         {
-            var oldMapDebugInfo = settings.MapDebugInfo;
-            var oldShowHiddenObjects = settings.ShowHiddenObjects;
-            var oldNoMonsters = settings.NoMonsters;
-            var oldSprintBoost = settings.SprintBoost;
-            var oldTurnDelay = settings.TurnMoveDelaySeconds;
+            var oldSettings = CloneSettings(settings);
             BeginSelectableRow();
             settings.MapDebugInfo = DrawCheckboxRow(settings.MapDebugInfo, "Map debug info");
             EndSelectableRow();
@@ -245,14 +226,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
             settings.TurnMoveDelaySeconds = DrawSliderRow("Turn Delay: " + GetTurnMoveDelay(settings).ToString("0.00") + " seconds", GetTurnMoveDelay(settings), 0f, 0.3f);
             EndSelectableRow();
 
-            if (oldMapDebugInfo != settings.MapDebugInfo ||
-                oldShowHiddenObjects != settings.ShowHiddenObjects ||
-                oldNoMonsters != settings.NoMonsters ||
-                !Mathf.Approximately(oldSprintBoost, settings.SprintBoost) ||
-                !Mathf.Approximately(oldTurnDelay, settings.TurnMoveDelaySeconds))
-            {
-                ApplySettings(settings, oldShowHiddenObjects != settings.ShowHiddenObjects);
-            }
+            ApplySettingsEffect(
+                viewModel.GetDebugSettingsChangeEffect(
+                    oldSettings,
+                    settings.MapDebugInfo,
+                    settings.ShowHiddenObjects,
+                    settings.NoMonsters,
+                    settings.SprintBoost,
+                    settings.TurnMoveDelaySeconds),
+                settings,
+                0);
         }
 
         private static float GetAutoSaveInterval(Settings settings)
@@ -342,142 +325,88 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void AdjustSelectedSetting(int delta)
         {
             var settings = SettingsCache.Current;
-            if (settings == null)
-            {
-                return;
-            }
-
-            if (selectedRowIndex == 0)
-            {
-                CycleSettingsTab(delta);
-                return;
-            }
-
-            if (currentSettingsTab == SettingsTab.General)
-            {
-                switch (selectedRowIndex - 1)
-                {
-                    case 0:
-                        settings.UiScale = Mathf.Clamp((settings.UiScale <= 0f ? 1f : settings.UiScale) + 0.05f * delta, MinUiScale, MaxUiScale);
-                        ApplySettings(settings);
-                        break;
-                    case 1:
-                        settings.DialogTextCharactersPerSecond = Mathf.Clamp(settings.DialogTextCharactersPerSecond + 5f * delta, 0f, 120f);
-                        ApplySettings(settings);
-                        break;
-                    case 3:
-                        settings.MusicVolume = Mathf.Clamp01(settings.MusicVolume + 0.01f * delta);
-                        ApplyAudioSettings(settings);
-                        break;
-                    case 4:
-                        settings.SoundEffectsVolume = Mathf.Clamp01(settings.SoundEffectsVolume + 0.01f * delta);
-                        ApplyAudioSettings(settings);
-                        break;
-                    case 6:
-                        settings.AutoSaveIntervalSeconds = Mathf.Clamp(GetAutoSaveInterval(settings) + 5f * delta, 5f, 300f);
-                        ApplySettings(settings);
-                        break;
-                }
-            }
-            else if (currentSettingsTab == SettingsTab.Ui)
-            {
-                switch (selectedRowIndex - 1)
-                {
-                    case 1:
-                        settings.UiBackgroundAlpha = Mathf.Clamp01(settings.UiBackgroundAlpha + 0.05f * delta);
-                        ApplySettings(settings);
-                        break;
-                    case 5:
-                        settings.UiBorderThickness = Mathf.Clamp(settings.UiBorderThickness + delta, 2, 12);
-                        ApplySettings(settings);
-                        break;
-                }
-            }
-            else if (currentSettingsTab == SettingsTab.Input)
-            {
-                selectedBindingSlotIndex = (selectedBindingSlotIndex + delta + 2) % 2;
-            }
-            else if (currentSettingsTab == SettingsTab.Debug)
-            {
-                switch (selectedRowIndex - 1)
-                {
-                    case 3:
-                        settings.SprintBoost = Mathf.Clamp((settings.SprintBoost <= 0f ? 1.5f : settings.SprintBoost) + 0.05f * delta, 1f, 3f);
-                        ApplySettings(settings);
-                        break;
-                    case 4:
-                        settings.TurnMoveDelaySeconds = Mathf.Clamp(GetTurnMoveDelay(settings) + 0.01f * delta, 0f, 0.3f);
-                        ApplySettings(settings);
-                        break;
-                }
-            }
+            ApplySettingsEffect(viewModel.AdjustSelectedSetting(settings, (int)currentSettingsTab, selectedRowIndex, delta), settings, delta);
         }
 
         private void ActivateSelectedSetting()
         {
             var settings = SettingsCache.Current;
-            if (settings == null)
-            {
-                return;
-            }
+            ApplySettingsEffect(
+                viewModel.ActivateSelectedSetting(settings, (int)currentSettingsTab, selectedRowIndex, InputManager.GetBindings().Length),
+                settings,
+                0);
+        }
 
-            if (selectedRowIndex == 0)
+        private void ApplySettingsEffect(GameMenuSettingsEffect effect, Settings settings, int delta)
+        {
+            switch (effect)
             {
-                return;
-            }
-
-            var settingsRowIndex = selectedRowIndex - 1;
-            if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 2)
-            {
-                settings.IsFullScreen = !settings.IsFullScreen;
-                ApplySettings(settings);
-            }
-            else if (currentSettingsTab == SettingsTab.General && settingsRowIndex == 5)
-            {
-                settings.AutoSaveEnabled = !settings.AutoSaveEnabled;
-                ApplySettings(settings);
-            }
-            else if (currentSettingsTab == SettingsTab.Debug)
-            {
-                if (settingsRowIndex == 0)
-                {
-                    settings.MapDebugInfo = !settings.MapDebugInfo;
-                }
-                else if (settingsRowIndex == 1)
-                {
-                    settings.ShowHiddenObjects = !settings.ShowHiddenObjects;
-                }
-                else if (settingsRowIndex == 2)
-                {
-                    settings.NoMonsters = !settings.NoMonsters;
-                }
-
-                ApplySettings(settings, settingsRowIndex == 1);
-            }
-            else if (currentSettingsTab == SettingsTab.Input)
-            {
-                ActivateSelectedInputBinding();
+                case GameMenuSettingsEffect.CycleTab:
+                    CycleSettingsTab(delta);
+                    break;
+                case GameMenuSettingsEffect.ApplySettings:
+                    ApplySettings(settings);
+                    break;
+                case GameMenuSettingsEffect.ApplyAudioSettings:
+                    ApplyAudioSettings(settings);
+                    break;
+                case GameMenuSettingsEffect.ApplySettingsAndRefreshVisibility:
+                    ApplySettings(settings, true);
+                    break;
+                case GameMenuSettingsEffect.ResetBindings:
+                    InputManager.ResetBindings();
+                    rebindingInput = null;
+                    rebindingSlot = null;
+                    break;
+                case GameMenuSettingsEffect.StartRebinding:
+                    ActivateSelectedInputBinding();
+                    break;
             }
         }
 
         private void ActivateSelectedInputBinding()
         {
             var bindings = InputManager.GetBindings().OrderBy(item => item.Command).ToList();
-            var bindingIndex = selectedRowIndex - 1;
-            if (bindingIndex >= bindings.Count)
-            {
-                InputManager.ResetBindings();
-                rebindingInput = null;
-                rebindingSlot = null;
-                return;
-            }
-
-            if (bindingIndex < 0)
+            var bindingIndex = viewModel.GetSelectedInputBindingIndex(selectedRowIndex);
+            if (bindingIndex < 0 || bindingIndex >= bindings.Count)
             {
                 return;
             }
 
-            StartRebinding(bindings[bindingIndex], selectedBindingSlotIndex == 0 ? "Primary" : "Gamepad");
+            StartRebinding(bindings[bindingIndex], viewModel.GetSelectedBindingSlotName());
+        }
+
+        private static Settings CloneSettings(Settings settings)
+        {
+            if (settings == null)
+            {
+                return null;
+            }
+
+            return new Settings
+            {
+                NoMonsters = settings.NoMonsters,
+                MapDebugInfo = settings.MapDebugInfo,
+                MusicVolume = settings.MusicVolume,
+                SoundEffectsVolume = settings.SoundEffectsVolume,
+                IsFullScreen = settings.IsFullScreen,
+                MaxPartyMembers = settings.MaxPartyMembers,
+                UiScale = settings.UiScale,
+                DialogTextCharactersPerSecond = settings.DialogTextCharactersPerSecond,
+                SprintBoost = settings.SprintBoost,
+                TurnMoveDelaySeconds = settings.TurnMoveDelaySeconds,
+                AutoSaveEnabled = settings.AutoSaveEnabled,
+                AutoSaveIntervalSeconds = settings.AutoSaveIntervalSeconds,
+                ShowHiddenObjects = settings.ShowHiddenObjects,
+                UiBackgroundColor = settings.UiBackgroundColor,
+                UiBackgroundAlpha = settings.UiBackgroundAlpha,
+                UiHoverColor = settings.UiHoverColor,
+                UiActiveColor = settings.UiActiveColor,
+                UiBorderColor = settings.UiBorderColor,
+                UiBorderThickness = settings.UiBorderThickness,
+                UiTextColor = settings.UiTextColor,
+                UiHighlightColor = settings.UiHighlightColor
+            };
         }
     }
 }

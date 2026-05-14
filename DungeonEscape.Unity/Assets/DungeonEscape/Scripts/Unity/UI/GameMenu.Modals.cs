@@ -16,36 +16,30 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ShowMenuModal(string title, string message, IEnumerable<string> choices, IEnumerable<Hero> choiceHeroes, Action<int> selected)
         {
-            menuModalTitle = title;
-            menuModalMessage = message;
-            menuModalChoices = choices == null ? null : choices.ToList();
-            menuModalChoiceHeroes = choiceHeroes == null ? null : choiceHeroes.ToList();
+            viewModel.ShowModal(
+                title,
+                message,
+                choices,
+                choiceHeroes,
+                InputManager.GetCommand(InputCommand.Interact) || UnityEngine.Input.GetMouseButton(0));
             menuModalSelected = selected;
-            menuModalSelectedIndex = 0;
-            menuModalWaitingForConfirmRelease =
-                InputManager.GetCommand(InputCommand.Interact) || UnityEngine.Input.GetMouseButton(0);
             ResetMenuNavigationRepeat();
         }
 
         private bool IsMenuModalVisible()
         {
-            return !string.IsNullOrEmpty(menuModalMessage);
+            return viewModel.IsModalVisible();
         }
 
         private bool MenuModalHasChoices()
         {
-            return menuModalChoices != null && menuModalChoices.Count > 0;
+            return viewModel.ModalHasChoices();
         }
 
         private void HideMenuModal()
         {
-            menuModalTitle = null;
-            menuModalMessage = null;
-            menuModalChoices = null;
-            menuModalChoiceHeroes = null;
+            viewModel.HideModal();
             menuModalSelected = null;
-            menuModalSelectedIndex = 0;
-            menuModalWaitingForConfirmRelease = false;
             ResetMenuNavigationRepeat();
         }
 
@@ -57,14 +51,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            if (menuModalWaitingForConfirmRelease)
+            if (viewModel.ModalWaitingForConfirmRelease)
             {
                 if (InputManager.GetCommand(InputCommand.Interact) || UnityEngine.Input.GetMouseButton(0))
                 {
                     return;
                 }
 
-                menuModalWaitingForConfirmRelease = false;
+                viewModel.ReleaseModalConfirmWait();
             }
 
             if (!MenuModalHasChoices())
@@ -80,44 +74,46 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var moveY = GetMenuMoveY();
             if (moveY < 0)
             {
-                menuModalSelectedIndex = Mathf.Max(0, menuModalSelectedIndex - 1);
+                viewModel.MoveModalSelection(-1);
             }
             else if (moveY > 0)
             {
-                menuModalSelectedIndex = Mathf.Min(menuModalChoices.Count - 1, menuModalSelectedIndex + 1);
+                viewModel.MoveModalSelection(1);
             }
 
-            if (menuModalChoices.Count <= 2)
+            if (viewModel.ModalChoices.Count <= 2)
             {
                 var moveX = InputManager.GetMoveXDown();
                 if (moveX < 0)
                 {
-                    menuModalSelectedIndex = Mathf.Max(0, menuModalSelectedIndex - 1);
+                    viewModel.MoveModalSelection(-1);
                 }
                 else if (moveX > 0)
                 {
-                    menuModalSelectedIndex = Mathf.Min(menuModalChoices.Count - 1, menuModalSelectedIndex + 1);
+                    viewModel.MoveModalSelection(1);
                 }
             }
 
             if (InputManager.GetCommandDown(InputCommand.Interact))
             {
-                SelectMenuModalChoice(menuModalSelectedIndex);
+                SelectMenuModalChoice(viewModel.ModalSelectedIndex);
             }
         }
 
         private void SelectMenuModalChoice(int index)
         {
-            if (!MenuModalHasChoices() || index < 0 || index >= menuModalChoices.Count)
+            int selectedIndex;
+            if (!viewModel.TrySelectModalChoice(index, out selectedIndex))
             {
                 return;
             }
 
             var selected = menuModalSelected;
-            HideMenuModal();
+            menuModalSelected = null;
+            ResetMenuNavigationRepeat();
             if (selected != null)
             {
-                selected(index);
+                selected(selectedIndex);
             }
         }
 
@@ -131,7 +127,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var scale = GetPixelScale();
             var width = Mathf.Min(Screen.width - 32f * scale, 620f * scale);
             var hasChoices = MenuModalHasChoices();
-            var choiceCount = hasChoices ? menuModalChoices.Count : 1;
+            var choiceCount = hasChoices ? viewModel.ModalChoices.Count : 1;
             var compactDialog = !hasChoices || choiceCount <= 2;
             var height = compactDialog
                 ? 170f * scale
@@ -147,33 +143,33 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 GUILayout.FlexibleSpace();
             }
 
-            GUILayout.Label(menuModalTitle, titleStyle);
-            GUILayout.Label(menuModalMessage, labelStyle);
+            GUILayout.Label(viewModel.ModalTitle, titleStyle);
+            GUILayout.Label(viewModel.ModalMessage, labelStyle);
             GUILayout.Space(10f * scale);
 
             if (hasChoices)
             {
-                if (menuModalChoiceHeroes != null)
+                if (viewModel.ModalChoiceHeroes != null)
                 {
-                    for (var i = 0; i < menuModalChoices.Count; i++)
+                    for (var i = 0; i < viewModel.ModalChoices.Count; i++)
                     {
                         DrawMenuModalChoiceRow(i, 38f * scale);
                     }
                 }
-                else if (menuModalChoices.Count <= 2)
+                else if (viewModel.ModalChoices.Count <= 2)
                 {
                     GUILayout.BeginHorizontal();
                     GUILayout.FlexibleSpace();
-                    for (var i = 0; i < menuModalChoices.Count; i++)
+                    for (var i = 0; i < viewModel.ModalChoices.Count; i++)
                     {
-                        if (UiControls.Button(menuModalChoices[i], i == menuModalSelectedIndex, uiTheme, GUILayout.Width(120f * scale), GUILayout.Height(34f * scale)) &&
-                            !menuModalWaitingForConfirmRelease)
+                        if (UiControls.Button(viewModel.ModalChoices[i], i == viewModel.ModalSelectedIndex, uiTheme, GUILayout.Width(120f * scale), GUILayout.Height(34f * scale)) &&
+                            !viewModel.ModalWaitingForConfirmRelease)
                         {
                             SelectMenuModalChoice(i);
                             break;
                         }
 
-                        if (i < menuModalChoices.Count - 1)
+                        if (i < viewModel.ModalChoices.Count - 1)
                         {
                             GUILayout.Space(10f * scale);
                         }
@@ -184,10 +180,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 }
                 else
                 {
-                    for (var i = 0; i < menuModalChoices.Count; i++)
+                    for (var i = 0; i < viewModel.ModalChoices.Count; i++)
                     {
-                        if (UiControls.Button(menuModalChoices[i], i == menuModalSelectedIndex, uiTheme) &&
-                            !menuModalWaitingForConfirmRelease)
+                        if (UiControls.Button(viewModel.ModalChoices[i], i == viewModel.ModalSelectedIndex, uiTheme) &&
+                            !viewModel.ModalWaitingForConfirmRelease)
                         {
                             SelectMenuModalChoice(i);
                             break;
@@ -196,7 +192,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 }
             }
             else if (UiControls.Button("OK", buttonStyle, GUILayout.Width(120f * scale)) &&
-                     !menuModalWaitingForConfirmRelease)
+                     !viewModel.ModalWaitingForConfirmRelease)
             {
                 HideMenuModal();
             }
@@ -211,11 +207,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawMenuModalChoiceRow(int index, float height)
         {
-            var selected = index == menuModalSelectedIndex;
+            var selected = index == viewModel.ModalSelectedIndex;
             GUILayout.BeginHorizontal(GetListRowStyle(selected), GUILayout.Height(height));
-            var hero = index >= 0 && menuModalChoiceHeroes != null && index < menuModalChoiceHeroes.Count
-                ? menuModalChoiceHeroes[index]
-                : null;
+            var hero = viewModel.GetModalChoiceHero(index);
             if (hero != null)
             {
                 Sprite sprite;
@@ -226,7 +220,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 GUILayout.Space(32f * GetPixelScale());
             }
 
-            GUILayout.Label(menuModalChoices[index], GetMenuListLabelStyle(selected), GUILayout.Height(height));
+            GUILayout.Label(viewModel.ModalChoices[index], GetMenuListLabelStyle(selected), GUILayout.Height(height));
             GUILayout.EndHorizontal();
             SelectMenuModalChoiceOnMouseClick(index);
         }
@@ -244,8 +238,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            menuModalSelectedIndex = index;
-            if (!menuModalWaitingForConfirmRelease)
+            viewModel.MoveModalSelection(index - viewModel.ModalSelectedIndex);
+            if (!viewModel.ModalWaitingForConfirmRelease)
             {
                 SelectMenuModalChoice(index);
             }

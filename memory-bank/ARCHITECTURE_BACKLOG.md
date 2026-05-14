@@ -88,10 +88,10 @@ Goal: reduce the size and coupling of Unity UI classes by separating drawing/lay
 - Added a plain C# `TitleViewModel` under `Redpoint.DungeonEscape.ViewModels` for title mode, main-row availability, create-player choices, load/create navigation, dropdown indexes, blocked create-image selection, load-slot display rows, and load selection clamping.
 - Added unit tests for `TitleViewModel`.
 - `TitleMenu` still owns IMGUI drawing, background textures, audio, save/load/delete execution, random name generation, and Unity app quit/close behavior.
-- Added a plain C# `GameMenuViewModel` under `Redpoint.DungeonEscape.ViewModels` for menu screen/focus/tab state, selected indexes, row/detail clamping, page-based detail selection, main action availability, member ordering/filtering, settings/save/load row counts, detail counts, equipment slots, equipped item lookup, and equipment candidate selection.
+- Added a plain C# `GameMenuViewModel` under `Redpoint.DungeonEscape.ViewModels` for menu screen/focus/tab state, selected indexes, row/detail clamping, page-based detail selection, main action availability, member ordering/filtering, settings/save/load row counts, detail counts, equipment slots, equipped item lookup, equipment candidate selection, item/spell use routing, item action labels, settings adjustment/activation effects, modal display/selection state, and mouse-driven settings change effects.
 - Added unit tests for `GameMenuViewModel`.
 - `GameMenu` still owns IMGUI drawing, scroll positions, modal command execution, input rebinding capture, settings persistence, and gameplay actions.
-- Added a plain C# `CombatViewModel` under `Redpoint.DungeonEscape.ViewModels` for combat UI state and selected-index movement, including wraparound monster target selection.
+- Added a plain C# `CombatViewModel` under `Redpoint.DungeonEscape.ViewModels` for combat UI state, selected-index movement, wraparound monster target selection, action/menu display rows, spell/item display labels, selected target lookup, target candidate checks, and party/monster target detection.
 - Added unit tests for `CombatViewModel`.
 - `CombatWindow` still owns battlefield rendering, menu rendering, target click handling, message reveal timing, audio, animation flashes, and action execution orchestration.
 
@@ -108,12 +108,11 @@ Goal: reduce the size and coupling of Unity UI classes by separating drawing/lay
 ### Candidate Areas
 
 - `GameMenu`:
-  - In progress: Split menu screen state, selection clamping, action availability, member filtering, detail counts, save/load row counts, settings row counts, and equipment candidate selection away from IMGUI drawing.
-  - Continue splitting item/spell/ability modal action decisions and settings adjustment decisions away from IMGUI drawing.
-  - Keep IMGUI files responsible for layout and control rendering only.
+  - Done for current scope: Split menu screen state, selection clamping, action availability, member filtering, detail counts, save/load row counts, settings row counts, equipment candidate selection, item/spell modal routing, item action labels, settings adjustment decisions, modal display/selection state, and settings change-effect detection away from IMGUI drawing.
+  - `GameMenu` still owns IMGUI layout/control rendering, scroll positions, input capture, modal rendering, settings persistence side effects, and gameplay command execution.
 - `CombatWindow`:
-  - In progress: Split combat command selection state and round-flow rules away from battlefield/message rendering.
-  - Continue splitting target display state and combat menu display data from rendering.
+  - Done for current scope: Split combat command selection state, round-flow rules, target display state, and combat menu display data from battlefield/message rendering.
+  - `CombatWindow` still owns battlefield rendering, message rendering, input timing, target click handling, audio, animation flashes, and action execution orchestration.
 - `StoreWindow` and `HealerWindow`:
   - Done for current scope: Split available actions, prices, recipient choices, service choices, and target choices from drawing code.
 - `TitleMenu`:

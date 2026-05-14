@@ -36,6 +36,7 @@
 - Core data/state split completed: file-backed data contracts and parsed Tiled map contracts now live under `DungeonEscape.Core/Data`; runtime/save objects remain under `State`.
 - Random item, quest progression/reward, and encounter generation extractions completed with focused core tests.
 - Combat round rules extraction completed: action choice, target resolution/fallback, run outcomes, and execution dispatch now live in core with tests.
+- UI drawing/logic split started with `StoreViewModel` in the core `ViewModels` namespace; store selection, filtering, metadata, and price decisions have matching core tests.
 - Future feature backlog has been captured in `memory-bank/FUTURE_FEATURES.md`.
 - Known bugs and rough edges are tracked in `memory-bank/BUGS.md`.
 

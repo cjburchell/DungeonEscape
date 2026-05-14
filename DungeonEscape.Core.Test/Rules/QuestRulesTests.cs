@@ -5,7 +5,7 @@ using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 using Xunit;
 
-namespace DungeonEscape.Core.Test.State
+namespace DungeonEscape.Core.Test.Rules
 {
     public sealed class QuestRulesTests
     {

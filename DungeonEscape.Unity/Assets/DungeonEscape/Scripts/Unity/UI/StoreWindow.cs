@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
+using Redpoint.DungeonEscape.ViewModels;
 using UnityEngine;
 
 using Redpoint.DungeonEscape.Unity.Core;
@@ -18,20 +19,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private const float InitialNavigationRepeatDelay = 0.35f;
         private const float NavigationRepeatDelay = 0.12f;
 
-        private enum StoreTab
-        {
-            Buy,
-            Sell
-        }
-
-        private enum StoreFocus
-        {
-            SellMembers,
-            Items
-        }
-
         private static StoreWindow instance;
 
+        private readonly StoreViewModel viewModel = new StoreViewModel();
         private GameState gameState;
         private TiledObjectInfo storeObject;
         private UiSettings uiSettings;
@@ -107,6 +97,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             gameState = state == null ? GameState.GetOrCreate() : state;
             storeObject = mapObject;
+            viewModel.Reset();
             currentTab = StoreTab.Buy;
             currentFocus = StoreFocus.Items;
             selectedHeroIndex = 0;
@@ -220,7 +211,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             buyListHeight = height;
             var inventory = gameState == null ? new List<Item>() : gameState.GetStoreInventory(storeObject);
-            selectedBuyIndex = Mathf.Clamp(selectedBuyIndex, 0, Mathf.Max(inventory.Count - 1, 0));
+            viewModel.ClampBuySelection(inventory);
+            selectedBuyIndex = viewModel.SelectedBuyIndex;
             if (inventory.Count == 0)
             {
                 GUILayout.Label("I have nothing to sell right now.", labelStyle);
@@ -267,7 +259,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            selectedHeroIndex = Mathf.Clamp(selectedHeroIndex, 0, members.Count - 1);
+            viewModel.ClampHeroSelection(members);
+            selectedHeroIndex = viewModel.SelectedHeroIndex;
             GUILayout.BeginHorizontal();
             for (var i = 0; i < members.Count; i++)
             {
@@ -285,7 +278,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             var hero = members[selectedHeroIndex];
             var items = GetSellableItems(hero).ToList();
-            selectedSellIndex = Mathf.Clamp(selectedSellIndex, 0, Mathf.Max(items.Count - 1, 0));
+            viewModel.ClampSellSelection(items);
+            selectedSellIndex = viewModel.SelectedSellIndex;
             if (items.Count == 0)
             {
                 GUILayout.Label(hero.Name + " has no sellable items.", labelStyle);
@@ -361,24 +355,22 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private List<Hero> GetBuyRecipients()
         {
-            return StoreRules.GetBuyRecipients(gameState == null ? null : gameState.Party);
+            return viewModel.GetBuyRecipients(gameState == null ? null : gameState.Party);
         }
 
         private List<Hero> GetPartyMembers()
         {
-            return gameState == null || gameState.Party == null
-                ? new List<Hero>()
-                : gameState.Party.Members.ToList();
+            return viewModel.GetPartyMembers(gameState == null ? null : gameState.Party);
         }
 
-        private static IEnumerable<ItemInstance> GetSellableItems(Hero hero)
+        private IEnumerable<ItemInstance> GetSellableItems(Hero hero)
         {
-            return StoreRules.GetSellableItems(hero);
+            return viewModel.GetSellableItems(hero);
         }
 
-        private static int GetSalePrice(ItemInstance item)
+        private int GetSalePrice(ItemInstance item)
         {
-            return StoreRules.GetSalePrice(item);
+            return viewModel.GetSalePrice(item);
         }
 
         private void ShowModal(string title, string message, IEnumerable<string> choices, Action<int> selected)
@@ -616,7 +608,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private bool StoreWillBuyItems()
         {
-            return StoreRules.StoreWillBuyItems(storeObject);
+            return viewModel.StoreWillBuyItems(storeObject);
         }
 
         private void HandleStoreInput()
@@ -749,7 +741,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             if (Event.current.clickCount >= 2 && CanBuy(item))
             {
                 currentFocus = StoreFocus.Items;
-                selectedBuyIndex = index;
+                SetSelectedBuyIndex(index);
                 UiControls.PlayConfirmSound();
                 ShowRecipientPicker(item);
                 Event.current.Use();
@@ -769,7 +761,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             if (Event.current.clickCount >= 2)
             {
                 currentFocus = StoreFocus.Items;
-                selectedSellIndex = index;
+                SetSelectedSellIndex(index);
                 UiControls.PlayConfirmSound();
                 ShowSellConfirmation(hero, item);
                 Event.current.Use();
@@ -840,7 +832,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private bool CanBuy(Item item)
         {
-            return StoreRules.CanBuy(gameState == null ? null : gameState.Party, item);
+            return viewModel.CanBuy(gameState == null ? null : gameState.Party, item);
         }
 
         private GUIStyle GetRowStyle(bool selected)
@@ -872,53 +864,48 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void SetCurrentTab(StoreTab tab)
         {
-            if (tab == StoreTab.Sell && !StoreWillBuyItems())
+            if (!viewModel.SetCurrentTab(tab, StoreWillBuyItems()))
             {
                 return;
             }
 
-            if (currentTab == tab)
-            {
-                return;
-            }
-
-            currentTab = tab;
+            currentTab = viewModel.CurrentTab;
             UiControls.PlaySelectSound();
         }
 
         private void SetSelectedHeroIndex(int index)
         {
-            if (selectedHeroIndex == index)
+            if (!viewModel.SetSelectedHeroIndex(index))
             {
                 return;
             }
 
-            selectedHeroIndex = index;
-            selectedSellIndex = 0;
+            selectedHeroIndex = viewModel.SelectedHeroIndex;
+            selectedSellIndex = viewModel.SelectedSellIndex;
             sellScroll = Vector2.zero;
             UiControls.PlaySelectSound();
         }
 
         private void SetSelectedBuyIndex(int index)
         {
-            if (selectedBuyIndex == index)
+            if (!viewModel.SetSelectedBuyIndex(index))
             {
                 return;
             }
 
-            selectedBuyIndex = index;
+            selectedBuyIndex = viewModel.SelectedBuyIndex;
             buyScroll.y = GetScrollYForSelectedIndex(selectedBuyIndex, buyScroll.y, buyListHeight);
             UiControls.PlaySelectSound();
         }
 
         private void SetSelectedSellIndex(int index)
         {
-            if (selectedSellIndex == index)
+            if (!viewModel.SetSelectedSellIndex(index))
             {
                 return;
             }
 
-            selectedSellIndex = index;
+            selectedSellIndex = viewModel.SelectedSellIndex;
             sellScroll.y = GetScrollYForSelectedIndex(selectedSellIndex, sellScroll.y, sellListHeight);
             UiControls.PlaySelectSound();
         }
@@ -1034,12 +1021,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private string GetStoreName()
         {
-            return StoreRules.GetStoreName(storeObject);
+            return viewModel.GetStoreName(storeObject);
         }
 
         private string GetStoreText()
         {
-            return StoreRules.GetStoreText(storeObject);
+            return viewModel.GetStoreText(storeObject);
         }
 
         private void Close()

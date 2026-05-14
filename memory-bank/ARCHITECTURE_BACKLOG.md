@@ -76,6 +76,13 @@ Goal: separate engine-neutral rules from Unity scripts into `DungeonEscape.Core`
 
 Goal: reduce the size and coupling of Unity UI classes by separating drawing/layout code from state transitions, filtering, command handling, and display data preparation.
 
+### Progress
+
+- Started with `StoreWindow`.
+- Added a plain C# `StoreViewModel` under `Redpoint.DungeonEscape.ViewModels` for store metadata, selected tab/focus/index state, selection clamping, buy eligibility, sellable filtering, and price display.
+- Added unit tests for `StoreViewModel`.
+- `StoreWindow` still owns IMGUI drawing, modal rendering, scroll positions, Unity input repeat timing, sounds, and direct game command execution.
+
 ### Unity UI And MVVM Notes
 
 - Unity can support MVVM-style patterns, especially with UI Toolkit data binding.
@@ -101,9 +108,9 @@ Goal: reduce the size and coupling of Unity UI classes by separating drawing/lay
 
 ### Suggested Steps
 
-1. Start with one small UI surface, probably `StoreWindow` or `HealerWindow`, to test the pattern.
-2. Create plain C# view-model classes that do not reference `UnityEngine`.
-3. Move filtering, labels, selected row clamping, and enabled-state decisions into those classes.
+1. Done: Start with one small UI surface, probably `StoreWindow` or `HealerWindow`, to test the pattern.
+2. In progress: Create plain C# view-model classes that do not reference `UnityEngine`.
+3. In progress: Move filtering, labels, selected row clamping, and enabled-state decisions into those classes.
 4. Keep IMGUI code as a thin renderer that calls view-model commands.
-5. Add unit tests for view-model behavior where it does not require Unity.
+5. In progress: Add unit tests for view-model behavior where it does not require Unity.
 6. Apply the pattern to `GameMenu` and `CombatWindow` after the smaller surface proves useful.

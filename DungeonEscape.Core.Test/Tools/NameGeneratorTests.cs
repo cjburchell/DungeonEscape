@@ -4,7 +4,7 @@ using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Tools;
 using Xunit;
 
-namespace DungeonEscape.Core.Test.State
+namespace DungeonEscape.Core.Test.Tools
 {
     public sealed class NameGeneratorTests
     {

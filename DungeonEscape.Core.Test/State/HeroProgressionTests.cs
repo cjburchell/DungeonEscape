@@ -1,4 +1,4 @@
-﻿using Redpoint.DungeonEscape.Data;
+using Redpoint.DungeonEscape.Data;
 using System.Collections.Generic;
 using System.Linq;
 using Redpoint.DungeonEscape.State;

@@ -90,6 +90,15 @@ if [[ "$UNITY_SCRIPT_COUNT" -gt 0 ]]; then
     find "$SCRIPT_ASSEMBLIES" -maxdepth 1 -name '*.dll' \( -name 'Unity.*.dll' -o -name 'nunit*.dll' \) -exec cp {} "$UNITY_REFERENCES_DIR" \;
   fi
 
+  UNITY_CORE_REFERENCE="$UNITY_REFERENCES_DIR/UnityEngine.CoreModule.dll"
+  UNITY_EDITOR_REFERENCE="$UNITY_REFERENCES_DIR/UnityEditor.CoreModule.dll"
+  if [[ ! -f "$UNITY_CORE_REFERENCE" || ! -f "$UNITY_EDITOR_REFERENCE" ]]; then
+    echo "Unity ReSharper references are incomplete." >&2
+    echo "Expected '$UNITY_CORE_REFERENCE' and '$UNITY_EDITOR_REFERENCE'." >&2
+    echo "Run unity-validate first and publish DungeonEscape.Unity/Logs/ReSharperReferences/*.dll as artifacts." >&2
+    exit 1
+  fi
+
   {
     printf '%s\n' '<Project Sdk="Microsoft.NET.Sdk">'
     printf '%s\n' '  <PropertyGroup>'
@@ -109,7 +118,7 @@ if [[ "$UNITY_SCRIPT_COUNT" -gt 0 ]]; then
     if [[ -d "$UNITY_REFERENCES_DIR" ]]; then
       find "$UNITY_REFERENCES_DIR" -maxdepth 1 -name '*.dll' | sort | while read -r dll; do
         name=$(basename "$dll" .dll)
-        printf '    <Reference Include="%s"><HintPath>../../%s</HintPath></Reference>\n' "$name" "$dll"
+        printf '    <Reference Include="%s"><HintPath>%s</HintPath></Reference>\n' "$name" "$dll"
       done
     fi
     printf '%s\n' '  </ItemGroup>'

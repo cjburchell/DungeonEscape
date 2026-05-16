@@ -719,7 +719,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             rendererPool.Begin();
 
             int spritesSortingOrder;
-            var renderedSpriteCount = Renderer.RenderVisibleLayers(
+            Renderer.RenderVisibleLayers(
                 rendererPool,
                 loadedMap.RenderableElements,
                 spriteSets,

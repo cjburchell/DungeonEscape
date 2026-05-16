@@ -46,7 +46,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private GUIStyle mainMenuButtonStyle;
         private GUIStyle selectedMainMenuButtonStyle;
         private GUIStyle labelStyle;
-        private GUIStyle smallStyle;
         private GUIStyle panelStyle;
         private float lastPixelScale;
         private string lastThemeSignature;
@@ -265,34 +264,32 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUI.depth = TitleGuiDepth;
             DrawBackgroundForCurrentMode();
 
-            var scale = GetPixelScale();
-            if (mode == TitleMode.Main)
+            try
             {
-                DrawMainMenuStandalone(scale);
+                var scale = GetPixelScale();
+                if (mode == TitleMode.Main)
+                {
+                    DrawMainMenuStandalone(scale);
+                    return;
+                }
+
+                if (mode == TitleMode.Create)
+                {
+                    DrawCreateMenuStandalone(scale);
+                    DrawCreateDropdownOverlay();
+                    return;
+                }
+
+                if (mode == TitleMode.Load)
+                {
+                    DrawLoadMenuStandalone(scale);
+                }
+            }
+            finally
+            {
                 GUI.depth = previousDepth;
                 GUI.color = previousColor;
-                return;
             }
-
-            if (mode == TitleMode.Create)
-            {
-                DrawCreateMenuStandalone(scale);
-                DrawCreateDropdownOverlay();
-                GUI.depth = previousDepth;
-                GUI.color = previousColor;
-                return;
-            }
-
-            if (mode == TitleMode.Load)
-            {
-                DrawLoadMenuStandalone(scale);
-                GUI.depth = previousDepth;
-                GUI.color = previousColor;
-                return;
-            }
-
-            GUI.depth = previousDepth;
-            GUI.color = previousColor;
         }
 
         private void OnDestroy()
@@ -1228,7 +1225,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     ActivateTitleAction(StartCreatedGame);
                     break;
                 case CreateBackIndex:
-                default:
                     ShowMainMenu();
                     break;
             }
@@ -1547,7 +1543,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 fontStyle = FontStyle.Normal
             };
             labelStyle = uiTheme.LabelStyle;
-            smallStyle = uiTheme.SmallStyle;
         }
 
         private float GetPixelScale()

@@ -238,7 +238,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                 List<SpriteAnimationFrame> animationFrames = null;
                 if (gid != 0)
                 {
-                    TryGetObjectAnimation(gid, mapObject, spriteSets, mapId, gameState, out animationFrames);
+                    animationFrames = GetObjectAnimation(gid, mapObject, spriteSets, mapId, gameState);
                 }
 
                 var x = GetFloat(mapObject, "x");
@@ -366,28 +366,30 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                 : Mathf.FloorToInt((y - 0.001f) / tileHeight);
         }
 
-        private static bool TryGetObjectAnimation(
+        private static List<SpriteAnimationFrame> GetObjectAnimation(
             int gid,
             XElement mapObject,
             IList<TilesetSpriteSet> spriteSets,
             string mapId,
-            GameState gameState,
-            out List<SpriteAnimationFrame> frames)
+            GameState gameState)
         {
-            frames = null;
             if (gameState != null &&
                 gameState.IsObjectOpen(mapId, GetInt(mapObject, "id")) &&
                 string.Equals(GetObjectClass(mapObject), "Chest", StringComparison.OrdinalIgnoreCase))
             {
                 var openImage = GetIntProperty(mapObject, "OpenImage", 135);
-                if (TilesetSprites.TryGetAnimationFromSameSet(gid, openImage, spriteSets, out frames))
+                List<SpriteAnimationFrame> openFrames;
+                if (TilesetSprites.TryGetAnimationFromSameSet(gid, openImage, spriteSets, out openFrames))
                 {
-                    return true;
+                    return openFrames;
                 }
             }
 
+            List<SpriteAnimationFrame> frames;
             return TilesetSprites.TryGetAnimation(gid, spriteSets, out frames) ||
-                   TryGetCharacterIdleAnimation(gid, mapObject, spriteSets, out frames);
+                   TryGetCharacterIdleAnimation(gid, mapObject, spriteSets, out frames)
+                ? frames
+                : null;
         }
 
         private static bool TryGetCharacterIdleAnimation(

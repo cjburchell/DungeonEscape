@@ -927,14 +927,9 @@ namespace Redpoint.DungeonEscape.Unity.Core
             var message = new StringBuilder();
             if (objectState.Items != null)
             {
+                objectState.Items.RemoveAll(item => item == null);
                 foreach (var item in objectState.Items.ToList())
                 {
-                    if (item == null)
-                    {
-                        objectState.Items.Remove(item);
-                        continue;
-                    }
-
                     if (item.Type == ItemType.Gold)
                     {
                         Party.Gold += item.Cost;
@@ -1497,7 +1492,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 gold > 0)
             {
                 items.Add(CreateGold(gold));
-                return items;
             }
 
             return items;

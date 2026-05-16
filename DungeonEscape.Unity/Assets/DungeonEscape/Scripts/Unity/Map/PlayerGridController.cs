@@ -486,14 +486,12 @@ namespace Redpoint.DungeonEscape.Unity.Map
             var sourceMapId = gameState == null || gameState.Party == null
                 ? null
                 : gameState.Party.CurrentMapId;
-            string targetMapId = null;
-
             try
             {
                 var transition = gameState == null
                     ? CreateFallbackTransition(warp)
                     : gameState.CreateWarpTransition(warp);
-                targetMapId = transition.MapId;
+                var targetMapId = transition.MapId;
 
                 mapView.LoadMap(transition.MapId, transition.SpawnId, !transition.UseSavedOverWorldPosition);
                 if (transition.UseSavedOverWorldPosition && gameState != null && gameState.Party != null)

@@ -230,8 +230,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private IEnumerator PrewarmEffect(string name)
         {
-            AudioClip ignored = null;
-            yield return LoadClip(GetEffectKey(name), EffectsFolder + name + ".wav", loaded => ignored = loaded);
+            yield return LoadClip(GetEffectKey(name), EffectsFolder + name + ".wav", _ => { });
         }
 
         private IEnumerator LoadClip(string key, string assetPath, Action<AudioClip> onLoaded)

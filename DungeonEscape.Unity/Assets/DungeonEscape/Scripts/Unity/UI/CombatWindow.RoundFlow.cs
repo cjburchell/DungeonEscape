@@ -123,7 +123,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             roundActions.Remove(action);
             bool endFight;
             var message = ExecuteRoundAction(action, out endFight);
-            ShowMessage(message, endFight ? (Action)null : ResolveNextRoundAction);
+            ShowMessage(message, endFight ? null : ResolveNextRoundAction);
         }
 
         private void EndRound()

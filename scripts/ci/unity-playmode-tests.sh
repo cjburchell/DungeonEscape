@@ -11,17 +11,26 @@ LOG="$RESULTS_DIR/playmode-log.txt"
 mkdir -p "$RESULTS_DIR"
 rm -f "$RESULTS"
 
+set +e
 "$UNITY_EXECUTABLE" \
   -batchmode \
   -nographics \
-  -quit \
   -projectPath "$PROJECT_ROOT/$UNITY_PROJECT_PATH" \
   -runTests \
-  -testPlatform PlayMode \
+  -testPlatform playmode \
   -testResults "$RESULTS" \
   -logFile "$LOG"
+UNITY_EXIT_CODE=$?
+set -e
+
+if [[ "$UNITY_EXIT_CODE" -ne 0 ]]; then
+  echo "Unity Play Mode tests exited with code $UNITY_EXIT_CODE. Log tail:" >&2
+  tail -n 200 "$LOG" >&2 || true
+  exit "$UNITY_EXIT_CODE"
+fi
 
 if [[ ! -f "$RESULTS" ]]; then
-  echo "Unity Play Mode test results were not created. Check the log at '$LOG'." >&2
+  echo "Unity Play Mode test results were not created. Log tail:" >&2
+  tail -n 200 "$LOG" >&2 || true
   exit 1
 fi

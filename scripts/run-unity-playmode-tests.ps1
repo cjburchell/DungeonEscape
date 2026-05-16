@@ -25,10 +25,9 @@ Remove-Item -LiteralPath $Results -Force -ErrorAction SilentlyContinue
 $Arguments = @(
     "-batchmode",
     "-nographics",
-    "-quit",
     "-projectPath", $ProjectPath,
     "-runTests",
-    "-testPlatform", "PlayMode",
+    "-testPlatform", "playmode",
     "-testResults", $Results,
     "-logFile", $Log
 )
@@ -36,6 +35,11 @@ $Arguments = @(
 $Process = Start-Process -FilePath $Unity -ArgumentList $Arguments -NoNewWindow -Wait -PassThru
 
 $ExitCode = $Process.ExitCode
+if ($ExitCode -ne 0) {
+    Write-Error "Unity Play Mode tests exited with code $ExitCode. Check the log at '$Log'."
+    exit $ExitCode
+}
+
 if ($ExitCode -eq 0 -and -not (Test-Path -LiteralPath $Results)) {
     Write-Error "Unity Play Mode test results were not created. Check the log at '$Log'."
     exit 1

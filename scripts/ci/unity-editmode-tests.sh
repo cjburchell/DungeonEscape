@@ -11,17 +11,26 @@ LOG="$RESULTS_DIR/editmode-log.txt"
 mkdir -p "$RESULTS_DIR"
 rm -f "$RESULTS"
 
+set +e
 "$UNITY_EXECUTABLE" \
   -batchmode \
   -nographics \
-  -quit \
   -projectPath "$PROJECT_ROOT/$UNITY_PROJECT_PATH" \
   -runTests \
-  -testPlatform EditMode \
+  -testPlatform editmode \
   -testResults "$RESULTS" \
   -logFile "$LOG"
+UNITY_EXIT_CODE=$?
+set -e
+
+if [[ "$UNITY_EXIT_CODE" -ne 0 ]]; then
+  echo "Unity Edit Mode tests exited with code $UNITY_EXIT_CODE. Log tail:" >&2
+  tail -n 200 "$LOG" >&2 || true
+  exit "$UNITY_EXIT_CODE"
+fi
 
 if [[ ! -f "$RESULTS" ]]; then
-  echo "Unity Edit Mode test results were not created. Check the log at '$LOG'." >&2
+  echo "Unity Edit Mode test results were not created. Log tail:" >&2
+  tail -n 200 "$LOG" >&2 || true
   exit 1
 fi

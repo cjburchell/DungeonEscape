@@ -12,17 +12,47 @@ UNITY_PROJECT_PATH="${UNITY_PROJECT_PATH:-DungeonEscape.Unity}"
 UNITY_REFERENCES_DIR="$PROJECT_ROOT/$UNITY_PROJECT_PATH/Logs/ReSharperReferences"
 UNITY_TEMP_DIR="$PROJECT_ROOT/.ci/resharper-unity"
 UNITY_PROJECT_FILE="$UNITY_TEMP_DIR/DungeonEscape.Unity.ReSharper.csproj"
+PACKAGES_DIRECTORY="${NUGET_PACKAGES_DIRECTORY:-}"
+DOTNET_EXE="$(command -v dotnet)"
+DOTNET_SDK_PATH="$(dotnet --info | awk -F': ' '/Base Path/ {print $2; exit}' | xargs)"
+DOTNET_SDK_VERSION="$(basename "$DOTNET_SDK_PATH")"
+MSBUILD_DLL="$DOTNET_SDK_PATH/MSBuild.dll"
 
+if [[ ! -f "$MSBUILD_DLL" ]]; then
+  echo "MSBuild.dll was not found at '$MSBUILD_DLL'." >&2
+  dotnet --info >&2
+  exit 1
+fi
+
+echo "Using dotnet: $DOTNET_EXE"
+echo "Using .NET SDK: $DOTNET_SDK_VERSION"
+echo "Using MSBuild: $MSBUILD_DLL"
+
+export PATH="$PATH:/root/.dotnet/tools:$HOME/.dotnet/tools"
 dotnet tool install --global JetBrains.ReSharper.GlobalTools --version "$RESHARPER_TOOL_VERSION" ||
   dotnet tool update --global JetBrains.ReSharper.GlobalTools --version "$RESHARPER_TOOL_VERSION"
-export PATH="$PATH:/root/.dotnet/tools:$HOME/.dotnet/tools"
 
 RESHARPER_EXCLUDE_OPTION=()
 if [[ -n "$RESHARPER_EXCLUDE" ]]; then
   RESHARPER_EXCLUDE_OPTION=("--exclude=$RESHARPER_EXCLUDE")
 fi
 
-(cd /tmp && jb inspectcode "${RESHARPER_EXCLUDE_OPTION[@]}" -e="$RESHARPER_SEVERITY" -o="$PROJECT_ROOT/RsInspection.xml" -f=xml --caches-home="$PROJECT_ROOT/temp/core" "$SOLUTION_PATH" --dotnetcore="$(command -v dotnet)")
+if [[ -n "$PACKAGES_DIRECTORY" ]]; then
+  dotnet restore "$SOLUTION_PATH" --packages "$PACKAGES_DIRECTORY"
+else
+  dotnet restore "$SOLUTION_PATH"
+fi
+
+COMMON_INSPECT_OPTIONS=(
+  "${RESHARPER_EXCLUDE_OPTION[@]}"
+  "-e=$RESHARPER_SEVERITY"
+  "-f=xml"
+  "--dotnetcore=$DOTNET_EXE"
+  "--dotnetcoresdk=$DOTNET_SDK_VERSION"
+  "--toolset-path=$MSBUILD_DLL"
+)
+
+(cd /tmp && jb inspectcode "${COMMON_INSPECT_OPTIONS[@]}" -o="$PROJECT_ROOT/RsInspection.xml" --caches-home="$PROJECT_ROOT/temp/core" "$SOLUTION_PATH")
 
 UNITY_SCRIPT_COUNT=$(find "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Scripts" "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Editor" "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Tests" -name '*.cs' 2>/dev/null | wc -l | tr -d ' ')
 if [[ "$UNITY_SCRIPT_COUNT" -gt 0 ]]; then
@@ -86,7 +116,7 @@ if [[ "$UNITY_SCRIPT_COUNT" -gt 0 ]]; then
     printf '%s\n' '</Project>'
   } > "$UNITY_PROJECT_FILE"
 
-  (cd /tmp && jb inspectcode "${RESHARPER_EXCLUDE_OPTION[@]}" -e="$RESHARPER_SEVERITY" -o="$PROJECT_ROOT/RsInspection.Unity.xml" -f=xml --caches-home="$PROJECT_ROOT/temp/unity" "$UNITY_PROJECT_FILE" --dotnetcore="$(command -v dotnet)")
+  (cd /tmp && jb inspectcode "${COMMON_INSPECT_OPTIONS[@]}" -o="$PROJECT_ROOT/RsInspection.Unity.xml" --caches-home="$PROJECT_ROOT/temp/unity" "$UNITY_PROJECT_FILE")
 else
   echo "No Unity scripts found; skipping Unity ReSharper inspection."
 fi

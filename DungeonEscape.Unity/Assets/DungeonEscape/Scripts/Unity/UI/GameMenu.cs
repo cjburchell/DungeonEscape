@@ -1209,10 +1209,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            var labels = locations
-                .Select(location => string.IsNullOrEmpty(location.DisplayName) ? location.MapId : location.DisplayName)
-                .ToList();
-            labels.Add("Cancel");
+            var labels = viewModel.GetReturnLocationLabels(locations, true);
             ShowMenuModal("Return", "Choose a place to return to.", labels, selectedIndex =>
             {
                 if (selectedIndex < 0 || selectedIndex >= locations.Count)
@@ -1233,16 +1230,15 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            var targets = GetValidSpellTargets(party, spell).ToList();
+            var targets = viewModel.GetSpellTargets(party, spell);
             if (targets.Count == 0)
             {
                 ShowPartyMessage("No party members can be targeted.");
                 return;
             }
 
-            var labels = targets.Select(target => target.Name).ToList();
-            labels.Add("Cancel");
-            var choiceHeroes = targets.Cast<Hero>().Concat(new Hero[] { null }).ToList();
+            var labels = viewModel.GetHeroChoiceLabels(targets, true);
+            var choiceHeroes = viewModel.GetHeroChoiceValues(targets, true);
             ShowMenuModal("Cast " + spell.Name, "Choose a target.", labels, choiceHeroes, selectedIndex =>
             {
                 if (selectedIndex < 0 || selectedIndex >= targets.Count)
@@ -1252,18 +1248,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
                 ShowPartyMessage(gameState.CastHeroSpell(caster, spell, targets[selectedIndex]));
             });
-        }
-
-        private static IEnumerable<Hero> GetValidSpellTargets(Party party, Spell spell)
-        {
-            if (party == null)
-            {
-                return Enumerable.Empty<Hero>();
-            }
-
-            return spell != null && spell.Type == SkillType.Revive
-                ? party.DeadMembers
-                : party.AliveMembers;
         }
 
         private Hero GetSelectedMenuHero()
@@ -1577,9 +1561,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private bool HasTransferTarget(Hero source)
         {
             var party = GetParty();
-            return party != null &&
-                   source != null &&
-                   GetInventoryMembers(party).Any(member => !ReferenceEquals(member, source) && member.Items.Count < Party.MaxItems);
+            return viewModel.GetTransferItemTargets(party, source).Count > 0;
         }
 
         private void ShowTransferItemTargetPicker(Hero source, ItemInstance item)
@@ -1590,18 +1572,15 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            var targets = GetInventoryMembers(party)
-                .Where(member => !ReferenceEquals(member, source) && member.Items.Count < Party.MaxItems)
-                .ToList();
+            var targets = viewModel.GetTransferItemTargets(party, source);
             if (targets.Count == 0)
             {
                 ShowInventoryMessage("No party member has room for " + item.Name + ".");
                 return;
             }
 
-            var labels = targets.Select(target => target.Name).ToList();
-            labels.Add("Cancel");
-            var choiceHeroes = targets.Cast<Hero>().Concat(new Hero[] { null }).ToList();
+            var labels = viewModel.GetHeroChoiceLabels(targets, true);
+            var choiceHeroes = viewModel.GetHeroChoiceValues(targets, true);
             ShowMenuModal("Transfer " + item.Name, "Choose who should carry this item.", labels, choiceHeroes, selectedIndex =>
             {
                 if (selectedIndex < 0 || selectedIndex >= targets.Count)
@@ -1718,16 +1697,15 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            var targets = party.ActiveMembers.ToList();
+            var targets = viewModel.GetItemTargets(party);
             if (targets.Count == 0)
             {
                 ShowInventoryMessage("No party members can be targeted.");
                 return;
             }
 
-            var labels = targets.Select(target => target.Name).ToList();
-            labels.Add("Cancel");
-            var choiceHeroes = targets.Cast<Hero>().Concat(new Hero[] { null }).ToList();
+            var labels = viewModel.GetHeroChoiceLabels(targets, true);
+            var choiceHeroes = viewModel.GetHeroChoiceValues(targets, true);
             ShowMenuModal("Use " + item.Name, "Choose a target.", labels, choiceHeroes, selectedIndex =>
             {
                 if (selectedIndex < 0 || selectedIndex >= targets.Count)
@@ -1742,25 +1720,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private bool CanUseItemFromInventory(Hero hero, ItemInstance item)
         {
-            if (gameState == null || !gameState.CanUseHeroItem(hero, item))
-            {
-                return false;
-            }
-
-            if (item != null && item.Item != null && item.Item.Skill != null)
-            {
-                if (item.Item.Skill.Type == SkillType.Outside)
-                {
-                    return gameState.CanCastOutside();
-                }
-
-                if (item.Item.Skill.Type == SkillType.Return)
-                {
-                    return gameState.CanCastReturn();
-                }
-            }
-
-            return true;
+            return gameState != null &&
+                   viewModel.CanUseItemFromInventory(
+                       gameState.CanUseHeroItem(hero, item),
+                       item,
+                       gameState.CanCastOutside(),
+                       gameState.CanCastReturn());
         }
 
         private void ShowReturnLocationPicker(Hero hero, ItemInstance item)
@@ -1774,10 +1739,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            var labels = locations
-                .Select(location => string.IsNullOrEmpty(location.DisplayName) ? location.MapId : location.DisplayName)
-                .ToList();
-            labels.Add("Cancel");
+            var labels = viewModel.GetReturnLocationLabels(locations, true);
             ShowMenuModal("Return", "Choose a place to return to.", labels, selectedIndex =>
             {
                 if (selectedIndex < 0 || selectedIndex >= locations.Count)
@@ -2026,58 +1988,32 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            var activeMembers = party.ActiveMembers.ToList();
-            var choices = new List<string>();
-            var actions = new List<Action>();
-            if (hero.IsActive)
-            {
-                var activeIndex = activeMembers.IndexOf(hero);
-                if (activeIndex > 0)
-                {
-                    choices.Add("Up");
-                    actions.Add(() =>
-                    {
-                        ApplyPartyChange(() => gameState.MovePartyMemberUp(hero));
-                        selectedRowIndex = Mathf.Max(0, selectedRowIndex - 1);
-                    });
-                }
-
-                if (activeIndex >= 0 && activeIndex < activeMembers.Count - 1)
-                {
-                    choices.Add("Down");
-                    actions.Add(() =>
-                    {
-                        ApplyPartyChange(() => gameState.MovePartyMemberDown(hero));
-                        selectedRowIndex = Mathf.Min(Math.Max(GetSelectableRowCount() - 1, 0), selectedRowIndex + 1);
-                    });
-                }
-
-                if (activeMembers.Count > 1)
-                {
-                    choices.Add("Reserve");
-                    actions.Add(() =>
-                    {
-                        ApplyPartyChange(() => gameState.DeactivatePartyMember(hero));
-                viewModel.ClampSelectedRowIndex(GetSelectableRowCount());
-                    });
-                }
-            }
-            else if (activeMembers.Count < GetMaxPartyMembers())
-            {
-                choices.Add("Add To Party");
-                actions.Add(() =>
-                {
-                    ApplyPartyChange(() => gameState.ActivatePartyMember(hero));
-            viewModel.ClampSelectedRowIndex(GetSelectableRowCount());
-                });
-            }
-
-            choices.Add("Cancel");
+            var choices = viewModel.GetPartyMemberActionLabels(party, hero, GetMaxPartyMembers());
             ShowMenuModal(hero.Name, "Choose an action.", choices, selectedIndex =>
             {
-                if (selectedIndex >= 0 && selectedIndex < actions.Count)
+                if (selectedIndex < 0 || selectedIndex >= choices.Count)
                 {
-                    actions[selectedIndex]();
+                    return;
+                }
+
+                switch (choices[selectedIndex])
+                {
+                    case "Up":
+                        ApplyPartyChange(() => gameState.MovePartyMemberUp(hero));
+                        selectedRowIndex = Mathf.Max(0, selectedRowIndex - 1);
+                        break;
+                    case "Down":
+                        ApplyPartyChange(() => gameState.MovePartyMemberDown(hero));
+                        selectedRowIndex = Mathf.Min(Math.Max(GetSelectableRowCount() - 1, 0), selectedRowIndex + 1);
+                        break;
+                    case "Reserve":
+                        ApplyPartyChange(() => gameState.DeactivatePartyMember(hero));
+                        viewModel.ClampSelectedRowIndex(GetSelectableRowCount());
+                        break;
+                    case "Add To Party":
+                        ApplyPartyChange(() => gameState.ActivatePartyMember(hero));
+                        viewModel.ClampSelectedRowIndex(GetSelectableRowCount());
+                        break;
                 }
             });
         }

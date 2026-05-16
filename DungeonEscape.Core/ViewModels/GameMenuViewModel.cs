@@ -353,6 +353,135 @@ namespace Redpoint.DungeonEscape.ViewModels
             return true;
         }
 
+        public bool CanUseItemFromInventory(bool canUseHeroItem, ItemInstance item, bool canCastOutside, bool canCastReturn)
+        {
+            if (!canUseHeroItem)
+            {
+                return false;
+            }
+
+            if (item != null && item.Item != null && item.Item.Skill != null)
+            {
+                if (item.Item.Skill.Type == SkillType.Outside)
+                {
+                    return canCastOutside;
+                }
+
+                if (item.Item.Skill.Type == SkillType.Return)
+                {
+                    return canCastReturn;
+                }
+            }
+
+            return true;
+        }
+
+        public List<Hero> GetSpellTargets(Party party, Spell spell)
+        {
+            if (party == null)
+            {
+                return new List<Hero>();
+            }
+
+            return spell != null && spell.Type == SkillType.Revive
+                ? party.DeadMembers.ToList()
+                : party.AliveMembers.ToList();
+        }
+
+        public List<Hero> GetItemTargets(Party party)
+        {
+            return party == null ? new List<Hero>() : party.ActiveMembers.ToList();
+        }
+
+        public List<Hero> GetTransferItemTargets(Party party, Hero source)
+        {
+            if (party == null || source == null)
+            {
+                return new List<Hero>();
+            }
+
+            return GetInventoryMembers(party)
+                .Where(member => !ReferenceEquals(member, source) && member.Items.Count < Party.MaxItems)
+                .ToList();
+        }
+
+        public List<string> GetHeroChoiceLabels(IEnumerable<Hero> heroes, bool includeCancel)
+        {
+            var labels = heroes == null
+                ? new List<string>()
+                : heroes.Where(hero => hero != null).Select(hero => hero.Name).ToList();
+            if (includeCancel)
+            {
+                labels.Add("Cancel");
+            }
+
+            return labels;
+        }
+
+        public List<Hero> GetHeroChoiceValues(IEnumerable<Hero> heroes, bool includeCancel)
+        {
+            var values = heroes == null
+                ? new List<Hero>()
+                : heroes.ToList();
+            if (includeCancel)
+            {
+                values.Add(null);
+            }
+
+            return values;
+        }
+
+        public List<string> GetReturnLocationLabels(IEnumerable<VisitedLocation> locations, bool includeCancel)
+        {
+            var labels = locations == null
+                ? new List<string>()
+                : locations
+                    .Select(location => string.IsNullOrEmpty(location.DisplayName) ? location.MapId : location.DisplayName)
+                    .ToList();
+            if (includeCancel)
+            {
+                labels.Add("Cancel");
+            }
+
+            return labels;
+        }
+
+        public List<string> GetPartyMemberActionLabels(Party party, Hero hero, int maxPartyMembers)
+        {
+            var choices = new List<string>();
+            if (party == null || hero == null)
+            {
+                return choices;
+            }
+
+            var activeMembers = party.ActiveMembers.ToList();
+            if (hero.IsActive)
+            {
+                var activeIndex = activeMembers.IndexOf(hero);
+                if (activeIndex > 0)
+                {
+                    choices.Add("Up");
+                }
+
+                if (activeIndex >= 0 && activeIndex < activeMembers.Count - 1)
+                {
+                    choices.Add("Down");
+                }
+
+                if (activeMembers.Count > 1)
+                {
+                    choices.Add("Reserve");
+                }
+            }
+            else if (activeMembers.Count < maxPartyMembers)
+            {
+                choices.Add("Add To Party");
+            }
+
+            choices.Add("Cancel");
+            return choices;
+        }
+
         public GameMenuSettingsEffect AdjustSelectedSetting(Settings settings, int settingsTab, int selectedRowIndex, int delta)
         {
             if (settings == null)

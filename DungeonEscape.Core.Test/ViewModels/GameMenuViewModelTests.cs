@@ -217,6 +217,91 @@ namespace DungeonEscape.Core.Test.ViewModels
         }
 
         [Fact]
+        public void CanUseItemFromInventoryAppliesOutsideAndReturnRules()
+        {
+            var viewModel = new GameMenuViewModel();
+            var outsideItem = CreateSkillItem("Wings", SkillType.Outside, Target.None);
+            var returnItem = CreateSkillItem("Return Wing", SkillType.Return, Target.None);
+            var potion = CreateItemInstance("Potion", ItemType.OneUse, Slot.PrimaryHand);
+
+            Assert.False(viewModel.CanUseItemFromInventory(false, potion, true, true));
+            Assert.False(viewModel.CanUseItemFromInventory(true, outsideItem, false, true));
+            Assert.False(viewModel.CanUseItemFromInventory(true, returnItem, true, false));
+            Assert.True(viewModel.CanUseItemFromInventory(true, potion, false, false));
+        }
+
+        [Fact]
+        public void SpellAndItemTargetListsReflectPartyState()
+        {
+            var viewModel = new GameMenuViewModel();
+            var alive = CreateHero("Alive", true, 0);
+            var dead = CreateHero("Dead", true, 1);
+            dead.Health = 0;
+            var reserve = CreateHero("Reserve", false, 2);
+            var party = new Party();
+            party.Members.Add(alive);
+            party.Members.Add(dead);
+            party.Members.Add(reserve);
+
+            Assert.Equal(new[] { "Alive" }, viewModel.GetSpellTargets(party, CreateSpell("Heal", SkillType.Heal, Target.Single)).Select(hero => hero.Name).ToArray());
+            Assert.Equal(new[] { "Dead" }, viewModel.GetSpellTargets(party, CreateSpell("Revive", SkillType.Revive, Target.Single)).Select(hero => hero.Name).ToArray());
+            Assert.Equal(new[] { "Alive", "Dead" }, viewModel.GetItemTargets(party).Select(hero => hero.Name).ToArray());
+        }
+
+        [Fact]
+        public void ChoiceHelpersBuildLabelsAndCancelValues()
+        {
+            var viewModel = new GameMenuViewModel();
+            var hero = CreateHero("Able", true, 0);
+            var locations = new[]
+            {
+                new VisitedLocation { MapId = "town", DisplayName = "Town" },
+                new VisitedLocation { MapId = "cave" }
+            };
+
+            Assert.Equal(new[] { "Able", "Cancel" }, viewModel.GetHeroChoiceLabels(new[] { hero }, true));
+            Assert.Equal(new[] { hero, null }, viewModel.GetHeroChoiceValues(new[] { hero }, true));
+            Assert.Equal(new[] { "Town", "cave", "Cancel" }, viewModel.GetReturnLocationLabels(locations, true));
+        }
+
+        [Fact]
+        public void TransferTargetsExcludeSourceAndFullInventories()
+        {
+            var viewModel = new GameMenuViewModel();
+            var source = CreateHero("Source", true, 0);
+            var target = CreateHero("Target", true, 1);
+            var full = CreateHero("Full", true, 2);
+            for (var i = 0; i < Party.MaxItems; i++)
+            {
+                full.Items.Add(CreateItemInstance("Item" + i, ItemType.OneUse, Slot.PrimaryHand));
+            }
+
+            var party = new Party();
+            party.Members.Add(source);
+            party.Members.Add(target);
+            party.Members.Add(full);
+
+            Assert.Equal(new[] { "Target" }, viewModel.GetTransferItemTargets(party, source).Select(hero => hero.Name).ToArray());
+        }
+
+        [Fact]
+        public void PartyMemberActionsReflectPositionAndActiveState()
+        {
+            var viewModel = new GameMenuViewModel();
+            var first = CreateHero("First", true, 0);
+            var second = CreateHero("Second", true, 1);
+            var reserve = CreateHero("Reserve", false, 2);
+            var party = new Party();
+            party.Members.Add(first);
+            party.Members.Add(second);
+            party.Members.Add(reserve);
+
+            Assert.Equal(new[] { "Down", "Reserve", "Cancel" }, viewModel.GetPartyMemberActionLabels(party, first, 4));
+            Assert.Equal(new[] { "Up", "Reserve", "Cancel" }, viewModel.GetPartyMemberActionLabels(party, second, 4));
+            Assert.Equal(new[] { "Add To Party", "Cancel" }, viewModel.GetPartyMemberActionLabels(party, reserve, 4));
+        }
+
+        [Fact]
         public void AdjustSelectedSettingMutatesSettingsAndReturnsEffect()
         {
             var viewModel = new GameMenuViewModel();

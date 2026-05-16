@@ -1,5 +1,4 @@
-﻿using Redpoint.DungeonEscape.Data;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -13,8 +12,6 @@ using UnityEditor;
 #endif
 
 using Redpoint.DungeonEscape.Unity.Core;
-using Redpoint.DungeonEscape.Unity.UI;
-using Redpoint.DungeonEscape.Unity.Map;
 using Redpoint.DungeonEscape.Unity.Rendering;
 using Redpoint.DungeonEscape.Unity.Map.Tiled;
 using CreateDropdown = Redpoint.DungeonEscape.ViewModels.TitleCreateDropdown;
@@ -122,7 +119,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private int createPlayerSpriteIndex
         {
             get { return viewModel.CreatePlayerSpriteIndex; }
-            set { viewModel.SetCreatePlayerSpriteIndex(value); }
         }
 
         private CreateDropdown activeCreateDropdown
@@ -1015,23 +1011,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 gameState == null ? 0 : gameState.GetManualSaveSlots().Count);
         }
 
-        private int GetOptionCount()
-        {
-            if (mode == TitleMode.Load)
-            {
-                return (gameState == null ? 0 : gameState.GetManualSaveSlots().Count) * 2 + 1;
-            }
-
-            if (mode == TitleMode.Create)
-            {
-                return 8;
-            }
-
-            return viewModel.GetOptionCount(
-                gameState != null && gameState.HasQuickSave(),
-                gameState == null ? 0 : gameState.GetManualSaveSlots().Count);
-        }
-
         private void HandleNavigation()
         {
             if (mode == TitleMode.Load)
@@ -1400,16 +1379,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 gameState.DeleteManual(slotIndex);
                 viewModel.ClampLoadSelection(gameState.GetManualSaveSlots().Count);
             }
-        }
-
-        private static int GetLoadSaveIndex(int saveIndex)
-        {
-            return TitleViewModel.GetLoadSaveIndex(saveIndex);
-        }
-
-        private static int GetLoadDeleteIndex(int saveIndex)
-        {
-            return TitleViewModel.GetLoadDeleteIndex(saveIndex);
         }
 
         private static int GetLoadBackIndex(int saveCount)

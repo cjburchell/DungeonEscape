@@ -1,11 +1,10 @@
-using System.IO;
+﻿using System.IO;
 using System;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.UnityEditor
 {
     public static class UnityCiValidation

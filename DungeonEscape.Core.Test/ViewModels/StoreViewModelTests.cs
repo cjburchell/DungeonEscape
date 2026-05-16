@@ -1,6 +1,5 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Redpoint.DungeonEscape.Data;
-using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.ViewModels;
 using Redpoint.DungeonEscape.State;
 using Xunit;

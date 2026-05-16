@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -6,10 +6,6 @@ using Redpoint.DungeonEscape.State;
 using UnityEngine;
 
 using Redpoint.DungeonEscape.Unity.Core;
-using Redpoint.DungeonEscape.Unity.UI;
-using Redpoint.DungeonEscape.Unity.Map;
-using Redpoint.DungeonEscape.Unity.Rendering;
-using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.Unity.Map.Tiled
 {
     public static class Renderer
@@ -442,17 +438,6 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                        GetInt(mapObject, "id"),
                        objectClass,
                        TryGetStringProperty(mapObject, "ItemId", out itemId) ? itemId : null);
-        }
-
-        private static void ApplyAnimation(SpriteRenderer renderer, List<SpriteAnimationFrame> animationFrames)
-        {
-            if (animationFrames == null || animationFrames.Count <= 1)
-            {
-                return;
-            }
-
-            var player = renderer.gameObject.AddComponent<SpriteAnimationPlayer>();
-            player.Configure(renderer, animationFrames);
         }
 
         private static Vector3 GetObjectLocalPosition(

@@ -3,13 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using Redpoint.DungeonEscape.Rules;
-using Redpoint.DungeonEscape.State;
 
 using Redpoint.DungeonEscape.Unity.Core;
-using Redpoint.DungeonEscape.Unity.UI;
-using Redpoint.DungeonEscape.Unity.Map;
-using Redpoint.DungeonEscape.Unity.Rendering;
-using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.Unity.Map.Tiled
 {
     public static class Collision
@@ -144,17 +139,6 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
         {
             return mapObject != null &&
                    string.Equals(mapObject.Class, "Door", StringComparison.OrdinalIgnoreCase);
-        }
-
-        private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName, int defaultValue)
-        {
-            string value;
-            int result;
-            return mapObject.Properties != null &&
-                   mapObject.Properties.TryGetValue(propertyName, out value) &&
-                   int.TryParse(value, out result)
-                ? result
-                : defaultValue;
         }
 
         private static Dictionary<string, string> ReadProperties(XElement element)

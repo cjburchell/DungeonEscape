@@ -306,12 +306,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
                    viewModel.IsTargetCandidate(targetSelectionCandidates, fighter);
         }
 
-        private bool IsPartyTargetSelection()
-        {
-            return state == CombatState.ChooseTarget &&
-                   viewModel.HasPartyTargets(targetSelectionCandidates);
-        }
-
         private bool IsMonsterTargetSelection()
         {
             return state == CombatState.ChooseTarget &&

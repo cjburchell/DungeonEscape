@@ -9,7 +9,6 @@ using UnityEngine;
 
 using Redpoint.DungeonEscape.Unity.Core;
 using Redpoint.DungeonEscape.Unity.UI;
-using Redpoint.DungeonEscape.Unity.Map;
 using Redpoint.DungeonEscape.Unity.Rendering;
 using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.Unity.Map
@@ -1598,13 +1597,6 @@ namespace Redpoint.DungeonEscape.Unity.Map
             }
 
             return hero == null ? LoadHeroSprites() : HeroSpriteResolver.GetSpriteSet(hero, CreateFallbackSprite());
-        }
-
-        private DirectionalSpriteSet LoadHeroSprites(Class heroClass, Gender gender)
-        {
-            return HeroSpriteResolver.GetHeroSpriteSet(
-                HeroSpriteResolver.GetDefaultFrameIndex(heroClass, gender),
-                CreateFallbackSprite());
         }
 
         private DirectionalSpriteSet LoadDeadHeroSprites()

@@ -1,5 +1,4 @@
-using Redpoint.DungeonEscape.State;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Redpoint.DungeonEscape.Data
 {

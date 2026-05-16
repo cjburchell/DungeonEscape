@@ -1,5 +1,4 @@
-using Redpoint.DungeonEscape.State;
-// ReSharper disable PropertyCanBeMadeInitOnly.Global
+﻿// ReSharper disable PropertyCanBeMadeInitOnly.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global

@@ -1,9 +1,8 @@
-using System.IO;
+﻿using System.IO;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.UnityEditor
 {
     public static class UnityCiBuild

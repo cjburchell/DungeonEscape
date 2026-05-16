@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Redpoint.DungeonEscape.State;
@@ -249,43 +249,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 case MenuTab.Settings:
                     settingsScrollPosition.y = y;
                     break;
-            }
-        }
-
-        private void AdjustSelectedRow(int delta)
-        {
-            if (currentTab == MenuTab.Party)
-            {
-                CyclePartyDetailTab(delta);
-                return;
-            }
-
-            if (currentTab == MenuTab.Inventory)
-            {
-                AdjustSelectedInventoryHero(delta);
-                return;
-            }
-
-            if (currentTab == MenuTab.Settings)
-            {
-                AdjustSelectedSetting(delta);
-            }
-        }
-
-        private void CyclePartyDetailTab(int delta)
-        {
-            var tabs = GetVisiblePartyDetailTabs(GetSelectedPartyHero());
-            var currentIndex = tabs.IndexOf(currentPartyDetailTab);
-            if (currentIndex < 0)
-            {
-                currentIndex = 0;
-            }
-
-            var previousTab = currentPartyDetailTab;
-            currentPartyDetailTab = tabs[(currentIndex + delta + tabs.Count) % tabs.Count];
-            if (currentPartyDetailTab != previousTab)
-            {
-                UiControls.PlaySelectSound();
             }
         }
 

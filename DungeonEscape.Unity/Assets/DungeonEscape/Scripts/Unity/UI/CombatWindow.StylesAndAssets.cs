@@ -41,16 +41,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
             buttonStyle = uiTheme.ButtonStyle;
         }
 
-        private GUIStyle GetMenuButtonStyle(bool selected)
-        {
-            if (uiTheme == null)
-            {
-                return buttonStyle;
-            }
-
-            return selected ? uiTheme.SelectedTabStyle : uiTheme.ButtonStyle;
-        }
-
         private GUIStyle GetCombatRowStyle(bool selected)
         {
             if (uiTheme == null)

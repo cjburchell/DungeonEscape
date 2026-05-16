@@ -5,14 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Redpoint.DungeonEscape.Rules;
-using Redpoint.DungeonEscape.State;
 using UnityEngine;
 
 using Redpoint.DungeonEscape.Unity.Core;
-using Redpoint.DungeonEscape.Unity.UI;
-using Redpoint.DungeonEscape.Unity.Map;
-using Redpoint.DungeonEscape.Unity.Rendering;
-using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.Unity.Map.Tiled
 {
     public static class Loader

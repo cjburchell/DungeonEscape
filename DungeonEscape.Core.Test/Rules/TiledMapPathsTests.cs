@@ -1,5 +1,4 @@
-using Redpoint.DungeonEscape.Rules;
-using Redpoint.DungeonEscape.State;
+﻿using Redpoint.DungeonEscape.Rules;
 using Xunit;
 
 namespace DungeonEscape.Core.Test.Rules

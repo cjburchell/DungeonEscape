@@ -1,13 +1,11 @@
 ﻿using Redpoint.DungeonEscape.Data;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.ViewModels;
 using UnityEngine;
 
 using Redpoint.DungeonEscape.Unity.Core;
-using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.Unity.UI
 {
     public sealed class HealerWindow : MonoBehaviour
@@ -368,11 +366,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private List<HealerServiceRow> BuildServices()
         {
             return viewModel.BuildServices(gameState == null ? null : gameState.Party, healerObject);
-        }
-
-        private int GetHealerCost()
-        {
-            return viewModel.GetHealerCost(healerObject);
         }
 
         private string GetHealerName()

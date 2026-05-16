@@ -10,10 +10,8 @@ using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Tools;
 using UnityEngine;
 
-using Redpoint.DungeonEscape.Unity.Core;
 using Redpoint.DungeonEscape.Unity.UI;
 using Redpoint.DungeonEscape.Unity.Map;
-using Redpoint.DungeonEscape.Unity.Rendering;
 using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.Unity.Core
 {
@@ -2986,19 +2984,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
         private static GameSave GetQuickSave(GameFile file)
         {
             return file == null ? null : file.Saves.FirstOrDefault(save => save.IsQuick);
-        }
-
-        private static void EnsureManualSaveSlots(GameFile file)
-        {
-            if (file == null)
-            {
-                return;
-            }
-
-            if (file.Saves == null)
-            {
-                file.Saves = new List<GameSave>();
-            }
         }
 
         private static GameSave CloneGameSave(GameSave save)

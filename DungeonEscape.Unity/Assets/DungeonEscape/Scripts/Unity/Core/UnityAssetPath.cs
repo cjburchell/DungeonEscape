@@ -1,12 +1,7 @@
-using System;
+﻿using System;
 using System.IO;
 using UnityEngine;
 
-using Redpoint.DungeonEscape.Unity.Core;
-using Redpoint.DungeonEscape.Unity.UI;
-using Redpoint.DungeonEscape.Unity.Map;
-using Redpoint.DungeonEscape.Unity.Rendering;
-using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.Unity.Core
 {
     public static class UnityAssetPath

@@ -1,11 +1,6 @@
-using Redpoint.DungeonEscape;
-using UnityEngine;
+﻿using UnityEngine;
 
 using Redpoint.DungeonEscape.Unity.Core;
-using Redpoint.DungeonEscape.Unity.UI;
-using Redpoint.DungeonEscape.Unity.Map;
-using Redpoint.DungeonEscape.Unity.Rendering;
-using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.Unity.UI
 {
     public sealed class UiSettings : MonoBehaviour

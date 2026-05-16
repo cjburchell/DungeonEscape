@@ -1,11 +1,10 @@
-using System.IO;
+﻿using System.IO;
 using Redpoint.DungeonEscape.Unity.Core;
 using Redpoint.DungeonEscape.Unity.Map;
 using Redpoint.DungeonEscape.Unity.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.UnityEditor

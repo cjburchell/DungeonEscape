@@ -1,5 +1,4 @@
-using Redpoint.DungeonEscape.State;
-// ReSharper disable CollectionNeverUpdated.Global
+﻿// ReSharper disable CollectionNeverUpdated.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace Redpoint.DungeonEscape.Data
 {

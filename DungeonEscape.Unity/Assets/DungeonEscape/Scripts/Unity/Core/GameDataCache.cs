@@ -5,11 +5,6 @@ using System.Linq;
 using System.Text;
 using Redpoint.DungeonEscape.State;
 
-using Redpoint.DungeonEscape.Unity.Core;
-using Redpoint.DungeonEscape.Unity.UI;
-using Redpoint.DungeonEscape.Unity.Map;
-using Redpoint.DungeonEscape.Unity.Rendering;
-using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.Unity.Core
 {
     public sealed class GameDataCache

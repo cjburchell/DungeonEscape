@@ -1,7 +1,5 @@
-using Redpoint.DungeonEscape.Data;
-using System.Linq;
+﻿using Redpoint.DungeonEscape.Data;
 using Redpoint.DungeonEscape.Rules;
-using Redpoint.DungeonEscape.State;
 using Xunit;
 
 namespace DungeonEscape.Core.Test.Rules

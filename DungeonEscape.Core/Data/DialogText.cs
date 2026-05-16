@@ -1,5 +1,4 @@
-using Redpoint.DungeonEscape.State;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global

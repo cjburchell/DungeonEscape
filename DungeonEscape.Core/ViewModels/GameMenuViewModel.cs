@@ -24,7 +24,6 @@ namespace Redpoint.DungeonEscape.ViewModels
         public int CurrentFocus { get; private set; }
         public int CurrentTab { get; private set; }
         public int CurrentSettingsTab { get; private set; }
-        public int CurrentPartyDetailTab { get; private set; }
         public int SelectedHeroIndex { get; private set; }
         public int SelectedPartyItemIndex { get; private set; }
         public int SelectedDetailIndex { get; private set; }
@@ -48,7 +47,6 @@ namespace Redpoint.DungeonEscape.ViewModels
             CurrentFocus = 0;
             CurrentTab = 0;
             CurrentSettingsTab = 0;
-            CurrentPartyDetailTab = 0;
             SelectedHeroIndex = 0;
             SelectedPartyItemIndex = 0;
             SelectedDetailIndex = 0;
@@ -697,11 +695,6 @@ namespace Redpoint.DungeonEscape.ViewModels
         public void SetCurrentSettingsTab(int value)
         {
             CurrentSettingsTab = value;
-        }
-
-        public void SetCurrentPartyDetailTab(int value)
-        {
-            CurrentPartyDetailTab = value;
         }
 
         public void SetSelectedHeroIndex(int value)

@@ -1,7 +1,5 @@
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using Redpoint.DungeonEscape.State;
 using UnityEngine;
 
 namespace Redpoint.DungeonEscape.Unity.UI

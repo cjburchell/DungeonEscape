@@ -3,14 +3,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Redpoint.DungeonEscape.State;
 using UnityEngine;
 
-using Redpoint.DungeonEscape.Unity.Core;
 using Redpoint.DungeonEscape.Unity.UI;
-using Redpoint.DungeonEscape.Unity.Map;
-using Redpoint.DungeonEscape.Unity.Rendering;
-using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.Unity.Core
 {
     public sealed class Bootstrap : MonoBehaviour
@@ -150,11 +145,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 Debug.LogError("Failed to deserialize " + label + " JSON from " + asset.name + ": " + exception.Message);
                 return default(T);
             }
-        }
-
-        private static int Count<T>(ICollection<T> values)
-        {
-            return values == null ? 0 : values.Count;
         }
 
         private static TiledMapInfo LoadTiledMap(TextAsset asset, string assetPath, string label)

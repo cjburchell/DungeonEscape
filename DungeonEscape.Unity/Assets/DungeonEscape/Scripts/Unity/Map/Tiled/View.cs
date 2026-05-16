@@ -8,9 +8,6 @@ using UnityEngine;
 
 using Redpoint.DungeonEscape.Unity.Core;
 using Redpoint.DungeonEscape.Unity.UI;
-using Redpoint.DungeonEscape.Unity.Map;
-using Redpoint.DungeonEscape.Unity.Rendering;
-using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.Unity.Map.Tiled
 {
     public sealed class View : MonoBehaviour
@@ -606,17 +603,6 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                    string.Equals(mapObject.Class, "HiddenItem", StringComparison.OrdinalIgnoreCase);
         }
 
-        private static int GetIntProperty(TiledObjectInfo mapObject, string propertyName, int defaultValue)
-        {
-            string value;
-            int result;
-            return mapObject.Properties != null &&
-                   mapObject.Properties.TryGetValue(propertyName, out value) &&
-                   int.TryParse(value, out result)
-                ? result
-                : defaultValue;
-        }
-
         private static bool IsPlayerAt(int column, int row)
         {
             var player = FindAnyObjectByType<PlayerGridController>();
@@ -969,11 +955,6 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             return selected.Document.Tiles.TryGetValue(gid - selected.FirstGid, out tileInfo)
                 ? tileInfo
                 : null;
-        }
-
-        private Biome GetMapBiome()
-        {
-            return GetMapBiomeInfo().Type;
         }
 
         private BiomeInfo GetMapBiomeInfo()

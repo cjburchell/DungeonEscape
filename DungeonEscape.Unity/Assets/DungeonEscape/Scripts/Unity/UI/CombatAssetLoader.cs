@@ -6,7 +6,6 @@ using System.Linq;
 using System.Xml.Linq;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Unity.Core;
-using Redpoint.DungeonEscape.Unity.Map.Tiled;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;

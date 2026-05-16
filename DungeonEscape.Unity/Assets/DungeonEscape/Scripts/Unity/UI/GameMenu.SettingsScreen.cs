@@ -1,7 +1,5 @@
-﻿using Redpoint.DungeonEscape.Data;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Unity.Core;
 using Redpoint.DungeonEscape.ViewModels;
 using UnityEngine;

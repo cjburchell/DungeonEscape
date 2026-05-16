@@ -1,12 +1,7 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Redpoint.DungeonEscape.State;
 using UnityEngine;
 
-using Redpoint.DungeonEscape.Unity.Core;
-using Redpoint.DungeonEscape.Unity.UI;
-using Redpoint.DungeonEscape.Unity.Map;
-using Redpoint.DungeonEscape.Unity.Rendering;
-using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.Unity.Rendering
 {
     public sealed class DirectionalSpriteSet

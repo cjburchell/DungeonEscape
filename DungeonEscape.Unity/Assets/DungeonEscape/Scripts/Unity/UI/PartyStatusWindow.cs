@@ -1,14 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Redpoint.DungeonEscape.State;
 using UnityEngine;
 
 using Redpoint.DungeonEscape.Unity.Core;
-using Redpoint.DungeonEscape.Unity.UI;
 using Redpoint.DungeonEscape.Unity.Map;
-using Redpoint.DungeonEscape.Unity.Rendering;
-using Redpoint.DungeonEscape.Unity.Map.Tiled;
 namespace Redpoint.DungeonEscape.Unity.UI
 {
     public sealed class PartyStatusWindow : MonoBehaviour
@@ -166,14 +163,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUI.DrawTexture(new Rect(rect.x, rect.y, thickness, rect.height), Texture2D.whiteTexture);
             GUI.DrawTexture(new Rect(rect.xMax - thickness, rect.y, thickness, rect.height), Texture2D.whiteTexture);
             GUI.color = previousColor;
-        }
-
-        private void DrawSplitLabel(string label, string value, GUIStyle style, float width, float scale)
-        {
-            GUILayout.BeginHorizontal(GUILayout.Width(width), GUILayout.Height(GetLineHeight(scale)));
-            GUILayout.Label(label, style, GUILayout.Width(width / 2f), GUILayout.Height(GetLineHeight(scale)));
-            GUILayout.Label(value, style, GUILayout.Width(width / 2f), GUILayout.Height(GetLineHeight(scale)));
-            GUILayout.EndHorizontal();
         }
 
         private void DrawLevelLabel(string label, string value, GUIStyle style, float width, float scale)

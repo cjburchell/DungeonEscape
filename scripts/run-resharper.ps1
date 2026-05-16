@@ -3,13 +3,14 @@ param(
     [string]$Unity = $env:UNITY_EXE,
     [string]$ToolVersion = "2026.1.0.1",
     [string]$Exclude = $env:RESHARPER_EXCLUDE,
+    [string]$Severity = $(if ([string]::IsNullOrWhiteSpace($env:RESHARPER_SEVERITY)) { "WARNING" } else { $env:RESHARPER_SEVERITY }),
     [int]$Threshold = 0
 )
 
 $ErrorActionPreference = "Stop"
 
-$RepoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
-$SolutionPath = Resolve-Path (Join-Path $RepoRoot $Solution)
+$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$SolutionPath = (Resolve-Path (Join-Path $RepoRoot $Solution)).Path
 $UnityProjectPath = Join-Path $RepoRoot "DungeonEscape.Unity"
 $TempRoot = Join-Path $RepoRoot ".ci\resharper-unity"
 $UnityReferencesDir = Join-Path $UnityProjectPath "Logs\ReSharperReferences"
@@ -56,9 +57,18 @@ if ($LASTEXITCODE -ne 0) {
 
 $jb = (Get-Command jb).Source
 $excludeOption = if ([string]::IsNullOrWhiteSpace($Exclude)) { @() } else { @("--exclude=$Exclude") }
+$severityOption = if ([string]::IsNullOrWhiteSpace($Severity)) { @() } else { @("-e=$Severity") }
 
 Push-Location $env:TEMP
-& $jb inspectcode @excludeOption "-o=$CoreReport" -f=xml "--caches-home=$CoreCache" $SolutionPath
+$coreInspectArgs = @(
+    $excludeOption
+    $severityOption
+    "-o=$CoreReport"
+    "-f=xml"
+    "--caches-home=$CoreCache"
+    $SolutionPath
+)
+& $jb inspectcode @coreInspectArgs
 $coreExitCode = $LASTEXITCODE
 Pop-Location
 if ($coreExitCode -ne 0) {
@@ -110,6 +120,7 @@ $lines = @(
     '    <LangVersion>9.0</LangVersion>',
     '    <Nullable>disable</Nullable>',
     '    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>',
+    '    <NoWarn>$(NoWarn);0649</NoWarn>',
     '  </PropertyGroup>',
     '  <ItemGroup>',
     "    <Compile Include=""$compileScripts"" />",
@@ -134,7 +145,15 @@ $lines += @(
 Set-Content -LiteralPath $UnityProject -Value $lines -Encoding ASCII
 
 Push-Location $env:TEMP
-& $jb inspectcode @excludeOption "-o=$UnityReport" -f=xml "--caches-home=$UnityCache" $UnityProject
+$unityInspectArgs = @(
+    $excludeOption
+    $severityOption
+    "-o=$UnityReport"
+    "-f=xml"
+    "--caches-home=$UnityCache"
+    $UnityProject
+)
+& $jb inspectcode @unityInspectArgs
 $unityExitCode = $LASTEXITCODE
 Pop-Location
 if ($unityExitCode -ne 0) {

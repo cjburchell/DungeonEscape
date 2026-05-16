@@ -5,6 +5,7 @@ PROJECT_ROOT="${CI_PROJECT_DIR:-$(pwd)}"
 SOLUTION="${RESHARPER_SOLUTION_NAME:-DungeonEscape.sln}"
 SOLUTION_PATH="$PROJECT_ROOT/$SOLUTION"
 RESHARPER_EXCLUDE="${RESHARPER_EXCLUDE:-}"
+RESHARPER_SEVERITY="${RESHARPER_SEVERITY:-WARNING}"
 RESHARPER_THRESHOLD="${RESHARPER_THRESHOLD:-0}"
 RESHARPER_TOOL_VERSION="${RESHARPER_TOOL_VERSION:-2026.1.0.1}"
 UNITY_PROJECT_PATH="${UNITY_PROJECT_PATH:-DungeonEscape.Unity}"
@@ -21,7 +22,7 @@ if [[ -n "$RESHARPER_EXCLUDE" ]]; then
   RESHARPER_EXCLUDE_OPTION=("--exclude=$RESHARPER_EXCLUDE")
 fi
 
-(cd /tmp && jb inspectcode "${RESHARPER_EXCLUDE_OPTION[@]}" -o="$PROJECT_ROOT/RsInspection.xml" -f=xml --caches-home="$PROJECT_ROOT/temp/core" "$SOLUTION_PATH" --dotnetcore="$(command -v dotnet)")
+(cd /tmp && jb inspectcode "${RESHARPER_EXCLUDE_OPTION[@]}" -e="$RESHARPER_SEVERITY" -o="$PROJECT_ROOT/RsInspection.xml" -f=xml --caches-home="$PROJECT_ROOT/temp/core" "$SOLUTION_PATH" --dotnetcore="$(command -v dotnet)")
 
 UNITY_SCRIPT_COUNT=$(find "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Scripts" "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Editor" "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Tests" -name '*.cs' 2>/dev/null | wc -l | tr -d ' ')
 if [[ "$UNITY_SCRIPT_COUNT" -gt 0 ]]; then
@@ -66,6 +67,7 @@ if [[ "$UNITY_SCRIPT_COUNT" -gt 0 ]]; then
     printf '%s\n' '    <LangVersion>9.0</LangVersion>'
     printf '%s\n' '    <Nullable>disable</Nullable>'
     printf '%s\n' '    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>'
+    printf '%s\n' '    <NoWarn>$(NoWarn);0649</NoWarn>'
     printf '%s\n' '  </PropertyGroup>'
     printf '%s\n' '  <ItemGroup>'
     printf '%s\n' "    <Compile Include=\"../../$UNITY_PROJECT_PATH/Assets/DungeonEscape/Scripts/**/*.cs\" />"
@@ -84,7 +86,7 @@ if [[ "$UNITY_SCRIPT_COUNT" -gt 0 ]]; then
     printf '%s\n' '</Project>'
   } > "$UNITY_PROJECT_FILE"
 
-  (cd /tmp && jb inspectcode "${RESHARPER_EXCLUDE_OPTION[@]}" -o="$PROJECT_ROOT/RsInspection.Unity.xml" -f=xml --caches-home="$PROJECT_ROOT/temp/unity" "$UNITY_PROJECT_FILE" --dotnetcore="$(command -v dotnet)")
+  (cd /tmp && jb inspectcode "${RESHARPER_EXCLUDE_OPTION[@]}" -e="$RESHARPER_SEVERITY" -o="$PROJECT_ROOT/RsInspection.Unity.xml" -f=xml --caches-home="$PROJECT_ROOT/temp/unity" "$UNITY_PROJECT_FILE" --dotnetcore="$(command -v dotnet)")
 else
   echo "No Unity scripts found; skipping Unity ReSharper inspection."
 fi

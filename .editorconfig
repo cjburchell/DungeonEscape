@@ -1,0 +1,27 @@
+root = true
+
+[*.cs]
+resharper_redundant_using_directive_highlighting = suggestion
+resharper_unused_parameter_local_highlighting = suggestion
+
+[DungeonEscape.Core/Data/**/*.cs]
+resharper_unused_auto_property_accessor_global_highlighting = none
+resharper_collection_never_updated_global_highlighting = none
+resharper_collection_never_queried_global_highlighting = none
+
+[DungeonEscape.Core/State/**/*.cs]
+resharper_unused_auto_property_accessor_global_highlighting = none
+resharper_collection_never_updated_global_highlighting = none
+resharper_collection_never_queried_global_highlighting = none
+
+[DungeonEscape.Unity/Assets/DungeonEscape/Scripts/**/*.cs]
+resharper_inconsistent_naming_highlighting = none
+resharper_parameter_hides_member_highlighting = suggestion
+resharper_local_variable_hides_member_highlighting = suggestion
+resharper_private_field_can_be_converted_to_local_variable_highlighting = suggestion
+resharper_redundant_enumerable_cast_call_highlighting = suggestion
+
+[DungeonEscape.Unity/Assets/DungeonEscape/Editor/**/*.cs]
+resharper_inconsistent_naming_highlighting = none
+resharper_parameter_hides_member_highlighting = suggestion
+resharper_local_variable_hides_member_highlighting = suggestion

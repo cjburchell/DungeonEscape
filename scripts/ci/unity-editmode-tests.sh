@@ -14,6 +14,7 @@ rm -f "$RESULTS"
 "$UNITY_EXECUTABLE" \
   -batchmode \
   -nographics \
+  -quit \
   -projectPath "$PROJECT_ROOT/$UNITY_PROJECT_PATH" \
   -runTests \
   -testPlatform EditMode \

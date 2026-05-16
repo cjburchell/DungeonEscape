@@ -4,15 +4,34 @@ root = true
 resharper_redundant_using_directive_highlighting = suggestion
 resharper_unused_parameter_local_highlighting = suggestion
 
+# JSON/data DTOs are populated by deserialization and may be queried dynamically by
+# rule/UI code. Keep contract shape warnings out of the ReSharper failure signal.
 [DungeonEscape.Core/Data/**/*.cs]
 resharper_unused_auto_property_accessor_global_highlighting = none
+resharper_auto_property_can_be_made_get_only_global_highlighting = none
+resharper_member_can_be_private_global_highlighting = none
+resharper_unused_member_global_highlighting = none
 resharper_collection_never_updated_global_highlighting = none
 resharper_collection_never_queried_global_highlighting = none
 
+# Save/state DTOs intentionally expose mutable public properties for persistence.
 [DungeonEscape.Core/State/**/*.cs]
 resharper_unused_auto_property_accessor_global_highlighting = none
+resharper_auto_property_can_be_made_get_only_global_highlighting = none
+resharper_member_can_be_private_global_highlighting = none
+resharper_unused_member_global_highlighting = none
 resharper_collection_never_updated_global_highlighting = none
 resharper_collection_never_queried_global_highlighting = none
+
+# Core view-models are consumed by Unity assemblies outside the core solution scan.
+[DungeonEscape.Core/ViewModels/**/*.cs]
+resharper_unused_auto_property_accessor_global_highlighting = none
+resharper_auto_property_can_be_made_get_only_global_highlighting = none
+resharper_member_can_be_private_global_highlighting = none
+
+# Round actions are command DTOs assembled and consumed across combat rule/UI layers.
+[DungeonEscape.Core/Rules/CombatRoundAction.cs]
+resharper_unused_auto_property_accessor_global_highlighting = none
 
 [DungeonEscape.Unity/Assets/DungeonEscape/Scripts/**/*.cs]
 resharper_inconsistent_naming_highlighting = none
@@ -20,6 +39,17 @@ resharper_parameter_hides_member_highlighting = suggestion
 resharper_local_variable_hides_member_highlighting = suggestion
 resharper_private_field_can_be_converted_to_local_variable_highlighting = suggestion
 resharper_redundant_enumerable_cast_call_highlighting = suggestion
+
+# Tiled loading helper records mirror TMX data and expose properties for consumers
+# that ReSharper does not always see in the generated Unity scan project.
+[DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/Map/Tiled/Loader.cs]
+resharper_unused_auto_property_accessor_global_highlighting = none
+
+[DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/Map/Tiled/TilesetSprites.cs]
+resharper_unused_auto_property_accessor_global_highlighting = none
+
+[DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/Map/Tiled/View.cs]
+resharper_unused_auto_property_accessor_global_highlighting = none
 
 [DungeonEscape.Unity/Assets/DungeonEscape/Editor/**/*.cs]
 resharper_inconsistent_naming_highlighting = none

@@ -25,6 +25,7 @@ Remove-Item -LiteralPath $Results -Force -ErrorAction SilentlyContinue
 $Arguments = @(
     "-batchmode",
     "-nographics",
+    "-quit",
     "-projectPath", $ProjectPath,
     "-runTests",
     "-testPlatform", "PlayMode",

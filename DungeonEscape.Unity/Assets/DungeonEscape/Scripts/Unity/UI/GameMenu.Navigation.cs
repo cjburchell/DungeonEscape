@@ -234,12 +234,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var y = Mathf.Max(0f, selectedRowIndex * 54f * GetPixelScale());
             switch (currentTab)
             {
-                case MenuTab.Party:
-                    partyScrollPosition.y = y;
-                    break;
-                case MenuTab.Inventory:
-                    inventoryScrollPosition.y = y;
-                    break;
                 case MenuTab.Quests:
                     questScrollPosition.y = y;
                     break;

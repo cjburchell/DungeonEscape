@@ -12,6 +12,7 @@ variables:
   UNITY_WINDOWS_BUILD_IMAGE: "unityci/editor:ubuntu-6000.4.4f1-windows-mono-3.2.2"
   UNITY_EXECUTABLE: "unity-editor"
   UNITY_CI_ENABLED: "true"
+  UNITY_PLAYMODE_TESTS_ENABLED: "false"
   UNITY_BUILD_WINDOWS_ENABLED: "true"
   UNITY_LICENSE_B64: ""
 
@@ -104,6 +105,10 @@ dotnet-tests:
   script:
     - bash scripts/ci/dotnet-restore.sh
     - bash scripts/ci/dotnet-test.sh
+  artifacts:
+    when: always
+    paths:
+      - TestResults/dotnet/*.trx
 
 unity-validate:
   image: $UNITY_CI_IMAGE
@@ -150,6 +155,29 @@ unity-editmode-tests:
       when: never
     - when: on_success
 
+unity-playmode-tests:
+  image: $UNITY_CI_IMAGE
+  stage: test
+  needs:
+    - job: dotnet-build
+      artifacts: true
+    - unity-validate
+  before_script: *unity-license-before-script
+  script:
+    - bash scripts/ci/unity-playmode-tests.sh
+  after_script: *unity-license-after-script
+  artifacts:
+    when: always
+    paths:
+      - TestResults/playmode-results.xml
+      - TestResults/playmode-log.txt
+  rules:
+    - if: '$UNITY_CI_ENABLED == "false"'
+      when: never
+    - if: '$UNITY_PLAYMODE_TESTS_ENABLED == "true"'
+      when: on_success
+    - when: never
+
 unity-build-windows:
   image: $UNITY_WINDOWS_BUILD_IMAGE
   stage: package
@@ -158,6 +186,8 @@ unity-build-windows:
       artifacts: true
     - dotnet-tests
     - unity-editmode-tests
+    - job: unity-playmode-tests
+      optional: true
   variables:
     UNITY_LOG_FILE: "$CI_PROJECT_DIR/DungeonEscape.Unity/Logs/ci-unity-build-windows.log"
     UNITY_WINDOWS_BUILD_PATH: "DungeonEscape.Unity/Builds/Windows"

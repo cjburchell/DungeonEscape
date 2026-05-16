@@ -75,8 +75,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private UiTheme uiTheme;
         private float lastPixelScale;
         private string lastThemeSignature;
-        private Vector2 partyScrollPosition;
-        private Vector2 inventoryScrollPosition;
         private Vector2 questScrollPosition;
         private Vector2 saveScrollPosition;
         private Vector2 settingsScrollPosition;

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Redpoint.DungeonEscape.Data;
 using Redpoint.DungeonEscape.State;
+using System.Linq;
 
 namespace Redpoint.DungeonEscape.ViewModels
 {
@@ -109,6 +110,51 @@ namespace Redpoint.DungeonEscape.ViewModels
             }
 
             return rows;
+        }
+
+        public List<Spell> GetAvailableEncounterSpells(Hero hero, IEnumerable<Spell> spells)
+        {
+            if (hero == null || hero.IsDead || spells == null)
+            {
+                return new List<Spell>();
+            }
+
+            return hero.GetSpells(spells)
+                .Where(spell => spell != null && spell.IsEncounterSpell && spell.Cost <= hero.Magic)
+                .ToList();
+        }
+
+        public List<Skill> GetAvailableEncounterSkills(Hero hero, IEnumerable<Skill> skills)
+        {
+            if (hero == null || hero.IsDead || skills == null)
+            {
+                return new List<Skill>();
+            }
+
+            return hero.GetSkills(skills)
+                .Where(skill => skill != null && skill.IsEncounterSkill)
+                .ToList();
+        }
+
+        public List<ItemInstance> GetAvailableEncounterItems(Hero hero)
+        {
+            if (hero == null || hero.IsDead || hero.Items == null)
+            {
+                return new List<ItemInstance>();
+            }
+
+            return hero.Items
+                .Where(IsAvailableEncounterItem)
+                .ToList();
+        }
+
+        public bool IsAvailableEncounterItem(ItemInstance item)
+        {
+            return item != null &&
+                   item.Item != null &&
+                   item.Item.Skill != null &&
+                   item.Item.Skill.IsEncounterSkill &&
+                   item.HasCharges;
         }
 
         public IFighter GetSelectedTarget(IList<IFighter> candidates)

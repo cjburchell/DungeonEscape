@@ -87,7 +87,7 @@ if [[ "$UNITY_SCRIPT_COUNT" -gt 0 ]]; then
   fi
   SCRIPT_ASSEMBLIES="$PROJECT_ROOT/$UNITY_PROJECT_PATH/Library/ScriptAssemblies"
   if [[ -d "$SCRIPT_ASSEMBLIES" ]]; then
-    find "$SCRIPT_ASSEMBLIES" -maxdepth 1 -name '*.dll' \( -name 'Unity.*.dll' -o -name 'nunit*.dll' \) -exec cp {} "$UNITY_REFERENCES_DIR" \;
+    find "$SCRIPT_ASSEMBLIES" -maxdepth 1 -name '*.dll' \( -name 'Unity*.dll' -o -name 'nunit*.dll' \) -exec cp {} "$UNITY_REFERENCES_DIR" \;
   fi
 
   UNITY_CORE_REFERENCE="$UNITY_REFERENCES_DIR/UnityEngine.CoreModule.dll"

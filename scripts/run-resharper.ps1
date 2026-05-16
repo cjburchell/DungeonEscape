@@ -104,7 +104,7 @@ if (Test-Path -LiteralPath $PackageCache) {
 $ScriptAssemblies = Join-Path $UnityProjectPath "Library\ScriptAssemblies"
 if (Test-Path -LiteralPath $ScriptAssemblies) {
     Get-ChildItem -Path $ScriptAssemblies -Filter *.dll |
-        Where-Object { $_.Name -like "Unity.*.dll" -or $_.Name -like "nunit*.dll" } |
+        Where-Object { $_.Name -like "Unity*.dll" -or $_.Name -like "nunit*.dll" } |
         Copy-Item -Destination $UnityReferencesDir -Force
 }
 

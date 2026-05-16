@@ -215,41 +215,36 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return selectionMemory.GetRememberedTargetIndex(actingHero, targets);
         }
 
-        private IEnumerable<Spell> GetAvailableEncounterSpells(Hero hero)
+        private List<Spell> GetAvailableEncounterSpells(Hero hero)
         {
-            return hero == null ||
-                   hero.IsDead ||
-                   GameDataCache.Current == null ||
-                   GameDataCache.Current.Spells == null
-                ? Enumerable.Empty<Spell>()
-                : hero.GetSpells(GameDataCache.Current.Spells)
-                    .Where(spell => spell != null && spell.IsEncounterSpell && spell.Cost <= hero.Magic);
+            return viewModel.GetAvailableEncounterSpells(
+                hero,
+                GameDataCache.Current == null ? null : GameDataCache.Current.Spells);
         }
 
-        private IEnumerable<Skill> GetAvailableEncounterSkills(Hero hero)
+        private List<Skill> GetAvailableEncounterSkills(Hero hero)
         {
-            return hero == null ||
-                   hero.IsDead ||
-                   GameDataCache.Current == null ||
-                   GameDataCache.Current.Skills == null
-                ? Enumerable.Empty<Skill>()
-                : hero.GetSkills(GameDataCache.Current.Skills)
-                    .Where(skill => skill != null && skill.IsEncounterSkill);
+            return viewModel.GetAvailableEncounterSkills(
+                hero,
+                GameDataCache.Current == null ? null : GameDataCache.Current.Skills);
         }
 
-        private IEnumerable<ItemInstance> GetAvailableEncounterItems(Hero hero)
+        private List<ItemInstance> GetAvailableEncounterItems(Hero hero)
         {
-            return hero == null || hero.IsDead || hero.Items == null
-                ? Enumerable.Empty<ItemInstance>()
-                : hero.Items.Where(item =>
+            if (hero == null || hero.Items == null)
+            {
+                return viewModel.GetAvailableEncounterItems(hero);
+            }
+
+            foreach (var item in hero.Items)
+            {
+                if (item != null)
                 {
                     EnsureItemLinked(item);
-                    return item != null &&
-                           item.Item != null &&
-                           item.Item.Skill != null &&
-                           item.Item.Skill.IsEncounterSkill &&
-                           item.HasCharges;
-                });
+                }
+            }
+
+            return viewModel.GetAvailableEncounterItems(hero);
         }
 
         private void DrawCenteredButtons(Rect panelRect, float scale, IEnumerable<CombatButton> buttons)

@@ -33,6 +33,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private const int CreateBackIndex = TitleViewModel.CreateBackIndex;
         private const string MainMenuBackgroundAssetPath = "Assets/DungeonEscape/Images/ui/mainmenue.png";
         private const string SecondaryMenuBackgroundAssetPath = "Assets/DungeonEscape/Images/ui/menu2.png";
+        private const string ToolkitPreviewStyleResourcePath = "UI/title-menu-toolkit-preview";
 
         private static bool isOpen;
         private static bool useToolkitPreview;
@@ -71,6 +72,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private Texture2D rightArrowTexture;
         private UIDocument toolkitDocument;
         private VisualElement toolkitPreviewRoot;
+        private StyleSheet toolkitPreviewStyle;
 
         public static bool IsOpen
         {
@@ -563,7 +565,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     ShowMainMenu);
             }
 
-            ApplyToolkitPreviewChrome();
             toolkitPreviewRoot.style.display = DisplayStyle.Flex;
         }
 
@@ -591,21 +592,28 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             toolkitPreviewRoot = new VisualElement { name = "TitleMenuToolkitPreview" };
+            toolkitPreviewRoot.AddToClassList("title-menu-toolkit-preview");
+            toolkitPreviewRoot.pickingMode = PickingMode.Ignore;
+            ApplyToolkitPreviewStyleSheet(documentRoot);
             documentRoot.Add(toolkitPreviewRoot);
         }
 
-        private void ApplyToolkitPreviewChrome()
+        private void ApplyToolkitPreviewStyleSheet(VisualElement documentRoot)
         {
-            toolkitPreviewRoot.pickingMode = PickingMode.Ignore;
-            toolkitPreviewRoot.style.position = Position.Absolute;
-            toolkitPreviewRoot.style.right = 24;
-            toolkitPreviewRoot.style.top = 24;
-            toolkitPreviewRoot.style.width = 320;
-            toolkitPreviewRoot.style.paddingLeft = 12;
-            toolkitPreviewRoot.style.paddingRight = 12;
-            toolkitPreviewRoot.style.paddingTop = 12;
-            toolkitPreviewRoot.style.paddingBottom = 12;
-            toolkitPreviewRoot.style.backgroundColor = new StyleColor(new Color(0f, 0f, 0f, 0.72f));
+            if (documentRoot == null)
+            {
+                return;
+            }
+
+            if (toolkitPreviewStyle == null)
+            {
+                toolkitPreviewStyle = Resources.Load<StyleSheet>(ToolkitPreviewStyleResourcePath);
+            }
+
+            if (toolkitPreviewStyle != null && !documentRoot.styleSheets.Contains(toolkitPreviewStyle))
+            {
+                documentRoot.styleSheets.Add(toolkitPreviewStyle);
+            }
         }
 
         private void HideToolkitPreview()

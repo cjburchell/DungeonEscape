@@ -6,6 +6,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.UIElements;
 
 namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
 {
@@ -72,6 +73,34 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
 
             InvokePrivate(gameMenu, "Toggle", menuTab);
             Assert.That(GetStaticBool("Redpoint.DungeonEscape.Unity.UI.GameMenu", "IsOpen"), Is.False);
+        }
+
+        [UnityTest]
+        public IEnumerator TitleMenuToolkitPreviewCanBeEnabledWithoutReplacingImguiFlow()
+        {
+            SetStaticBool("Redpoint.DungeonEscape.Unity.UI.TitleMenu", "UseToolkitPreview", true);
+            try
+            {
+                yield return OpenTitleMenu();
+                yield return null;
+
+                var titleMenu = FindObject("Redpoint.DungeonEscape.Unity.UI.TitleMenu") as Component;
+                Assert.That(titleMenu, Is.Not.Null);
+                Assert.That(GetStaticBool("Redpoint.DungeonEscape.Unity.UI.TitleMenu", "IsOpen"), Is.True);
+                InvokePrivate(titleMenu, "DrawToolkitPreview");
+                yield return null;
+
+                var document = titleMenu.GetComponent<UIDocument>();
+                Assert.That(document, Is.Not.Null);
+                var preview = document.rootVisualElement.Q("TitleMenuToolkitPreview");
+                Assert.That(preview, Is.Not.Null);
+                Assert.That(preview.resolvedStyle.display, Is.EqualTo(DisplayStyle.Flex));
+                Assert.That(preview.Query<Button>().ToList().Count, Is.GreaterThan(0));
+            }
+            finally
+            {
+                SetStaticBool("Redpoint.DungeonEscape.Unity.UI.TitleMenu", "UseToolkitPreview", false);
+            }
         }
 
         private static IEnumerator StartNewGame()
@@ -168,6 +197,14 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
             var type = GetType(typeName);
             var property = type == null ? null : type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Static);
             return property != null && (bool)property.GetValue(null);
+        }
+
+        private static void SetStaticBool(string typeName, string propertyName, bool value)
+        {
+            var type = GetType(typeName);
+            var property = type == null ? null : type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Static);
+            Assert.That(property, Is.Not.Null, "Missing static property " + propertyName + " on " + typeName + ".");
+            property.SetValue(null, value);
         }
 
         private static object GetPropertyValue(object instance, string propertyName)

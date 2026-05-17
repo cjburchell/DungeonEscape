@@ -7,6 +7,25 @@
     background-color: rgba(0, 0, 0, 0.72);
 }
 
+.title-menu-toolkit-active {
+    position: absolute;
+    left: 50%;
+    top: 58%;
+    width: 280px;
+    translate: -140px 0;
+}
+
+.title-menu-toolkit-load-active {
+    position: absolute;
+    left: 50%;
+    top: 24%;
+    width: 640px;
+    max-width: 90%;
+    translate: -320px 0;
+    padding: 16px;
+    background-color: rgba(0, 0, 0, 0.72);
+}
+
 .title-menu__button,
 .title-menu__button--selected,
 .title-load-menu__load,
@@ -27,9 +46,15 @@
     flex-direction: row;
 }
 
+.title-load-menu__load,
+.title-load-menu__load--selected {
+    flex-grow: 1;
+}
+
 .title-load-menu__delete,
 .title-load-menu__delete--selected {
     margin-left: 8px;
+    width: 92px;
 }
 
 .title-menu__button--selected,

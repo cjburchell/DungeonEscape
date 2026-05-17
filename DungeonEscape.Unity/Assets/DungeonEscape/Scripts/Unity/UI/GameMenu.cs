@@ -7,6 +7,7 @@ using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.ViewModels;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 using Redpoint.DungeonEscape.Unity.Core;
 using Redpoint.DungeonEscape.Unity.Map;
@@ -59,10 +60,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private const float MaxUiScale = 3f;
         private const float InitialNavigationRepeatDelay = 0.35f;
         private const float NavigationRepeatDelay = 0.12f;
+        private const string ToolkitPreviewStyleResourcePath = "UI/game-menu-toolkit-preview";
 
         private static bool isOpen;
+        private static bool useToolkitPreview;
 
         private readonly GameMenuViewModel viewModel = new GameMenuViewModel();
+        [SerializeField] private bool showToolkitPreview;
         private GameState gameState;
         private MessageBox messageBox;
         private UiSettings uiSettings;
@@ -96,10 +100,20 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private bool uiAssetsPrewarmed;
         private bool pendingSettingsSave;
         private float pendingSettingsSaveTime;
+        private UIDocument toolkitDocument;
+        private VisualElement toolkitPreviewRoot;
+        private StyleSheet toolkitPreviewStyle;
+        private PanelSettings toolkitPanelSettings;
 
         public static bool IsOpen
         {
             get { return isOpen; }
+        }
+
+        public static bool UseToolkitPreview
+        {
+            get { return useToolkitPreview; }
+            set { useToolkitPreview = value; }
         }
 
         private MenuScreen currentScreen
@@ -299,6 +313,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 DrawLeftActionMenuOverlay(scale);
                 DrawMenuModalOverlay();
                 DrawRebindingOverlay();
+                DrawToolkitPreview();
                 GUI.depth = previousDepth;
                 return;
             }
@@ -331,6 +346,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.EndArea();
             DrawMenuModalOverlay();
             DrawRebindingOverlay();
+            DrawToolkitPreview();
             GUI.depth = previousDepth;
         }
 
@@ -364,6 +380,130 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void SetMenuGuiEnabled(bool enabled)
         {
             GUI.enabled = enabled && !menuControlsBlocked;
+        }
+
+        private void DrawToolkitPreview()
+        {
+            if (!ShouldShowToolkitPreview())
+            {
+                HideToolkitPreview();
+                return;
+            }
+
+            EnsureToolkitPreviewRoot();
+            if (toolkitPreviewRoot == null)
+            {
+                return;
+            }
+
+            if (IsMenuModalVisible())
+            {
+                GameMenuToolkitView.BuildModal(
+                    toolkitPreviewRoot,
+                    viewModel.ModalTitle,
+                    viewModel.ModalMessage,
+                    viewModel.ModalChoices,
+                    viewModel.ModalSelectedIndex,
+                    SelectMenuModalChoice);
+            }
+            else if (currentScreen == MenuScreen.Save || currentScreen == MenuScreen.Load)
+            {
+                var saves = gameState == null
+                    ? new List<GameSave>()
+                    : gameState.GetManualSaveSlots().ToList();
+                var includeNewSave = currentScreen == MenuScreen.Save;
+                GameMenuToolkitView.BuildSaveRows(
+                    toolkitPreviewRoot,
+                    viewModel.GetSaveSlotRows(saves, includeNewSave),
+                    selectedRowIndex,
+                    ShowSaveActionModal);
+            }
+            else
+            {
+                toolkitPreviewRoot.Clear();
+                toolkitPreviewRoot.Add(new Label(currentScreen + " preview"));
+            }
+
+            toolkitPreviewRoot.style.display = DisplayStyle.Flex;
+        }
+
+        private bool ShouldShowToolkitPreview()
+        {
+            return showToolkitPreview || useToolkitPreview;
+        }
+
+        private void EnsureToolkitPreviewRoot()
+        {
+            if (toolkitDocument == null)
+            {
+                toolkitDocument = GetComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>();
+            }
+
+            EnsureToolkitPanelSettings();
+
+            var documentRoot = toolkitDocument.rootVisualElement;
+            if (documentRoot == null)
+            {
+                return;
+            }
+
+            if (toolkitPreviewRoot != null && toolkitPreviewRoot.parent == documentRoot)
+            {
+                return;
+            }
+
+            toolkitPreviewRoot = new VisualElement { name = "GameMenuToolkitPreview" };
+            toolkitPreviewRoot.AddToClassList("game-menu-toolkit-preview");
+            toolkitPreviewRoot.pickingMode = PickingMode.Ignore;
+            ApplyToolkitPreviewStyleSheet(documentRoot);
+            documentRoot.Add(toolkitPreviewRoot);
+        }
+
+        private void ApplyToolkitPreviewStyleSheet(VisualElement documentRoot)
+        {
+            if (documentRoot == null)
+            {
+                return;
+            }
+
+            if (toolkitPreviewStyle == null)
+            {
+                toolkitPreviewStyle = Resources.Load<StyleSheet>(ToolkitPreviewStyleResourcePath);
+            }
+
+            if (toolkitPreviewStyle != null && !documentRoot.styleSheets.Contains(toolkitPreviewStyle))
+            {
+                documentRoot.styleSheets.Add(toolkitPreviewStyle);
+            }
+        }
+
+        private void EnsureToolkitPanelSettings()
+        {
+            if (toolkitDocument.panelSettings != null)
+            {
+                return;
+            }
+
+            if (toolkitPanelSettings == null)
+            {
+                toolkitPanelSettings = ScriptableObject.CreateInstance<PanelSettings>();
+                toolkitPanelSettings.name = "GameMenuToolkitPreviewPanelSettings";
+                toolkitPanelSettings.scaleMode = PanelScaleMode.ScaleWithScreenSize;
+                toolkitPanelSettings.referenceResolution = new Vector2Int(1920, 1080);
+                toolkitPanelSettings.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;
+                toolkitPanelSettings.match = 0.5f;
+                toolkitPanelSettings.sortingOrder = 5001;
+            }
+
+            toolkitDocument.panelSettings = toolkitPanelSettings;
+        }
+
+        private void HideToolkitPreview()
+        {
+            if (toolkitPreviewRoot != null)
+            {
+                toolkitPreviewRoot.style.display = DisplayStyle.None;
+            }
         }
 
         private static float GetMenuTop(float scale)
@@ -2099,6 +2239,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             DisplaySettings.Apply(settings);
             UiSettings.GetOrCreate().ApplySettings(settings);
             Audio.GetOrCreate().ApplySettings(settings);
+            ToolkitPreviewSettings.Apply(settings);
             lastThemeSignature = null;
             if (!refreshMap)
             {

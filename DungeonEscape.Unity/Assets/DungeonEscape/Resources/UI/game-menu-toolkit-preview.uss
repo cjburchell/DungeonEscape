@@ -1,0 +1,39 @@
+.game-menu-toolkit-preview {
+    position: absolute;
+    right: 24px;
+    top: 120px;
+    width: 360px;
+    padding: 12px;
+    background-color: rgba(0, 0, 0, 0.72);
+}
+
+.game-menu-save-list__row,
+.game-menu-save-list__row--selected,
+.game-menu-modal__choice,
+.game-menu-modal__choice--selected {
+    margin-bottom: 8px;
+    min-height: 34px;
+    white-space: normal;
+    -unity-text-align: middle-center;
+    color: white;
+    background-color: rgba(20, 20, 20, 0.92);
+}
+
+.game-menu-save-list__row--selected,
+.game-menu-modal__choice--selected {
+    color: black;
+    background-color: rgba(255, 242, 51, 0.95);
+}
+
+#GameMenuModalTitle {
+    font-size: 18px;
+    -unity-font-style: bold;
+    color: white;
+    margin-bottom: 8px;
+}
+
+#GameMenuModalMessage {
+    color: white;
+    white-space: normal;
+    margin-bottom: 12px;
+}

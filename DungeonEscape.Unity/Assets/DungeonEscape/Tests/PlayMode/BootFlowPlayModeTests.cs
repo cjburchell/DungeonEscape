@@ -14,6 +14,20 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
     {
         private const string BootSceneName = "Boot";
         private const float TimeoutSeconds = 10f;
+        private float _previousAudioVolume;
+
+        [SetUp]
+        public void MuteAudio()
+        {
+            _previousAudioVolume = AudioListener.volume;
+            AudioListener.volume = 0f;
+        }
+
+        [TearDown]
+        public void RestoreAudio()
+        {
+            AudioListener.volume = _previousAudioVolume;
+        }
 
         [UnityTest]
         public IEnumerator BootSceneCreatesRuntimeRoots()
@@ -78,10 +92,10 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
         [UnityTest]
         public IEnumerator TitleMenuToolkitPreviewCanBeEnabledWithoutReplacingImguiFlow()
         {
-            SetStaticBool("Redpoint.DungeonEscape.Unity.UI.TitleMenu", "UseToolkitPreview", true);
             try
             {
                 yield return OpenTitleMenu();
+                SetStaticBool("Redpoint.DungeonEscape.Unity.UI.TitleMenu", "UseToolkitPreview", true);
                 yield return null;
 
                 var titleMenu = FindObject("Redpoint.DungeonEscape.Unity.UI.TitleMenu") as Component;
@@ -100,6 +114,90 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
             finally
             {
                 SetStaticBool("Redpoint.DungeonEscape.Unity.UI.TitleMenu", "UseToolkitPreview", false);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator TitleMenuToolkitMainRendererCanBeEnabledForMainMenu()
+        {
+            SetStaticBool("Redpoint.DungeonEscape.Unity.UI.TitleMenu", "UseToolkitMainMenuRenderer", true);
+            try
+            {
+                yield return OpenTitleMenu();
+
+                var titleMenu = FindObject("Redpoint.DungeonEscape.Unity.UI.TitleMenu") as Component;
+                Assert.That(titleMenu, Is.Not.Null);
+                InvokePrivate(titleMenu, "DrawToolkitMainMenuRenderer");
+                yield return null;
+
+                var document = titleMenu.GetComponent<UIDocument>();
+                Assert.That(document, Is.Not.Null);
+                var root = document.rootVisualElement.Q("TitleMenuToolkitPreview");
+                Assert.That(root, Is.Not.Null);
+                Assert.That(root.ClassListContains("title-menu-toolkit-active"), Is.True);
+                Assert.That(root.pickingMode, Is.EqualTo(PickingMode.Position));
+                Assert.That(root.Query<Button>().ToList().Count, Is.GreaterThan(0));
+            }
+            finally
+            {
+                SetStaticBool("Redpoint.DungeonEscape.Unity.UI.TitleMenu", "UseToolkitMainMenuRenderer", false);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator TitleMenuToolkitLoadRendererCanBeEnabledForLoadMenu()
+        {
+            SetStaticBool("Redpoint.DungeonEscape.Unity.UI.TitleMenu", "UseToolkitLoadRenderer", true);
+            try
+            {
+                yield return OpenTitleMenu();
+
+                var titleMenu = FindObject("Redpoint.DungeonEscape.Unity.UI.TitleMenu") as Component;
+                Assert.That(titleMenu, Is.Not.Null);
+                InvokePrivate(titleMenu, "ShowLoadMenu");
+                InvokePrivate(titleMenu, "DrawToolkitLoadMenuRenderer");
+                yield return null;
+
+                var document = titleMenu.GetComponent<UIDocument>();
+                Assert.That(document, Is.Not.Null);
+                var root = document.rootVisualElement.Q("TitleMenuToolkitPreview");
+                Assert.That(root, Is.Not.Null);
+                Assert.That(root.ClassListContains("title-menu-toolkit-load-active"), Is.True);
+                Assert.That(root.pickingMode, Is.EqualTo(PickingMode.Position));
+                Assert.That(root.Query<Button>().ToList().Any(button => button.text == "Back"), Is.True);
+            }
+            finally
+            {
+                SetStaticBool("Redpoint.DungeonEscape.Unity.UI.TitleMenu", "UseToolkitLoadRenderer", false);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator GameMenuToolkitPreviewCanBeEnabledWithoutReplacingImguiFlow()
+        {
+            try
+            {
+                yield return LoadBootScene();
+                yield return StartNewGame();
+                SetStaticBool("Redpoint.DungeonEscape.Unity.UI.GameMenu", "UseToolkitPreview", true);
+
+                var gameMenu = FindObject("Redpoint.DungeonEscape.Unity.UI.GameMenu") as Component;
+                Assert.That(gameMenu, Is.Not.Null);
+                var menuTab = GetNestedEnumValue("Redpoint.DungeonEscape.Unity.UI.GameMenu", "MenuTab", "Party");
+                InvokePrivate(gameMenu, "Toggle", menuTab);
+                InvokePrivate(gameMenu, "DrawToolkitPreview");
+                yield return null;
+
+                Assert.That(GetStaticBool("Redpoint.DungeonEscape.Unity.UI.GameMenu", "IsOpen"), Is.True);
+                var document = gameMenu.GetComponent<UIDocument>();
+                Assert.That(document, Is.Not.Null);
+                var preview = document.rootVisualElement.Q("GameMenuToolkitPreview");
+                Assert.That(preview, Is.Not.Null);
+                Assert.That(preview.resolvedStyle.display, Is.EqualTo(DisplayStyle.Flex));
+            }
+            finally
+            {
+                SetStaticBool("Redpoint.DungeonEscape.Unity.UI.GameMenu", "UseToolkitPreview", false);
             }
         }
 

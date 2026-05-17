@@ -57,6 +57,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             DisplaySettings.Apply(Settings);
             UiSettings.GetOrCreate().ApplySettings(Settings);
             Audio.GetOrCreate().ApplySettings(Settings);
+            ToolkitPreviewSettings.Apply(Settings);
 
             if (Settings.SkipSplashAndLoadQuickSave)
             {

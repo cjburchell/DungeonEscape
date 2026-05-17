@@ -159,6 +159,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
             settings.AutoSaveIntervalSeconds = DrawSliderRow("Autosave Period: " + GetAutoSaveInterval(settings).ToString("0") + " seconds", GetAutoSaveInterval(settings), 5f, 300f);
             SetMenuGuiEnabled(true);
             EndSelectableRow();
+            GUILayout.Space(8f * GetPixelScale());
+            BeginSelectableRow();
+            settings.ShowToolkitPreviews = DrawCheckboxRow(settings.ShowToolkitPreviews, "UI Toolkit previews");
+            EndSelectableRow();
+            BeginSelectableRow();
+            settings.UseToolkitTitleLoadRenderer = DrawCheckboxRow(settings.UseToolkitTitleLoadRenderer, "Toolkit title load screen");
+            EndSelectableRow();
 
             ApplySettingsEffect(
                 viewModel.GetGeneralSettingsChangeEffect(
@@ -169,7 +176,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     settings.MusicVolume,
                     settings.SoundEffectsVolume,
                     settings.AutoSaveEnabled,
-                    settings.AutoSaveIntervalSeconds),
+                    settings.AutoSaveIntervalSeconds,
+                    settings.ShowToolkitPreviews,
+                    settings.UseToolkitTitleLoadRenderer),
                 settings,
                 0);
         }

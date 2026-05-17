@@ -7,6 +7,7 @@ using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Tools;
 using Redpoint.DungeonEscape.ViewModels;
 using UnityEngine;
+using UnityEngine.UIElements;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -34,8 +35,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private const string SecondaryMenuBackgroundAssetPath = "Assets/DungeonEscape/Images/ui/menu2.png";
 
         private static bool isOpen;
+        private static bool useToolkitPreview;
 
         private readonly TitleViewModel viewModel = new TitleViewModel();
+        [SerializeField] private bool showToolkitPreview;
         private GameState gameState;
         private UiSettings uiSettings;
         private UiTheme uiTheme;
@@ -66,10 +69,18 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private bool titleActionPending;
         private Texture2D leftArrowTexture;
         private Texture2D rightArrowTexture;
+        private UIDocument toolkitDocument;
+        private VisualElement toolkitPreviewRoot;
 
         public static bool IsOpen
         {
             get { return isOpen; }
+        }
+
+        public static bool UseToolkitPreview
+        {
+            get { return useToolkitPreview; }
+            set { useToolkitPreview = value; }
         }
 
         private TitleMode mode
@@ -266,11 +277,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 if (mode == TitleMode.Main)
                 {
                     DrawMainMenuStandalone(scale);
+                    DrawToolkitPreview();
                     return;
                 }
 
                 if (mode == TitleMode.Create)
                 {
+                    HideToolkitPreview();
                     DrawCreateMenuStandalone(scale);
                     DrawCreateDropdownOverlay();
                     return;
@@ -279,6 +292,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 if (mode == TitleMode.Load)
                 {
                     DrawLoadMenuStandalone(scale);
+                    DrawToolkitPreview();
                 }
             }
             finally
@@ -510,6 +524,95 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
                 GUILayout.EndHorizontal();
                 GUILayout.Space(8f * scale);
+            }
+        }
+
+        private void DrawToolkitPreview()
+        {
+            if (!ShouldShowToolkitPreview())
+            {
+                HideToolkitPreview();
+                return;
+            }
+
+            EnsureToolkitPreviewRoot();
+            if (toolkitPreviewRoot == null)
+            {
+                return;
+            }
+
+            if (mode == TitleMode.Main)
+            {
+                TitleMenuToolkitView.BuildMainMenu(
+                    toolkitPreviewRoot,
+                    GetMainRows(),
+                    selectedIndex,
+                    ActivateMainAction);
+            }
+            else if (mode == TitleMode.Load)
+            {
+                var slots = gameState == null
+                    ? new List<GameSave>()
+                    : gameState.GetManualSaveSlots().ToList();
+                TitleMenuToolkitView.BuildLoadMenu(
+                    toolkitPreviewRoot,
+                    viewModel.GetLoadSlotRows(slots, selectedIndex),
+                    viewModel.IsLoadBackSelected(slots.Count),
+                    TryLoadSlot,
+                    DeleteSlot,
+                    ShowMainMenu);
+            }
+
+            ApplyToolkitPreviewChrome();
+            toolkitPreviewRoot.style.display = DisplayStyle.Flex;
+        }
+
+        private bool ShouldShowToolkitPreview()
+        {
+            return showToolkitPreview || useToolkitPreview;
+        }
+
+        private void EnsureToolkitPreviewRoot()
+        {
+            if (toolkitDocument == null)
+            {
+                toolkitDocument = GetComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>();
+            }
+
+            var documentRoot = toolkitDocument.rootVisualElement;
+            if (documentRoot == null)
+            {
+                return;
+            }
+
+            if (toolkitPreviewRoot != null && toolkitPreviewRoot.parent == documentRoot)
+            {
+                return;
+            }
+
+            toolkitPreviewRoot = new VisualElement { name = "TitleMenuToolkitPreview" };
+            documentRoot.Add(toolkitPreviewRoot);
+        }
+
+        private void ApplyToolkitPreviewChrome()
+        {
+            toolkitPreviewRoot.pickingMode = PickingMode.Ignore;
+            toolkitPreviewRoot.style.position = Position.Absolute;
+            toolkitPreviewRoot.style.right = 24;
+            toolkitPreviewRoot.style.top = 24;
+            toolkitPreviewRoot.style.width = 320;
+            toolkitPreviewRoot.style.paddingLeft = 12;
+            toolkitPreviewRoot.style.paddingRight = 12;
+            toolkitPreviewRoot.style.paddingTop = 12;
+            toolkitPreviewRoot.style.paddingBottom = 12;
+            toolkitPreviewRoot.style.backgroundColor = new StyleColor(new Color(0f, 0f, 0f, 0.72f));
+        }
+
+        private void HideToolkitPreview()
+        {
+            if (toolkitPreviewRoot != null)
+            {
+                toolkitPreviewRoot.style.display = DisplayStyle.None;
             }
         }
 

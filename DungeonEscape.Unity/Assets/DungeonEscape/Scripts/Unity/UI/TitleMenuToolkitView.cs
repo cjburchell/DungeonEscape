@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Redpoint.DungeonEscape.ViewModels;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Redpoint.DungeonEscape.Unity.UI
@@ -35,6 +36,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 };
                 button.SetEnabled(row.Enabled);
                 button.AddToClassList(index == selectedIndex ? "title-menu__button--selected" : "title-menu__button");
+                ApplyButtonStyle(button, index == selectedIndex);
                 root.Add(button);
                 index++;
             }
@@ -71,6 +73,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     text = row.ButtonText
                 };
                 loadButton.AddToClassList(row.LoadSelected ? "title-load-menu__load--selected" : "title-load-menu__load");
+                ApplyButtonStyle(loadButton, row.LoadSelected);
 
                 var deleteButton = new Button(() =>
                 {
@@ -83,6 +86,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     text = row.DeleteButtonText
                 };
                 deleteButton.AddToClassList(row.DeleteSelected ? "title-load-menu__delete--selected" : "title-load-menu__delete");
+                ApplyButtonStyle(deleteButton, row.DeleteSelected);
+                deleteButton.style.marginLeft = 8;
 
                 rowElement.Add(loadButton);
                 rowElement.Add(deleteButton);
@@ -100,7 +105,20 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 text = "Back"
             };
             backButton.AddToClassList(backSelected ? "title-load-menu__back--selected" : "title-load-menu__back");
+            ApplyButtonStyle(backButton, backSelected);
             root.Add(backButton);
+        }
+
+        private static void ApplyButtonStyle(Button button, bool selected)
+        {
+            button.style.marginBottom = 8;
+            button.style.minHeight = 34;
+            button.style.whiteSpace = WhiteSpace.Normal;
+            button.style.unityTextAlign = TextAnchor.MiddleCenter;
+            button.style.color = selected ? new StyleColor(Color.black) : new StyleColor(Color.white);
+            button.style.backgroundColor = selected
+                ? new StyleColor(new Color(1f, 0.95f, 0.2f, 0.95f))
+                : new StyleColor(new Color(0.08f, 0.08f, 0.08f, 0.92f));
         }
     }
 }

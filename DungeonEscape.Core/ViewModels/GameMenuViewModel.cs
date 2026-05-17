@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Redpoint.DungeonEscape.Data;
+using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 
 namespace Redpoint.DungeonEscape.ViewModels
@@ -801,6 +802,79 @@ namespace Redpoint.DungeonEscape.ViewModels
             return Math.Max(0, manualSaveCount);
         }
 
+        public List<GameMenuSaveSlotRow> GetSaveSlotRows(IEnumerable<GameSave> saves, bool includeNewSave)
+        {
+            var rows = new List<GameMenuSaveSlotRow>();
+            if (saves != null)
+            {
+                var saveList = saves.ToList();
+                for (var i = 0; i < saveList.Count; i++)
+                {
+                    rows.Add(new GameMenuSaveSlotRow
+                    {
+                        SlotIndex = i,
+                        Title = GameSaveFormatter.GetTitle(saveList[i]),
+                        Summary = GameSaveFormatter.GetSummary(saveList[i])
+                    });
+                }
+            }
+
+            if (includeNewSave)
+            {
+                rows.Add(new GameMenuSaveSlotRow
+                {
+                    SlotIndex = rows.Count,
+                    Title = "New Save",
+                    Summary = "Save the current quest.",
+                    IsNewSave = true
+                });
+            }
+
+            return rows;
+        }
+
+        public GameMenuSaveModalData GetNewSaveModal()
+        {
+            return CreateSaveModal(
+                "New Save",
+                "Create a new manual save?",
+                new[] { "Save", "Cancel" },
+                new[] { GameMenuSaveAction.Save, GameMenuSaveAction.Cancel });
+        }
+
+        public GameMenuSaveModalData GetExistingSaveActionModal(GameSave save)
+        {
+            return CreateSaveModal(
+                GameSaveFormatter.GetTitle(save),
+                "Choose an action for this save.",
+                new[] { "Save Over", "Load", "Delete", "Cancel" },
+                new[]
+                {
+                    GameMenuSaveAction.SaveOver,
+                    GameMenuSaveAction.Load,
+                    GameMenuSaveAction.Delete,
+                    GameMenuSaveAction.Cancel
+                });
+        }
+
+        public GameMenuSaveModalData GetConfirmLoadModal()
+        {
+            return CreateSaveModal(
+                "Load",
+                "Load this quest? Unsaved progress will be lost.",
+                new[] { "Load", "Cancel" },
+                new[] { GameMenuSaveAction.Load, GameMenuSaveAction.Cancel });
+        }
+
+        public GameMenuSaveModalData GetConfirmDeleteModal()
+        {
+            return CreateSaveModal(
+                "Delete",
+                "Delete this quest?",
+                new[] { "Delete", "Cancel" },
+                new[] { GameMenuSaveAction.Delete, GameMenuSaveAction.Cancel });
+        }
+
         public void SetCurrentScreen(int value)
         {
             CurrentScreen = value;
@@ -911,6 +985,21 @@ namespace Redpoint.DungeonEscape.ViewModels
                 default:
                     return GameMenuUseAction.CannotUse;
             }
+        }
+
+        private static GameMenuSaveModalData CreateSaveModal(
+            string title,
+            string message,
+            IEnumerable<string> choices,
+            IEnumerable<GameMenuSaveAction> actions)
+        {
+            return new GameMenuSaveModalData
+            {
+                Title = title,
+                Message = message,
+                Choices = choices == null ? new List<string>() : choices.ToList(),
+                Actions = actions == null ? new List<GameMenuSaveAction>() : actions.ToList()
+            };
         }
     }
 }

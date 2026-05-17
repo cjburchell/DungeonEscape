@@ -208,6 +208,11 @@ namespace Redpoint.DungeonEscape.ViewModels
 
         public List<TitleLoadSlotRow> GetLoadSlotRows(IList<GameSave> slots)
         {
+            return GetLoadSlotRows(slots, SelectedIndex);
+        }
+
+        public List<TitleLoadSlotRow> GetLoadSlotRows(IList<GameSave> slots, int selectedIndex)
+        {
             var rows = new List<TitleLoadSlotRow>();
             if (slots == null)
             {
@@ -225,7 +230,10 @@ namespace Redpoint.DungeonEscape.ViewModels
                     DeleteIndex = GetLoadDeleteIndex(i),
                     Title = title,
                     Summary = summary,
-                    ButtonText = title + "\n" + summary
+                    ButtonText = title + "\n" + summary,
+                    DeleteButtonText = "Delete",
+                    LoadSelected = selectedIndex == GetLoadSaveIndex(i),
+                    DeleteSelected = selectedIndex == GetLoadDeleteIndex(i)
                 });
             }
 

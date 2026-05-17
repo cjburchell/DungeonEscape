@@ -89,6 +89,46 @@ namespace DungeonEscape.Core.Test.ViewModels
         }
 
         [Fact]
+        public void SaveSlotRowsIncludeExistingSavesAndNewSaveAction()
+        {
+            var viewModel = new GameMenuViewModel();
+            var save = CreateSave("Quest One");
+
+            var rows = viewModel.GetSaveSlotRows(new[] { save }, true);
+
+            Assert.Equal(2, rows.Count);
+            Assert.Equal(0, rows[0].SlotIndex);
+            Assert.Equal("Quest One", rows[0].Title);
+            Assert.Contains("Level 3", rows[0].Summary);
+            Assert.False(rows[0].IsNewSave);
+            Assert.Equal(1, rows[1].SlotIndex);
+            Assert.Equal("New Save", rows[1].Title);
+            Assert.True(rows[1].IsNewSave);
+        }
+
+        [Fact]
+        public void SaveModalsExposeChoicesAndActions()
+        {
+            var viewModel = new GameMenuViewModel();
+
+            var existing = viewModel.GetExistingSaveActionModal(CreateSave("Quest One"));
+            Assert.Equal("Quest One", existing.Title);
+            Assert.Equal(new[] { "Save Over", "Load", "Delete", "Cancel" }, existing.Choices);
+            Assert.Equal(GameMenuSaveAction.SaveOver, existing.GetAction(0));
+            Assert.Equal(GameMenuSaveAction.Load, existing.GetAction(1));
+            Assert.Equal(GameMenuSaveAction.Delete, existing.GetAction(2));
+            Assert.Equal(GameMenuSaveAction.Cancel, existing.GetAction(3));
+            Assert.Equal(GameMenuSaveAction.None, existing.GetAction(99));
+
+            var newSave = viewModel.GetNewSaveModal();
+            Assert.Equal(new[] { "Save", "Cancel" }, newSave.Choices);
+            Assert.Equal(GameMenuSaveAction.Save, newSave.GetAction(0));
+
+            Assert.Equal(GameMenuSaveAction.Load, viewModel.GetConfirmLoadModal().GetAction(0));
+            Assert.Equal(GameMenuSaveAction.Delete, viewModel.GetConfirmDeleteModal().GetAction(0));
+        }
+
+        [Fact]
         public void InventoryMembersActiveThenReserveByOrder()
         {
             var viewModel = new GameMenuViewModel();
@@ -460,6 +500,24 @@ namespace DungeonEscape.Core.Test.ViewModels
                 Slots = new List<Slot> { slot },
                 Classes = new List<Class> { Class.Hero }
             });
+        }
+
+        private static GameSave CreateSave(string playerName)
+        {
+            var save = new GameSave
+            {
+                Time = new System.DateTime(2026, 5, 14, 12, 0, 0),
+                Party = new Party
+                {
+                    PlayerName = playerName,
+                    CurrentMapId = "StartTown",
+                    CurrentPosition = WorldPosition.Zero,
+                    Gold = 42,
+                    StepCount = 7
+                }
+            };
+            save.Party.Members.Add(new Hero { Name = "Able", IsActive = true, Level = 3, Health = 10, MaxHealth = 10 });
+            return save;
         }
 
         private static ItemInstance CreateSkillItem(string name, SkillType skillType, Target target)

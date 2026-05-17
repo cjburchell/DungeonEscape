@@ -1814,45 +1814,39 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ConfirmLoadManual(int slotIndex)
         {
-            ShowMenuModal(
-                "Load",
-                "Load this quest? Unsaved progress will be lost.",
-                new[] { "Load", "Cancel" },
-                index =>
+            var modal = viewModel.GetConfirmLoadModal();
+            ShowMenuModal(modal.Title, modal.Message, modal.Choices, index =>
+            {
+                if (modal.GetAction(index) == GameMenuSaveAction.Load)
                 {
-                    if (index == 0)
+                    if (gameState != null && gameState.LoadManual(slotIndex))
                     {
-                        if (gameState != null && gameState.LoadManual(slotIndex))
-                        {
-                            isOpen = false;
-                        }
-                        else
-                        {
-                            ShowSaveMessage("Could not load quest.");
-                        }
+                        isOpen = false;
                     }
-                });
+                    else
+                    {
+                        ShowSaveMessage("Could not load quest.");
+                    }
+                }
+            });
         }
 
         private void ConfirmDeleteManual(int slotIndex)
         {
-            ShowMenuModal(
-                "Delete",
-                "Delete this quest?",
-                new[] { "Delete", "Cancel" },
-                index =>
+            var modal = viewModel.GetConfirmDeleteModal();
+            ShowMenuModal(modal.Title, modal.Message, modal.Choices, index =>
+            {
+                if (modal.GetAction(index) == GameMenuSaveAction.Delete)
                 {
-                    if (index == 0)
+                    var deleted = gameState != null && gameState.DeleteManual(slotIndex);
+                    if (deleted && gameState != null)
                     {
-                        var deleted = gameState != null && gameState.DeleteManual(slotIndex);
-                        if (deleted && gameState != null)
-                        {
-                viewModel.ClampSelectedRowIndex(gameState.GetManualSaveSlots().Count + 1);
-                        }
-
-                        ShowSaveMessage(deleted ? "Deleted quest." : "Could not delete quest.");
+                        viewModel.ClampSelectedRowIndex(gameState.GetManualSaveSlots().Count + 1);
                     }
-                });
+
+                    ShowSaveMessage(deleted ? "Deleted quest." : "Could not delete quest.");
+                }
+            });
         }
 
         private void ShowSaveActionModal(int rowIndex)
@@ -1865,40 +1859,34 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var saves = gameState.GetManualSaveSlots();
             if (rowIndex >= saves.Count)
             {
-                ShowMenuModal(
-                    "New Save",
-                    "Create a new manual save?",
-                    new[] { "Save", "Cancel" },
-                    index =>
+                var newSaveModal = viewModel.GetNewSaveModal();
+                ShowMenuModal(newSaveModal.Title, newSaveModal.Message, newSaveModal.Choices, index =>
+                {
+                    if (newSaveModal.GetAction(index) == GameMenuSaveAction.Save)
                     {
-                        if (index == 0)
-                        {
-                            SaveManual(rowIndex);
-                        }
-                    });
+                        SaveManual(rowIndex);
+                    }
+                });
                 return;
             }
 
             var save = saves[rowIndex];
-            ShowMenuModal(
-                GetSaveTitle(save),
-                "Choose an action for this save.",
-                new[] { "Save Over", "Load", "Delete", "Cancel" },
-                index =>
+            var modal = viewModel.GetExistingSaveActionModal(save);
+            ShowMenuModal(modal.Title, modal.Message, modal.Choices, index =>
+            {
+                switch (modal.GetAction(index))
                 {
-                    switch (index)
-                    {
-                        case 0:
-                            ConfirmSaveManual(rowIndex, save);
-                            break;
-                        case 1:
-                            ConfirmLoadManual(rowIndex);
-                            break;
-                        case 2:
-                            ConfirmDeleteManual(rowIndex);
-                            break;
-                    }
-                });
+                    case GameMenuSaveAction.SaveOver:
+                        ConfirmSaveManual(rowIndex, save);
+                        break;
+                    case GameMenuSaveAction.Load:
+                        ConfirmLoadManual(rowIndex);
+                        break;
+                    case GameMenuSaveAction.Delete:
+                        ConfirmDeleteManual(rowIndex);
+                        break;
+                }
+            });
         }
 
         private void ConfirmReturnToMainMenu()
@@ -1935,11 +1923,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void ShowSaveMessage(string message)
         {
             ShowMenuModal("Save", string.IsNullOrEmpty(message) ? "Done." : message, null, null);
-        }
-
-        private static string GetSaveTitle(GameSave save)
-        {
-            return GameSaveFormatter.GetTitle(save);
         }
 
         private static bool IsUsableSave(GameSave save)

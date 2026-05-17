@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
+using Redpoint.DungeonEscape.ViewModels;
 using UnityEngine;
 
 namespace Redpoint.DungeonEscape.Unity.UI
@@ -29,25 +29,20 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     return;
                 }
 
-                var saves = Menu.gameState.GetManualSaveSlots();
-                Menu.viewModel.ClampSelectedRowIndex(saves.Count + 1);
+                var rows = Menu.viewModel.GetSaveSlotRows(Menu.gameState.GetManualSaveSlots(), true);
+                Menu.viewModel.ClampSelectedRowIndex(rows.Count);
 
                 GUILayout.BeginVertical();
                 Menu.saveScrollPosition = Menu.BeginThemedScroll(
                     Menu.saveScrollPosition,
                     Mathf.Max(120f * Menu.GetPixelScale(), Menu.menuBodyHeight));
-                for (var i = 0; i < saves.Count; i++)
+                for (var i = 0; i < rows.Count; i++)
                 {
                     Menu.BeginSelectableRow();
-                    DrawSaveRow(saves[i]);
+                    DrawSaveRow(rows[i]);
                     EndSelectableRow();
                     Menu.SelectSaveRowOnMouseClick(i);
                 }
-
-                Menu.BeginSelectableRow();
-                DrawNewSaveRow();
-                EndSelectableRow();
-                Menu.SelectSaveRowOnMouseClick(saves.Count);
 
                 EndThemedScroll();
                 GUILayout.EndVertical();
@@ -58,19 +53,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 Menu.ActivateSelectedSaveSlot();
             }
 
-            private void DrawSaveRow(GameSave save)
+            private void DrawSaveRow(GameMenuSaveSlotRow row)
             {
                 GUILayout.BeginVertical();
-                GUILayout.Label(GameSaveFormatter.GetTitle(save), Menu.labelStyle);
-                GUILayout.Label(GameSaveFormatter.GetSummary(save), Menu.smallStyle);
-                GUILayout.EndVertical();
-            }
-
-            private void DrawNewSaveRow()
-            {
-                GUILayout.BeginVertical();
-                GUILayout.Label("New Save", Menu.labelStyle);
-                GUILayout.Label("Save the current quest.", Menu.smallStyle);
+                GUILayout.Label(row.Title, Menu.labelStyle);
+                GUILayout.Label(row.Summary, Menu.smallStyle);
                 GUILayout.EndVertical();
             }
         }
@@ -96,9 +83,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     return;
                 }
 
-                var saves = Menu.gameState.GetManualSaveSlots();
-                Menu.viewModel.ClampSelectedRowIndex(saves.Count);
-                if (saves.Count == 0)
+                var rows = Menu.viewModel.GetSaveSlotRows(Menu.gameState.GetManualSaveSlots(), false);
+                Menu.viewModel.ClampSelectedRowIndex(rows.Count);
+                if (rows.Count == 0)
                 {
                     GUILayout.Label("No saves.", Menu.labelStyle);
                     return;
@@ -107,10 +94,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 Menu.saveScrollPosition = Menu.BeginThemedScroll(
                     Menu.saveScrollPosition,
                     Mathf.Max(120f * Menu.GetPixelScale(), Menu.menuBodyHeight));
-                for (var i = 0; i < saves.Count; i++)
+                for (var i = 0; i < rows.Count; i++)
                 {
                     Menu.BeginSelectableRow();
-                    DrawSaveRow(saves[i]);
+                    DrawSaveRow(rows[i]);
                     EndSelectableRow();
                     Menu.SelectRowOnMouseClick(i);
                 }
@@ -123,17 +110,18 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 var saves = Menu.gameState == null
                     ? new List<GameSave>()
                     : Menu.gameState.GetManualSaveSlots().ToList();
-                if (Menu.selectedRowIndex >= 0 && Menu.selectedRowIndex < saves.Count)
+                var rows = Menu.viewModel.GetSaveSlotRows(saves, false);
+                if (Menu.selectedRowIndex >= 0 && Menu.selectedRowIndex < rows.Count)
                 {
-                    Menu.ConfirmLoadManual(Menu.selectedRowIndex);
+                    Menu.ConfirmLoadManual(rows[Menu.selectedRowIndex].SlotIndex);
                 }
             }
 
-            private void DrawSaveRow(GameSave save)
+            private void DrawSaveRow(GameMenuSaveSlotRow row)
             {
                 GUILayout.BeginVertical();
-                GUILayout.Label(GameSaveFormatter.GetTitle(save), Menu.labelStyle);
-                GUILayout.Label(GameSaveFormatter.GetSummary(save), Menu.smallStyle);
+                GUILayout.Label(row.Title, Menu.labelStyle);
+                GUILayout.Label(row.Summary, Menu.smallStyle);
                 GUILayout.EndVertical();
             }
         }

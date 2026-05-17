@@ -120,6 +120,27 @@ namespace DungeonEscape.Core.Test.ViewModels
             Assert.Equal("Quest One", row.Title);
             Assert.Contains("Level 3", row.Summary);
             Assert.Equal(row.Title + "\n" + row.Summary, row.ButtonText);
+            Assert.Equal("Delete", row.DeleteButtonText);
+        }
+
+        [Fact]
+        public void LoadSlotRowsMarkSelectedLoadAndDeleteButtons()
+        {
+            var viewModel = new TitleViewModel();
+            var slots = new List<GameSave>
+            {
+                new GameSave { Party = new Party { PlayerName = "Quest One" } },
+                new GameSave { Party = new Party { PlayerName = "Quest Two" } }
+            };
+
+            var loadRows = viewModel.GetLoadSlotRows(slots, TitleViewModel.GetLoadSaveIndex(1));
+            Assert.False(loadRows[0].LoadSelected);
+            Assert.True(loadRows[1].LoadSelected);
+            Assert.False(loadRows[1].DeleteSelected);
+
+            var deleteRows = viewModel.GetLoadSlotRows(slots, TitleViewModel.GetLoadDeleteIndex(0));
+            Assert.True(deleteRows[0].DeleteSelected);
+            Assert.False(deleteRows[0].LoadSelected);
         }
 
         [Fact]

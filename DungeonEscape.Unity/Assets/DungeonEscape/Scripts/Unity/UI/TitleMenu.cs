@@ -484,14 +484,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawLoadSlotButtons(IList<GameSave> slots, float scale)
         {
-            var rows = viewModel.GetLoadSlotRows(slots);
+            var rows = viewModel.GetLoadSlotRows(slots, selectedIndex);
             for (var i = 0; i < rows.Count; i++)
             {
                 var row = rows[i];
                 GUILayout.BeginHorizontal();
                 if (UiControls.Button(
                     row.ButtonText,
-                    selectedIndex == row.LoadIndex,
+                    row.LoadSelected,
                     uiTheme,
                     GUILayout.Height(48f * scale),
                     GUILayout.Width(500f * scale)) &&
@@ -501,7 +501,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     TryLoadSlot(row.SlotIndex);
                 }
 
-                if (UiControls.Button("Delete", selectedIndex == row.DeleteIndex, uiTheme, GUILayout.Height(48f * scale), GUILayout.Width(92f * scale)) &&
+                if (UiControls.Button(row.DeleteButtonText, row.DeleteSelected, uiTheme, GUILayout.Height(48f * scale), GUILayout.Width(92f * scale)) &&
                     !waitingForConfirmRelease)
                 {
                     selectedIndex = row.DeleteIndex;

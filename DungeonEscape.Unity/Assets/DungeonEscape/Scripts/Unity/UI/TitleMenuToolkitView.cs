@@ -219,6 +219,47 @@ namespace Redpoint.DungeonEscape.Unity.UI
             button.style.paddingLeft = 8;
             button.style.paddingRight = 8;
             button.style.width = Length.Percent(100);
+            RegisterButtonPointerFeedback(button, selected);
+        }
+
+        private static void RegisterButtonPointerFeedback(Button button, bool selected)
+        {
+            if (button == null)
+            {
+                return;
+            }
+
+            button.RegisterCallback<PointerEnterEvent>(_ => ApplyButtonInteractionStyle(button, selected, true, false));
+            button.RegisterCallback<PointerLeaveEvent>(_ => ApplyButtonInteractionStyle(button, selected, false, false));
+            button.RegisterCallback<PointerDownEvent>(_ => ApplyButtonInteractionStyle(button, selected, true, true));
+            button.RegisterCallback<PointerUpEvent>(_ => ApplyButtonInteractionStyle(button, selected, true, false));
+        }
+
+        private static void ApplyButtonInteractionStyle(Button button, bool selected, bool hovered, bool pressed)
+        {
+            if (button == null)
+            {
+                return;
+            }
+
+            if (pressed)
+            {
+                button.style.backgroundColor = new Color(1f, 0.82f, 0.08f, 1f);
+            }
+            else if (hovered)
+            {
+                button.style.backgroundColor = selected
+                    ? new Color(1f, 0.95f, 0.2f, 1f)
+                    : new Color(0.22f, 0.22f, 0.22f, 0.96f);
+            }
+            else
+            {
+                button.style.backgroundColor = selected
+                    ? new Color(1f, 0.95f, 0.2f, 0.95f)
+                    : new Color(0.08f, 0.08f, 0.08f, 0.92f);
+            }
+
+            button.style.borderBottomWidth = pressed ? 1 : 0;
         }
 
         private static void ApplyMainMenuLayout(VisualElement menu, int rowCount)
@@ -317,6 +358,30 @@ namespace Redpoint.DungeonEscape.Unity.UI
             field.AddToClassList(nameSelected ? "title-create-menu__name--selected" : "title-create-menu__name");
             field.style.width = 136;
             field.style.height = 34;
+            field.style.backgroundColor = nameSelected
+                ? new Color(1f, 0.95f, 0.2f, 0.95f)
+                : new Color(0.08f, 0.08f, 0.08f, 0.92f);
+            field.style.color = nameSelected ? Color.black : Color.white;
+            field.RegisterCallback<PointerDownEvent>(_ =>
+            {
+                field.Focus();
+                if (onNameFocusChanged != null)
+                {
+                    onNameFocusChanged(true);
+                }
+            });
+            field.RegisterCallback<PointerEnterEvent>(_ =>
+            {
+                field.style.backgroundColor = nameSelected
+                    ? new Color(1f, 0.95f, 0.2f, 1f)
+                    : new Color(0.22f, 0.22f, 0.22f, 0.96f);
+            });
+            field.RegisterCallback<PointerLeaveEvent>(_ =>
+            {
+                field.style.backgroundColor = nameSelected
+                    ? new Color(1f, 0.95f, 0.2f, 0.95f)
+                    : new Color(0.08f, 0.08f, 0.08f, 0.92f);
+            });
             field.RegisterValueChangedCallback(evt =>
             {
                 if (onNameChanged != null)

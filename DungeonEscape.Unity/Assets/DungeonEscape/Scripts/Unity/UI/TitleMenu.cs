@@ -252,9 +252,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (IsCreateNameTextFocused())
             {
+                if (toolkitCreateNameFocused)
+                {
+                    HandleToolkitCreateNameInput();
+                }
+
                 if (InputManager.GetCommandDown(InputCommand.Cancel))
                 {
                     GUI.FocusControl(null);
+                    toolkitCreateNameFocused = false;
+                    focusToolkitCreateNameNextFrame = false;
                     ResetNavigationRepeat();
                 }
 
@@ -712,7 +719,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
                         createPlayerName = value;
                         UpdateCreatePreviewHeroIdentity();
                     },
-                    focused => { toolkitCreateNameFocused = focused; },
+                    focused =>
+                    {
+                        toolkitCreateNameFocused = focused;
+                        if (focused)
+                        {
+                            selectedIndex = CreateNameIndex;
+                        }
+                    },
                     () =>
                     {
                         selectedIndex = CreateGenerateNameIndex;
@@ -986,9 +1000,74 @@ namespace Redpoint.DungeonEscape.Unity.UI
             if (field != null)
             {
                 field.Focus();
+                toolkitCreateNameFocused = true;
             }
 
             focusToolkitCreateNameNextFrame = false;
+        }
+
+        private void HandleToolkitCreateNameInput()
+        {
+            var field = toolkitPreviewRoot == null ? null : toolkitPreviewRoot.Q<TextField>("TitleMenuToolkitCreateName");
+            if (field != null && !string.Equals(field.value, createPlayerName ?? string.Empty, StringComparison.Ordinal))
+            {
+                createPlayerName = field.value == null
+                    ? string.Empty
+                    : field.value.Length > 24 ? field.value.Substring(0, 24) : field.value;
+                UpdateCreatePreviewHeroIdentity();
+                field.SetValueWithoutNotify(createPlayerName);
+                return;
+            }
+
+            var nextName = createPlayerName ?? string.Empty;
+            if (Input.GetKeyDown(KeyCode.Backspace))
+            {
+                if (nextName.Length > 0)
+                {
+                    nextName = nextName.Substring(0, nextName.Length - 1);
+                }
+            }
+            else if (Input.GetKeyDown(KeyCode.Delete))
+            {
+                nextName = string.Empty;
+            }
+
+            var input = Input.inputString;
+            if (!string.IsNullOrEmpty(input))
+            {
+                for (var i = 0; i < input.Length; i++)
+                {
+                    var character = input[i];
+                    if (character == '\b' || character == '\n' || character == '\r')
+                    {
+                        continue;
+                    }
+
+                    if (!char.IsControl(character) && nextName.Length < 24)
+                    {
+                        nextName += character;
+                    }
+                }
+            }
+
+            if (!string.Equals(nextName, createPlayerName, StringComparison.Ordinal))
+            {
+                createPlayerName = nextName;
+                UpdateCreatePreviewHeroIdentity();
+                if (field != null)
+                {
+                    field.SetValueWithoutNotify(createPlayerName);
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                toolkitCreateNameFocused = false;
+                if (field != null)
+                {
+                    field.Blur();
+                }
+            }
         }
 
         private void DrawCreateMenuStandalone(float scale)

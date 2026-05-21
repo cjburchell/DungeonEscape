@@ -4,10 +4,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
     {
         public static void Apply(Settings settings)
         {
-            var showPreviews = settings != null && settings.ShowToolkitPreviews;
-            TitleMenu.UseToolkitPreview = showPreviews;
-            GameMenu.UseToolkitPreview = showPreviews;
-            TitleMenu.UseToolkitLoadRenderer = settings != null && settings.UseToolkitTitleLoadRenderer;
+            TitleMenu.UseToolkitPreview = false;
+            GameMenu.UseToolkitPreview = false;
+            TitleMenu.UseToolkitMainMenuRenderer = true;
+            TitleMenu.UseToolkitLoadRenderer = true;
+            TitleMenu.UseToolkitCreateRenderer = true;
+            GameMenu.UseToolkitModalRenderer = true;
         }
     }
 }

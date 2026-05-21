@@ -115,7 +115,7 @@ namespace Redpoint.DungeonEscape.ViewModels
             switch (settingsTab)
             {
                 case SettingsGeneral:
-                    return 10;
+                    return 8;
                 case SettingsUi:
                     return 9;
                 case SettingsInput:
@@ -569,18 +569,6 @@ namespace Redpoint.DungeonEscape.ViewModels
                 return GameMenuSettingsEffect.ApplySettings;
             }
 
-            if (settingsTab == SettingsGeneral && settingsRowIndex == 7)
-            {
-                settings.ShowToolkitPreviews = !settings.ShowToolkitPreviews;
-                return GameMenuSettingsEffect.ApplySettings;
-            }
-
-            if (settingsTab == SettingsGeneral && settingsRowIndex == 8)
-            {
-                settings.UseToolkitTitleLoadRenderer = !settings.UseToolkitTitleLoadRenderer;
-                return GameMenuSettingsEffect.ApplySettings;
-            }
-
             if (settingsTab == SettingsDebug)
             {
                 if (settingsRowIndex == 0)
@@ -600,6 +588,7 @@ namespace Redpoint.DungeonEscape.ViewModels
                     settings.NoMonsters = !settings.NoMonsters;
                     return GameMenuSettingsEffect.ApplySettings;
                 }
+
             }
 
             if (settingsTab == SettingsInput)
@@ -621,9 +610,7 @@ namespace Redpoint.DungeonEscape.ViewModels
             float musicVolume,
             float soundEffectsVolume,
             bool autoSaveEnabled,
-            float autoSaveIntervalSeconds,
-            bool showToolkitPreviews,
-            bool useToolkitTitleLoadRenderer)
+            float autoSaveIntervalSeconds)
         {
             if (oldSettings == null)
             {
@@ -638,9 +625,7 @@ namespace Redpoint.DungeonEscape.ViewModels
                 !NearlyEqual(oldSettings.DialogTextCharactersPerSecond, dialogTextCharactersPerSecond) ||
                 oldSettings.IsFullScreen != isFullScreen ||
                 oldSettings.AutoSaveEnabled != autoSaveEnabled ||
-                !NearlyEqual(oldSettings.AutoSaveIntervalSeconds, autoSaveIntervalSeconds) ||
-                oldSettings.ShowToolkitPreviews != showToolkitPreviews ||
-                oldSettings.UseToolkitTitleLoadRenderer != useToolkitTitleLoadRenderer;
+                !NearlyEqual(oldSettings.AutoSaveIntervalSeconds, autoSaveIntervalSeconds);
 
             return otherChanged
                 ? GameMenuSettingsEffect.ApplySettings
@@ -668,8 +653,6 @@ namespace Redpoint.DungeonEscape.ViewModels
                 TurnMoveDelaySeconds = settings.TurnMoveDelaySeconds,
                 AutoSaveEnabled = settings.AutoSaveEnabled,
                 AutoSaveIntervalSeconds = settings.AutoSaveIntervalSeconds,
-                ShowToolkitPreviews = settings.ShowToolkitPreviews,
-                UseToolkitTitleLoadRenderer = settings.UseToolkitTitleLoadRenderer,
                 ShowHiddenObjects = settings.ShowHiddenObjects,
                 UiBackgroundColor = settings.UiBackgroundColor,
                 UiBackgroundAlpha = settings.UiBackgroundAlpha,
@@ -1019,5 +1002,6 @@ namespace Redpoint.DungeonEscape.ViewModels
                 Actions = actions == null ? new List<GameMenuSaveAction>() : actions.ToList()
             };
         }
+
     }
 }

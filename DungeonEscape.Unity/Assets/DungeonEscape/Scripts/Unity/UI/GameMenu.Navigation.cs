@@ -86,6 +86,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             isOpen = false;
+            HideToolkitPreview();
         }
 
         private void BlockMenuInteractUntilRelease()

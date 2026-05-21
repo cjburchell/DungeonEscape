@@ -19,7 +19,7 @@ namespace Redpoint.DungeonEscape.Unity.Tests.EditMode
             GetToolkitMethod("BuildSaveRows").Invoke(null, new object[] { root, rows, 1, null });
 
             var buttons = root.Query<Button>().ToList();
-            Assert.That(buttons.Select(button => button.text).ToArray(), Is.EqualTo(new[] { "Quest One\nLevel 3", "New Save\nSave the current quest." }));
+            Assert.That(buttons.Select(GetButtonLabelText).ToArray(), Is.EqualTo(new[] { "Quest One\nLevel 3", "New Save\nSave the current quest." }));
             Assert.That(buttons[0].ClassListContains("game-menu-save-list__row"), Is.True);
             Assert.That(buttons[1].ClassListContains("game-menu-save-list__row--selected"), Is.True);
         }
@@ -34,9 +34,14 @@ namespace Redpoint.DungeonEscape.Unity.Tests.EditMode
             Assert.That(root.Q<Label>("GameMenuModalTitle").text, Is.EqualTo("Save"));
             Assert.That(root.Q<Label>("GameMenuModalMessage").text, Is.EqualTo("Choose an action."));
             var buttons = root.Query<Button>().ToList();
-            Assert.That(buttons.Select(button => button.text).ToArray(), Is.EqualTo(new[] { "Save", "Cancel" }));
+            Assert.That(buttons.Select(GetButtonLabelText).ToArray(), Is.EqualTo(new[] { "Save", "Cancel" }));
             Assert.That(buttons[0].ClassListContains("game-menu-modal__choice--selected"), Is.True);
             Assert.That(buttons[1].ClassListContains("game-menu-modal__choice"), Is.True);
+        }
+
+        private static string GetButtonLabelText(Button button)
+        {
+            return button.Q<Label>().text;
         }
 
         private static System.Reflection.MethodInfo GetToolkitMethod(string methodName)

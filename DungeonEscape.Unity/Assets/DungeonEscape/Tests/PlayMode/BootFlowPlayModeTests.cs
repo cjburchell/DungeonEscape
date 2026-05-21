@@ -137,6 +137,12 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
                 Assert.That(root.ClassListContains("title-menu-toolkit-active"), Is.True);
                 Assert.That(root.pickingMode, Is.EqualTo(PickingMode.Position));
                 Assert.That(root.Query<Button>().ToList().Count, Is.GreaterThan(0));
+                Assert.That(root.style.width.value.value, Is.GreaterThan(0f));
+                Assert.That(root.style.height.value.value, Is.GreaterThan(0f));
+                var menuItems = root.Q("TitleMenuToolkitMainItems");
+                Assert.That(menuItems, Is.Not.Null);
+                Assert.That(menuItems.style.width.value.value, Is.GreaterThan(0f));
+                Assert.That(menuItems.style.height.value.value, Is.GreaterThan(0f));
             }
             finally
             {
@@ -164,7 +170,13 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
                 Assert.That(root, Is.Not.Null);
                 Assert.That(root.ClassListContains("title-menu-toolkit-load-active"), Is.True);
                 Assert.That(root.pickingMode, Is.EqualTo(PickingMode.Position));
-                Assert.That(root.Query<Button>().ToList().Any(button => button.text == "Back"), Is.True);
+                Assert.That(root.Query<Button>().ToList().Any(button => GetButtonLabelText(button) == "Back"), Is.True);
+                Assert.That(root.style.width.value.value, Is.GreaterThan(0f));
+                Assert.That(root.style.height.value.value, Is.GreaterThan(0f));
+                var loadPanel = root.Q("TitleMenuToolkitLoadPanel");
+                Assert.That(loadPanel, Is.Not.Null);
+                Assert.That(loadPanel.style.width.value.value, Is.GreaterThan(0f));
+                Assert.That(loadPanel.style.height.value.value, Is.GreaterThan(0f));
             }
             finally
             {
@@ -173,7 +185,41 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
         }
 
         [UnityTest]
-        public IEnumerator GameMenuToolkitPreviewCanBeEnabledWithoutReplacingImguiFlow()
+        public IEnumerator TitleMenuToolkitCreateRendererCanBeEnabledForNewQuest()
+        {
+            SetStaticBool("Redpoint.DungeonEscape.Unity.UI.TitleMenu", "UseToolkitCreateRenderer", true);
+            try
+            {
+                yield return OpenTitleMenu();
+
+                var titleMenu = FindObject("Redpoint.DungeonEscape.Unity.UI.TitleMenu") as Component;
+                Assert.That(titleMenu, Is.Not.Null);
+                InvokePrivate(titleMenu, "ShowCreateMenu");
+                InvokePrivate(titleMenu, "DrawToolkitCreateMenuRenderer");
+                yield return null;
+
+                var document = titleMenu.GetComponent<UIDocument>();
+                Assert.That(document, Is.Not.Null);
+                var root = document.rootVisualElement.Q("TitleMenuToolkitPreview");
+                Assert.That(root, Is.Not.Null);
+                Assert.That(root.ClassListContains("title-menu-toolkit-active"), Is.True);
+                Assert.That(root.pickingMode, Is.EqualTo(PickingMode.Position));
+                Assert.That(root.style.width.value.value, Is.GreaterThan(0f));
+                Assert.That(root.style.height.value.value, Is.GreaterThan(0f));
+                var createPanel = root.Q("TitleMenuToolkitCreatePanel");
+                Assert.That(createPanel, Is.Not.Null);
+                Assert.That(createPanel.style.width.value.value, Is.GreaterThan(0f));
+                Assert.That(createPanel.style.height.value.value, Is.GreaterThan(0f));
+                Assert.That(root.Query<Button>().ToList().Any(button => GetButtonLabelText(button) == "Start"), Is.True);
+            }
+            finally
+            {
+                SetStaticBool("Redpoint.DungeonEscape.Unity.UI.TitleMenu", "UseToolkitCreateRenderer", false);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator GameMenuToolkitPreviewDoesNotRenderPlaceholderForMainMenu()
         {
             try
             {
@@ -193,11 +239,48 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
                 Assert.That(document, Is.Not.Null);
                 var preview = document.rootVisualElement.Q("GameMenuToolkitPreview");
                 Assert.That(preview, Is.Not.Null);
-                Assert.That(preview.resolvedStyle.display, Is.EqualTo(DisplayStyle.Flex));
+                Assert.That(preview.resolvedStyle.display, Is.EqualTo(DisplayStyle.None));
             }
             finally
             {
                 SetStaticBool("Redpoint.DungeonEscape.Unity.UI.GameMenu", "UseToolkitPreview", false);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator GameMenuToolkitModalRendererCanBeEnabledForMenuModal()
+        {
+            try
+            {
+                yield return LoadBootScene();
+                yield return StartNewGame();
+                SetStaticBool("Redpoint.DungeonEscape.Unity.UI.GameMenu", "UseToolkitModalRenderer", true);
+
+                var gameMenu = FindObject("Redpoint.DungeonEscape.Unity.UI.GameMenu") as Component;
+                Assert.That(gameMenu, Is.Not.Null);
+                var viewModel = GetFieldValue(gameMenu, "viewModel");
+                InvokePublic(
+                    viewModel,
+                    "ShowModal",
+                    "Confirm",
+                    "Use the selected item?",
+                    new[] { "Use", "Cancel" },
+                    null,
+                    false);
+                InvokePrivate(gameMenu, "DrawToolkitMenuModalOverlay");
+                yield return null;
+
+                var document = gameMenu.GetComponent<UIDocument>();
+                Assert.That(document, Is.Not.Null);
+                var root = document.rootVisualElement.Q("GameMenuToolkitPreview");
+                Assert.That(root, Is.Not.Null);
+                Assert.That(root.ClassListContains("game-menu-toolkit-modal-active"), Is.True);
+                Assert.That(root.pickingMode, Is.EqualTo(PickingMode.Position));
+                Assert.That(root.Query<Button>().ToList().Select(GetButtonLabelText).ToArray(), Is.EqualTo(new[] { "Use", "Cancel" }));
+            }
+            finally
+            {
+                SetStaticBool("Redpoint.DungeonEscape.Unity.UI.GameMenu", "UseToolkitModalRenderer", false);
             }
         }
 
@@ -313,6 +396,14 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
             return property.GetValue(instance);
         }
 
+        private static object GetFieldValue(object instance, string fieldName)
+        {
+            Assert.That(instance, Is.Not.Null);
+            var field = instance.GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+            Assert.That(field, Is.Not.Null, "Missing field " + fieldName + " on " + instance.GetType().FullName + ".");
+            return field.GetValue(instance);
+        }
+
         private static object GetNestedEnumValue(string typeName, string enumName, string valueName)
         {
             var ownerType = GetType(typeName);
@@ -322,10 +413,24 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
             return Enum.Parse(enumType, valueName);
         }
 
+        private static string GetButtonLabelText(Button button)
+        {
+            var label = button == null ? null : button.Q<Label>();
+            return label == null ? string.Empty : label.text;
+        }
+
         private static void InvokePrivate(object instance, string methodName, params object[] arguments)
         {
             Assert.That(instance, Is.Not.Null);
             var method = instance.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
+            Assert.That(method, Is.Not.Null, "Missing method " + methodName + " on " + instance.GetType().FullName + ".");
+            method.Invoke(instance, arguments);
+        }
+
+        private static void InvokePublic(object instance, string methodName, params object[] arguments)
+        {
+            Assert.That(instance, Is.Not.Null);
+            var method = instance.GetType().GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance);
             Assert.That(method, Is.Not.Null, "Missing method " + methodName + " on " + instance.GetType().FullName + ".");
             method.Invoke(instance, arguments);
         }

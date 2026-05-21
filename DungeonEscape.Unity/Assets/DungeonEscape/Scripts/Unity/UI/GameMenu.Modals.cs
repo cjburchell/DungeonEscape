@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Unity.Core;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Redpoint.DungeonEscape.Unity.UI
 {
@@ -40,6 +41,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
             viewModel.HideModal();
             menuModalSelected = null;
             ResetMenuNavigationRepeat();
+            if (!ShouldShowToolkitPreview())
+            {
+                HideToolkitPreview();
+            }
         }
 
         private void UpdateMenuModal()
@@ -110,6 +115,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var selected = menuModalSelected;
             menuModalSelected = null;
             ResetMenuNavigationRepeat();
+            if (!ShouldShowToolkitPreview())
+            {
+                HideToolkitPreview();
+            }
+
             if (selected != null)
             {
                 selected(selectedIndex);
@@ -120,6 +130,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (!IsMenuModalVisible() || rebindingInput != null)
             {
+                return;
+            }
+
+            if (ShouldUseToolkitModalRenderer())
+            {
+                DrawToolkitMenuModalOverlay();
                 return;
             }
 
@@ -202,6 +218,25 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             GUILayout.EndArea();
+        }
+
+        private void DrawToolkitMenuModalOverlay()
+        {
+            EnsureToolkitPreviewRoot();
+            if (toolkitPreviewRoot == null)
+            {
+                return;
+            }
+
+            ConfigureToolkitRoot(true);
+            GameMenuToolkitView.BuildModal(
+                toolkitPreviewRoot,
+                viewModel.ModalTitle,
+                viewModel.ModalMessage,
+                MenuModalHasChoices() ? viewModel.ModalChoices : new[] { "OK" },
+                MenuModalHasChoices() ? viewModel.ModalSelectedIndex : 0,
+                MenuModalHasChoices() ? SelectMenuModalChoice : new Action<int>(_ => HideMenuModal()));
+            toolkitPreviewRoot.style.display = DisplayStyle.Flex;
         }
 
         private void DrawMenuModalChoiceRow(int index, float height)

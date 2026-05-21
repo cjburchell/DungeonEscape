@@ -39,11 +39,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private static bool useToolkitPreview;
         private static bool useToolkitMainMenuRenderer;
         private static bool useToolkitLoadRenderer;
+        private static bool useToolkitCreateRenderer;
 
         private readonly TitleViewModel viewModel = new TitleViewModel();
         [SerializeField] private bool showToolkitPreview;
-        [SerializeField] private bool useToolkitMainMenuRendererPreview;
-        [SerializeField] private bool useToolkitLoadRendererPreview;
         private GameState gameState;
         private UiSettings uiSettings;
         private UiTheme uiTheme;
@@ -100,6 +99,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             get { return useToolkitLoadRenderer; }
             set { useToolkitLoadRenderer = value; }
+        }
+
+        public static bool UseToolkitCreateRenderer
+        {
+            get { return useToolkitCreateRenderer; }
+            set { useToolkitCreateRenderer = value; }
         }
 
         private TitleMode mode
@@ -274,6 +279,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (!isOpen)
             {
+                HideToolkitPreview();
                 return;
             }
 
@@ -288,14 +294,20 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var previousDepth = GUI.depth;
             var previousColor = GUI.color;
             GUI.depth = TitleGuiDepth;
-            DrawBackgroundForCurrentMode();
+            var useToolkitMainRenderer = mode == TitleMode.Main && ShouldUseToolkitMainMenuRenderer();
+            var useToolkitLoadRenderer = mode == TitleMode.Load && ShouldUseToolkitLoadRenderer();
+            var useToolkitCreateRenderer = mode == TitleMode.Create && ShouldUseToolkitCreateRenderer();
+            if (!useToolkitMainRenderer && !useToolkitLoadRenderer && !useToolkitCreateRenderer)
+            {
+                DrawBackgroundForCurrentMode();
+            }
 
             try
             {
                 var scale = GetPixelScale();
                 if (mode == TitleMode.Main)
                 {
-                    if (ShouldUseToolkitMainMenuRenderer())
+                    if (useToolkitMainRenderer)
                     {
                         DrawToolkitMainMenuRenderer();
                         return;
@@ -308,7 +320,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
                 if (mode == TitleMode.Create)
                 {
-                    HideToolkitPreview();
+                    if (useToolkitCreateRenderer)
+                    {
+                        DrawToolkitCreateMenuRenderer();
+                        return;
+                    }
+
                     DrawCreateMenuStandalone(scale);
                     DrawCreateDropdownOverlay();
                     return;
@@ -316,7 +333,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
                 if (mode == TitleMode.Load)
                 {
-                    if (ShouldUseToolkitLoadRenderer())
+                    if (useToolkitLoadRenderer)
                     {
                         DrawToolkitLoadMenuRenderer();
                         return;
@@ -613,6 +630,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 GetMainRows(),
                 selectedIndex,
                 ActivateMainAction);
+            ConfigureToolkitMainMenuBackground();
             toolkitPreviewRoot.style.display = DisplayStyle.Flex;
         }
 
@@ -636,6 +654,76 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 TryLoadSlot,
                 DeleteSlot,
                 ShowMainMenu);
+            ConfigureToolkitLoadMenuBackground();
+            toolkitPreviewRoot.style.display = DisplayStyle.Flex;
+        }
+
+        private void DrawToolkitCreateMenuRenderer()
+        {
+            EnsureToolkitPreviewRoot();
+            if (toolkitPreviewRoot == null)
+            {
+                return;
+            }
+
+            EnsureCreatePreviewHero();
+            ConfigureToolkitRoot(true, false);
+            TitleMenuToolkitView.BuildCreateMenu(
+                toolkitPreviewRoot,
+                createPlayerName,
+                createPlayerGender,
+                createPlayerClass,
+                createPlayerSpriteIndex,
+                GetCreatePlayerStats(),
+                selectedIndex,
+                value =>
+                {
+                    selectedIndex = CreateNameIndex;
+                    createPlayerName = value;
+                    UpdateCreatePreviewHeroIdentity();
+                },
+                () =>
+                {
+                    selectedIndex = CreateGenerateNameIndex;
+                    GenerateRandomPlayerName();
+                    UpdateCreatePreviewHeroIdentity();
+                },
+                () =>
+                {
+                    selectedIndex = CreateGenderIndex;
+                    CycleCreateGender(1);
+                },
+                () =>
+                {
+                    selectedIndex = CreateClassIndex;
+                    CycleCreateClass(1);
+                },
+                () =>
+                {
+                    selectedIndex = CreateImageIndex;
+                    CycleCreateImage(-1);
+                },
+                () =>
+                {
+                    selectedIndex = CreateImageIndex;
+                    CycleCreateImage(1);
+                },
+                () =>
+                {
+                    selectedIndex = CreateRerollIndex;
+                    RerollCreatePreviewHero();
+                },
+                () =>
+                {
+                    selectedIndex = CreateStartIndex;
+                    StartCreatedGame();
+                },
+                () =>
+                {
+                    selectedIndex = CreateBackIndex;
+                    ShowMainMenu();
+                });
+            ConfigureToolkitLoadMenuBackground();
             toolkitPreviewRoot.style.display = DisplayStyle.Flex;
         }
 
@@ -646,12 +734,17 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private bool ShouldUseToolkitMainMenuRenderer()
         {
-            return useToolkitMainMenuRendererPreview || useToolkitMainMenuRenderer;
+            return true;
         }
 
         private bool ShouldUseToolkitLoadRenderer()
         {
-            return useToolkitLoadRendererPreview || useToolkitLoadRenderer;
+            return true;
+        }
+
+        private bool ShouldUseToolkitCreateRenderer()
+        {
+            return true;
         }
 
         private void EnsureToolkitPreviewRoot()
@@ -694,6 +787,94 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             toolkitPreviewRoot.pickingMode = activeRenderer ? PickingMode.Position : PickingMode.Ignore;
+            ConfigureToolkitBounds(activeRenderer);
+            ConfigureToolkitBackground(activeRenderer, loadRenderer);
+        }
+
+        private void ConfigureToolkitBounds(bool activeRenderer)
+        {
+            if (!activeRenderer)
+            {
+                var documentRoot = toolkitDocument == null ? null : toolkitDocument.rootVisualElement;
+                if (documentRoot != null)
+                {
+                    documentRoot.style.width = StyleKeyword.Null;
+                    documentRoot.style.height = StyleKeyword.Null;
+                }
+
+                toolkitPreviewRoot.style.left = StyleKeyword.Null;
+                toolkitPreviewRoot.style.top = StyleKeyword.Null;
+                toolkitPreviewRoot.style.right = StyleKeyword.Null;
+                toolkitPreviewRoot.style.bottom = StyleKeyword.Null;
+                toolkitPreviewRoot.style.width = StyleKeyword.Null;
+                toolkitPreviewRoot.style.height = StyleKeyword.Null;
+                return;
+            }
+
+            var screenWidth = Mathf.Max(Screen.width, 1);
+            var screenHeight = Mathf.Max(Screen.height, 1);
+            var rootElement = toolkitDocument == null ? null : toolkitDocument.rootVisualElement;
+            if (rootElement != null)
+            {
+                rootElement.style.position = Position.Absolute;
+                rootElement.style.left = 0;
+                rootElement.style.top = 0;
+                rootElement.style.width = screenWidth;
+                rootElement.style.height = screenHeight;
+                rootElement.style.display = DisplayStyle.Flex;
+                rootElement.style.visibility = Visibility.Visible;
+            }
+
+            toolkitPreviewRoot.style.position = Position.Absolute;
+            toolkitPreviewRoot.style.left = 0;
+            toolkitPreviewRoot.style.top = 0;
+            toolkitPreviewRoot.style.right = StyleKeyword.Null;
+            toolkitPreviewRoot.style.bottom = StyleKeyword.Null;
+            toolkitPreviewRoot.style.width = screenWidth;
+            toolkitPreviewRoot.style.height = screenHeight;
+            toolkitPreviewRoot.style.display = DisplayStyle.Flex;
+            toolkitPreviewRoot.style.visibility = Visibility.Visible;
+            toolkitPreviewRoot.BringToFront();
+        }
+
+        private void ConfigureToolkitBackground(bool activeRenderer, bool loadRenderer)
+        {
+            if (activeRenderer && !loadRenderer)
+            {
+                toolkitPreviewRoot.style.backgroundColor = Color.black;
+                return;
+            }
+
+            toolkitPreviewRoot.style.backgroundColor = new Color(0f, 0f, 0f, 0f);
+            toolkitPreviewRoot.style.backgroundImage = StyleKeyword.Null;
+        }
+
+        private void ConfigureToolkitMainMenuBackground()
+        {
+            var background = GetMainMenuBackground();
+            if (background == null)
+            {
+                toolkitPreviewRoot.style.backgroundColor = Color.black;
+                toolkitPreviewRoot.style.backgroundImage = StyleKeyword.Null;
+                return;
+            }
+
+            toolkitPreviewRoot.style.backgroundImage = new StyleBackground(background);
+            toolkitPreviewRoot.style.backgroundColor = Color.black;
+        }
+
+        private void ConfigureToolkitLoadMenuBackground()
+        {
+            var background = GetSecondaryMenuBackground();
+            if (background == null)
+            {
+                toolkitPreviewRoot.style.backgroundColor = Color.black;
+                toolkitPreviewRoot.style.backgroundImage = StyleKeyword.Null;
+                return;
+            }
+
+            toolkitPreviewRoot.style.backgroundImage = new StyleBackground(background);
+            toolkitPreviewRoot.style.backgroundColor = Color.black;
         }
 
         private void ApplyToolkitPreviewStyleSheet(VisualElement documentRoot)
@@ -730,6 +911,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 toolkitPanelSettings.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;
                 toolkitPanelSettings.match = 0.5f;
                 toolkitPanelSettings.sortingOrder = 5000;
+                toolkitPanelSettings.themeStyleSheet = ScriptableObject.CreateInstance<ThemeStyleSheet>();
+                toolkitPanelSettings.themeStyleSheet.name = "TitleMenuToolkitRuntimeTheme";
             }
 
             toolkitDocument.panelSettings = toolkitPanelSettings;
@@ -1096,6 +1279,19 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.Label(label, labelStyle, GUILayout.Width(150f * GetPixelScale()));
             GUILayout.Label(value.ToString(), labelStyle, GUILayout.Width(44f * GetPixelScale()));
             GUILayout.EndHorizontal();
+        }
+
+        private int[] GetCreatePlayerStats()
+        {
+            return new[]
+            {
+                createPreviewHero == null ? 0 : createPreviewHero.MaxHealth,
+                createPreviewHero == null ? 0 : createPreviewHero.MaxMagic,
+                createPreviewHero == null ? 0 : createPreviewHero.Attack,
+                createPreviewHero == null ? 0 : createPreviewHero.Defence,
+                createPreviewHero == null ? 0 : createPreviewHero.MagicDefence,
+                createPreviewHero == null ? 0 : createPreviewHero.Agility
+            };
         }
 
         private GUIStyle GetTextFieldStyle()
@@ -1561,6 +1757,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ShowLoadMenu()
         {
+            HideToolkitPreview();
             mode = TitleMode.Load;
             selectedIndex = 0;
             WaitForConfirmRelease();
@@ -1569,6 +1766,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ShowCreateMenu()
         {
+            HideToolkitPreview();
             mode = TitleMode.Create;
             selectedIndex = 0;
             EnsureCreatePlayerName();
@@ -1578,6 +1776,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ShowMainMenu()
         {
+            HideToolkitPreview();
             mode = TitleMode.Main;
             selectedIndex = 0;
             WaitForConfirmRelease();
@@ -1624,6 +1823,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private static void Close()
         {
             isOpen = false;
+            var titleMenu = FindAnyObjectByType<TitleMenu>();
+            if (titleMenu != null)
+            {
+                titleMenu.HideToolkitPreview();
+            }
+
             var mapView = FindAnyObjectByType<View>();
             if (mapView != null)
             {

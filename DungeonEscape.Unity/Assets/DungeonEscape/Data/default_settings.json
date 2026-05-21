@@ -11,8 +11,6 @@
   "TurnMoveDelaySeconds": 0.12,
   "AutoSaveEnabled": true,
   "AutoSaveIntervalSeconds": 5.0,
-  "ShowToolkitPreviews": false,
-  "UseToolkitTitleLoadRenderer": false,
   "SkipSplashAndLoadQuickSave": false,
   "ShowUiSettingsTab": false,
   "ShowDebugSettingsTab": false,

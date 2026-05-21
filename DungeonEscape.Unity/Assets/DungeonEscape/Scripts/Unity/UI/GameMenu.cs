@@ -64,6 +64,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private static bool isOpen;
         private static bool useToolkitPreview;
+        private static bool useToolkitModalRenderer;
 
         private readonly GameMenuViewModel viewModel = new GameMenuViewModel();
         [SerializeField] private bool showToolkitPreview;
@@ -114,6 +115,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             get { return useToolkitPreview; }
             set { useToolkitPreview = value; }
+        }
+
+        public static bool UseToolkitModalRenderer
+        {
+            get { return useToolkitModalRenderer; }
+            set { useToolkitModalRenderer = value; }
         }
 
         private MenuScreen currentScreen
@@ -294,6 +301,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (!isOpen || CombatWindow.IsOpen)
             {
+                HideToolkitPreview();
                 return;
             }
 
@@ -398,6 +406,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (IsMenuModalVisible())
             {
+                ConfigureToolkitRoot(false);
                 GameMenuToolkitView.BuildModal(
                     toolkitPreviewRoot,
                     viewModel.ModalTitle,
@@ -408,6 +417,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
             else if (currentScreen == MenuScreen.Save || currentScreen == MenuScreen.Load)
             {
+                ConfigureToolkitRoot(false);
                 var saves = gameState == null
                     ? new List<GameSave>()
                     : gameState.GetManualSaveSlots().ToList();
@@ -420,8 +430,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
             else
             {
-                toolkitPreviewRoot.Clear();
-                toolkitPreviewRoot.Add(new Label(currentScreen + " preview"));
+                HideToolkitPreview();
+                return;
             }
 
             toolkitPreviewRoot.style.display = DisplayStyle.Flex;
@@ -453,10 +463,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             toolkitPreviewRoot = new VisualElement { name = "GameMenuToolkitPreview" };
-            toolkitPreviewRoot.AddToClassList("game-menu-toolkit-preview");
-            toolkitPreviewRoot.pickingMode = PickingMode.Ignore;
             ApplyToolkitPreviewStyleSheet(documentRoot);
             documentRoot.Add(toolkitPreviewRoot);
+        }
+
+        private void ConfigureToolkitRoot(bool activeModal)
+        {
+            toolkitPreviewRoot.RemoveFromClassList("game-menu-toolkit-preview");
+            toolkitPreviewRoot.RemoveFromClassList("game-menu-toolkit-modal-active");
+            toolkitPreviewRoot.AddToClassList(activeModal ? "game-menu-toolkit-modal-active" : "game-menu-toolkit-preview");
+            toolkitPreviewRoot.pickingMode = activeModal ? PickingMode.Position : PickingMode.Ignore;
         }
 
         private void ApplyToolkitPreviewStyleSheet(VisualElement documentRoot)
@@ -493,6 +509,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 toolkitPanelSettings.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;
                 toolkitPanelSettings.match = 0.5f;
                 toolkitPanelSettings.sortingOrder = 5001;
+                toolkitPanelSettings.themeStyleSheet = ScriptableObject.CreateInstance<ThemeStyleSheet>();
+                toolkitPanelSettings.themeStyleSheet.name = "GameMenuToolkitRuntimeTheme";
             }
 
             toolkitDocument.panelSettings = toolkitPanelSettings;
@@ -504,6 +522,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 toolkitPreviewRoot.style.display = DisplayStyle.None;
             }
+        }
+
+        private bool ShouldUseToolkitModalRenderer()
+        {
+            return true;
         }
 
         private static float GetMenuTop(float scale)
@@ -527,6 +550,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             if (isOpen)
             {
                 isOpen = false;
+                HideToolkitPreview();
                 return;
             }
 

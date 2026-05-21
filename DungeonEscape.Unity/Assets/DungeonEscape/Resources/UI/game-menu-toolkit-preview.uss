@@ -7,6 +7,17 @@
     background-color: rgba(0, 0, 0, 0.72);
 }
 
+.game-menu-toolkit-modal-active {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 620px;
+    max-width: 92%;
+    translate: -310px -50%;
+    padding: 18px;
+    background-color: rgba(0, 0, 0, 0.86);
+}
+
 .game-menu-save-list__row,
 .game-menu-save-list__row--selected,
 .game-menu-modal__choice,
@@ -36,4 +47,20 @@
     color: white;
     white-space: normal;
     margin-bottom: 12px;
+}
+
+.game-menu-toolkit-button-label,
+.game-menu-toolkit-button-label--selected {
+    flex-grow: 1;
+    white-space: normal;
+    -unity-text-align: middle-center;
+    font-size: 15px;
+}
+
+.game-menu-toolkit-button-label {
+    color: white;
+}
+
+.game-menu-toolkit-button-label--selected {
+    color: black;
 }

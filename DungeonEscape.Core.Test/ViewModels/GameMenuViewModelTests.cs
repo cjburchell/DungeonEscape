@@ -80,7 +80,7 @@ namespace DungeonEscape.Core.Test.ViewModels
         {
             var viewModel = new GameMenuViewModel();
 
-            Assert.Equal(10, viewModel.GetSettingsSelectableRowCount(GameMenuViewModel.SettingsGeneral, 4));
+            Assert.Equal(8, viewModel.GetSettingsSelectableRowCount(GameMenuViewModel.SettingsGeneral, 4));
             Assert.Equal(9, viewModel.GetSettingsSelectableRowCount(GameMenuViewModel.SettingsUi, 4));
             Assert.Equal(6, viewModel.GetSettingsSelectableRowCount(GameMenuViewModel.SettingsInput, 4));
             Assert.Equal(6, viewModel.GetSettingsSelectableRowCount(GameMenuViewModel.SettingsDebug, 4));
@@ -366,12 +366,6 @@ namespace DungeonEscape.Core.Test.ViewModels
             Assert.Equal(GameMenuSettingsEffect.ApplySettings, viewModel.ActivateSelectedSetting(settings, GameMenuViewModel.SettingsGeneral, 3, 2));
             Assert.True(settings.IsFullScreen);
 
-            Assert.Equal(GameMenuSettingsEffect.ApplySettings, viewModel.ActivateSelectedSetting(settings, GameMenuViewModel.SettingsGeneral, 8, 2));
-            Assert.True(settings.ShowToolkitPreviews);
-
-            Assert.Equal(GameMenuSettingsEffect.ApplySettings, viewModel.ActivateSelectedSetting(settings, GameMenuViewModel.SettingsGeneral, 9, 2));
-            Assert.True(settings.UseToolkitTitleLoadRenderer);
-
             Assert.Equal(GameMenuSettingsEffect.ApplySettingsAndRefreshVisibility, viewModel.ActivateSelectedSetting(settings, GameMenuViewModel.SettingsDebug, 2, 2));
             Assert.True(settings.ShowHiddenObjects);
 
@@ -435,16 +429,10 @@ namespace DungeonEscape.Core.Test.ViewModels
 
             Assert.Equal(
                 GameMenuSettingsEffect.ApplyAudioSettings,
-                viewModel.GetGeneralSettingsChangeEffect(settings, 1f, 60f, false, 0.4f, 0.5f, true, 5f, false, false));
+                viewModel.GetGeneralSettingsChangeEffect(settings, 1f, 60f, false, 0.4f, 0.5f, true, 5f));
             Assert.Equal(
                 GameMenuSettingsEffect.ApplySettings,
-                viewModel.GetGeneralSettingsChangeEffect(settings, 1.1f, 60f, false, 0.5f, 0.5f, true, 5f, false, false));
-            Assert.Equal(
-                GameMenuSettingsEffect.ApplySettings,
-                viewModel.GetGeneralSettingsChangeEffect(settings, 1f, 60f, false, 0.5f, 0.5f, true, 5f, true, false));
-            Assert.Equal(
-                GameMenuSettingsEffect.ApplySettings,
-                viewModel.GetGeneralSettingsChangeEffect(settings, 1f, 60f, false, 0.5f, 0.5f, true, 5f, false, true));
+                viewModel.GetGeneralSettingsChangeEffect(settings, 1.1f, 60f, false, 0.5f, 0.5f, true, 5f));
         }
 
         [Fact]
@@ -461,6 +449,9 @@ namespace DungeonEscape.Core.Test.ViewModels
             Assert.Equal(
                 GameMenuSettingsEffect.ApplySettings,
                 viewModel.GetDebugSettingsChangeEffect(oldSettings, false, false, true, 1.5f, 0.1f));
+            Assert.Equal(
+                GameMenuSettingsEffect.ApplySettings,
+                viewModel.GetDebugSettingsChangeEffect(oldSettings, false, false, false, 1.5f, 0.2f));
         }
 
         [Fact]
@@ -473,8 +464,6 @@ namespace DungeonEscape.Core.Test.ViewModels
                 UiScale = 1.5f,
                 UiBackgroundColor = "#111111",
                 UiBorderThickness = 5,
-                ShowToolkitPreviews = true,
-                UseToolkitTitleLoadRenderer = true,
                 ShowHiddenObjects = true,
                 TurnMoveDelaySeconds = 0.2f
             };
@@ -486,8 +475,6 @@ namespace DungeonEscape.Core.Test.ViewModels
             Assert.Equal(settings.UiScale, snapshot.UiScale);
             Assert.Equal(settings.UiBackgroundColor, snapshot.UiBackgroundColor);
             Assert.Equal(settings.UiBorderThickness, snapshot.UiBorderThickness);
-            Assert.Equal(settings.ShowToolkitPreviews, snapshot.ShowToolkitPreviews);
-            Assert.Equal(settings.UseToolkitTitleLoadRenderer, snapshot.UseToolkitTitleLoadRenderer);
             Assert.Equal(settings.ShowHiddenObjects, snapshot.ShowHiddenObjects);
             Assert.Equal(settings.TurnMoveDelaySeconds, snapshot.TurnMoveDelaySeconds);
         }

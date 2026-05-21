@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Redpoint.DungeonEscape.ViewModels;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Redpoint.DungeonEscape.Unity.UI
@@ -31,9 +32,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     }
                 })
                 {
-                    text = row.Title + "\n" + row.Summary
+                    text = string.Empty
                 };
                 button.AddToClassList(rowIndex == selectedIndex ? "game-menu-save-list__row--selected" : "game-menu-save-list__row");
+                button.Add(CreateButtonLabel(row.Title + "\n" + row.Summary, rowIndex == selectedIndex));
                 root.Add(button);
                 rowIndex++;
             }
@@ -54,8 +56,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             root.Clear();
             root.AddToClassList("game-menu-modal");
-            root.Add(new Label(title) { name = "GameMenuModalTitle" });
-            root.Add(new Label(message) { name = "GameMenuModalMessage" });
+            var titleLabel = new Label(title) { name = "GameMenuModalTitle" };
+            ToolkitTextStyles.Apply(titleLabel, Color.white, 18);
+            root.Add(titleLabel);
+            var messageLabel = new Label(message) { name = "GameMenuModalMessage" };
+            ToolkitTextStyles.Apply(messageLabel, Color.white, 15);
+            root.Add(messageLabel);
 
             var choiceIndex = 0;
             foreach (var choice in choices ?? new List<string>())
@@ -69,12 +75,21 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     }
                 })
                 {
-                    text = choice
+                    text = string.Empty
                 };
                 button.AddToClassList(choiceIndex == selectedIndex ? "game-menu-modal__choice--selected" : "game-menu-modal__choice");
+                button.Add(CreateButtonLabel(choice, choiceIndex == selectedIndex));
                 root.Add(button);
                 choiceIndex++;
             }
+        }
+
+        private static Label CreateButtonLabel(string text, bool selected)
+        {
+            var label = new Label(text);
+            label.AddToClassList(selected ? "game-menu-toolkit-button-label--selected" : "game-menu-toolkit-button-label");
+            ToolkitTextStyles.Apply(label, selected ? Color.black : Color.white, 15);
+            return label;
         }
     }
 }

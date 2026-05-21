@@ -136,9 +136,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             Gender gender,
             Class playerClass,
             int spriteIndex,
+            Sprite heroSprite,
             int[] stats,
             int selectedIndex,
             Action<string> onNameChanged,
+            Action<bool> onNameFocusChanged,
             Action onGenerateName,
             Action onCycleGender,
             Action onCycleClass,
@@ -172,10 +174,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var controls = new VisualElement();
             controls.AddToClassList("title-create-menu__controls");
             ApplyCreateControlsLayout(controls);
-            controls.Add(CreateNameRow(playerName, selectedIndex == TitleViewModel.CreateNameIndex, onNameChanged, onGenerateName));
+            controls.Add(CreateNameRow(
+                playerName,
+                selectedIndex == TitleViewModel.CreateNameIndex,
+                selectedIndex == TitleViewModel.CreateGenerateNameIndex,
+                onNameChanged,
+                onNameFocusChanged,
+                onGenerateName));
             controls.Add(CreateValueButtonRow("Gender:", gender.ToString(), selectedIndex == TitleViewModel.CreateGenderIndex, onCycleGender));
             controls.Add(CreateValueButtonRow("Class:", playerClass.ToString(), selectedIndex == TitleViewModel.CreateClassIndex, onCycleClass));
-            controls.Add(CreateImageRow(spriteIndex, selectedIndex == TitleViewModel.CreateImageIndex, onPreviousImage, onNextImage));
+            controls.Add(CreateImageRow(spriteIndex, heroSprite, selectedIndex == TitleViewModel.CreateImageIndex, onPreviousImage, onNextImage));
 
             var statsPanel = CreateStatsPanel(stats, selectedIndex == TitleViewModel.CreateRerollIndex, onReroll);
             body.Add(controls);
@@ -292,7 +300,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
             row.style.width = Length.Percent(100);
         }
 
-        private static VisualElement CreateNameRow(string playerName, bool selected, Action<string> onNameChanged, Action onGenerateName)
+        private static VisualElement CreateNameRow(
+            string playerName,
+            bool nameSelected,
+            bool generateSelected,
+            Action<string> onNameChanged,
+            Action<bool> onNameFocusChanged,
+            Action onGenerateName)
         {
             var row = CreateFormRow("Name:");
             var field = new TextField
@@ -300,7 +314,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 name = "TitleMenuToolkitCreateName",
                 value = playerName ?? string.Empty
             };
-            field.AddToClassList(selected ? "title-create-menu__name--selected" : "title-create-menu__name");
+            field.AddToClassList(nameSelected ? "title-create-menu__name--selected" : "title-create-menu__name");
             field.style.width = 136;
             field.style.height = 34;
             field.RegisterValueChangedCallback(evt =>
@@ -310,8 +324,22 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     onNameChanged(evt.newValue);
                 }
             });
+            field.RegisterCallback<FocusInEvent>(_ =>
+            {
+                if (onNameFocusChanged != null)
+                {
+                    onNameFocusChanged(true);
+                }
+            });
+            field.RegisterCallback<FocusOutEvent>(_ =>
+            {
+                if (onNameFocusChanged != null)
+                {
+                    onNameFocusChanged(false);
+                }
+            });
             row.Add(field);
-            row.Add(CreateActionButton("Generate Name", false, onGenerateName, 152));
+            row.Add(CreateActionButton("Generate Name", generateSelected, onGenerateName, 152));
             return row;
         }
 
@@ -322,9 +350,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return row;
         }
 
-        private static VisualElement CreateImageRow(int spriteIndex, bool selected, Action onPreviousImage, Action onNextImage)
+        private static VisualElement CreateImageRow(int spriteIndex, Sprite heroSprite, bool selected, Action onPreviousImage, Action onNextImage)
         {
-            var row = CreateFormRow("Image:");
+            var row = CreateFormRow("Image:", 112);
             var imagePanel = new VisualElement();
             imagePanel.AddToClassList(selected ? "title-create-menu__image--selected" : "title-create-menu__image");
             imagePanel.style.flexDirection = FlexDirection.Row;
@@ -334,7 +362,24 @@ namespace Redpoint.DungeonEscape.Unity.UI
             imagePanel.style.height = 104;
             imagePanel.style.backgroundColor = new Color(0.08f, 0.08f, 0.08f, 0.92f);
             imagePanel.Add(CreateActionButton("<", selected, onPreviousImage, 34));
-            imagePanel.Add(CreateTextLabel("Hero " + (spriteIndex + 1), "title-create-menu__image-label", Color.white, 14));
+            if (heroSprite != null)
+            {
+                var image = new Image
+                {
+                    name = "TitleMenuToolkitCreateHeroImage",
+                    sprite = heroSprite,
+                    scaleMode = ScaleMode.ScaleToFit,
+                    pickingMode = PickingMode.Ignore
+                };
+                image.style.width = 80;
+                image.style.height = 92;
+                imagePanel.Add(image);
+            }
+            else
+            {
+                imagePanel.Add(CreateTextLabel("Hero " + (spriteIndex + 1), "title-create-menu__image-label", Color.white, 14));
+            }
+
             imagePanel.Add(CreateActionButton(">", selected, onNextImage, 34));
             row.Add(imagePanel);
             return row;
@@ -368,13 +413,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return panel;
         }
 
-        private static VisualElement CreateFormRow(string labelText)
+        private static VisualElement CreateFormRow(string labelText, float height = 38f)
         {
             var row = new VisualElement();
             row.AddToClassList("title-create-menu__row");
             row.style.flexDirection = FlexDirection.Row;
-            row.style.alignItems = Align.Center;
-            row.style.height = 38;
+            row.style.alignItems = Align.FlexStart;
+            row.style.height = height;
             row.style.marginBottom = 4;
             row.Add(CreateTextLabel(labelText, "title-create-menu__label", Color.white, 14));
             return row;
@@ -410,7 +455,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private static void ApplyCreateMenuLayout(VisualElement panel)
         {
             const float panelWidth = 692f;
-            const float panelHeight = 350f;
+            const float panelHeight = 386f;
             var screenWidth = Mathf.Max(Screen.width, 640);
             var screenHeight = Mathf.Max(Screen.height, 480);
             panel.style.position = Position.Absolute;
@@ -430,7 +475,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private static void ApplyCreateBodyLayout(VisualElement body)
         {
             body.style.flexDirection = FlexDirection.Row;
-            body.style.height = 226;
+            body.style.height = 250;
         }
 
         private static void ApplyCreateControlsLayout(VisualElement controls)

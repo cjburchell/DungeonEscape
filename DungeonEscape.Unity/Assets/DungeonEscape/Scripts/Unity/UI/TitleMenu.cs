@@ -77,6 +77,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private VisualElement toolkitPreviewRoot;
         private StyleSheet toolkitPreviewStyle;
         private PanelSettings toolkitPanelSettings;
+        private string toolkitRenderKey;
+        private bool toolkitCreateNameFocused;
+        private bool focusToolkitCreateNameNextFrame;
 
         public static bool IsOpen
         {
@@ -625,11 +628,19 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             ConfigureToolkitRoot(true, false);
-            TitleMenuToolkitView.BuildMainMenu(
-                toolkitPreviewRoot,
-                GetMainRows(),
-                selectedIndex,
-                ActivateMainAction);
+            var rows = GetMainRows().ToList();
+            var renderKey = "main|" + Screen.width + "|" + Screen.height + "|" + selectedIndex + "|" +
+                            string.Join("|", rows.Select(row => row.Label + ":" + row.Enabled).ToArray());
+            if (!string.Equals(toolkitRenderKey, renderKey, StringComparison.Ordinal))
+            {
+                TitleMenuToolkitView.BuildMainMenu(
+                    toolkitPreviewRoot,
+                    rows,
+                    selectedIndex,
+                    ActivateMainAction);
+                toolkitRenderKey = renderKey;
+            }
+
             ConfigureToolkitMainMenuBackground();
             toolkitPreviewRoot.style.display = DisplayStyle.Flex;
         }
@@ -647,13 +658,22 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 : gameState.GetManualSaveSlots().ToList();
             viewModel.ClampLoadSelection(slots.Count);
             ConfigureToolkitRoot(true, true);
-            TitleMenuToolkitView.BuildLoadMenu(
-                toolkitPreviewRoot,
-                viewModel.GetLoadSlotRows(slots, selectedIndex),
-                viewModel.IsLoadBackSelected(slots.Count),
-                TryLoadSlot,
-                DeleteSlot,
-                ShowMainMenu);
+            var rows = viewModel.GetLoadSlotRows(slots, selectedIndex);
+            var renderKey = "load|" + Screen.width + "|" + Screen.height + "|" + selectedIndex + "|" +
+                            string.Join("|", rows.Select(row => row.ButtonText + ":" + row.DeleteButtonText).ToArray());
+            if (!string.Equals(toolkitRenderKey, renderKey, StringComparison.Ordinal))
+            {
+                TitleMenuToolkitView.BuildLoadMenu(
+                    toolkitPreviewRoot,
+                    rows,
+                    viewModel.IsLoadBackSelected(slots.Count),
+                    TryLoadSlot,
+                    DeleteSlot,
+                    ShowMainMenu);
+                toolkitRenderKey = renderKey;
+            }
+
+            FocusToolkitCreateNameIfRequested();
             ConfigureToolkitLoadMenuBackground();
             toolkitPreviewRoot.style.display = DisplayStyle.Flex;
         }
@@ -668,61 +688,81 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             EnsureCreatePreviewHero();
             ConfigureToolkitRoot(true, false);
-            TitleMenuToolkitView.BuildCreateMenu(
-                toolkitPreviewRoot,
-                createPlayerName,
-                createPlayerGender,
-                createPlayerClass,
-                createPlayerSpriteIndex,
-                GetCreatePlayerStats(),
-                selectedIndex,
-                value =>
-                {
-                    selectedIndex = CreateNameIndex;
-                    createPlayerName = value;
-                    UpdateCreatePreviewHeroIdentity();
-                },
-                () =>
-                {
-                    selectedIndex = CreateGenerateNameIndex;
-                    GenerateRandomPlayerName();
-                    UpdateCreatePreviewHeroIdentity();
-                },
-                () =>
-                {
-                    selectedIndex = CreateGenderIndex;
-                    CycleCreateGender(1);
-                },
-                () =>
-                {
-                    selectedIndex = CreateClassIndex;
-                    CycleCreateClass(1);
-                },
-                () =>
-                {
-                    selectedIndex = CreateImageIndex;
-                    CycleCreateImage(-1);
-                },
-                () =>
-                {
-                    selectedIndex = CreateImageIndex;
-                    CycleCreateImage(1);
-                },
-                () =>
-                {
-                    selectedIndex = CreateRerollIndex;
-                    RerollCreatePreviewHero();
-                },
-                () =>
-                {
-                    selectedIndex = CreateStartIndex;
-                    StartCreatedGame();
-                },
-                () =>
-                {
-                    selectedIndex = CreateBackIndex;
-                    ShowMainMenu();
-                });
+            Sprite heroSprite;
+            UiAssetResolver.TryGetHeroSprite(GetCreatePlayerSpriteFrameIndex(), out heroSprite);
+            var stats = GetCreatePlayerStats();
+            var renderKey = "create|" + Screen.width + "|" + Screen.height + "|" + selectedIndex + "|" +
+                            (toolkitCreateNameFocused ? string.Empty : createPlayerName) + "|" +
+                            createPlayerGender + "|" + createPlayerClass + "|" + createPlayerSpriteIndex + "|" +
+                            string.Join(",", stats.Select(stat => stat.ToString()).ToArray());
+            if (!string.Equals(toolkitRenderKey, renderKey, StringComparison.Ordinal))
+            {
+                TitleMenuToolkitView.BuildCreateMenu(
+                    toolkitPreviewRoot,
+                    createPlayerName,
+                    createPlayerGender,
+                    createPlayerClass,
+                    createPlayerSpriteIndex,
+                    heroSprite,
+                    stats,
+                    selectedIndex,
+                    value =>
+                    {
+                        selectedIndex = CreateNameIndex;
+                        createPlayerName = value;
+                        UpdateCreatePreviewHeroIdentity();
+                    },
+                    focused => { toolkitCreateNameFocused = focused; },
+                    () =>
+                    {
+                        selectedIndex = CreateGenerateNameIndex;
+                        GenerateRandomPlayerName();
+                        UpdateCreatePreviewHeroIdentity();
+                        InvalidateToolkitRender();
+                    },
+                    () =>
+                    {
+                        selectedIndex = CreateGenderIndex;
+                        CycleCreateGender(1);
+                        InvalidateToolkitRender();
+                    },
+                    () =>
+                    {
+                        selectedIndex = CreateClassIndex;
+                        CycleCreateClass(1);
+                        InvalidateToolkitRender();
+                    },
+                    () =>
+                    {
+                        selectedIndex = CreateImageIndex;
+                        CycleCreateImage(-1);
+                        InvalidateToolkitRender();
+                    },
+                    () =>
+                    {
+                        selectedIndex = CreateImageIndex;
+                        CycleCreateImage(1);
+                        InvalidateToolkitRender();
+                    },
+                    () =>
+                    {
+                        selectedIndex = CreateRerollIndex;
+                        RerollCreatePreviewHero();
+                        InvalidateToolkitRender();
+                    },
+                    () =>
+                    {
+                        selectedIndex = CreateStartIndex;
+                        StartCreatedGame();
+                    },
+                    () =>
+                    {
+                        selectedIndex = CreateBackIndex;
+                        ShowMainMenu();
+                    });
+                toolkitRenderKey = renderKey;
+            }
+
             ConfigureToolkitLoadMenuBackground();
             toolkitPreviewRoot.style.display = DisplayStyle.Flex;
         }
@@ -924,6 +964,31 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 toolkitPreviewRoot.style.display = DisplayStyle.None;
             }
+
+            InvalidateToolkitRender();
+            toolkitCreateNameFocused = false;
+            focusToolkitCreateNameNextFrame = false;
+        }
+
+        private void InvalidateToolkitRender()
+        {
+            toolkitRenderKey = null;
+        }
+
+        private void FocusToolkitCreateNameIfRequested()
+        {
+            if (!focusToolkitCreateNameNextFrame || toolkitPreviewRoot == null)
+            {
+                return;
+            }
+
+            var field = toolkitPreviewRoot.Q<TextField>("TitleMenuToolkitCreateName");
+            if (field != null)
+            {
+                field.Focus();
+            }
+
+            focusToolkitCreateNameNextFrame = false;
         }
 
         private void DrawCreateMenuStandalone(float scale)
@@ -1606,6 +1671,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 case CreateNameIndex:
                     focusCreateNameNextGui = true;
+                    focusToolkitCreateNameNextFrame = true;
                     break;
                 case CreateGenerateNameIndex:
                     GenerateRandomPlayerName();
@@ -1737,9 +1803,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
                    Input.GetKey(KeyCode.KeypadEnter);
         }
 
-        private static bool IsCreateNameTextFocused()
+        private bool IsCreateNameTextFocused()
         {
-            return string.Equals(GUI.GetNameOfFocusedControl(), "CreatePlayerName", StringComparison.Ordinal);
+            return toolkitCreateNameFocused ||
+                   string.Equals(GUI.GetNameOfFocusedControl(), "CreatePlayerName", StringComparison.Ordinal);
         }
 
         private void WaitForConfirmRelease()

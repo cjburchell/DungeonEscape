@@ -4,6 +4,14 @@ Dungeon Escape is a retro-inspired 2D RPG running on Unity after the migration f
 
 The active target is the Unity project. The old MonoGame/Nez project has been removed from this branch; use `main` if old implementation reference is needed.
 
+## AI / Agent Context
+
+For AI-assisted work, start with:
+
+- `AI_CONTEXT.md` — root context entrypoint for what to read first and which paths are safe to edit.
+- `AGENTS.md` — repository-specific operating rules and validation commands.
+- `memory-bank/README.md` — index of the durable project context documents.
+
 ## Current Project Layout
 
 ```text

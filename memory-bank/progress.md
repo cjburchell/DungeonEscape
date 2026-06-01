@@ -37,6 +37,7 @@
 - `CombatViewModel` added under the core `ViewModels` namespace; combat UI state, selected-index movement, action/menu display rows, spell/item labels, selected target lookup, and target candidate/type checks have matching core tests.
 - Future feature backlog has been captured in `memory-bank/FUTURE_FEATURES.md`.
 - Known bugs and rough edges are tracked in `memory-bank/BUGS.md`.
+- The planned UI Toolkit migration was abandoned; the active direction is to keep the current IMGUI runtime UI and improve it incrementally.
 
 ## In Progress
 
@@ -65,3 +66,4 @@ See `memory-bank/UNITY_MIGRATION_COMPLETED.md` for the final migration record an
 - Review and prioritize core extraction work in `memory-bank/ARCHITECTURE_BACKLOG.md`.
 - Review and prioritize future feature ideas in `memory-bank/FUTURE_FEATURES.md`.
 - Triage and prioritize known issues in `memory-bank/BUGS.md`.
+- Remove or archive leftover experimental UI Toolkit code and notes when they are confirmed unused.

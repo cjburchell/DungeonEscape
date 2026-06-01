@@ -1,6 +1,19 @@
-# UI Toolkit Migration Plan
+# UI Toolkit Migration Record (Abandoned)
 
-This file tracks the plan for migrating Dungeon Escape's Unity UI from IMGUI `OnGUI` drawing to UI Toolkit.
+This file records the abandoned plan for migrating Dungeon Escape's Unity UI from IMGUI `OnGUI` drawing to UI Toolkit.
+
+## Status
+
+The UI Toolkit migration is no longer active.
+
+The project attempted to move toward UI Toolkit, but the migration introduced too much implementation and maintenance friction for the current scope. The active direction is now:
+
+- keep the existing IMGUI-based runtime UI
+- continue improving the current screens incrementally
+- continue extracting portable view-model logic and adding tests where it reduces risk
+- avoid additional UI Toolkit migration work unless project priorities change significantly
+
+Any code or notes below should be treated as archived exploration rather than an active roadmap.
 
 ## Goal
 
@@ -165,4 +178,3 @@ The recommended first slice is:
 - migrate `GoldWindow` and `MessageBox`
 - keep IMGUI fallback behind a simple feature flag or component toggle
 - manually validate map play, NPC dialog, and combat message overlays
-

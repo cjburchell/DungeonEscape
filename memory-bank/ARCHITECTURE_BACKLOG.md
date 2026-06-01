@@ -6,6 +6,7 @@ This file tracks active and future architecture cleanup ideas. Completed archite
 
 - Core gameplay rule extraction is complete for the current planned scope.
 - UI drawing/logic split is complete for the current planned scope.
+- The attempted UI Toolkit migration is no longer an active architecture direction; keep runtime UI on IMGUI unless a future plan explicitly replaces it.
 - Remaining items are next-phase architecture work, not unfinished cleanup from the completed extraction pass.
 
 ## Next Architecture Phase
@@ -22,6 +23,7 @@ This file tracks active and future architecture cleanup ideas. Completed archite
   - missing sprite/icon/audio assets
 - Consider battle tactics now that combat round/action selection rules are testable in core.
 - Consider small view models for `PartyStatusWindow`, `GoldWindow`, and `MessageBox` only if they gain logic beyond rendering.
+- Remove obsolete experimental UI Toolkit helpers and docs once they are confirmed unused.
 
 ## Keep Unity-Side For Now
 

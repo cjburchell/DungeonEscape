@@ -39,6 +39,7 @@
 - Known bugs and rough edges are tracked in `memory-bank/BUGS.md`.
 - The planned UI Toolkit migration was abandoned; the active direction is to keep the current IMGUI runtime UI and improve it incrementally.
 - Added first-pass Unity UI Play Mode regression coverage for boot/runtime roots, title opening, create-game flow, and game-menu open/close behavior, plus a shared Play Mode helper for scene/object/reflection setup.
+- Expanded Unity UI Play Mode regression coverage to combat open/message/autosave blocking, action-selection transition, target-selection return-to-action behavior, and combat close cleanup.
 - Removed stale Toolkit-oriented Unity UI tests that no longer match the active IMGUI direction.
 
 ## In Progress
@@ -53,7 +54,7 @@
 - Add Unity-side edit mode tests for map loading, hidden item conditions, and save/load behavior.
 - Add regression tests for quest dialog actions and item rewards.
 - Review ReSharper warnings and fix actionable issues where they improve correctness or maintainability.
-- Expand Unity Play Mode UI regression coverage to combat, store, and healer flows.
+- Expand Unity Play Mode UI regression coverage to deeper game-menu tabs/modals/settings plus store and healer flows.
 
 ## Current Known Backlog Items
 
@@ -70,4 +71,3 @@ See `memory-bank/UNITY_MIGRATION_COMPLETED.md` for the final migration record an
 - Review and prioritize future feature ideas in `memory-bank/FUTURE_FEATURES.md`.
 - Triage and prioritize known issues in `memory-bank/BUGS.md`.
 - Remove or archive leftover experimental UI Toolkit code and notes when they are confirmed unused.
-- Run Unity Play Mode tests once the project is not open in another Unity editor instance.

@@ -13,6 +13,7 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
 
             var gameMenu = UiPlayModeTestHelper.FindObject("Redpoint.DungeonEscape.Unity.UI.GameMenu");
             var menuTab = UiPlayModeTestHelper.GetNestedEnumValue("Redpoint.DungeonEscape.Unity.UI.GameMenu", "MenuTab", "Party");
+            CloseGameMenuIfOpen(gameMenu, menuTab);
 
             UiPlayModeTestHelper.InvokePrivate(gameMenu, "Toggle", menuTab);
             yield return null;
@@ -30,6 +31,7 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
 
             var gameMenu = UiPlayModeTestHelper.FindObject("Redpoint.DungeonEscape.Unity.UI.GameMenu");
             var menuTab = UiPlayModeTestHelper.GetNestedEnumValue("Redpoint.DungeonEscape.Unity.UI.GameMenu", "MenuTab", "Party");
+            CloseGameMenuIfOpen(gameMenu, menuTab);
 
             UiPlayModeTestHelper.InvokePrivate(gameMenu, "Toggle", menuTab);
             yield return null;
@@ -37,6 +39,17 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
 
             UiPlayModeTestHelper.InvokePrivate(gameMenu, "Toggle", menuTab);
             yield return null;
+            Assert.That(UiPlayModeTestHelper.GetStaticBool("Redpoint.DungeonEscape.Unity.UI.GameMenu", "IsOpen"), Is.False);
+        }
+
+        private static void CloseGameMenuIfOpen(UnityEngine.Object gameMenu, object menuTab)
+        {
+            if (!UiPlayModeTestHelper.GetStaticBool("Redpoint.DungeonEscape.Unity.UI.GameMenu", "IsOpen"))
+            {
+                return;
+            }
+
+            UiPlayModeTestHelper.InvokePrivate(gameMenu, "Toggle", menuTab);
             Assert.That(UiPlayModeTestHelper.GetStaticBool("Redpoint.DungeonEscape.Unity.UI.GameMenu", "IsOpen"), Is.False);
         }
     }

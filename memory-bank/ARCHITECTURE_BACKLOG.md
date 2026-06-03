@@ -6,6 +6,7 @@ This file tracks active and future architecture cleanup ideas. Completed archite
 
 - Core gameplay rule extraction is complete for the current planned scope.
 - UI drawing/logic split is complete for the current planned scope.
+- The attempted UI Toolkit migration is no longer an active architecture direction; keep runtime UI on IMGUI unless a future plan explicitly replaces it.
 - Remaining items are next-phase architecture work, not unfinished cleanup from the completed extraction pass.
 
 ## Next Architecture Phase
@@ -15,6 +16,7 @@ This file tracks active and future architecture cleanup ideas. Completed archite
   - game menu tabs, modals, settings changes, item/spell use
   - combat action and target selection
   - store/healer selection and transaction flows
+  - note: boot/title open/create flow, basic game-menu open/close coverage, and combat open/message/action-target/close state coverage now exist in Play Mode tests; remaining work is to deepen game-menu coverage and add service-window coverage
 - Add data validation tooling for JSON content:
   - item/spell/skill/monster references
   - quest/dialog links

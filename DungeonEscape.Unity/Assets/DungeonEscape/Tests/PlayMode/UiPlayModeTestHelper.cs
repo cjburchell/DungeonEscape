@@ -105,6 +105,14 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
             return property.GetValue(instance);
         }
 
+        public static object GetNonPublicFieldValue(object instance, string fieldName)
+        {
+            Assert.That(instance, Is.Not.Null);
+            var field = instance.GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+            Assert.That(field, Is.Not.Null, "Missing non-public field " + fieldName + " on " + instance.GetType().FullName + ".");
+            return field.GetValue(instance);
+        }
+
         public static object GetNestedEnumValue(string typeName, string enumName, string valueName)
         {
             var ownerType = GetType(typeName);
@@ -114,10 +122,42 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
             return Enum.Parse(enumType, valueName);
         }
 
+        public static object GetEnumValue(string typeName, string valueName)
+        {
+            var enumType = GetType(typeName);
+            Assert.That(enumType, Is.Not.Null, "Missing enum type " + typeName + ".");
+            return Enum.Parse(enumType, valueName);
+        }
+
+        public static object GetStaticPropertyValue(string typeName, string propertyName)
+        {
+            var type = GetType(typeName);
+            var property = type == null ? null : type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Static);
+            Assert.That(property, Is.Not.Null, "Missing static property " + propertyName + " on " + typeName + ".");
+            return property.GetValue(null);
+        }
+
+        public static void InvokeStatic(string typeName, string methodName, params object[] arguments)
+        {
+            var type = GetType(typeName);
+            Assert.That(type, Is.Not.Null, "Missing type " + typeName + ".");
+            var method = type
+                .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
+                .FirstOrDefault(candidate =>
+                    candidate.Name == methodName &&
+                    candidate.GetParameters().Length == (arguments == null ? 0 : arguments.Length));
+            Assert.That(method, Is.Not.Null, "Missing static method " + methodName + " on " + typeName + ".");
+            method.Invoke(null, arguments);
+        }
+
         public static void InvokePrivate(object instance, string methodName, params object[] arguments)
         {
             Assert.That(instance, Is.Not.Null);
-            var method = instance.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
+            var method = instance.GetType()
+                .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
+                .FirstOrDefault(candidate =>
+                    candidate.Name == methodName &&
+                    candidate.GetParameters().Length == (arguments == null ? 0 : arguments.Length));
             Assert.That(method, Is.Not.Null, "Missing method " + methodName + " on " + instance.GetType().FullName + ".");
             method.Invoke(instance, arguments);
         }

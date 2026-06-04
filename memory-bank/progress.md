@@ -41,6 +41,10 @@
 - Added first-pass Unity UI Play Mode regression coverage for boot/runtime roots, title opening, create-game flow, and game-menu open/close behavior, plus a shared Play Mode helper for scene/object/reflection setup.
 - Expanded Unity UI Play Mode regression coverage to combat open/message/autosave blocking, action-selection transition, target-selection return-to-action behavior, and combat close cleanup.
 - Removed stale Toolkit-oriented Unity UI tests that no longer match the active IMGUI direction.
+- Added `DungeonEscape.Tools.MonsterEditor`, a standalone Photino.Blazor desktop tool for editing monster JSON files (open/new/save any monster array file, searchable list with image thumbnails, add/duplicate/remove, and a full property editor with dropdowns for image/rarity/biomes/spells/skills/items). It references `DungeonEscape.Core` so saved JSON matches the game format.
+- Monster Editor: consolidated New/Open/Save/Save As into a single **File** dropdown menu, and added an `EditorSettingsService` that persists the last opened/saved file (`%AppData%/DungeonEscape.MonsterEditor/settings.json`) and **auto-loads it on startup**.
+
+
 
 ## In Progress
 

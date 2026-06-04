@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>DungeonEscape.Tools.MonsterEditor</RootNamespace>
+    <AssemblyName>DungeonEscape.Tools.MonsterEditor</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Allow running on a newer installed runtime (e.g. .NET 10) when the
+         .NET 8 runtime is not present on the machine. -->
+    <RollForward>LatestMajor</RollForward>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Photino.Blazor" Version="3.1.8" />
+  </ItemGroup>
+
+  <!-- Photino.Blazor serves the app from a physical wwwroot in the output
+       directory, so copy the static web assets there at build time. The
+       wwwroot files are already Content items by SDK default, so update
+       (not include) them to set the copy behavior. -->
+  <ItemGroup>
+    <Content Update="wwwroot\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\DungeonEscape.Core\DungeonEscape.Core.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -952,3 +952,52 @@ Status legend:
 - Expected: combat music and sound effects are muted.
 - Set both volumes back to `1.00`.
 - Expected: combat music and sound effects are audible again.
+
+## Tools - Monster Editor (standalone)
+
+The Monster Editor is a separate Photino.Blazor desktop app under
+`DungeonEscape.Tools.MonsterEditor`. Run it with
+`dotnet run --project DungeonEscape.Tools.MonsterEditor`.
+
+### [ ] File Menu And Auto-Load Last File
+
+- Launch the tool; a single **File** button appears in the toolbar.
+- Click File.
+- Expected: a dropdown lists New, Open…, Save, and Save As… (Save/Save As are disabled until a file is open). Selecting any item closes the menu.
+- Open `DungeonEscape.Unity/Assets/DungeonEscape/Data/allmonsters.json`, then close and relaunch the tool.
+- Expected: the previously opened file is automatically loaded on startup.
+- Open a file, then move/delete it on disk and relaunch.
+- Expected: the tool starts on the empty state without errors.
+
+### [ ] Open, Edit, And Save A Monster File
+
+- Launch the tool; a desktop window titled "Dungeon Escape - Monster Editor" opens.
+- Open `DungeonEscape.Unity/Assets/DungeonEscape/Data/allmonsters.json` from the **File** menu.
+
+- Expected: the left list fills with monsters, each showing an image thumbnail and name.
+- Select a monster.
+- Expected: the right form shows its properties and a large image preview.
+- Change the Image dropdown.
+- Expected: the preview and the list thumbnail update to the selected tileset image.
+- Edit Name, stats, Rarity, Biomes, and add/remove Spells/Skills/Items via the dropdowns.
+- Expected: the file name shows a "• unsaved" indicator after any change.
+- Click Save.
+- Expected: the indicator clears and the JSON file on disk is updated; reopening it shows the changes, and the format/keys match the original game file.
+
+### [ ] Add, Duplicate, And Remove Monsters
+
+- With a file open, click Add.
+- Expected: a new "New Monster" entry is added and selected.
+- Select a monster and click Duplicate.
+- Expected: a copy named "<name> (Copy)" is inserted after it and selected.
+- Click Remove and confirm.
+- Expected: the selected monster is removed and the document is marked unsaved.
+
+### [ ] New File And Unsaved-Changes Guard
+
+- Make a change, then click New or Open without saving.
+- Expected: a prompt offers Yes/No/Cancel; Cancel aborts, Yes saves first, No discards.
+- Create a New file, add a monster, and use Save As to write a new `*.json` file.
+- Expected: the file is created and can be reopened with the added monster.
+
+

@@ -1,0 +1,98 @@
+@*
+    Edits a List<string> using dropdowns sourced from a known option list, with
+    a free-text fallback so values not present in the source can still be added.
+*@
+
+<div class="string-list">
+    @if (Items.Count == 0)
+    {
+        <div class="tag-empty">None</div>
+    }
+    else
+    {
+        @for (var i = 0; i < Items.Count; i++)
+        {
+            var index = i;
+            <div class="row">
+                @if (Options.Count > 0)
+                {
+                    <select value="@Items[index]" @onchange="e => UpdateAt(index, e.Value?.ToString())">
+                        @if (!Options.Contains(Items[index]))
+                        {
+                            <option value="@Items[index]">@Items[index] (custom)</option>
+                        }
+                        @foreach (var option in Options)
+                        {
+                            <option value="@option">@option</option>
+                        }
+                    </select>
+                }
+                else
+                {
+                    <input value="@Items[index]" @onchange="e => UpdateAt(index, e.Value?.ToString())" />
+                }
+                <button class="danger" title="Remove" @onclick="() => RemoveAt(index)">&times;</button>
+            </div>
+        }
+    }
+
+    <div class="add-row">
+        @if (Options.Count > 0)
+        {
+            <select @bind="pendingValue">
+                <option value="">-- select to add --</option>
+                @foreach (var option in Options)
+                {
+                    <option value="@option">@option</option>
+                }
+            </select>
+        }
+        else
+        {
+            <input placeholder="Add value..." @bind="pendingValue" @bind:event="oninput" />
+        }
+        <button @onclick="Add" disabled="@string.IsNullOrWhiteSpace(pendingValue)">Add</button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<string> Items { get; set; } = new();
+    [Parameter] public IReadOnlyList<string> Options { get; set; } = Array.Empty<string>();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private string pendingValue = string.Empty;
+
+    private async Task Add()
+    {
+        if (string.IsNullOrWhiteSpace(pendingValue))
+        {
+            return;
+        }
+
+        Items.Add(pendingValue.Trim());
+        pendingValue = string.Empty;
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task UpdateAt(int index, string? value)
+    {
+        if (index < 0 || index >= Items.Count)
+        {
+            return;
+        }
+
+        Items[index] = value ?? string.Empty;
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task RemoveAt(int index)
+    {
+        if (index < 0 || index >= Items.Count)
+        {
+            return;
+        }
+
+        Items.RemoveAt(index);
+        await OnChanged.InvokeAsync();
+    }
+}

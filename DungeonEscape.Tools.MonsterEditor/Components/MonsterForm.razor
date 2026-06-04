@@ -1,0 +1,162 @@
+@*
+    Property editor for a single monster. Mutates the bound Monster instance
+    directly and raises OnChanged so the parent can flag the document dirty.
+*@
+@inject MonsterImageCatalog ImageCatalog
+@inject DataSourceCatalog DataSources
+
+@if (Monster == null)
+{
+    <div class="empty-state">Select a monster from the list, or add a new one.</div>
+}
+else
+{
+    <div class="form-header">
+        <img class="preview" src="@PreviewSource" alt="preview" />
+        <div class="field" style="flex:1">
+            <label>Name</label>
+            <input value="@Monster.Name" @onchange="e => SetName(e.Value?.ToString())" />
+        </div>
+    </div>
+
+    <div class="field-grid">
+        <div class="field">
+            <label>Image</label>
+            <select value="@Monster.ImageId" @onchange="OnImageChanged">
+                @if (!ImageCatalog.TryGet(Monster.ImageId, out _))
+                {
+                    <option value="@Monster.ImageId">#@Monster.ImageId (unknown)</option>
+                }
+                @foreach (var entry in ImageCatalog.Entries)
+                {
+                    <option value="@entry.ImageId">@entry.DisplayName</option>
+                }
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Rarity</label>
+            <select value="@Monster.Rarity" @onchange="OnRarityChanged">
+                @foreach (var rarity in Enum.GetValues<Rarity>())
+                {
+                    <option value="@rarity">@rarity</option>
+                }
+            </select>
+        </div>
+
+        <NumberField Label="Min Level" Value="Monster.MinLevel" ValueChanged="v => Set(() => Monster.MinLevel = v)" />
+        <NumberField Label="Group Size" Value="Monster.GroupSize" ValueChanged="v => Set(() => Monster.GroupSize = v)" />
+        <NumberField Label="Gold" Value="Monster.Gold" ValueChanged="v => Set(() => Monster.Gold = v)" />
+        <NumberField Label="XP" Value="@((long)Monster.Xp)" ValueChanged="v => Set(() => Monster.Xp = (ulong)Math.Max(0, v))" />
+    </div>
+
+    <fieldset>
+        <legend>Combat Stats</legend>
+        <div class="field-grid">
+            <NumberField Label="Attack" Value="Monster.Attack" ValueChanged="v => Set(() => Monster.Attack = v)" />
+            <NumberField Label="Defence" Value="Monster.Defence" ValueChanged="v => Set(() => Monster.Defence = v)" />
+            <NumberField Label="Magic Defence" Value="Monster.MagicDefence" ValueChanged="v => Set(() => Monster.MagicDefence = v)" />
+            <NumberField Label="Agility" Value="Monster.Agility" ValueChanged="v => Set(() => Monster.Agility = v)" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Health (Const + Roll(Random) x Times)</legend>
+        <div class="field-grid">
+            <NumberField Label="Health Const" Value="Monster.HealthConst" ValueChanged="v => Set(() => Monster.HealthConst = v)" />
+            <NumberField Label="Health Random" Value="Monster.HealthRandom" ValueChanged="v => Set(() => Monster.HealthRandom = v)" />
+            <NumberField Label="Health Times" Value="Monster.HealthTimes" ValueChanged="v => Set(() => Monster.HealthTimes = v)" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Magic (Const + Roll(Random) x Times)</legend>
+        <div class="field-grid">
+            <NumberField Label="Magic Const" Value="Monster.MagicConst" ValueChanged="v => Set(() => Monster.MagicConst = v)" />
+            <NumberField Label="Magic Random" Value="Monster.MagicRandom" ValueChanged="v => Set(() => Monster.MagicRandom = v)" />
+            <NumberField Label="Magic Times" Value="Monster.MagicTimes" ValueChanged="v => Set(() => Monster.MagicTimes = v)" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Biomes</legend>
+        <BiomePicker Selected="Monster.Biomes" SelectedChanged="OnBiomesChanged" OnChanged="RaiseChanged" />
+    </fieldset>
+
+    <fieldset>
+        <legend>Spells</legend>
+        <StringListEditor Items="EnsureList(Monster.SpellList)" Options="DataSources.Spells" OnChanged="RaiseChanged" />
+    </fieldset>
+
+    <fieldset>
+        <legend>Skills</legend>
+        <StringListEditor Items="EnsureList(Monster.SkillList)" Options="DataSources.Skills" OnChanged="RaiseChanged" />
+    </fieldset>
+
+    <fieldset>
+        <legend>Items (drops)</legend>
+        <StringListEditor Items="EnsureList(Monster.Items)" Options="DataSources.Items" OnChanged="RaiseChanged" />
+    </fieldset>
+}
+
+@code {
+    [Parameter] public Monster? Monster { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private string PreviewSource =>
+        Monster == null
+            ? string.Empty
+            : ImageCatalog.GetImageDataUri(Monster.ImageId) ?? string.Empty;
+
+    private List<string> EnsureList(List<string>? list) => list ?? new List<string>();
+
+    private async Task SetName(string? value)
+    {
+        if (Monster == null)
+        {
+            return;
+        }
+
+        Monster.Name = value ?? string.Empty;
+        await RaiseChanged();
+    }
+
+    private async Task OnImageChanged(ChangeEventArgs e)
+    {
+        if (Monster != null && int.TryParse(e.Value?.ToString(), out var id))
+        {
+            Monster.ImageId = id;
+            await RaiseChanged();
+        }
+    }
+
+    private async Task OnRarityChanged(ChangeEventArgs e)
+    {
+        if (Monster != null && Enum.TryParse<Rarity>(e.Value?.ToString(), out var rarity))
+        {
+            Monster.Rarity = rarity;
+            await RaiseChanged();
+        }
+    }
+
+    private async Task OnBiomesChanged(List<Biome> biomes)
+    {
+        if (Monster != null)
+        {
+            Monster.Biomes = biomes;
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task Set(Action mutate)
+    {
+        mutate();
+        await RaiseChanged();
+    }
+
+    private async Task RaiseChanged()
+    {
+        await OnChanged.InvokeAsync();
+    }
+}

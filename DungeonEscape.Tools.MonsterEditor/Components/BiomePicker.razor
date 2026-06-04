@@ -1,0 +1,47 @@
+@*
+    Multi-select editor for the monster's Biomes list (excluding Biome.None).
+*@
+
+<div class="checkbox-grid">
+    @foreach (var biome in SelectableBiomes)
+    {
+        <label>
+            <input type="checkbox"
+                   checked="@IsChecked(biome)"
+                   @onchange="e => Toggle(biome, (bool)(e.Value ?? false))" />
+            @biome
+        </label>
+    }
+</div>
+
+@code {
+    [Parameter] public List<Biome>? Selected { get; set; }
+    [Parameter] public EventCallback<List<Biome>> SelectedChanged { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private static readonly Biome[] SelectableBiomes =
+        Enum.GetValues<Biome>().Where(b => b != Biome.None).ToArray();
+
+    private bool IsChecked(Biome biome) => Selected != null && Selected.Contains(biome);
+
+    private async Task Toggle(Biome biome, bool isChecked)
+    {
+        var list = Selected ?? new List<Biome>();
+
+        if (isChecked)
+        {
+            if (!list.Contains(biome))
+            {
+                list.Add(biome);
+            }
+        }
+        else
+        {
+            list.Remove(biome);
+        }
+
+        Selected = list;
+        await SelectedChanged.InvokeAsync(list);
+        await OnChanged.InvokeAsync();
+    }
+}

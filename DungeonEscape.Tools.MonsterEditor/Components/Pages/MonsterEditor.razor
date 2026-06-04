@@ -1,0 +1,314 @@
+@page "/"
+@implements IDisposable
+@inject MonsterFileService Files
+@inject MonsterImageCatalog ImageCatalog
+@inject DataSourceCatalog DataSources
+@inject AssetContext Assets
+@inject WindowService Window
+@inject EditorSettingsService Settings
+
+<div class="toolbar">
+    <div class="menu @(showFileMenu ? "open" : string.Empty)">
+        <button class="menu-button" @onclick="ToggleFileMenu">File &#9662;</button>
+        @if (showFileMenu)
+        {
+            <div class="menu-dropdown">
+                <button class="menu-item" @onclick="NewFile">New</button>
+                <button class="menu-item" @onclick="OpenFile">Open&hellip;</button>
+                <button class="menu-item" @onclick="SaveFile" disabled="@(!Files.HasDocument)">Save</button>
+                <button class="menu-item" @onclick="SaveFileAs" disabled="@(!Files.HasDocument)">Save As&hellip;</button>
+            </div>
+        }
+    </div>
+    <span class="spacer"></span>
+
+    <span class="file-name">
+        @if (Files.HasDocument)
+        {
+            @Files.DisplayName
+            @if (Files.IsDirty)
+            {
+                <span class="dirty"> &bull; unsaved</span>
+            }
+        }
+        else
+        {
+            <text>No file open</text>
+        }
+    </span>
+</div>
+
+@if (!Files.HasDocument)
+{
+    <div class="empty-state">
+        <p>Open an existing monster JSON file or create a new one to begin.</p>
+        <p>
+            <button @onclick="OpenFile">Open File</button>
+            <button @onclick="NewFile">New File</button>
+        </p>
+        @if (Assets.AssetRoot == null)
+        {
+            <p style="color:var(--text-dim);font-size:.8rem">
+                Tip: open a file inside your <code>Assets/DungeonEscape/Data</code> folder
+                so monster images can be resolved automatically.
+            </p>
+        }
+    </div>
+}
+else
+{
+    <div class="split">
+        <div class="list-pane">
+            <div class="search">
+                <input placeholder="Search monsters..." @bind="searchText" @bind:event="oninput" />
+            </div>
+            <div class="list-actions">
+                <button @onclick="AddMonster">+ Add</button>
+                <button @onclick="DuplicateMonster" disabled="@(Files.Selected == null)">Duplicate</button>
+                <button class="danger" @onclick="RemoveMonster" disabled="@(Files.Selected == null)">Remove</button>
+            </div>
+            <div class="monster-list">
+                @foreach (var monster in FilteredMonsters)
+                {
+                    var current = monster;
+                    <div class="monster-item @(ReferenceEquals(current, Files.Selected) ? "selected" : string.Empty)"
+                         @onclick="() => Select(current)">
+                        <img class="thumb" src="@Thumb(current.ImageId)" alt="" />
+                        <div class="meta">
+                            <span class="name">@(string.IsNullOrEmpty(current.Name) ? "(unnamed)" : current.Name)</span>
+                            <span class="sub">Lvl @current.MinLevel &middot; @current.Rarity</span>
+                        </div>
+                    </div>
+                }
+                @if (!FilteredMonsters.Any())
+                {
+                    <div class="empty-state">No monsters match.</div>
+                }
+            </div>
+        </div>
+
+        <div class="form-pane">
+            <MonsterForm Monster="Files.Selected" OnChanged="OnMonsterChanged" />
+        </div>
+    </div>
+}
+
+@if (toast != null)
+{
+    <div class="toast">@toast</div>
+}
+
+@code {
+    private string searchText = string.Empty;
+    private string? toast;
+    private bool showFileMenu;
+
+    protected override void OnInitialized()
+    {
+        Files.StateChanged += OnStateChanged;
+        Assets.Changed += OnStateChanged;
+
+        TryAutoLoadLastFile();
+    }
+
+    private void ToggleFileMenu() => showFileMenu = !showFileMenu;
+
+    private void CloseFileMenu() => showFileMenu = false;
+
+    private void TryAutoLoadLastFile()
+    {
+        var path = Settings.LastFilePath;
+        if (string.IsNullOrEmpty(path) || !System.IO.File.Exists(path))
+        {
+            return;
+        }
+
+        try
+        {
+            Files.Load(path);
+            ImageCatalog.Reload();
+            DataSources.Reload();
+            ShowToast($"Loaded {Files.Monsters.Count} monsters");
+        }
+        catch
+        {
+            // If the remembered file can't be loaded, fall back to the empty state.
+        }
+    }
+
+
+    public void Dispose()
+    {
+        Files.StateChanged -= OnStateChanged;
+        Assets.Changed -= OnStateChanged;
+    }
+
+    private void OnStateChanged() => InvokeAsync(StateHasChanged);
+
+    private IEnumerable<Monster> FilteredMonsters =>
+        string.IsNullOrWhiteSpace(searchText)
+            ? Files.Monsters
+            : Files.Monsters.Where(m =>
+                (m.Name ?? string.Empty).Contains(searchText, StringComparison.OrdinalIgnoreCase));
+
+    private string Thumb(int imageId) => ImageCatalog.GetImageDataUri(imageId) ?? string.Empty;
+
+    private void Select(Monster monster) => Files.Select(monster);
+
+    private void OnMonsterChanged() => Files.MarkDirty();
+
+    private void AddMonster() => Files.AddMonster();
+
+    private void DuplicateMonster() => Files.Duplicate(Files.Selected);
+
+    private void RemoveMonster()
+    {
+        var selected = Files.Selected;
+        if (selected == null)
+        {
+            return;
+        }
+
+        var result = Window.ShowConfirm("Remove Monster",
+            $"Remove '{selected.Name}' from the list?");
+        if (result == Photino.NET.PhotinoDialogResult.Yes)
+        {
+            Files.Remove(selected);
+        }
+    }
+
+    private void NewFile()
+    {
+        CloseFileMenu();
+
+        if (!ConfirmDiscardChanges())
+        {
+            return;
+        }
+
+        Files.NewDocument();
+    }
+
+    private void OpenFile()
+    {
+        CloseFileMenu();
+
+        if (!ConfirmDiscardChanges())
+        {
+            return;
+        }
+
+        var startDir = Assets.DataDirectory
+            ?? (Files.CurrentFilePath != null ? System.IO.Path.GetDirectoryName(Files.CurrentFilePath) : null);
+
+        var path = Window.ShowOpenFile("Open Monster JSON", startDir);
+        if (string.IsNullOrEmpty(path))
+        {
+            return;
+        }
+
+        try
+        {
+            Files.Load(path);
+            ImageCatalog.Reload();
+            DataSources.Reload();
+            Settings.LastFilePath = Files.CurrentFilePath;
+            ShowToast($"Loaded {Files.Monsters.Count} monsters");
+        }
+        catch (Exception ex)
+        {
+            Window.ShowInfo("Open Failed", ex.Message);
+        }
+    }
+
+    private void SaveFile()
+    {
+        CloseFileMenu();
+
+        if (string.IsNullOrEmpty(Files.CurrentFilePath))
+        {
+            SaveFileAs();
+            return;
+        }
+
+        try
+        {
+            Files.Save();
+            Settings.LastFilePath = Files.CurrentFilePath;
+            ShowToast("Saved");
+        }
+        catch (Exception ex)
+        {
+            Window.ShowInfo("Save Failed", ex.Message);
+        }
+    }
+
+    private void SaveFileAs()
+    {
+        CloseFileMenu();
+
+        var startDir = Assets.DataDirectory
+            ?? (Files.CurrentFilePath != null ? System.IO.Path.GetDirectoryName(Files.CurrentFilePath) : null);
+        var defaultName = Files.CurrentFilePath != null
+            ? System.IO.Path.GetFileName(Files.CurrentFilePath)
+            : "monsters.json";
+
+        var path = Window.ShowSaveFile("Save Monster JSON", startDir, defaultName);
+        if (string.IsNullOrEmpty(path))
+        {
+            return;
+        }
+
+        if (!path.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+        {
+            path += ".json";
+        }
+
+        try
+        {
+            Files.Save(path);
+            Settings.LastFilePath = Files.CurrentFilePath;
+            ShowToast("Saved");
+        }
+        catch (Exception ex)
+        {
+            Window.ShowInfo("Save Failed", ex.Message);
+        }
+    }
+
+
+    private bool ConfirmDiscardChanges()
+    {
+        if (!Files.IsDirty)
+        {
+            return true;
+        }
+
+        var result = Window.ShowConfirm("Unsaved Changes",
+            "You have unsaved changes. Save before continuing?");
+
+        switch (result)
+        {
+            case Photino.NET.PhotinoDialogResult.Yes:
+                SaveFile();
+                return !Files.IsDirty;
+            case Photino.NET.PhotinoDialogResult.No:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void ShowToast(string message)
+    {
+        toast = message;
+        _ = HideToastLater();
+    }
+
+    private async Task HideToastLater()
+    {
+        await Task.Delay(2000);
+        toast = null;
+        await InvokeAsync(StateHasChanged);
+    }
+}

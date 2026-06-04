@@ -1,0 +1,23 @@
+@*
+    A labelled integer input that reports changes via ValueChanged. Accepts the
+    value as a long so it can edit both int and ulong-backed properties safely.
+*@
+
+<div class="field">
+    <label>@Label</label>
+    <input type="number" value="@Value" @onchange="OnChanged" />
+</div>
+
+@code {
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public long Value { get; set; }
+    [Parameter] public EventCallback<int> ValueChanged { get; set; }
+
+    private async Task OnChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var parsed))
+        {
+            await ValueChanged.InvokeAsync(parsed);
+        }
+    }
+}

@@ -288,6 +288,10 @@ button.danger {
     image-rendering: pixelated;
 }
 
+.embedded-header {
+    margin-bottom: 0;
+}
+
 .field .preview {
     width: 96px;
     height: 96px;

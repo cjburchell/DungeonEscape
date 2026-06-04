@@ -12,6 +12,7 @@
 else
 {
     <div class="form-header">
+        <img class="preview" src="@PreviewSource" alt="preview" />
         <div class="field" style="flex:1">
             <label>Name</label>
             <input value="@Spell.Name" @onchange="e => Set(() => Spell.Name = e.Value?.ToString() ?? string.Empty)" />
@@ -49,6 +50,11 @@ else
 @code {
     [Parameter] public Spell? Spell { get; set; }
     [Parameter] public EventCallback OnChanged { get; set; }
+
+    private string PreviewSource =>
+        Spell == null
+            ? string.Empty
+            : Images.Catalog.GetImageDataUri(Spell.ImageId) ?? string.Empty;
 
     private List<Class> EnsureClasses()
     {

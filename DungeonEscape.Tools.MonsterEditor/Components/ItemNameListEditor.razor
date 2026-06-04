@@ -15,7 +15,8 @@
         {
             var index = i;
             <div class="card-row">
-                <div class="field-grid">
+                <div class="form-header embedded-header">
+                    <img class="preview" src="@PreviewSource(Items[index].ImageId)" alt="preview" />
                     <div class="field">
                         <label>Name</label>
                         <input value="@Items[index].Name" @onchange="e => UpdateAt(index, item => item.Name = e.Value?.ToString() ?? string.Empty)" />
@@ -38,6 +39,8 @@
 @code {
     [Parameter] public List<ItemName> Items { get; set; } = new();
     [Parameter] public EventCallback OnChanged { get; set; }
+
+    private string PreviewSource(int imageId) => Images.Catalog.GetImageDataUri(imageId) ?? string.Empty;
 
     private async Task Add()
     {

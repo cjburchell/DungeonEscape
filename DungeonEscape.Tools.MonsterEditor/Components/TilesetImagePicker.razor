@@ -1,6 +1,6 @@
 @*
-    Image selector + preview for a grid-based tileset (items / spells). Renders a
-    preview thumbnail and a dropdown of available tile ids.
+    Image selector for a grid-based tileset (items / spells). The selected
+    entity form is responsible for rendering its main preview.
 *@
 
 <div class="field-grid">
@@ -17,10 +17,6 @@
             }
         </select>
     </div>
-    <div class="field">
-        <label>Preview</label>
-        <img class="preview" src="@PreviewSource" alt="preview" />
-    </div>
 </div>
 
 @code {
@@ -28,8 +24,6 @@
     [Parameter] public TilesetImageCatalog Catalog { get; set; } = default!;
     [Parameter] public int ImageId { get; set; }
     [Parameter] public EventCallback<int> ImageIdChanged { get; set; }
-
-    private string PreviewSource => Catalog.GetImageDataUri(ImageId) ?? string.Empty;
 
     private async Task OnImageChanged(ChangeEventArgs e)
     {

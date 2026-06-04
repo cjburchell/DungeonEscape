@@ -2,6 +2,7 @@
     Property editor for itemdef.json entries. These are procedural item templates:
     type/base stat, equip slots/classes, and generated name/image options.
 *@
+@inject ItemImageCatalog Images
 
 @if (Definition == null)
 {
@@ -9,9 +10,12 @@
 }
 else
 {
-    <div class="field-grid">
-        <EnumSelect TEnum="ItemType" Label="Type" Value="Definition.Type" ValueChanged="v => Set(() => Definition.Type = v)" />
-        <NumberField Label="Base Stat" Value="Definition.BaseStat" ValueChanged="v => Set(() => Definition.BaseStat = v)" />
+    <div class="form-header">
+        <img class="preview" src="@PreviewSource" alt="preview" />
+        <div class="field-grid" style="flex:1">
+            <EnumSelect TEnum="ItemType" Label="Type" Value="Definition.Type" ValueChanged="v => Set(() => Definition.Type = v)" />
+            <NumberField Label="Base Stat" Value="Definition.BaseStat" ValueChanged="v => Set(() => Definition.BaseStat = v)" />
+        </div>
     </div>
 
     <fieldset>
@@ -33,6 +37,12 @@ else
 @code {
     [Parameter] public ItemDefinition? Definition { get; set; }
     [Parameter] public EventCallback OnChanged { get; set; }
+
+    private string PreviewSource => Images.Catalog.GetImageDataUri(PreviewImageId) ?? string.Empty;
+
+    private int PreviewImageId => Definition?.Names?.FirstOrDefault(name => name.ImageId != 0)?.ImageId
+        ?? Definition?.Names?.FirstOrDefault()?.ImageId
+        ?? 0;
 
     private List<Slot> EnsureSlots() => Definition == null ? new List<Slot>() : (Definition.Slots ??= new List<Slot>());
     private List<Class> EnsureClasses() => Definition == null ? new List<Class>() : (Definition.Classes ??= new List<Class>());

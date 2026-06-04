@@ -40,6 +40,8 @@ namespace Redpoint.DungeonEscape.UnityEditor
                 options = BuildOptions.None
             };
 
+            global::DungeonEscape.Unity.Editor.AppIconConfigurator.ConfigureIcon();
+
             var report = BuildPipeline.BuildPlayer(options);
             if (report.summary.result == BuildResult.Succeeded)
             {

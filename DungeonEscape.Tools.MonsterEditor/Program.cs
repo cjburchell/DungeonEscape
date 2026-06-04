@@ -6,6 +6,8 @@ namespace DungeonEscape.Tools.MonsterEditor;
 
 public static class Program
 {
+    private const string AppIconRelativePath = "wwwroot/icons/DungeonEscape.ico";
+
     [STAThread]
     public static void Main(string[] args)
     {
@@ -33,9 +35,11 @@ public static class Program
         var windowService = app.Services.GetRequiredService<WindowService>();
         windowService.Attach(app.MainWindow);
 
+        var appIconPath = Path.Combine(AppContext.BaseDirectory, AppIconRelativePath);
+
         app.MainWindow
             .SetTitle("Dungeon Escape - Data Editor")
-
+            .SetIconFile(appIconPath)
             .SetUseOsDefaultSize(false)
             .SetSize(1280, 800)
             .SetResizable(true)
@@ -44,7 +48,7 @@ public static class Program
         AppDomain.CurrentDomain.UnhandledException += (_, error) =>
         {
             var ex = error.ExceptionObject as Exception;
-            app.MainWindow.ShowMessage("Unhandled Error", ex?.Message ?? "Unknown error");
+            Console.Error.WriteLine(ex?.ToString() ?? "Unhandled error: unknown exception");
         };
 
         app.Run();

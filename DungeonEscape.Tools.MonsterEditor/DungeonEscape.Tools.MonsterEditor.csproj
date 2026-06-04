@@ -10,6 +10,7 @@
     <!-- Allow running on a newer installed runtime (e.g. .NET 10) when the
          .NET 8 runtime is not present on the machine. -->
     <RollForward>LatestMajor</RollForward>
+    <ApplicationIcon>wwwroot\icons\DungeonEscape.ico</ApplicationIcon>
     <!-- Photino desktop tool runs on Windows; System.Drawing platform warnings are expected. -->
     <NoWarn>$(NoWarn);CA1416</NoWarn>
   </PropertyGroup>

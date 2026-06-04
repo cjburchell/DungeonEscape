@@ -22,16 +22,35 @@ else
     <div class="field-grid">
         <div class="field">
             <label>Image</label>
-            <select value="@Monster.ImageId" @onchange="OnImageChanged">
-                @if (!ImageCatalog.TryGet(Monster.ImageId, out _))
-                {
-                    <option value="@Monster.ImageId">#@Monster.ImageId (unknown)</option>
-                }
-                @foreach (var entry in ImageCatalog.Entries)
-                {
-                    <option value="@entry.ImageId">@entry.DisplayName</option>
-                }
-            </select>
+            <div class="image-picker">
+                <div class="field image-picker-field">
+                    <div class="image-dropdown @(imageDropdownOpen ? "open" : null)">
+                        <button type="button" class="image-dropdown-button" @onclick="ToggleImageDropdown">
+                            <ImageDropdownRow ImageSource="@PreviewSource" Text="@SelectedImageDisplayName" />
+                            <span class="image-dropdown-caret">▾</span>
+                        </button>
+                        @if (imageDropdownOpen)
+                        {
+                            <div class="image-dropdown-menu">
+                        @if (!ImageCatalog.TryGet(Monster.ImageId, out _))
+                        {
+                                    <button type="button" class="image-dropdown-option selected" @onclick="() => SelectImage(Monster.ImageId)">
+                                        <ImageDropdownRow ImageSource="@PreviewSource" Text="@UnknownImageDisplayName" />
+                                    </button>
+                        }
+                        @foreach (var entry in ImageCatalog.Entries)
+                        {
+                                    <button type="button"
+                                            class="image-dropdown-option @(entry.ImageId == Monster.ImageId ? "selected" : null)"
+                                            @onclick="() => SelectImage(entry.ImageId)">
+                                        <ImageDropdownRow ImageSource="@ImageCatalog.GetImageDataUri(entry.ImageId)" Text="@entry.DisplayName" />
+                                    </button>
+                        }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="field">
@@ -107,11 +126,20 @@ else
 
     private static readonly Biome[] ExcludedBiomes = { Biome.None };
 
+    private bool imageDropdownOpen;
+
 
     private string PreviewSource =>
         Monster == null
             ? string.Empty
             : ImageCatalog.GetImageDataUri(Monster.ImageId) ?? string.Empty;
+
+    private string UnknownImageDisplayName => Monster == null ? string.Empty : $"#{Monster.ImageId} (unknown)";
+
+    private string SelectedImageDisplayName =>
+        Monster == null
+            ? string.Empty
+            : ImageCatalog.GetDisplayName(Monster.ImageId);
 
     private List<string> EnsureList(List<string>? list) => list ?? new List<string>();
 
@@ -126,9 +154,15 @@ else
         await RaiseChanged();
     }
 
-    private async Task OnImageChanged(ChangeEventArgs e)
+    private void ToggleImageDropdown()
     {
-        if (Monster != null && int.TryParse(e.Value?.ToString(), out var id))
+        imageDropdownOpen = !imageDropdownOpen;
+    }
+
+    private async Task SelectImage(int id)
+    {
+        imageDropdownOpen = false;
+        if (Monster != null)
         {
             Monster.ImageId = id;
             await RaiseChanged();

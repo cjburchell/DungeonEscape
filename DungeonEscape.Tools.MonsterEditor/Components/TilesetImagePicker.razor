@@ -1,21 +1,38 @@
 @*
     Image selector for a grid-based tileset (items / spells). The selected
-    entity form is responsible for rendering its main preview.
+    entity form may still render a larger main preview; this picker shows the
+    currently selected tile next to the dropdown so image choices are visible
+    at the point of selection.
 *@
 
-<div class="field-grid">
-    <div class="field">
+<div class="image-picker">
+    <div class="field image-picker-field">
         <label>@Label</label>
-        <select value="@ImageId" @onchange="OnImageChanged">
+        <div class="image-dropdown @(isOpen ? "open" : null)">
+            <button type="button" class="image-dropdown-button" @onclick="ToggleOpen">
+                <ImageDropdownRow ImageSource="@PreviewSource" Text="@SelectedDisplayName" />
+                <span class="image-dropdown-caret">▾</span>
+            </button>
+            @if (isOpen)
+            {
+                <div class="image-dropdown-menu">
             @if (!Catalog.TryGet(ImageId, out _))
             {
-                <option value="@ImageId">#@ImageId (unknown)</option>
+                        <button type="button" class="image-dropdown-option selected" @onclick="() => SelectImage(ImageId)">
+                            <ImageDropdownRow ImageSource="@PreviewSource" Text="@UnknownDisplayName" />
+                        </button>
             }
             @foreach (var entry in Catalog.Entries)
             {
-                <option value="@entry.ImageId">@entry.DisplayName</option>
+                        <button type="button"
+                                class="image-dropdown-option @(entry.ImageId == ImageId ? "selected" : null)"
+                                @onclick="() => SelectImage(entry.ImageId)">
+                            <ImageDropdownRow ImageSource="@Catalog.GetImageDataUri(entry.ImageId)" Text="@entry.DisplayName" />
+                        </button>
             }
-        </select>
+                </div>
+            }
+        </div>
     </div>
 </div>
 
@@ -25,12 +42,26 @@
     [Parameter] public int ImageId { get; set; }
     [Parameter] public EventCallback<int> ImageIdChanged { get; set; }
 
-    private async Task OnImageChanged(ChangeEventArgs e)
+    private bool isOpen;
+
+    private string PreviewSource => Catalog.GetImageDataUri(ImageId) ?? string.Empty;
+
+    private string UnknownDisplayName => $"#{ImageId} (unknown)";
+
+    private string SelectedDisplayName =>
+        Catalog.TryGet(ImageId, out var entry)
+            ? entry.DisplayName
+            : UnknownDisplayName;
+
+    private void ToggleOpen()
     {
-        if (int.TryParse(e.Value?.ToString(), out var id))
-        {
-            ImageId = id;
-            await ImageIdChanged.InvokeAsync(id);
-        }
+        isOpen = !isOpen;
+    }
+
+    private async Task SelectImage(int id)
+    {
+        isOpen = false;
+        ImageId = id;
+        await ImageIdChanged.InvokeAsync(id);
     }
 }

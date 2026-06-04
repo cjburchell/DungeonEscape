@@ -1,0 +1,14 @@
+@*
+    Shared row content for custom image dropdowns. Native select options cannot
+    reliably display images, so image pickers render button-based option rows.
+*@
+
+<span class="image-dropdown-row">
+    <img class="dropdown-preview" src="@ImageSource" alt="" />
+    <span class="image-dropdown-text">@Text</span>
+</span>
+
+@code {
+    [Parameter] public string? ImageSource { get; set; }
+    [Parameter] public string Text { get; set; } = string.Empty;
+}

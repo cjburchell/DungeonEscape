@@ -14,6 +14,7 @@ variables:
   UNITY_CI_ENABLED: "true"
   UNITY_PLAYMODE_TESTS_ENABLED: "false"
   UNITY_BUILD_WINDOWS_ENABLED: "true"
+  TOOLS_PACKAGE_ENABLED: "true"
   UNITY_LICENSE_B64: ""
 
 stages:
@@ -204,6 +205,26 @@ unity-build-windows:
       - DungeonEscape.Unity/Logs/ci-unity-build-windows.log
   rules:
     - if: '$UNITY_BUILD_WINDOWS_ENABLED == "false"'
+      when: never
+    - when: on_success
+
+tools-package:
+  image: $DOTNET_SDK_IMAGE
+  stage: package
+  needs:
+    - dotnet-build
+    - dotnet-tests
+  script:
+    - bash scripts/ci/dotnet-restore.sh
+    - bash scripts/ci/tools-package.sh
+  artifacts:
+    when: on_success
+    expire_in: 1 week
+    name: "DungeonEscape-Tools-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - artifacts/tools/
+  rules:
+    - if: '$TOOLS_PACKAGE_ENABLED == "false"'
       when: never
     - when: on_success
 

@@ -1,0 +1,30 @@
+@*
+    Displays a D&D-style dice expression for fields stored as
+    Const + Roll(Random) x Times.
+*@
+
+<span class="roll-preview" title="@Title">@Expression</span>
+
+@code {
+    [Parameter] public string Label { get; set; } = "Roll";
+    [Parameter] public int Times { get; set; }
+    [Parameter] public int Random { get; set; }
+    [Parameter] public int Const { get; set; }
+
+    private string Title => $"{Label}: {Times} roll(s) of d{Random} plus {Const}";
+
+    private string Expression
+    {
+        get
+        {
+            var dice = Times > 0 && Random > 0 ? $"{Times}d{Random}" : string.Empty;
+            if (Const == 0)
+            {
+                return string.IsNullOrEmpty(dice) ? "0" : dice;
+            }
+
+            var modifier = Const > 0 ? $"+{Const}" : Const.ToString();
+            return string.IsNullOrEmpty(dice) ? Const.ToString() : dice + modifier;
+        }
+    }
+}

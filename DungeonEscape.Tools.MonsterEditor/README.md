@@ -23,15 +23,21 @@ It loads the following files into one shared, in-memory dataset:
 | `spells.json`     | Spells        |
 | `skills.json`     | Skills        |
 | `customitems.json`| Items         |
+| `itemdef.json`    | Item Definitions |
+| `quests.json`     | Quests        |
+| `statnames.json`  | Stat Names    |
+| `names.json`      | Names         |
 
 The last opened folder is remembered and **auto-loaded on startup** (stored in
 `%AppData%/DungeonEscape.MonsterEditor/settings.json`).
 
 ## Features
 
-- Tabs for **Monsters**, **Spells**, **Skills**, and **Items**, each with a
-  searchable list and **Add**, **Duplicate**, and **Remove** actions.
-- All four lists share a single in-memory dataset, so cross-references update
+- Tabs for **Monsters**, **Spells**, **Skills**, **Items**, **Item Definitions**,
+  **Quests**, **Stat Names**, and **Names**. Array-backed tabs include a
+  searchable list and **Add**, **Duplicate**, and **Remove** actions; `names.json`
+  is edited as a single document.
+- All lists share a single in-memory dataset, so cross-references update
   **live** &mdash; e.g. add a new item on the Items tab and it immediately
   appears in a monster's drop list and any item dropdown; rename a skill and the
   Spell/Item skill dropdowns update without reloading.
@@ -47,6 +53,12 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
   - **Item** &mdash; image (with preview), type, rarity, target, cost, min
     level, charges, skill reference, stat values, slots, classes, and quest
     fields.
+  - **Item Definition** &mdash; procedural item type/base stat, equip slots,
+    allowed classes, and generated name/image options.
+  - **Quest** &mdash; id/name/description, minimum level, XP/gold rewards, reward
+    item references, and quest stages.
+  - **Stat Names** &mdash; stat type plus prefix/suffix word pools.
+  - **Names** &mdash; male and female character name pools.
 
 ## Images
 

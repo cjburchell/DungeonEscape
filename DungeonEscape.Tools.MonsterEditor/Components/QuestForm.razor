@@ -1,0 +1,60 @@
+@*
+    Property editor for quests.json entries, including reward item references and
+    embedded stages.
+*@
+@inject DataSourceCatalog DataSources
+
+@if (Quest == null)
+{
+    <div class="empty-state">Select a quest from the list, or add a new one.</div>
+}
+else
+{
+    <div class="form-header">
+        <div class="field" style="flex:1">
+            <label>Name</label>
+            <input value="@Quest.Name" @onchange="e => Set(() => Quest.Name = e.Value?.ToString() ?? string.Empty)" />
+        </div>
+        <div class="field" style="flex:1">
+            <label>Id</label>
+            <input value="@Quest.Id" @onchange="e => Set(() => Quest.Id = e.Value?.ToString() ?? string.Empty)" />
+        </div>
+    </div>
+
+    <div class="field">
+        <label>Description</label>
+        <textarea rows="4" value="@Quest.Description" @onchange="e => Set(() => Quest.Description = e.Value?.ToString() ?? string.Empty)"></textarea>
+    </div>
+
+    <div class="field-grid">
+        <NumberField Label="Minimum Level" Value="Quest.MinimumLevel" ValueChanged="v => Set(() => Quest.MinimumLevel = v)" />
+        <NumberField Label="XP" Value="Quest.Xp" ValueChanged="v => Set(() => Quest.Xp = v)" />
+        <NumberField Label="Gold" Value="Quest.Gold" ValueChanged="v => Set(() => Quest.Gold = v)" />
+    </div>
+
+    <fieldset>
+        <legend>Reward Items</legend>
+        <StringListEditor Items="EnsureItems()" Options="DataSources.Items" OnChanged="RaiseChanged" />
+    </fieldset>
+
+    <fieldset>
+        <legend>Stages</legend>
+        <QuestStageListEditor Items="EnsureStages()" OnChanged="RaiseChanged" />
+    </fieldset>
+}
+
+@code {
+    [Parameter] public Quest? Quest { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private List<string> EnsureItems() => Quest == null ? new List<string>() : (Quest.Items ??= new List<string>());
+    private List<QuestStage> EnsureStages() => Quest == null ? new List<QuestStage>() : (Quest.Stages ??= new List<QuestStage>());
+
+    private async Task Set(Action mutate)
+    {
+        mutate();
+        await RaiseChanged();
+    }
+
+    private async Task RaiseChanged() => await OnChanged.InvokeAsync();
+}

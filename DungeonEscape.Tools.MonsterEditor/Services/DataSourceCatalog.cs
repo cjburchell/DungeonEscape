@@ -9,6 +9,8 @@ namespace DungeonEscape.Tools.MonsterEditor.Services;
 /// </summary>
 public sealed class DataSourceCatalog
 {
+    public const string RandomItemId = "#Random#";
+
     private readonly DataFolderService data;
 
     public DataSourceCatalog(DataFolderService data)
@@ -26,7 +28,9 @@ public sealed class DataSourceCatalog
     {
         Spells = Names(data.Spells.Select(s => s.Name));
         Skills = Names(data.Skills.Select(s => s.Name));
-        Items = Names(data.Items.Select(i => i.Name));
+        Items = Names(data.Items.Select(i => i.Name)
+            .Concat(data.ItemDefinitions.SelectMany(d => d.Names ?? new List<Redpoint.DungeonEscape.Data.ItemName>()).Select(n => n.Name)));
+        Items = Items.Prepend(RandomItemId).ToList();
     }
 
     private static IReadOnlyList<string> Names(IEnumerable<string?> source)

@@ -288,6 +288,29 @@ button.danger {
     image-rendering: pixelated;
 }
 
+.field .preview {
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+    background: #14151a;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    image-rendering: pixelated;
+}
+
+.roll-preview {
+    display: inline-block;
+    margin-left: .35rem;
+    padding: .1rem .4rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: rgba(0,0,0,.16);
+    color: var(--text);
+    font-family: Consolas, "Courier New", monospace;
+    font-size: .8rem;
+    font-weight: 500;
+}
+
 .field-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -376,6 +399,33 @@ legend {
     color: var(--text-dim);
     font-size: .8rem;
     font-style: italic;
+}
+
+/* ---- Complex embedded list editors ---- */
+.complex-list {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+
+.complex-list .card-row {
+    display: flex;
+    flex-direction: column;
+    gap: .65rem;
+    padding: .75rem;
+    background: rgba(0,0,0,.12);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.row-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: .4rem;
+}
+
+.checkbox-field input[type="checkbox"] {
+    width: fit-content;
 }
 
 /* ---- Toast / message ---- */

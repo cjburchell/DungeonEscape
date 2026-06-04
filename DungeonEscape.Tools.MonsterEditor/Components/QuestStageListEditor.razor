@@ -1,0 +1,87 @@
+@*
+    Edits the ordered quest stages embedded in a Quest.
+*@
+
+<div class="complex-list">
+    @if (Items.Count == 0)
+    {
+        <div class="tag-empty">No stages</div>
+    }
+    else
+    {
+        @for (var i = 0; i < Items.Count; i++)
+        {
+            var index = i;
+            <div class="card-row">
+                <div class="field-grid">
+                    <div class="field">
+                        <label>Number</label>
+                        <input value="@Items[index].Number" readonly />
+                    </div>
+                    <div class="field checkbox-field">
+                        <label>Complete Quest</label>
+                        <input type="checkbox" checked="@Items[index].CompleteQuest"
+                               @onchange="e => UpdateAt(index, stage => stage.CompleteQuest = (bool)(e.Value ?? false))" />
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Description</label>
+                    <textarea rows="3" value="@Items[index].Description" @onchange="e => UpdateAt(index, stage => stage.Description = e.Value?.ToString() ?? string.Empty)"></textarea>
+                </div>
+                <div class="row-actions">
+                    <button class="danger" @onclick="() => RemoveAt(index)">Remove Stage</button>
+                </div>
+            </div>
+        }
+    }
+
+    <button @onclick="Add">+ Add Stage</button>
+</div>
+
+@code {
+    [Parameter] public List<QuestStage> Items { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        NormalizeStageNumbers();
+    }
+
+    private async Task Add()
+    {
+        Items.Add(new QuestStage { Description = "New stage" });
+        NormalizeStageNumbers();
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task UpdateAt(int index, Action<QuestStage> mutate)
+    {
+        if (index < 0 || index >= Items.Count)
+        {
+            return;
+        }
+
+        mutate(Items[index]);
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task RemoveAt(int index)
+    {
+        if (index < 0 || index >= Items.Count)
+        {
+            return;
+        }
+
+        Items.RemoveAt(index);
+        NormalizeStageNumbers();
+        await OnChanged.InvokeAsync();
+    }
+
+    private void NormalizeStageNumbers()
+    {
+        for (var i = 0; i < Items.Count; i++)
+        {
+            Items[i].Number = i;
+        }
+    }
+}

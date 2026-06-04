@@ -61,7 +61,7 @@ else
     </fieldset>
 
     <fieldset>
-        <legend>Health (Const + Roll(Random) x Times)</legend>
+        <legend>Health <RollPreview Label="Health" Times="Monster.HealthTimes" Random="Monster.HealthRandom" Const="Monster.HealthConst" /></legend>
         <div class="field-grid">
             <NumberField Label="Health Const" Value="Monster.HealthConst" ValueChanged="v => Set(() => Monster.HealthConst = v)" />
             <NumberField Label="Health Random" Value="Monster.HealthRandom" ValueChanged="v => Set(() => Monster.HealthRandom = v)" />
@@ -70,7 +70,7 @@ else
     </fieldset>
 
     <fieldset>
-        <legend>Magic (Const + Roll(Random) x Times)</legend>
+        <legend>Magic <RollPreview Label="Magic" Times="Monster.MagicTimes" Random="Monster.MagicRandom" Const="Monster.MagicConst" /></legend>
         <div class="field-grid">
             <NumberField Label="Magic Const" Value="Monster.MagicConst" ValueChanged="v => Set(() => Monster.MagicConst = v)" />
             <NumberField Label="Magic Random" Value="Monster.MagicRandom" ValueChanged="v => Set(() => Monster.MagicRandom = v)" />

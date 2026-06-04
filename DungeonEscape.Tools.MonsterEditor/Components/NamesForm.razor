@@ -1,0 +1,30 @@
+@*
+    Single-object editor for names.json.
+*@
+
+@if (Names == null)
+{
+    <div class="empty-state">No names document loaded.</div>
+}
+else
+{
+    <fieldset>
+        <legend>Male Names</legend>
+        <StringListEditor Items="EnsureMale()" OnChanged="RaiseChanged" />
+    </fieldset>
+
+    <fieldset>
+        <legend>Female Names</legend>
+        <StringListEditor Items="EnsureFemale()" OnChanged="RaiseChanged" />
+    </fieldset>
+}
+
+@code {
+    [Parameter] public Names? Names { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private List<string> EnsureMale() => Names == null ? new List<string>() : (Names.Male ??= new List<string>());
+    private List<string> EnsureFemale() => Names == null ? new List<string>() : (Names.Female ??= new List<string>());
+
+    private async Task RaiseChanged() => await OnChanged.InvokeAsync();
+}

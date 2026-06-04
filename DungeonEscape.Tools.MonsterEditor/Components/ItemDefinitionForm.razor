@@ -1,0 +1,68 @@
+@*
+    Property editor for itemdef.json entries. These are procedural item templates:
+    type/base stat, equip slots/classes, and generated name/image options.
+*@
+
+@if (Definition == null)
+{
+    <div class="empty-state">Select an item definition from the list, or add a new one.</div>
+}
+else
+{
+    <div class="field-grid">
+        <EnumSelect TEnum="ItemType" Label="Type" Value="Definition.Type" ValueChanged="v => Set(() => Definition.Type = v)" />
+        <NumberField Label="Base Stat" Value="Definition.BaseStat" ValueChanged="v => Set(() => Definition.BaseStat = v)" />
+    </div>
+
+    <fieldset>
+        <legend>Slots</legend>
+        <EnumMultiSelect TEnum="Slot" Selected="EnsureSlots()" SelectedChanged="OnSlotsChanged" OnChanged="RaiseChanged" />
+    </fieldset>
+
+    <fieldset>
+        <legend>Classes</legend>
+        <EnumMultiSelect TEnum="Class" Selected="EnsureClasses()" SelectedChanged="OnClassesChanged" OnChanged="RaiseChanged" />
+    </fieldset>
+
+    <fieldset>
+        <legend>Names</legend>
+        <ItemNameListEditor Items="EnsureNames()" OnChanged="RaiseChanged" />
+    </fieldset>
+}
+
+@code {
+    [Parameter] public ItemDefinition? Definition { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private List<Slot> EnsureSlots() => Definition == null ? new List<Slot>() : (Definition.Slots ??= new List<Slot>());
+    private List<Class> EnsureClasses() => Definition == null ? new List<Class>() : (Definition.Classes ??= new List<Class>());
+    private List<ItemName> EnsureNames() => Definition == null ? new List<ItemName>() : (Definition.Names ??= new List<ItemName>());
+
+    private async Task OnSlotsChanged(List<Slot> slots)
+    {
+        if (Definition != null)
+        {
+            Definition.Slots = slots;
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task OnClassesChanged(List<Class> classes)
+    {
+        if (Definition != null)
+        {
+            Definition.Classes = classes;
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task Set(Action mutate)
+    {
+        mutate();
+        await RaiseChanged();
+    }
+
+    private async Task RaiseChanged() => await OnChanged.InvokeAsync();
+}

@@ -1,0 +1,69 @@
+@*
+    Edits the Names collection inside itemdef.json entries. Each row captures the
+    display name and corresponding item tileset image id.
+*@
+@inject ItemImageCatalog Images
+
+<div class="complex-list">
+    @if (Items.Count == 0)
+    {
+        <div class="tag-empty">No item names</div>
+    }
+    else
+    {
+        @for (var i = 0; i < Items.Count; i++)
+        {
+            var index = i;
+            <div class="card-row">
+                <div class="field-grid">
+                    <div class="field">
+                        <label>Name</label>
+                        <input value="@Items[index].Name" @onchange="e => UpdateAt(index, item => item.Name = e.Value?.ToString() ?? string.Empty)" />
+                    </div>
+                </div>
+
+                <TilesetImagePicker Label="Image" Catalog="Images.Catalog" ImageId="Items[index].ImageId"
+                                    ImageIdChanged="id => UpdateAt(index, item => item.ImageId = id)" />
+
+                <div class="row-actions">
+                    <button class="danger" @onclick="() => RemoveAt(index)">Remove Name</button>
+                </div>
+            </div>
+        }
+    }
+
+    <button @onclick="Add">+ Add Name</button>
+</div>
+
+@code {
+    [Parameter] public List<ItemName> Items { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private async Task Add()
+    {
+        Items.Add(new ItemName { Name = "New Item Name" });
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task UpdateAt(int index, Action<ItemName> mutate)
+    {
+        if (index < 0 || index >= Items.Count)
+        {
+            return;
+        }
+
+        mutate(Items[index]);
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task RemoveAt(int index)
+    {
+        if (index < 0 || index >= Items.Count)
+        {
+            return;
+        }
+
+        Items.RemoveAt(index);
+        await OnChanged.InvokeAsync();
+    }
+}

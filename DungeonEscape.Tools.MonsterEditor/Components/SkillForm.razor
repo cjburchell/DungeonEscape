@@ -41,7 +41,7 @@ else
     </div>
 
     <fieldset>
-        <legend>Stat (Const + Roll(Random) x Times)</legend>
+        <legend>Stat <RollPreview Label="Stat" Times="Skill.StatTimes" Random="Skill.StatRandom" Const="Skill.StatConst" /></legend>
         <div class="field-grid">
             <NumberField Label="Stat Const" Value="Skill.StatConst" ValueChanged="v => Set(() => Skill.StatConst = v)" />
             <NumberField Label="Stat Random" Value="Skill.StatRandom" ValueChanged="v => Set(() => Skill.StatRandom = v)" />
@@ -50,7 +50,7 @@ else
     </fieldset>
 
     <fieldset>
-        <legend>Duration (Const + Roll(Random) x Times)</legend>
+        <legend>Duration <RollPreview Label="Duration" Times="Skill.DurationTimes" Random="Skill.DurationRandom" Const="Skill.DurationConst" /></legend>
         <div class="field-grid">
             <NumberField Label="Duration Const" Value="Skill.DurationConst" ValueChanged="v => Set(() => Skill.DurationConst = v)" />
             <NumberField Label="Duration Random" Value="Skill.DurationRandom" ValueChanged="v => Set(() => Skill.DurationRandom = v)" />

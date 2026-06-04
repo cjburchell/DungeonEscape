@@ -1,0 +1,28 @@
+@*
+    Generic labelled dropdown for a single enum value.
+*@
+@typeparam TEnum where TEnum : struct, Enum
+
+<div class="field">
+    <label>@Label</label>
+    <select value="@Value" @onchange="OnChanged">
+        @foreach (var value in Enum.GetValues<TEnum>())
+        {
+            <option value="@value">@value</option>
+        }
+    </select>
+</div>
+
+@code {
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public TEnum Value { get; set; }
+    [Parameter] public EventCallback<TEnum> ValueChanged { get; set; }
+
+    private async Task OnChanged(ChangeEventArgs e)
+    {
+        if (Enum.TryParse<TEnum>(e.Value?.ToString(), out var parsed))
+        {
+            await ValueChanged.InvokeAsync(parsed);
+        }
+    }
+}

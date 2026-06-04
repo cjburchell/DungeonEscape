@@ -1,0 +1,72 @@
+@*
+    Property editor for a single Skill. Mutates the bound Skill directly and
+    raises OnChanged so the parent can flag the project dirty.
+*@
+
+@if (Skill == null)
+{
+    <div class="empty-state">Select a skill from the list, or add a new one.</div>
+}
+else
+{
+    <div class="form-header">
+        <div class="field" style="flex:1">
+            <label>Name</label>
+            <input value="@Skill.Name" @onchange="e => Set(() => Skill.Name = e.Value?.ToString() ?? string.Empty)" />
+        </div>
+    </div>
+
+    <div class="field-grid">
+        <EnumSelect TEnum="SkillType" Label="Type" Value="Skill.Type" ValueChanged="v => Set(() => Skill.Type = v)" />
+        <EnumSelect TEnum="Target" Label="Targets" Value="Skill.Targets" ValueChanged="v => Set(() => Skill.Targets = v)" />
+        <EnumSelect TEnum="StatType" Label="Stat Type" Value="Skill.StatType" ValueChanged="v => Set(() => Skill.StatType = v)" />
+        <NumberField Label="Max Targets" Value="Skill.MaxTargets" ValueChanged="v => Set(() => Skill.MaxTargets = v)" />
+    </div>
+
+    <div class="field-grid">
+        <div class="field">
+            <label>Effect Name</label>
+            <input value="@Skill.EffectName" @onchange="e => Set(() => Skill.EffectName = e.Value?.ToString() ?? string.Empty)" />
+        </div>
+        <div class="field">
+            <label>Is Piercing</label>
+            <input type="checkbox" checked="@Skill.IsPiercing"
+                   @onchange="e => Set(() => Skill.IsPiercing = (bool)(e.Value ?? false))" />
+        </div>
+        <div class="field">
+            <label>Do Attack</label>
+            <input type="checkbox" checked="@Skill.DoAttack"
+                   @onchange="e => Set(() => Skill.DoAttack = (bool)(e.Value ?? false))" />
+        </div>
+    </div>
+
+    <fieldset>
+        <legend>Stat (Const + Roll(Random) x Times)</legend>
+        <div class="field-grid">
+            <NumberField Label="Stat Const" Value="Skill.StatConst" ValueChanged="v => Set(() => Skill.StatConst = v)" />
+            <NumberField Label="Stat Random" Value="Skill.StatRandom" ValueChanged="v => Set(() => Skill.StatRandom = v)" />
+            <NumberField Label="Stat Times" Value="Skill.StatTimes" ValueChanged="v => Set(() => Skill.StatTimes = v)" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Duration (Const + Roll(Random) x Times)</legend>
+        <div class="field-grid">
+            <NumberField Label="Duration Const" Value="Skill.DurationConst" ValueChanged="v => Set(() => Skill.DurationConst = v)" />
+            <NumberField Label="Duration Random" Value="Skill.DurationRandom" ValueChanged="v => Set(() => Skill.DurationRandom = v)" />
+            <NumberField Label="Duration Times" Value="Skill.DurationTimes" ValueChanged="v => Set(() => Skill.DurationTimes = v)" />
+            <EnumSelect TEnum="DurationType" Label="Duration Type" Value="Skill.DurationType" ValueChanged="v => Set(() => Skill.DurationType = v)" />
+        </div>
+    </fieldset>
+}
+
+@code {
+    [Parameter] public Skill? Skill { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private async Task Set(Action mutate)
+    {
+        mutate();
+        await OnChanged.InvokeAsync();
+    }
+}

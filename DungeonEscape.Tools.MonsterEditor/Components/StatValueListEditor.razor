@@ -1,0 +1,70 @@
+@*
+    Edits a List<StatValue> as rows of (StatType dropdown + integer value).
+*@
+
+<div class="string-list">
+    @if (Items.Count == 0)
+    {
+        <div class="tag-empty">None</div>
+    }
+    else
+    {
+        @for (var i = 0; i < Items.Count; i++)
+        {
+            var index = i;
+            <div class="row">
+                <select value="@Items[index].Type" @onchange="e => UpdateType(index, e.Value?.ToString())">
+                    @foreach (var stat in Enum.GetValues<StatType>())
+                    {
+                        <option value="@stat">@stat</option>
+                    }
+                </select>
+                <input type="number" value="@Items[index].Value"
+                       @onchange="e => UpdateValue(index, e.Value?.ToString())" />
+                <button class="danger" title="Remove" @onclick="() => RemoveAt(index)">&times;</button>
+            </div>
+        }
+    }
+
+    <div class="add-row">
+        <button @onclick="Add">+ Add Stat</button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<StatValue> Items { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private async Task Add()
+    {
+        Items.Add(new StatValue { Type = StatType.Health, Value = 0 });
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task UpdateType(int index, string? value)
+    {
+        if (index >= 0 && index < Items.Count && Enum.TryParse<StatType>(value, out var type))
+        {
+            Items[index].Type = type;
+            await OnChanged.InvokeAsync();
+        }
+    }
+
+    private async Task UpdateValue(int index, string? value)
+    {
+        if (index >= 0 && index < Items.Count && int.TryParse(value, out var parsed))
+        {
+            Items[index].Value = parsed;
+            await OnChanged.InvokeAsync();
+        }
+    }
+
+    private async Task RemoveAt(int index)
+    {
+        if (index >= 0 && index < Items.Count)
+        {
+            Items.RemoveAt(index);
+            await OnChanged.InvokeAsync();
+        }
+    }
+}

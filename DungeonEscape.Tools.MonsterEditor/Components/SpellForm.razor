@@ -1,0 +1,80 @@
+@*
+    Property editor for a single Spell. The Skill reference is chosen from the
+    in-memory skills list so it stays current as skills are added/renamed.
+*@
+@inject SpellImageCatalog Images
+@inject DataSourceCatalog DataSources
+
+@if (Spell == null)
+{
+    <div class="empty-state">Select a spell from the list, or add a new one.</div>
+}
+else
+{
+    <div class="form-header">
+        <div class="field" style="flex:1">
+            <label>Name</label>
+            <input value="@Spell.Name" @onchange="e => Set(() => Spell.Name = e.Value?.ToString() ?? string.Empty)" />
+        </div>
+    </div>
+
+    <TilesetImagePicker Label="Image" Catalog="Images.Catalog" ImageId="Spell.ImageId"
+                        ImageIdChanged="id => Set(() => Spell.ImageId = id)" />
+
+    <div class="field-grid">
+        <div class="field">
+            <label>Skill</label>
+            <select value="@Spell.SkillId" @onchange="e => Set(() => Spell.SkillId = e.Value?.ToString())">
+                <option value="">-- none --</option>
+                @if (!string.IsNullOrEmpty(Spell.SkillId) && !DataSources.Skills.Contains(Spell.SkillId))
+                {
+                    <option value="@Spell.SkillId">@Spell.SkillId (custom)</option>
+                }
+                @foreach (var skill in DataSources.Skills)
+                {
+                    <option value="@skill">@skill</option>
+                }
+            </select>
+        </div>
+        <NumberField Label="Cost" Value="Spell.Cost" ValueChanged="v => Set(() => Spell.Cost = v)" />
+        <NumberField Label="Min Level" Value="Spell.MinLevel" ValueChanged="v => Set(() => Spell.MinLevel = v)" />
+    </div>
+
+    <fieldset>
+        <legend>Classes</legend>
+        <EnumMultiSelect TEnum="Class" Selected="EnsureClasses()" SelectedChanged="OnClassesChanged" OnChanged="RaiseChanged" />
+    </fieldset>
+}
+
+@code {
+    [Parameter] public Spell? Spell { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private List<Class> EnsureClasses()
+    {
+        if (Spell == null)
+        {
+            return new List<Class>();
+        }
+
+        return Spell.Classes ??= new List<Class>();
+    }
+
+    private async Task OnClassesChanged(List<Class> classes)
+    {
+        if (Spell != null)
+        {
+            Spell.Classes = classes;
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task Set(Action mutate)
+    {
+        mutate();
+        await RaiseChanged();
+    }
+
+    private async Task RaiseChanged() => await OnChanged.InvokeAsync();
+}

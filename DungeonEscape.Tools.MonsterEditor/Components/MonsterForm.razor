@@ -80,8 +80,10 @@ else
 
     <fieldset>
         <legend>Biomes</legend>
-        <BiomePicker Selected="Monster.Biomes" SelectedChanged="OnBiomesChanged" OnChanged="RaiseChanged" />
+        <EnumMultiSelect TEnum="Biome" Selected="Monster.Biomes" SelectedChanged="OnBiomesChanged"
+                         Exclude="ExcludedBiomes" OnChanged="RaiseChanged" />
     </fieldset>
+
 
     <fieldset>
         <legend>Spells</legend>
@@ -102,6 +104,9 @@ else
 @code {
     [Parameter] public Monster? Monster { get; set; }
     [Parameter] public EventCallback OnChanged { get; set; }
+
+    private static readonly Biome[] ExcludedBiomes = { Biome.None };
+
 
     private string PreviewSource =>
         Monster == null

@@ -14,8 +14,21 @@ public sealed class WindowService
 
     public void SetTitle(string title) => window?.SetTitle(title);
 
+    /// <summary>Show a native open-folder dialog; returns the selected folder or null.</summary>
+    public string? ShowOpenFolder(string title, string? initialDirectory)
+    {
+        if (window == null)
+        {
+            return null;
+        }
+
+        var results = window.ShowOpenFolder(title, initialDirectory, multiSelect: false);
+        return results is { Length: > 0 } ? results[0] : null;
+    }
+
     /// <summary>Show a native open-file dialog; returns the selected path or null.</summary>
     public string? ShowOpenFile(string title, string? initialDirectory)
+
     {
         if (window == null)
         {

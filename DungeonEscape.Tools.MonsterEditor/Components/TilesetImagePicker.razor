@@ -1,0 +1,42 @@
+@*
+    Image selector + preview for a grid-based tileset (items / spells). Renders a
+    preview thumbnail and a dropdown of available tile ids.
+*@
+
+<div class="field-grid">
+    <div class="field">
+        <label>@Label</label>
+        <select value="@ImageId" @onchange="OnImageChanged">
+            @if (!Catalog.TryGet(ImageId, out _))
+            {
+                <option value="@ImageId">#@ImageId (unknown)</option>
+            }
+            @foreach (var entry in Catalog.Entries)
+            {
+                <option value="@entry.ImageId">@entry.DisplayName</option>
+            }
+        </select>
+    </div>
+    <div class="field">
+        <label>Preview</label>
+        <img class="preview" src="@PreviewSource" alt="preview" />
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Label { get; set; } = "Image";
+    [Parameter] public TilesetImageCatalog Catalog { get; set; } = default!;
+    [Parameter] public int ImageId { get; set; }
+    [Parameter] public EventCallback<int> ImageIdChanged { get; set; }
+
+    private string PreviewSource => Catalog.GetImageDataUri(ImageId) ?? string.Empty;
+
+    private async Task OnImageChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var id))
+        {
+            ImageId = id;
+            await ImageIdChanged.InvokeAsync(id);
+        }
+    }
+}

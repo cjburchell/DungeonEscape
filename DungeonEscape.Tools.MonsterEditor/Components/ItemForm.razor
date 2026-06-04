@@ -1,0 +1,122 @@
+@*
+    Property editor for a single custom Item. Mutates the bound Item directly and
+    raises OnChanged so the parent can flag the project dirty.
+*@
+@inject ItemImageCatalog Images
+@inject DataSourceCatalog DataSources
+
+@if (Item == null)
+{
+    <div class="empty-state">Select an item from the list, or add a new one.</div>
+}
+else
+{
+    <div class="form-header">
+        <div class="field" style="flex:1">
+            <label>Name</label>
+            <input value="@Item.Name" @onchange="e => Set(() => Item.Name = e.Value?.ToString() ?? string.Empty)" />
+        </div>
+        <div class="field" style="flex:1">
+            <label>Id</label>
+            <input value="@Item.Id" @onchange="e => Set(() => Item.Id = e.Value?.ToString())" />
+        </div>
+    </div>
+
+    <TilesetImagePicker Label="Image" Catalog="Images.Catalog" ImageId="Item.ImageId"
+                        ImageIdChanged="id => Set(() => Item.ImageId = id)" />
+
+    <div class="field-grid">
+        <EnumSelect TEnum="ItemType" Label="Type" Value="Item.Type" ValueChanged="v => Set(() => Item.Type = v)" />
+        <EnumSelect TEnum="Rarity" Label="Rarity" Value="Item.Rarity" ValueChanged="v => Set(() => Item.Rarity = v)" />
+        <EnumSelect TEnum="Target" Label="Target" Value="Item.Target" ValueChanged="v => Set(() => Item.Target = v)" />
+        <NumberField Label="Cost" Value="Item.Cost" ValueChanged="v => Set(() => Item.Cost = v)" />
+        <NumberField Label="Min Level" Value="Item.MinLevel" ValueChanged="v => Set(() => Item.MinLevel = v)" />
+        <NumberField Label="Charges" Value="Item.Charges" ValueChanged="v => Set(() => Item.Charges = v)" />
+    </div>
+
+    <div class="field-grid">
+        <div class="field">
+            <label>Skill</label>
+            <select value="@Item.SkillId" @onchange="e => Set(() => Item.SkillId = e.Value?.ToString())">
+                <option value="">-- none --</option>
+                @if (!string.IsNullOrEmpty(Item.SkillId) && !DataSources.Skills.Contains(Item.SkillId))
+                {
+                    <option value="@Item.SkillId">@Item.SkillId (custom)</option>
+                }
+                @foreach (var skill in DataSources.Skills)
+                {
+                    <option value="@skill">@skill</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <fieldset>
+        <legend>Stats</legend>
+        <StatValueListEditor Items="EnsureStats()" OnChanged="RaiseChanged" />
+    </fieldset>
+
+    <fieldset>
+        <legend>Slots</legend>
+        <EnumMultiSelect TEnum="Slot" Selected="EnsureSlots()" SelectedChanged="OnSlotsChanged" OnChanged="RaiseChanged" />
+    </fieldset>
+
+    <fieldset>
+        <legend>Classes</legend>
+        <EnumMultiSelect TEnum="Class" Selected="EnsureClasses()" SelectedChanged="OnClassesChanged" OnChanged="RaiseChanged" />
+    </fieldset>
+
+    <fieldset>
+        <legend>Quest</legend>
+        <div class="field-grid">
+            <div class="field">
+                <label>Quest Id</label>
+                <input value="@Item.QuestId" @onchange="e => Set(() => Item.QuestId = e.Value?.ToString())" />
+            </div>
+            <div class="field">
+                <label>Start Quest</label>
+                <input type="checkbox" checked="@Item.StartQuest"
+                       @onchange="e => Set(() => Item.StartQuest = (bool)(e.Value ?? false))" />
+            </div>
+            <NumberField Label="Next Stage" Value="@(Item.NextStage ?? 0)"
+                         ValueChanged="v => Set(() => Item.NextStage = v)" />
+        </div>
+    </fieldset>
+}
+
+@code {
+    [Parameter] public Item? Item { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private List<StatValue> EnsureStats() => Item == null ? new List<StatValue>() : (Item.Stats ??= new List<StatValue>());
+    private List<Slot> EnsureSlots() => Item == null ? new List<Slot>() : (Item.Slots ??= new List<Slot>());
+    private List<Class> EnsureClasses() => Item == null ? new List<Class>() : (Item.Classes ??= new List<Class>());
+
+    private async Task OnSlotsChanged(List<Slot> slots)
+    {
+        if (Item != null)
+        {
+            Item.Slots = slots;
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task OnClassesChanged(List<Class> classes)
+    {
+        if (Item != null)
+        {
+            Item.Classes = classes;
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task Set(Action mutate)
+    {
+        mutate();
+        await RaiseChanged();
+    }
+
+    private async Task RaiseChanged() => await OnChanged.InvokeAsync();
+}

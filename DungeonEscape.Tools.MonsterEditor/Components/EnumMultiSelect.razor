@@ -1,0 +1,53 @@
+@*
+    Generic multi-select editor for a List<TEnum> rendered as a grid of
+    checkboxes. Optionally excludes specific values (e.g. Biome.None).
+*@
+@typeparam TEnum where TEnum : struct, Enum
+
+<div class="checkbox-grid">
+    @foreach (var value in SelectableValues)
+    {
+        var current = value;
+        <label>
+            <input type="checkbox"
+                   checked="@IsChecked(current)"
+                   @onchange="e => Toggle(current, (bool)(e.Value ?? false))" />
+            @current
+        </label>
+    }
+</div>
+
+@code {
+    [Parameter] public List<TEnum>? Selected { get; set; }
+    [Parameter] public EventCallback<List<TEnum>> SelectedChanged { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    /// <summary>Values to omit from the list (e.g. None placeholders).</summary>
+    [Parameter] public IReadOnlyList<TEnum>? Exclude { get; set; }
+
+    private IEnumerable<TEnum> SelectableValues =>
+        Enum.GetValues<TEnum>().Where(v => Exclude == null || !Exclude.Contains(v));
+
+    private bool IsChecked(TEnum value) => Selected != null && Selected.Contains(value);
+
+    private async Task Toggle(TEnum value, bool isChecked)
+    {
+        var list = Selected ?? new List<TEnum>();
+
+        if (isChecked)
+        {
+            if (!list.Contains(value))
+            {
+                list.Add(value);
+            }
+        }
+        else
+        {
+            list.Remove(value);
+        }
+
+        Selected = list;
+        await SelectedChanged.InvokeAsync(list);
+        await OnChanged.InvokeAsync();
+    }
+}

@@ -19,8 +19,11 @@ public static class Program
         builder.Services.AddSingleton<AssetContext>();
 
         builder.Services.AddSingleton<MonsterImageCatalog>();
+        builder.Services.AddSingleton<ItemImageCatalog>();
+        builder.Services.AddSingleton<SpellImageCatalog>();
+        builder.Services.AddSingleton<DataFolderService>();
         builder.Services.AddSingleton<DataSourceCatalog>();
-        builder.Services.AddSingleton<MonsterFileService>();
+
 
         builder.RootComponents.Add<App>("#app");
 
@@ -31,7 +34,8 @@ public static class Program
         windowService.Attach(app.MainWindow);
 
         app.MainWindow
-            .SetTitle("Dungeon Escape - Monster Editor")
+            .SetTitle("Dungeon Escape - Data Editor")
+
             .SetUseOsDefaultSize(false)
             .SetSize(1280, 800)
             .SetResizable(true)

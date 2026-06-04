@@ -1,0 +1,469 @@
+@page "/"
+@implements IDisposable
+@inject DataFolderService Data
+@inject MonsterImageCatalog MonsterImages
+@inject DataSourceCatalog DataSources
+@inject AssetContext Assets
+@inject WindowService Window
+@inject EditorSettingsService Settings
+
+<div class="toolbar">
+    <div class="menu @(showFileMenu ? "open" : string.Empty)">
+        <button class="menu-button" @onclick="ToggleFileMenu">File &#9662;</button>
+        @if (showFileMenu)
+        {
+            <div class="menu-dropdown">
+                <button class="menu-item" @onclick="OpenFolder">Open Folder&hellip;</button>
+                <button class="menu-item" @onclick="SaveProject" disabled="@(!Data.HasDocument)">Save Project</button>
+                <button class="menu-item" @onclick="ReloadProject" disabled="@(!Data.HasDocument)">Reload</button>
+            </div>
+        }
+    </div>
+    <span class="spacer"></span>
+
+    <span class="file-name">
+        @if (Data.HasDocument)
+        {
+            @Data.DisplayName
+            @if (Data.IsDirty)
+            {
+                <span class="dirty"> &bull; unsaved</span>
+            }
+        }
+        else
+        {
+            <text>No folder open</text>
+        }
+    </span>
+</div>
+
+@if (!Data.HasDocument)
+{
+    <div class="empty-state">
+        <p>Open a Dungeon Escape <code>Data</code> folder to begin editing monsters, spells, skills and items.</p>
+        <p><button @onclick="OpenFolder">Open Folder</button></p>
+    </div>
+}
+else
+{
+    <div class="tabs">
+        @foreach (var tab in Enum.GetValues<EditorTab>())
+        {
+            var current = tab;
+            <button class="tab @(activeTab == current ? "active" : string.Empty)"
+                    @onclick="() => SetTab(current)">
+                @TabLabel(current) (@Count(current))
+            </button>
+        }
+    </div>
+
+    <div class="split">
+        <div class="list-pane">
+            <div class="search">
+                <input placeholder="Search..." @bind="searchText" @bind:event="oninput" />
+            </div>
+            <div class="list-actions">
+                <button @onclick="AddItem">+ Add</button>
+                <button @onclick="DuplicateItem" disabled="@(SelectedObject == null)">Duplicate</button>
+                <button class="danger" @onclick="RemoveItem" disabled="@(SelectedObject == null)">Remove</button>
+            </div>
+            <div class="monster-list">
+                @switch (activeTab)
+                {
+                    case EditorTab.Monsters:
+                        @foreach (var monster in Filter(Data.Monsters, m => m.Name))
+                        {
+                            var current = monster;
+                            <div class="monster-item @(ReferenceEquals(current, selectedMonster) ? "selected" : string.Empty)"
+                                 @onclick="() => selectedMonster = current">
+                                <img class="thumb" src="@MonsterThumb(current.ImageId)" alt="" />
+                                <div class="meta">
+                                    <span class="name">@Display(current.Name)</span>
+                                    <span class="sub">Lvl @current.MinLevel &middot; @current.Rarity</span>
+                                </div>
+                            </div>
+                        }
+                        break;
+                    case EditorTab.Spells:
+                        @foreach (var spell in Filter(Data.Spells, s => s.Name))
+                        {
+                            var current = spell;
+                            <div class="monster-item @(ReferenceEquals(current, selectedSpell) ? "selected" : string.Empty)"
+                                 @onclick="() => selectedSpell = current">
+                                <div class="meta">
+                                    <span class="name">@Display(current.Name)</span>
+                                    <span class="sub">Cost @current.Cost &middot; Lvl @current.MinLevel</span>
+                                </div>
+                            </div>
+                        }
+                        break;
+                    case EditorTab.Skills:
+                        @foreach (var skill in Filter(Data.Skills, s => s.Name))
+                        {
+                            var current = skill;
+                            <div class="monster-item @(ReferenceEquals(current, selectedSkill) ? "selected" : string.Empty)"
+                                 @onclick="() => selectedSkill = current">
+                                <div class="meta">
+                                    <span class="name">@Display(current.Name)</span>
+                                    <span class="sub">@current.Type</span>
+                                </div>
+                            </div>
+                        }
+                        break;
+                    case EditorTab.Items:
+                        @foreach (var item in Filter(Data.Items, i => i.Name))
+                        {
+                            var current = item;
+                            <div class="monster-item @(ReferenceEquals(current, selectedItem) ? "selected" : string.Empty)"
+                                 @onclick="() => selectedItem = current">
+                                <div class="meta">
+                                    <span class="name">@Display(current.Name)</span>
+                                    <span class="sub">@current.Type &middot; @current.Rarity</span>
+                                </div>
+                            </div>
+                        }
+                        break;
+                }
+            </div>
+        </div>
+
+        <div class="form-pane">
+            @switch (activeTab)
+            {
+                case EditorTab.Monsters:
+                    <MonsterForm Monster="selectedMonster" OnChanged="OnDataChanged" />
+                    break;
+                case EditorTab.Spells:
+                    <SpellForm Spell="selectedSpell" OnChanged="OnDataChanged" />
+                    break;
+                case EditorTab.Skills:
+                    <SkillForm Skill="selectedSkill" OnChanged="OnDataChanged" />
+                    break;
+                case EditorTab.Items:
+                    <ItemForm Item="selectedItem" OnChanged="OnDataChanged" />
+                    break;
+            }
+        </div>
+    </div>
+}
+
+@if (toast != null)
+{
+    <div class="toast">@toast</div>
+}
+
+@code {
+    private enum EditorTab { Monsters, Spells, Skills, Items }
+
+    private EditorTab activeTab = EditorTab.Monsters;
+    private string searchText = string.Empty;
+    private string? toast;
+    private bool showFileMenu;
+
+    private Monster? selectedMonster;
+    private Spell? selectedSpell;
+    private Skill? selectedSkill;
+    private Item? selectedItem;
+
+    protected override void OnInitialized()
+    {
+        Data.StateChanged += OnStateChanged;
+        Assets.Changed += OnStateChanged;
+
+        TryAutoLoadLastFolder();
+    }
+
+    public void Dispose()
+    {
+        Data.StateChanged -= OnStateChanged;
+        Assets.Changed -= OnStateChanged;
+    }
+
+    private void OnStateChanged() => InvokeAsync(StateHasChanged);
+
+    private void ToggleFileMenu() => showFileMenu = !showFileMenu;
+    private void CloseFileMenu() => showFileMenu = false;
+
+    private void TryAutoLoadLastFolder()
+    {
+        var path = Settings.LastDataFolder;
+        if (string.IsNullOrEmpty(path) || !System.IO.Directory.Exists(path))
+        {
+            return;
+        }
+
+        try
+        {
+            Data.Load(path);
+            ResetSelections();
+            ShowToast($"Loaded {Data.Monsters.Count} monsters, {Data.Items.Count} items");
+        }
+        catch
+        {
+            // If the remembered folder can't be loaded, fall back to the empty state.
+        }
+    }
+
+    private void OpenFolder()
+    {
+        CloseFileMenu();
+
+        if (!ConfirmDiscardChanges())
+        {
+            return;
+        }
+
+        var startDir = Assets.DataDirectory ?? Data.FolderPath ?? Settings.LastDataFolder;
+        var path = Window.ShowOpenFolder("Open Data Folder", startDir);
+        if (string.IsNullOrEmpty(path))
+        {
+            return;
+        }
+
+        try
+        {
+            Data.Load(path);
+            ResetSelections();
+            Settings.LastDataFolder = Data.FolderPath;
+            ShowToast($"Loaded {Data.Monsters.Count} monsters, {Data.Items.Count} items");
+        }
+        catch (Exception ex)
+        {
+            Window.ShowInfo("Open Failed", ex.Message);
+        }
+    }
+
+    private void SaveProject()
+    {
+        CloseFileMenu();
+
+        try
+        {
+            Data.Save();
+            Settings.LastDataFolder = Data.FolderPath;
+            ShowToast("Saved project");
+        }
+        catch (Exception ex)
+        {
+            Window.ShowInfo("Save Failed", ex.Message);
+        }
+    }
+
+    private void ReloadProject()
+    {
+        CloseFileMenu();
+
+        if (!ConfirmDiscardChanges())
+        {
+            return;
+        }
+
+        try
+        {
+            Data.Reload();
+            ResetSelections();
+            ShowToast("Reloaded");
+        }
+        catch (Exception ex)
+        {
+            Window.ShowInfo("Reload Failed", ex.Message);
+        }
+    }
+
+    private void ResetSelections()
+    {
+        selectedMonster = Data.Monsters.FirstOrDefault();
+        selectedSpell = Data.Spells.FirstOrDefault();
+        selectedSkill = Data.Skills.FirstOrDefault();
+        selectedItem = Data.Items.FirstOrDefault();
+    }
+
+    private void SetTab(EditorTab tab)
+    {
+        activeTab = tab;
+        searchText = string.Empty;
+    }
+
+    private static string TabLabel(EditorTab tab) => tab.ToString();
+
+    private int Count(EditorTab tab) => tab switch
+    {
+        EditorTab.Monsters => Data.Monsters.Count,
+        EditorTab.Spells => Data.Spells.Count,
+        EditorTab.Skills => Data.Skills.Count,
+        EditorTab.Items => Data.Items.Count,
+        _ => 0
+    };
+
+    private object? SelectedObject => activeTab switch
+    {
+        EditorTab.Monsters => selectedMonster,
+        EditorTab.Spells => selectedSpell,
+        EditorTab.Skills => selectedSkill,
+        EditorTab.Items => selectedItem,
+        _ => null
+    };
+
+    private IEnumerable<T> Filter<T>(IEnumerable<T> source, Func<T, string?> nameSelector)
+    {
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            return source;
+        }
+
+        return source.Where(x =>
+            (nameSelector(x) ?? string.Empty).Contains(searchText, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static string Display(string? name) => string.IsNullOrEmpty(name) ? "(unnamed)" : name;
+
+    private string MonsterThumb(int imageId) => MonsterImages.GetImageDataUri(imageId) ?? string.Empty;
+
+    private void OnDataChanged() => Data.MarkDirty();
+
+    private void AddItem()
+    {
+        switch (activeTab)
+        {
+            case EditorTab.Monsters:
+                selectedMonster = new Monster { Name = "New Monster" };
+                Data.Monsters.Add(selectedMonster);
+                break;
+            case EditorTab.Spells:
+                selectedSpell = new Spell { Name = "New Spell", Classes = new List<Class>() };
+                Data.Spells.Add(selectedSpell);
+                break;
+            case EditorTab.Skills:
+                selectedSkill = new Skill { Name = "New Skill" };
+                Data.Skills.Add(selectedSkill);
+                break;
+            case EditorTab.Items:
+                selectedItem = new Item { Name = "New Item" };
+                Data.Items.Add(selectedItem);
+                break;
+        }
+
+        Data.MarkDirty();
+    }
+
+    private void DuplicateItem()
+    {
+        switch (activeTab)
+        {
+            case EditorTab.Monsters when selectedMonster != null:
+                selectedMonster = Clone(selectedMonster, Data.Monsters, m => m.Name, (m, n) => m.Name = n);
+                break;
+            case EditorTab.Spells when selectedSpell != null:
+                selectedSpell = Clone(selectedSpell, Data.Spells, s => s.Name, (s, n) => s.Name = n);
+                break;
+            case EditorTab.Skills when selectedSkill != null:
+                selectedSkill = Clone(selectedSkill, Data.Skills, s => s.Name, (s, n) => s.Name = n);
+                break;
+            case EditorTab.Items when selectedItem != null:
+                selectedItem = Clone(selectedItem, Data.Items, i => i.Name, (i, n) => i.Name = n);
+                break;
+        }
+
+        Data.MarkDirty();
+    }
+
+    private static T Clone<T>(T source, List<T> list, Func<T, string?> getName, Action<T, string> setName)
+    {
+        var json = Newtonsoft.Json.JsonConvert.SerializeObject(source);
+        var clone = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json)!;
+        var name = getName(source);
+        setName(clone, string.IsNullOrEmpty(name) ? "Copy" : name + " (Copy)");
+
+        var index = list.IndexOf(source);
+        if (index >= 0)
+        {
+            list.Insert(index + 1, clone);
+        }
+        else
+        {
+            list.Add(clone);
+        }
+
+        return clone;
+    }
+
+    private void RemoveItem()
+    {
+        var name = activeTab switch
+        {
+            EditorTab.Monsters => selectedMonster?.Name,
+            EditorTab.Spells => selectedSpell?.Name,
+            EditorTab.Skills => selectedSkill?.Name,
+            EditorTab.Items => selectedItem?.Name,
+            _ => null
+        };
+
+        if (SelectedObject == null)
+        {
+            return;
+        }
+
+        var result = Window.ShowConfirm("Remove", $"Remove '{name}' from the list?");
+        if (result != Photino.NET.PhotinoDialogResult.Yes)
+        {
+            return;
+        }
+
+        switch (activeTab)
+        {
+            case EditorTab.Monsters when selectedMonster != null:
+                Data.Monsters.Remove(selectedMonster);
+                selectedMonster = Data.Monsters.FirstOrDefault();
+                break;
+            case EditorTab.Spells when selectedSpell != null:
+                Data.Spells.Remove(selectedSpell);
+                selectedSpell = Data.Spells.FirstOrDefault();
+                break;
+            case EditorTab.Skills when selectedSkill != null:
+                Data.Skills.Remove(selectedSkill);
+                selectedSkill = Data.Skills.FirstOrDefault();
+                break;
+            case EditorTab.Items when selectedItem != null:
+                Data.Items.Remove(selectedItem);
+                selectedItem = Data.Items.FirstOrDefault();
+                break;
+        }
+
+        Data.MarkDirty();
+    }
+
+    private bool ConfirmDiscardChanges()
+    {
+        if (!Data.IsDirty)
+        {
+            return true;
+        }
+
+        var result = Window.ShowConfirm("Unsaved Changes",
+            "You have unsaved changes. Save before continuing?");
+
+        switch (result)
+        {
+            case Photino.NET.PhotinoDialogResult.Yes:
+                SaveProject();
+                return !Data.IsDirty;
+            case Photino.NET.PhotinoDialogResult.No:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void ShowToast(string message)
+    {
+        toast = message;
+        _ = HideToastLater();
+    }
+
+    private async Task HideToastLater()
+    {
+        await Task.Delay(2000);
+        toast = null;
+        await InvokeAsync(StateHasChanged);
+    }
+}

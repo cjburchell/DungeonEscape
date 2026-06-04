@@ -28,21 +28,22 @@ public sealed class EditorSettingsService
         settings = Load();
     }
 
-    /// <summary>The absolute path of the last file that was opened or saved.</summary>
-    public string? LastFilePath
+    /// <summary>The absolute path of the last Data folder that was opened.</summary>
+    public string? LastDataFolder
     {
-        get => settings.LastFilePath;
+        get => settings.LastDataFolder;
         set
         {
-            if (string.Equals(settings.LastFilePath, value, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(settings.LastDataFolder, value, StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
 
-            settings.LastFilePath = value;
+            settings.LastDataFolder = value;
             Save();
         }
     }
+
 
     private EditorSettings Load()
     {
@@ -83,6 +84,7 @@ public sealed class EditorSettingsService
 
     private sealed class EditorSettings
     {
-        public string? LastFilePath { get; set; }
+        public string? LastDataFolder { get; set; }
     }
+
 }

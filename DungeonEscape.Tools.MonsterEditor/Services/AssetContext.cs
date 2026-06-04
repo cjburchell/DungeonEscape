@@ -19,6 +19,15 @@ public sealed class AssetContext
     public string? TilesetPath =>
         AssetRoot == null ? null : Path.Combine(AssetRoot, "Tilesets", "allmonsters.tsx");
 
+    /// <summary>Tileset used for item images (items2.tsx).</summary>
+    public string? ItemsTilesetPath =>
+        AssetRoot == null ? null : Path.Combine(AssetRoot, "Tilesets", "items2.tsx");
+
+    /// <summary>Tileset used for spell images (items.tsx).</summary>
+    public string? SpellsTilesetPath =>
+        AssetRoot == null ? null : Path.Combine(AssetRoot, "Tilesets", "items.tsx");
+
+
     public string? MonsterImagesDirectory =>
         AssetRoot == null ? null : Path.Combine(AssetRoot, "Images", "monsters");
 

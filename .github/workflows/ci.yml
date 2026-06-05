@@ -9,6 +9,12 @@ on:
       - "**"
   workflow_dispatch:
 
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+  actions: read
+
 env:
   OBJECTS_DIRECTORY: obj
   NUGET_PACKAGES_DIRECTORY: .nuget
@@ -126,6 +132,13 @@ jobs:
           if-no-files-found: warn
           path: TestResults/dotnet/*.trx
 
+      - name: Publish .NET test report
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          check_name: .NET Tests
+          files: TestResults/dotnet/*.trx
+
   unity-validate:
     runs-on: ubuntu-latest
     needs: dotnet-build
@@ -233,6 +246,13 @@ jobs:
             TestResults/editmode-results.xml
             TestResults/editmode-log.txt
 
+      - name: Publish Unity Edit Mode test report
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          check_name: Unity Edit Mode Tests
+          files: TestResults/editmode-results.xml
+
   unity-playmode-tests:
     runs-on: ubuntu-latest
     needs:
@@ -281,6 +301,13 @@ jobs:
           path: |
             TestResults/playmode-results.xml
             TestResults/playmode-log.txt
+
+      - name: Publish Unity Play Mode test report
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          check_name: Unity Play Mode Tests
+          files: TestResults/playmode-results.xml
 
   unity-build-windows:
     runs-on: ubuntu-latest

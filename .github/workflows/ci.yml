@@ -405,7 +405,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: unity-validation
-          path: .
+          path: DungeonEscape.Unity
+
+      - name: List Unity ReSharper references
+        if: ${{ needs.unity-validate.result == 'success' }}
+        run: find DungeonEscape.Unity/Logs/ReSharperReferences -maxdepth 1 -name '*.dll' | sort | head -50
 
       - name: Run ReSharper inspection
         run: bash scripts/ci/resharper-scan.sh

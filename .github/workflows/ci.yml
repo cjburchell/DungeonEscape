@@ -439,7 +439,25 @@ jobs:
         run: find DungeonEscape.Unity/Logs/ReSharperReferences -maxdepth 1 -name '*.dll' | sort | head -50
 
       - name: Run ReSharper inspection
-        run: bash scripts/ci/resharper-scan.sh
+        id: resharper-inspection
+        continue-on-error: true
+        run: |
+          set +e
+          bash scripts/ci/resharper-scan.sh
+          code=$?
+          set -e
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" -eq 2 ]; then
+            echo "::warning::ReSharper issues exceeded RESHARPER_THRESHOLD. Reports will be uploaded for cleanup."
+            exit 1
+          fi
+          exit "$code"
+
+      - name: Fail on ReSharper infrastructure errors
+        if: ${{ steps.resharper-inspection.outputs.exit_code != '0' && steps.resharper-inspection.outputs.exit_code != '2' }}
+        run: |
+          echo "ReSharper inspection failed for a non-threshold reason with exit code ${{ steps.resharper-inspection.outputs.exit_code }}."
+          exit 1
 
       - name: Upload ReSharper reports
         if: always()

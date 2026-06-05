@@ -17,12 +17,15 @@ DOTNET_EXE="$(command -v dotnet)"
 DOTNET_SDK_PATH="$(dotnet --info | awk -F': ' '/Base Path/ {print $2; exit}' | xargs)"
 DOTNET_SDK_VERSION="$(basename "$DOTNET_SDK_PATH")"
 MSBUILD_DLL="$DOTNET_SDK_PATH/MSBuild.dll"
+RESHARPER_THRESHOLD_EXIT_CODE=2
 
 if [[ ! -f "$MSBUILD_DLL" ]]; then
   echo "MSBuild.dll was not found at '$MSBUILD_DLL'." >&2
   dotnet --info >&2
   exit 1
 fi
+
+rm -f "$PROJECT_ROOT/RsInspection.xml" "$PROJECT_ROOT/RsInspection.Unity.xml"
 
 echo "Using dotnet: $DOTNET_EXE"
 echo "Using .NET SDK: $DOTNET_SDK_VERSION"
@@ -58,6 +61,10 @@ CORE_INSPECT_EXIT_CODE=$?
 set -e
 if [[ "$CORE_INSPECT_EXIT_CODE" -ne 0 ]]; then
   echo "Core ReSharper inspection exited with code $CORE_INSPECT_EXIT_CODE; continuing so reports can be evaluated against RESHARPER_THRESHOLD."
+fi
+if [[ ! -f "$PROJECT_ROOT/RsInspection.xml" ]]; then
+  echo "Core ReSharper inspection did not produce '$PROJECT_ROOT/RsInspection.xml'." >&2
+  exit 1
 fi
 
 UNITY_SCRIPT_COUNT=$(find "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Scripts" "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Editor" "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Tests" -name '*.cs' 2>/dev/null | wc -l | tr -d ' ')
@@ -138,6 +145,10 @@ if [[ "$UNITY_SCRIPT_COUNT" -gt 0 ]]; then
   if [[ "$UNITY_INSPECT_EXIT_CODE" -ne 0 ]]; then
     echo "Unity ReSharper inspection exited with code $UNITY_INSPECT_EXIT_CODE; continuing so reports can be evaluated against RESHARPER_THRESHOLD."
   fi
+  if [[ ! -f "$PROJECT_ROOT/RsInspection.Unity.xml" ]]; then
+    echo "Unity ReSharper inspection did not produce '$PROJECT_ROOT/RsInspection.Unity.xml'." >&2
+    exit 1
+  fi
 else
   echo "No Unity scripts found; skipping Unity ReSharper inspection."
 fi
@@ -162,5 +173,5 @@ echo "ReSharper issue count: $ISSUE_COUNT"
 echo "ReSharper error count: $ERROR_COUNT"
 if [[ "$ERROR_COUNT" -gt "$RESHARPER_THRESHOLD" ]]; then
   echo "ReSharper error count $ERROR_COUNT exceeds threshold $RESHARPER_THRESHOLD"
-  exit 1
+  exit "$RESHARPER_THRESHOLD_EXIT_CODE"
 fi

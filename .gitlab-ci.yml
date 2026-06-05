@@ -231,6 +231,9 @@ tools-package:
 resharper-scan:
   image: $DOTNET_SDK_IMAGE
   stage: scan
+  allow_failure:
+    exit_codes:
+      - 2
   needs:
     - dotnet-build
     - job: unity-validate

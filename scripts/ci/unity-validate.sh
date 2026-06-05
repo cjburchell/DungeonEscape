@@ -20,3 +20,4 @@ mkdir -p "$(dirname "$UNITY_LOG_FILE")"
 mkdir -p "$UNITY_REFERENCES_DIR"
 find /opt/unity/Editor/Data/Managed -name '*.dll' -exec cp {} "$UNITY_REFERENCES_DIR/" \;
 find "$PROJECT_ROOT/$UNITY_PROJECT_PATH/Library/PackageCache" -name '*.dll' -exec cp {} "$UNITY_REFERENCES_DIR/" \; || true
+find "$PROJECT_ROOT/$UNITY_PROJECT_PATH/Library/ScriptAssemblies" -maxdepth 1 -name '*.dll' -exec cp {} "$UNITY_REFERENCES_DIR/" \; || true

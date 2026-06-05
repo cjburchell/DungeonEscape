@@ -52,7 +52,13 @@ COMMON_INSPECT_OPTIONS=(
   "--toolset-path=$MSBUILD_DLL"
 )
 
+set +e
 (cd /tmp && jb inspectcode "${COMMON_INSPECT_OPTIONS[@]}" -o="$PROJECT_ROOT/RsInspection.xml" --caches-home="$PROJECT_ROOT/temp/core" "$SOLUTION_PATH")
+CORE_INSPECT_EXIT_CODE=$?
+set -e
+if [[ "$CORE_INSPECT_EXIT_CODE" -ne 0 ]]; then
+  echo "Core ReSharper inspection exited with code $CORE_INSPECT_EXIT_CODE; continuing so reports can be evaluated against RESHARPER_THRESHOLD."
+fi
 
 UNITY_SCRIPT_COUNT=$(find "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Scripts" "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Editor" "$UNITY_PROJECT_PATH/Assets/DungeonEscape/Tests" -name '*.cs' 2>/dev/null | wc -l | tr -d ' ')
 if [[ "$UNITY_SCRIPT_COUNT" -gt 0 ]]; then
@@ -125,7 +131,13 @@ if [[ "$UNITY_SCRIPT_COUNT" -gt 0 ]]; then
     printf '%s\n' '</Project>'
   } > "$UNITY_PROJECT_FILE"
 
+  set +e
   (cd /tmp && jb inspectcode "${COMMON_INSPECT_OPTIONS[@]}" -o="$PROJECT_ROOT/RsInspection.Unity.xml" --caches-home="$PROJECT_ROOT/temp/unity" "$UNITY_PROJECT_FILE")
+  UNITY_INSPECT_EXIT_CODE=$?
+  set -e
+  if [[ "$UNITY_INSPECT_EXIT_CODE" -ne 0 ]]; then
+    echo "Unity ReSharper inspection exited with code $UNITY_INSPECT_EXIT_CODE; continuing so reports can be evaluated against RESHARPER_THRESHOLD."
+  fi
 else
   echo "No Unity scripts found; skipping Unity ReSharper inspection."
 fi

@@ -1,5 +1,5 @@
-﻿{
-  "male": [
+{
+  "Male": [
     "Akibrus",
     "Angun",
     "Balrus",
@@ -41,7 +41,7 @@
     "Zarek",
     "Zorion"
   ],
-  "female": [
+  "Female": [
     "Aleera",
     "Alva",
     "Amara",

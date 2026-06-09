@@ -1,4 +1,4 @@
-﻿[
+[
   {
     "Type": "Agility",
     "Prefix": [
@@ -27,12 +27,10 @@
       "Blessed",
       "Saintly",
       "Holy"
-    ],
-    "Suffix": null
+    ]
   },
   {
     "Type": "Health",
-    "Prefix": null,
     "Suffix": [
       "The Jackal",
       "The Fox",

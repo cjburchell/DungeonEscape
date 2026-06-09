@@ -1,8 +1,9 @@
-﻿[
+[
   {
     "Type": "Armor",
-    "BaseStat": 5,
-    "Slots": ["OffHand"],
+    "Slots": [
+      "OffHand"
+    ],
     "Classes": [
       "Cleric",
       "Hero",
@@ -29,13 +30,14 @@
         "Name": "Tower Shield",
         "ImageId": 201
       }
-    ]
+    ],
+    "BaseStat": 5
   },
   {
     "Type": "Armor",
-    "Slots": ["Head"],
-    "BaseStat": 2,
-    "Classes": null,
+    "Slots": [
+      "Head"
+    ],
     "Names": [
       {
         "Name": "Circlet",
@@ -53,12 +55,14 @@
         "Name": "Diadem",
         "ImageId": 247
       }
-    ]
+    ],
+    "BaseStat": 2
   },
   {
     "Type": "Armor",
-    "Slots": ["Head"],
-    "BaseStat": 5,
+    "Slots": [
+      "Head"
+    ],
     "Classes": [
       "Cleric",
       "Merchant",
@@ -86,12 +90,14 @@
         "Name": "Great Helm",
         "ImageId": 230
       }
-    ]
+    ],
+    "BaseStat": 5
   },
   {
     "Type": "Armor",
-    "Slots": ["Chest"],
-    "BaseStat": 10,
+    "Slots": [
+      "Chest"
+    ],
     "Classes": [
       "Cleric",
       "Merchant",
@@ -121,12 +127,14 @@
         "Name": "Light Plate",
         "ImageId": 289
       }
-    ]
+    ],
+    "BaseStat": 10
   },
   {
     "Type": "Armor",
-    "Slots": ["Chest"],
-    "BaseStat": 15,
+    "Slots": [
+      "Chest"
+    ],
     "Classes": [
       "Cleric",
       "Hero",
@@ -157,12 +165,14 @@
         "Name": "Ancient Armor",
         "ImageId": 310
       }
-    ]
+    ],
+    "BaseStat": 15
   },
   {
     "Type": "Armor",
-    "Slots": ["Chest"],
-    "BaseStat": 25,
+    "Slots": [
+      "Chest"
+    ],
     "Classes": [
       "Soldier"
     ],
@@ -179,13 +189,14 @@
         "Name": "Full Plate",
         "ImageId": 303
       }
-    ]
+    ],
+    "BaseStat": 25
   },
   {
     "Type": "Armor",
-    "BaseStat": 1,
-    "Slots": ["Chest"],
-    "Classes": null,
+    "Slots": [
+      "Chest"
+    ],
     "Names": [
       {
         "Name": "Robe",
@@ -199,12 +210,14 @@
         "Name": "Robe",
         "ImageId": 376
       }
-    ]
+    ],
+    "BaseStat": 1
   },
   {
     "Type": "Armor",
-    "BaseStat": 2,
-    "Slots": ["Hands"],
+    "Slots": [
+      "Hands"
+    ],
     "Classes": [
       "Cleric",
       "Merchant",
@@ -234,12 +247,14 @@
         "Name": "Gauntlets",
         "ImageId": 402
       }
-    ]
+    ],
+    "BaseStat": 2
   },
   {
     "Type": "Armor",
-    "BaseStat": 2,
-    "Slots": ["Feet"],
+    "Slots": [
+      "Feet"
+    ],
     "Classes": [
       "Cleric",
       "Merchant",
@@ -269,24 +284,28 @@
         "Name": "Greaves",
         "ImageId": 503
       }
-    ]
+    ],
+    "BaseStat": 2
   },
   {
     "Type": "Armor",
-    "BaseStat": 1,
-    "Slots": ["Hands"],
-    "Classes": null,
+    "Slots": [
+      "Hands"
+    ],
     "Names": [
       {
         "Name": "Ring",
         "ImageId": 719
       }
-    ]
+    ],
+    "BaseStat": 1
   },
   {
     "Type": "Weapon",
-    "BaseStat": 15,
-    "Slots": ["PrimaryHand", "OffHand"],
+    "Slots": [
+      "PrimaryHand",
+      "OffHand"
+    ],
     "Classes": [
       "Merchant",
       "Hero",
@@ -313,12 +332,14 @@
         "Name": "Giant Axe",
         "ImageId": 136
       }
-    ]
+    ],
+    "BaseStat": 15
   },
   {
     "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "BaseStat": 12,
+    "Slots": [
+      "PrimaryHand"
+    ],
     "Classes": [
       "Merchant",
       "Hero",
@@ -350,12 +371,15 @@
         "Name": "Long Sword",
         "ImageId": 12
       }
-    ]
+    ],
+    "BaseStat": 12
   },
   {
     "Type": "Weapon",
-    "Slots": ["PrimaryHand", "OffHand"],
-    "BaseStat": 10,
+    "Slots": [
+      "PrimaryHand",
+      "OffHand"
+    ],
     "Classes": [
       "Cleric",
       "Merchant",
@@ -379,12 +403,14 @@
         "Name": "Great Hammer",
         "ImageId": 150
       }
-    ]
+    ],
+    "BaseStat": 10
   },
   {
     "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "BaseStat": 5,
+    "Slots": [
+      "PrimaryHand"
+    ],
     "Classes": [
       "Merchant",
       "Hero",
@@ -410,12 +436,15 @@
         "Name": "Blade",
         "ImageId": 46
       }
-    ]
+    ],
+    "BaseStat": 5
   },
   {
     "Type": "Weapon",
-    "Slots": ["PrimaryHand", "OffHand"],
-    "BaseStat": 10,
+    "Slots": [
+      "PrimaryHand",
+      "OffHand"
+    ],
     "Classes": [
       "Cleric",
       "Merchant",
@@ -446,6 +475,7 @@
         "Name": "War Staff",
         "ImageId": 64
       }
-    ]
+    ],
+    "BaseStat": 10
   }
 ]

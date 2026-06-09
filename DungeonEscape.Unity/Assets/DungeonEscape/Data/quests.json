@@ -1,21 +1,27 @@
-﻿[
+[
   {
     "Id": "Lost_Sea_Shell",
     "Name": "The lost seashell",
     "Description": "The Boy in the village is looking for a lost seashell.",
+    "MinimumLevel": 0,
     "Xp": 10,
-    "Items": ["#Random#"],
+    "Gold": 0,
+    "Items": [
+      "#Random#"
+    ],
     "Stages": [
       {
+        "Number": 0,
+        "Description": "You should search the area for the seashell.",
+        "CompleteQuest": false
+      },
+      {
         "Number": 1,
-        "Description": "You should search the area for the seashell."
+        "Description": "You found the shell you should return it to the boy.",
+        "CompleteQuest": false
       },
       {
         "Number": 2,
-        "Description": "You found the shell you should return it to the boy."
-      },
-      {
-        "Number": 3,
         "Description": "You returned the seashell.",
         "CompleteQuest": true
       }
@@ -24,15 +30,19 @@
   {
     "Id": "Lost_Dog",
     "Name": "Lost Dog",
+    "MinimumLevel": 0,
     "Xp": 100,
+    "Gold": 0,
     "Stages": [
       {
         "Number": 1,
-        "Description": "Talked to the villager"
+        "Description": "Talked to the villager",
+        "CompleteQuest": false
       },
       {
         "Number": 2,
-        "Description": "Found the dog"
+        "Description": "Found the dog",
+        "CompleteQuest": false
       },
       {
         "Number": 3,
@@ -45,27 +55,34 @@
     "Id": "Find_Ship",
     "Name": "Get a ship",
     "Description": "To cross the sea you need to find a boat",
+    "MinimumLevel": 0,
     "Xp": 100,
+    "Gold": 0,
     "Stages": [
       {
         "Number": 1,
-        "Description": "Go to Isis and find the man"
+        "Description": "Go to Isis and find the man",
+        "CompleteQuest": false
       },
       {
         "Number": 2,
-        "Description": "Travel to Coast and find the man's uncle"
+        "Description": "Travel to Coast and find the man's uncle",
+        "CompleteQuest": false
       },
       {
         "Number": 3,
-        "Description": "Find the old man's key"
+        "Description": "Find the old man's key",
+        "CompleteQuest": false
       },
       {
         "Number": 4,
-        "Description": "You have found the key and should return it to the old man"
+        "Description": "You have found the key and should return it to the old man",
+        "CompleteQuest": false
       },
       {
         "Number": 5,
-        "Description": "Opened the door"
+        "Description": "Opened the door",
+        "CompleteQuest": false
       },
       {
         "Number": 6,

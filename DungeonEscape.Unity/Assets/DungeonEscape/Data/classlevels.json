@@ -1,390 +1,435 @@
-﻿[
+[
   {
     "Class": "Hero",
-    "FirstLevel": 29,
     "Stats": [
       {
         "Type": "Health",
         "StartConst": 40,
         "Roll": 7,
+        "RollTimes": 1,
         "RollConst": 3
       },
       {
         "Type": "Attack",
         "StartConst": 5,
         "Roll": 7,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Defence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "MagicDefence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Agility",
         "StartConst": 1,
         "Roll": 3,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Magic",
         "StartConst": 5,
         "Roll": 6,
+        "RollTimes": 1,
         "RollConst": 5
       }
-    ]
+    ],
+    "FirstLevel": 29
   },
   {
     "Class": "Soldier",
-    "FirstLevel": 12,
     "Stats": [
       {
         "Type": "Health",
         "StartConst": 50,
         "Roll": 7,
+        "RollTimes": 1,
         "RollConst": 3
       },
       {
         "Type": "Attack",
         "StartConst": 5,
         "Roll": 7,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Defence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "MagicDefence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Agility",
         "StartConst": 1,
         "Roll": 3,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Magic",
-        "StartConst": 0,
-        "Roll": 0,
-        "RollConst": 0
+        "RollTimes": 1
       }
-    ]
+    ],
+    "FirstLevel": 12
   },
   {
     "Class": "Wizard",
-    "FirstLevel": 15,
     "Stats": [
       {
         "Type": "Health",
         "StartConst": 20,
         "Roll": 5,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Attack",
         "StartConst": 1,
         "Roll": 2,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Defence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "MagicDefence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Agility",
         "StartConst": 1,
         "Roll": 3,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Magic",
         "StartConst": 10,
         "Roll": 10,
+        "RollTimes": 1,
         "RollConst": 5
       }
-    ]
+    ],
+    "FirstLevel": 15
   },
   {
     "Class": "Cleric",
-    "FirstLevel": 14,
     "Stats": [
       {
         "Type": "Health",
         "StartConst": 40,
         "Roll": 7,
+        "RollTimes": 1,
         "RollConst": 3
       },
       {
         "Type": "Attack",
         "StartConst": 5,
         "Roll": 7,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Defence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "MagicDefence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Agility",
         "StartConst": 1,
         "Roll": 3,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Magic",
         "StartConst": 5,
         "Roll": 6,
+        "RollTimes": 1,
         "RollConst": 5
       }
-    ]
+    ],
+    "FirstLevel": 14
   },
   {
     "Class": "Fighter",
-    "FirstLevel": 29,
-    "Skills": [
-      "Swipe"
-    ],
     "Stats": [
       {
         "Type": "Health",
         "StartConst": 40,
         "Roll": 7,
+        "RollTimes": 1,
         "RollConst": 3
       },
       {
         "Type": "Attack",
         "StartConst": 5,
         "Roll": 7,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Defence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "MagicDefence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Agility",
         "StartConst": 1,
         "Roll": 3,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Magic",
-        "StartConst": 0,
-        "Roll": 0,
-        "RollConst": 0
+        "RollTimes": 1
       }
+    ],
+    "FirstLevel": 29,
+    "Skills": [
+      "Swipe"
     ]
   },
   {
     "Class": "Merchant",
-    "FirstLevel": 12,
     "Stats": [
       {
         "Type": "Health",
         "StartConst": 40,
         "Roll": 7,
+        "RollTimes": 1,
         "RollConst": 3
       },
       {
         "Type": "Attack",
         "StartConst": 5,
         "Roll": 7,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Defence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "MagicDefence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Agility",
         "StartConst": 1,
         "Roll": 3,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Magic",
         "StartConst": 5,
         "Roll": 6,
+        "RollTimes": 1,
         "RollConst": 5
       }
-    ]
+    ],
+    "FirstLevel": 12
   },
   {
     "Class": "Thief",
-    "FirstLevel": 14,
-    "Skills": [
-      "Steal"
-    ],
     "Stats": [
       {
         "Type": "Health",
         "StartConst": 40,
         "Roll": 7,
+        "RollTimes": 1,
         "RollConst": 3
       },
       {
         "Type": "Attack",
         "StartConst": 5,
         "Roll": 7,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Defence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "MagicDefence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Agility",
         "StartConst": 1,
         "Roll": 3,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Magic",
-        "StartConst": 0,
-        "Roll": 0,
-        "RollConst": 0
+        "RollTimes": 1
       }
+    ],
+    "FirstLevel": 14,
+    "Skills": [
+      "Steal"
     ]
   },
   {
     "Class": "Sage",
-    "FirstLevel": 14,
     "Stats": [
       {
         "Type": "Health",
         "StartConst": 40,
         "Roll": 7,
+        "RollTimes": 1,
         "RollConst": 3
       },
       {
         "Type": "Attack",
         "StartConst": 5,
         "Roll": 7,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Defence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "MagicDefence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Agility",
         "StartConst": 1,
         "Roll": 3,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Magic",
         "StartConst": 5,
         "Roll": 6,
+        "RollTimes": 1,
         "RollConst": 5
       }
-    ]
+    ],
+    "FirstLevel": 14
   },
   {
     "Class": "Bard",
-    "Skills": [
-      "Weird Dance",
-      "Play Song"
-    ],
-    "FirstLevel": 29,
     "Stats": [
       {
         "Type": "Health",
         "StartConst": 40,
         "Roll": 7,
+        "RollTimes": 1,
         "RollConst": 3
       },
       {
         "Type": "Attack",
         "StartConst": 1,
         "Roll": 1,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Defence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "MagicDefence",
         "StartConst": 1,
         "Roll": 4,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Agility",
         "StartConst": 1,
         "Roll": 3,
+        "RollTimes": 1,
         "RollConst": 1
       },
       {
         "Type": "Magic",
         "StartConst": 5,
         "Roll": 6,
+        "RollTimes": 1,
         "RollConst": 5
       }
+    ],
+    "FirstLevel": 29,
+    "Skills": [
+      "Weird Dance",
+      "Play Song"
     ]
   }
 ]

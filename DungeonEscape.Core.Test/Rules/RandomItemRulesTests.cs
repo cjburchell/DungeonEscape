@@ -63,7 +63,7 @@ namespace DungeonEscape.Core.Test.Rules
             Assert.Equal(ItemType.Weapon, item.Type);
             Assert.Equal(5, item.MinLevel);
             Assert.Equal("Mystic Sword of Giants", item.Name);
-            Assert.Equal(new[] { Class.Hero }, item.Classes);
+            Assert.Equal(new[] { "Hero" }, item.Classes);
             Assert.Equal(new[] { Slot.PrimaryHand }, item.Slots);
             Assert.Equal(3, item.Stats.Count);
             Assert.Contains(item.Stats, stat => stat.Type == StatType.Attack && stat.Value == 5);
@@ -76,7 +76,7 @@ namespace DungeonEscape.Core.Test.Rules
         {
             var matching = CreateWeaponDefinition();
             var wrongClass = CreateWeaponDefinition();
-            wrongClass.Classes = new List<Class> { Class.Wizard };
+            wrongClass.Classes = new List<string> { "Wizard" };
             var wrongSlot = CreateWeaponDefinition();
             wrongSlot.Slots = new List<Slot> { Slot.Chest };
 
@@ -95,7 +95,7 @@ namespace DungeonEscape.Core.Test.Rules
             {
                 Type = ItemType.Weapon,
                 BaseStat = 5,
-                Classes = new List<Class> { Class.Hero },
+                Classes = new List<string> { "Hero" },
                 Slots = new List<Slot> { Slot.PrimaryHand },
                 Names = new List<ItemName>
                 {

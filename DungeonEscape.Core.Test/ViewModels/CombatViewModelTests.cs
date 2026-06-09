@@ -162,7 +162,7 @@ namespace DungeonEscape.Core.Test.ViewModels
                 Name = name,
                 Cost = cost,
                 MinLevel = minLevel,
-                Classes = new List<Class> { heroClass },
+                Classes = new List<string> { heroClass.ToString() },
                 SkillId = skill.Name
             };
             spell.Setup(new[] { skill });

@@ -2500,7 +2500,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             ApplyStartingClassStats(hero);
             var classLevels = GameDataCache.Current == null ? null : GameDataCache.Current.ClassLevels;
-            if (classLevels != null && classLevels.Any(item => item.Class == hero.Class))
+            if (classLevels != null && classLevels.Any(item => IsClass(item.Class, hero.Class)))
             {
                 while (hero.Level < level)
                 {
@@ -2525,7 +2525,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             var classStats = GameDataCache.Current == null ||
                              GameDataCache.Current.ClassLevels == null
                 ? null
-                : GameDataCache.Current.ClassLevels.FirstOrDefault(item => item.Class == hero.Class);
+                : GameDataCache.Current.ClassLevels.FirstOrDefault(item => IsClass(item.Class, hero.Class));
 
             if (classStats == null || classStats.Stats == null)
             {
@@ -2549,6 +2549,11 @@ namespace Redpoint.DungeonEscape.Unity.Core
         {
             var stat = classStats.Stats.FirstOrDefault(item => item.Type == type);
             return stat == null ? fallbackValue : stat.RollStartValue();
+        }
+
+        private static bool IsClass(string className, Class heroClass)
+        {
+            return string.Equals(className, heroClass.ToString(), StringComparison.OrdinalIgnoreCase);
         }
 
         private static void ApplyFallbackStartingStats(Hero hero)

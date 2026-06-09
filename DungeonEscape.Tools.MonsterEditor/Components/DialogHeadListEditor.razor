@@ -1,0 +1,107 @@
+@inject DataSourceCatalog DataSources
+
+<div class="complex-list">
+    @if (Items.Count == 0)
+    {
+        <div class="tag-empty">No dialog heads</div>
+    }
+    else
+    {
+        @for (var i = 0; i < Items.Count; i++)
+        {
+            var index = i;
+            <div class="card-row">
+                <div class="field-grid">
+                    <div class="field">
+                        <label>Quest</label>
+                        <select value="@Items[index].Quest" @onchange="e => UpdateAt(index, head => head.Quest = e.Value?.ToString())">
+                            <option value="">-- none --</option>
+                            @if (!string.IsNullOrEmpty(Items[index].Quest) && !DataSources.Quests.Contains(Items[index].Quest))
+                            {
+                                <option value="@Items[index].Quest">@Items[index].Quest (custom)</option>
+                            }
+                            @foreach (var quest in DataSources.Quests)
+                            {
+                                <option value="@quest">@quest</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="field checkbox-field">
+                        <label>Start Quest</label>
+                        <input type="checkbox" checked="@Items[index].StartQuest"
+                               @onchange="e => UpdateAt(index, head => head.StartQuest = (bool)(e.Value ?? false))" />
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Text</label>
+                    <textarea rows="4" value="@Items[index].Text" @onchange="e => UpdateAt(index, head => head.Text = e.Value?.ToString() ?? string.Empty)"></textarea>
+                </div>
+
+                <fieldset>
+                    <legend>Quest Stages</legend>
+                    <IntegerListEditor Items="EnsureQuestStages(index)" OnChanged="OnChanged" />
+                </fieldset>
+
+                <fieldset>
+                    <legend>Choices</legend>
+                    <DialogChoiceListEditor Items="EnsureChoices(index)" OnChanged="OnChanged" />
+                </fieldset>
+
+                <div class="row-actions">
+                    <button class="danger" @onclick="() => RemoveAt(index)">Remove Head</button>
+                </div>
+            </div>
+        }
+    }
+
+    <button @onclick="Add">+ Add Head</button>
+</div>
+
+@code {
+    [Parameter] public List<DialogHead> Items { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private async Task Add()
+    {
+        Items.Add(new DialogHead
+        {
+            Text = "New dialog",
+            Choices = new List<Choice>(),
+            QuestStage = new List<int>()
+        });
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task UpdateAt(int index, Action<DialogHead> mutate)
+    {
+        if (index < 0 || index >= Items.Count)
+        {
+            return;
+        }
+
+        mutate(Items[index]);
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task RemoveAt(int index)
+    {
+        if (index < 0 || index >= Items.Count)
+        {
+            return;
+        }
+
+        Items.RemoveAt(index);
+        await OnChanged.InvokeAsync();
+    }
+
+    private List<int> EnsureQuestStages(int index)
+    {
+        var head = Items[index];
+        head.QuestStage ??= head.ForQuestStage ?? new List<int>();
+        head.ForQuestStage = null;
+        return head.QuestStage;
+    }
+
+    private List<Choice> EnsureChoices(int index) => Items[index].Choices ??= new List<Choice>();
+}

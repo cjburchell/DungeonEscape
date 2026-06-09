@@ -210,7 +210,7 @@ namespace Redpoint.DungeonEscape.Rules
                     return definition.Slots != null &&
                            definition.Classes != null &&
                            definition.Type == type &&
-                           definition.Classes.Contains(itemClass.Value) &&
+                           ContainsClass(definition.Classes, itemClass.Value) &&
                            definition.Slots.Contains(slot.Value);
                 }
 
@@ -218,7 +218,7 @@ namespace Redpoint.DungeonEscape.Rules
                 {
                     return definition.Classes != null &&
                            definition.Type == type &&
-                           definition.Classes.Contains(itemClass.Value);
+                           ContainsClass(definition.Classes, itemClass.Value);
                 }
 
                 if (slot.HasValue)
@@ -230,6 +230,12 @@ namespace Redpoint.DungeonEscape.Rules
 
                 return definition.Type == type;
             });
+        }
+
+        private static bool ContainsClass(IEnumerable<string> classes, Class itemClass)
+        {
+            return classes != null &&
+                   classes.Any(value => string.Equals(value, itemClass.ToString(), StringComparison.OrdinalIgnoreCase));
         }
 
         public static string BuildEquipmentName(string baseName, string prefix, string suffix)

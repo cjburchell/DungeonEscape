@@ -1,0 +1,52 @@
+@inject DataSourceCatalog DataSources
+
+<div class="checkbox-grid">
+    @foreach (var value in SelectableValues)
+    {
+        var current = value;
+        <label>
+            <input type="checkbox"
+                   checked="@IsChecked(current)"
+                   @onchange="e => Toggle(current, (bool)(e.Value ?? false))" />
+            @current
+        </label>
+    }
+</div>
+
+@code {
+    [Parameter] public List<string>? Selected { get; set; }
+    [Parameter] public EventCallback<List<string>> SelectedChanged { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private IEnumerable<string> SelectableValues =>
+        DataSources.Classes
+            .Concat(Selected ?? Enumerable.Empty<string>())
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .Select(value => value!)
+            .Distinct()
+            .OrderBy(value => value, StringComparer.OrdinalIgnoreCase);
+
+    private bool IsChecked(string value) =>
+        Selected != null && Selected.Any(selected => string.Equals(selected, value, StringComparison.OrdinalIgnoreCase));
+
+    private async Task Toggle(string value, bool isChecked)
+    {
+        var list = Selected ?? new List<string>();
+
+        if (isChecked)
+        {
+            if (!list.Any(selected => string.Equals(selected, value, StringComparison.OrdinalIgnoreCase)))
+            {
+                list.Add(value);
+            }
+        }
+        else
+        {
+            list.Remove(value);
+        }
+
+        Selected = list;
+        await SelectedChanged.InvokeAsync(list);
+        await OnChanged.InvokeAsync();
+    }
+}

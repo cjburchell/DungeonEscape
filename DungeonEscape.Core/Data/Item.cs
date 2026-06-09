@@ -53,8 +53,7 @@ namespace Redpoint.DungeonEscape.Data
         public int Cost { get; set; }
         public int MinLevel { get; set; }
 
-        [JsonProperty("Classes", ItemConverterType = typeof(StringEnumConverter))]
-        public List<Class> Classes { get; set; }
+        public List<string> Classes { get; set; }
 
         [JsonIgnore]
         public bool CanBeSoldInStore

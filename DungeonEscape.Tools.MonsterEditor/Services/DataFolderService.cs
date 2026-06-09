@@ -20,8 +20,10 @@ public sealed class DataFolderService
     private const string ItemsFileName = "customitems.json";
     private const string ItemDefinitionsFileName = "itemdef.json";
     private const string QuestsFileName = "quests.json";
+    private const string DialogsFileName = "dialog.json";
     private const string StatNamesFileName = "statnames.json";
     private const string NamesFileName = "names.json";
+    private const string ClassLevelsFileName = "classlevels.json";
 
     private static readonly JsonSerializerSettings SerializerSettings = new()
     {
@@ -52,7 +54,9 @@ public sealed class DataFolderService
     public List<Item> Items { get; private set; } = new();
     public List<ItemDefinition> ItemDefinitions { get; private set; } = new();
     public List<Quest> Quests { get; private set; } = new();
+    public List<Dialog> Dialogs { get; private set; } = new();
     public List<StatName> StatNames { get; private set; } = new();
+    public List<ClassStats> ClassLevels { get; private set; } = new();
     public Names Names { get; private set; } = new() { Male = new List<string>(), Female = new List<string>() };
 
     public string? FolderPath { get; private set; }
@@ -77,7 +81,9 @@ public sealed class DataFolderService
         Items = LoadList<Item>(Path.Combine(folderPath, ItemsFileName));
         ItemDefinitions = LoadList<ItemDefinition>(Path.Combine(folderPath, ItemDefinitionsFileName));
         Quests = LoadList<Quest>(Path.Combine(folderPath, QuestsFileName));
+        Dialogs = LoadList<Dialog>(Path.Combine(folderPath, DialogsFileName));
         StatNames = LoadList<StatName>(Path.Combine(folderPath, StatNamesFileName));
+        ClassLevels = LoadList<ClassStats>(Path.Combine(folderPath, ClassLevelsFileName));
         Names = LoadObject(Path.Combine(folderPath, NamesFileName), new Names());
         Names.Male ??= new List<string>();
         Names.Female ??= new List<string>();
@@ -114,7 +120,9 @@ public sealed class DataFolderService
         SaveList(Path.Combine(FolderPath, ItemsFileName), Items);
         SaveList(Path.Combine(FolderPath, ItemDefinitionsFileName), ItemDefinitions);
         SaveList(Path.Combine(FolderPath, QuestsFileName), Quests);
+        SaveList(Path.Combine(FolderPath, DialogsFileName), Dialogs);
         SaveList(Path.Combine(FolderPath, StatNamesFileName), StatNames);
+        SaveList(Path.Combine(FolderPath, ClassLevelsFileName), ClassLevels);
         SaveObject(Path.Combine(FolderPath, NamesFileName), Names);
 
         IsDirty = false;

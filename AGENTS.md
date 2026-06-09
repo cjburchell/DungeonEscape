@@ -7,8 +7,15 @@ The Unity project is in `DungeonEscape.Unity`, not the repository root.
 ## Editing Rules
 
 - Do not edit generated Unity or build folders: `DungeonEscape.Unity/Library/`, `DungeonEscape.Unity/Temp/`, `DungeonEscape.Unity/Obj/`, `DungeonEscape.Unity/Build/`, `DungeonEscape.Unity/Builds/`, `DungeonEscape.Unity/Logs/`, or `DungeonEscape.Unity/UserSettings/`.
-- Prefer changes under `DungeonEscape.Unity/Assets/`, `DungeonEscape.Unity/Packages/`, `DungeonEscape.Unity/ProjectSettings/`, `DungeonEscape.Core/`, and `DungeonEscape.Core.Test/`.
+- Prefer changes under `DungeonEscape.Unity/Assets/`, `DungeonEscape.Unity/Packages/`, `DungeonEscape.Unity/ProjectSettings/`, `DungeonEscape.Core/`, `DungeonEscape.Core.Test/`, and project tool folders such as `DungeonEscape.Tools.MonsterEditor/`.
 - Do not edit generated `.csproj` files under the Unity project unless the user explicitly asks.
+
+## Memory Bank
+
+- Treat `memory-bank/` as the persistent project context for Codex, similar to project rules.
+- At the start of a new task, read `memory-bank/README.md` and `memory-bank/activeContext.md` before making planning assumptions.
+- When the task touches roadmap, current focus, completed work, bugs, or manual validation, also read the relevant file such as `memory-bank/progress.md`, `memory-bank/FUTURE_FEATURES.md`, `memory-bank/BUGS.md`, or `memory-bank/MANUAL_TESTS.md`.
+- After meaningful gameplay, architecture, tooling, validation, or planning changes, update the appropriate memory-bank files so the next session has current context.
 
 ## Test Commands
 

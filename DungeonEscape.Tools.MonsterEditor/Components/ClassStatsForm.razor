@@ -1,0 +1,48 @@
+@*
+    Property editor for classlevels.json entries: one class, its first level XP,
+    stat growth rows, and skill unlock references.
+*@
+@inject DataSourceCatalog DataSources
+
+@if (ClassStats == null)
+{
+    <div class="empty-state">Select a class from the list, or add a new one.</div>
+}
+else
+{
+    <div class="form-header">
+        <div class="field-grid" style="flex:1">
+            <div class="field">
+                <label>Class</label>
+                <input value="@ClassStats.Class" @onchange="e => Set(() => ClassStats.Class = e.Value?.ToString() ?? string.Empty)" />
+            </div>
+            <NumberField Label="First Level" Value="@((long)ClassStats.FirstLevel)" ValueChanged="v => Set(() => ClassStats.FirstLevel = (ulong)Math.Max(0, v))" />
+        </div>
+    </div>
+
+    <fieldset>
+        <legend>Stats</legend>
+        <StatsListEditor Items="EnsureStats()" OnChanged="RaiseChanged" />
+    </fieldset>
+
+    <fieldset>
+        <legend>Skills</legend>
+        <StringListEditor Items="EnsureSkills()" Options="DataSources.Skills" OnChanged="RaiseChanged" />
+    </fieldset>
+}
+
+@code {
+    [Parameter] public ClassStats? ClassStats { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private List<Stats> EnsureStats() => ClassStats == null ? new List<Stats>() : (ClassStats.Stats ??= new List<Stats>());
+    private List<string> EnsureSkills() => ClassStats == null ? new List<string>() : (ClassStats.Skills ??= new List<string>());
+
+    private async Task Set(Action mutate)
+    {
+        mutate();
+        await RaiseChanged();
+    }
+
+    private async Task RaiseChanged() => await OnChanged.InvokeAsync();
+}

@@ -89,7 +89,7 @@ namespace DungeonEscape.Core.Test.State
             {
                 new ClassStats
                 {
-                    Class = Class.Hero,
+                    Class = "Hero",
                     FirstLevel = 10,
                     Skills = new List<string> { "Swipe" },
                     Stats = new List<Stats>
@@ -132,19 +132,19 @@ namespace DungeonEscape.Core.Test.State
                 {
                     Name = "Heal",
                     MinLevel = 2,
-                    Classes = new List<Class> { Class.Hero }
+                    Classes = new List<string> { "Hero" }
                 },
                 new Spell
                 {
                     Name = "Lightning",
                     MinLevel = 3,
-                    Classes = new List<Class> { Class.Hero }
+                    Classes = new List<string> { "Hero" }
                 },
                 new Spell
                 {
                     Name = "Upper",
                     MinLevel = 2,
-                    Classes = new List<Class> { Class.Wizard }
+                    Classes = new List<string> { "Wizard" }
                 }
             };
         }

@@ -18,8 +18,7 @@ namespace Redpoint.DungeonEscape.Data
         [JsonProperty("Slots", ItemConverterType=typeof(StringEnumConverter))]
         public List<Slot> Slots { get; set; }
         
-        [JsonProperty("Classes", ItemConverterType=typeof(StringEnumConverter))]
-        public List<Class> Classes { get; set; }
+        public List<string> Classes { get; set; }
         public List<ItemName> Names { get; set; }
 
         public int BaseStat { get; set; }

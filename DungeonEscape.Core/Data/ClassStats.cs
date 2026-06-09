@@ -5,14 +5,11 @@ using Redpoint.DungeonEscape.State;
 namespace Redpoint.DungeonEscape.Data
 {
     using System.Collections.Generic;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
 
     // ReSharper disable once ClassNeverInstantiated.Global
     public class ClassStats
     {
-        [JsonConverter(typeof(StringEnumConverter))]
-        public Class Class { get; set; }
+        public string Class { get; set; }
         public List<Stats> Stats { get; set; } = new List<Stats>();
         public ulong FirstLevel { get; set; }
 

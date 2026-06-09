@@ -79,7 +79,7 @@ namespace Redpoint.DungeonEscape.State
         public int Magic { get { return Item.GetAttribute(StatType.Magic); } }
 
         [JsonIgnore]
-        public IReadOnlyCollection<Class> Classes { get { return Item.Classes; } }
+        public IReadOnlyCollection<string> Classes { get { return Item.Classes; } }
 
         [JsonIgnore]
         public bool IsEquippable { get { return Item.EquippableItems.Contains(Type); } }

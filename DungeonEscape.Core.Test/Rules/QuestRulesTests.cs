@@ -133,7 +133,7 @@ namespace DungeonEscape.Core.Test.Rules
             {
                 new ClassStats
                 {
-                    Class = Class.Hero,
+                    Class = "Hero",
                     FirstLevel = 100,
                     Skills = new List<string>(),
                     Stats = new List<Stats>

@@ -8,6 +8,7 @@
 @inject AssetContext Assets
 @inject WindowService Window
 @inject EditorSettingsService Settings
+@inject DataValidationService Validator
 
 <div class="toolbar">
     <div class="menu @(showFileMenu ? "open" : string.Empty)">
@@ -56,6 +57,32 @@ else
                     @onclick="() => SetTab(current)">
                 @TabLabel(current) (@Count(current))
             </button>
+        }
+    </div>
+
+    <div class="validation-panel @(showValidationPanel ? "open" : string.Empty)">
+        <button class="validation-summary" @onclick="ToggleValidationPanel">
+            Validation: @ValidationSummary
+        </button>
+        @if (showValidationPanel)
+        {
+            <div class="validation-list">
+                @if (validationIssues.Count == 0)
+                {
+                    <div class="validation-empty">No validation issues.</div>
+                }
+                else
+                {
+                    @foreach (var issue in validationIssues)
+                    {
+                        <div class="validation-issue @issue.Severity.ToString().ToLowerInvariant()">
+                            <span class="validation-severity">@issue.Severity</span>
+                            <span class="validation-location">@issue.Location</span>
+                            <span class="validation-message">@issue.Message</span>
+                        </div>
+                    }
+                }
+            </div>
         }
     </div>
 
@@ -154,6 +181,32 @@ else
                             </div>
                         }
                         break;
+                    case EditorTab.Dialogs:
+                        @foreach (var dialog in Filter(Data.Dialogs, d => d.Id))
+                        {
+                            var current = dialog;
+                            <div class="monster-item @(ReferenceEquals(current, selectedDialog) ? "selected" : string.Empty)"
+                                 @onclick="() => selectedDialog = current">
+                                <div class="meta">
+                                    <span class="name">@Display(current.Id)</span>
+                                    <span class="sub">@(current.Dialogs?.Count ?? 0) heads</span>
+                                </div>
+                            </div>
+                        }
+                        break;
+                    case EditorTab.Classes:
+                        @foreach (var classStats in Filter(Data.ClassLevels, c => c.Class))
+                        {
+                            var current = classStats;
+                            <div class="monster-item @(ReferenceEquals(current, selectedClassStats) ? "selected" : string.Empty)"
+                                 @onclick="() => selectedClassStats = current">
+                                <div class="meta">
+                                    <span class="name">@current.Class</span>
+                                    <span class="sub">First @current.FirstLevel &middot; @(current.Stats?.Count ?? 0) stats &middot; @(current.Skills?.Count ?? 0) skills</span>
+                                </div>
+                            </div>
+                        }
+                        break;
                     case EditorTab.StatNames:
                         @foreach (var statName in Filter(Data.StatNames, s => s.Type.ToString()))
                         {
@@ -195,6 +248,12 @@ else
                 case EditorTab.Quests:
                     <QuestForm Quest="selectedQuest" OnChanged="OnDataChanged" />
                     break;
+                case EditorTab.Dialogs:
+                    <DialogForm Dialog="selectedDialog" OnChanged="OnDataChanged" />
+                    break;
+                case EditorTab.Classes:
+                    <ClassStatsForm ClassStats="selectedClassStats" OnChanged="OnDataChanged" />
+                    break;
                 case EditorTab.StatNames:
                     <StatNameForm StatName="selectedStatName" OnChanged="OnDataChanged" />
                     break;
@@ -212,12 +271,14 @@ else
 }
 
 @code {
-    private enum EditorTab { Monsters, Spells, Skills, Items, ItemDefinitions, Quests, StatNames, Names }
+    private enum EditorTab { Monsters, Spells, Skills, Items, ItemDefinitions, Quests, Dialogs, Classes, StatNames, Names }
 
     private EditorTab activeTab = EditorTab.Monsters;
     private string searchText = string.Empty;
     private string? toast;
     private bool showFileMenu;
+    private bool showValidationPanel = true;
+    private IReadOnlyList<DataValidationIssue> validationIssues = Array.Empty<DataValidationIssue>();
 
     private Monster? selectedMonster;
     private Spell? selectedSpell;
@@ -225,6 +286,8 @@ else
     private Item? selectedItem;
     private ItemDefinition? selectedItemDefinition;
     private Quest? selectedQuest;
+    private Dialog? selectedDialog;
+    private ClassStats? selectedClassStats;
     private StatName? selectedStatName;
 
     protected override void OnInitialized()
@@ -241,10 +304,15 @@ else
         Assets.Changed -= OnStateChanged;
     }
 
-    private void OnStateChanged() => InvokeAsync(StateHasChanged);
+    private void OnStateChanged()
+    {
+        RefreshValidation();
+        _ = InvokeAsync(StateHasChanged);
+    }
 
     private void ToggleFileMenu() => showFileMenu = !showFileMenu;
     private void CloseFileMenu() => showFileMenu = false;
+    private void ToggleValidationPanel() => showValidationPanel = !showValidationPanel;
 
     private void TryAutoLoadLastFolder()
     {
@@ -258,6 +326,7 @@ else
         {
             Data.Load(path);
             ResetSelections();
+            RefreshValidation();
             ShowToast($"Loaded {Data.Monsters.Count} monsters, {Data.Items.Count} items");
         }
         catch
@@ -287,6 +356,7 @@ else
             Data.Load(path);
             ResetSelections();
             Settings.LastDataFolder = Data.FolderPath;
+            RefreshValidation();
             ShowToast($"Loaded {Data.Monsters.Count} monsters, {Data.Items.Count} items");
         }
         catch (Exception ex)
@@ -303,6 +373,7 @@ else
         {
             Data.Save();
             Settings.LastDataFolder = Data.FolderPath;
+            RefreshValidation();
             ShowToast("Saved project");
         }
         catch (Exception ex)
@@ -324,6 +395,7 @@ else
         {
             Data.Reload();
             ResetSelections();
+            RefreshValidation();
             ShowToast("Reloaded");
         }
         catch (Exception ex)
@@ -340,6 +412,8 @@ else
         selectedItem = Data.Items.FirstOrDefault();
         selectedItemDefinition = Data.ItemDefinitions.FirstOrDefault();
         selectedQuest = Data.Quests.FirstOrDefault();
+        selectedDialog = Data.Dialogs.FirstOrDefault();
+        selectedClassStats = Data.ClassLevels.FirstOrDefault();
         selectedStatName = Data.StatNames.FirstOrDefault();
     }
 
@@ -352,6 +426,7 @@ else
     private static string TabLabel(EditorTab tab) => tab switch
     {
         EditorTab.ItemDefinitions => "Item Definitions",
+        EditorTab.Classes => "Class",
         EditorTab.StatNames => "Stat Names",
         _ => tab.ToString()
     };
@@ -364,6 +439,8 @@ else
         EditorTab.Items => Data.Items.Count,
         EditorTab.ItemDefinitions => Data.ItemDefinitions.Count,
         EditorTab.Quests => Data.Quests.Count,
+        EditorTab.Dialogs => Data.Dialogs.Count,
+        EditorTab.Classes => Data.ClassLevels.Count,
         EditorTab.StatNames => Data.StatNames.Count,
         EditorTab.Names => (Data.Names.Male?.Count ?? 0) + (Data.Names.Female?.Count ?? 0),
         _ => 0
@@ -379,6 +456,8 @@ else
         EditorTab.Items => selectedItem,
         EditorTab.ItemDefinitions => selectedItemDefinition,
         EditorTab.Quests => selectedQuest,
+        EditorTab.Dialogs => selectedDialog,
+        EditorTab.Classes => selectedClassStats,
         EditorTab.StatNames => selectedStatName,
         EditorTab.Names => Data.Names,
         _ => null
@@ -419,6 +498,23 @@ else
 
     private void OnDataChanged() => Data.MarkDirty();
 
+    private string ValidationSummary
+    {
+        get
+        {
+            var errorCount = validationIssues.Count(issue => issue.Severity == DataValidationSeverity.Error);
+            var warningCount = validationIssues.Count(issue => issue.Severity == DataValidationSeverity.Warning);
+            return errorCount == 0 && warningCount == 0
+                ? "0 issues"
+                : $"{errorCount} errors, {warningCount} warnings";
+        }
+    }
+
+    private void RefreshValidation()
+    {
+        validationIssues = Data.HasDocument ? Validator.Validate() : Array.Empty<DataValidationIssue>();
+    }
+
     private void AddItem()
     {
         switch (activeTab)
@@ -428,7 +524,7 @@ else
                 Data.Monsters.Add(selectedMonster);
                 break;
             case EditorTab.Spells:
-                selectedSpell = new Spell { Name = "New Spell", Classes = new List<Class>() };
+                selectedSpell = new Spell { Name = "New Spell", Classes = new List<string>() };
                 Data.Spells.Add(selectedSpell);
                 break;
             case EditorTab.Skills:
@@ -444,7 +540,7 @@ else
                 {
                     Type = ItemType.Weapon,
                     Slots = new List<Slot>(),
-                    Classes = new List<Class>(),
+                    Classes = new List<string>(),
                     Names = new List<ItemName> { new() { Name = "New Item Definition" } }
                 };
                 Data.ItemDefinitions.Add(selectedItemDefinition);
@@ -459,6 +555,37 @@ else
                     Stages = new List<QuestStage>()
                 };
                 Data.Quests.Add(selectedQuest);
+                break;
+            case EditorTab.Dialogs:
+                selectedDialog = new Dialog
+                {
+                    Id = "new-dialog",
+                    Dialogs = new List<DialogHead>
+                    {
+                        new()
+                        {
+                            Text = "New dialog",
+                            Choices = new List<Choice>(),
+                            QuestStage = new List<int>()
+                        }
+                    }
+                };
+                Data.Dialogs.Add(selectedDialog);
+                break;
+            case EditorTab.Classes:
+                selectedClassStats = new ClassStats
+                {
+                    Class = NextAvailableClass(),
+                    FirstLevel = 1,
+                    Stats = new List<Stats>
+                    {
+                        new() { Type = StatType.Health, StartConst = 1, Roll = 1, RollTimes = 1 },
+                        new() { Type = StatType.Attack, StartConst = 1, Roll = 1, RollTimes = 1 },
+                        new() { Type = StatType.Defence, StartConst = 1, Roll = 1, RollTimes = 1 }
+                    },
+                    Skills = new List<string>()
+                };
+                Data.ClassLevels.Add(selectedClassStats);
                 break;
             case EditorTab.StatNames:
                 selectedStatName = new StatName
@@ -495,6 +622,16 @@ else
                 break;
             case EditorTab.Quests when selectedQuest != null:
                 selectedQuest = Clone(selectedQuest, Data.Quests, q => q.Name, (q, n) => q.Name = n);
+                selectedQuest.Id = UniqueId(
+                    string.IsNullOrWhiteSpace(selectedQuest.Id) ? "quest-copy" : selectedQuest.Id + "-copy",
+                    Data.Quests.Where(quest => !ReferenceEquals(quest, selectedQuest)).Select(quest => quest.Id));
+                break;
+            case EditorTab.Dialogs when selectedDialog != null:
+                selectedDialog = Clone(selectedDialog, Data.Dialogs, d => d.Id, (d, n) => d.Id = UniqueId(n, Data.Dialogs.Select(existing => existing.Id)));
+                break;
+            case EditorTab.Classes when selectedClassStats != null:
+                selectedClassStats = Clone(selectedClassStats, Data.ClassLevels, c => c.Class, (_, _) => { });
+                selectedClassStats.Class = NextAvailableClass(selectedClassStats.Class);
                 break;
             case EditorTab.StatNames when selectedStatName != null:
                 selectedStatName = Clone(selectedStatName, Data.StatNames, s => s.Type.ToString(), (_, _) => { });
@@ -535,6 +672,50 @@ else
         definition.Names[0].Name = name;
     }
 
+    private string NextAvailableClass(string? fallback = null)
+    {
+        var usedClasses = Data.ClassLevels
+            .Where(classStats => !ReferenceEquals(classStats, selectedClassStats))
+            .Select(classStats => classStats.Class)
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .Select(value => value!)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var candidate in Enum.GetValues<Class>())
+        {
+            var className = candidate.ToString();
+            if (!usedClasses.Contains(className))
+            {
+                return className;
+            }
+        }
+
+        return string.IsNullOrWhiteSpace(fallback) ? "NewClass" : fallback;
+    }
+
+    private static string UniqueId(string baseId, IEnumerable<string?> existingIds)
+    {
+        var root = string.IsNullOrWhiteSpace(baseId) ? "copy" : baseId.Trim();
+        var existing = existingIds
+            .Where(id => !string.IsNullOrWhiteSpace(id))
+            .Select(id => id!)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        if (!existing.Contains(root))
+        {
+            return root;
+        }
+
+        for (var index = 2; ; index++)
+        {
+            var candidate = $"{root}-{index}";
+            if (!existing.Contains(candidate))
+            {
+                return candidate;
+            }
+        }
+    }
+
     private void RemoveItem()
     {
         var name = activeTab switch
@@ -545,6 +726,8 @@ else
             EditorTab.Items => selectedItem?.Name,
             EditorTab.ItemDefinitions => selectedItemDefinition == null ? null : ItemDefinitionName(selectedItemDefinition),
             EditorTab.Quests => selectedQuest?.Name,
+            EditorTab.Dialogs => selectedDialog?.Id,
+            EditorTab.Classes => selectedClassStats?.Class,
             EditorTab.StatNames => selectedStatName?.Type.ToString(),
             _ => null
         };
@@ -585,6 +768,14 @@ else
             case EditorTab.Quests when selectedQuest != null:
                 Data.Quests.Remove(selectedQuest);
                 selectedQuest = Data.Quests.FirstOrDefault();
+                break;
+            case EditorTab.Dialogs when selectedDialog != null:
+                Data.Dialogs.Remove(selectedDialog);
+                selectedDialog = Data.Dialogs.FirstOrDefault();
+                break;
+            case EditorTab.Classes when selectedClassStats != null:
+                Data.ClassLevels.Remove(selectedClassStats);
+                selectedClassStats = Data.ClassLevels.FirstOrDefault();
                 break;
             case EditorTab.StatNames when selectedStatName != null:
                 Data.StatNames.Remove(selectedStatName);

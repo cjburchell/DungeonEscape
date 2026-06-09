@@ -36,13 +36,7 @@ This file tracks post-migration feature and architecture ideas. Items here are n
 
 ## Tools And Data Editing
 
-- Create editors for JSON data files:
-  - Monsters.
-  - Spells.
-  - Skills.
-  - Items.
-  - Dialogs.
-  - Quests.
+- Continue expanding JSON data editor coverage and polish for monsters, spells, skills, items, dialogs, quests, stat names, and names.
 - Add JSON validation schemas for items, spells, skills, quests, dialogs, and monsters.
 - Add in-editor data validation for missing item IDs, broken dialog links, invalid quest stages, bad map references, and missing assets.
 - Add a quest/dialog graph viewer before or alongside full editors.

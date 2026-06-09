@@ -498,7 +498,7 @@ namespace DungeonEscape.Core.Test.ViewModels
                 Name = name,
                 Type = type,
                 Slots = new List<Slot> { slot },
-                Classes = new List<Class> { Class.Hero }
+                Classes = new List<string> { "Hero" }
             });
         }
 
@@ -529,7 +529,7 @@ namespace DungeonEscape.Core.Test.ViewModels
                 Type = ItemType.OneUse,
                 Target = target,
                 Slots = new List<Slot> { Slot.PrimaryHand },
-                Classes = new List<Class> { Class.Hero },
+                Classes = new List<string> { "Hero" },
                 Skill = new Skill { Name = name, Type = skillType }
             });
         }

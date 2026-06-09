@@ -25,7 +25,7 @@ else
 
     <fieldset>
         <legend>Classes</legend>
-        <EnumMultiSelect TEnum="Class" Selected="EnsureClasses()" SelectedChanged="OnClassesChanged" OnChanged="RaiseChanged" />
+        <ClassMultiSelect Selected="EnsureClasses()" SelectedChanged="OnClassesChanged" OnChanged="RaiseChanged" />
     </fieldset>
 
     <fieldset>
@@ -45,7 +45,7 @@ else
         ?? 0;
 
     private List<Slot> EnsureSlots() => Definition == null ? new List<Slot>() : (Definition.Slots ??= new List<Slot>());
-    private List<Class> EnsureClasses() => Definition == null ? new List<Class>() : (Definition.Classes ??= new List<Class>());
+    private List<string> EnsureClasses() => Definition == null ? new List<string>() : (Definition.Classes ??= new List<string>());
     private List<ItemName> EnsureNames() => Definition == null ? new List<ItemName>() : (Definition.Names ??= new List<ItemName>());
 
     private async Task OnSlotsChanged(List<Slot> slots)
@@ -58,7 +58,7 @@ else
         await Task.CompletedTask;
     }
 
-    private async Task OnClassesChanged(List<Class> classes)
+    private async Task OnClassesChanged(List<string> classes)
     {
         if (Definition != null)
         {

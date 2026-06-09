@@ -25,6 +25,7 @@ public static class Program
         builder.Services.AddSingleton<SpellImageCatalog>();
         builder.Services.AddSingleton<DataFolderService>();
         builder.Services.AddSingleton<DataSourceCatalog>();
+        builder.Services.AddSingleton<DataValidationService>();
 
 
         builder.RootComponents.Add<App>("#app");

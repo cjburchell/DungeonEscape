@@ -1,0 +1,193 @@
+@inject DataSourceCatalog DataSources
+
+<div class="complex-list">
+    @if (Items.Count == 0)
+    {
+        <div class="tag-empty">No choices</div>
+    }
+    else
+    {
+        @for (var i = 0; i < Items.Count; i++)
+        {
+            var index = i;
+            <div class="card-row nested-card">
+                <div class="field">
+                    <label>Choice Text</label>
+                    <input value="@Items[index].Text" @onchange="e => UpdateAt(index, choice => choice.Text = e.Value?.ToString() ?? string.Empty)" />
+                </div>
+
+                <div class="field-grid">
+                    <div class="field">
+                        <label>Quest</label>
+                        <select value="@Items[index].Quest" @onchange="e => UpdateAt(index, choice => choice.Quest = e.Value?.ToString())">
+                            <option value="">-- none --</option>
+                            @if (!string.IsNullOrEmpty(Items[index].Quest) && !DataSources.Quests.Contains(Items[index].Quest))
+                            {
+                                <option value="@Items[index].Quest">@Items[index].Quest (custom)</option>
+                            }
+                            @foreach (var quest in DataSources.Quests)
+                            {
+                                <option value="@quest">@quest</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Item</label>
+                        <select value="@Items[index].ItemId" @onchange="e => UpdateAt(index, choice => choice.ItemId = e.Value?.ToString())">
+                            <option value="">-- none --</option>
+                            @if (!string.IsNullOrEmpty(Items[index].ItemId) && !DataSources.Items.Contains(Items[index].ItemId))
+                            {
+                                <option value="@Items[index].ItemId">@Items[index].ItemId (custom)</option>
+                            }
+                            @foreach (var item in DataSources.Items)
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Monster</label>
+                        <select value="@Items[index].Monster" @onchange="e => UpdateAt(index, choice => choice.Monster = e.Value?.ToString())">
+                            <option value="">-- none --</option>
+                            @if (!string.IsNullOrEmpty(Items[index].Monster) && !DataSources.Monsters.Contains(Items[index].Monster))
+                            {
+                                <option value="@Items[index].Monster">@Items[index].Monster (custom)</option>
+                            }
+                            @foreach (var monster in DataSources.Monsters)
+                            {
+                                <option value="@monster">@monster</option>
+                            }
+                        </select>
+                    </div>
+                    <NumberField Label="Next Quest Stage" Value="@(Items[index].NextQuestStage ?? 0)"
+                                 ValueChanged="value => UpdateAt(index, choice => choice.NextQuestStage = value)" />
+                    <div class="field">
+                        <label>Map Id</label>
+                        <input value="@Items[index].MapId" @onchange="e => UpdateAt(index, choice => choice.MapId = e.Value?.ToString())" />
+                    </div>
+                    <div class="field">
+                        <label>Spawn Id</label>
+                        <input value="@Items[index].SpawnId" @onchange="e => UpdateAt(index, choice => choice.SpawnId = e.Value?.ToString())" />
+                    </div>
+                    <NumberField Label="Object Id" Value="@(Items[index].ObjectId ?? 0)"
+                                 ValueChanged="value => UpdateAt(index, choice => choice.ObjectId = value)" />
+                </div>
+
+                <fieldset>
+                    <legend>Actions</legend>
+                    <EnumMultiSelect TEnum="QuestAction" Selected="EnsureActions(index)" SelectedChanged="actions => OnActionsChanged(index, actions)" OnChanged="OnChanged" />
+                </fieldset>
+
+                <fieldset>
+                    <legend>Items</legend>
+                    <StringListEditor Items="EnsureItems(index)" Options="DataSources.Items" OnChanged="OnChanged" />
+                </fieldset>
+
+                <fieldset>
+                    <legend>Nested Dialog</legend>
+                    @if (Items[index].Dialog == null)
+                    {
+                        <button @onclick="() => AddNestedDialog(index)">Add Response</button>
+                    }
+                    else
+                    {
+                        <div class="field">
+                            <label>Text</label>
+                            <textarea rows="3" value="@Items[index].Dialog.Text"
+                                      @onchange="e => UpdateAt(index, choice => choice.Dialog.Text = e.Value?.ToString() ?? string.Empty)"></textarea>
+                        </div>
+                        <fieldset>
+                            <legend>Choices</legend>
+                            <DialogChoiceListEditor Items="EnsureNestedChoices(index)" OnChanged="OnChanged" />
+                        </fieldset>
+                        <div class="row-actions">
+                            <button class="danger" @onclick="() => RemoveNestedDialog(index)">Remove Response</button>
+                        </div>
+                    }
+                </fieldset>
+
+                <div class="row-actions">
+                    <button class="danger" @onclick="() => RemoveAt(index)">Remove Choice</button>
+                </div>
+            </div>
+        }
+    }
+
+    <button @onclick="Add">+ Add Choice</button>
+</div>
+
+@code {
+    [Parameter] public List<Choice> Items { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private async Task Add()
+    {
+        Items.Add(new Choice
+        {
+            Text = "New choice",
+            Actions = new List<QuestAction>(),
+            Items = new List<string>()
+        });
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task UpdateAt(int index, Action<Choice> mutate)
+    {
+        if (index < 0 || index >= Items.Count)
+        {
+            return;
+        }
+
+        mutate(Items[index]);
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task RemoveAt(int index)
+    {
+        if (index < 0 || index >= Items.Count)
+        {
+            return;
+        }
+
+        Items.RemoveAt(index);
+        await OnChanged.InvokeAsync();
+    }
+
+    private List<QuestAction> EnsureActions(int index) => Items[index].Actions ??= new List<QuestAction>();
+    private List<string> EnsureItems(int index) => Items[index].Items ??= new List<string>();
+    private List<Choice> EnsureNestedChoices(int index) => Items[index].Dialog.Choices ??= new List<Choice>();
+
+    private async Task OnActionsChanged(int index, List<QuestAction> actions)
+    {
+        if (index >= 0 && index < Items.Count)
+        {
+            Items[index].Actions = actions;
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task AddNestedDialog(int index)
+    {
+        if (index >= 0 && index < Items.Count)
+        {
+            Items[index].Dialog = new DialogText
+            {
+                Text = "New response",
+                Choices = new List<Choice>()
+            };
+        }
+
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task RemoveNestedDialog(int index)
+    {
+        if (index >= 0 && index < Items.Count)
+        {
+            Items[index].Dialog = null;
+        }
+
+        await OnChanged.InvokeAsync();
+    }
+}

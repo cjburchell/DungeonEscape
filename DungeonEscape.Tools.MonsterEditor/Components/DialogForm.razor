@@ -1,0 +1,38 @@
+@*
+    Property editor for dialog.json entries. Dialogs contain one or more heads,
+    each with optional quest conditions and nested choices.
+*@
+
+@if (Dialog == null)
+{
+    <div class="empty-state">Select a dialog from the list, or add a new one.</div>
+}
+else
+{
+    <div class="form-header">
+        <div class="field" style="flex:1">
+            <label>Id</label>
+            <input value="@Dialog.Id" @onchange="e => Set(() => Dialog.Id = e.Value?.ToString() ?? string.Empty)" />
+        </div>
+    </div>
+
+    <fieldset>
+        <legend>Dialog Heads</legend>
+        <DialogHeadListEditor Items="EnsureHeads()" OnChanged="RaiseChanged" />
+    </fieldset>
+}
+
+@code {
+    [Parameter] public Dialog? Dialog { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private List<DialogHead> EnsureHeads() => Dialog == null ? new List<DialogHead>() : (Dialog.Dialogs ??= new List<DialogHead>());
+
+    private async Task Set(Action mutate)
+    {
+        mutate();
+        await RaiseChanged();
+    }
+
+    private async Task RaiseChanged() => await OnChanged.InvokeAsync();
+}

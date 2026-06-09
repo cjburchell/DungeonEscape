@@ -43,7 +43,7 @@ else
 
     <fieldset>
         <legend>Classes</legend>
-        <EnumMultiSelect TEnum="Class" Selected="EnsureClasses()" SelectedChanged="OnClassesChanged" OnChanged="RaiseChanged" />
+        <ClassMultiSelect Selected="EnsureClasses()" SelectedChanged="OnClassesChanged" OnChanged="RaiseChanged" />
     </fieldset>
 }
 
@@ -56,17 +56,17 @@ else
             ? string.Empty
             : Images.Catalog.GetImageDataUri(Spell.ImageId) ?? string.Empty;
 
-    private List<Class> EnsureClasses()
+    private List<string> EnsureClasses()
     {
         if (Spell == null)
         {
-            return new List<Class>();
+            return new List<string>();
         }
 
-        return Spell.Classes ??= new List<Class>();
+        return Spell.Classes ??= new List<string>();
     }
 
-    private async Task OnClassesChanged(List<Class> classes)
+    private async Task OnClassesChanged(List<string> classes)
     {
         if (Spell != null)
         {

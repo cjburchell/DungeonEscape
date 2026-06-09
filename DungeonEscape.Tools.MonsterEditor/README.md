@@ -25,7 +25,9 @@ It loads the following files into one shared, in-memory dataset:
 | `customitems.json`| Items         |
 | `itemdef.json`    | Item Definitions |
 | `quests.json`     | Quests        |
+| `dialog.json`     | Dialogs       |
 | `statnames.json`  | Stat Names    |
+| `classlevels.json`| Class         |
 | `names.json`      | Names         |
 
 The last opened folder is remembered and **auto-loaded on startup** (stored in
@@ -34,9 +36,12 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
 ## Features
 
 - Tabs for **Monsters**, **Spells**, **Skills**, **Items**, **Item Definitions**,
-  **Quests**, **Stat Names**, and **Names**. Array-backed tabs include a
+  **Quests**, **Dialogs**, **Class**, **Stat Names**, and **Names**. Array-backed tabs include a
   searchable list and **Add**, **Duplicate**, and **Remove** actions; `names.json`
   is edited as a single document.
+- A collapsible **Validation** panel flags duplicate identifiers, empty required
+  names/IDs, broken spell/skill/item/quest/monster references, invalid image IDs,
+  missing class-level definitions, and dialog nesting issues.
 - All lists share a single in-memory dataset, so cross-references update
   **live** &mdash; e.g. add a new item on the Items tab and it immediately
   appears in a monster's drop list and any item dropdown; rename a skill and the
@@ -57,6 +62,12 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
     allowed classes, and generated name/image options.
   - **Quest** &mdash; id/name/description, minimum level, XP/gold rewards, reward
     item references, and quest stages.
+  - **Dialog** &mdash; dialog ids, quest-conditioned heads, text, choices, quest
+    actions, item/monster/map references, and nested response dialogs.
+  - **Class** &mdash; free-text class name, first-level XP threshold, fixed stat
+    growth rows with initial roll previews, and skill unlock references.
+    Spell/item/item-definition class selectors are populated from
+    `classlevels.json`.
   - **Stat Names** &mdash; stat type plus prefix/suffix word pools.
   - **Names** &mdash; male and female character name pools.
 

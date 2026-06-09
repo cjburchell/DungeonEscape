@@ -35,7 +35,7 @@ namespace Redpoint.DungeonEscape.State
 
         public override IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells)
         {
-            return availableSpells.Where(spell => spell.MinLevel <= Level && spell.Classes.Contains(Class));
+            return availableSpells.Where(spell => spell.MinLevel <= Level && HasClass(spell.Classes, Class));
         }
 
         public override IEnumerable<Skill> GetSkills(IEnumerable<Skill> availableSkills)
@@ -48,7 +48,7 @@ namespace Redpoint.DungeonEscape.State
         {
             Level = 1;
             var classStatList = game.ClassLevelStats.ToList();
-            var classStats = classStatList.First(stats => stats.Class == Class);
+            var classStats = classStatList.First(stats => IsClass(stats.Class, Class));
             Xp = 0;
             NextLevel = classStats.FirstLevel;
 
@@ -100,7 +100,7 @@ namespace Redpoint.DungeonEscape.State
                 return false;
             }
 
-            var classStats = classLevels.First(stats => stats.Class == Class);
+            var classStats = classLevels.First(stats => IsClass(stats.Class, Class));
             var oldLevel = Level;
             Level++;
             NextLevel = CalculateNextLevel(oldLevel, NextLevel);
@@ -130,7 +130,7 @@ namespace Redpoint.DungeonEscape.State
 
             if (availableSpells != null)
             {
-                foreach (var spell in availableSpells.Where(spell => spell.MinLevel <= Level && spell.MinLevel > oldLevel && spell.Classes.Contains(Class)))
+                foreach (var spell in availableSpells.Where(spell => spell.MinLevel <= Level && spell.MinLevel > oldLevel && HasClass(spell.Classes, Class)))
                 {
                     levelUpMessage += "Has learned the " + spell.Name + " Spell\n";
                 }
@@ -179,12 +179,22 @@ namespace Redpoint.DungeonEscape.State
             return !IsDead &&
                    item.Item.Skill != null &&
                    item.Item.Skill.IsNonEncounterSkill &&
-                   (item.Classes == null || item.Classes.Contains(Class));
+                   (item.Classes == null || HasClass(item.Classes, Class));
         }
 
         public bool CanEquipItem(ItemInstance item)
         {
-            return !IsDead && item.IsEquippable && !item.IsEquipped && (item.Classes == null || item.Classes.Contains(Class));
+            return !IsDead && item.IsEquippable && !item.IsEquipped && (item.Classes == null || HasClass(item.Classes, Class));
+        }
+
+        private static bool HasClass(IEnumerable<string> classes, Class heroClass)
+        {
+            return classes != null && classes.Any(item => IsClass(item, heroClass));
+        }
+
+        private static bool IsClass(string className, Class heroClass)
+        {
+            return string.Equals(className, heroClass.ToString(), StringComparison.OrdinalIgnoreCase);
         }
 
         public void UnEquip(ItemInstance item)

@@ -43,6 +43,10 @@
 - Removed stale Toolkit-oriented Unity UI tests that no longer match the active IMGUI direction.
 - Added `DungeonEscape.Tools.MonsterEditor`, a standalone Photino.Blazor desktop tool for editing monster JSON files (open/new/save any monster array file, searchable list with image thumbnails, add/duplicate/remove, and a full property editor with dropdowns for image/rarity/biomes/spells/skills/items). It references `DungeonEscape.Core` so saved JSON matches the game format.
 - Monster Editor: consolidated New/Open/Save/Save As into a single **File** dropdown menu, and added an `EditorSettingsService` that persists the last opened/saved file (`%AppData%/DungeonEscape.MonsterEditor/settings.json`) and **auto-loads it on startup**.
+- Data Editor: expanded the Photino tool into a full Data-folder editor covering monsters, spells, skills, custom items, item definitions, quests, dialogs, class levels, stat names, and names. Added a collapsible validation panel for duplicate identifiers, required name/id checks, broken cross-references, invalid image IDs, missing class-level definitions, and dialog nesting/reference issues.
+- Data Editor/Core data contracts: class-level entries and spell/item/item-definition class references now use string class names from `classlevels.json`; runtime hero state still uses the existing `Class` enum and compares against those strings by name.
+- Data Editor: renamed the class-level tab to **Class** and made class stats a fixed normalized list of Health, Attack, Defence, MagicDefence, Agility, and Magic rather than add/remove rows.
+- Data Editor: class stat rows now show the stat name as the group header and display the initial character stat roll as `RollTimes`d`Roll`+`StartConst`, matching `Stats.RollStartValue()`.
 
 
 

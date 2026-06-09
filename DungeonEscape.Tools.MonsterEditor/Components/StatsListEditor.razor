@@ -1,0 +1,71 @@
+@*
+    Edits the fixed class-level stat rows from classlevels.json.
+*@
+
+<div class="complex-list">
+    @for (var i = 0; i < Items.Count; i++)
+    {
+        var index = i;
+        <div class="card-row">
+            <div class="card-row-title">
+                <span>@Items[index].Type</span>
+                <RollPreview Label="Initial" Times="Items[index].RollTimes" Random="Items[index].Roll" Const="Items[index].StartConst" />
+            </div>
+            <div class="field-grid">
+                <NumberField Label="Start Const" Value="Items[index].StartConst" ValueChanged="value => UpdateAt(index, stat => stat.StartConst = value)" />
+                <NumberField Label="Roll" Value="Items[index].Roll" ValueChanged="value => UpdateAt(index, stat => stat.Roll = value)" />
+                <NumberField Label="Roll Times" Value="Items[index].RollTimes" ValueChanged="value => UpdateAt(index, stat => stat.RollTimes = value)" />
+                <NumberField Label="Roll Const" Value="Items[index].RollConst" ValueChanged="value => UpdateAt(index, stat => stat.RollConst = value)" />
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public List<Stats> Items { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private static readonly StatType[] RequiredStats =
+    {
+        StatType.Health,
+        StatType.Attack,
+        StatType.Defence,
+        StatType.MagicDefence,
+        StatType.Agility,
+        StatType.Magic
+    };
+
+    protected override void OnParametersSet()
+    {
+        NormalizeStats();
+    }
+
+    private async Task UpdateAt(int index, Action<Stats> mutate)
+    {
+        if (index < 0 || index >= Items.Count)
+        {
+            return;
+        }
+
+        mutate(Items[index]);
+        await OnChanged.InvokeAsync();
+    }
+
+    private void NormalizeStats()
+    {
+        var byType = Items
+            .Where(stat => stat != null)
+            .GroupBy(stat => stat.Type)
+            .ToDictionary(group => group.Key, group => group.First());
+
+        Items.Clear();
+        foreach (var statType in RequiredStats)
+        {
+            var stat = byType.TryGetValue(statType, out var existing)
+                ? existing
+                : new Stats { Type = statType, RollTimes = 1 };
+            stat.Type = statType;
+            Items.Add(stat);
+        }
+    }
+}

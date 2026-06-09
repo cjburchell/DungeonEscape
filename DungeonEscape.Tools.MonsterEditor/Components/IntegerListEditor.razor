@@ -1,0 +1,52 @@
+<div class="string-list">
+    @if (Items.Count == 0)
+    {
+        <div class="tag-empty">None</div>
+    }
+    else
+    {
+        @for (var i = 0; i < Items.Count; i++)
+        {
+            var index = i;
+            <div class="row">
+                <NumberField Label="" Value="Items[index]" ValueChanged="value => UpdateAt(index, value)" />
+                <button class="danger" title="Remove" @onclick="() => RemoveAt(index)">&times;</button>
+            </div>
+        }
+    }
+
+    <button @onclick="Add">Add Stage</button>
+</div>
+
+@code {
+    [Parameter] public List<int> Items { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private async Task Add()
+    {
+        Items.Add(Items.Count == 0 ? 0 : Items.Max() + 1);
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task UpdateAt(int index, int value)
+    {
+        if (index < 0 || index >= Items.Count)
+        {
+            return;
+        }
+
+        Items[index] = value;
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task RemoveAt(int index)
+    {
+        if (index < 0 || index >= Items.Count)
+        {
+            return;
+        }
+
+        Items.RemoveAt(index);
+        await OnChanged.InvokeAsync();
+    }
+}

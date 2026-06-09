@@ -29,14 +29,13 @@ namespace DungeonEscape.Unity.Editor
                 return;
             }
 
-            var iconSizes = PlayerSettings.GetIconSizesForTargetGroup(BuildTargetGroup.Standalone);
+            var iconSizes = PlayerSettings.GetIconSizes(NamedBuildTarget.Standalone, IconKind.Application);
             var icons = new Texture2D[iconSizes.Length];
             for (var i = 0; i < icons.Length; i++)
             {
                 icons[i] = icon;
             }
 
-            PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Standalone, icons);
             PlayerSettings.SetIcons(NamedBuildTarget.Standalone, icons, IconKind.Application);
             EditorUtility.SetDirty(Unsupported.GetSerializedAssetInterfaceSingleton("PlayerSettings"));
             AssetDatabase.SaveAssets();

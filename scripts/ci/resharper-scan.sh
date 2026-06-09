@@ -116,6 +116,7 @@ if [[ "$UNITY_SCRIPT_COUNT" -gt 0 ]]; then
     printf '%s\n' '<Project Sdk="Microsoft.NET.Sdk">'
     printf '%s\n' '  <PropertyGroup>'
     printf '%s\n' '    <TargetFramework>netstandard2.1</TargetFramework>'
+    printf '%s\n' '    <RootNamespace>Redpoint.DungeonEscape.Unity</RootNamespace>'
     printf '%s\n' '    <LangVersion>9.0</LangVersion>'
     printf '%s\n' '    <Nullable>disable</Nullable>'
     printf '%s\n' '    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>'

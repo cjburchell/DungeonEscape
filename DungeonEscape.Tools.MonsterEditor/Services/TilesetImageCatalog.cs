@@ -45,8 +45,17 @@ public sealed class TilesetImageCatalog
 
     public bool TryGet(int imageId, out TilesetImageEntry entry)
     {
-        entry = entries.FirstOrDefault(e => e.ImageId == imageId)!;
-        return entry != null;
+        foreach (var candidate in entries)
+        {
+            if (candidate.ImageId == imageId)
+            {
+                entry = candidate;
+                return true;
+            }
+        }
+
+        entry = null!;
+        return false;
     }
 
     /// <summary>

@@ -10,7 +10,7 @@ namespace Redpoint.DungeonEscape.Data
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int MinimumLevel { get; set; } = 0;
+        public int MinimumLevel { get; set; }
         public int Xp { get; set; }
         public int Gold { get; set; }
         public List<string> Items { get; set; }

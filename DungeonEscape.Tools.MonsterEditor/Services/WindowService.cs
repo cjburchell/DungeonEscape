@@ -1,4 +1,5 @@
 using Photino.NET;
+using System.IO;
 
 namespace DungeonEscape.Tools.MonsterEditor.Services;
 
@@ -55,7 +56,7 @@ public sealed class WindowService
         var startDirectory = initialDirectory;
         if (!string.IsNullOrEmpty(defaultFileName) && !string.IsNullOrEmpty(startDirectory))
         {
-            startDirectory = System.IO.Path.Combine(startDirectory, defaultFileName);
+            startDirectory = Path.Combine(startDirectory, defaultFileName);
         }
 
         return window.ShowSaveFile(
@@ -75,6 +76,6 @@ public sealed class WindowService
 
     public void ShowInfo(string title, string message)
     {
-        window?.ShowMessage(title, message, PhotinoDialogButtons.Ok, PhotinoDialogIcon.Info);
+        window?.ShowMessage(title, message);
     }
 }

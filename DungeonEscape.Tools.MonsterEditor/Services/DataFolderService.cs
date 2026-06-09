@@ -78,7 +78,7 @@ public sealed class DataFolderService
         ItemDefinitions = LoadList<ItemDefinition>(Path.Combine(folderPath, ItemDefinitionsFileName));
         Quests = LoadList<Quest>(Path.Combine(folderPath, QuestsFileName));
         StatNames = LoadList<StatName>(Path.Combine(folderPath, StatNamesFileName));
-        Names = LoadObject(Path.Combine(folderPath, NamesFileName), new Names()) ?? new Names();
+        Names = LoadObject(Path.Combine(folderPath, NamesFileName), new Names());
         Names.Male ??= new List<string>();
         Names.Female ??= new List<string>();
 
@@ -146,7 +146,7 @@ public sealed class DataFolderService
         File.WriteAllText(path, json);
     }
 
-    private static T? LoadObject<T>(string path, T fallback)
+    private static T LoadObject<T>(string path, T fallback)
     {
         if (!File.Exists(path))
         {

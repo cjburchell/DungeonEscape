@@ -9,7 +9,7 @@ namespace DungeonEscape.Tools.MonsterEditor.Services;
 public sealed record MonsterImageEntry(int ImageId, string DisplayName, string ImagePath);
 
 /// <summary>
-/// Parses <c>allmonsters.tsx</c> to build the ImageId &rarr; PNG mapping used by
+/// Parses <c>allmonsters.tsx</c> to build the ImageId-to-PNG mapping used by
 /// the editor's image dropdown and thumbnails. Mirrors the resolution logic used
 /// by the game's CombatAssetLoader.
 /// </summary>

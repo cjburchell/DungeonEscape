@@ -20,6 +20,8 @@ $UnityReport = Join-Path $RepoRoot "RsInspection.Unity.xml"
 $CoreCache = Join-Path $RepoRoot "temp\core"
 $UnityCache = Join-Path $RepoRoot "temp\unity"
 
+Remove-Item -LiteralPath $CoreReport, $UnityReport -ErrorAction SilentlyContinue
+
 function Test-ReSharperThreshold {
     param([int]$Threshold)
 
@@ -117,6 +119,7 @@ $lines = @(
     '<Project Sdk="Microsoft.NET.Sdk">',
     '  <PropertyGroup>',
     '    <TargetFramework>netstandard2.1</TargetFramework>',
+    '    <RootNamespace>Redpoint.DungeonEscape.Unity</RootNamespace>',
     '    <LangVersion>9.0</LangVersion>',
     '    <Nullable>disable</Nullable>',
     '    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>',

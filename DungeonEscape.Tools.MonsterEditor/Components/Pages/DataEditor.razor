@@ -397,7 +397,7 @@ else
 
     private static string Display(string? name) => string.IsNullOrEmpty(name) ? "(unnamed)" : name;
 
-    private static string? ItemDefinitionName(ItemDefinition definition)
+    private static string ItemDefinitionName(ItemDefinition definition)
     {
         var firstName = definition.Names?.FirstOrDefault(n => !string.IsNullOrEmpty(n.Name))?.Name;
         return string.IsNullOrEmpty(firstName) ? definition.Type.ToString() : firstName;

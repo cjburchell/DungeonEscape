@@ -47,6 +47,9 @@
 - Data Editor/Core data contracts: class-level entries and spell/item/item-definition class references now use string class names from `classlevels.json`; runtime hero state still uses the existing `Class` enum and compares against those strings by name.
 - Data Editor: renamed the class-level tab to **Class** and made class stats a fixed normalized list of Health, Attack, Defence, MagicDefence, Agility, and Magic rather than add/remove rows.
 - Data Editor: class stat rows now show the stat name as the group header and display the initial character stat roll as `RollTimes`d`Roll`+`StartConst`, matching `Stats.RollStartValue()`.
+- Data Editor: dialog choice `NextQuestStage` is now shown only when an effective quest is available, uses a dropdown of that quest's stages, and treats `0` as none.
+- Data Editor: save output is now sparse JSON, omitting null/default values, zeroes, `false`, empty strings, empty arrays, and empty objects while keeping root files valid.
+- Data Editor: Stat Names is now a fixed normalized list of Agility, Defence, Health, Attack, Magic, and MagicDefence; rows cannot be added, duplicated, removed, or retargeted to another stat.
 
 
 

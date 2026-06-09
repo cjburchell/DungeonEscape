@@ -1,4 +1,5 @@
 @inject DataSourceCatalog DataSources
+@inject DataFolderService Data
 
 <div class="complex-list">
     @if (Items.Count == 0)
@@ -19,7 +20,7 @@
                 <div class="field-grid">
                     <div class="field">
                         <label>Quest</label>
-                        <select value="@Items[index].Quest" @onchange="e => UpdateAt(index, choice => choice.Quest = e.Value?.ToString())">
+                        <select value="@Items[index].Quest" @onchange="e => UpdateQuest(index, e.Value?.ToString())">
                             <option value="">-- none --</option>
                             @if (!string.IsNullOrEmpty(Items[index].Quest) && !DataSources.Quests.Contains(Items[index].Quest))
                             {
@@ -59,8 +60,19 @@
                             }
                         </select>
                     </div>
-                    <NumberField Label="Next Quest Stage" Value="@(Items[index].NextQuestStage ?? 0)"
-                                 ValueChanged="value => UpdateAt(index, choice => choice.NextQuestStage = value)" />
+                    @if (!string.IsNullOrWhiteSpace(GetEffectiveQuestId(index)))
+                    {
+                        <div class="field">
+                            <label>Next Quest Stage</label>
+                            <select value="@NextQuestStageValue(index)" @onchange="e => UpdateNextQuestStage(index, e.Value?.ToString())">
+                                <option value="">-- none --</option>
+                                @foreach (var stage in GetQuestStageNumbers(GetEffectiveQuestId(index)))
+                                {
+                                    <option value="@stage">@stage</option>
+                                }
+                            </select>
+                        </div>
+                    }
                     <div class="field">
                         <label>Map Id</label>
                         <input value="@Items[index].MapId" @onchange="e => UpdateAt(index, choice => choice.MapId = e.Value?.ToString())" />
@@ -98,7 +110,7 @@
                         </div>
                         <fieldset>
                             <legend>Choices</legend>
-                            <DialogChoiceListEditor Items="EnsureNestedChoices(index)" OnChanged="OnChanged" />
+                            <DialogChoiceListEditor Items="EnsureNestedChoices(index)" ParentQuestId="@GetEffectiveQuestId(index)" OnChanged="OnChanged" />
                         </fieldset>
                         <div class="row-actions">
                             <button class="danger" @onclick="() => RemoveNestedDialog(index)">Remove Response</button>
@@ -118,7 +130,13 @@
 
 @code {
     [Parameter] public List<Choice> Items { get; set; } = new();
+    [Parameter] public string? ParentQuestId { get; set; }
     [Parameter] public EventCallback OnChanged { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        NormalizeNextQuestStages(Items, ParentQuestId);
+    }
 
     private async Task Add()
     {
@@ -156,6 +174,88 @@
     private List<QuestAction> EnsureActions(int index) => Items[index].Actions ??= new List<QuestAction>();
     private List<string> EnsureItems(int index) => Items[index].Items ??= new List<string>();
     private List<Choice> EnsureNestedChoices(int index) => Items[index].Dialog.Choices ??= new List<Choice>();
+
+    private async Task UpdateQuest(int index, string? questId)
+    {
+        await UpdateAt(index, choice =>
+        {
+            choice.Quest = string.IsNullOrWhiteSpace(questId) ? null : questId;
+            var effectiveQuestId = GetEffectiveQuestId(choice);
+            if (string.IsNullOrWhiteSpace(effectiveQuestId) ||
+                !GetQuestStageNumbers(effectiveQuestId).Contains(choice.NextQuestStage ?? 0))
+            {
+                choice.NextQuestStage = null;
+            }
+        });
+    }
+
+    private async Task UpdateNextQuestStage(int index, string? value)
+    {
+        await UpdateAt(index, choice =>
+        {
+            if (!int.TryParse(value, out var stage) || stage == 0)
+            {
+                choice.NextQuestStage = null;
+                return;
+            }
+
+            choice.NextQuestStage = stage;
+        });
+    }
+
+    private string? GetEffectiveQuestId(int index) =>
+        index >= 0 && index < Items.Count ? GetEffectiveQuestId(Items[index]) : ParentQuestId;
+
+    private string? GetEffectiveQuestId(Choice choice) =>
+        string.IsNullOrWhiteSpace(choice.Quest) ? ParentQuestId : choice.Quest;
+
+    private string NextQuestStageValue(int index)
+    {
+        var value = Items[index].NextQuestStage ?? 0;
+        return value == 0 ? string.Empty : value.ToString();
+    }
+
+    private IReadOnlyList<int> GetQuestStageNumbers(string? questId)
+    {
+        if (string.IsNullOrWhiteSpace(questId))
+        {
+            return Array.Empty<int>();
+        }
+
+        var stages = Data.Quests
+            .FirstOrDefault(quest => string.Equals(quest.Id, questId, StringComparison.OrdinalIgnoreCase))
+            ?.Stages?
+            .Select(stage => stage.Number)
+            .Distinct()
+            .OrderBy(stage => stage)
+            .ToList();
+
+        return stages ?? (IReadOnlyList<int>)Array.Empty<int>();
+    }
+
+    private void NormalizeNextQuestStages(IEnumerable<Choice>? choices, string? parentQuestId)
+    {
+        if (choices == null)
+        {
+            return;
+        }
+
+        foreach (var choice in choices)
+        {
+            if (choice.NextQuestStage == 0)
+            {
+                choice.NextQuestStage = null;
+            }
+
+            var effectiveQuestId = string.IsNullOrWhiteSpace(choice.Quest) ? parentQuestId : choice.Quest;
+            if (string.IsNullOrWhiteSpace(effectiveQuestId))
+            {
+                choice.NextQuestStage = null;
+            }
+
+            NormalizeNextQuestStages(choice.Dialog?.Choices, effectiveQuestId);
+        }
+    }
 
     private async Task OnActionsChanged(int index, List<QuestAction> actions)
     {

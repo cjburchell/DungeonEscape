@@ -47,7 +47,9 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
   appears in a monster's drop list and any item dropdown; rename a skill and the
   Spell/Item skill dropdowns update without reloading.
 - **File &rarr; Save Project** writes every data file back at once; a single
-  unsaved-changes indicator drives the save prompt.
+  unsaved-changes indicator drives the save prompt. Saved JSON is pruned so
+  null/default values, zeroes, `false`, empty strings, empty arrays, and empty
+  objects are omitted.
 - Per-entity property editors:
   - **Monster** &mdash; image (with preview), rarity, levels, combat stats,
     health/magic rolls, biomes, and Spell/Skill/Item references.
@@ -68,7 +70,7 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
     growth rows with initial roll previews, and skill unlock references.
     Spell/item/item-definition class selectors are populated from
     `classlevels.json`.
-  - **Stat Names** &mdash; stat type plus prefix/suffix word pools.
+  - **Stat Names** &mdash; fixed stat rows plus prefix/suffix word pools.
   - **Names** &mdash; male and female character name pools.
 
 ## Images

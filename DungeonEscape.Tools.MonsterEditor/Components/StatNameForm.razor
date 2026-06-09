@@ -5,12 +5,12 @@
 
 @if (StatName == null)
 {
-    <div class="empty-state">Select a stat name entry from the list, or add a new one.</div>
+    <div class="empty-state">Select a stat name entry from the list.</div>
 }
 else
 {
-    <div class="field-grid">
-        <EnumSelect TEnum="StatType" Label="Type" Value="StatName.Type" ValueChanged="v => Set(() => StatName.Type = v)" />
+    <div class="card-row-title">
+        <span>@StatName.Type</span>
     </div>
 
     <fieldset>
@@ -30,12 +30,6 @@ else
 
     private List<string> EnsurePrefix() => StatName == null ? new List<string>() : (StatName.Prefix ??= new List<string>());
     private List<string> EnsureSuffix() => StatName == null ? new List<string>() : (StatName.Suffix ??= new List<string>());
-
-    private async Task Set(Action mutate)
-    {
-        mutate();
-        await RaiseChanged();
-    }
 
     private async Task RaiseChanged() => await OnChanged.InvokeAsync();
 }

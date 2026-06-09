@@ -23,6 +23,16 @@ public sealed class DataValidationService
         StatType.Magic
     };
 
+    private static readonly StatType[] RequiredStatNameTypes =
+    {
+        StatType.Agility,
+        StatType.Defence,
+        StatType.Health,
+        StatType.Attack,
+        StatType.Magic,
+        StatType.MagicDefence
+    };
+
     private readonly DataFolderService data;
     private readonly MonsterImageCatalog monsterImages;
     private readonly ItemImageCatalog itemImages;
@@ -82,6 +92,7 @@ public sealed class DataValidationService
         ValidateItemDefinitions(issues, classValues);
         ValidateQuests(issues, itemRefs);
         ValidateDialogs(issues, questIds, itemRefs, monsterNames);
+        ValidateStatNames(issues);
         ValidateClassLevels(issues, skillNames);
 
         return issues
@@ -210,6 +221,26 @@ public sealed class DataValidationService
         }
     }
 
+    private void ValidateStatNames(List<DataValidationIssue> issues)
+    {
+        var statNameTypes = data.StatNames.Select(statName => statName.Type).ToList();
+        foreach (var requiredType in RequiredStatNameTypes)
+        {
+            if (!statNameTypes.Contains(requiredType))
+            {
+                Error(issues, "Stat Names", $"Missing required {requiredType} row.");
+            }
+        }
+
+        foreach (var statName in data.StatNames)
+        {
+            if (!RequiredStatNameTypes.Contains(statName.Type))
+            {
+                Error(issues, "Stat Names", $"Unexpected {statName.Type} row.");
+            }
+        }
+    }
+
     private void ValidateDialogs(
         List<DataValidationIssue> issues,
         HashSet<string> questIds,
@@ -237,7 +268,7 @@ public sealed class DataValidationService
 
                 ValidateReference(issues, headLocation, "quest", head.Quest, questIds);
                 ValidateDialogStages(issues, headLocation, head);
-                ValidateChoices(issues, headLocation, head.Choices, questIds, itemRefs, monsterNames);
+                ValidateChoices(issues, headLocation, head.Choices, questIds, itemRefs, monsterNames, head.Quest);
             }
         }
     }
@@ -259,13 +290,14 @@ public sealed class DataValidationService
         }
     }
 
-    private static void ValidateChoices(
+    private void ValidateChoices(
         List<DataValidationIssue> issues,
         string location,
         IReadOnlyList<Choice>? choices,
         HashSet<string> questIds,
         HashSet<string> itemRefs,
-        HashSet<string> monsterNames)
+        HashSet<string> monsterNames,
+        string? parentQuestId)
     {
         if (choices == null)
         {
@@ -286,9 +318,19 @@ public sealed class DataValidationService
             ValidateReferences(issues, choiceLocation, "item", choice.Items, itemRefs);
             ValidateReference(issues, choiceLocation, "monster", choice.Monster, monsterNames);
 
-            if (choice.NextQuestStage.HasValue && choice.NextQuestStage.Value < 0)
+            var effectiveQuestId = string.IsNullOrWhiteSpace(choice.Quest) ? parentQuestId : choice.Quest;
+            if (choice.NextQuestStage.HasValue && choice.NextQuestStage.Value != 0 && string.IsNullOrWhiteSpace(effectiveQuestId))
+            {
+                Error(issues, choiceLocation, "NextQuestStage requires a quest.");
+            }
+            else if (choice.NextQuestStage.HasValue && choice.NextQuestStage.Value < 0)
             {
                 Error(issues, choiceLocation, $"Next quest stage {choice.NextQuestStage.Value} is invalid.");
+            }
+            else if (choice.NextQuestStage.HasValue && choice.NextQuestStage.Value != 0 &&
+                     !GetQuestStageNumbers(effectiveQuestId).Contains(choice.NextQuestStage.Value))
+            {
+                Error(issues, choiceLocation, $"Quest '{effectiveQuestId}' does not have stage {choice.NextQuestStage.Value}.");
             }
 
             if (choice.Dialog != null)
@@ -298,9 +340,26 @@ public sealed class DataValidationService
                     Warning(issues, choiceLocation, "Nested dialog text is empty.");
                 }
 
-                ValidateChoices(issues, choiceLocation + " nested dialog", choice.Dialog.Choices, questIds, itemRefs, monsterNames);
+                ValidateChoices(issues, choiceLocation + " nested dialog", choice.Dialog.Choices, questIds, itemRefs, monsterNames, effectiveQuestId);
             }
         }
+    }
+
+    private IReadOnlyList<int> GetQuestStageNumbers(string? questId)
+    {
+        if (string.IsNullOrWhiteSpace(questId))
+        {
+            return Array.Empty<int>();
+        }
+
+        var stages = data.Quests
+            .FirstOrDefault(quest => string.Equals(quest.Id, questId, StringComparison.OrdinalIgnoreCase))
+            ?.Stages?
+            .Select(stage => stage.Number)
+            .Distinct()
+            .ToList();
+
+        return stages ?? (IReadOnlyList<int>)Array.Empty<int>();
     }
 
     private static void ValidateReferences(

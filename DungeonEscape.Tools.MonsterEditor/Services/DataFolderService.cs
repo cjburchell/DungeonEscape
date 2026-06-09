@@ -1,6 +1,8 @@
 using System.IO;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Redpoint.DungeonEscape.Data;
+using Redpoint.DungeonEscape.State;
 
 namespace DungeonEscape.Tools.MonsterEditor.Services;
 
@@ -14,6 +16,16 @@ namespace DungeonEscape.Tools.MonsterEditor.Services;
 /// </summary>
 public sealed class DataFolderService
 {
+    private static readonly StatType[] RequiredStatNameTypes =
+    {
+        StatType.Agility,
+        StatType.Defence,
+        StatType.Health,
+        StatType.Attack,
+        StatType.Magic,
+        StatType.MagicDefence
+    };
+
     private const string MonstersFileName = "allmonsters.json";
     private const string SpellsFileName = "spells.json";
     private const string SkillsFileName = "skills.json";
@@ -83,6 +95,7 @@ public sealed class DataFolderService
         Quests = LoadList<Quest>(Path.Combine(folderPath, QuestsFileName));
         Dialogs = LoadList<Dialog>(Path.Combine(folderPath, DialogsFileName));
         StatNames = LoadList<StatName>(Path.Combine(folderPath, StatNamesFileName));
+        NormalizeStatNames();
         ClassLevels = LoadList<ClassStats>(Path.Combine(folderPath, ClassLevelsFileName));
         Names = LoadObject(Path.Combine(folderPath, NamesFileName), new Names());
         Names.Male ??= new List<string>();
@@ -121,6 +134,7 @@ public sealed class DataFolderService
         SaveList(Path.Combine(FolderPath, ItemDefinitionsFileName), ItemDefinitions);
         SaveList(Path.Combine(FolderPath, QuestsFileName), Quests);
         SaveList(Path.Combine(FolderPath, DialogsFileName), Dialogs);
+        NormalizeStatNames();
         SaveList(Path.Combine(FolderPath, StatNamesFileName), StatNames);
         SaveList(Path.Combine(FolderPath, ClassLevelsFileName), ClassLevels);
         SaveObject(Path.Combine(FolderPath, NamesFileName), Names);
@@ -150,7 +164,7 @@ public sealed class DataFolderService
 
     private static void SaveList<T>(string path, List<T> items)
     {
-        var json = JsonConvert.SerializeObject(items, SerializerSettings);
+        var json = SerializeData(items);
         File.WriteAllText(path, json);
     }
 
@@ -167,8 +181,84 @@ public sealed class DataFolderService
 
     private static void SaveObject<T>(string path, T item)
     {
-        var json = JsonConvert.SerializeObject(item, SerializerSettings);
+        var json = SerializeData(item);
         File.WriteAllText(path, json);
+    }
+
+    private static string SerializeData<T>(T item)
+    {
+        var json = JsonConvert.SerializeObject(item, SerializerSettings);
+        var token = JToken.Parse(json);
+        PruneDefaultValues(token, true);
+        return token.ToString(Formatting.Indented);
+    }
+
+    private static bool PruneDefaultValues(JToken token, bool isRoot = false)
+    {
+        switch (token.Type)
+        {
+            case JTokenType.Object:
+                foreach (var property in token.Children<JProperty>().ToList())
+                {
+                    if (PruneDefaultValues(property.Value))
+                    {
+                        property.Remove();
+                    }
+                }
+
+                return !isRoot && !token.Children<JProperty>().Any();
+
+            case JTokenType.Array:
+                foreach (var child in token.Children().ToList())
+                {
+                    if (PruneDefaultValues(child))
+                    {
+                        child.Remove();
+                    }
+                }
+
+                return !isRoot && !token.Children().Any();
+
+            case JTokenType.Null:
+            case JTokenType.Undefined:
+                return !isRoot;
+
+            case JTokenType.String:
+                return !isRoot && string.IsNullOrEmpty(token.Value<string>());
+
+            case JTokenType.Boolean:
+                return !isRoot && token.Value<bool>() == false;
+
+            case JTokenType.Integer:
+                return !isRoot && token.Value<long>() == 0;
+
+            case JTokenType.Float:
+                return !isRoot && token.Value<double>() == 0d;
+
+            default:
+                return false;
+        }
+    }
+
+    private void NormalizeStatNames()
+    {
+        var byType = StatNames
+            .Where(statName => statName != null)
+            .GroupBy(statName => statName.Type)
+            .ToDictionary(group => group.Key, group => group.First());
+
+        StatNames.Clear();
+        foreach (var statType in RequiredStatNameTypes)
+        {
+            var statName = byType.TryGetValue(statType, out var existing)
+                ? existing
+                : new StatName { Type = statType, Prefix = new List<string>(), Suffix = new List<string>() };
+
+            statName.Type = statType;
+            statName.Prefix ??= new List<string>();
+            statName.Suffix ??= new List<string>();
+            StatNames.Add(statName);
+        }
     }
 
     private void NotifyChanged() => StateChanged?.Invoke();

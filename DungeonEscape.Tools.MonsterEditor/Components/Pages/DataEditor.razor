@@ -92,9 +92,9 @@ else
                 <input placeholder="Search..." @bind="searchText" @bind:event="oninput" />
             </div>
             <div class="list-actions">
-                <button @onclick="AddItem" disabled="@IsSingleObjectTab">+ Add</button>
-                <button @onclick="DuplicateItem" disabled="@(SelectedObject == null || IsSingleObjectTab)">Duplicate</button>
-                <button class="danger" @onclick="RemoveItem" disabled="@(SelectedObject == null || IsSingleObjectTab)">Remove</button>
+                <button @onclick="AddItem" disabled="@AreListActionsDisabled">+ Add</button>
+                <button @onclick="DuplicateItem" disabled="@(SelectedObject == null || AreListActionsDisabled)">Duplicate</button>
+                <button class="danger" @onclick="RemoveItem" disabled="@(SelectedObject == null || AreListActionsDisabled)">Remove</button>
             </div>
             <div class="monster-list">
                 @switch (activeTab)
@@ -447,6 +447,8 @@ else
     };
 
     private bool IsSingleObjectTab => activeTab == EditorTab.Names;
+    private bool IsFixedListTab => activeTab == EditorTab.StatNames;
+    private bool AreListActionsDisabled => IsSingleObjectTab || IsFixedListTab;
 
     private object? SelectedObject => activeTab switch
     {

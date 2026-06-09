@@ -45,7 +45,7 @@
 
                 <fieldset>
                     <legend>Choices</legend>
-                    <DialogChoiceListEditor Items="EnsureChoices(index)" OnChanged="OnChanged" />
+                    <DialogChoiceListEditor Items="EnsureChoices(index)" ParentQuestId="@Items[index].Quest" OnChanged="OnChanged" />
                 </fieldset>
 
                 <div class="row-actions">

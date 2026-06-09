@@ -58,7 +58,10 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 $jb = (Get-Command jb).Source
-$excludeOption = if ([string]::IsNullOrWhiteSpace($Exclude)) { @() } else { @("--exclude=$Exclude") }
+$excludeOption = @("--exclude=**/*.razor")
+if (-not [string]::IsNullOrWhiteSpace($Exclude)) {
+    $excludeOption += "--exclude=$Exclude"
+}
 $severityOption = if ([string]::IsNullOrWhiteSpace($Severity)) { @() } else { @("-e=$Severity") }
 
 Push-Location $env:TEMP
@@ -136,8 +139,10 @@ $lines = @(
 
 Get-ChildItem -Path $UnityReferencesDir -Filter *.dll | Sort-Object Name | ForEach-Object {
     $name = [System.IO.Path]::GetFileNameWithoutExtension($_.Name)
-    $relative = "..\..\DungeonEscape.Unity\Logs\ReSharperReferences\$($_.Name)"
-    $lines += "    <Reference Include=""$name""><HintPath>$relative</HintPath></Reference>"
+    if ($name -ne "Assembly-CSharp" -and $name -ne "Assembly-CSharp-Editor" -and $name -notlike "DungeonEscape.Unity.*") {
+        $relative = "..\..\DungeonEscape.Unity\Logs\ReSharperReferences\$($_.Name)"
+        $lines += "    <Reference Include=""$name""><HintPath>$relative</HintPath></Reference>"
+    }
 }
 
 $lines += @(

@@ -5,6 +5,7 @@ PROJECT_ROOT="${CI_PROJECT_DIR:-$(pwd)}"
 SOLUTION="${RESHARPER_SOLUTION_NAME:-DungeonEscape.sln}"
 SOLUTION_PATH="$PROJECT_ROOT/$SOLUTION"
 RESHARPER_EXCLUDE="${RESHARPER_EXCLUDE:-}"
+DEFAULT_RESHARPER_EXCLUDE="**/*.razor"
 RESHARPER_SEVERITY="${RESHARPER_SEVERITY:-WARNING}"
 RESHARPER_THRESHOLD="${RESHARPER_THRESHOLD:-0}"
 RESHARPER_TOOL_VERSION="${RESHARPER_TOOL_VERSION:-2026.1.0.1}"
@@ -35,9 +36,9 @@ export PATH="$PATH:/root/.dotnet/tools:$HOME/.dotnet/tools"
 dotnet tool install --global JetBrains.ReSharper.GlobalTools --version "$RESHARPER_TOOL_VERSION" ||
   dotnet tool update --global JetBrains.ReSharper.GlobalTools --version "$RESHARPER_TOOL_VERSION"
 
-RESHARPER_EXCLUDE_OPTION=()
+RESHARPER_EXCLUDE_OPTION=("--exclude=$DEFAULT_RESHARPER_EXCLUDE")
 if [[ -n "$RESHARPER_EXCLUDE" ]]; then
-  RESHARPER_EXCLUDE_OPTION=("--exclude=$RESHARPER_EXCLUDE")
+  RESHARPER_EXCLUDE_OPTION+=("--exclude=$RESHARPER_EXCLUDE")
 fi
 
 if [[ -n "$PACKAGES_DIRECTORY" ]]; then
@@ -132,6 +133,11 @@ if [[ "$UNITY_SCRIPT_COUNT" -gt 0 ]]; then
     if [[ -d "$UNITY_REFERENCES_DIR" ]]; then
       find "$UNITY_REFERENCES_DIR" -maxdepth 1 -name '*.dll' | sort | while read -r dll; do
         name=$(basename "$dll" .dll)
+        case "$name" in
+          Assembly-CSharp|Assembly-CSharp-Editor|DungeonEscape.Unity.*)
+            continue
+            ;;
+        esac
         printf '    <Reference Include="%s"><HintPath>%s</HintPath></Reference>\n' "$name" "$dll"
       done
     fi

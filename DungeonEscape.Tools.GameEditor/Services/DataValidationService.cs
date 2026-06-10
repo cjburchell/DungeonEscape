@@ -441,12 +441,23 @@ public sealed class DataValidationService
         string location,
         IEnumerable<MapObjectDocument> mapObjects)
     {
-        foreach (var group in mapObjects
-                     .Where(mapObject => mapObject.Id > 0)
-                     .GroupBy(mapObject => mapObject.Id)
-                     .Where(group => group.Count() > 1))
+        var duplicateGroups = mapObjects
+            .Where(mapObject => mapObject.Id > 0)
+            .GroupBy(mapObject => mapObject.GroupName, StringComparer.OrdinalIgnoreCase)
+            .SelectMany(layerGroup => layerGroup
+                .GroupBy(mapObject => mapObject.Id)
+                .Where(idGroup => idGroup.Count() > 1)
+                .Select(idGroup => new
+                {
+                    Layer = layerGroup.Key,
+                    Id = idGroup.Key,
+                    Count = idGroup.Count()
+                }));
+
+        foreach (var group in duplicateGroups)
         {
-            Warning(issues, location, $"Object id {group.Key} is used by {group.Count()} objects.");
+            var layerName = string.IsNullOrWhiteSpace(group.Layer) ? "unnamed object layer" : $"object layer '{group.Layer}'";
+            Warning(issues, location, $"Object id {group.Id} is used by {group.Count} objects in {layerName}.");
         }
     }
 

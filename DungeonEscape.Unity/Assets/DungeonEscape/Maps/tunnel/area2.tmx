@@ -167,7 +167,7 @@
     <property name="MoveRadius" type="int" value="0"/>
    </properties>
   </object>
-  <object id="3" name="Chest" class="Chest" gid="1072" x="768" y="960" width="32" height="32">
+  <object id="4" name="Chest" class="Chest" gid="1072" x="768" y="960" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="ItemId" value="#Random#"/>

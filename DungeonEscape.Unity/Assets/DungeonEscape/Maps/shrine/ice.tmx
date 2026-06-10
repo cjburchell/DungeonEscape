@@ -192,7 +192,7 @@
 </data>
   </layer>
   <objectgroup id="4" name="items">
-    <object id="3" name="Exit 0" class="Warp" x="42" y="16" width="957" height="32">
+    <object id="1" name="Exit 0" class="Warp" x="42" y="16" width="957" height="32">
       <properties>
         <property name="Collideable" type="bool" value="false" />
         <property name="WarpMap" value="maps/overworld" />

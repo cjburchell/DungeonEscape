@@ -160,18 +160,6 @@
         "QuestStage": [
           1
         ],
-        "Text": "Have you found my sea shell yet?",
-        "Choices": [
-          {
-            "Text": "No"
-          }
-        ]
-      },
-      {
-        "Quest": "Lost_Sea_Shell",
-        "QuestStage": [
-          2
-        ],
         "Text": "Did you find my sea shell?",
         "Choices": [
           {
@@ -180,7 +168,7 @@
               "TakeItem"
             ],
             "ItemId": "Boy's Sea Shell",
-            "NextQuestStage": 3
+            "NextQuestStage": 2
           },
           {
             "Text": "No",
@@ -193,7 +181,7 @@
       {
         "Quest": "Lost_Sea_Shell",
         "QuestStage": [
-          3
+          2
         ],
         "Text": "Thank you for finding my sea shell."
       }

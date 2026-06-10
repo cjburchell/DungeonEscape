@@ -1,6 +1,7 @@
 # Dungeon Escape - Game Editor
 
-A standalone desktop tool for editing the game's data JSON files. It is a
+A standalone desktop tool for editing the game's data JSON files and gameplay
+metadata stored on TMX map objects. It is a
 [Photino.Blazor](https://github.com/tryphotino/photino.Blazor) app (HTML/CSS UI
 hosted in a native OS window) that references `DungeonEscape.Core`, so the JSON
 it writes matches the game's data format exactly (Newtonsoft serialization,
@@ -29,6 +30,12 @@ It loads the following files into one shared, in-memory dataset:
 | `statnames.json`  | Stat Names    |
 | `classlevels.json`| Class         |
 | `names.json`      | Names         |
+| `maps/**/*_monsters.json` | Maps random monsters |
+
+After the Data folder is opened, the tool also auto-detects the neighboring
+`Maps` folder and loads `DungeonEscape.Unity/Assets/DungeonEscape/Maps/**/*.tmx`
+for the **Maps** tab. TMX layout/display data remains owned by Tiled; the editor
+only exposes gameplay metadata.
 
 The last opened folder is remembered and **auto-loaded on startup** (stored in
 `%AppData%/DungeonEscape.GameEditor/settings.json`).
@@ -36,12 +43,15 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
 ## Features
 
 - Tabs for **Monsters**, **Spells**, **Skills**, **Items**, **Item Definitions**,
-  **Quests**, **Dialogs**, **Class**, **Stat Names**, and **Names**. Array-backed tabs include a
+  **Quests**, **Dialogs**, **Class**, **Stat Names**, **Names**, and **Maps**. Array-backed tabs include a
   searchable list and **Add**, **Duplicate**, and **Remove** actions; `names.json`
-  is edited as a single document.
+  is edited as a single document, and maps are discovered from the Unity Maps
+  folder rather than added or removed in this editor.
 - A collapsible **Validation** panel flags duplicate identifiers, empty required
   names/IDs, broken spell/skill/item/quest/monster references, invalid image IDs,
-  missing class-level definitions, and dialog nesting issues.
+  missing class-level definitions, dialog nesting issues, broken map object
+  references, duplicate TMX object ids, and missing explicit chest/door lock
+  metadata.
 - All lists share a single in-memory dataset, so cross-references update
   **live** &mdash; e.g. add a new item on the Items tab and it immediately
   appears in a monster's drop list and any item dropdown; rename a skill and the
@@ -72,6 +82,43 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
     from `classlevels.json`.
   - **Stat Names** &mdash; fixed stat rows plus prefix/suffix word pools.
   - **Names** &mdash; male and female character name pools.
+  - **Maps** &mdash; map class/properties, object `name`/`class`, NPC/chest/door/warp
+    gameplay properties, advanced object properties, and per-map random monster
+    encounter sets.
+
+## Map editing
+
+The **Maps** tab is for gameplay metadata only. Use Tiled for actual map layout,
+tiles, object placement, object size, and sprite/tile display. The editor shows
+TMX placement fields such as object id, `gid`, `x`, `y`, `width`, and `height`
+as read-only context.
+
+Editable map/object metadata includes:
+
+- Map-level `class` and properties such as `biome` and `song`.
+- NPC/service NPC fields such as `Text`, `Dialog`, `MoveRadius`, `Collideable`,
+  `Direction`/`Facing`, and party-member `Class`, `Gender`, and `Level`.
+- Chest/hidden-item fields such as `ItemId`, `Gold`, `Locked`, `Level`,
+  `ChestLevel`, `KeyId`, `OpenWithKey`, and `Collideable`.
+- Door fields such as `Locked`, `DoorLevel`, `KeyId`, `OpenWithKey`, and
+  `Collideable`.
+- Warp/spawn fields such as `WarpMap`, `SpawnId`, and `DefaultSpawn`.
+- An advanced property list for custom or less-common TMX properties.
+
+Random encounter sets are saved as JSON files using the runtime-supported path:
+
+```text
+DungeonEscape.Unity/Assets/DungeonEscape/Data/maps/{mapId}_monsters.json
+```
+
+For example, map id `shrine/first` saves to
+`Data/maps/shrine/first_monsters.json`. These files are created only when a
+non-overworld map's random monster list is edited. The overworld is special: its
+encounters are generated from monster biome lists, so the Maps tab shows that as
+read-only guidance.
+
+Only maps changed through the Maps tab are written back on **Save Project**, so
+normal JSON-only edits do not rewrite every TMX file.
 
 ## Images
 

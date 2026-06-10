@@ -1,0 +1,99 @@
+@if (Properties == null)
+{
+    <div class="tag-empty">No properties.</div>
+}
+else
+{
+    <div class="complex-list tiled-properties">
+        @foreach (var row in PropertyRows)
+        {
+            <div class="card-row property-row">
+                <div class="field-grid compact-grid">
+                    <div class="field">
+                        <label>Name</label>
+                        <input value="@row.Key" @onchange="e => Rename(row.Key, e.Value?.ToString())" />
+                    </div>
+                    <div class="field">
+                        <label>Value</label>
+                        <input value="@row.Value" @onchange="e => SetValue(row.Key, e.Value?.ToString())" />
+                    </div>
+                </div>
+                <div class="row-actions">
+                    <button type="button" class="danger" @onclick="() => Remove(row.Key)">Remove</button>
+                </div>
+            </div>
+        }
+        <div class="add-row property-add-row">
+            <input placeholder="Property name" @bind="newName" @bind:event="oninput" />
+            <input placeholder="Value" @bind="newValue" @bind:event="oninput" />
+            <button type="button" @onclick="Add" disabled="@string.IsNullOrWhiteSpace(newName)">Add</button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public Dictionary<string, string>? Properties { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private string newName = string.Empty;
+    private string newValue = string.Empty;
+
+    private IEnumerable<KeyValuePair<string, string>> PropertyRows =>
+        (Properties ?? new Dictionary<string, string>())
+            .OrderBy(pair => pair.Key, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+    private async Task SetValue(string key, string? value)
+    {
+        if (Properties == null || !Properties.ContainsKey(key))
+        {
+            return;
+        }
+
+        Properties[key] = value ?? string.Empty;
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task Rename(string oldKey, string? newKey)
+    {
+        if (Properties == null || string.IsNullOrWhiteSpace(newKey) || !Properties.ContainsKey(oldKey))
+        {
+            return;
+        }
+
+        newKey = newKey.Trim();
+        if (string.Equals(oldKey, newKey, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        var value = Properties[oldKey];
+        Properties.Remove(oldKey);
+        Properties[newKey] = value;
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task Remove(string key)
+    {
+        if (Properties == null)
+        {
+            return;
+        }
+
+        Properties.Remove(key);
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task Add()
+    {
+        if (Properties == null || string.IsNullOrWhiteSpace(newName))
+        {
+            return;
+        }
+
+        Properties[newName.Trim()] = newValue ?? string.Empty;
+        newName = string.Empty;
+        newValue = string.Empty;
+        await OnChanged.InvokeAsync();
+    }
+}

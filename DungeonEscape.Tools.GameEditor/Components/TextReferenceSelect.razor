@@ -1,0 +1,52 @@
+@*
+    Consistent dropdown for string-backed references. It keeps unknown values visible
+    as custom entries so legacy/free-text data is not lost when editing.
+*@
+
+<div class="field @CssClass" style="@Style">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <label>@Label</label>
+    }
+    <select value="@CurrentValue" @onchange="HandleChanged">
+        @if (IncludeNone)
+        {
+            <option value="">@NoneLabel</option>
+        }
+        @if (ShouldShowCustomValue)
+        {
+            <option value="@CurrentValue">@CurrentValue (custom)</option>
+        }
+        @foreach (var option in CleanOptions)
+        {
+            <option value="@option">@option</option>
+        }
+    </select>
+</div>
+
+@code {
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+    [Parameter] public IReadOnlyList<string> Options { get; set; } = Array.Empty<string>();
+    [Parameter] public bool IncludeNone { get; set; }
+    [Parameter] public string NoneLabel { get; set; } = "-- none --";
+    [Parameter] public string CssClass { get; set; } = string.Empty;
+    [Parameter] public string Style { get; set; } = string.Empty;
+
+    private string CurrentValue => Value ?? string.Empty;
+
+    private IReadOnlyList<string> CleanOptions => Options
+        .Where(option => !string.IsNullOrWhiteSpace(option))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .ToList();
+
+    private bool ShouldShowCustomValue =>
+        !string.IsNullOrWhiteSpace(CurrentValue) &&
+        !CleanOptions.Any(option => string.Equals(option, CurrentValue, StringComparison.OrdinalIgnoreCase));
+
+    private async Task HandleChanged(ChangeEventArgs e)
+    {
+        await ValueChanged.InvokeAsync(e.Value?.ToString());
+    }
+}

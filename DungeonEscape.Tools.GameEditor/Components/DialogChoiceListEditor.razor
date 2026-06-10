@@ -18,48 +18,14 @@
                 </div>
 
                 <div class="field-grid">
-                    <div class="field">
-                        <label>Quest</label>
-                        <select value="@Items[index].Quest" @onchange="e => UpdateQuest(index, e.Value?.ToString())">
-                            <option value="">-- none --</option>
-                            @if (!string.IsNullOrEmpty(Items[index].Quest) && !DataSources.Quests.Contains(Items[index].Quest))
-                            {
-                                <option value="@Items[index].Quest">@Items[index].Quest (custom)</option>
-                            }
-                            @foreach (var quest in DataSources.Quests)
-                            {
-                                <option value="@quest">@quest</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label>Item</label>
-                        <select value="@Items[index].ItemId" @onchange="e => UpdateAt(index, choice => choice.ItemId = e.Value?.ToString())">
-                            <option value="">-- none --</option>
-                            @if (!string.IsNullOrEmpty(Items[index].ItemId) && !DataSources.Items.Contains(Items[index].ItemId))
-                            {
-                                <option value="@Items[index].ItemId">@Items[index].ItemId (custom)</option>
-                            }
-                            @foreach (var item in DataSources.Items)
-                            {
-                                <option value="@item">@item</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label>Monster</label>
-                        <select value="@Items[index].Monster" @onchange="e => UpdateAt(index, choice => choice.Monster = e.Value?.ToString())">
-                            <option value="">-- none --</option>
-                            @if (!string.IsNullOrEmpty(Items[index].Monster) && !DataSources.Monsters.Contains(Items[index].Monster))
-                            {
-                                <option value="@Items[index].Monster">@Items[index].Monster (custom)</option>
-                            }
-                            @foreach (var monster in DataSources.Monsters)
-                            {
-                                <option value="@monster">@monster</option>
-                            }
-                        </select>
-                    </div>
+                    <TextReferenceSelect Label="Quest" Value="@Items[index].Quest" ValueChanged="value => UpdateQuest(index, value)"
+                                         Options="DataSources.Quests" IncludeNone="true" />
+                    <ItemReferenceSelect Label="Item" Value="@Items[index].ItemId"
+                                         ValueChanged="value => UpdateAt(index, choice => choice.ItemId = value)"
+                                         IncludeNone="true" />
+                    <MonsterReferenceSelect Label="Monster" Value="@Items[index].Monster"
+                                            ValueChanged="value => UpdateAt(index, choice => choice.Monster = value)"
+                                            IncludeNone="true" />
                     @if (!string.IsNullOrWhiteSpace(GetEffectiveQuestId(index)))
                     {
                         <div class="field">
@@ -73,14 +39,11 @@
                             </select>
                         </div>
                     }
-                    <div class="field">
-                        <label>Map Id</label>
-                        <input value="@Items[index].MapId" @onchange="e => UpdateAt(index, choice => choice.MapId = e.Value?.ToString())" />
-                    </div>
-                    <div class="field">
-                        <label>Spawn Id</label>
-                        <input value="@Items[index].SpawnId" @onchange="e => UpdateAt(index, choice => choice.SpawnId = e.Value?.ToString())" />
-                    </div>
+                    <TextReferenceSelect Label="Map Id" Value="@Items[index].MapId" ValueChanged="value => UpdateMap(index, value)"
+                                         Options="MapOptions" IncludeNone="true" />
+                    <TextReferenceSelect Label="Spawn Id" Value="@Items[index].SpawnId"
+                                         ValueChanged="value => UpdateAt(index, choice => choice.SpawnId = value)"
+                                         Options="@GetSpawnOptions(Items[index].MapId)" IncludeNone="true" />
                     <NumberField Label="Object Id" Value="@(Items[index].ObjectId ?? 0)"
                                  ValueChanged="value => UpdateAt(index, choice => choice.ObjectId = value)" />
                 </div>
@@ -132,6 +95,8 @@
     [Parameter] public List<Choice> Items { get; set; } = new();
     [Parameter] public string? ParentQuestId { get; set; }
     [Parameter] public EventCallback OnChanged { get; set; }
+
+    private IReadOnlyList<string> MapOptions => MapReferenceOptions.GetMapOptions(Data.Maps);
 
     protected override void OnParametersSet()
     {
@@ -189,6 +154,18 @@
         });
     }
 
+    private async Task UpdateMap(int index, string? mapId)
+    {
+        await UpdateAt(index, choice =>
+        {
+            choice.MapId = string.IsNullOrWhiteSpace(mapId) ? null : mapId;
+            if (!MapReferenceOptions.GetSpawnOptions(Data.Maps, choice.MapId).Contains(choice.SpawnId ?? string.Empty, StringComparer.OrdinalIgnoreCase))
+            {
+                choice.SpawnId = null;
+            }
+        });
+    }
+
     private async Task UpdateNextQuestStage(int index, string? value)
     {
         await UpdateAt(index, choice =>
@@ -232,6 +209,9 @@
 
         return stages ?? (IReadOnlyList<int>)Array.Empty<int>();
     }
+
+    private IReadOnlyList<string> GetSpawnOptions(string? mapReference) =>
+        MapReferenceOptions.GetSpawnOptions(Data.Maps, mapReference);
 
     private void NormalizeNextQuestStages(IEnumerable<Choice>? choices, string? parentQuestId)
     {

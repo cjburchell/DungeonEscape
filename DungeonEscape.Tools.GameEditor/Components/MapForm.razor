@@ -1,0 +1,172 @@
+@if (Map == null)
+{
+    <div class="empty-state">Select a map from the list.</div>
+}
+else
+{
+    <div class="form-header">
+        <div class="field" style="flex:2">
+            <label>Map ID</label>
+            <input value="@Map.Id" readonly />
+        </div>
+        <div class="field" style="flex:1">
+            <label>Map Class</label>
+            <input value="@Map.Class" @onchange="e => SetMapClass(e.Value?.ToString())" />
+        </div>
+    </div>
+
+    <fieldset>
+        <legend>Map Properties</legend>
+        <div class="field-grid compact-grid">
+            <div class="field">
+                <label>Biome</label>
+                <input value="@Biome" @onchange="e => SetBiome(e.Value?.ToString())" />
+            </div>
+            <div class="field">
+                <label>Song</label>
+                <input value="@Song" @onchange="e => SetSong(e.Value?.ToString())" />
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Objects (@FilteredObjects.Count)</legend>
+        <div class="map-object-layout">
+            <div class="map-object-list">
+                <div class="search">
+                    <input placeholder="Filter objects..." @bind="objectFilter" @bind:event="oninput" />
+                </div>
+                <div class="map-object-items">
+                    @foreach (var mapObject in FilteredObjects)
+                    {
+                        var current = mapObject;
+                        <div class="monster-item @(ReferenceEquals(current, selectedObject) ? "selected" : string.Empty)"
+                             @onclick="() => SelectObject(current)">
+                            <div class="meta">
+                                <span class="name">@current.DisplayName</span>
+                                <span class="sub">@current.Class &middot; @current.GroupName &middot; #@current.Id</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="map-object-form">
+                <MapObjectForm Object="selectedObject" Maps="Maps" OnChanged="RaiseChanged" />
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Random Monsters</legend>
+        <MapRandomMonsterListEditor Map="Map" OnChanged="RaiseChanged" />
+    </fieldset>
+}
+
+@code {
+    [Parameter] public MapDocument? Map { get; set; }
+    [Parameter] public IReadOnlyList<MapDocument> Maps { get; set; } = Array.Empty<MapDocument>();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private MapObjectDocument? selectedObject;
+    private string objectFilter = string.Empty;
+
+    private string Biome => GetMapProperty("biome");
+    private string Song => GetMapProperty("song");
+
+    private List<MapObjectDocument> FilteredObjects => Map == null
+        ? new List<MapObjectDocument>()
+        : Map.Objects
+            .Where(ObjectMatchesFilter)
+            .OrderBy(ObjectSortKey)
+            .ThenBy(item => item.Id)
+            .ToList();
+
+    protected override void OnParametersSet()
+    {
+        if (Map == null)
+        {
+            selectedObject = null;
+            return;
+        }
+
+        if (selectedObject == null || !Map.Objects.Contains(selectedObject))
+        {
+            selectedObject = Map.Objects.FirstOrDefault();
+        }
+    }
+
+    private bool ObjectMatchesFilter(MapObjectDocument mapObject)
+    {
+        if (string.IsNullOrWhiteSpace(objectFilter))
+        {
+            return true;
+        }
+
+        return mapObject.DisplayName.Contains(objectFilter, StringComparison.OrdinalIgnoreCase) ||
+               mapObject.Class.Contains(objectFilter, StringComparison.OrdinalIgnoreCase) ||
+               mapObject.GroupName.Contains(objectFilter, StringComparison.OrdinalIgnoreCase) ||
+               mapObject.Id.ToString().Contains(objectFilter, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static int ObjectSortKey(MapObjectDocument mapObject)
+    {
+        if (mapObject.Class.StartsWith("Npc", StringComparison.OrdinalIgnoreCase))
+        {
+            return 0;
+        }
+
+        if (string.Equals(mapObject.Class, "Chest", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(mapObject.Class, "HiddenItem", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(mapObject.Class, "Door", StringComparison.OrdinalIgnoreCase))
+        {
+            return 1;
+        }
+
+        return 2;
+    }
+
+    private void SelectObject(MapObjectDocument mapObject)
+    {
+        selectedObject = mapObject;
+    }
+
+    private async Task SetMapClass(string? value)
+    {
+        if (Map == null)
+        {
+            return;
+        }
+
+        Map.Class = value ?? string.Empty;
+        await RaiseChanged();
+    }
+
+    private string GetMapProperty(string name) =>
+        Map != null && Map.Properties.TryGetValue(name, out var value) ? value : string.Empty;
+
+    private async Task SetBiome(string? value) => await SetMapProperty("biome", value);
+
+    private async Task SetSong(string? value) => await SetMapProperty("song", value);
+
+    private async Task SetMapProperty(string name, string? value)
+    {
+        if (Map == null)
+        {
+            return;
+        }
+
+        value ??= string.Empty;
+        if (string.IsNullOrEmpty(value))
+        {
+            Map.Properties.Remove(name);
+        }
+        else
+        {
+            Map.Properties[name] = value;
+        }
+
+        await RaiseChanged();
+    }
+
+    private async Task RaiseChanged() => await OnChanged.InvokeAsync();
+}

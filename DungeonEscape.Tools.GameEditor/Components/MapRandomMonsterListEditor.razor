@@ -1,0 +1,103 @@
+@if (Map == null)
+{
+    <div class="tag-empty">Select a map to edit encounter monsters.</div>
+}
+else if (Map.IsOverworld)
+{
+    <div class="tag-empty">Overworld encounters are generated from each monster's biome list. Edit monster biomes on the Monsters tab.</div>
+}
+else
+{
+    <div class="complex-list">
+        @if (Map.RandomMonsters.Count == 0)
+        {
+            <div class="tag-empty">No random monsters are configured for this map.</div>
+        }
+        @for (var index = 0; index < Map.RandomMonsters.Count; index++)
+        {
+            var row = Map.RandomMonsters[index];
+            var rowIndex = index;
+            <div class="card-row">
+                <div class="card-row-title">Monster @(rowIndex + 1)</div>
+                <div class="field-grid compact-grid">
+                    <MonsterReferenceSelect Label="Name" Value="@row.Name" ValueChanged="value => SetName(row, value)" />
+                    <div class="field">
+                        <label>Rarity</label>
+                        <select value="@row.Rarity" @onchange="e => SetRarity(row, e.Value?.ToString())">
+                            @foreach (var rarity in Enum.GetValues<Rarity>())
+                            {
+                                <option value="@rarity">@rarity</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="row-actions">
+                    <button type="button" @onclick="() => Duplicate(rowIndex)">Duplicate</button>
+                    <button type="button" class="danger" @onclick="() => Remove(rowIndex)">Remove</button>
+                </div>
+            </div>
+        }
+        <button type="button" @onclick="Add">+ Add Monster</button>
+    </div>
+
+}
+
+@code {
+    [Inject] public DataSourceCatalog DataSources { get; set; } = null!;
+
+    [Parameter] public MapDocument? Map { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private async Task Add()
+    {
+        if (Map == null)
+        {
+            return;
+        }
+
+        Map.RandomMonsters.Add(new RandomMonster
+        {
+            Name = DataSources.Monsters.FirstOrDefault() ?? string.Empty,
+            Rarity = Rarity.Common
+        });
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task Duplicate(int index)
+    {
+        if (Map == null || index < 0 || index >= Map.RandomMonsters.Count)
+        {
+            return;
+        }
+
+        var source = Map.RandomMonsters[index];
+        Map.RandomMonsters.Insert(index + 1, new RandomMonster { Name = source.Name, Rarity = source.Rarity });
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task Remove(int index)
+    {
+        if (Map == null || index < 0 || index >= Map.RandomMonsters.Count)
+        {
+            return;
+        }
+
+        Map.RandomMonsters.RemoveAt(index);
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task SetName(RandomMonster row, string? value)
+    {
+        row.Name = value ?? string.Empty;
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task SetRarity(RandomMonster row, string? value)
+    {
+        if (Enum.TryParse<Rarity>(value, out var rarity))
+        {
+            row.Rarity = rarity;
+            await OnChanged.InvokeAsync();
+        }
+    }
+}

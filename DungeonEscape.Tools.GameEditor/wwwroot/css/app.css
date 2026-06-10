@@ -481,6 +481,10 @@ button.danger {
     gap: .75rem 1rem;
 }
 
+.field-grid.compact-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
 .field {
     display: flex;
     flex-direction: column;
@@ -602,6 +606,63 @@ legend {
 
 .checkbox-field input[type="checkbox"] {
     width: fit-content;
+}
+
+/* ---- Map editor ---- */
+.map-object-layout {
+    display: grid;
+    grid-template-columns: minmax(220px, 320px) 1fr;
+    gap: 1rem;
+    min-height: 520px;
+}
+
+.map-object-list {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: rgba(0,0,0,.12);
+}
+
+.map-object-list .search {
+    padding: .5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.map-object-list .search input {
+    width: 100%;
+}
+
+.map-object-items {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.map-object-form {
+    min-width: 0;
+}
+
+.advanced-details {
+    margin-top: .75rem;
+}
+
+.advanced-details summary {
+    color: var(--accent-2);
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: .5rem;
+}
+
+.property-add-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: .4rem;
+}
+
+.property-row {
+    gap: .4rem;
 }
 
 /* ---- Toast / message ---- */

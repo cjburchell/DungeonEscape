@@ -225,6 +225,19 @@ else
                     case EditorTab.Names:
                         <div class="empty-state">Names are edited as a single document.</div>
                         break;
+                    case EditorTab.Maps:
+                        @foreach (var map in Filter(Data.Maps, m => m.Id))
+                        {
+                            var current = map;
+                            <div class="monster-item @(ReferenceEquals(current, selectedMap) ? "selected" : string.Empty)"
+                                 @onclick="() => selectedMap = current">
+                                <div class="meta">
+                                    <span class="name">@Display(current.Id)</span>
+                                    <span class="sub">@(current.Objects?.Count ?? 0) objects &middot; @(current.RandomMonsters?.Count ?? 0) monsters</span>
+                                </div>
+                            </div>
+                        }
+                        break;
                 }
             </div>
         </div>
@@ -262,6 +275,9 @@ else
                 case EditorTab.Names:
                     <NamesForm Names="Data.Names" OnChanged="OnDataChanged" />
                     break;
+                case EditorTab.Maps:
+                    <MapForm Map="selectedMap" Maps="Data.Maps" OnChanged="OnMapChanged" />
+                    break;
             }
         </div>
     </div>
@@ -273,7 +289,7 @@ else
 }
 
 @code {
-    private enum EditorTab { Monsters, Spells, Skills, Items, ItemDefinitions, Quests, Dialogs, Classes, StatNames, Names }
+    private enum EditorTab { Monsters, Spells, Skills, Items, ItemDefinitions, Quests, Dialogs, Classes, StatNames, Names, Maps }
 
     private EditorTab activeTab = EditorTab.Monsters;
     private string searchText = string.Empty;
@@ -291,6 +307,7 @@ else
     private Dialog? selectedDialog;
     private ClassStats? selectedClassStats;
     private StatName? selectedStatName;
+    private MapDocument? selectedMap;
 
     protected override void OnInitialized()
     {
@@ -329,7 +346,7 @@ else
             Data.Load(path);
             ResetSelections();
             RefreshValidation();
-            ShowToast($"Loaded {Data.Monsters.Count} monsters, {Data.Items.Count} items");
+            ShowToast($"Loaded {Data.Monsters.Count} monsters, {Data.Items.Count} items, {Data.Maps.Count} maps");
         }
         catch
         {
@@ -359,7 +376,7 @@ else
             ResetSelections();
             Settings.LastDataFolder = Data.FolderPath;
             RefreshValidation();
-            ShowToast($"Loaded {Data.Monsters.Count} monsters, {Data.Items.Count} items");
+            ShowToast($"Loaded {Data.Monsters.Count} monsters, {Data.Items.Count} items, {Data.Maps.Count} maps");
         }
         catch (Exception ex)
         {
@@ -417,6 +434,7 @@ else
         selectedDialog = Data.Dialogs.FirstOrDefault();
         selectedClassStats = Data.ClassLevels.FirstOrDefault();
         selectedStatName = Data.StatNames.FirstOrDefault();
+        selectedMap = Data.Maps.FirstOrDefault();
     }
 
     private void SetTab(EditorTab tab)
@@ -445,12 +463,14 @@ else
         EditorTab.Classes => Data.ClassLevels.Count,
         EditorTab.StatNames => Data.StatNames.Count,
         EditorTab.Names => (Data.Names.Male?.Count ?? 0) + (Data.Names.Female?.Count ?? 0),
+        EditorTab.Maps => Data.Maps.Count,
         _ => 0
     };
 
     private bool IsSingleObjectTab => activeTab == EditorTab.Names;
     private bool IsFixedListTab => activeTab == EditorTab.StatNames;
-    private bool AreListActionsDisabled => IsSingleObjectTab || IsFixedListTab;
+    private bool IsMapTab => activeTab == EditorTab.Maps;
+    private bool AreListActionsDisabled => IsSingleObjectTab || IsFixedListTab || IsMapTab;
 
     private object? SelectedObject => activeTab switch
     {
@@ -464,6 +484,7 @@ else
         EditorTab.Classes => selectedClassStats,
         EditorTab.StatNames => selectedStatName,
         EditorTab.Names => Data.Names,
+        EditorTab.Maps => selectedMap,
         _ => null
     };
 
@@ -503,6 +524,16 @@ else
     }
 
     private void OnDataChanged() => Data.MarkDirty();
+
+    private void OnMapChanged()
+    {
+        if (selectedMap != null)
+        {
+            selectedMap.IsDirty = true;
+        }
+
+        Data.MarkDirty();
+    }
 
     private string ValidationSummary
     {
@@ -736,6 +767,7 @@ else
             EditorTab.Dialogs => selectedDialog?.Id,
             EditorTab.Classes => selectedClassStats?.Class,
             EditorTab.StatNames => selectedStatName?.Type.ToString(),
+            EditorTab.Maps => selectedMap?.Id,
             _ => null
         };
 

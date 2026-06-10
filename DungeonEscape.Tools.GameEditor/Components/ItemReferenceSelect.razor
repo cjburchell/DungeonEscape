@@ -1,0 +1,109 @@
+@inject DataFolderService Data
+@inject DataSourceCatalog DataSources
+@inject ItemImageCatalog Images
+
+<div class="field @CssClass" style="@Style">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <label>@Label</label>
+    }
+    <div class="image-dropdown reference-dropdown @(isOpen ? "open" : null)">
+        <button type="button" class="image-dropdown-button" @onclick="ToggleOpen">
+            <ImageDropdownRow ImageSource="@SelectedImageSource" Text="@SelectedDisplayName" />
+            <span class="image-dropdown-caret">▾</span>
+        </button>
+        @if (isOpen)
+        {
+            <div class="image-dropdown-menu">
+                @if (IncludeNone)
+                {
+                    <button type="button" class="image-dropdown-option @(string.IsNullOrEmpty(CurrentValue) ? "selected" : null)" @onclick="() => SelectValue(string.Empty)">
+                        <ImageDropdownRow ImageSource="" Text="@NoneLabel" />
+                    </button>
+                }
+                @if (ShouldShowCustomValue)
+                {
+                    <button type="button" class="image-dropdown-option selected" @onclick="() => SelectValue(CurrentValue)">
+                        <ImageDropdownRow ImageSource="@SelectedImageSource" Text="@(CurrentValue + " (custom)")" />
+                    </button>
+                }
+                @foreach (var option in CleanOptions)
+                {
+                    <button type="button"
+                            class="image-dropdown-option @(IsSelected(option) ? "selected" : null)"
+                            @onclick="() => SelectValue(option)">
+                        <ImageDropdownRow ImageSource="@GetImageSource(option)" Text="@option" />
+                    </button>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+    [Parameter] public IReadOnlyList<string>? Options { get; set; }
+    [Parameter] public bool IncludeNone { get; set; }
+    [Parameter] public string NoneLabel { get; set; } = "-- none --";
+    [Parameter] public string CssClass { get; set; } = string.Empty;
+    [Parameter] public string Style { get; set; } = string.Empty;
+
+    private bool isOpen;
+
+    private string CurrentValue => Value ?? string.Empty;
+
+    private IReadOnlyList<string> SourceOptions => Options ?? DataSources.Items;
+
+    private IReadOnlyList<string> CleanOptions => SourceOptions
+        .Where(option => !string.IsNullOrWhiteSpace(option))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .ToList();
+
+    private bool ShouldShowCustomValue =>
+        !string.IsNullOrWhiteSpace(CurrentValue) &&
+        !CleanOptions.Any(option => string.Equals(option, CurrentValue, StringComparison.OrdinalIgnoreCase));
+
+    private string SelectedDisplayName => string.IsNullOrEmpty(CurrentValue) ? NoneLabel : CurrentValue;
+
+    private string SelectedImageSource => GetImageSource(CurrentValue);
+
+    private void ToggleOpen() => isOpen = !isOpen;
+
+    private bool IsSelected(string option) => string.Equals(option, CurrentValue, StringComparison.OrdinalIgnoreCase);
+
+    private async Task SelectValue(string value)
+    {
+        isOpen = false;
+        await ValueChanged.InvokeAsync(value);
+    }
+
+    private string GetImageSource(string? value)
+    {
+        var imageId = ResolveImageId(value);
+        return imageId.HasValue ? Images.Catalog.GetImageDataUri(imageId.Value) ?? string.Empty : string.Empty;
+    }
+
+    private int? ResolveImageId(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value) || string.Equals(value, DataSourceCatalog.RandomItemId, StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        var item = Data.Items.FirstOrDefault(candidate =>
+            string.Equals(candidate.Name, value, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(candidate.Id, value, StringComparison.OrdinalIgnoreCase));
+        if (item != null)
+        {
+            return item.ImageId;
+        }
+
+        var itemName = Data.ItemDefinitions
+            .SelectMany(definition => definition.Names ?? new List<ItemName>())
+            .FirstOrDefault(candidate => string.Equals(candidate.Name, value, StringComparison.OrdinalIgnoreCase));
+
+        return itemName?.ImageId;
+    }
+}

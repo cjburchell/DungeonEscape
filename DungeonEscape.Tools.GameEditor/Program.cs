@@ -24,6 +24,7 @@ public static class Program
         builder.Services.AddSingleton<ItemImageCatalog>();
         builder.Services.AddSingleton<SpellImageCatalog>();
         builder.Services.AddSingleton<HeroImageCatalog>();
+        builder.Services.AddSingleton<MapDocumentService>();
         builder.Services.AddSingleton<DataFolderService>();
         builder.Services.AddSingleton<DataSourceCatalog>();
         builder.Services.AddSingleton<DataValidationService>();

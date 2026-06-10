@@ -37,6 +37,12 @@ public sealed class AssetContext
     public string? DataDirectory =>
         AssetRoot == null ? null : Path.Combine(AssetRoot, "Data");
 
+    public string? MapsDirectory =>
+        AssetRoot == null ? null : Path.Combine(AssetRoot, "Maps");
+
+    public string? MapDataDirectory =>
+        AssetRoot == null ? null : Path.Combine(AssetRoot, "Data", "maps");
+
     /// <summary>
     /// Attempt to discover the asset root by walking up from the supplied path
     /// looking for a directory that contains <c>Tilesets/allmonsters.tsx</c>.

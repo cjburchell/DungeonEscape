@@ -1,0 +1,251 @@
+@if (Object == null)
+{
+    <div class="empty-state">Select a map object to edit its gameplay metadata.</div>
+}
+else
+{
+    <div class="form-header embedded-header">
+        <div class="field" style="flex:1">
+            <label>Name</label>
+            <input value="@Object.Name" @onchange="e => SetName(e.Value?.ToString())" />
+        </div>
+        <TextReferenceSelect Label="Object Class" Value="@Object.Class" ValueChanged="SetClass"
+                             Options="ObjectClasses" Style="flex:1" />
+    </div>
+
+    <fieldset>
+        <legend>Placement (read-only; edit in Tiled)</legend>
+        <div class="field-grid compact-grid">
+            @ReadOnlyField("Map", Object.MapId)
+            @ReadOnlyField("Group", Object.GroupName)
+            @ReadOnlyField("Object ID", Object.Id.ToString())
+            @ReadOnlyField("GID", Object.Gid.ToString())
+            @ReadOnlyField("X", Object.X.ToString())
+            @ReadOnlyField("Y", Object.Y.ToString())
+            @ReadOnlyField("Width", Object.Width.ToString())
+            @ReadOnlyField("Height", Object.Height.ToString())
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>@FriendlyLegend</legend>
+        @if (IsNpc)
+        {
+            <div class="field-grid">
+                @PropertySelect("Dialog", "Dialog", DataSources.Dialogs, true)
+                @PropertyTextArea("Text", "Text")
+                @PropertyNumber("Move Radius", "MoveRadius")
+                @PropertyBool("Collideable", "Collideable")
+                @PropertySelect("Direction", "Direction", DirectionOptions, true)
+                @PropertySelect("Facing", "Facing", DirectionOptions, true)
+            </div>
+            @if (IsPartyMember)
+            {
+                <div class="field-grid" style="margin-top:.75rem">
+                    @PropertySelect("Class", "Class", DataSources.Classes, true)
+                    @PropertySelect("Gender", "Gender", GenderOptions, true)
+                    @PropertyNumber("Level", "Level")
+                </div>
+            }
+        }
+        else if (IsPickup)
+        {
+            <div class="field-grid">
+                @PropertyItemSelect("Item ID", "ItemId", true)
+                @PropertyBool("Locked", "Locked")
+                @PropertyNumber("Level", "Level")
+                @PropertyNumber("Chest Level", "ChestLevel")
+                @PropertyItemSelect("Key ID", "KeyId", true)
+                @PropertyBool("Open With Key", "OpenWithKey")
+                @PropertyBool("Collideable", "Collideable")
+            </div>
+        }
+        else if (IsDoor)
+        {
+            <div class="field-grid">
+                @PropertyBool("Locked", "Locked")
+                @PropertyNumber("Door Level", "DoorLevel")
+                @PropertyItemSelect("Key ID", "KeyId", true)
+                @PropertyBool("Open With Key", "OpenWithKey")
+                @PropertyBool("Collideable", "Collideable")
+                @PropertyNumber("Move Radius", "MoveRadius")
+            </div>
+        }
+        else if (IsWarp)
+        {
+            <div class="field-grid">
+                @PropertySelect("Warp Map", "WarpMap", MapOptions, true)
+                @PropertySelect("Spawn ID", "SpawnId", SpawnOptionsForWarp, true, "-- default spawn --")
+            </div>
+        }
+        else if (IsSpawn)
+        {
+            <div class="field-grid">
+                @PropertyBool("Default Spawn", "DefaultSpawn")
+            </div>
+        }
+        else
+        {
+            <div class="field-grid">
+                @PropertyBool("Collideable", "Collideable")
+                @PropertyNumber("Move Radius", "MoveRadius")
+            </div>
+        }
+    </fieldset>
+}
+
+@code {
+    [Inject] public DataSourceCatalog DataSources { get; set; } = null!;
+
+    [Parameter] public MapObjectDocument? Object { get; set; }
+    [Parameter] public IReadOnlyList<MapDocument> Maps { get; set; } = Array.Empty<MapDocument>();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private static readonly IReadOnlyList<string> ObjectClasses = new[]
+    {
+        "Chest", "Door", "HiddenItem", "Npc", "NpcHeal", "NpcKey", "NpcPartyMember", "NpcSave", "NpcStore", "Spawn", "Warp"
+    };
+
+    private static readonly IReadOnlyList<string> DirectionOptions = Enum.GetValues<Direction>().Select(value => value.ToString()).ToList();
+
+    private static readonly IReadOnlyList<string> GenderOptions = Enum.GetValues<Gender>().Select(value => value.ToString()).ToList();
+
+    private IReadOnlyList<string> MapOptions => MapReferenceOptions.GetMapOptions(Maps);
+
+    private IReadOnlyList<string> SpawnOptionsForWarp => MapReferenceOptions.GetSpawnOptions(Maps, GetProperty("WarpMap"));
+
+    private bool IsNpc => Object?.Class.StartsWith("Npc", StringComparison.OrdinalIgnoreCase) == true;
+    private bool IsPartyMember => string.Equals(Object?.Class, "NpcPartyMember", StringComparison.OrdinalIgnoreCase);
+    private bool IsPickup => string.Equals(Object?.Class, "Chest", StringComparison.OrdinalIgnoreCase) ||
+                             string.Equals(Object?.Class, "HiddenItem", StringComparison.OrdinalIgnoreCase);
+    private bool IsDoor => string.Equals(Object?.Class, "Door", StringComparison.OrdinalIgnoreCase);
+    private bool IsWarp => string.Equals(Object?.Class, "Warp", StringComparison.OrdinalIgnoreCase);
+    private bool IsSpawn => string.Equals(Object?.Class, "Spawn", StringComparison.OrdinalIgnoreCase);
+
+    private string FriendlyLegend => Object?.Class switch
+    {
+        "Chest" => "Chest Gameplay",
+        "HiddenItem" => "Hidden Item Gameplay",
+        "Door" => "Door Gameplay",
+        "Warp" => "Warp Gameplay",
+        "Spawn" => "Spawn Gameplay",
+        var value when value?.StartsWith("Npc", StringComparison.OrdinalIgnoreCase) == true => "NPC Gameplay",
+        _ => "Common Gameplay"
+    };
+
+    private async Task SetName(string? value)
+    {
+        if (Object == null)
+        {
+            return;
+        }
+
+        Object.Name = value ?? string.Empty;
+        await RaiseChanged();
+    }
+
+    private async Task SetClass(string? value)
+    {
+        if (Object == null)
+        {
+            return;
+        }
+
+        Object.Class = value ?? string.Empty;
+        await RaiseChanged();
+    }
+
+    private string GetProperty(string name) =>
+        Object != null && Object.Properties.TryGetValue(name, out var value) ? value : string.Empty;
+
+    private int GetIntProperty(string name)
+    {
+        var value = GetProperty(name);
+        return int.TryParse(value, out var result) ? result : 0;
+    }
+
+    private async Task SetProperty(string name, string? value)
+    {
+        if (Object == null)
+        {
+            return;
+        }
+
+        value ??= string.Empty;
+        if (string.IsNullOrEmpty(value))
+        {
+            Object.Properties.Remove(name);
+        }
+        else
+        {
+            Object.Properties[name] = value;
+        }
+
+        await RaiseChanged();
+    }
+
+    private async Task SetIntProperty(string name, int value)
+    {
+        await SetProperty(name, value.ToString());
+    }
+
+    private async Task SetBoolProperty(string name, bool value)
+    {
+        if (Object == null)
+        {
+            return;
+        }
+
+        Object.Properties[name] = value ? "true" : "false";
+        await RaiseChanged();
+    }
+
+    private bool GetBoolProperty(string name)
+    {
+        var value = GetProperty(name);
+        return bool.TryParse(value, out var result) && result;
+    }
+
+    private async Task RaiseChanged() => await OnChanged.InvokeAsync();
+}
+
+@code {
+    private RenderFragment ReadOnlyField(string Label, string Value) => @<div class="field">
+        <label>@Label</label>
+        <input value="@Value" readonly />
+    </div>;
+
+    private RenderFragment PropertyField(string Label, string PropertyName) => @<div class="field">
+        <label>@Label</label>
+        <input value="@GetProperty(PropertyName)" @onchange="e => SetProperty(PropertyName, e.Value?.ToString())" />
+    </div>;
+
+    private RenderFragment PropertyNumber(string Label, string PropertyName) => @<NumberField
+        Label="@Label"
+        Value="@GetIntProperty(PropertyName)"
+        ValueChanged="value => SetIntProperty(PropertyName, value)" />;
+
+    private RenderFragment PropertySelect(string Label, string PropertyName, IReadOnlyList<string> Options, bool IncludeNone = false, string NoneLabel = "-- none --") => @<TextReferenceSelect
+        Label="@Label"
+        Value="@GetProperty(PropertyName)"
+        ValueChanged="value => SetProperty(PropertyName, value)"
+        Options="Options"
+        IncludeNone="IncludeNone"
+        NoneLabel="@NoneLabel" />;
+
+    private RenderFragment PropertyItemSelect(string Label, string PropertyName, bool IncludeNone = false) => @<ItemReferenceSelect
+        Label="@Label"
+        Value="@GetProperty(PropertyName)"
+        ValueChanged="value => SetProperty(PropertyName, value)"
+        IncludeNone="IncludeNone" />;
+
+    private RenderFragment PropertyTextArea(string Label, string PropertyName) => @<div class="field">
+        <label>@Label</label>
+        <textarea rows="4" value="@GetProperty(PropertyName)" @onchange="e => SetProperty(PropertyName, e.Value?.ToString())"></textarea>
+    </div>;
+
+    private RenderFragment PropertyBool(string Label, string PropertyName) => @<div class="field checkbox-field">
+        <label>@Label</label>
+        <input type="checkbox" checked="@GetBoolProperty(PropertyName)" @onchange="e => SetBoolProperty(PropertyName, e.Value is true)" />
+    </div>;
+}

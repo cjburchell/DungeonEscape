@@ -68,8 +68,10 @@ public sealed class DataValidationService
             .Concat(data.ItemDefinitions.SelectMany(definition => definition.Names ?? new List<ItemName>()).Select(name => name.Name))
             .Append(DataSourceCatalog.RandomItemId));
         var questIds = NameSet(data.Quests.Select(quest => quest.Id));
+        var dialogIds = NameSet(data.Dialogs.Select(dialog => dialog.Id));
         var monsterNames = NameSet(data.Monsters.Select(monster => monster.Name));
         var classValues = NameSet(data.ClassLevels.Select(classStats => classStats.Class));
+        var mapIds = NameSet(data.Maps.Select(map => map.Id).Concat(data.Maps.Select(map => "maps/" + map.Id)));
 
         ValidateRequiredNames(issues, "Monster", data.Monsters.Select((item, index) => (index, Value: (string?)item.Name)));
         ValidateRequiredNames(issues, "Spell", data.Spells.Select((item, index) => (index, Value: (string?)item.Name)));
@@ -97,6 +99,7 @@ public sealed class DataValidationService
         ValidateDialogs(issues, questIds, itemRefs, monsterNames);
         ValidateStatNames(issues);
         ValidateClassLevels(issues, skillNames);
+        ValidateMaps(issues, itemRefs, dialogIds, monsterNames, mapIds, classValues);
 
         return issues
             .OrderBy(issue => issue.Severity)
@@ -368,6 +371,83 @@ public sealed class DataValidationService
             .ToList();
 
         return stages ?? (IReadOnlyList<int>)Array.Empty<int>();
+    }
+
+    private void ValidateMaps(
+        List<DataValidationIssue> issues,
+        HashSet<string> itemRefs,
+        HashSet<string> dialogIds,
+        HashSet<string> monsterNames,
+        HashSet<string> mapIds,
+        HashSet<string> classValues)
+    {
+        foreach (var map in data.Maps)
+        {
+            var location = $"Map '{map.Id}'";
+            ValidateDuplicateMapObjectIds(issues, location, map.Objects);
+
+            foreach (var randomMonster in map.RandomMonsters)
+            {
+                ValidateReference(issues, location + " random monsters", "monster", randomMonster.Name, monsterNames);
+            }
+
+            foreach (var mapObject in map.Objects)
+            {
+                ValidateMapObject(issues, mapObject, itemRefs, dialogIds, mapIds, classValues);
+            }
+        }
+    }
+
+    private static void ValidateMapObject(
+        List<DataValidationIssue> issues,
+        MapObjectDocument mapObject,
+        HashSet<string> itemRefs,
+        HashSet<string> dialogIds,
+        HashSet<string> mapIds,
+        HashSet<string> classValues)
+    {
+        var location = $"Map '{mapObject.MapId}' object #{mapObject.Id} '{mapObject.DisplayName}'";
+        ValidateReference(issues, location, "dialog", GetProperty(mapObject, "Dialog"), dialogIds);
+        ValidateReference(issues, location, "item", GetProperty(mapObject, "ItemId"), itemRefs);
+        ValidateReference(issues, location, "key item", GetProperty(mapObject, "KeyId"), itemRefs);
+        ValidateReference(issues, location, "key item", GetProperty(mapObject, "KeyItemId"), itemRefs);
+        ValidateReference(issues, location, "warp map", GetProperty(mapObject, "WarpMap"), mapIds);
+
+        if (string.Equals(mapObject.Class, "Chest", StringComparison.OrdinalIgnoreCase) &&
+            !mapObject.Properties.ContainsKey("Locked"))
+        {
+            Warning(issues, location, "Chest should explicitly set Locked.");
+        }
+
+        if (string.Equals(mapObject.Class, "Door", StringComparison.OrdinalIgnoreCase) &&
+            !mapObject.Properties.ContainsKey("Locked"))
+        {
+            Warning(issues, location, "Door should explicitly set Locked.");
+        }
+
+        if (string.Equals(mapObject.Class, "NpcPartyMember", StringComparison.OrdinalIgnoreCase))
+        {
+            ValidateReference(issues, location, "class", GetProperty(mapObject, "Class"), classValues);
+        }
+    }
+
+    private static string? GetProperty(MapObjectDocument mapObject, string name)
+    {
+        return mapObject.Properties.TryGetValue(name, out var value) ? value : null;
+    }
+
+    private static void ValidateDuplicateMapObjectIds(
+        List<DataValidationIssue> issues,
+        string location,
+        IEnumerable<MapObjectDocument> mapObjects)
+    {
+        foreach (var group in mapObjects
+                     .Where(mapObject => mapObject.Id > 0)
+                     .GroupBy(mapObject => mapObject.Id)
+                     .Where(group => group.Count() > 1))
+        {
+            Warning(issues, location, $"Object id {group.Key} is used by {group.Count()} objects.");
+        }
     }
 
     private static void ValidateReferences(

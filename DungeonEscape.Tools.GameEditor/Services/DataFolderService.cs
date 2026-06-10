@@ -45,10 +45,12 @@ public sealed class DataFolderService
     };
 
     private readonly AssetContext assetContext;
+    private readonly MapDocumentService maps;
 
-    public DataFolderService(AssetContext assetContext)
+    public DataFolderService(AssetContext assetContext, MapDocumentService maps)
     {
         this.assetContext = assetContext;
+        this.maps = maps;
     }
 
     /// <summary>Raised whenever the folder, selection or dirty state changes.</summary>
@@ -70,6 +72,7 @@ public sealed class DataFolderService
     public List<StatName> StatNames { get; private set; } = new();
     public List<ClassStats> ClassLevels { get; private set; } = new();
     public Names Names { get; private set; } = new() { Male = new List<string>(), Female = new List<string>() };
+    public List<MapDocument> Maps { get; private set; } = new();
 
     public string? FolderPath { get; private set; }
 
@@ -107,6 +110,7 @@ public sealed class DataFolderService
 
         // Resolve images/tilesets relative to the opened folder.
         assetContext.TryDetectFrom(folderPath);
+        Maps = maps.LoadMaps(assetContext.MapsDirectory, assetContext.MapDataDirectory);
 
         NotifyDataChanged();
         NotifyChanged();
@@ -138,6 +142,7 @@ public sealed class DataFolderService
         SaveList(Path.Combine(FolderPath, StatNamesFileName), StatNames);
         SaveList(Path.Combine(FolderPath, ClassLevelsFileName), ClassLevels);
         SaveObject(Path.Combine(FolderPath, NamesFileName), Names);
+        maps.SaveMaps(Maps, assetContext.MapDataDirectory);
 
         IsDirty = false;
         NotifyChanged();

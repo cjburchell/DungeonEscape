@@ -1,7 +1,7 @@
 using System.IO;
 using Newtonsoft.Json;
 
-namespace DungeonEscape.Tools.MonsterEditor.Services;
+namespace DungeonEscape.Tools.GameEditor.Services;
 
 /// <summary>
 /// Persists small user preferences for the editor (such as the most recently
@@ -17,14 +17,15 @@ public sealed class EditorSettingsService
     };
 
     private readonly string settingsPath;
+    private readonly string legacySettingsPath;
     private EditorSettings settings;
 
     public EditorSettingsService()
     {
-        var dir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "DungeonEscape.MonsterEditor");
+        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        var dir = Path.Combine(appData, "DungeonEscape.GameEditor");
         settingsPath = Path.Combine(dir, "settings.json");
+        legacySettingsPath = Path.Combine(appData, "DungeonEscape.MonsterEditor", "settings.json");
         settings = Load();
     }
 
@@ -49,9 +50,10 @@ public sealed class EditorSettingsService
     {
         try
         {
-            if (File.Exists(settingsPath))
+            var path = File.Exists(settingsPath) ? settingsPath : legacySettingsPath;
+            if (File.Exists(path))
             {
-                var json = File.ReadAllText(settingsPath);
+                var json = File.ReadAllText(path);
                 return JsonConvert.DeserializeObject<EditorSettings>(json) ?? new EditorSettings();
             }
         }

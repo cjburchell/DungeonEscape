@@ -1,7 +1,7 @@
 using Redpoint.DungeonEscape.Data;
 using Redpoint.DungeonEscape.State;
 
-namespace DungeonEscape.Tools.MonsterEditor.Services;
+namespace DungeonEscape.Tools.GameEditor.Services;
 
 public enum DataValidationSeverity
 {
@@ -37,17 +37,20 @@ public sealed class DataValidationService
     private readonly MonsterImageCatalog monsterImages;
     private readonly ItemImageCatalog itemImages;
     private readonly SpellImageCatalog spellImages;
+    private readonly HeroImageCatalog heroImages;
 
     public DataValidationService(
         DataFolderService data,
         MonsterImageCatalog monsterImages,
         ItemImageCatalog itemImages,
-        SpellImageCatalog spellImages)
+        SpellImageCatalog spellImages,
+        HeroImageCatalog heroImages)
     {
         this.data = data;
         this.monsterImages = monsterImages;
         this.itemImages = itemImages;
         this.spellImages = spellImages;
+        this.heroImages = heroImages;
     }
 
     public IReadOnlyList<DataValidationIssue> Validate()
@@ -188,6 +191,11 @@ public sealed class DataValidationService
         {
             var classStats = data.ClassLevels[i];
             var location = Label("Class level", classStats.Class, i);
+            if (heroImages.Entries.Count > 0 && !heroImages.TryGet(classStats.DefaultImage, out _))
+            {
+                Warning(issues, location, $"Default image #{classStats.DefaultImage} was not found in hero.png.");
+            }
+
             if (classStats.FirstLevel == 0)
             {
                 Warning(issues, location, "First level is 0.");

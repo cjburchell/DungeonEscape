@@ -953,11 +953,11 @@ Status legend:
 - Set both volumes back to `1.00`.
 - Expected: combat music and sound effects are audible again.
 
-## Tools - Monster Editor (standalone)
+## Tools - Game Editor (standalone)
 
-The Monster Editor is a separate Photino.Blazor desktop app under
-`DungeonEscape.Tools.MonsterEditor`. Run it with
-`dotnet run --project DungeonEscape.Tools.MonsterEditor`.
+The Game Editor is a separate Photino.Blazor desktop app under
+`DungeonEscape.Tools.GameEditor`. Run it with
+`dotnet run --project DungeonEscape.Tools.GameEditor`.
 
 ### [ ] File Menu And Auto-Load Last File
 
@@ -971,7 +971,7 @@ The Monster Editor is a separate Photino.Blazor desktop app under
 
 ### [ ] Open, Edit, And Save A Monster File
 
-- Launch the tool; a desktop window titled "Dungeon Escape - Monster Editor" opens.
+- Launch the tool; a desktop window titled "Dungeon Escape - Game Editor" opens.
 - Open `DungeonEscape.Unity/Assets/DungeonEscape/Data/allmonsters.json` from the **File** menu.
 
 - Expected: the left list fills with monsters, each showing an image thumbnail and name.

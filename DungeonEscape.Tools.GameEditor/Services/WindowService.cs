@@ -1,7 +1,7 @@
 using Photino.NET;
 using System.IO;
 
-namespace DungeonEscape.Tools.MonsterEditor.Services;
+namespace DungeonEscape.Tools.GameEditor.Services;
 
 /// <summary>
 /// Thin wrapper around the native Photino window so Blazor components can show

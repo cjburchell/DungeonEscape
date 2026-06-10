@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace DungeonEscape.Tools.MonsterEditor.Services;
+namespace DungeonEscape.Tools.GameEditor.Services;
 
 /// <summary>
 /// Tracks the Dungeon Escape asset root (the folder that contains the
@@ -30,6 +30,9 @@ public sealed class AssetContext
 
     public string? MonsterImagesDirectory =>
         AssetRoot == null ? null : Path.Combine(AssetRoot, "Images", "monsters");
+
+    public string? HeroSpriteSheetPath =>
+        AssetRoot == null ? null : Path.Combine(AssetRoot, "Images", "sprites", "hero.png");
 
     public string? DataDirectory =>
         AssetRoot == null ? null : Path.Combine(AssetRoot, "Data");

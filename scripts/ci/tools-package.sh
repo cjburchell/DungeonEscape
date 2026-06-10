@@ -3,29 +3,29 @@ set -euo pipefail
 
 CONFIGURATION="${CONFIGURATION:-Release}"
 TOOLS_PACKAGE_DIR="${TOOLS_PACKAGE_DIR:-artifacts/tools}"
-MONSTER_EDITOR_PROJECT="${MONSTER_EDITOR_PROJECT:-DungeonEscape.Tools.MonsterEditor/DungeonEscape.Tools.MonsterEditor.csproj}"
-MONSTER_EDITOR_RUNTIME="${MONSTER_EDITOR_RUNTIME:-win-x64}"
+GAME_EDITOR_PROJECT="${GAME_EDITOR_PROJECT:-DungeonEscape.Tools.GameEditor/DungeonEscape.Tools.GameEditor.csproj}"
+GAME_EDITOR_RUNTIME="${GAME_EDITOR_RUNTIME:-win-x64}"
 
-MONSTER_EDITOR_OUTPUT="$TOOLS_PACKAGE_DIR/DungeonEscape.Tools.MonsterEditor/$MONSTER_EDITOR_RUNTIME"
+GAME_EDITOR_OUTPUT="$TOOLS_PACKAGE_DIR/DungeonEscape.Tools.GameEditor/$GAME_EDITOR_RUNTIME"
 
 rm -rf "$TOOLS_PACKAGE_DIR"
-mkdir -p "$MONSTER_EDITOR_OUTPUT"
+mkdir -p "$GAME_EDITOR_OUTPUT"
 
-dotnet restore "$MONSTER_EDITOR_PROJECT" --runtime "$MONSTER_EDITOR_RUNTIME"
+dotnet restore "$GAME_EDITOR_PROJECT" --runtime "$GAME_EDITOR_RUNTIME"
 
-dotnet publish "$MONSTER_EDITOR_PROJECT" \
+dotnet publish "$GAME_EDITOR_PROJECT" \
   --configuration "$CONFIGURATION" \
-  --runtime "$MONSTER_EDITOR_RUNTIME" \
+  --runtime "$GAME_EDITOR_RUNTIME" \
   --self-contained true \
   --no-restore \
   -p:PublishSingleFile=true \
   -p:PublishReadyToRun=false \
   -p:DebugType=embedded \
-  --output "$MONSTER_EDITOR_OUTPUT"
+  --output "$GAME_EDITOR_OUTPUT"
 
 if command -v zip >/dev/null 2>&1; then
   (
-    cd "$TOOLS_PACKAGE_DIR/DungeonEscape.Tools.MonsterEditor"
-    zip -r "../DungeonEscape.Tools.MonsterEditor-$MONSTER_EDITOR_RUNTIME.zip" "$MONSTER_EDITOR_RUNTIME"
+    cd "$TOOLS_PACKAGE_DIR/DungeonEscape.Tools.GameEditor"
+    zip -r "../DungeonEscape.Tools.GameEditor-$GAME_EDITOR_RUNTIME.zip" "$GAME_EDITOR_RUNTIME"
   )
 fi

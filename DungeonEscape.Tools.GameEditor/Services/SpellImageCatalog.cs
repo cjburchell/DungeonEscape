@@ -1,4 +1,4 @@
-namespace DungeonEscape.Tools.MonsterEditor.Services;
+namespace DungeonEscape.Tools.GameEditor.Services;
 
 /// <summary>
 /// Spell image catalog backed by <c>items.tsx</c>.

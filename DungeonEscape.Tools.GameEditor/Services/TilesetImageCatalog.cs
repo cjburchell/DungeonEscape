@@ -3,7 +3,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Xml.Linq;
 
-namespace DungeonEscape.Tools.MonsterEditor.Services;
+namespace DungeonEscape.Tools.GameEditor.Services;
 
 /// <summary>
 /// A single selectable image (a tile) from a grid-based tileset.

@@ -1,4 +1,4 @@
-namespace DungeonEscape.Tools.MonsterEditor.Services;
+namespace DungeonEscape.Tools.GameEditor.Services;
 
 /// <summary>
 /// Provides the option lists used to populate the Spells / Skills / Items

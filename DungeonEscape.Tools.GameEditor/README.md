@@ -1,4 +1,4 @@
-# Dungeon Escape - Data Editor
+# Dungeon Escape - Game Editor
 
 A standalone desktop tool for editing the game's data JSON files. It is a
 [Photino.Blazor](https://github.com/tryphotino/photino.Blazor) app (HTML/CSS UI
@@ -31,7 +31,7 @@ It loads the following files into one shared, in-memory dataset:
 | `names.json`      | Names         |
 
 The last opened folder is remembered and **auto-loaded on startup** (stored in
-`%AppData%/DungeonEscape.MonsterEditor/settings.json`).
+`%AppData%/DungeonEscape.GameEditor/settings.json`).
 
 ## Features
 
@@ -67,9 +67,9 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
   - **Dialog** &mdash; dialog ids, quest-conditioned heads, text, choices, quest
     actions, item/monster/map references, and nested response dialogs.
   - **Class** &mdash; free-text class name, first-level XP threshold, fixed stat
-    growth rows with initial roll previews, and skill unlock references.
-    Spell/item/item-definition class selectors are populated from
-    `classlevels.json`.
+    growth rows with initial roll previews, default hero-sheet image, and skill
+    unlock references. Spell/item/item-definition class selectors are populated
+    from `classlevels.json`.
   - **Stat Names** &mdash; fixed stat rows plus prefix/suffix word pools.
   - **Names** &mdash; male and female character name pools.
 
@@ -87,17 +87,17 @@ then resolves the item/spell tilesets and their PNGs relative to that root.
 ## Running
 
 ```sh
-dotnet run --project DungeonEscape.Tools.MonsterEditor
+dotnet run --project DungeonEscape.Tools.GameEditor
 ```
 
 ## Publishing a single executable
 
 ```sh
-dotnet publish DungeonEscape.Tools.MonsterEditor -c Release -r win-x64 ^
+dotnet publish DungeonEscape.Tools.GameEditor -c Release -r win-x64 ^
   -p:PublishSingleFile=true --self-contained true
 ```
 
-The resulting `DungeonEscape.Tools.MonsterEditor.exe` (under
+The resulting `DungeonEscape.Tools.GameEditor.exe` (under
 `bin/Release/net8.0/win-x64/publish/`) can be launched directly.
 
 > Note: the project targets `net8.0` with `RollForward=LatestMajor`, so it will

@@ -1,0 +1,60 @@
+@inject HeroImageCatalog Images
+
+<div class="image-picker">
+    <div class="field image-picker-field">
+        <label>@Label</label>
+        <div class="image-dropdown @(isOpen ? "open" : null)">
+            <button type="button" class="image-dropdown-button" @onclick="ToggleOpen">
+                <ImageDropdownRow ImageSource="@PreviewSource" Text="@SelectedDisplayName" />
+                <span class="image-dropdown-caret">&#9662;</span>
+            </button>
+            @if (isOpen)
+            {
+                <div class="image-dropdown-menu">
+                    @if (!Images.TryGet(ImageId, out _))
+                    {
+                        <button type="button" class="image-dropdown-option selected" @onclick="() => SelectImage(ImageId)">
+                            <ImageDropdownRow ImageSource="@PreviewSource" Text="@UnknownDisplayName" />
+                        </button>
+                    }
+                    @foreach (var entry in Images.Entries)
+                    {
+                        <button type="button"
+                                class="image-dropdown-option @(entry.ImageId == ImageId ? "selected" : null)"
+                                @onclick="() => SelectImage(entry.ImageId)">
+                            <ImageDropdownRow ImageSource="@Images.GetImageDataUri(entry.ImageId)" Text="@entry.DisplayName" />
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Label { get; set; } = "Image";
+    [Parameter] public int ImageId { get; set; }
+    [Parameter] public EventCallback<int> ImageIdChanged { get; set; }
+
+    private bool isOpen;
+
+    private string PreviewSource => Images.GetImageDataUri(ImageId) ?? string.Empty;
+    private string UnknownDisplayName => $"#{ImageId} (unknown)";
+
+    private string SelectedDisplayName =>
+        Images.TryGet(ImageId, out var entry)
+            ? entry.DisplayName
+            : UnknownDisplayName;
+
+    private void ToggleOpen()
+    {
+        isOpen = !isOpen;
+    }
+
+    private async Task SelectImage(int id)
+    {
+        isOpen = false;
+        ImageId = id;
+        await ImageIdChanged.InvokeAsync(id);
+    }
+}

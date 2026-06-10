@@ -1,8 +1,8 @@
-using DungeonEscape.Tools.MonsterEditor.Services;
+using DungeonEscape.Tools.GameEditor.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
 
-namespace DungeonEscape.Tools.MonsterEditor;
+namespace DungeonEscape.Tools.GameEditor;
 
 public static class Program
 {
@@ -23,6 +23,7 @@ public static class Program
         builder.Services.AddSingleton<MonsterImageCatalog>();
         builder.Services.AddSingleton<ItemImageCatalog>();
         builder.Services.AddSingleton<SpellImageCatalog>();
+        builder.Services.AddSingleton<HeroImageCatalog>();
         builder.Services.AddSingleton<DataFolderService>();
         builder.Services.AddSingleton<DataSourceCatalog>();
         builder.Services.AddSingleton<DataValidationService>();
@@ -39,7 +40,7 @@ public static class Program
         var appIconPath = Path.Combine(AppContext.BaseDirectory, AppIconRelativePath);
 
         app.MainWindow
-            .SetTitle("Dungeon Escape - Data Editor")
+            .SetTitle("Dungeon Escape - Game Editor")
             .SetIconFile(appIconPath)
             .SetUseOsDefaultSize(false)
             .SetSize(1280, 800)

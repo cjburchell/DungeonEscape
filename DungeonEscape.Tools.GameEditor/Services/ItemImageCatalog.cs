@@ -1,4 +1,4 @@
-namespace DungeonEscape.Tools.MonsterEditor.Services;
+namespace DungeonEscape.Tools.GameEditor.Services;
 
 /// <summary>
 /// Item image catalog backed by <c>items2.tsx</c>.

@@ -818,6 +818,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 value =>
                 {
                     createPlayerClass = value;
+                    ApplyDefaultImageForCreateClass();
                     RerollCreatePreviewHero();
                     activeCreateDropdown = CreateDropdown.None;
                 },
@@ -1372,6 +1373,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 var values = System.Enum.GetValues(typeof(Class));
                 createPlayerClass = (Class)values.GetValue(Mathf.Clamp(selectedDropdownIndex, 0, values.Length - 1));
+                ApplyDefaultImageForCreateClass();
                 RerollCreatePreviewHero();
             }
 
@@ -1390,8 +1392,38 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void CycleCreateClass(int delta)
         {
             viewModel.CycleCreateClass(delta);
+            ApplyDefaultImageForCreateClass();
             RerollCreatePreviewHero();
             UiControls.PlaySelectSound();
+        }
+
+        private void ApplyDefaultImageForCreateClass()
+        {
+            var classStats = GameDataCache.Current == null || GameDataCache.Current.ClassLevels == null
+                ? null
+                : GameDataCache.Current.ClassLevels.FirstOrDefault(item => IsClass(item.Class, createPlayerClass));
+            if (classStats == null)
+            {
+                return;
+            }
+
+            var imageIndex = classStats.DefaultImage;
+            var heroCharacterCount = HeroSpriteResolver.GetHeroCharacterCount();
+            if (heroCharacterCount <= 0)
+            {
+                imageIndex = 0;
+            }
+            else
+            {
+                imageIndex = Mathf.Clamp(imageIndex, 0, heroCharacterCount - 1);
+            }
+
+            if (!TitleViewModel.IsSelectableCreateImageIndex(imageIndex))
+            {
+                imageIndex = TitleViewModel.GetNextSelectableCreateImageIndex(imageIndex, 1, heroCharacterCount);
+            }
+
+            viewModel.SetCreatePlayerSpriteIndex(imageIndex);
         }
 
         private void CycleCreateImage(int delta)
@@ -1427,6 +1459,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return string.Equals(GUI.GetNameOfFocusedControl(), "CreatePlayerName", StringComparison.Ordinal);
         }
 
+        private static bool IsClass(string className, Class heroClass)
+        {
+            return string.Equals(className, heroClass.ToString(), StringComparison.OrdinalIgnoreCase);
+        }
+
         private void WaitForConfirmRelease()
         {
             waitingForConfirmRelease = GetConfirmHeld() || Input.GetMouseButton(0);
@@ -1453,6 +1490,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             mode = TitleMode.Create;
             selectedIndex = 0;
             EnsureCreatePlayerName();
+            ApplyDefaultImageForCreateClass();
+            RerollCreatePreviewHero();
             WaitForConfirmRelease();
             ResetNavigationRepeat();
         }

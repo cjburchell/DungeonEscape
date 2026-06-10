@@ -7,7 +7,7 @@ The Unity project is in `DungeonEscape.Unity`, not the repository root.
 ## Editing Rules
 
 - Do not edit generated Unity or build folders: `DungeonEscape.Unity/Library/`, `DungeonEscape.Unity/Temp/`, `DungeonEscape.Unity/Obj/`, `DungeonEscape.Unity/Build/`, `DungeonEscape.Unity/Builds/`, `DungeonEscape.Unity/Logs/`, or `DungeonEscape.Unity/UserSettings/`.
-- Prefer changes under `DungeonEscape.Unity/Assets/`, `DungeonEscape.Unity/Packages/`, `DungeonEscape.Unity/ProjectSettings/`, `DungeonEscape.Core/`, `DungeonEscape.Core.Test/`, and project tool folders such as `DungeonEscape.Tools.MonsterEditor/`.
+- Prefer changes under `DungeonEscape.Unity/Assets/`, `DungeonEscape.Unity/Packages/`, `DungeonEscape.Unity/ProjectSettings/`, `DungeonEscape.Core/`, `DungeonEscape.Core.Test/`, and project tool folders such as `DungeonEscape.Tools.GameEditor/`.
 - Do not edit generated `.csproj` files under the Unity project unless the user explicitly asks.
 
 ## Memory Bank

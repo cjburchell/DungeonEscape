@@ -10,6 +10,7 @@ namespace Redpoint.DungeonEscape.Data
     public class ClassStats
     {
         public string Class { get; set; }
+        public int DefaultImage { get; set; }
         public List<Stats> Stats { get; set; } = new List<Stats>();
         public ulong FirstLevel { get; set; }
 

@@ -4,6 +4,7 @@
 @inject MonsterImageCatalog MonsterImages
 @inject ItemImageCatalog ItemImages
 @inject SpellImageCatalog SpellImages
+@inject HeroImageCatalog HeroImages
 @inject DataSourceCatalog DataSources
 @inject AssetContext Assets
 @inject WindowService Window
@@ -200,6 +201,7 @@ else
                             var current = classStats;
                             <div class="monster-item @(ReferenceEquals(current, selectedClassStats) ? "selected" : string.Empty)"
                                  @onclick="() => selectedClassStats = current">
+                                <img class="thumb" src="@ClassThumb(current.DefaultImage)" alt="" />
                                 <div class="meta">
                                     <span class="name">@current.Class</span>
                                     <span class="sub">First @current.FirstLevel &middot; @(current.Stats?.Count ?? 0) stats &middot; @(current.Skills?.Count ?? 0) skills</span>
@@ -490,6 +492,8 @@ else
 
     private string SpellThumb(int imageId) => SpellImages.Catalog.GetImageDataUri(imageId) ?? string.Empty;
 
+    private string ClassThumb(int imageId) => HeroImages.GetImageDataUri(imageId) ?? string.Empty;
+
     private string ItemDefinitionThumb(ItemDefinition definition)
     {
         var imageId = definition.Names?.FirstOrDefault(name => name.ImageId != 0)?.ImageId
@@ -578,6 +582,7 @@ else
                 selectedClassStats = new ClassStats
                 {
                     Class = NextAvailableClass(),
+                    DefaultImage = Data.ClassLevels.Count,
                     FirstLevel = 1,
                     Stats = new List<Stats>
                     {

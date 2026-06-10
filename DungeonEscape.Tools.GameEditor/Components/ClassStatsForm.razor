@@ -20,6 +20,9 @@ else
         </div>
     </div>
 
+    <HeroImagePicker Label="Default Image" ImageId="ClassStats.DefaultImage"
+                     ImageIdChanged="id => Set(() => ClassStats.DefaultImage = id)" />
+
     <fieldset>
         <legend>Stats</legend>
         <StatsListEditor Items="EnsureStats()" OnChanged="RaiseChanged" />

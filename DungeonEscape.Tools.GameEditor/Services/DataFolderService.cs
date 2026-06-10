@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 using Redpoint.DungeonEscape.Data;
 using Redpoint.DungeonEscape.State;
 
-namespace DungeonEscape.Tools.MonsterEditor.Services;
+namespace DungeonEscape.Tools.GameEditor.Services;
 
 /// <summary>
 /// Owns the single in-memory dataset for the currently open Data folder. All

@@ -1,7 +1,7 @@
 using System.IO;
 using System.Xml.Linq;
 
-namespace DungeonEscape.Tools.MonsterEditor.Services;
+namespace DungeonEscape.Tools.GameEditor.Services;
 
 /// <summary>
 /// Describes a single selectable monster image (a tile in allmonsters.tsx).

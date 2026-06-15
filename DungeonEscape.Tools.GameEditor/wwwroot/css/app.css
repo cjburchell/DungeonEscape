@@ -619,6 +619,9 @@ legend {
 .map-object-list {
     display: flex;
     flex-direction: column;
+    align-self: start;
+    width: 100%;
+    max-height: 520px;
     min-height: 0;
     border: 1px solid var(--border);
     border-radius: 6px;

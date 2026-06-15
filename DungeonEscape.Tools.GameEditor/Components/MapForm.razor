@@ -11,7 +11,12 @@ else
         </div>
         <div class="field" style="flex:1">
             <label>Map Class</label>
-            <input value="@Map.Class" @onchange="e => SetMapClass(e.Value?.ToString())" />
+            <label class="checkbox-row">
+                <input type="checkbox"
+                       checked="@IsOverworldMapClass"
+                       @onchange="e => SetMapOverworld((bool)(e.Value ?? false))" />
+                Overworld
+            </label>
         </div>
     </div>
 
@@ -72,6 +77,9 @@ else
 
     private string Biome => GetMapProperty("biome");
     private string Song => GetMapProperty("song");
+    private bool IsOverworldMapClass => string.Equals(Map?.Class, OverworldMapClass, StringComparison.OrdinalIgnoreCase);
+
+    private const string OverworldMapClass = "Overworld";
 
     private List<MapObjectDocument> FilteredObjects => Map == null
         ? new List<MapObjectDocument>()
@@ -130,14 +138,14 @@ else
         selectedObject = mapObject;
     }
 
-    private async Task SetMapClass(string? value)
+    private async Task SetMapOverworld(bool value)
     {
         if (Map == null)
         {
             return;
         }
 
-        Map.Class = value ?? string.Empty;
+        Map.Class = value ? OverworldMapClass : string.Empty;
         await RaiseChanged();
     }
 

@@ -13,6 +13,8 @@ public sealed record DataValidationIssue(DataValidationSeverity Severity, string
 
 public sealed class DataValidationService
 {
+    private const string OverworldMapClass = "Overworld";
+
     private static readonly StatType[] RequiredClassStats =
     {
         StatType.Health,
@@ -384,6 +386,7 @@ public sealed class DataValidationService
         foreach (var map in data.Maps)
         {
             var location = $"Map '{map.Id}'";
+            ValidateMapClass(issues, location, map.Class);
             ValidateDuplicateMapObjectIds(issues, location, map.Objects);
 
             foreach (var randomMonster in map.RandomMonsters)
@@ -396,6 +399,17 @@ public sealed class DataValidationService
                 ValidateMapObject(issues, mapObject, itemRefs, dialogIds, mapIds, classValues);
             }
         }
+    }
+
+    private static void ValidateMapClass(List<DataValidationIssue> issues, string location, string? mapClass)
+    {
+        if (string.IsNullOrWhiteSpace(mapClass) ||
+            string.Equals(mapClass, OverworldMapClass, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        Error(issues, location, $"Map class '{mapClass}' is not supported. Use no map class or '{OverworldMapClass}'.");
     }
 
     private static void ValidateMapObject(

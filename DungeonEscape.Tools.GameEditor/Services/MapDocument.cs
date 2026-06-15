@@ -43,6 +43,7 @@ public sealed class MapObjectDocument
 public sealed class MapDocumentService
 {
     private const uint TiledGidMask = 0x1FFFFFFF;
+    private const string OverworldMapClass = "Overworld";
 
     private static readonly JsonSerializerSettings SerializerSettings = new()
     {
@@ -89,7 +90,7 @@ public sealed class MapDocumentService
         {
             Id = id,
             FilePath = path,
-            Class = GetString(root, "class"),
+            Class = NormalizeMapClass(GetString(root, "class")),
             Properties = ReadProperties(root),
             Xml = xml
         };
@@ -128,7 +129,7 @@ public sealed class MapDocumentService
             return;
         }
 
-        SetOptionalAttribute(map.Xml.Root, "class", map.Class);
+        SetOptionalAttribute(map.Xml.Root, "class", NormalizeMapClass(map.Class));
         WriteProperties(map.Xml.Root, map.Properties);
 
         foreach (var mapObject in map.Objects)
@@ -286,6 +287,13 @@ public sealed class MapDocumentService
         {
             element.SetAttributeValue(name, value);
         }
+    }
+
+    private static string NormalizeMapClass(string? value)
+    {
+        return string.Equals(value, OverworldMapClass, StringComparison.OrdinalIgnoreCase)
+            ? OverworldMapClass
+            : string.Empty;
     }
 
     private static string GetString(XElement element, string name) => element.Attribute(name)?.Value ?? string.Empty;

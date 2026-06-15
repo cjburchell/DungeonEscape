@@ -498,6 +498,21 @@ button.danger {
     letter-spacing: .03em;
 }
 
+.field .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    min-height: 2rem;
+    color: var(--text);
+    font-size: .85rem;
+    letter-spacing: normal;
+    text-transform: none;
+}
+
+.field .checkbox-row input[type="checkbox"] {
+    width: fit-content;
+}
+
 input, select, textarea {
     background: var(--panel-2);
     color: var(--text);

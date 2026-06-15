@@ -14,7 +14,7 @@ public sealed class HeroImageCatalog
     private const int DownIdleFrameOffset = 4;
 
     private readonly AssetContext context;
-    private readonly Dictionary<int, string> dataUriCache = new();
+    private readonly Dictionary<int, string> imageUriCache = new();
     private List<HeroImageEntry> entries = new();
     private Bitmap? sourceBitmap;
 
@@ -49,7 +49,7 @@ public sealed class HeroImageCatalog
             return null;
         }
 
-        if (dataUriCache.TryGetValue(imageId, out var cached))
+        if (imageUriCache.TryGetValue(imageId, out var cached))
         {
             return cached;
         }
@@ -82,10 +82,11 @@ public sealed class HeroImageCatalog
                     GraphicsUnit.Pixel);
             }
 
-            using var stream = new MemoryStream();
-            tile.Save(stream, ImageFormat.Png);
-            var uri = "data:image/png;base64," + Convert.ToBase64String(stream.ToArray());
-            dataUriCache[imageId] = uri;
+            var cachePath = GetCachePath(imageId);
+            Directory.CreateDirectory(Path.GetDirectoryName(cachePath)!);
+            tile.Save(cachePath, ImageFormat.Png);
+            var uri = ImagePreviewCache.ToRelativeUrl(cachePath);
+            imageUriCache[imageId] = uri;
             return uri;
         }
         catch
@@ -96,7 +97,7 @@ public sealed class HeroImageCatalog
 
     public void Reload()
     {
-        dataUriCache.Clear();
+        imageUriCache.Clear();
         entries = new List<HeroImageEntry>();
         sourceBitmap?.Dispose();
         sourceBitmap = null;
@@ -125,5 +126,11 @@ public sealed class HeroImageCatalog
         {
             entries.Add(new HeroImageEntry(index, $"#{index}"));
         }
+    }
+
+    private string GetCachePath(int imageId)
+    {
+        var identity = ImagePreviewCache.GetSourceIdentity(context.HeroSpriteSheetPath ?? "hero");
+        return ImagePreviewCache.GetCachePath("hero", identity, imageId);
     }
 }

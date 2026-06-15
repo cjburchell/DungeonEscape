@@ -1,0 +1,258 @@
+@inject DataFolderService Data
+
+<div class="tool-panel">
+    <div class="tool-header">
+        <div>
+            <h2>Quest / Dialog Graph</h2>
+            <p>Read-only relationship view for quests, stages, dialogs, choices, rewards, fights, warps, and nested dialog branches.</p>
+        </div>
+        <div class="field tool-filter">
+            <label>Filter</label>
+            <input placeholder="Quest, dialog, item, monster, map..." @bind="filter" @bind:event="oninput" />
+        </div>
+    </div>
+
+    <div class="graph-summary">
+        <div><strong>@FilteredQuests.Count</strong><span>quests</span></div>
+        <div><strong>@FilteredDialogs.Count</strong><span>dialogs</span></div>
+        <div><strong>@DialogChoiceCount</strong><span>choices</span></div>
+    </div>
+
+    <div class="graph-layout">
+        <section class="graph-column">
+            <h3>Quests</h3>
+            @if (FilteredQuests.Count == 0)
+            {
+                <div class="empty-state compact">No quests match the current filter.</div>
+            }
+            else
+            {
+                @foreach (var quest in FilteredQuests)
+                {
+                    <article class="graph-card quest-card">
+                        <header>
+                            <strong>@Display(quest.Name, quest.Id)</strong>
+                            <span>@quest.Id</span>
+                        </header>
+                        @if (!string.IsNullOrWhiteSpace(quest.Description))
+                        {
+                            <p>@quest.Description</p>
+                        }
+                        <div class="graph-tags">
+                            <span>Min level @quest.MinimumLevel</span>
+                            <span>@quest.Xp XP</span>
+                            <span>@quest.Gold gold</span>
+                            @foreach (var item in quest.Items ?? new List<string>())
+                            {
+                                <span>Reward: @item</span>
+                            }
+                        </div>
+
+                        <div class="graph-stages">
+                            @foreach (var stage in (quest.Stages ?? new List<QuestStage>()).OrderBy(stage => stage.Number))
+                            {
+                                <div class="graph-stage @(stage.CompleteQuest ? "complete" : string.Empty)">
+                                    <strong>Stage @stage.Number</strong>
+                                    <span>@Display(stage.Description, stage.CompleteQuest ? "Complete quest" : "No description")</span>
+                                </div>
+                            }
+                        </div>
+                    </article>
+                }
+            }
+        </section>
+
+        <section class="graph-column wide">
+            <h3>Dialogs</h3>
+            @if (FilteredDialogs.Count == 0)
+            {
+                <div class="empty-state compact">No dialogs match the current filter.</div>
+            }
+            else
+            {
+                @foreach (var dialog in FilteredDialogs)
+                {
+                    <article class="graph-card dialog-card">
+                        <header>
+                            <strong>@dialog.Id</strong>
+                            <span>@(dialog.Dialogs?.Count ?? 0) heads</span>
+                        </header>
+                        @for (var i = 0; i < (dialog.Dialogs?.Count ?? 0); i++)
+                        {
+                            var head = dialog.Dialogs![i];
+                            <div class="dialog-head-card">
+                                <div class="graph-node-title">
+                                    <strong>Head @(i + 1)</strong>
+                                    <span>@QuestStageSummary(head)</span>
+                                </div>
+                                <p>@Display(head.Text, "(empty text)")</p>
+                                <div class="graph-tags">
+                                    @if (!string.IsNullOrWhiteSpace(head.Quest))
+                                    {
+                                        <span>Quest: @head.Quest</span>
+                                    }
+                                    @if (head.StartQuest)
+                                    {
+                                        <span>Starts quest</span>
+                                    }
+                                </div>
+                                @RenderChoices(head.Choices, head.Quest, 0)
+                            </div>
+                        }
+                    </article>
+                }
+            }
+        </section>
+    </div>
+</div>
+
+@code {
+    private string filter = string.Empty;
+
+    private List<Quest> FilteredQuests => Data.Quests
+        .Where(QuestMatchesFilter)
+        .OrderBy(quest => quest.Id, StringComparer.OrdinalIgnoreCase)
+        .ToList();
+
+    private List<Dialog> FilteredDialogs => Data.Dialogs
+        .Where(DialogMatchesFilter)
+        .OrderBy(dialog => dialog.Id, StringComparer.OrdinalIgnoreCase)
+        .ToList();
+
+    private int DialogChoiceCount => FilteredDialogs.Sum(dialog =>
+        (dialog.Dialogs ?? new List<DialogHead>()).Sum(head => CountChoices(head.Choices)));
+
+    private RenderFragment RenderChoices(IReadOnlyList<Choice>? choices, string? parentQuest, int depth) => builder =>
+    {
+        if (choices == null || choices.Count == 0)
+        {
+            return;
+        }
+
+        var sequence = 0;
+        builder.OpenElement(sequence++, "div");
+        builder.AddAttribute(sequence++, "class", "choice-list");
+        foreach (var choice in choices)
+        {
+            var effectiveQuest = string.IsNullOrWhiteSpace(choice.Quest) ? parentQuest : choice.Quest;
+            builder.OpenElement(sequence++, "div");
+            builder.AddAttribute(sequence++, "class", "choice-node");
+            builder.AddAttribute(sequence++, "style", $"margin-left:{Math.Min(depth, 4) * 1.25}rem");
+            builder.OpenElement(sequence++, "div");
+            builder.AddAttribute(sequence++, "class", "graph-node-title");
+            builder.OpenElement(sequence++, "strong");
+            builder.AddContent(sequence++, Display(choice.Text, "(empty choice)"));
+            builder.CloseElement();
+            builder.OpenElement(sequence++, "span");
+            builder.AddContent(sequence++, ChoiceActionSummary(choice));
+            builder.CloseElement();
+            builder.CloseElement();
+
+            builder.OpenElement(sequence++, "div");
+            builder.AddAttribute(sequence++, "class", "graph-tags");
+            AddTag(builder, ref sequence, effectiveQuest, "Quest: ");
+            AddTag(builder, ref sequence, choice.NextQuestStage.HasValue && choice.NextQuestStage.Value != 0 ? choice.NextQuestStage.Value.ToString() : null, "Next stage: ");
+            AddTag(builder, ref sequence, choice.ItemId, "Item: ");
+            foreach (var item in choice.Items ?? new List<string>())
+            {
+                AddTag(builder, ref sequence, item, "Item: ");
+            }
+            AddTag(builder, ref sequence, choice.Monster, "Fight: ");
+            AddTag(builder, ref sequence, choice.MapId, "Warp: ");
+            AddTag(builder, ref sequence, choice.SpawnId, "Spawn: ");
+            if (choice.ObjectId.HasValue)
+            {
+                AddTag(builder, ref sequence, choice.ObjectId.Value.ToString(), "Object: ");
+            }
+            builder.CloseElement();
+
+            if (choice.Dialog != null)
+            {
+                builder.OpenElement(sequence++, "div");
+                builder.AddAttribute(sequence++, "class", "nested-dialog-node");
+                builder.OpenElement(sequence++, "p");
+                builder.AddContent(sequence++, Display(choice.Dialog.Text, "(empty nested dialog)"));
+                builder.CloseElement();
+                builder.AddContent(sequence++, RenderChoices(choice.Dialog.Choices, effectiveQuest, depth + 1));
+                builder.CloseElement();
+            }
+
+            builder.CloseElement();
+        }
+        builder.CloseElement();
+    };
+
+    private bool QuestMatchesFilter(Quest quest)
+    {
+        if (string.IsNullOrWhiteSpace(filter))
+        {
+            return true;
+        }
+
+        return Contains(quest.Id) ||
+               Contains(quest.Name) ||
+               Contains(quest.Description) ||
+               (quest.Items ?? new List<string>()).Any(Contains) ||
+               (quest.Stages ?? new List<QuestStage>()).Any(stage => Contains(stage.Description) || Contains(stage.Number.ToString()));
+    }
+
+    private bool DialogMatchesFilter(Dialog dialog)
+    {
+        if (string.IsNullOrWhiteSpace(filter))
+        {
+            return true;
+        }
+
+        return Contains(dialog.Id) ||
+               (dialog.Dialogs ?? new List<DialogHead>()).Any(head =>
+                   Contains(head.Text) || Contains(head.Quest) || ChoicesMatchFilter(head.Choices));
+    }
+
+    private bool ChoicesMatchFilter(IEnumerable<Choice>? choices)
+    {
+        return choices != null && choices.Any(choice =>
+            Contains(choice.Text) ||
+            Contains(choice.Quest) ||
+            Contains(choice.ItemId) ||
+            Contains(choice.Monster) ||
+            Contains(choice.MapId) ||
+            Contains(choice.SpawnId) ||
+            (choice.Items ?? new List<string>()).Any(Contains) ||
+            (choice.Actions ?? new List<QuestAction>()).Any(action => Contains(action.ToString())) ||
+            (choice.Dialog != null && (Contains(choice.Dialog.Text) || ChoicesMatchFilter(choice.Dialog.Choices))));
+    }
+
+    private int CountChoices(IEnumerable<Choice>? choices)
+    {
+        return choices == null ? 0 : choices.Sum(choice => 1 + CountChoices(choice.Dialog?.Choices));
+    }
+
+    private bool Contains(string? value) =>
+        !string.IsNullOrWhiteSpace(value) && value.Contains(filter, StringComparison.OrdinalIgnoreCase);
+
+    private static string Display(string? value, string? fallback) => string.IsNullOrWhiteSpace(value) ? fallback ?? string.Empty : value;
+
+    private static string QuestStageSummary(DialogHead head)
+    {
+        var stages = head.QuestStage ?? head.ForQuestStage;
+        return stages == null || stages.Count == 0 ? "Any stage" : "Stages " + string.Join(", ", stages);
+    }
+
+    private static string ChoiceActionSummary(Choice choice)
+    {
+        var actions = choice.Actions ?? new List<QuestAction>();
+        return actions.Count == 0 ? "Choice" : string.Join(", ", actions);
+    }
+
+    private static void AddTag(RenderTreeBuilder builder, ref int sequence, string? value, string label)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return;
+        }
+
+        builder.OpenElement(sequence++, "span");
+        builder.AddContent(sequence++, label + value);
+        builder.CloseElement();
+    }
+}

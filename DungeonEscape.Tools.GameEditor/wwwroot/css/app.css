@@ -338,6 +338,11 @@ button.danger {
     text-align: center;
 }
 
+.empty-state.compact {
+    padding: 1rem;
+    text-align: left;
+}
+
 .form-header {
     display: flex;
     align-items: center;
@@ -681,6 +686,201 @@ legend {
 
 .property-row {
     gap: .4rem;
+}
+
+/* ---- Read-only tool tabs ---- */
+.tool-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tool-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.tool-header h2 {
+    margin: 0 0 .35rem;
+    color: var(--accent-2);
+}
+
+.tool-header p {
+    margin: 0;
+    color: var(--text-dim);
+}
+
+.tool-filter {
+    min-width: 280px;
+}
+
+.graph-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: .65rem;
+}
+
+.graph-summary > div {
+    display: flex;
+    flex-direction: column;
+    gap: .15rem;
+    padding: .75rem;
+    background: rgba(0,0,0,.16);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.graph-summary strong {
+    color: var(--accent-2);
+    font-size: 1.25rem;
+}
+
+.graph-summary span {
+    color: var(--text-dim);
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+.graph-layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) minmax(420px, 1.6fr);
+    gap: 1rem;
+    align-items: start;
+}
+
+.graph-column {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    min-width: 0;
+}
+
+.graph-column h3 {
+    margin: 0;
+    color: var(--accent-2);
+}
+
+.graph-card,
+.dialog-head-card,
+.choice-node,
+.nested-dialog-node {
+    padding: .75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: rgba(0,0,0,.13);
+}
+
+.graph-card header,
+.graph-node-title {
+    display: flex;
+    justify-content: space-between;
+    gap: .75rem;
+    align-items: baseline;
+}
+
+.graph-card header span,
+.graph-node-title span {
+    color: var(--text-dim);
+    font-size: .8rem;
+}
+
+.graph-card p,
+.dialog-head-card p,
+.nested-dialog-node p {
+    margin: .45rem 0;
+    color: var(--text);
+}
+
+.graph-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+    margin-top: .45rem;
+}
+
+.graph-tags span {
+    padding: .12rem .4rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--panel-2);
+    color: var(--text-dim);
+    font-size: .75rem;
+}
+
+.graph-stages,
+.choice-list {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    margin-top: .65rem;
+}
+
+.graph-stage {
+    display: flex;
+    gap: .6rem;
+    padding: .4rem .55rem;
+    border-left: 3px solid var(--border);
+    background: rgba(255,255,255,.03);
+}
+
+.graph-stage.complete {
+    border-left-color: var(--ok);
+}
+
+.graph-stage span {
+    color: var(--text-dim);
+}
+
+.dialog-head-card,
+.choice-node,
+.nested-dialog-node {
+    margin-top: .65rem;
+}
+
+.choice-node {
+    border-left: 3px solid var(--accent);
+}
+
+.nested-dialog-node {
+    background: rgba(0,0,0,.18);
+}
+
+.simulator-actions {
+    margin-top: .75rem;
+}
+
+.simulator-warning {
+    margin: .75rem 0;
+}
+
+.simulator-table {
+    display: flex;
+    flex-direction: column;
+    margin-top: .75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.simulator-row {
+    display: grid;
+    grid-template-columns: minmax(160px, 1fr) repeat(5, minmax(80px, .55fr));
+    gap: .5rem;
+    padding: .45rem .6rem;
+    border-bottom: 1px solid rgba(0,0,0,.2);
+}
+
+.simulator-row:last-child {
+    border-bottom: none;
+}
+
+.simulator-row.header {
+    background: var(--panel-2);
+    color: var(--accent-2);
+    font-weight: 700;
 }
 
 /* ---- Toast / message ---- */

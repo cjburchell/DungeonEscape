@@ -40,8 +40,9 @@ public sealed class MonsterImageCatalog
             : $"#{imageId} (unknown)";
 
     /// <summary>
-    /// Returns a base64 data URI for the monster image so it can be rendered
-    /// directly inside the WebView, or null if the image cannot be found.
+    /// Returns a short app-relative URI for the monster image so it can be
+    /// rendered inside Photino without logging a large base64 string, or null if
+    /// the image cannot be found.
     /// </summary>
     public string? GetImageDataUri(int imageId)
     {
@@ -53,8 +54,13 @@ public sealed class MonsterImageCatalog
 
         try
         {
-            var bytes = File.ReadAllBytes(path);
-            return "data:image/png;base64," + Convert.ToBase64String(bytes);
+            var cachePath = ImagePreviewCache.GetCachePath(
+                "monsters",
+                ImagePreviewCache.GetSourceIdentity(path),
+                imageId);
+            Directory.CreateDirectory(Path.GetDirectoryName(cachePath)!);
+            File.Copy(path, cachePath, overwrite: true);
+            return ImagePreviewCache.ToRelativeUrl(cachePath);
         }
         catch
         {

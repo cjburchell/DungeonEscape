@@ -36,14 +36,12 @@ This file tracks post-migration feature and architecture ideas. Items here are n
 
 ## Tools And Data Editing
 
-- Completed / mostly completed: the standalone Game Editor now edits the Data folder as one project, including monsters, spells, skills, custom items, item definitions, quests, dialogs, class levels, stat names, names, and map gameplay metadata.
-- Completed / mostly completed: the Game Editor validation panel now covers duplicate identifiers, empty required names/IDs, broken spell/skill/item/quest/monster/map references, invalid image IDs, missing class-level definitions, dialog nesting issues, duplicate TMX object IDs within each object layer, and chest/door lock metadata warnings.
+- Completed / mostly completed: the standalone Game Editor now edits the Data folder as one project, including monsters, spells, skills, custom items, item definitions, quests, dialogs, class levels, stat names, names, and map gameplay metadata. It also includes read-only Quest Graph and Encounter Simulator analysis tabs.
+- Completed / mostly completed: the Game Editor validation panel now covers duplicate identifiers, empty required names/IDs, broken spell/skill/item/quest/monster/map references, invalid image IDs, missing class-level definitions, dialog nesting issues, duplicate TMX object IDs within each object layer, chest/door lock metadata warnings, invalid map biome values, missing map music, generated item-definition image references, and missing tileset/source image files.
 - Completed / mostly completed: the Maps tab now acts as the first map gameplay validator for map/warp/spawn/object metadata, locked-door/chest metadata, random monster references, map root class rules, and supported TMX object class/property editing.
+- Completed / mostly completed: JSON validation schemas now live under `DungeonEscape.Tools.GameEditor/Schemas/` for items, spells, skills, quests, dialogs, monsters, class levels, stat names, names, and map random monster tables.
 - Continue polishing existing Game Editor workflows and expand coverage when new data types or metadata rules are introduced.
-- Add JSON validation schemas for items, spells, skills, quests, dialogs, and monsters.
-- Add a quest/dialog graph viewer before or alongside full editors.
-- Add an encounter simulator for testing random monster tables and reward pacing.
-- Expand validation for missing sprite/icon/audio assets and any future map metadata rules not covered by the current Game Editor.
+- Expand validation for future map metadata rules not covered by the current Game Editor.
 
 ## Map And Exploration UI
 

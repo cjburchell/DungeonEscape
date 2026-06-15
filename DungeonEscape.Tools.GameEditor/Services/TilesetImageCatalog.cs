@@ -15,17 +15,18 @@ public sealed record TilesetImageEntry(int ImageId, string DisplayName);
 /// <c>items.tsx</c> for spells) into individual tile images indexed by ImageId.
 /// Mirrors the slicing logic used by the game's <c>TilesetSprites</c> so the
 /// editor previews match in-game rendering. Tiles are produced lazily and cached
-/// as base64 PNG data URIs for display inside the WebView.
+/// as temporary PNG files so rendered image sources stay short in logs.
 /// </summary>
 public sealed class TilesetImageCatalog
 {
     private readonly AssetContext context;
     private readonly Func<AssetContext, string?> tilesetPathSelector;
 
-    private readonly Dictionary<int, string> dataUriCache = new();
+    private readonly Dictionary<int, string> imageUriCache = new();
     private List<TilesetImageEntry> entries = new();
 
     private Bitmap? sourceBitmap;
+    private string? sourceImagePath;
     private int tileWidth;
     private int tileHeight;
     private int columns;
@@ -43,6 +44,8 @@ public sealed class TilesetImageCatalog
 
     public IReadOnlyList<TilesetImageEntry> Entries => entries;
 
+    public string? SourceImagePath => sourceImagePath;
+
     public bool TryGet(int imageId, out TilesetImageEntry entry)
     {
         foreach (var candidate in entries)
@@ -59,8 +62,8 @@ public sealed class TilesetImageCatalog
     }
 
     /// <summary>
-    /// Returns a base64 PNG data URI for the given tile, or null when the tile
-    /// cannot be resolved.
+    /// Returns a short app-relative URI for the given cached tile PNG, or null
+    /// when the tile cannot be resolved.
     /// </summary>
     public string? GetImageDataUri(int imageId)
     {
@@ -74,7 +77,7 @@ public sealed class TilesetImageCatalog
             return null;
         }
 
-        if (dataUriCache.TryGetValue(imageId, out var cached))
+        if (imageUriCache.TryGetValue(imageId, out var cached))
         {
             return cached;
         }
@@ -101,10 +104,11 @@ public sealed class TilesetImageCatalog
                     GraphicsUnit.Pixel);
             }
 
-            using var stream = new MemoryStream();
-            tile.Save(stream, ImageFormat.Png);
-            var uri = "data:image/png;base64," + Convert.ToBase64String(stream.ToArray());
-            dataUriCache[imageId] = uri;
+            var cachePath = GetCachePath(imageId);
+            Directory.CreateDirectory(Path.GetDirectoryName(cachePath)!);
+            tile.Save(cachePath, ImageFormat.Png);
+            var uri = ImagePreviewCache.ToRelativeUrl(cachePath);
+            imageUriCache[imageId] = uri;
             return uri;
         }
         catch
@@ -115,8 +119,9 @@ public sealed class TilesetImageCatalog
 
     public void Reload()
     {
-        dataUriCache.Clear();
+        imageUriCache.Clear();
         entries = new List<TilesetImageEntry>();
+        sourceImagePath = null;
         sourceBitmap?.Dispose();
         sourceBitmap = null;
 
@@ -157,6 +162,7 @@ public sealed class TilesetImageCatalog
         }
 
         var imagePath = ResolveImageAssetPath(tilesetPath, source);
+        sourceImagePath = imagePath;
         if (!File.Exists(imagePath))
         {
             return;
@@ -201,5 +207,11 @@ public sealed class TilesetImageCatalog
         var tilesetDir = Path.GetDirectoryName(tilesetPath) ?? string.Empty;
         var combined = Path.GetFullPath(Path.Combine(tilesetDir, source.Replace('\\', '/')));
         return combined;
+    }
+
+    private string GetCachePath(int imageId)
+    {
+        var identity = ImagePreviewCache.GetSourceIdentity(sourceImagePath ?? tilesetPathSelector(context) ?? "tileset");
+        return ImagePreviewCache.GetCachePath("tilesets", identity, imageId);
     }
 }

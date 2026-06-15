@@ -88,6 +88,8 @@ else
     </div>
 
     <div class="split">
+        @if (!IsToolTab)
+        {
         <div class="list-pane">
             <div class="search">
                 <input placeholder="Search..." @bind="searchText" @bind:event="oninput" />
@@ -241,6 +243,7 @@ else
                 }
             </div>
         </div>
+        }
 
         <div class="form-pane">
             @switch (activeTab)
@@ -278,6 +281,12 @@ else
                 case EditorTab.Maps:
                     <MapForm Map="selectedMap" Maps="Data.Maps" OnChanged="OnMapChanged" />
                     break;
+                case EditorTab.QuestGraph:
+                    <QuestDialogGraph />
+                    break;
+                case EditorTab.EncounterSimulator:
+                    <EncounterSimulator />
+                    break;
             }
         </div>
     </div>
@@ -289,7 +298,7 @@ else
 }
 
 @code {
-    private enum EditorTab { Monsters, Spells, Skills, Items, ItemDefinitions, Quests, Dialogs, Classes, StatNames, Names, Maps }
+    private enum EditorTab { Monsters, Spells, Skills, Items, ItemDefinitions, Quests, Dialogs, Classes, StatNames, Names, Maps, QuestGraph, EncounterSimulator }
 
     private EditorTab activeTab = EditorTab.Monsters;
     private string searchText = string.Empty;
@@ -448,6 +457,8 @@ else
         EditorTab.ItemDefinitions => "Item Definitions",
         EditorTab.Classes => "Class",
         EditorTab.StatNames => "Stat Names",
+        EditorTab.QuestGraph => "Quest Graph",
+        EditorTab.EncounterSimulator => "Encounter Simulator",
         _ => tab.ToString()
     };
 
@@ -464,13 +475,16 @@ else
         EditorTab.StatNames => Data.StatNames.Count,
         EditorTab.Names => (Data.Names.Male?.Count ?? 0) + (Data.Names.Female?.Count ?? 0),
         EditorTab.Maps => Data.Maps.Count,
+        EditorTab.QuestGraph => Data.Quests.Count + Data.Dialogs.Count,
+        EditorTab.EncounterSimulator => Data.Maps.Count + 1,
         _ => 0
     };
 
     private bool IsSingleObjectTab => activeTab == EditorTab.Names;
     private bool IsFixedListTab => activeTab == EditorTab.StatNames;
     private bool IsMapTab => activeTab == EditorTab.Maps;
-    private bool AreListActionsDisabled => IsSingleObjectTab || IsFixedListTab || IsMapTab;
+    private bool IsToolTab => activeTab == EditorTab.QuestGraph || activeTab == EditorTab.EncounterSimulator;
+    private bool AreListActionsDisabled => IsSingleObjectTab || IsFixedListTab || IsMapTab || IsToolTab;
 
     private object? SelectedObject => activeTab switch
     {
@@ -485,6 +499,8 @@ else
         EditorTab.StatNames => selectedStatName,
         EditorTab.Names => Data.Names,
         EditorTab.Maps => selectedMap,
+        EditorTab.QuestGraph => null,
+        EditorTab.EncounterSimulator => null,
         _ => null
     };
 

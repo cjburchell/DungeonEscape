@@ -1,0 +1,306 @@
+@inject DataFolderService Data
+
+<div class="tool-panel">
+    <div class="tool-header">
+        <div>
+            <h2>Encounter Simulator</h2>
+            <p>Runs the same weighted encounter builder used by the game so random monster tables can be tuned before play-testing.</p>
+        </div>
+    </div>
+
+    <fieldset>
+        <legend>Simulation Setup</legend>
+        <div class="field-grid compact-grid">
+            <div class="field">
+                <label>Source</label>
+                <select @bind="sourceKey">
+                    <option value="overworld">Overworld biome monsters</option>
+                    @foreach (var map in Data.Maps.Where(map => !map.IsOverworld).OrderBy(map => map.Id, StringComparer.OrdinalIgnoreCase))
+                    {
+                        <option value="map:@map.Id">Map: @map.Id (@map.RandomMonsters.Count)</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label>Biome</label>
+                <select value="@biome" @onchange="OnBiomeChanged">
+                    @foreach (var value in Enum.GetValues<Biome>())
+                    {
+                        <option value="@value">@value</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label>Min Monster Level</label>
+                <input type="number" value="@minMonsterLevel" @onchange="e => minMonsterLevel = ParseInt(e.Value, 0)" />
+            </div>
+            <div class="field">
+                <label>Max Monster Level</label>
+                <input type="number" value="@maxMonsterLevel" @onchange="e => maxMonsterLevel = ParseInt(e.Value, 0)" />
+            </div>
+            <div class="field">
+                <label>Party Level</label>
+                <input type="number" min="1" value="@partyLevel" @onchange="e => partyLevel = Math.Max(1, ParseInt(e.Value, 1))" />
+            </div>
+            <div class="field">
+                <label>Alive Members</label>
+                <input type="number" min="1" value="@alivePartyCount" @onchange="e => alivePartyCount = Math.Max(1, ParseInt(e.Value, 1))" />
+            </div>
+            <div class="field">
+                <label>Runs</label>
+                <input type="number" min="1" max="10000" value="@simulationCount" @onchange="e => simulationCount = Math.Clamp(ParseInt(e.Value, 1000), 1, 10000)" />
+            </div>
+            <div class="field checkbox-field">
+                <label>Repel</label>
+                <label class="checkbox-row"><input type="checkbox" @bind="repelActive" /> Apply repel filter</label>
+            </div>
+            <div class="field">
+                <label>Repel Max Health</label>
+                <input type="number" min="0" value="@repelMaxHealth" @onchange="e => repelMaxHealth = Math.Max(0, ParseInt(e.Value, 0))" disabled="@(!repelActive)" />
+            </div>
+        </div>
+        <div class="row-actions simulator-actions">
+            <button class="primary" @onclick="RunSimulation">Run Simulation</button>
+            <button @onclick="ApplySelectedMapDefaults" disabled="@(SelectedMap == null)">Use Map Defaults</button>
+        </div>
+    </fieldset>
+
+    @if (results == null)
+    {
+        <div class="empty-state compact">Choose a source and run the simulator.</div>
+    }
+    else
+    {
+        <fieldset>
+            <legend>Results</legend>
+            <div class="graph-summary">
+                <div><strong>@results.RunCount</strong><span>runs</span></div>
+                <div><strong>@results.EmptyRuns</strong><span>empty</span></div>
+                <div><strong>@results.AverageMonsterCount.ToString("0.00")</strong><span>avg monsters</span></div>
+                <div><strong>@results.AverageXp.ToString("0.0")</strong><span>avg XP</span></div>
+                <div><strong>@results.AverageGold.ToString("0.0")</strong><span>avg gold</span></div>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(results.Warning))
+            {
+                <div class="validation-issue warning simulator-warning">
+                    <span class="validation-severity">Warning</span>
+                    <span class="validation-location">Encounter Simulator</span>
+                    <span class="validation-message">@results.Warning</span>
+                </div>
+            }
+
+            <div class="simulator-table">
+                <div class="simulator-row header">
+                    <span>Monster</span>
+                    <span>Appearances</span>
+                    <span>Runs %</span>
+                    <span>Avg / run</span>
+                    <span>Min level</span>
+                    <span>Rarity</span>
+                </div>
+                @foreach (var row in results.Rows)
+                {
+                    <div class="simulator-row">
+                        <span>@row.Name</span>
+                        <span>@row.Appearances</span>
+                        <span>@row.RunPercent.ToString("0.0")%</span>
+                        <span>@row.AveragePerRun.ToString("0.00")</span>
+                        <span>@row.MinLevel</span>
+                        <span>@row.Rarity</span>
+                    </div>
+                }
+            </div>
+        </fieldset>
+    }
+</div>
+
+@code {
+    private string sourceKey = "overworld";
+    private Biome biome = Biome.Grassland;
+    private int minMonsterLevel;
+    private int maxMonsterLevel;
+    private int partyLevel = 4;
+    private int alivePartyCount = 1;
+    private int simulationCount = 1000;
+    private bool repelActive;
+    private int repelMaxHealth = 10;
+    private SimulationResults? results;
+
+    private MapDocument? SelectedMap => sourceKey.StartsWith("map:", StringComparison.OrdinalIgnoreCase)
+        ? Data.Maps.FirstOrDefault(map => string.Equals(map.Id, sourceKey[4..], StringComparison.OrdinalIgnoreCase))
+        : null;
+
+    private void OnBiomeChanged(ChangeEventArgs e)
+    {
+        if (Enum.TryParse<Biome>(e.Value?.ToString(), out var parsed))
+        {
+            biome = parsed;
+        }
+    }
+
+    private void ApplySelectedMapDefaults()
+    {
+        var map = SelectedMap;
+        if (map == null)
+        {
+            return;
+        }
+
+        if (map.Properties.TryGetValue("biome", out var biomeValue) && Enum.TryParse<Biome>(biomeValue, true, out var parsedBiome))
+        {
+            biome = parsedBiome;
+        }
+
+        minMonsterLevel = GetMapInt(map, "MinMonsterLevel");
+        maxMonsterLevel = GetMapInt(map, "MaxMonsterLevel");
+    }
+
+    private void RunSimulation()
+    {
+        var random = new Random(12345);
+        var randomMonsters = GetRandomMonsters().ToList();
+        EncounterRules.LinkRandomMonsters(randomMonsters, Data.Monsters);
+
+        var biomeInfo = new BiomeInfo
+        {
+            Type = biome,
+            MinMonsterLevel = minMonsterLevel,
+            MaxMonsterLevel = maxMonsterLevel
+        };
+
+        var rows = new Dictionary<string, SimulationRow>(StringComparer.OrdinalIgnoreCase);
+        var emptyRuns = 0;
+        var totalMonsters = 0;
+        var totalXp = 0L;
+        var totalGold = 0L;
+
+        for (var run = 0; run < simulationCount; run++)
+        {
+            var encounter = EncounterRules.BuildRandomEncounter(
+                randomMonsters,
+                biomeInfo,
+                partyLevel,
+                alivePartyCount,
+                repelActive,
+                repelMaxHealth,
+                max => random.Next(max),
+                () => random.Next(1, 21),
+                RollMonsterHealth);
+
+            if (encounter.Count == 0)
+            {
+                emptyRuns++;
+                continue;
+            }
+
+            totalMonsters += encounter.Count;
+            totalXp += encounter.Sum(monster => (long)monster.Xp);
+            totalGold += encounter.Sum(monster => monster.Gold);
+
+            foreach (var monster in encounter)
+            {
+                if (!rows.TryGetValue(monster.Name, out var row))
+                {
+                    row = new SimulationRow(monster.Name, monster.MinLevel, monster.Rarity);
+                    rows[monster.Name] = row;
+                }
+
+                row.Appearances++;
+            }
+        }
+
+        var orderedRows = rows.Values
+            .OrderByDescending(row => row.Appearances)
+            .ThenBy(row => row.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        foreach (var row in orderedRows)
+        {
+            row.RunPercent = simulationCount == 0 ? 0 : row.Appearances * 100d / simulationCount;
+            row.AveragePerRun = simulationCount == 0 ? 0 : row.Appearances / (double)simulationCount;
+        }
+
+        results = new SimulationResults(
+            simulationCount,
+            emptyRuns,
+            simulationCount == 0 ? 0 : totalMonsters / (double)simulationCount,
+            simulationCount == 0 ? 0 : totalXp / (double)simulationCount,
+            simulationCount == 0 ? 0 : totalGold / (double)simulationCount,
+            orderedRows,
+            GetWarning(randomMonsters, biomeInfo, emptyRuns));
+    }
+
+    private IEnumerable<RandomMonster> GetRandomMonsters()
+    {
+        var map = SelectedMap;
+        if (map == null)
+        {
+            return EncounterRules.CreateOverworldRandomMonsters(Data.Monsters);
+        }
+
+        return map.RandomMonsters.Select(monster => new RandomMonster
+        {
+            Name = monster.Name,
+            Rarity = monster.Rarity,
+            IsOverworld = false
+        });
+    }
+
+    private static int RollMonsterHealth(Monster monster)
+    {
+        if (monster == null)
+        {
+            return 0;
+        }
+
+        var times = Math.Max(1, monster.HealthTimes);
+        var random = Math.Max(0, monster.HealthRandom);
+        return monster.HealthConst + (random == 0 ? 0 : times * ((random + 1) / 2));
+    }
+
+    private static string? GetWarning(IEnumerable<RandomMonster> randomMonsters, BiomeInfo biomeInfo, int emptyRuns)
+    {
+        var candidates = EncounterRules.FilterRandomMonsters(randomMonsters, biomeInfo).ToList();
+        if (candidates.Count == 0)
+        {
+            return "No monsters match the selected source, biome, and level range.";
+        }
+
+        return emptyRuns > 0 ? "Some simulation runs produced no encounter after rarity and repel filtering." : null;
+    }
+
+    private static int GetMapInt(MapDocument map, string property)
+    {
+        return map.Properties.TryGetValue(property, out var value) && int.TryParse(value, out var parsed) ? parsed : 0;
+    }
+
+    private static int ParseInt(object? value, int fallback) =>
+        int.TryParse(value?.ToString(), out var parsed) ? parsed : fallback;
+
+    private sealed record SimulationResults(
+        int RunCount,
+        int EmptyRuns,
+        double AverageMonsterCount,
+        double AverageXp,
+        double AverageGold,
+        IReadOnlyList<SimulationRow> Rows,
+        string? Warning);
+
+    private sealed class SimulationRow
+    {
+        public SimulationRow(string name, int minLevel, Rarity rarity)
+        {
+            Name = name;
+            MinLevel = minLevel;
+            Rarity = rarity;
+        }
+
+        public string Name { get; }
+        public int MinLevel { get; }
+        public Rarity Rarity { get; }
+        public int Appearances { get; set; }
+        public double RunPercent { get; set; }
+        public double AveragePerRun { get; set; }
+    }
+}

@@ -40,19 +40,22 @@ public sealed class DataValidationService
     private readonly ItemImageCatalog itemImages;
     private readonly SpellImageCatalog spellImages;
     private readonly HeroImageCatalog heroImages;
+    private readonly AssetContext assets;
 
     public DataValidationService(
         DataFolderService data,
         MonsterImageCatalog monsterImages,
         ItemImageCatalog itemImages,
         SpellImageCatalog spellImages,
-        HeroImageCatalog heroImages)
+        HeroImageCatalog heroImages,
+        AssetContext assets)
     {
         this.data = data;
         this.monsterImages = monsterImages;
         this.itemImages = itemImages;
         this.spellImages = spellImages;
         this.heroImages = heroImages;
+        this.assets = assets;
     }
 
     public IReadOnlyList<DataValidationIssue> Validate()
@@ -102,6 +105,7 @@ public sealed class DataValidationService
         ValidateStatNames(issues);
         ValidateClassLevels(issues, skillNames);
         ValidateMaps(issues, itemRefs, dialogIds, monsterNames, mapIds, classValues);
+        ValidateAssetFiles(issues);
 
         return issues
             .OrderBy(issue => issue.Severity)
@@ -169,7 +173,16 @@ public sealed class DataValidationService
         for (var i = 0; i < data.ItemDefinitions.Count; i++)
         {
             var definition = data.ItemDefinitions[i];
-            ValidateClasses(issues, Label("Item definition", definition.Type.ToString(), i), definition.Classes, classValues);
+            var location = Label("Item definition", definition.Type.ToString(), i);
+            ValidateClasses(issues, location, definition.Classes, classValues);
+
+            foreach (var itemName in definition.Names ?? new List<ItemName>())
+            {
+                if (itemImages.Catalog.Entries.Count > 0 && !itemImages.Catalog.TryGet(itemName.ImageId, out _))
+                {
+                    Warning(issues, location, $"Generated item image #{itemName.ImageId} for '{itemName.Name}' was not found in items2.tsx.");
+                }
+            }
         }
     }
 
@@ -387,6 +400,8 @@ public sealed class DataValidationService
         {
             var location = $"Map '{map.Id}'";
             ValidateMapClass(issues, location, map.Class);
+            ValidateMapSong(issues, location, map.Properties);
+            ValidateMapBiome(issues, location, map.Properties);
             ValidateDuplicateMapObjectIds(issues, location, map.Objects);
 
             foreach (var randomMonster in map.RandomMonsters)
@@ -442,6 +457,80 @@ public sealed class DataValidationService
         if (string.Equals(mapObject.Class, "NpcPartyMember", StringComparison.OrdinalIgnoreCase))
         {
             ValidateReference(issues, location, "class", GetProperty(mapObject, "Class"), classValues);
+        }
+    }
+
+    private void ValidateMapSong(List<DataValidationIssue> issues, string location, IReadOnlyDictionary<string, string> properties)
+    {
+        if (!properties.TryGetValue("song", out var song) || string.IsNullOrWhiteSpace(song))
+        {
+            return;
+        }
+
+        var musicDirectory = assets.MusicDirectory;
+        if (string.IsNullOrWhiteSpace(musicDirectory) || !Directory.Exists(musicDirectory))
+        {
+            return;
+        }
+
+        var path = Path.Combine(musicDirectory, song + ".ogg");
+        if (!File.Exists(path))
+        {
+            Warning(issues, location, $"Song '{song}' was not found in Audio/music.");
+        }
+    }
+
+    private static void ValidateMapBiome(List<DataValidationIssue> issues, string location, IReadOnlyDictionary<string, string> properties)
+    {
+        if (!properties.TryGetValue("biome", out var biome) || string.IsNullOrWhiteSpace(biome))
+        {
+            return;
+        }
+
+        if (!Enum.TryParse<Biome>(biome, true, out _))
+        {
+            Error(issues, location, $"Biome '{biome}' is not a known biome value.");
+        }
+    }
+
+    private void ValidateAssetFiles(List<DataValidationIssue> issues)
+    {
+        if (!string.IsNullOrWhiteSpace(assets.TilesetPath) && !File.Exists(assets.TilesetPath))
+        {
+            Warning(issues, "Assets", "Monster tileset Tilesets/allmonsters.tsx was not found.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(assets.ItemsTilesetPath) && !File.Exists(assets.ItemsTilesetPath))
+        {
+            Warning(issues, "Assets", "Item tileset Tilesets/items2.tsx was not found.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(assets.SpellsTilesetPath) && !File.Exists(assets.SpellsTilesetPath))
+        {
+            Warning(issues, "Assets", "Spell tileset Tilesets/items.tsx was not found.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(assets.HeroSpriteSheetPath) && !File.Exists(assets.HeroSpriteSheetPath))
+        {
+            Warning(issues, "Assets", "Hero sprite sheet Images/sprites/hero.png was not found.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(itemImages.Catalog.SourceImagePath) && !File.Exists(itemImages.Catalog.SourceImagePath))
+        {
+            Warning(issues, "Assets", $"Item tileset image '{Path.GetFileName(itemImages.Catalog.SourceImagePath)}' was not found.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(spellImages.Catalog.SourceImagePath) && !File.Exists(spellImages.Catalog.SourceImagePath))
+        {
+            Warning(issues, "Assets", $"Spell tileset image '{Path.GetFileName(spellImages.Catalog.SourceImagePath)}' was not found.");
+        }
+
+        foreach (var entry in monsterImages.Entries)
+        {
+            if (!File.Exists(entry.ImagePath))
+            {
+                Warning(issues, "Assets", $"Monster image '{Path.GetFileName(entry.ImagePath)}' for {entry.DisplayName} was not found.");
+            }
         }
     }
 

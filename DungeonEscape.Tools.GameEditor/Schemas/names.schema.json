@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dungeonescape.local/schemas/names.schema.json",
+  "title": "Dungeon Escape names.json",
+  "$ref": "dungeonescape-data.schema.json#/$defs/names"
+}

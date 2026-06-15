@@ -41,6 +41,7 @@ public static class Program
         var appIconPath = Path.Combine(AppContext.BaseDirectory, AppIconRelativePath);
 
         app.MainWindow
+            .SetLogVerbosity(0)
             .SetTitle("Dungeon Escape - Game Editor")
             .SetIconFile(appIconPath)
             .SetUseOsDefaultSize(false)

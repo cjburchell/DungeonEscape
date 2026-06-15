@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dungeonescape.local/schemas/dungeonescape-data.schema.json",
+  "title": "Dungeon Escape data definitions",
+  "type": "object",
+  "$defs": {
+    "rarity": { "type": "string", "enum": ["Common", "Uncommon", "Rare", "Epic", "Legendary"] },
+    "biome": { "type": "string", "enum": ["None", "Grassland", "Forest", "Water", "Hills", "Desert", "Swamp", "Cave", "Town", "Tower"] },
+    "statType": { "type": "string", "enum": ["None", "Health", "Attack", "Defence", "MagicDefence", "Agility", "Magic"] },
+    "target": { "type": "string", "enum": ["Single", "Group", "Object", "None"] },
+    "skillType": { "type": "string", "enum": ["Heal", "Outside", "Damage", "Return", "Revive", "Dot", "Sleep", "Confusion", "StopSpell", "Buff", "Decrease", "Clear", "Steal", "Flee", "Attack", "None", "StatDecrease", "StatIncrease", "Repel", "Open"] },
+    "durationType": { "type": "string", "enum": ["Distance", "Rounds"] },
+    "itemType": { "type": "string", "enum": ["OneUse", "Weapon", "Armor", "Gold", "Quest", "Unknown", "RepeatableUse"] },
+    "slot": { "type": "string", "enum": ["OffHand", "PrimaryHand", "Hands", "Head", "Chest", "Legs", "Feet"] },
+    "questAction": { "type": "string", "enum": ["None", "GiveItem", "TakeItem", "Fight", "Warp", "Join", "OpenDoor"] },
+    "className": { "type": "string", "minLength": 1 },
+    "statRoll": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "Type": { "$ref": "#/$defs/statType" },
+        "Roll": { "type": "integer" },
+        "RollTimes": { "type": "integer" },
+        "StartConst": { "type": "integer" }
+      }
+    },
+    "statValue": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "Type": { "$ref": "#/$defs/statType" },
+        "Value": { "type": "integer" }
+      }
+    },
+    "monster": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["Name"],
+      "properties": {
+        "Name": { "type": "string", "minLength": 1 },
+        "ImageId": { "type": "integer", "minimum": 0 },
+        "MinLevel": { "type": "integer", "minimum": 0 },
+        "GroupSize": { "type": "integer", "minimum": 0 },
+        "Spells": { "type": "array", "items": { "type": "string" } },
+        "Skills": { "type": "array", "items": { "type": "string" } },
+        "Items": { "type": "array", "items": { "type": "string" } },
+        "Biomes": { "type": "array", "items": { "$ref": "#/$defs/biome" } },
+        "Rarity": { "$ref": "#/$defs/rarity" }
+      }
+    },
+    "spell": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["Name"],
+      "properties": {
+        "Name": { "type": "string", "minLength": 1 },
+        "Skill": { "type": "string" },
+        "ImageId": { "type": "integer", "minimum": 0 },
+        "Cost": { "type": "integer", "minimum": 0 },
+        "MinLevel": { "type": "integer", "minimum": 0 },
+        "Classes": { "type": "array", "items": { "$ref": "#/$defs/className" } }
+      }
+    },
+    "skill": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["Name"],
+      "properties": {
+        "Name": { "type": "string", "minLength": 1 },
+        "Targets": { "$ref": "#/$defs/target" },
+        "Type": { "$ref": "#/$defs/skillType" },
+        "DurationType": { "$ref": "#/$defs/durationType" },
+        "StatType": { "$ref": "#/$defs/statType" },
+        "MaxTargets": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "item": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["Name"],
+      "properties": {
+        "Id": { "type": "string" },
+        "Name": { "type": "string", "minLength": 1 },
+        "ImageId": { "type": "integer", "minimum": 0 },
+        "QuestId": { "type": "string" },
+        "Skill": { "type": "string" },
+        "Slots": { "type": "array", "items": { "$ref": "#/$defs/slot" } },
+        "Type": { "$ref": "#/$defs/itemType" },
+        "Rarity": { "$ref": "#/$defs/rarity" },
+        "Stats": { "type": "array", "items": { "$ref": "#/$defs/statValue" } },
+        "Classes": { "type": "array", "items": { "$ref": "#/$defs/className" } },
+        "Target": { "$ref": "#/$defs/target" }
+      }
+    },
+    "itemName": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "Name": { "type": "string" },
+        "ImageId": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "itemDefinition": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "Type": { "$ref": "#/$defs/itemType" },
+        "BaseStat": { "$ref": "#/$defs/statType" },
+        "Slots": { "type": "array", "items": { "$ref": "#/$defs/slot" } },
+        "Classes": { "type": "array", "items": { "$ref": "#/$defs/className" } },
+        "Names": { "type": "array", "items": { "$ref": "#/$defs/itemName" } }
+      }
+    },
+    "questStage": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "Number": { "type": "integer", "minimum": 0 },
+        "Description": { "type": "string" },
+        "CompleteQuest": { "type": "boolean" }
+      }
+    },
+    "quest": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["Id"],
+      "properties": {
+        "Id": { "type": "string", "minLength": 1 },
+        "Name": { "type": "string" },
+        "Description": { "type": "string" },
+        "MinimumLevel": { "type": "integer", "minimum": 0 },
+        "Items": { "type": "array", "items": { "type": "string" } },
+        "Stages": { "type": "array", "items": { "$ref": "#/$defs/questStage" } }
+      }
+    },
+    "choice": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "Text": { "type": "string" },
+        "Actions": { "type": "array", "items": { "$ref": "#/$defs/questAction" } },
+        "Items": { "type": "array", "items": { "type": "string" } },
+        "ItemId": { "type": "string" },
+        "Quest": { "type": "string" },
+        "Monster": { "type": "string" },
+        "NextQuestStage": { "type": "integer" },
+        "MapId": { "type": "string" },
+        "SpawnId": { "type": "string" },
+        "ObjectId": { "type": "integer" },
+        "Dialog": { "$ref": "#/$defs/dialogText" }
+      }
+    },
+    "dialogText": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "Text": { "type": "string" },
+        "Choices": { "type": "array", "items": { "$ref": "#/$defs/choice" } }
+      }
+    },
+    "dialogHead": {
+      "allOf": [
+        { "$ref": "#/$defs/dialogText" },
+        {
+          "type": "object",
+          "properties": {
+            "Quest": { "type": "string" },
+            "QuestStage": { "type": "array", "items": { "type": "integer" } },
+            "ForQuestStage": { "type": "array", "items": { "type": "integer" } },
+            "StartQuest": { "type": "boolean" }
+          }
+        }
+      ]
+    },
+    "dialog": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["Id"],
+      "properties": {
+        "Id": { "type": "string", "minLength": 1 },
+        "Dialogs": { "type": "array", "items": { "$ref": "#/$defs/dialogHead" } }
+      }
+    },
+    "classStats": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["Class"],
+      "properties": {
+        "Class": { "$ref": "#/$defs/className" },
+        "FirstLevel": { "type": "integer", "minimum": 0 },
+        "DefaultImage": { "type": "integer", "minimum": 0 },
+        "Stats": { "type": "array", "items": { "$ref": "#/$defs/statRoll" } },
+        "Skills": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "statName": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "Type": { "$ref": "#/$defs/statType" },
+        "Prefix": { "type": "array", "items": { "type": "string" } },
+        "Suffix": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "names": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "Male": { "type": "array", "items": { "type": "string" } },
+        "Female": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "randomMonster": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["Name"],
+      "properties": {
+        "Name": { "type": "string", "minLength": 1 },
+        "Rarity": { "$ref": "#/$defs/rarity" }
+      }
+    }
+  }
+}

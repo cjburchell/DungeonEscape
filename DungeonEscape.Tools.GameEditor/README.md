@@ -30,7 +30,7 @@ It loads the following files into one shared, in-memory dataset:
 | `statnames.json`  | Stat Names    |
 | `classlevels.json`| Class         |
 | `names.json`      | Names         |
-| `maps/**/*_monsters.json` | Maps random monsters |
+| `maps/**/*_monsters.json` | Maps random monsters / Encounter Simulator |
 
 After the Data folder is opened, the tool also auto-detects the neighboring
 `Maps` folder and loads `DungeonEscape.Unity/Assets/DungeonEscape/Maps/**/*.tmx`
@@ -43,15 +43,18 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
 ## Features
 
 - Tabs for **Monsters**, **Spells**, **Skills**, **Items**, **Item Definitions**,
-  **Quests**, **Dialogs**, **Class**, **Stat Names**, **Names**, and **Maps**. Array-backed tabs include a
+  **Quests**, **Dialogs**, **Class**, **Stat Names**, **Names**, **Maps**,
+  **Quest Graph**, and **Encounter Simulator**. Array-backed data tabs include a
   searchable list and **Add**, **Duplicate**, and **Remove** actions; `names.json`
   is edited as a single document, and maps are discovered from the Unity Maps
-  folder rather than added or removed in this editor.
+  folder rather than added or removed in this editor. The graph and simulator
+  tabs are read-only analysis tools and do not mark the project dirty.
 - A collapsible **Validation** panel flags duplicate identifiers, empty required
   names/IDs, broken spell/skill/item/quest/monster references, invalid image IDs,
   missing class-level definitions, dialog nesting issues, broken map object
-  references, duplicate TMX object ids, and missing explicit chest/door lock
-  metadata.
+  references, duplicate TMX object ids, missing explicit chest/door lock
+  metadata, invalid map biome values, missing map music files, generated item
+  definition image IDs, missing tileset source images, and missing monster PNGs.
 - All lists share a single in-memory dataset, so cross-references update
   **live** &mdash; e.g. add a new item on the Items tab and it immediately
   appears in a monster's drop list and any item dropdown; rename a skill and the
@@ -83,8 +86,30 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
   - **Stat Names** &mdash; fixed stat rows plus prefix/suffix word pools.
   - **Names** &mdash; male and female character name pools.
   - **Maps** &mdash; map class/properties, object `name`/`class`, NPC/chest/door/warp
-    gameplay properties, advanced object properties, and per-map random monster
-    encounter sets.
+    gameplay properties, and per-map random monster encounter sets. Unsupported
+    raw TMX property add/remove editing is intentionally hidden so Tiled remains
+    responsible for layout/display metadata and the editor only exposes supported
+    gameplay fields.
+  - **Quest Graph** &mdash; read-only relationship cards for quests, stages, dialog
+    heads, choices, nested responses, quest-stage transitions, item rewards,
+    fights, object actions, and warps.
+  - **Encounter Simulator** &mdash; read-only random encounter simulation for
+    overworld biome encounters and per-map random monster tables using the same
+    `EncounterRules` weighting as the game.
+
+## JSON schemas
+
+The tool project includes JSON Schemas under `Schemas/` for the Data files it
+edits. These schemas document file shape and enum values for editor tooling or
+future CI checks:
+
+```text
+DungeonEscape.Tools.GameEditor/Schemas/
+```
+
+Cross-file reference checks, asset existence checks, and map metadata rules are
+still handled by the live Validation panel because those checks need the opened
+project's full in-memory dataset.
 
 ## Map editing
 
@@ -103,7 +128,11 @@ Editable map/object metadata includes:
 - Door fields such as `Locked`, `DoorLevel`, `KeyId`, `OpenWithKey`, and
   `Collideable`.
 - Warp/spawn fields such as `WarpMap`, `SpawnId`, and `DefaultSpawn`.
-- An advanced property list for custom or less-common TMX properties.
+
+Unsupported raw property add/remove controls are intentionally hidden from the
+Maps tab. If new map metadata rules are added, expose them through a supported
+typed form field and validation rule instead of asking users to edit arbitrary
+TMX properties in the Game Editor.
 
 Random encounter sets are saved as JSON files using the runtime-supported path:
 
@@ -130,6 +159,20 @@ normal JSON-only edits do not rewrite every TMX file.
 The tool auto-detects the asset root by walking up from the opened Data folder
 to find a folder containing `Tilesets/allmonsters.tsx` and `Images/monsters/`,
 then resolves the item/spell tilesets and their PNGs relative to that root.
+Image previews use local file URIs or temporary cached PNG files instead of
+large base64 `data:` URLs so the Photino/Blazor output window stays readable.
+
+## Audio
+
+Map `song` values are selected from `.ogg` files in:
+
+```text
+DungeonEscape.Unity/Assets/DungeonEscape/Audio/music
+```
+
+The saved value is the file name without extension. Existing custom or missing
+song values are preserved as a temporary dropdown option and still produce a
+validation warning until the matching `.ogg` exists.
 
 ## Running
 

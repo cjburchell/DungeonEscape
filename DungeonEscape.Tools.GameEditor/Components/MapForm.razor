@@ -1,3 +1,5 @@
+@inject AssetContext Assets
+
 @if (Map == null)
 {
     <div class="empty-state">Select a map from the list.</div>
@@ -29,7 +31,17 @@ else
             </div>
             <div class="field">
                 <label>Song</label>
-                <input value="@Song" @onchange="e => SetSong(e.Value?.ToString())" />
+                <select value="@Song" @onchange="e => SetSong(e.Value?.ToString())">
+                    <option value="">(none)</option>
+                    @if (!string.IsNullOrWhiteSpace(Song) && !AvailableSongs.Contains(Song, StringComparer.OrdinalIgnoreCase))
+                    {
+                        <option value="@Song">@Song (missing/custom)</option>
+                    }
+                    @foreach (var song in AvailableSongs)
+                    {
+                        <option value="@song">@song</option>
+                    }
+                </select>
             </div>
         </div>
     </fieldset>
@@ -78,6 +90,26 @@ else
     private string Biome => GetMapProperty("biome");
     private string Song => GetMapProperty("song");
     private bool IsOverworldMapClass => string.Equals(Map?.Class, OverworldMapClass, StringComparison.OrdinalIgnoreCase);
+
+    private IReadOnlyList<string> AvailableSongs
+    {
+        get
+        {
+            var musicDirectory = Assets.MusicDirectory;
+            if (string.IsNullOrWhiteSpace(musicDirectory) || !Directory.Exists(musicDirectory))
+            {
+                return Array.Empty<string>();
+            }
+
+            return Directory
+                .EnumerateFiles(musicDirectory, "*.ogg", SearchOption.TopDirectoryOnly)
+                .Select(Path.GetFileNameWithoutExtension)
+                .Where(song => !string.IsNullOrWhiteSpace(song))
+                .Select(song => song!)
+                .OrderBy(song => song, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+    }
 
     private const string OverworldMapClass = "Overworld";
 

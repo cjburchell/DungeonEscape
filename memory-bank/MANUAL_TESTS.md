@@ -1018,5 +1018,36 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 - Expected: each object class shows only its supported gameplay fields; layout/display fields stay read-only or hidden because Tiled owns them.
 - Change a warp `WarpMap`.
 - Expected: the dependent `SpawnId` options update from the selected target map's spawn objects, with an empty spawn shown as the target map's default spawn.
+- Open the Song dropdown.
+- Expected: it lists `.ogg` files from `DungeonEscape.Unity/Assets/DungeonEscape/Audio/music` by file name without extension, plus `(none)` and any current missing/custom value when applicable.
+- Change the selected Song.
+- Expected: the map is marked unsaved, validation updates, and saving writes the selected song name without `.ogg`.
 - Edit per-map random monsters for a non-overworld map.
 - Expected: rows use monster reference dropdowns with thumbnails where available and save to `Data/maps/{mapId}_monsters.json`.
+
+### [ ] Image Previews Do Not Flood Output
+
+- Launch the standalone Game Editor from a terminal or VS Code output window.
+- Open the Data folder and browse monster, item, spell, class, and image dropdown previews.
+- Expected: image previews still render.
+- Expected: output/log messages do not contain long `data:image/png;base64,...` strings for previews.
+
+### [ ] Quest Graph And Encounter Simulator Tabs
+
+- Open a Data folder in the standalone Game Editor.
+- Select the Quest Graph tab.
+- Expected: quest cards, stage rows, dialog heads, choices, nested responses, item rewards, fights, object actions, and warps are shown as read-only relationship cards.
+- Type a quest id, dialog id, item, monster, or map into the graph filter.
+- Expected: matching quest/dialog cards remain visible and counts update without marking the project unsaved.
+- Select the Encounter Simulator tab.
+- Run the default overworld biome simulation.
+- Expected: results show run count, empty runs, average monster count, average XP/gold, and monster appearance frequencies.
+- Select a non-overworld map source with a random monster table, click Use Map Defaults, then Run Simulation.
+- Expected: biome/level defaults are applied from map properties when available, the simulation uses the map table, and warnings appear if no monsters can match.
+
+### [ ] JSON Schemas And Expanded Asset Validation
+
+- Inspect `DungeonEscape.Tools.GameEditor/Schemas/`.
+- Expected: per-file schemas exist for all editor-owned JSON data files and shared definitions live in `dungeonescape-data.schema.json`.
+- Temporarily point a map `song` property or item-definition image ID at a missing value in a reversible working copy.
+- Expected: the validation panel warns for missing map music and generated item-definition image references, then clears after reverting the edit.

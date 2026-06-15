@@ -959,45 +959,64 @@ The Game Editor is a separate Photino.Blazor desktop app under
 `DungeonEscape.Tools.GameEditor`. Run it with
 `dotnet run --project DungeonEscape.Tools.GameEditor`.
 
-### [ ] File Menu And Auto-Load Last File
+Implementation evidence as of the current roadmap cleanup: the Game Editor is implemented as a Data-folder editor with a single **File** dropdown, auto-load of the last opened folder, tabs for monsters, spells, skills, items, item definitions, quests, dialogs, class, stat names, names, and maps, and a collapsible validation panel. The checks below remain unchecked because they still require launching the desktop tool and manually confirming the workflow end-to-end.
+
+### [ ] Open Data Folder, File Menu, And Auto-Load Last Folder
 
 - Launch the tool; a single **File** button appears in the toolbar.
 - Click File.
-- Expected: a dropdown lists New, Open…, Save, and Save As… (Save/Save As are disabled until a file is open). Selecting any item closes the menu.
-- Open `DungeonEscape.Unity/Assets/DungeonEscape/Data/allmonsters.json`, then close and relaunch the tool.
-- Expected: the previously opened file is automatically loaded on startup.
-- Open a file, then move/delete it on disk and relaunch.
+- Expected: a dropdown lists Open Folder…, Save Project, and Reload. Save Project and Reload are disabled until a Data folder is open. Selecting any item closes the menu.
+- Open `DungeonEscape.Unity/Assets/DungeonEscape/Data`, then close and relaunch the tool.
+- Expected: the previously opened Data folder is automatically loaded on startup.
+- Open a Data folder, then move/delete it on disk and relaunch.
 - Expected: the tool starts on the empty state without errors.
 
-### [ ] Open, Edit, And Save A Monster File
+### [ ] Open, Edit, Validate, And Save The Data Folder
 
 - Launch the tool; a desktop window titled "Dungeon Escape - Game Editor" opens.
-- Open `DungeonEscape.Unity/Assets/DungeonEscape/Data/allmonsters.json` from the **File** menu.
+- Open `DungeonEscape.Unity/Assets/DungeonEscape/Data` from the **File** menu.
 
-- Expected: the left list fills with monsters, each showing an image thumbnail and name.
-- Select a monster.
+- Expected: tabs appear for Monsters, Spells, Skills, Items, Item Definitions, Quests, Dialogs, Class, Stat Names, Names, and Maps.
+- Expected: the validation panel shows the current issue count and can be collapsed/expanded.
+- Select the Monsters tab and choose a monster.
 - Expected: the right form shows its properties and a large image preview.
 - Change the Image dropdown.
 - Expected: the preview and the list thumbnail update to the selected tileset image.
 - Edit Name, stats, Rarity, Biomes, and add/remove Spells/Skills/Items via the dropdowns.
-- Expected: the file name shows a "• unsaved" indicator after any change.
-- Click Save.
-- Expected: the indicator clears and the JSON file on disk is updated; reopening it shows the changes, and the format/keys match the original game file.
+- Expected: the project name shows a "• unsaved" indicator after any change.
+- Visit several other tabs and make a reversible edit, such as quest text, dialog choice metadata, class default image, stat-name text, or map gameplay metadata.
+- Expected: each edit marks the project unsaved and updates validation when references or required fields change.
+- Click Save Project.
+- Expected: the indicator clears and changed JSON/TMX/map-monster files on disk are updated; reopening the Data folder shows the changes, and saved JSON still matches the game format.
 
-### [ ] Add, Duplicate, And Remove Monsters
+### [ ] Add, Duplicate, And Remove Array-Backed Data
 
-- With a file open, click Add.
-- Expected: a new "New Monster" entry is added and selected.
-- Select a monster and click Duplicate.
+- With a Data folder open, use Monsters, Spells, Skills, Items, Item Definitions, Quests, Dialogs, or Class.
+- Click Add.
+- Expected: a new default entry for the active tab is added and selected.
+- Select an entry and click Duplicate.
 - Expected: a copy named "<name> (Copy)" is inserted after it and selected.
 - Click Remove and confirm.
-- Expected: the selected monster is removed and the document is marked unsaved.
+- Expected: the selected entry is removed and the project is marked unsaved.
+- Switch to Stat Names, Names, or Maps.
+- Expected: Add, Duplicate, and Remove are disabled for fixed/single-object/map-backed tabs.
 
-### [ ] New File And Unsaved-Changes Guard
+### [ ] Unsaved-Changes Guard And Reload
 
-- Make a change, then click New or Open without saving.
+- Make a change, then click Open Folder or Reload without saving.
 - Expected: a prompt offers Yes/No/Cancel; Cancel aborts, Yes saves first, No discards.
-- Create a New file, add a monster, and use Save As to write a new `*.json` file.
-- Expected: the file is created and can be reopened with the added monster.
+- Choose Reload after saving or discarding.
+- Expected: data is reloaded from disk, selections reset to valid rows, and validation refreshes.
 
+### [ ] Maps Tab Gameplay Metadata Editing
 
+- Open the Maps tab.
+- Expected: Unity TMX maps are auto-detected from the opened Data folder's asset root.
+- Select a map with many objects.
+- Expected: the object selector has an internal scrollbar and does not grow beyond the editor window.
+- Select NPC, chest/hidden item, door, warp, and spawn objects.
+- Expected: each object class shows only its supported gameplay fields; layout/display fields stay read-only or hidden because Tiled owns them.
+- Change a warp `WarpMap`.
+- Expected: the dependent `SpawnId` options update from the selected target map's spawn objects, with an empty spawn shown as the target map's default spawn.
+- Edit per-map random monsters for a non-overworld map.
+- Expected: rows use monster reference dropdowns with thumbnails where available and save to `Data/maps/{mapId}_monsters.json`.

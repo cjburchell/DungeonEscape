@@ -36,12 +36,14 @@ This file tracks post-migration feature and architecture ideas. Items here are n
 
 ## Tools And Data Editing
 
-- Continue expanding JSON data editor coverage and polish for monsters, spells, skills, items, dialogs, quests, stat names, and names.
+- Completed / mostly completed: the standalone Game Editor now edits the Data folder as one project, including monsters, spells, skills, custom items, item definitions, quests, dialogs, class levels, stat names, names, and map gameplay metadata.
+- Completed / mostly completed: the Game Editor validation panel now covers duplicate identifiers, empty required names/IDs, broken spell/skill/item/quest/monster/map references, invalid image IDs, missing class-level definitions, dialog nesting issues, duplicate TMX object IDs within each object layer, and chest/door lock metadata warnings.
+- Completed / mostly completed: the Maps tab now acts as the first map gameplay validator for map/warp/spawn/object metadata, locked-door/chest metadata, random monster references, map root class rules, and supported TMX object class/property editing.
+- Continue polishing existing Game Editor workflows and expand coverage when new data types or metadata rules are introduced.
 - Add JSON validation schemas for items, spells, skills, quests, dialogs, and monsters.
-- Add in-editor data validation for missing item IDs, broken dialog links, invalid quest stages, bad map references, and missing assets.
 - Add a quest/dialog graph viewer before or alongside full editors.
 - Add an encounter simulator for testing random monster tables and reward pacing.
-- Add a map validator for warps, spawn IDs, object classes, locked-door/chest metadata, and missing assets.
+- Expand validation for missing sprite/icon/audio assets and any future map metadata rules not covered by the current Game Editor.
 
 ## Map And Exploration UI
 

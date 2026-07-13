@@ -518,6 +518,22 @@ button.danger {
     width: fit-content;
 }
 
+.song-preview-row {
+    display: flex;
+    gap: .4rem;
+    align-items: center;
+}
+
+.song-preview-row select {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.song-preview-button {
+    flex: 0 0 auto;
+    min-width: 4.25rem;
+}
+
 input, select, textarea {
     background: var(--panel-2);
     color: var(--text);
@@ -665,6 +681,97 @@ legend {
 
 .map-object-form {
     min-width: 0;
+}
+
+.map-preview-layout {
+    display: grid;
+    grid-template-columns: minmax(260px, 420px) 1fr;
+    gap: 1rem;
+    align-items: start;
+}
+
+.map-preview-frame {
+    max-height: 420px;
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #111217;
+}
+
+.map-preview-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+}
+
+.map-preview-details {
+    min-width: 0;
+}
+
+.map-preview-summary {
+    margin-bottom: .5rem;
+    color: var(--text-dim);
+    font-size: .85rem;
+}
+
+.map-used-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: .5rem;
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: .25rem;
+}
+
+.map-used-tile {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    grid-template-rows: auto auto;
+    gap: .05rem .45rem;
+    align-items: center;
+    min-width: 0;
+    padding: .35rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: rgba(0,0,0,.12);
+}
+
+.map-used-tile img,
+.map-used-tile-missing {
+    grid-row: 1 / span 2;
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    background: #14151a;
+    border: 1px solid var(--border);
+}
+
+.map-used-tile-missing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+}
+
+.map-used-tile span,
+.map-used-tile small {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.map-used-tile span {
+    color: var(--text);
+    font-size: .78rem;
+    font-weight: 600;
+}
+
+.map-used-tile small {
+    color: var(--text-dim);
+    font-size: .72rem;
 }
 
 .advanced-details {

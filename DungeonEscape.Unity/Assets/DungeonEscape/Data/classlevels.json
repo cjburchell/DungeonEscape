@@ -49,6 +49,7 @@
   },
   {
     "Class": "Soldier",
+    "DefaultImage": 2,
     "Stats": [
       {
         "Type": "Health",
@@ -94,6 +95,7 @@
   },
   {
     "Class": "Wizard",
+    "DefaultImage": 6,
     "Stats": [
       {
         "Type": "Health",
@@ -142,6 +144,7 @@
   },
   {
     "Class": "Cleric",
+    "DefaultImage": 4,
     "Stats": [
       {
         "Type": "Health",
@@ -190,6 +193,7 @@
   },
   {
     "Class": "Fighter",
+    "DefaultImage": 8,
     "Stats": [
       {
         "Type": "Health",
@@ -238,6 +242,7 @@
   },
   {
     "Class": "Merchant",
+    "DefaultImage": 10,
     "Stats": [
       {
         "Type": "Health",
@@ -286,6 +291,7 @@
   },
   {
     "Class": "Thief",
+    "DefaultImage": 14,
     "Stats": [
       {
         "Type": "Health",
@@ -334,6 +340,7 @@
   },
   {
     "Class": "Sage",
+    "DefaultImage": 16,
     "Stats": [
       {
         "Type": "Health",
@@ -382,6 +389,7 @@
   },
   {
     "Class": "Bard",
+    "DefaultImage": 12,
     "Stats": [
       {
         "Type": "Health",

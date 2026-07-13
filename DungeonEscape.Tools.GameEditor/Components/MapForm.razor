@@ -1,4 +1,7 @@
 @inject AssetContext Assets
+@inject MapPreviewCatalog MapPreviewCatalog
+@inject IJSRuntime Js
+@implements IAsyncDisposable
 
 @if (Map == null)
 {
@@ -31,19 +34,70 @@ else
             </div>
             <div class="field">
                 <label>Song</label>
-                <select value="@Song" @onchange="e => SetSong(e.Value?.ToString())">
-                    <option value="">(none)</option>
-                    @if (!string.IsNullOrWhiteSpace(Song) && !AvailableSongs.Contains(Song, StringComparer.OrdinalIgnoreCase))
-                    {
-                        <option value="@Song">@Song (missing/custom)</option>
-                    }
-                    @foreach (var song in AvailableSongs)
-                    {
-                        <option value="@song">@song</option>
-                    }
-                </select>
+                <div class="song-preview-row">
+                    <select value="@Song" @onchange="e => SetSong(e.Value?.ToString())">
+                        <option value="">(none)</option>
+                        @if (!string.IsNullOrWhiteSpace(Song) && !AvailableSongs.Contains(Song, StringComparer.OrdinalIgnoreCase))
+                        {
+                            <option value="@Song">@Song (missing/custom)</option>
+                        }
+                        @foreach (var song in AvailableSongs)
+                        {
+                            <option value="@song">@song</option>
+                        }
+                    </select>
+                    <button type="button"
+                            class="song-preview-button"
+                            disabled="@(!CanPreviewSong)"
+                            title="@SongPreviewTitle"
+                            @onclick="ToggleSongPreview">
+                        @SongPreviewButtonText
+                    </button>
+                </div>
             </div>
         </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Map Preview</legend>
+        @if (Preview.Error != null)
+        {
+            <div class="empty-state compact">@Preview.Error</div>
+        }
+        else
+        {
+            <div class="map-preview-layout">
+                <div class="map-preview-frame">
+                    <img class="map-preview-image"
+                         src="@Preview.MapImageUrl"
+                         alt="Map preview for @Map.Id" />
+                </div>
+                <div class="map-preview-details">
+                    <div class="map-preview-summary">
+                        @Preview.Width x @Preview.Height tiles &middot;
+                        @Preview.TileWidth x @Preview.TileHeight px &middot;
+                        @Preview.UsedTiles.Count used tiles
+                    </div>
+                    <div class="map-used-tiles">
+                        @foreach (var tile in Preview.UsedTiles)
+                        {
+                            <div class="map-used-tile" title="@GetTileTitle(tile)">
+                                @if (tile.ImageUrl != null)
+                                {
+                                    <img src="@tile.ImageUrl" alt="@GetTileTitle(tile)" />
+                                }
+                                else
+                                {
+                                    <div class="map-used-tile-missing">?</div>
+                                }
+                                <span>@tile.TilesetName #@tile.LocalTileId</span>
+                                <small>gid @tile.Gid &middot; @tile.UsageCount</small>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
     </fieldset>
 
     <fieldset>
@@ -86,9 +140,19 @@ else
 
     private MapObjectDocument? selectedObject;
     private string objectFilter = string.Empty;
+    private bool isPlayingSongPreview;
+    private string? playingSong;
+    private MapPreview Preview { get; set; } = new(null, 0, 0, 0, 0, Array.Empty<MapPreviewTile>(), null);
 
     private string Biome => GetMapProperty("biome");
     private string Song => GetMapProperty("song");
+    private bool CanPreviewSong => GetSongPreviewUrl() != null;
+    private string SongPreviewButtonText => isPlayingSongPreview && string.Equals(playingSong, Song, StringComparison.OrdinalIgnoreCase)
+        ? "Stop"
+        : "Play";
+    private string SongPreviewTitle => CanPreviewSong
+        ? $"Preview {Song}.ogg"
+        : "Select an existing music file to preview.";
     private bool IsOverworldMapClass => string.Equals(Map?.Class, OverworldMapClass, StringComparison.OrdinalIgnoreCase);
 
     private IReadOnlyList<string> AvailableSongs
@@ -126,14 +190,19 @@ else
         if (Map == null)
         {
             selectedObject = null;
+            Preview = MapPreviewCatalog.GetPreview(null);
             return;
         }
 
+        Preview = MapPreviewCatalog.GetPreview(Map);
         if (selectedObject == null || !Map.Objects.Contains(selectedObject))
         {
             selectedObject = Map.Objects.FirstOrDefault();
         }
     }
+
+    private static string GetTileTitle(MapPreviewTile tile) =>
+        $"{tile.TilesetName} tile {tile.LocalTileId} (gid {tile.Gid}), used {tile.UsageCount} time(s)";
 
     private bool ObjectMatchesFilter(MapObjectDocument mapObject)
     {
@@ -186,7 +255,57 @@ else
 
     private async Task SetBiome(string? value) => await SetMapProperty("biome", value);
 
-    private async Task SetSong(string? value) => await SetMapProperty("song", value);
+    private async Task SetSong(string? value)
+    {
+        await StopSongPreview();
+        await SetMapProperty("song", value);
+    }
+
+    private async Task ToggleSongPreview()
+    {
+        if (isPlayingSongPreview && string.Equals(playingSong, Song, StringComparison.OrdinalIgnoreCase))
+        {
+            await StopSongPreview();
+            return;
+        }
+
+        var previewUrl = GetSongPreviewUrl();
+        if (previewUrl == null)
+        {
+            await StopSongPreview();
+            return;
+        }
+
+        try
+        {
+            await Js.InvokeVoidAsync("dungeonEscapeAudioPreview.play", previewUrl);
+            playingSong = Song;
+            isPlayingSongPreview = true;
+        }
+        catch
+        {
+            playingSong = null;
+            isPlayingSongPreview = false;
+        }
+    }
+
+    private string? GetSongPreviewUrl() =>
+        MusicPreviewCache.GetPreviewUrl(Assets.MusicDirectory, Song);
+
+    private async Task StopSongPreview()
+    {
+        try
+        {
+            await Js.InvokeVoidAsync("dungeonEscapeAudioPreview.stop");
+        }
+        catch
+        {
+            // Ignore JS cleanup failures during shutdown/navigation.
+        }
+
+        playingSong = null;
+        isPlayingSongPreview = false;
+    }
 
     private async Task SetMapProperty(string name, string? value)
     {
@@ -209,4 +328,9 @@ else
     }
 
     private async Task RaiseChanged() => await OnChanged.InvokeAsync();
+
+    public async ValueTask DisposeAsync()
+    {
+        await StopSongPreview();
+    }
 }

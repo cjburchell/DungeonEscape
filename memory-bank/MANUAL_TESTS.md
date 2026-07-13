@@ -1012,6 +1012,8 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 
 - Open the Maps tab.
 - Expected: Unity TMX maps are auto-detected from the opened Data folder's asset root.
+- Select `overworld`, `dungeon/first`, and a town map.
+- Expected: the Map Preview section renders a pixelated composite map image, shows map dimensions, and lists each used tile with a thumbnail, tileset/local tile id, gid, and usage count.
 - Select a map with many objects.
 - Expected: the object selector has an internal scrollbar and does not grow beyond the editor window.
 - Select NPC, chest/hidden item, door, warp, and spawn objects.

@@ -55,6 +55,8 @@
 - Roadmap cleanup: Game Editor coverage, in-editor validation, and map validator work have been moved out of the open future-feature list as completed/mostly completed. Remaining tool backlog now focuses on polish, JSON schemas, graph/simulator tooling, missing-asset validation, and future metadata rules.
 - Data Editor tools: added checked-in JSON Schemas under `DungeonEscape.Tools.GameEditor/Schemas/`; added read-only **Quest Graph** and **Encounter Simulator** tabs; expanded validation for map `song` audio files, map biome values, generated item-definition image IDs, tileset source image files, and missing monster PNGs.
 - Data Editor Maps tab: added a cached read-only map preview and used-tile gallery that lists each rendered tile gid/local tileset tile with usage counts.
+- Narrative data pass: improved quest journal descriptions, branching dialog copy, and direct map NPC text for the seashell/ship quests, town guards, shrine NPCs, recruitable NPCs, and Estark hints without changing quest IDs, stages, rewards, or map hooks.
+- Interactive NPC conversation pass: replaced all ordinary map NPC `Text` prompts with referenced branching dialogs across the pyramid, shrines, Coast, Forest Palace, Isis, Oasis, and the walled city; recruitable NPC prompts remain on their dedicated Yes/No flow.
 
 
 

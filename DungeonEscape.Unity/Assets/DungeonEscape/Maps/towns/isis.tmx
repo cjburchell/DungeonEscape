@@ -355,37 +355,35 @@
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="Text" value="Beware of Estark the Destroyer"/>
+    <property name="Dialog" value="Isis_Guard_Dialog"/>
    </properties>
   </object>
   <object id="31" name="Gard" class="Npc" gid="146" x="608" y="1088" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="Text" value="Welcome to Isis"/>
+    <property name="Dialog" value="Isis_Guard_Dialog"/>
    </properties>
   </object>
   <object id="32" name="Vlefu" class="Npc" gid="103" x="416" y="896" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="Dragons are very powerful"/>
+    <property name="Dialog" value="Isis_Vlefu_Dialog"/>
    </properties>
   </object>
   <object id="33" name="Aestald" class="Npc" gid="27" x="960" y="992" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text">The sea is very dangerus
-do not veture there until
-you are experencd</property>
+    <property name="Dialog" value="Isis_Aestald_Dialog"/>
    </properties>
   </object>
   <object id="34" name="Gyles Harpar" class="Npc" gid="86" x="384" y="672" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="You can allways run away if the enemy is to powerfull"/>
+    <property name="Dialog" value="Isis_Gyles_Dialog"/>
    </properties>
   </object>
   <object id="35" name="Lesym" class="Npc" gid="188" x="704" y="704" width="32" height="48">
@@ -402,7 +400,7 @@ you are experencd</property>
     <property name="Gender" value="Male"/>
     <property name="Level" type="int" value="2"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="Can I join you?"/>
+    <property name="Text" value="I know the streets of Isis and the road beyond. Need another blade?"/>
    </properties>
   </object>
  </objectgroup>

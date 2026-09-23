@@ -354,49 +354,49 @@
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="Venture into the desert you will find what you seek"/>
+    <property name="Dialog" value="Forest_Lady_Dialog"/>
    </properties>
   </object>
   <object id="95" name="Gard" class="Npc" gid="18" x="1024" y="1312" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="Text" value="Welcome to Forest Palace "/>
+    <property name="Dialog" value="Forest_Guard_Dialog"/>
    </properties>
   </object>
   <object id="96" name="Gard" class="Npc" gid="18" x="768" y="480" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="Text" value="Welcome to the Forest Palace"/>
+    <property name="Dialog" value="Forest_Guard_Dialog"/>
    </properties>
   </object>
   <object id="97" name="Gard" class="Npc" gid="18" x="1232" y="696" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="Welcome"/>
+    <property name="Dialog" value="Forest_Guard_Dialog"/>
    </properties>
   </object>
   <object id="98" name="Gard" class="Npc" gid="18" x="720" y="88" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="Welcome"/>
+    <property name="Dialog" value="Forest_Guard_Dialog"/>
    </properties>
   </object>
   <object id="99" name="Gard" class="Npc" gid="18" x="768" y="576" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="Text" value="Welcome"/>
+    <property name="Dialog" value="Forest_Guard_Dialog"/>
    </properties>
   </object>
   <object id="100" name="Gard" class="Npc" gid="18" x="720" y="696" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="Welcome"/>
+    <property name="Dialog" value="Forest_Guard_Dialog"/>
    </properties>
   </object>
  </objectgroup>

@@ -5,7 +5,7 @@
       {
         "Quest": "Find_Ship",
         "StartQuest": true,
-        "Text": "You must find a ship and travel to the forest continent\nThere is a man in Isis who might know where a ship is.",
+        "Text": "If you mean to reach the forest continent, you will need a ship.\nSeek Lesym in Isis. He knows the coast better than anyone here.",
         "Choices": [
           {
             "Text": "OK",
@@ -14,7 +14,7 @@
         ]
       },
       {
-        "Text": "Did you ever find a ship?",
+        "Text": "Have you found passage across the sea yet?\nThe forest continent will not wait forever.",
         "Choices": [
           {
             "Text": "OK"
@@ -31,12 +31,12 @@
         "QuestStage": [
           1
         ],
-        "Text": "Are you looking for a ship?",
+        "Text": "You have the look of someone hunting for a ship.\nAm I right?",
         "Choices": [
           {
             "Text": "Yes",
             "Dialog": {
-              "Text": "My Uncle has a ship you can borrow he lives in Coast.",
+              "Text": "My uncle keeps an old ship in Coast.\nTell him Lesym sent you, and he may let you borrow it.",
               "Choices": [
                 {
                   "Text": "OK"
@@ -51,7 +51,7 @@
         ]
       },
       {
-        "Text": "Hello",
+        "Text": "Safe roads, traveler. Ask at the docks if you need news from Coast.",
         "Choices": [
           {
             "Text": "OK"
@@ -68,12 +68,12 @@
         "QuestStage": [
           2
         ],
-        "Text": "Are you looking for a ship?",
+        "Text": "So Lesym sent you about my ship?\nShe is old, but she still knows the waves.",
         "Choices": [
           {
             "Text": "Yes",
             "Dialog": {
-              "Text": "I would give it to you but someone has stolen my key!\nCan you find it for me?",
+              "Text": "I would lend her to you, but someone stole my key.\nFind it, and I will open the way to the dock.",
               "Choices": [
                 {
                   "Text": "Yes",
@@ -96,15 +96,15 @@
           3,
           4
         ],
-        "Text": "Did You Find my key?",
+        "Text": "Did you find my key?\nWithout it, the ship stays locked behind that door.",
         "Choices": [
           {
             "Text": "Yes",
             "Dialog": {
-              "Text": "Thank you! I will open the door to the ship for you.",
+              "Text": "Bless you. That is the key.\nStand back, and I will open the door to the ship.",
               "Choices": [
                 {
-                  "Text": "Ok",
+                  "Text": "Thank you",
                   "Actions": [
                     "TakeItem",
                     "OpenDoor"
@@ -122,7 +122,7 @@
         ]
       },
       {
-        "Text": "Hello",
+        "Text": "The sea is generous to the prepared and cruel to the careless.",
         "Choices": [
           {
             "Text": "OK"
@@ -137,12 +137,12 @@
       {
         "Quest": "Lost_Sea_Shell",
         "StartQuest": true,
-        "Text": "I lost my sea shell can you find it?",
+        "Text": "I lost my favorite seashell near the shrine.\nPlease, will you help me find it?",
         "Choices": [
           {
             "Text": "Yes",
             "Dialog": {
-              "Text": "Come back here when you find it."
+              "Text": "Thank you! I will wait right here.\nIt has a pale spiral and shines like moonlight."
             },
             "Quest": "Lost_Sea_Shell",
             "NextQuestStage": 1
@@ -150,7 +150,7 @@
           {
             "Text": "No",
             "Dialog": {
-              "Text": "I guess I will have to find someone else!"
+              "Text": "Oh. I understand.\nI will keep looking, but the grass is so tall."
             }
           }
         ]
@@ -160,7 +160,7 @@
         "QuestStage": [
           1
         ],
-        "Text": "Did you find my sea shell?",
+        "Text": "Did you find my seashell?\nI keep thinking I hear it rattling in the weeds.",
         "Choices": [
           {
             "Text": "Yes",
@@ -173,7 +173,7 @@
           {
             "Text": "No",
             "Dialog": {
-              "Text": "Keep trying!"
+              "Text": "Please keep looking.\nI know it cannot have gone far."
             }
           }
         ]
@@ -183,8 +183,195 @@
         "QuestStage": [
           2
         ],
-        "Text": "Thank you for finding my sea shell."
+        "Text": "Thank you for bringing back my seashell.\nI will keep it safe this time."
       }
     ]
+  },
+  {
+    "Id": "Pyramid_Guard_Dialog",
+    "Dialogs": [{
+      "Text": "Keep your voice low. Estark the Destroyer stirs beneath these stones. What do you need to know?",
+      "Choices": [
+        { "Text": "Tell me about Estark", "Dialog": { "Text": "Estark does not fight like a common beast. He waits for fear to break a party's discipline, then strikes the weakest first. Keep everyone standing." } },
+        { "Text": "What lies ahead?", "Dialog": { "Text": "Old passages, false turns, and guardians that never tire. Search every chamber before you descend, and save your strength for the deepest room." } },
+        { "Text": "I am ready", "Dialog": { "Text": "Readiness is proven below, not spoken here. Go carefully, hero." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Shrine_Eanswild_Dialog",
+    "Dialogs": [{
+      "Text": "Estark must be defeated before darkness spreads beyond the shrine. Have you come seeking counsel?",
+      "Choices": [
+        { "Text": "Why is Estark dangerous?", "Dialog": { "Text": "His strength is terrible, but his influence is worse. Creatures grow bolder wherever his shadow reaches, and frightened people begin turning against one another." } },
+        { "Text": "How can I help?", "Dialog": { "Text": "Gather allies, sharpen your equipment, and listen closely to those who survived the old battles. Courage without preparation only feeds the darkness." } },
+        { "Text": "Farewell", "Dialog": { "Text": "May the shrine's light follow you into every dark place." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Healing_Shrine_Guard_Dialog",
+    "Dialogs": [{
+      "Text": "Welcome to the Shrine of Healing. The doors remain open to every wounded traveler.",
+      "Choices": [
+        { "Text": "Where is the healer?", "Dialog": { "Text": "Inside the shrine. Speak plainly about your wounds, and keep enough gold for the road after your treatment." } },
+        { "Text": "Is this place safe?", "Dialog": { "Text": "Safer than the roads, though no sanctuary is beyond Estark's reach forever. Rest while you can." } },
+        { "Text": "Thank you", "Dialog": { "Text": "Walk gently, and leave some peace for the next traveler." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Healing_Shrine_Lady_Dialog",
+    "Dialogs": [{
+      "Text": "The spring water is cool today. Even a moment beside it can steady the nerves.",
+      "Choices": [
+        { "Text": "Does the water heal?", "Dialog": { "Text": "Not every hurt. It clears the mind and eases weariness, but serious wounds still need the healer's hands." } },
+        { "Text": "Do you live here?", "Dialog": { "Text": "I help tend the lamps and carry water. Travelers bring enough stories that the shrine never feels far from the world." } },
+        { "Text": "Farewell", "Dialog": { "Text": "May your wounds close quickly and your courage last longer." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Healing_Shrine_Cat_Dialog",
+    "Dialogs": [{
+      "Text": "The shrine cat watches you with grave suspicion.",
+      "Choices": [
+        { "Text": "Offer a hand", "Dialog": { "Text": "The cat inspects your fingers, accepts one scratch beneath the chin, then pretends the meeting never happened." } },
+        { "Text": "Ask about the shrine", "Dialog": { "Text": "Meow. The cat glances toward the healer, which is either excellent advice or a request for supper." } },
+        { "Text": "Leave it alone", "Dialog": { "Text": "The cat resumes guarding the warm stones." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Coast_Guard_Dialog",
+    "Dialogs": [{
+      "Text": "Welcome to Coast. Watch the tide, and keep your coin purse close.",
+      "Choices": [
+        { "Text": "Any ships available?", "Dialog": { "Text": "Most captains will not risk unfamiliar passengers. The old man near the docks owns a vessel, though he guards access to it carefully." } },
+        { "Text": "Why watch my purse?", "Dialog": { "Text": "Sailors spend freely, thieves listen closely, and visitors stare at the sea instead of their belongings. An unfortunate combination." } },
+        { "Text": "Thanks for the warning", "Dialog": { "Text": "Enjoy the harbor, traveler. Just do it with both eyes open." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Forest_Lady_Dialog",
+    "Dialogs": [{
+      "Text": "Beyond the trees, the desert hides old answers. Bring water, and trust no mirage.",
+      "Choices": [
+        { "Text": "What answers?", "Dialog": { "Text": "Ruins remember what kingdoms choose to forget. Search them carefully and you may learn why Estark's name has returned to frightened lips." } },
+        { "Text": "How do I cross safely?", "Dialog": { "Text": "Travel when the heat is kind, mark the direction of the trees behind you, and never follow a distant light merely because it moves." } },
+        { "Text": "I will be careful", "Dialog": { "Text": "Good. The desert has buried many confident people." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Forest_Guard_Dialog",
+    "Dialogs": [{
+      "Text": "Welcome to Forest Palace. What brings you beneath our trees?",
+      "Choices": [
+        { "Text": "I seek the king", "Dialog": { "Text": "Follow the main path and show respect inside the palace. The court remembers manners almost as long as it remembers favors." } },
+        { "Text": "I need road news", "Dialog": { "Text": "The tower road is dangerous, and scouts saw strange lights above the desert. Keep to marked paths until you know which danger you are chasing." } },
+        { "Text": "Just passing through", "Dialog": { "Text": "Then tread lightly. These roots were old before our walls were raised." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Isis_Guard_Dialog",
+    "Dialogs": [{
+      "Text": "Welcome to Isis, crossroads of sand, river, and rumor. What news are you seeking?",
+      "Choices": [
+        { "Text": "Tell me about Estark", "Dialog": { "Text": "Even old soldiers lower their voices at that name. If you intend to face him, gather a disciplined party and prepare for a long fight." } },
+        { "Text": "Where can I find a ship?", "Dialog": { "Text": "Ask Lesym. He knows the coast and the people who still keep seaworthy vessels." } },
+        { "Text": "Nothing today", "Dialog": { "Text": "Then enjoy the city, but remember that rumors often arrive before danger." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Isis_Vlefu_Dialog",
+    "Dialogs": [{
+      "Text": "Dragons are patient creatures. Never mistake distance for safety.",
+      "Choices": [
+        { "Text": "Have you seen one?", "Dialog": { "Text": "Once, circling beyond the dunes. It watched our caravan for half a day before deciding we were not worth the flame. I have never felt so fortunate to be disappointing." } },
+        { "Text": "How do I fight one?", "Dialog": { "Text": "Spread out, protect your healers, and do not waste your strongest attacks before it commits. A dragon studies you while you panic." } },
+        { "Text": "I will remember", "Dialog": { "Text": "Remembering is easy here. Try it again when the sky has wings." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Isis_Aestald_Dialog",
+    "Dialogs": [{
+      "Text": "The sea is dangerous, especially for those who think calm water means a safe journey.",
+      "Choices": [
+        { "Text": "What should I bring?", "Dialog": { "Text": "Healing supplies, a reliable weapon, and enough patience to wait out trouble. Once you leave shore, every forgotten item becomes important." } },
+        { "Text": "What lives at sea?", "Dialog": { "Text": "Storms, reefs, and creatures large enough to treat a ship as driftwood. The sea does not need monsters to kill you, but it has them anyway." } },
+        { "Text": "I understand", "Dialog": { "Text": "Good. Venture out only when you are ready to finish the journey." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Isis_Gyles_Dialog",
+    "Dialogs": [{
+      "Text": "If a battle turns against you, run. Pride buys more graves than glory.",
+      "Choices": [
+        { "Text": "When should I flee?", "Dialog": { "Text": "Before your healer falls, before your supplies are gone, and before hope becomes your only plan. Leave enough strength to survive the road back." } },
+        { "Text": "Is retreat cowardly?", "Dialog": { "Text": "Cowards abandon others. Survivors recognize a lost fight and make certain there can be another." } },
+        { "Text": "Sound advice", "Dialog": { "Text": "The best advice usually sounds obvious after someone else pays for it." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Oasis_Traveler_Dialog",
+    "Dialogs": [{
+      "Text": "To defeat Estark, strike quickly and give him no rest.",
+      "Choices": [
+        { "Text": "Have you fought him?", "Dialog": { "Text": "No, but I met someone who escaped. Estark controlled the pace of every exchange until the survivors stopped reacting and forced him to react instead." } },
+        { "Text": "What else did they say?", "Dialog": { "Text": "Bring companions who can recover under pressure. A single strong warrior becomes a single obvious target." } },
+        { "Text": "I will prepare", "Dialog": { "Text": "Preparation is the first blow. Make it count." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Oasis_Guard_Dialog",
+    "Dialogs": [{
+      "Text": "Welcome to Oasis. Fill your waterskin before the dunes swallow the road.",
+      "Choices": [
+        { "Text": "Which road is safest?", "Dialog": { "Text": "The busiest road is usually the safest, but storms erase tracks quickly. If the markers vanish, return here instead of guessing." } },
+        { "Text": "Any danger nearby?", "Dialog": { "Text": "Creatures hunt near the shade at dusk. They know tired travelers will hurry toward water and forget to look around." } },
+        { "Text": "I will stock up", "Dialog": { "Text": "Wise. Thirst turns small mistakes into final ones." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Walled_Tower_Old_Man_Dialog",
+    "Dialogs": [{
+      "Text": "A key waits in the northern tower, though reaching it is no simple errand.",
+      "Choices": [
+        { "Text": "What does it unlock?", "Dialog": { "Text": "A sealed way beneath the city. I do not know what waits beyond it, only that someone worked very hard to keep it closed." } },
+        { "Text": "What guards the tower?", "Dialog": { "Text": "Monsters, old traps, and the impatience that ruins good adventurers. Bring a strong party and search before every step." } },
+        { "Text": "I will find it", "Dialog": { "Text": "Then return with the key, not merely a brave story." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Walled_Guard_Dialog",
+    "Dialogs": [{
+      "Text": "The wall is quiet for now. Do you need directions or a warning?",
+      "Choices": [
+        { "Text": "Give me directions", "Dialog": { "Text": "The northern tower lies beyond the upper road. The southern gate opens toward the desert, and neither route forgives careless travelers." } },
+        { "Text": "Give me a warning", "Dialog": { "Text": "Do not underestimate dragons. Their fire breaks shields first, and their patience breaks formations afterward." } },
+        { "Text": "How is the city?", "Dialog": { "Text": "Stone keeps most monsters out, but fear still slips through. People are watching the horizon more than they watch one another." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Walled_Neighbor_Old_Man_Dialog",
+    "Dialogs": [{
+      "Text": "The man next door has locked himself inside again.",
+      "Choices": [
+        { "Text": "Why did he do that?", "Dialog": { "Text": "He claims something watches his windows after sunset. I told him we live inside a wall, but apparently walls do not impress whatever he imagined." } },
+        { "Text": "Should I check on him?", "Dialog": { "Text": "Knock first. Last time a guard opened the door, he swung a cooking pot at the poor fellow." } },
+        { "Text": "I will leave him be", "Dialog": { "Text": "Probably kindest. He usually emerges when he runs out of soup." } }
+      ]
+    }]
   }
 ]

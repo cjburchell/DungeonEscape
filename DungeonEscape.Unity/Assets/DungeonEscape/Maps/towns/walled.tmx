@@ -354,64 +354,56 @@
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text">There is a key in
-the tower to the
-north</property>
+    <property name="Dialog" value="Walled_Tower_Old_Man_Dialog"/>
    </properties>
   </object>
   <object id="16" name="Gard" class="Npc" gid="18" x="736" y="192" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text">The strange old man
-knows the way</property>
+    <property name="Dialog" value="Walled_Guard_Dialog"/>
    </properties>
   </object>
   <object id="17" name="Gard" class="Npc" gid="18" x="544" y="192" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text">You are not suppose
-to be on the wall</property>
+    <property name="Dialog" value="Walled_Guard_Dialog"/>
    </properties>
   </object>
   <object id="18" name="Gard" class="Npc" gid="18" x="224" y="192" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text">The View Is Great
-you can almost see
-the southern desert</property>
+    <property name="Dialog" value="Walled_Guard_Dialog"/>
    </properties>
   </object>
   <object id="19" name="Gard" class="Npc" gid="18" x="224" y="1088" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="This is the walled city"/>
+    <property name="Dialog" value="Walled_Guard_Dialog"/>
    </properties>
   </object>
   <object id="20" name="Gard" class="Npc" gid="18" x="1088" y="1088" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="Garding the wall is fun"/>
+    <property name="Dialog" value="Walled_Guard_Dialog"/>
    </properties>
   </object>
   <object id="21" name="Gard" class="Npc" gid="18" x="1088" y="192" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text">Do not under estmate the
-power of dragons</property>
+    <property name="Dialog" value="Walled_Guard_Dialog"/>
    </properties>
   </object>
   <object id="22" name="Old Man" class="Npc" gid="86" x="512" y="896" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text">The guy next door locked
-himself Inside</property>
+    <property name="Dialog" value="Walled_Neighbor_Old_Man_Dialog"/>
    </properties>
   </object>
  </objectgroup>

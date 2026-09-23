@@ -165,6 +165,19 @@ Status legend:
 - Complete the old man's key handoff.
 - Expected: the old man's dialog opens the ship door.
 
+### [ ] Quest And NPC Narrative Text Pass
+
+- Start a new game and talk to Adric and Burgiua in `shrine/first`.
+- Expected: the seashell and ship quest dialogue is clearer, typo-free, and still advances the same quest stages.
+- Travel through Isis and Coast and complete the old man's key handoff.
+- Expected: Lesym and the old man's dialogue still routes correctly, takes `Old Man's Key`, and opens the ship door.
+- Visit the maps with updated NPC conversations: `shrine/first`, `shrine/heal`, `towns/isis`, `towns/coast`, `towns/forest`, `towns/oasis`, `towns/walled`, and `pyramid/main`.
+- Expected: ordinary NPCs offer two or three relevant conversation choices, each choice opens the expected follow-up text, and the dialogue closes without clipping, missing text, or broken navigation.
+- Talk to recruitable NPCs in `dungeon/first`, `shrine/heal`, and `towns/isis`.
+- Expected: recruitable NPCs retain their existing Yes/No recruitment interaction.
+- Open the Quest menu during `Lost_Sea_Shell` and `Find_Ship`.
+- Expected: quest descriptions and current-stage text read clearly and match the current objective.
+
 ### [x] Stairs And Flipped Tiled Objects Render And Warp Correctly
 
 - Load maps with stairs that previously looked misplaced, such as `dungeon/first`, `forest_tower/floor1`, `forest_tower/floor2`, `island_tower/floor1`, `pyramid/basement`, `tunnel/area1`, or `tunnel/area2`.

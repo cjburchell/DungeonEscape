@@ -409,7 +409,7 @@
     <property name="Gender" value="Female"/>
     <property name="Level" type="int" value="3"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="Hey I am lost can I tag along?"/>
+    <property name="Text" value="I lost my way in these tunnels. Let me travel with you, and I will watch your back."/>
    </properties>
   </object>
  </objectgroup>

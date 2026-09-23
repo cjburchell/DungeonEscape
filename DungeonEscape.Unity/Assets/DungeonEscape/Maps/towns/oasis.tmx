@@ -336,15 +336,14 @@
       <properties>
         <property name="Collideable" type="bool" value="true" />
         <property name="MoveRadius" type="int" value="3" />
-        <property name="Text">The way to defeat Estark the Destroyer
-is to hit it fast</property>
+        <property name="Dialog" value="Oasis_Traveler_Dialog" />
       </properties>
     </object>
     <object id="50" name="Gard" class="Npc" gid="18" x="544" y="320" width="32" height="48">
       <properties>
         <property name="Collideable" type="bool" value="true" />
         <property name="MoveRadius" type="int" value="3" />
-        <property name="Text" value="Welcome to Oasis" />
+        <property name="Dialog" value="Oasis_Guard_Dialog" />
       </properties>
     </object>
   </objectgroup>

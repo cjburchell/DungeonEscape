@@ -405,7 +405,7 @@
       <properties>
         <property name="Collideable" type="bool" value="true" />
         <property name="MoveRadius" type="int" value="0" />
-        <property name="Text" value="Welcome to Coast" />
+        <property name="Dialog" value="Coast_Guard_Dialog" />
       </properties>
     </object>
     <object id="57" name="Old Man" class="Npc" gid="27" x="960" y="448" width="32" height="48">

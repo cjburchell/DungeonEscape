@@ -187,14 +187,14 @@
     <object id="94" name="Gard" class="Npc" gid="18" x="576" y="1152" width="32" height="48">
       <properties>
         <property name="Collideable" type="bool" value="true" />
-        <property name="Text" value="Beware of Estark the Destroyer" />
+        <property name="Dialog" value="Pyramid_Guard_Dialog" />
         <property name="MoveRadius" type="int" value="0" />
       </properties>
     </object>
     <object id="95" name="Gard" class="Npc" gid="18" x="736" y="1152" width="32" height="48">
       <properties>
         <property name="Collideable" type="bool" value="true" />
-        <property name="Text" value="Beware of Estark the Destroyer" />
+        <property name="Dialog" value="Pyramid_Guard_Dialog" />
         <property name="MoveRadius" type="int" value="0" />
       </properties>
     </object>

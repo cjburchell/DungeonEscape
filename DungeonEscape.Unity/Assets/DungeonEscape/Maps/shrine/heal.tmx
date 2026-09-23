@@ -324,42 +324,42 @@
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="Text" value="Hello"/>
+    <property name="Dialog" value="Healing_Shrine_Guard_Dialog"/>
    </properties>
   </object>
   <object id="25" name="Gard" class="Npc" gid="146" x="608" y="896" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="Text" value="Welcome to the shrine of healing"/>
+    <property name="Dialog" value="Healing_Shrine_Guard_Dialog"/>
    </properties>
   </object>
   <object id="26" name="Lady" class="Npc" gid="120" x="352" y="544" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="Welcome"/>
+    <property name="Dialog" value="Healing_Shrine_Lady_Dialog"/>
    </properties>
   </object>
   <object id="27" name="Lady" class="Npc" gid="120" x="704" y="544" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="Have a nice day"/>
+    <property name="Dialog" value="Healing_Shrine_Lady_Dialog"/>
    </properties>
   </object>
   <object id="28" name="Cat" class="Npc" gid="214" x="640" y="704" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="meow?"/>
+    <property name="Dialog" value="Healing_Shrine_Cat_Dialog"/>
    </properties>
   </object>
   <object id="29" name="Cat" class="Npc" gid="214" x="448" y="704" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="meow!"/>
+    <property name="Dialog" value="Healing_Shrine_Cat_Dialog"/>
    </properties>
   </object>
   <object id="4" name="#Random#" class="NpcPartyMember" gid="1905" x="704" y="352" width="32" height="48">
@@ -369,7 +369,7 @@
     <property name="Gender" value="Male"/>
     <property name="Level" type="int" value="2"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="Looking for some help? Can I come along?"/>
+    <property name="Text" value="You look like you could use a steady hand. Shall I come along?"/>
    </properties>
   </object>
  </objectgroup>

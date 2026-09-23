@@ -1,23 +1,23 @@
 [
   {
     "Id": "Lost_Sea_Shell",
-    "Name": "The lost seashell",
-    "Description": "The Boy in the village is looking for a lost seashell.",
+    "Name": "The Lost Seashell",
+    "Description": "Adric, a worried boy at the shrine, lost his favorite seashell somewhere nearby.",
     "Xp": 10,
     "Items": [
       "#Random#"
     ],
     "Stages": [
       {
-        "Description": "You should search the area for the seashell."
+        "Description": "Search the shrine grounds for Adric's missing seashell."
       },
       {
         "Number": 1,
-        "Description": "You found the shell you should return it to the boy."
+        "Description": "You found Adric's seashell. Return it to him at the shrine."
       },
       {
         "Number": 2,
-        "Description": "You returned the seashell.",
+        "Description": "You returned the seashell and lifted Adric's spirits.",
         "CompleteQuest": true
       }
     ]
@@ -29,48 +29,48 @@
     "Stages": [
       {
         "Number": 1,
-        "Description": "Talked to the villager"
+        "Description": "A villager asked for help finding a missing dog."
       },
       {
         "Number": 2,
-        "Description": "Found the dog"
+        "Description": "You found the lost dog. Bring it safely home."
       },
       {
         "Number": 3,
-        "Description": "Returned The dog",
+        "Description": "You returned the dog to its grateful owner.",
         "CompleteQuest": true
       }
     ]
   },
   {
     "Id": "Find_Ship",
-    "Name": "Get a ship",
-    "Description": "To cross the sea you need to find a boat",
+    "Name": "Secure a Ship",
+    "Description": "The forest continent lies across dangerous water. Find someone who can help you sail there.",
     "Xp": 100,
     "Stages": [
       {
         "Number": 1,
-        "Description": "Go to Isis and find the man"
+        "Description": "Travel to Isis and ask around for someone who knows about ships."
       },
       {
         "Number": 2,
-        "Description": "Travel to Coast and find the man's uncle"
+        "Description": "Lesym in Isis says his uncle in Coast owns a ship. Find the old man there."
       },
       {
         "Number": 3,
-        "Description": "Find the old man's key"
+        "Description": "The old man's ship key was stolen. Search for the missing key."
       },
       {
         "Number": 4,
-        "Description": "You have found the key and should return it to the old man"
+        "Description": "You found the old man's key. Return to him in Coast."
       },
       {
         "Number": 5,
-        "Description": "Opened the door"
+        "Description": "The old man unlocked the way to the ship."
       },
       {
         "Number": 6,
-        "Description": "Got the ship",
+        "Description": "You claimed the ship and can now cross the sea.",
         "CompleteQuest": true
       }
     ]

@@ -45,7 +45,20 @@
         "Skills": { "type": "array", "items": { "type": "string" } },
         "Items": { "type": "array", "items": { "type": "string" } },
         "Biomes": { "type": "array", "items": { "$ref": "#/$defs/biome" } },
-        "Rarity": { "$ref": "#/$defs/rarity" }
+        "Rarity": { "$ref": "#/$defs/rarity" },
+        "Strength": { "type": "integer" },
+        "Dexterity": { "type": "integer" },
+        "Constitution": { "type": "integer" },
+        "Intelligence": { "type": "integer" },
+        "Wisdom": { "type": "integer" },
+        "Charisma": { "type": "integer" },
+        "ArmorClass": { "type": "integer", "minimum": 0 },
+        "ProficiencyBonus": { "type": "integer" },
+        "AttackBonus": { "type": "integer" },
+        "DamageDice": { "type": "integer", "minimum": 0 },
+        "DamageDie": { "type": "integer", "minimum": 0 },
+        "DamageBonus": { "type": "integer" },
+        "ChallengeRating": { "type": "string" }
       }
     },
     "spell": {
@@ -89,6 +102,9 @@
         "Rarity": { "$ref": "#/$defs/rarity" },
         "Stats": { "type": "array", "items": { "$ref": "#/$defs/statValue" } },
         "Classes": { "type": "array", "items": { "$ref": "#/$defs/className" } },
+        "DamageDice": { "type": "integer", "minimum": 0 },
+        "DamageDie": { "type": "integer", "minimum": 0 },
+        "DamageBonus": { "type": "integer" },
         "Target": { "$ref": "#/$defs/target" }
       }
     },

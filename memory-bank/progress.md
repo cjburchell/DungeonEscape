@@ -57,12 +57,14 @@
 - Data Editor Maps tab: added a cached read-only map preview and used-tile gallery that lists each rendered tile gid/local tileset tile with usage counts.
 - Narrative data pass: improved quest journal descriptions, branching dialog copy, and direct map NPC text for the seashell/ship quests, town guards, shrine NPCs, recruitable NPCs, and Estark hints without changing quest IDs, stages, rewards, or map hooks.
 - Interactive NPC conversation pass: replaced all ordinary map NPC `Text` prompts with referenced branching dialogs across the pyramid, shrines, Coast, Forest Palace, Isis, Oasis, and the walled city; recruitable NPC prompts remain on their dedicated Yes/No flow.
+- Began the D&D 5.5e / 2024 SRD-inspired combat migration: added optional ability scores, armor class, proficiency, attack bonus, weapon damage dice, damage bonus, and monster challenge rating fields; normal combat attacks now resolve with a d20 attack roll against AC and damage dice/critical dice; existing JRPG stats are still used as fallback bridge values for old data.
 
 
 
 ## In Progress
 
 - Feature development and next-phase architecture planning.
+- D&D-style combat migration phase 1 is started but not complete; spells, skills, class progression, saves, encounter CR, and dialogue ability checks still need dedicated follow-up passes.
 - Active architecture ideas are tracked in `memory-bank/ARCHITECTURE_BACKLOG.md`.
 - Completed architecture work is archived in `memory-bank/ARCHITECTURE_COMPLETED.md`.
 

@@ -52,6 +52,9 @@ namespace Redpoint.DungeonEscape.Data
         public List<StatValue> Stats { get; set; }
         public int Cost { get; set; }
         public int MinLevel { get; set; }
+        public int DamageDice { get; set; }
+        public int DamageDie { get; set; }
+        public int DamageBonus { get; set; }
 
         public List<string> Classes { get; set; }
 

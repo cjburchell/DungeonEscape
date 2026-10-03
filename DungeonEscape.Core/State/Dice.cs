@@ -32,5 +32,10 @@ namespace Redpoint.DungeonEscape.State
         {
             return Random.Next(20) + 1;
         }
+
+        public static int RollDie(int sides)
+        {
+            return sides <= 1 ? 1 : Random.Next(sides) + 1;
+        }
     }
 }

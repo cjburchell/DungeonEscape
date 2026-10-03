@@ -221,6 +221,12 @@ namespace Redpoint.DungeonEscape.State
             Defence -= item.Defence;
             MagicDefence -= item.MagicDefence;
             MaxHealth -= item.Health;
+            if (item.Type == ItemType.Weapon)
+            {
+                DamageDice = 0;
+                DamageDie = 0;
+                DamageBonus -= item.DamageBonus;
+            }
 
             if (Health > MaxHealth)
             {
@@ -247,6 +253,12 @@ namespace Redpoint.DungeonEscape.State
             Defence += item.Defence;
             MagicDefence += item.MagicDefence;
             MaxHealth += item.Health;
+            if (item.Type == ItemType.Weapon)
+            {
+                DamageDice = item.DamageDice;
+                DamageDie = item.DamageDie;
+                DamageBonus += item.DamageBonus;
+            }
         }
     }
 }

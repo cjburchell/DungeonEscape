@@ -23,6 +23,18 @@ namespace Redpoint.DungeonEscape.State
         int MagicDefence { get; set; }
         int CriticalAttack { get; }
         int MaxMagic { get; set; }
+        int Strength { get; set; }
+        int Dexterity { get; set; }
+        int Constitution { get; set; }
+        int Intelligence { get; set; }
+        int Wisdom { get; set; }
+        int Charisma { get; set; }
+        int ArmorClass { get; set; }
+        int ProficiencyBonus { get; set; }
+        int AttackBonus { get; set; }
+        int DamageDice { get; set; }
+        int DamageDie { get; set; }
+        int DamageBonus { get; set; }
         void AddEffect(StatusEffect effect);
         void RemoveEffect(StatusEffect effect);
         void Equip(ItemInstance item);

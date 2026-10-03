@@ -848,7 +848,7 @@ Status legend:
 - Damage an active party member below the same thresholds if practical.
 - Expected: party HP bar fill uses the same green/yellow/orange/red threshold colors, MP bar fill is blue, and party status text only changes color when a party member is dead.
 - Expected: after all party members have chosen actions, queued hero and monster actions resolve in agility order.
-- Expected: attacks use the old hit, critical hit, and damage rules, and target HP bars update as actions resolve.
+- Expected: Fight attacks roll d20 against target Armor Class, critical hits double weapon damage dice, and target HP bars update as actions resolve.
 - Expected: when a monster takes damage, that monster sprite flashes briefly a few times.
 - Expected: when a party member takes damage, that member's portrait in the party status window flashes briefly a few times.
 - Heal a damaged party member during combat.
@@ -965,6 +965,17 @@ Status legend:
 - Expected: combat music and sound effects are muted.
 - Set both volumes back to `1.00`.
 - Expected: combat music and sound effects are audible again.
+
+### [ ] D&D-Style Fight Attack Migration
+
+- Trigger combat with a party member using Fight against a monster.
+- Expected: the attack can hit or miss based on d20 attack roll versus target Armor Class, using explicit D&D combat fields when present and legacy Attack/Defence/Agility bridge values otherwise.
+- Equip a weapon with `DamageDice`, `DamageDie`, and `DamageBonus` set in item data.
+- Expected: Fight damage uses those weapon dice and bonus.
+- Fight a monster with explicit `ArmorClass`, `AttackBonus`, `DamageDice`, `DamageDie`, and `DamageBonus`.
+- Expected: monster Fight actions use those values without requiring legacy Attack/Defence tuning.
+- Force or observe a critical hit if practical.
+- Expected: the combat message shows the heroic maneuver text and damage rolls doubled weapon dice.
 
 ## Tools - Game Editor (standalone)
 

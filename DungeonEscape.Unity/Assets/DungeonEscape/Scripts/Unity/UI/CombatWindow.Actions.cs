@@ -279,20 +279,25 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             var message = source.Name + " attacks " + target.Name + ".\n";
             damage = 0;
-            if (source.CanCriticalHit(target))
+            var attack = DndCombatRules.ResolveWeaponAttack(
+                source,
+                target,
+                () => Dice.RollD20(),
+                sides => Dice.RollDie(sides));
+            if (attack.Critical)
             {
-                damage = target.CalculateDamage(RandomAttack(source.CriticalAttack));
+                damage = attack.Damage;
                 message += "Heroic maneuver!\n";
                 message += target.Name;
             }
-            else if (source.CanHit(target))
+            else if (attack.Hit)
             {
-                damage = target.CalculateDamage(RandomAttack(source.Attack));
+                damage = attack.Damage;
                 message += target.Name;
             }
             else
             {
-                message += target.Name + " dodges the attack and";
+                message += target.Name + " avoided the attack and";
             }
 
             if (damage <= 0)
@@ -320,11 +325,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             return message.TrimEnd();
-        }
-
-        private static int RandomAttack(int attack)
-        {
-            return attack <= 0 ? 0 : CombatRandom.Next(attack);
         }
 
         private static void EnsureItemLinked(ItemInstance item)

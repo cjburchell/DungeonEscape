@@ -58,6 +58,15 @@ else
     </fieldset>
 
     <fieldset>
+        <legend>Weapon Damage</legend>
+        <div class="field-grid">
+            <NumberField Label="Damage Dice" Value="Item.DamageDice" ValueChanged="v => Set(() => Item.DamageDice = v)" />
+            <NumberField Label="Damage Die" Value="Item.DamageDie" ValueChanged="v => Set(() => Item.DamageDie = v)" />
+            <NumberField Label="Damage Bonus" Value="Item.DamageBonus" ValueChanged="v => Set(() => Item.DamageBonus = v)" />
+        </div>
+    </fieldset>
+
+    <fieldset>
         <legend>Slots</legend>
         <EnumMultiSelect TEnum="Slot" Selected="EnsureSlots()" SelectedChanged="OnSlotsChanged" OnChanged="RaiseChanged" />
     </fieldset>

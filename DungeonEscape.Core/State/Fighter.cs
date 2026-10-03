@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Redpoint.DungeonEscape.Rules;
 
 namespace Redpoint.DungeonEscape.State
 {
@@ -25,6 +26,18 @@ namespace Redpoint.DungeonEscape.State
         public int Defence { get; set; }
         public int MagicDefence { get; set; }
         public int Agility { get; set; }
+        public int Strength { get; set; }
+        public int Dexterity { get; set; }
+        public int Constitution { get; set; }
+        public int Intelligence { get; set; }
+        public int Wisdom { get; set; }
+        public int Charisma { get; set; }
+        public int ArmorClass { get; set; }
+        public int ProficiencyBonus { get; set; }
+        public int AttackBonus { get; set; }
+        public int DamageDice { get; set; }
+        public int DamageDie { get; set; }
+        public int DamageBonus { get; set; }
 
         [JsonIgnore]
         public IEnumerable<StatValue> Stats
@@ -236,14 +249,12 @@ namespace Redpoint.DungeonEscape.State
 
         public bool CanHit(IFighter target)
         {
-            var roll = Dice.RollD20();
-            return roll == 20 || (Agility - target.Agility) / 100 * 10 + roll > 4;
+            return DndCombatRules.ResolveWeaponAttack(this, target, null, null).Hit;
         }
 
         public bool CanCriticalHit(IFighter target)
         {
-            var roll = Dice.RollD100();
-            return roll >= 95 || (Agility - target.Agility) / 100 * 50 + roll > 90;
+            return DndCombatRules.ResolveWeaponAttack(this, target, null, null).Critical;
         }
 
         public int CalculateDamage(int attack, bool isPiercing = false, bool isMagic = false)

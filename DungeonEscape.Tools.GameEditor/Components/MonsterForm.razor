@@ -67,6 +67,10 @@ else
         <NumberField Label="Group Size" Value="Monster.GroupSize" ValueChanged="v => Set(() => Monster.GroupSize = v)" />
         <NumberField Label="Gold" Value="Monster.Gold" ValueChanged="v => Set(() => Monster.Gold = v)" />
         <NumberField Label="XP" Value="@((long)Monster.Xp)" ValueChanged="v => Set(() => Monster.Xp = (ulong)Math.Max(0, v))" />
+        <div class="field">
+            <label>Challenge Rating</label>
+            <input value="@Monster.ChallengeRating" @onchange="e => Set(() => Monster.ChallengeRating = e.Value?.ToString())" />
+        </div>
     </div>
 
     <fieldset>
@@ -76,6 +80,30 @@ else
             <NumberField Label="Defence" Value="Monster.Defence" ValueChanged="v => Set(() => Monster.Defence = v)" />
             <NumberField Label="Magic Defence" Value="Monster.MagicDefence" ValueChanged="v => Set(() => Monster.MagicDefence = v)" />
             <NumberField Label="Agility" Value="Monster.Agility" ValueChanged="v => Set(() => Monster.Agility = v)" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>D&amp;D Combat</legend>
+        <div class="field-grid">
+            <NumberField Label="Armor Class" Value="Monster.ArmorClass" ValueChanged="v => Set(() => Monster.ArmorClass = v)" />
+            <NumberField Label="Proficiency" Value="Monster.ProficiencyBonus" ValueChanged="v => Set(() => Monster.ProficiencyBonus = v)" />
+            <NumberField Label="Attack Bonus" Value="Monster.AttackBonus" ValueChanged="v => Set(() => Monster.AttackBonus = v)" />
+            <NumberField Label="Damage Dice" Value="Monster.DamageDice" ValueChanged="v => Set(() => Monster.DamageDice = v)" />
+            <NumberField Label="Damage Die" Value="Monster.DamageDie" ValueChanged="v => Set(() => Monster.DamageDie = v)" />
+            <NumberField Label="Damage Bonus" Value="Monster.DamageBonus" ValueChanged="v => Set(() => Monster.DamageBonus = v)" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Ability Scores</legend>
+        <div class="field-grid">
+            <NumberField Label="Strength" Value="Monster.Strength" ValueChanged="v => Set(() => Monster.Strength = v)" />
+            <NumberField Label="Dexterity" Value="Monster.Dexterity" ValueChanged="v => Set(() => Monster.Dexterity = v)" />
+            <NumberField Label="Constitution" Value="Monster.Constitution" ValueChanged="v => Set(() => Monster.Constitution = v)" />
+            <NumberField Label="Intelligence" Value="Monster.Intelligence" ValueChanged="v => Set(() => Monster.Intelligence = v)" />
+            <NumberField Label="Wisdom" Value="Monster.Wisdom" ValueChanged="v => Set(() => Monster.Wisdom = v)" />
+            <NumberField Label="Charisma" Value="Monster.Charisma" ValueChanged="v => Set(() => Monster.Charisma = v)" />
         </div>
     </fieldset>
 

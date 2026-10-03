@@ -79,6 +79,15 @@ namespace Redpoint.DungeonEscape.State
         public int Magic { get { return Item.GetAttribute(StatType.Magic); } }
 
         [JsonIgnore]
+        public int DamageDice { get { return Item.DamageDice; } }
+
+        [JsonIgnore]
+        public int DamageDie { get { return Item.DamageDie; } }
+
+        [JsonIgnore]
+        public int DamageBonus { get { return Item.DamageBonus; } }
+
+        [JsonIgnore]
         public IReadOnlyCollection<string> Classes { get { return Item.Classes; } }
 
         [JsonIgnore]

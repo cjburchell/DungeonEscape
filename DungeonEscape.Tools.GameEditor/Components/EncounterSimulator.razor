@@ -55,7 +55,7 @@
                 <label class="checkbox-row"><input type="checkbox" @bind="repelActive" /> Apply repel filter</label>
             </div>
             <div class="field">
-                <label>Repel Max Health</label>
+                <label>Repel Max HP</label>
                 <input type="number" min="0" value="@repelMaxHealth" @onchange="e => repelMaxHealth = Math.Max(0, ParseInt(e.Value, 0))" disabled="@(!repelActive)" />
             </div>
         </div>
@@ -186,7 +186,7 @@
                 repelMaxHealth,
                 max => random.Next(max),
                 () => random.Next(1, 21),
-                RollMonsterHealth);
+                RollMonsterHP);
 
             if (encounter.Count == 0)
             {
@@ -247,16 +247,16 @@
         });
     }
 
-    private static int RollMonsterHealth(Monster monster)
+    private static int RollMonsterHP(Monster monster)
     {
         if (monster == null)
         {
             return 0;
         }
 
-        var times = Math.Max(1, monster.HealthTimes);
-        var random = Math.Max(0, monster.HealthRandom);
-        return monster.HealthConst + (random == 0 ? 0 : times * ((random + 1) / 2));
+        var times = Math.Max(1, monster.HitPointTimes);
+        var random = Math.Max(0, monster.HitPointRandom);
+        return monster.HitPoints + (random == 0 ? 0 : times * ((random + 1) / 2));
     }
 
     private static string? GetWarning(IEnumerable<RandomMonster> randomMonsters, BiomeInfo biomeInfo, int emptyRuns)

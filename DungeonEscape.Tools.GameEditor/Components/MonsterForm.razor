@@ -71,15 +71,43 @@ else
             <label>Challenge Rating</label>
             <input value="@Monster.ChallengeRating" @onchange="e => Set(() => Monster.ChallengeRating = e.Value?.ToString())" />
         </div>
+        <div class="field">
+            <label>D&amp;D Monster</label>
+            <input value="@Monster.DndMonster" @onchange="e => Set(() => Monster.DndMonster = e.Value?.ToString())" />
+        </div>
     </div>
 
     <fieldset>
-        <legend>Combat Stats</legend>
+        <legend>D&amp;D Identity</legend>
         <div class="field-grid">
-            <NumberField Label="Attack" Value="Monster.Attack" ValueChanged="v => Set(() => Monster.Attack = v)" />
-            <NumberField Label="Defence" Value="Monster.Defence" ValueChanged="v => Set(() => Monster.Defence = v)" />
-            <NumberField Label="Magic Defence" Value="Monster.MagicDefence" ValueChanged="v => Set(() => Monster.MagicDefence = v)" />
-            <NumberField Label="Agility" Value="Monster.Agility" ValueChanged="v => Set(() => Monster.Agility = v)" />
+            <div class="field">
+                <label>Size</label>
+                <input value="@Monster.Size" @onchange="e => Set(() => Monster.Size = e.Value?.ToString())" />
+            </div>
+            <div class="field">
+                <label>Type</label>
+                <input value="@Monster.MonsterType" @onchange="e => Set(() => Monster.MonsterType = e.Value?.ToString())" />
+            </div>
+            <div class="field">
+                <label>Alignment</label>
+                <input value="@Monster.Alignment" @onchange="e => Set(() => Monster.Alignment = e.Value?.ToString())" />
+            </div>
+            <div class="field">
+                <label>Speed</label>
+                <input value="@Monster.Speed" @onchange="e => Set(() => Monster.Speed = e.Value?.ToString())" />
+            </div>
+            <div class="field">
+                <label>Senses</label>
+                <input value="@Monster.Senses" @onchange="e => Set(() => Monster.Senses = e.Value?.ToString())" />
+            </div>
+            <div class="field">
+                <label>Languages</label>
+                <input value="@Monster.Languages" @onchange="e => Set(() => Monster.Languages = e.Value?.ToString())" />
+            </div>
+            <div class="field">
+                <label>Hit Dice</label>
+                <input value="@Monster.HitDice" @onchange="e => Set(() => Monster.HitDice = e.Value?.ToString())" />
+            </div>
         </div>
     </fieldset>
 
@@ -108,11 +136,11 @@ else
     </fieldset>
 
     <fieldset>
-        <legend>Health <RollPreview Label="Health" Times="Monster.HealthTimes" Random="Monster.HealthRandom" Const="Monster.HealthConst" /></legend>
+        <legend>HP <RollPreview Label="HP" Times="Monster.HitPointTimes" Random="Monster.HitPointRandom" Const="Monster.HitPoints" /></legend>
         <div class="field-grid">
-            <NumberField Label="Health Const" Value="Monster.HealthConst" ValueChanged="v => Set(() => Monster.HealthConst = v)" />
-            <NumberField Label="Health Random" Value="Monster.HealthRandom" ValueChanged="v => Set(() => Monster.HealthRandom = v)" />
-            <NumberField Label="Health Times" Value="Monster.HealthTimes" ValueChanged="v => Set(() => Monster.HealthTimes = v)" />
+            <NumberField Label="HP" Value="Monster.HitPoints" ValueChanged="v => Set(() => Monster.HitPoints = v)" />
+            <NumberField Label="HP Random" Value="Monster.HitPointRandom" ValueChanged="v => Set(() => Monster.HitPointRandom = v)" />
+            <NumberField Label="HP Times" Value="Monster.HitPointTimes" ValueChanged="v => Set(() => Monster.HitPointTimes = v)" />
         </div>
     </fieldset>
 
@@ -143,6 +171,81 @@ else
     </fieldset>
 
     <fieldset>
+        <legend>D&amp;D Traits</legend>
+        @if (Monster.Traits == null || Monster.Traits.Count == 0)
+        {
+            <div class="tag-empty">None</div>
+        }
+        else
+        {
+            @for (var i = 0; i < Monster.Traits.Count; i++)
+            {
+                var index = i;
+                var trait = Monster.Traits[index];
+                <div class="stacked-row">
+                    <div class="field">
+                        <label>Name</label>
+                        <input value="@trait.Name" @onchange="e => Set(() => trait.Name = e.Value?.ToString())" />
+                    </div>
+                    <div class="field">
+                        <label>Description</label>
+                        <textarea value="@trait.Description" @onchange="e => Set(() => trait.Description = e.Value?.ToString())"></textarea>
+                    </div>
+                    <button class="danger" title="Remove" @onclick="() => RemoveTrait(index)">&times;</button>
+                </div>
+            }
+        }
+        <button @onclick="AddTrait">Add Trait</button>
+    </fieldset>
+
+    <fieldset>
+        <legend>D&amp;D Actions</legend>
+        @if (Monster.Actions == null || Monster.Actions.Count == 0)
+        {
+            <div class="tag-empty">None</div>
+        }
+        else
+        {
+            @for (var i = 0; i < Monster.Actions.Count; i++)
+            {
+                var index = i;
+                var action = Monster.Actions[index];
+                <div class="stacked-row">
+                    <div class="field-grid">
+                        <div class="field">
+                            <label>Name</label>
+                            <input value="@action.Name" @onchange="e => Set(() => action.Name = e.Value?.ToString())" />
+                        </div>
+                        <NumberField Label="Count" Value="action.Count" ValueChanged="v => Set(() => action.Count = v)" />
+                        <NumberField Label="Attack Bonus" Value="action.AttackBonus" ValueChanged="v => Set(() => action.AttackBonus = v)" />
+                        <NumberField Label="Damage Dice" Value="action.DamageDice" ValueChanged="v => Set(() => action.DamageDice = v)" />
+                        <NumberField Label="Damage Die" Value="action.DamageDie" ValueChanged="v => Set(() => action.DamageDie = v)" />
+                        <NumberField Label="Damage Bonus" Value="action.DamageBonus" ValueChanged="v => Set(() => action.DamageBonus = v)" />
+                        <div class="field">
+                            <label>Damage Type</label>
+                            <input value="@action.DamageType" @onchange="e => Set(() => action.DamageType = e.Value?.ToString())" />
+                        </div>
+                        <div class="field">
+                            <label>Reach</label>
+                            <input value="@action.Reach" @onchange="e => Set(() => action.Reach = e.Value?.ToString())" />
+                        </div>
+                        <div class="field">
+                            <label>Range</label>
+                            <input value="@action.Range" @onchange="e => Set(() => action.Range = e.Value?.ToString())" />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Description</label>
+                        <textarea value="@action.Description" @onchange="e => Set(() => action.Description = e.Value?.ToString())"></textarea>
+                    </div>
+                    <button class="danger" title="Remove" @onclick="() => RemoveAction(index)">&times;</button>
+                </div>
+            }
+        }
+        <button @onclick="AddAction">Add Action</button>
+    </fieldset>
+
+    <fieldset>
         <legend>Items (drops)</legend>
         <StringListEditor Items="EnsureList(Monster.Items)" Options="DataSources.Items" OnChanged="RaiseChanged" />
     </fieldset>
@@ -170,6 +273,52 @@ else
             : ImageCatalog.GetDisplayName(Monster.ImageId);
 
     private List<string> EnsureList(List<string>? list) => list ?? new List<string>();
+
+    private async Task AddTrait()
+    {
+        if (Monster == null)
+        {
+            return;
+        }
+
+        Monster.Traits ??= new List<MonsterTrait>();
+        Monster.Traits.Add(new MonsterTrait());
+        await RaiseChanged();
+    }
+
+    private async Task RemoveTrait(int index)
+    {
+        if (Monster?.Traits == null || index < 0 || index >= Monster.Traits.Count)
+        {
+            return;
+        }
+
+        Monster.Traits.RemoveAt(index);
+        await RaiseChanged();
+    }
+
+    private async Task AddAction()
+    {
+        if (Monster == null)
+        {
+            return;
+        }
+
+        Monster.Actions ??= new List<MonsterAction>();
+        Monster.Actions.Add(new MonsterAction());
+        await RaiseChanged();
+    }
+
+    private async Task RemoveAction(int index)
+    {
+        if (Monster?.Actions == null || index < 0 || index >= Monster.Actions.Count)
+        {
+            return;
+        }
+
+        Monster.Actions.RemoveAt(index);
+        await RaiseChanged();
+    }
 
     private async Task SetName(string? value)
     {

@@ -1,4 +1,4 @@
-﻿using Redpoint.DungeonEscape.Data;
+using Redpoint.DungeonEscape.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,7 +73,7 @@ namespace Redpoint.DungeonEscape.State
         public int MagicDefence { get { return Item.GetAttribute(StatType.MagicDefence); } }
 
         [JsonIgnore]
-        public int Health { get { return Item.GetAttribute(StatType.Health); } }
+        public int Health { get { return Item.GetAttribute(StatType.HP); } }
 
         [JsonIgnore]
         public int Magic { get { return Item.GetAttribute(StatType.Magic); } }
@@ -148,7 +148,7 @@ namespace Redpoint.DungeonEscape.State
 
                 switch (stat)
                 {
-                    case StatType.Health:
+                    case StatType.HP:
                         if (target.Health + value > target.MaxHealth)
                         {
                             target.Health = target.MaxHealth;

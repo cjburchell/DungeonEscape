@@ -105,7 +105,7 @@ namespace Redpoint.DungeonEscape.Rules
             switch (type.Value)
             {
                 case ItemType.Weapon:
-                    availableStats = new List<StatType> { StatType.Agility, StatType.Attack, StatType.Health, StatType.Magic };
+                    availableStats = new List<StatType> { StatType.Agility, StatType.Attack, StatType.HP, StatType.Magic };
                     item.MinLevel = RandomLevel(maxLevel, minLevel, nextInt);
                     item.Stats.Add(new StatValue
                     {
@@ -118,7 +118,7 @@ namespace Redpoint.DungeonEscape.Rules
                     {
                         StatType.Agility,
                         StatType.Defence,
-                        StatType.Health,
+                        StatType.HP,
                         StatType.Magic,
                         StatType.MagicDefence
                     };

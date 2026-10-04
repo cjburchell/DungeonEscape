@@ -21,7 +21,6 @@ namespace Redpoint.DungeonEscape.State
         List<StatusEffect> Status { get; }
         List<ItemInstance> Items { get; }
         int MagicDefence { get; set; }
-        int CriticalAttack { get; }
         int MaxMagic { get; set; }
         int Strength { get; set; }
         int Dexterity { get; set; }
@@ -46,6 +45,5 @@ namespace Redpoint.DungeonEscape.State
         bool CanCriticalHit(IFighter target);
         int CalculateDamage(int attack, bool isPiercing = false, bool isMagic = false);
         string HitCheck();
-        string GetStats();
     }
 }

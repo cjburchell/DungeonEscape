@@ -113,8 +113,8 @@ namespace Redpoint.DungeonEscape.Data
 
                     switch (stat)
                     {
-                        case StatType.Health:
-                            shortStat = "H";
+                        case StatType.HP:
+                            shortStat = "HP";
                             break;
                         case StatType.Magic:
                             shortStat = "M";

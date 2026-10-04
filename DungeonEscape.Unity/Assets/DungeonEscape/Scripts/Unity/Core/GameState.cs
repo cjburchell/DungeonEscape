@@ -2556,7 +2556,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             }
 
             hero.NextLevel = classStats.FirstLevel;
-            hero.MaxHealth = RollStartingStat(classStats, StatType.Health, 30);
+            hero.MaxHealth = RollStartingStat(classStats, StatType.HP, 30);
             hero.Health = hero.MaxHealth;
             hero.MaxMagic = RollStartingStat(classStats, StatType.Magic, 8);
             hero.Magic = hero.MaxMagic;
@@ -3005,7 +3005,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 repelMaxHealth,
                 maxValue => Random.Next(maxValue),
                 () => Dice.RollD20(),
-                monster => Dice.Roll(monster.HealthRandom, monster.HealthTimes, monster.HealthConst));
+                monster => Dice.Roll(monster.HitPointRandom, monster.HitPointTimes, monster.HitPoints));
         }
 
         private static GameSave GetQuickSave(GameFile file)

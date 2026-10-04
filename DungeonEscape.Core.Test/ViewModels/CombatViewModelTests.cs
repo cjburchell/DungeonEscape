@@ -142,7 +142,7 @@ namespace DungeonEscape.Core.Test.ViewModels
         {
             var viewModel = new CombatViewModel();
             var hero = new Hero { Name = "Able" };
-            var monster = new MonsterInstance(new Monster { Name = "Slime", HealthConst = 1 }, null);
+            var monster = new MonsterInstance(new Monster { Name = "Slime", HitPoints = 1 }, null);
             var candidates = new List<IFighter> { hero, monster };
 
             viewModel.SetSelectedMenuIndex(1);

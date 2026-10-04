@@ -20,7 +20,7 @@ public sealed class DataFolderService
     {
         StatType.Agility,
         StatType.Defence,
-        StatType.Health,
+        StatType.HP,
         StatType.Attack,
         StatType.Magic,
         StatType.MagicDefence

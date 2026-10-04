@@ -37,7 +37,7 @@
 
     private async Task Add()
     {
-        Items.Add(new StatValue { Type = StatType.Health, Value = 0 });
+        Items.Add(new StatValue { Type = StatType.HP, Value = 0 });
         await OnChanged.InvokeAsync();
     }
 

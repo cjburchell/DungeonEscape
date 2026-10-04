@@ -1,23 +1,23 @@
 [
   {
-    "Name": "Bodkin Archer"
+    "Name": "Goblin Archer"
   },
   {
     "Name": "Troll",
     "Rarity": "Uncommon"
   },
   {
-    "Name": "Great troll",
+    "Name": "Dire Troll",
     "Rarity": "Rare"
   },
   {
-    "Name": "Ratscal"
+    "Name": "Giant Rat"
   },
   {
-    "Name": "Walking stick"
+    "Name": "Animated Walking Stick"
   },
   {
-    "Name": "Bullmustiff",
+    "Name": "Dire Wolf",
     "Rarity": "Uncommon"
   }
 ]

@@ -174,11 +174,11 @@ namespace DungeonEscape.Core.Test.Rules
                 new Monster
                 {
                     Name = name,
-                    HealthConst = 10,
-                    HealthTimes = 1,
+                    HitPoints = 10,
+                    HitPointTimes = 1,
                     MagicConst = 10,
                     MagicTimes = 1,
-                    Agility = 3,
+                    Dexterity = 13,
                     SpellList = spells == null ? new List<string>() : spells.ToList()
                 },
                 null);

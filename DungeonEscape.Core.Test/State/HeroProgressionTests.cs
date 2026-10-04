@@ -94,7 +94,7 @@ namespace DungeonEscape.Core.Test.State
                     Skills = new List<string> { "Swipe" },
                     Stats = new List<Stats>
                     {
-                        CreateStat(StatType.Health, 3),
+                        CreateStat(StatType.HP, 3),
                         CreateStat(StatType.Attack, 2),
                         CreateStat(StatType.Defence, 1),
                         CreateStat(StatType.MagicDefence, 1),

@@ -6,7 +6,7 @@
   "$defs": {
     "rarity": { "type": "string", "enum": ["Common", "Uncommon", "Rare", "Epic", "Legendary"] },
     "biome": { "type": "string", "enum": ["None", "Grassland", "Forest", "Water", "Hills", "Desert", "Swamp", "Cave", "Town", "Tower"] },
-    "statType": { "type": "string", "enum": ["None", "Health", "Attack", "Defence", "MagicDefence", "Agility", "Magic"] },
+    "statType": { "type": "string", "enum": ["None", "HP", "Attack", "Defence", "MagicDefence", "Agility", "Magic"] },
     "target": { "type": "string", "enum": ["Single", "Group", "Object", "None"] },
     "skillType": { "type": "string", "enum": ["Heal", "Outside", "Damage", "Return", "Revive", "Dot", "Sleep", "Confusion", "StopSpell", "Buff", "Decrease", "Clear", "Steal", "Flee", "Attack", "None", "StatDecrease", "StatIncrease", "Repel", "Open"] },
     "durationType": { "type": "string", "enum": ["Distance", "Rounds"] },
@@ -30,6 +30,30 @@
       "properties": {
         "Type": { "$ref": "#/$defs/statType" },
         "Value": { "type": "integer" }
+      }
+    },
+    "monsterTrait": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "Name": { "type": "string" },
+        "Description": { "type": "string" }
+      }
+    },
+    "monsterAction": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "Name": { "type": "string" },
+        "Description": { "type": "string" },
+        "AttackBonus": { "type": "integer" },
+        "DamageDice": { "type": "integer", "minimum": 0 },
+        "DamageDie": { "type": "integer", "minimum": 0 },
+        "DamageBonus": { "type": "integer" },
+        "DamageType": { "type": "string" },
+        "Reach": { "type": "string" },
+        "Range": { "type": "string" },
+        "Count": { "type": "integer", "minimum": 0 }
       }
     },
     "monster": {
@@ -58,7 +82,17 @@
         "DamageDice": { "type": "integer", "minimum": 0 },
         "DamageDie": { "type": "integer", "minimum": 0 },
         "DamageBonus": { "type": "integer" },
-        "ChallengeRating": { "type": "string" }
+        "ChallengeRating": { "type": "string" },
+        "DndMonster": { "type": "string" },
+        "Size": { "type": "string" },
+        "MonsterType": { "type": "string" },
+        "Alignment": { "type": "string" },
+        "Speed": { "type": "string" },
+        "Senses": { "type": "string" },
+        "Languages": { "type": "string" },
+        "HitDice": { "type": "string" },
+        "Traits": { "type": "array", "items": { "$ref": "#/$defs/monsterTrait" } },
+        "Actions": { "type": "array", "items": { "$ref": "#/$defs/monsterAction" } }
       }
     },
     "spell": {

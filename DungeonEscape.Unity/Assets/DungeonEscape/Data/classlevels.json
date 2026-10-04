@@ -3,7 +3,7 @@
         "Class":  "Paladin",
         "Stats":  [
                       {
-                          "Type":  "Health",
+                          "Type":  "HP",
                           "StartConst":  40,
                           "Roll":  7,
                           "RollTimes":  1,
@@ -54,7 +54,7 @@
         "DefaultImage":  2,
         "Stats":  [
                       {
-                          "Type":  "Health",
+                          "Type":  "HP",
                           "StartConst":  50,
                           "Roll":  7,
                           "RollTimes":  1,
@@ -102,7 +102,7 @@
         "DefaultImage":  6,
         "Stats":  [
                       {
-                          "Type":  "Health",
+                          "Type":  "HP",
                           "StartConst":  20,
                           "Roll":  5,
                           "RollTimes":  1,
@@ -153,7 +153,7 @@
         "DefaultImage":  4,
         "Stats":  [
                       {
-                          "Type":  "Health",
+                          "Type":  "HP",
                           "StartConst":  40,
                           "Roll":  7,
                           "RollTimes":  1,
@@ -204,7 +204,7 @@
         "DefaultImage":  8,
         "Stats":  [
                       {
-                          "Type":  "Health",
+                          "Type":  "HP",
                           "StartConst":  40,
                           "Roll":  7,
                           "RollTimes":  1,
@@ -255,7 +255,7 @@
         "DefaultImage":  10,
         "Stats":  [
                       {
-                          "Type":  "Health",
+                          "Type":  "HP",
                           "StartConst":  40,
                           "Roll":  7,
                           "RollTimes":  1,
@@ -306,7 +306,7 @@
         "DefaultImage":  14,
         "Stats":  [
                       {
-                          "Type":  "Health",
+                          "Type":  "HP",
                           "StartConst":  40,
                           "Roll":  7,
                           "RollTimes":  1,
@@ -357,7 +357,7 @@
         "DefaultImage":  16,
         "Stats":  [
                       {
-                          "Type":  "Health",
+                          "Type":  "HP",
                           "StartConst":  40,
                           "Roll":  7,
                           "RollTimes":  1,
@@ -408,7 +408,7 @@
         "DefaultImage":  12,
         "Stats":  [
                       {
-                          "Type":  "Health",
+                          "Type":  "HP",
                           "StartConst":  40,
                           "Roll":  7,
                           "RollTimes":  1,

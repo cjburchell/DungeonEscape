@@ -19,19 +19,15 @@ namespace Redpoint.DungeonEscape.Data
         public List<string> SkillList { get; set; }
 
         public List<string> Items { get; set; }
-        public int Agility { get; set; }
-        public int Defence { get; set; }
         public ulong Xp { get; set; }
         public int Gold { get; set; }
-        public int HealthConst { get; set; }
-        public int HealthRandom { get; set; }
-        public int HealthTimes { get; set; }
+        public int HitPoints { get; set; }
+        public int HitPointRandom { get; set; }
+        public int HitPointTimes { get; set; }
         public int MagicTimes { get; set; }
         public int MagicConst { get; set; }
         public int MagicRandom { get; set; }
-        public int Attack { get; set; }
         public string Name { get; set; }
-        public int MagicDefence { get; set; }
         public int Strength { get; set; }
         public int Dexterity { get; set; }
         public int Constitution { get; set; }
@@ -45,6 +41,16 @@ namespace Redpoint.DungeonEscape.Data
         public int DamageDie { get; set; }
         public int DamageBonus { get; set; }
         public string ChallengeRating { get; set; }
+        public string DndMonster { get; set; }
+        public string Size { get; set; }
+        public string MonsterType { get; set; }
+        public string Alignment { get; set; }
+        public string Speed { get; set; }
+        public string Senses { get; set; }
+        public string Languages { get; set; }
+        public string HitDice { get; set; }
+        public List<MonsterTrait> Traits { get; set; }
+        public List<MonsterAction> Actions { get; set; }
 
         [JsonProperty("Biomes", ItemConverterType = typeof(StringEnumConverter))]
         public List<Biome> Biomes { get; set; }
@@ -57,8 +63,10 @@ namespace Redpoint.DungeonEscape.Data
             SpellList = new List<string>();
             SkillList = new List<string>();
             Items = new List<string>();
-            HealthConst = 1;
-            HealthTimes = 1;
+            Traits = new List<MonsterTrait>();
+            Actions = new List<MonsterAction>();
+            HitPoints = 1;
+            HitPointTimes = 1;
             MagicTimes = 1;
             Rarity = Rarity.Common;
         }

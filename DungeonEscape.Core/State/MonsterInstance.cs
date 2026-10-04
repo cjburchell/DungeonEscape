@@ -1,6 +1,7 @@
 ﻿using Redpoint.DungeonEscape.Data;
 using System.Collections.Generic;
 using System.Linq;
+using Redpoint.DungeonEscape.Rules;
 
 namespace Redpoint.DungeonEscape.State
 {
@@ -11,14 +12,14 @@ namespace Redpoint.DungeonEscape.State
         public MonsterInstance(Monster info, IGame gameState)
         {
             _info = info;
-            Health = Dice.Roll(info.HealthRandom, info.HealthTimes, info.HealthConst);
+            Health = Dice.Roll(info.HitPointRandom, info.HitPointTimes, info.HitPoints);
             MaxHealth = Health;
             Magic = Dice.Roll(info.MagicRandom, info.MagicTimes, info.MagicConst);
             MaxMagic = Magic;
-            Attack = info.Attack;
-            Defence = info.Defence;
-            MagicDefence = info.MagicDefence;
-            Agility = info.Agility;
+            Attack = GetLegacyAttack(info);
+            Defence = GetLegacyDefence(info);
+            MagicDefence = GetLegacyMagicDefence(info);
+            Agility = info.Dexterity;
             Strength = info.Strength;
             Dexterity = info.Dexterity;
             Constitution = info.Constitution;
@@ -58,6 +59,29 @@ namespace Redpoint.DungeonEscape.State
         {
             return _info.SkillList.Select(id => availableSkills.FirstOrDefault(item => item.Name == id))
                 .Where(skill => skill != null).ToList();
+        }
+
+        private static int GetLegacyAttack(Monster info)
+        {
+            return info == null
+                ? 1
+                : System.Math.Max(1, info.DamageDice * System.Math.Max(1, info.DamageDie) + info.DamageBonus);
+        }
+
+        private static int GetLegacyDefence(Monster info)
+        {
+            return info == null ? 0 : System.Math.Max(0, (info.ArmorClass - 10) * 5);
+        }
+
+        private static int GetLegacyMagicDefence(Monster info)
+        {
+            if (info == null)
+            {
+                return 0;
+            }
+
+            var wisdom = DndStatRules.GetAbilityModifier(info.Wisdom);
+            return System.Math.Max(0, (wisdom + info.ProficiencyBonus) * 10);
         }
     }
 }

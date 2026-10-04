@@ -633,7 +633,7 @@ else
                     FirstLevel = 1,
                     Stats = new List<Stats>
                     {
-                        new() { Type = StatType.Health, StartConst = 1, Roll = 1, RollTimes = 1 },
+                        new() { Type = StatType.HP, StartConst = 1, Roll = 1, RollTimes = 1 },
                         new() { Type = StatType.Attack, StartConst = 1, Roll = 1, RollTimes = 1 },
                         new() { Type = StatType.Defence, StartConst = 1, Roll = 1, RollTimes = 1 }
                     },
@@ -644,7 +644,7 @@ else
             case EditorTab.StatNames:
                 selectedStatName = new StatName
                 {
-                    Type = StatType.Health,
+                    Type = StatType.HP,
                     Prefix = new List<string>(),
                     Suffix = new List<string>()
                 };

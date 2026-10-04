@@ -256,7 +256,7 @@
     <properties>
       <property name="RenderRole" value="Sprites" />
     </properties>
-    <object id="2" name="Estark" class="Npc" gid="8868" x="640" y="384" width="32" height="48">
+    <object id="2" name="Horned Devil" class="Npc" gid="8868" x="640" y="384" width="32" height="48">
       <properties>
         <property name="Collideable" type="bool" value="true" />
         <property name="MoveRadius" type="int" value="3" />

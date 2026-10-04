@@ -48,8 +48,8 @@ namespace DungeonEscape.Core.Test.Rules
                 new Monster
                 {
                     Name = "Ogre",
-                    HealthConst = 10,
-                    HealthTimes = 1,
+                    HitPoints = 10,
+                    HitPointTimes = 1,
                     MagicTimes = 1,
                     Strength = 18,
                     DamageBonus = 4

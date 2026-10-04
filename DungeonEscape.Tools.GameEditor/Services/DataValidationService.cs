@@ -17,7 +17,7 @@ public sealed class DataValidationService
 
     private static readonly StatType[] RequiredClassStats =
     {
-        StatType.Health,
+        StatType.HP,
         StatType.Attack,
         StatType.Defence,
         StatType.MagicDefence,
@@ -29,7 +29,7 @@ public sealed class DataValidationService
     {
         StatType.Agility,
         StatType.Defence,
-        StatType.Health,
+        StatType.HP,
         StatType.Attack,
         StatType.Magic,
         StatType.MagicDefence

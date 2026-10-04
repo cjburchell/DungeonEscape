@@ -163,8 +163,8 @@ namespace Redpoint.DungeonEscape.Data
             }
 
             return (oldHealth == 0
-                ? target.Name + " is revived and gains " + target.Health + " health\n"
-                : target.Name + " gains " + (target.Health - oldHealth) + " health\n", true);
+                ? target.Name + " is revived and gains " + target.Health + " HP\n"
+                : target.Name + " gains " + (target.Health - oldHealth) + " HP\n", true);
         }
 
         private (string, bool) DoClearEffects(IFighter target)
@@ -281,7 +281,7 @@ namespace Redpoint.DungeonEscape.Data
                 return (message + " was unharmed\n", false);
             }
 
-            if (StatType == StatType.Health)
+            if (StatType == StatType.HP)
             {
                 target.Health -= damage;
                 message += " took " + damage + " points of damage from " + EffectName + "\n";
@@ -331,7 +331,7 @@ namespace Redpoint.DungeonEscape.Data
 
             switch (StatType)
             {
-                case StatType.Health:
+                case StatType.HP:
                     target.MaxHealth += statValue;
                     if (target.Health > target.MaxHealth) target.Health = target.MaxHealth;
                     break;

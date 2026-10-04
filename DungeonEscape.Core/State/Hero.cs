@@ -1,4 +1,4 @@
-﻿using Redpoint.DungeonEscape.Data;
+using Redpoint.DungeonEscape.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +56,7 @@ namespace Redpoint.DungeonEscape.State
             Xp = 0;
             NextLevel = classStats.FirstLevel;
 
-            MaxHealth = classStats.Stats.First(item => item.Type == StatType.Health).RollStartValue();
+            MaxHealth = classStats.Stats.First(item => item.Type == StatType.HP).RollStartValue();
             Attack = classStats.Stats.First(item => item.Type == StatType.Attack).RollStartValue();
             Defence = classStats.Stats.First(item => item.Type == StatType.Defence).RollStartValue();
             MagicDefence = classStats.Stats.First(item => item.Type == StatType.MagicDefence).RollStartValue();

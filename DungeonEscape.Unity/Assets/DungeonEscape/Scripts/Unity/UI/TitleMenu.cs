@@ -1004,7 +1004,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             };
             GUILayout.Label("Stats", title, GUILayout.Height(24f * scale));
             GUILayout.BeginVertical();
-            DrawStatRow("Health:", createPreviewHero == null ? 0 : createPreviewHero.MaxHealth);
+            DrawStatRow("HP:", createPreviewHero == null ? 0 : createPreviewHero.MaxHealth);
             DrawStatRow("Magic:", createPreviewHero == null ? 0 : createPreviewHero.MaxMagic);
             DrawStatRow("Attack:", createPreviewHero == null ? 0 : createPreviewHero.Attack);
             DrawStatRow("Defence:", createPreviewHero == null ? 0 : createPreviewHero.Defence);

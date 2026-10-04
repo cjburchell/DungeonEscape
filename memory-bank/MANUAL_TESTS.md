@@ -829,7 +829,7 @@ active or waiting according to the current party-size limit.
 - Expected: the battlefield image matches the encounter biome, such as field, forest, ocean, mountain, desert, swamp, cave, castle, or tower.
 - Expected: each selected monster is shown with its own image from `allmonsters.tsx`, including duplicate monsters of the same type.
 - Expected: monster sprites keep their relative source image sizes instead of being forced to a uniform size.
-- Expected: each monster shows a health progress bar instead of a name label.
+- Expected: each monster shows an HP progress bar instead of a name label.
 - Expected: the party status window remains visible in the upper-left while combat is open, including after using the directional pad.
 - Expected: the gold window is hidden while combat is open.
 - Press OK, Interact, or Cancel.
@@ -975,6 +975,15 @@ active or waiting according to the current party-size limit.
 
 - Trigger combat with a party member using Fight against a monster.
 - Expected: the attack can hit or miss based on d20 attack roll versus target Armor Class, using explicit D&D combat fields when present and legacy Attack/Defence/Agility bridge values otherwise.
+
+### [ ] D&D HP Data Naming
+
+- Open the Game Editor Class, Stat Names, Skills, and Monster tabs.
+- Expected: character/stat data uses `HP` rather than `Health`, and monster HP rolls edit through `HitPoints`, `HitPointRandom`, and `HitPointTimes`-backed fields.
+- Start a new quest and enter combat.
+- Expected: player and monster HP values still initialize, display, and change correctly during combat.
+- Trigger random encounters in several areas, including a dungeon/tower map with map-specific monsters.
+- Expected: monsters use the renamed D&D-style display names, such as `Goblin Archer`, `Troll`, `Dire Wolf`, or `Green Dragon Wyrmling`, and encounters still resolve without missing-monster lookup errors.
 - Equip a weapon with `DamageDice`, `DamageDie`, and `DamageBonus` set in item data.
 - Expected: Fight damage uses those weapon dice and bonus.
 - Fight a monster with explicit `ArmorClass`, `AttackBonus`, `DamageDice`, `DamageDie`, and `DamageBonus`.

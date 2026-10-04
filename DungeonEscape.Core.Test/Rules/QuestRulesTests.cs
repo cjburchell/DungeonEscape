@@ -138,7 +138,7 @@ namespace DungeonEscape.Core.Test.Rules
                     Skills = new List<string>(),
                     Stats = new List<Stats>
                     {
-                        new Stats { Type = StatType.Health },
+                        new Stats { Type = StatType.HP },
                         new Stats { Type = StatType.Attack },
                         new Stats { Type = StatType.Defence },
                         new Stats { Type = StatType.MagicDefence },

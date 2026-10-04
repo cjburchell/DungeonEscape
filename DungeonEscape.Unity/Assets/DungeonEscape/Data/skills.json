@@ -11,7 +11,7 @@
     "DurationTimes": 1,
     "DurationRandom": 8,
     "DurationType": "Distance",
-    "StatType": "Health",
+    "StatType": "HP",
     "EffectName": "poisoned",
     "DoAttack": true
   },
@@ -27,7 +27,7 @@
     "DurationTimes": 1,
     "DurationRandom": 8,
     "DurationType": "Distance",
-    "StatType": "Health",
+    "StatType": "HP",
     "EffectName": "poisoned"
   },
   {
@@ -101,7 +101,7 @@
     "StatRandom": 20,
     "DurationTimes": 1,
     "DurationType": "Distance",
-    "StatType": "Health",
+    "StatType": "HP",
     "EffectName": "Swipe"
   },
   {
@@ -171,7 +171,7 @@
     "StatRandom": 10,
     "DurationTimes": 1,
     "DurationType": "Distance",
-    "StatType": "Health",
+    "StatType": "HP",
     "EffectName": "Fire"
   },
   {
@@ -196,7 +196,7 @@
     "StatRandom": 10,
     "DurationTimes": 1,
     "DurationType": "Distance",
-    "StatType": "Health",
+    "StatType": "HP",
     "EffectName": "Fire"
   },
   {
@@ -208,7 +208,7 @@
     "StatRandom": 10,
     "DurationTimes": 1,
     "DurationType": "Distance",
-    "StatType": "Health",
+    "StatType": "HP",
     "EffectName": "Fire"
   },
   {
@@ -221,7 +221,7 @@
     "StatRandom": 20,
     "DurationTimes": 1,
     "DurationType": "Distance",
-    "StatType": "Health",
+    "StatType": "HP",
     "EffectName": "Lighting"
   },
   {
@@ -234,7 +234,7 @@
     "StatRandom": 10,
     "DurationTimes": 1,
     "DurationType": "Distance",
-    "StatType": "Health",
+    "StatType": "HP",
     "EffectName": "Lighting"
   },
   {
@@ -246,7 +246,7 @@
     "StatRandom": 10,
     "DurationTimes": 1,
     "DurationType": "Distance",
-    "StatType": "Health",
+    "StatType": "HP",
     "EffectName": "Heal"
   },
   {
@@ -277,7 +277,7 @@
     "StatTimes": 1,
     "DurationTimes": 1,
     "DurationType": "Distance",
-    "StatType": "Health",
+    "StatType": "HP",
     "EffectName": "Revive"
   },
   {
@@ -287,7 +287,7 @@
     "StatTimes": 1,
     "DurationTimes": 1,
     "DurationType": "Distance",
-    "StatType": "Health",
+    "StatType": "HP",
     "EffectName": "Vivify"
   },
   {
@@ -297,7 +297,7 @@
     "StatTimes": 1,
     "DurationTimes": 1,
     "DurationType": "Distance",
-    "StatType": "Health",
+    "StatType": "HP",
     "EffectName": "Heal"
   },
   {
@@ -309,7 +309,7 @@
     "StatRandom": 10,
     "DurationTimes": 1,
     "DurationType": "Distance",
-    "StatType": "Health",
+    "StatType": "HP",
     "EffectName": "Heal"
   },
   {
@@ -319,7 +319,7 @@
     "StatTimes": 1,
     "DurationTimes": 1,
     "DurationType": "Distance",
-    "StatType": "Health",
+    "StatType": "HP",
     "EffectName": "Heal"
   },
   {

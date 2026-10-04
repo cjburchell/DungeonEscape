@@ -2,7 +2,7 @@
 {
     public enum StatType
     {
-        Health = 0,
+        HP = 0,
         Magic = 1,
         Agility = 2,
         Attack = 3,

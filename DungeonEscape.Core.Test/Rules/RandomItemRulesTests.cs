@@ -67,7 +67,7 @@ namespace DungeonEscape.Core.Test.Rules
             Assert.Equal(new[] { Slot.PrimaryHand }, item.Slots);
             Assert.Equal(3, item.Stats.Count);
             Assert.Contains(item.Stats, stat => stat.Type == StatType.Attack && stat.Value == 5);
-            Assert.Contains(item.Stats, stat => stat.Type == StatType.Health && stat.Value == 1);
+            Assert.Contains(item.Stats, stat => stat.Type == StatType.HP && stat.Value == 1);
             Assert.Contains(item.Stats, stat => stat.Type == StatType.Magic && stat.Value == 1);
         }
 
@@ -110,7 +110,7 @@ namespace DungeonEscape.Core.Test.Rules
             {
                 new StatName
                 {
-                    Type = StatType.Health,
+                    Type = StatType.HP,
                     Suffix = new List<string> { "Giants" }
                 },
                 new StatName

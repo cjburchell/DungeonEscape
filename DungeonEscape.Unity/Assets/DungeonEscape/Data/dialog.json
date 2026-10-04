@@ -190,9 +190,9 @@
   {
     "Id": "Pyramid_Guard_Dialog",
     "Dialogs": [{
-      "Text": "Keep your voice low. Estark the Destroyer stirs beneath these stones. What do you need to know?",
+      "Text": "Keep your voice low. Horned Devil stirs beneath these stones. What do you need to know?",
       "Choices": [
-        { "Text": "Tell me about Estark", "Dialog": { "Text": "Estark does not fight like a common beast. He waits for fear to break a party's discipline, then strikes the weakest first. Keep everyone standing." } },
+        { "Text": "Tell me about Horned Devil", "Dialog": { "Text": "Horned Devil does not fight like a common beast. He waits for fear to break a party's discipline, then strikes the weakest first. Keep everyone standing." } },
         { "Text": "What lies ahead?", "Dialog": { "Text": "Old passages, false turns, and guardians that never tire. Search every chamber before you descend, and save your strength for the deepest room." } },
         { "Text": "I am ready", "Dialog": { "Text": "Readiness is proven below, not spoken here. Go carefully, hero." } }
       ]
@@ -201,9 +201,9 @@
   {
     "Id": "Shrine_Eanswild_Dialog",
     "Dialogs": [{
-      "Text": "Estark must be defeated before darkness spreads beyond the shrine. Have you come seeking counsel?",
+      "Text": "Horned Devil must be defeated before darkness spreads beyond the shrine. Have you come seeking counsel?",
       "Choices": [
-        { "Text": "Why is Estark dangerous?", "Dialog": { "Text": "His strength is terrible, but his influence is worse. Creatures grow bolder wherever his shadow reaches, and frightened people begin turning against one another." } },
+        { "Text": "Why is Horned Devil dangerous?", "Dialog": { "Text": "His strength is terrible, but his influence is worse. Creatures grow bolder wherever his shadow reaches, and frightened people begin turning against one another." } },
         { "Text": "How can I help?", "Dialog": { "Text": "Gather allies, sharpen your equipment, and listen closely to those who survived the old battles. Courage without preparation only feeds the darkness." } },
         { "Text": "Farewell", "Dialog": { "Text": "May the shrine's light follow you into every dark place." } }
       ]
@@ -215,7 +215,7 @@
       "Text": "Welcome to the Shrine of Healing. The doors remain open to every wounded traveler.",
       "Choices": [
         { "Text": "Where is the healer?", "Dialog": { "Text": "Inside the shrine. Speak plainly about your wounds, and keep enough gold for the road after your treatment." } },
-        { "Text": "Is this place safe?", "Dialog": { "Text": "Safer than the roads, though no sanctuary is beyond Estark's reach forever. Rest while you can." } },
+        { "Text": "Is this place safe?", "Dialog": { "Text": "Safer than the roads, though no sanctuary is beyond Horned Devil's reach forever. Rest while you can." } },
         { "Text": "Thank you", "Dialog": { "Text": "Walk gently, and leave some peace for the next traveler." } }
       ]
     }]
@@ -258,7 +258,7 @@
     "Dialogs": [{
       "Text": "Beyond the trees, the desert hides old answers. Bring water, and trust no mirage.",
       "Choices": [
-        { "Text": "What answers?", "Dialog": { "Text": "Ruins remember what kingdoms choose to forget. Search them carefully and you may learn why Estark's name has returned to frightened lips." } },
+        { "Text": "What answers?", "Dialog": { "Text": "Ruins remember what kingdoms choose to forget. Search them carefully and you may learn why Horned Devil's name has returned to frightened lips." } },
         { "Text": "How do I cross safely?", "Dialog": { "Text": "Travel when the heat is kind, mark the direction of the trees behind you, and never follow a distant light merely because it moves." } },
         { "Text": "I will be careful", "Dialog": { "Text": "Good. The desert has buried many confident people." } }
       ]
@@ -280,7 +280,7 @@
     "Dialogs": [{
       "Text": "Welcome to Isis, crossroads of sand, river, and rumor. What news are you seeking?",
       "Choices": [
-        { "Text": "Tell me about Estark", "Dialog": { "Text": "Even old soldiers lower their voices at that name. If you intend to face him, gather a disciplined party and prepare for a long fight." } },
+        { "Text": "Tell me about Horned Devil", "Dialog": { "Text": "Even old soldiers lower their voices at that name. If you intend to face him, gather a disciplined party and prepare for a long fight." } },
         { "Text": "Where can I find a ship?", "Dialog": { "Text": "Ask Lesym. He knows the coast and the people who still keep seaworthy vessels." } },
         { "Text": "Nothing today", "Dialog": { "Text": "Then enjoy the city, but remember that rumors often arrive before danger." } }
       ]
@@ -322,9 +322,9 @@
   {
     "Id": "Oasis_Traveler_Dialog",
     "Dialogs": [{
-      "Text": "To defeat Estark, strike quickly and give him no rest.",
+      "Text": "To defeat Horned Devil, strike quickly and give him no rest.",
       "Choices": [
-        { "Text": "Have you fought him?", "Dialog": { "Text": "No, but I met someone who escaped. Estark controlled the pace of every exchange until the survivors stopped reacting and forced him to react instead." } },
+        { "Text": "Have you fought him?", "Dialog": { "Text": "No, but I met someone who escaped. Horned Devil controlled the pace of every exchange until the survivors stopped reacting and forced him to react instead." } },
         { "Text": "What else did they say?", "Dialog": { "Text": "Bring companions who can recover under pressure. A single strong warrior becomes a single obvious target." } },
         { "Text": "I will prepare", "Dialog": { "Text": "Preparation is the first blow. Make it count." } }
       ]
@@ -442,7 +442,7 @@
         {
           "Text": "Why leave Isis?",
           "Dialog": {
-            "Text": "Rumors arrive here every day, but answers never do. Estark, dragons, ships vanishing at sea... I am tired of hearing frightened stories from people who never looked for the truth.",
+            "Text": "Rumors arrive here every day, but answers never do. Horned Devil, dragons, ships vanishing at sea... I am tired of hearing frightened stories from people who never looked for the truth.",
             "Choices": [
               { "Text": "Find the truth with us", "Actions": ["Join"] },
               { "Text": "Isis still needs you", "Dialog": { "Text": "Perhaps. I will keep listening until I am certain." } }

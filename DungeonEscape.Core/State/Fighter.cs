@@ -1,4 +1,4 @@
-﻿using Redpoint.DungeonEscape.Data;
+using Redpoint.DungeonEscape.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +12,6 @@ namespace Redpoint.DungeonEscape.State
         public override string ToString()
         {
             return Name;
-        }
-
-        public string GetStats()
-        {
-            return Name + " (" + Level + ")\nH:" + Health + "/" + MaxHealth + " A:" + Attack + " D:" + Defence;
         }
 
         public string Name { get; set; }
@@ -46,7 +41,7 @@ namespace Redpoint.DungeonEscape.State
             {
                 return new List<StatValue>
                 {
-                    new StatValue { Value = MaxHealth, Type = StatType.Health },
+                    new StatValue { Value = MaxHealth, Type = StatType.HP },
                     new StatValue { Value = MaxMagic, Type = StatType.Magic },
                     new StatValue { Value = Attack, Type = StatType.Attack },
                     new StatValue { Value = Defence, Type = StatType.Defence },
@@ -73,9 +68,6 @@ namespace Redpoint.DungeonEscape.State
 
         public List<StatusEffect> Status { get; set; }
         public List<ItemInstance> Items { get; set; }
-
-        [JsonIgnore]
-        public int CriticalAttack { get { return Attack + (20 * Level); } }
 
         protected Fighter()
         {
@@ -107,7 +99,7 @@ namespace Redpoint.DungeonEscape.State
         {
             switch (effect.StatType)
             {
-                case StatType.Health:
+                case StatType.HP:
                     MaxHealth += value;
                     if (Health > MaxHealth)
                     {
@@ -178,7 +170,7 @@ namespace Redpoint.DungeonEscape.State
             {
                 switch (effect.StatType)
                 {
-                    case StatType.Health:
+                    case StatType.HP:
                         if (effect.StatValue > 0)
                         {
                             message += Name + " gained " + effect.StatValue + " points of health\n";

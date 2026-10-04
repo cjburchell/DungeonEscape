@@ -107,6 +107,9 @@ namespace Redpoint.DungeonEscape.Rules
                 case ItemType.Weapon:
                     availableStats = new List<StatType> { StatType.Agility, StatType.Attack, StatType.HP, StatType.Magic };
                     item.MinLevel = RandomLevel(maxLevel, minLevel, nextInt);
+                    item.DamageDice = itemDefinition.DamageDice;
+                    item.DamageDie = itemDefinition.DamageDie;
+                    item.DamageBonus = itemDefinition.DamageBonus;
                     item.Stats.Add(new StatValue
                     {
                         Type = StatType.Attack,
@@ -126,7 +129,9 @@ namespace Redpoint.DungeonEscape.Rules
                     item.Stats.Add(new StatValue
                     {
                         Type = StatType.Defence,
-                        Value = Math.Max(item.MinLevel - 5 + Next(nextInt, 6) + itemDefinition.BaseStat, Math.Max(itemDefinition.BaseStat, 1))
+                        Value = itemDefinition.ArmorClass > 0
+                            ? Math.Max(0, itemDefinition.ArmorClass - 10) * 5
+                            : Math.Max(item.MinLevel - 5 + Next(nextInt, 6) + itemDefinition.BaseStat, Math.Max(itemDefinition.BaseStat, 1))
                     });
                     break;
                 default:

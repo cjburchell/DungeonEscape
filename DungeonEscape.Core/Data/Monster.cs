@@ -15,15 +15,10 @@ namespace Redpoint.DungeonEscape.Data
         [JsonProperty("Spells")]
         public List<string> SpellList { get; set; }
 
-        [JsonProperty("Skills")]
-        public List<string> SkillList { get; set; }
-
         public List<string> Items { get; set; }
         public ulong Xp { get; set; }
         public int Gold { get; set; }
         public int HitPoints { get; set; }
-        public int HitPointRandom { get; set; }
-        public int HitPointTimes { get; set; }
         public int MagicTimes { get; set; }
         public int MagicConst { get; set; }
         public int MagicRandom { get; set; }
@@ -61,12 +56,10 @@ namespace Redpoint.DungeonEscape.Data
         public Monster()
         {
             SpellList = new List<string>();
-            SkillList = new List<string>();
             Items = new List<string>();
             Traits = new List<MonsterTrait>();
             Actions = new List<MonsterAction>();
-            HitPoints = 1;
-            HitPointTimes = 1;
+            HitPoints = 0;
             MagicTimes = 1;
             Rarity = Rarity.Common;
         }

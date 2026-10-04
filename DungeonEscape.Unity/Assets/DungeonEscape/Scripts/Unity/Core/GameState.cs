@@ -3005,7 +3005,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 repelMaxHealth,
                 maxValue => Random.Next(maxValue),
                 () => Dice.RollD20(),
-                monster => Dice.Roll(monster.HitPointRandom, monster.HitPointTimes, monster.HitPoints));
+                DndStatRules.GetMonsterAverageHitPoints);
         }
 
         private static GameSave GetQuickSave(GameFile file)

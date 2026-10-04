@@ -254,9 +254,7 @@
             return 0;
         }
 
-        var times = Math.Max(1, monster.HitPointTimes);
-        var random = Math.Max(0, monster.HitPointRandom);
-        return monster.HitPoints + (random == 0 ? 0 : times * ((random + 1) / 2));
+        return DndStatRules.GetMonsterAverageHitPoints(monster);
     }
 
     private static string? GetWarning(IEnumerable<RandomMonster> randomMonsters, BiomeInfo biomeInfo, int emptyRuns)

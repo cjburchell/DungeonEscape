@@ -357,7 +357,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 AliveHeroes().Cast<IFighter>(),
                 AliveMonsters().Select(item => item.Instance).Cast<IFighter>(),
                 GameDataCache.Current == null ? null : GameDataCache.Current.Spells,
-                GameDataCache.Current == null ? null : GameDataCache.Current.Skills,
                 maxValue => CombatRandom.Next(maxValue),
                 () => Dice.RollD100());
         }
@@ -373,6 +372,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 CastSpell,
                 UseItem,
                 DoSkill,
+                DoMonsterAction,
                 GetOpposingTargets,
                 out endFight);
         }

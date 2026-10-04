@@ -20,7 +20,6 @@ namespace DungeonEscape.Core.Test.Rules
                 new[] { CreateHero("Hero") },
                 new[] { monster },
                 null,
-                null,
                 max => 0,
                 () => 1);
 
@@ -42,7 +41,6 @@ namespace DungeonEscape.Core.Test.Rules
                 new[] { CreateHero("Hero") },
                 new[] { monster },
                 new[] { heal },
-                null,
                 max => 0,
                 () => 1);
 
@@ -148,11 +146,38 @@ namespace DungeonEscape.Core.Test.Rules
                 null,
                 null,
                 null,
+                null,
                 source => new List<IFighter> { fallback },
                 out endFight);
 
             Assert.False(endFight);
             Assert.Equal("Hero hits Fallback.", message);
+        }
+
+        [Fact]
+        public void ChooseMonsterActionUsesDndActionsInsteadOfLegacySkills()
+        {
+            var bite = new MonsterAction
+            {
+                Name = "Bite",
+                AttackBonus = 4,
+                DamageDice = 1,
+                DamageDie = 6,
+                DamageBonus = 2
+            };
+            var monster = CreateMonster("Wolf", null, new[] { bite });
+
+            var action = CombatRoundRules.ChooseMonsterAction(
+                monster,
+                new[] { CreateHero("Hero") },
+                new[] { monster },
+                null,
+                max => 0,
+                () => 100);
+
+            Assert.Equal(CombatRoundActionState.MonsterAction, action.State);
+            Assert.Same(bite, action.MonsterAction);
+            Assert.Null(action.Skill);
         }
 
         private static Hero CreateHero(string name, int agility = 5)
@@ -168,18 +193,21 @@ namespace DungeonEscape.Core.Test.Rules
             };
         }
 
-        private static IFighter CreateMonster(string name, IEnumerable<string> spells = null)
+        private static IFighter CreateMonster(
+            string name,
+            IEnumerable<string> spells = null,
+            IEnumerable<MonsterAction> actions = null)
         {
             return new MonsterInstance(
                 new Monster
                 {
                     Name = name,
                     HitPoints = 10,
-                    HitPointTimes = 1,
                     MagicConst = 10,
                     MagicTimes = 1,
                     Dexterity = 13,
-                    SpellList = spells == null ? new List<string>() : spells.ToList()
+                    SpellList = spells == null ? new List<string>() : spells.ToList(),
+                    Actions = actions == null ? new List<MonsterAction>() : actions.ToList()
                 },
                 null);
         }

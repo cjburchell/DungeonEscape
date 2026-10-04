@@ -22,6 +22,9 @@ namespace Redpoint.DungeonEscape.Data
         public List<ItemName> Names { get; set; }
 
         public int BaseStat { get; set; }
-        
+        public int DamageDice { get; set; }
+        public int DamageDie { get; set; }
+        public int DamageBonus { get; set; }
+        public int ArmorClass { get; set; }
     }
 }

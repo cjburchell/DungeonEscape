@@ -7,6 +7,7 @@ namespace Redpoint.DungeonEscape.Rules
         Spell,
         Item,
         Nothing,
-        Skill
+        Skill,
+        MonsterAction
     }
 }

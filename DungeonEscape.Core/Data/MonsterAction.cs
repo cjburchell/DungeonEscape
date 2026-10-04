@@ -4,6 +4,7 @@ namespace Redpoint.DungeonEscape.Data
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public string ItemId { get; set; }
         public int AttackBonus { get; set; }
         public int DamageDice { get; set; }
         public int DamageDie { get; set; }

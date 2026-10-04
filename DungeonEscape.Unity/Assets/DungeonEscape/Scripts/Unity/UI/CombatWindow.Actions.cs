@@ -167,6 +167,45 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return string.IsNullOrEmpty(message) ? source.Name + " used " + item.Name + "." : message.TrimEnd();
         }
 
+        private string DoMonsterAction(MonsterAction action, List<IFighter> targets, IFighter source)
+        {
+            if (source == null || action == null)
+            {
+                return "";
+            }
+
+            Audio.GetOrCreate().PlaySoundEffect("prepare-attack", true);
+            var selectedTargets = targets == null || targets.Count == 0
+                ? new List<IFighter>()
+                : targets.Where(CanBeAttacked).ToList();
+            if (selectedTargets.Count == 0)
+            {
+                return source.Name + " uses " + action.Name + ".";
+            }
+
+            var message = source.Name + " uses " + action.Name + ".\n";
+            var hit = false;
+            var attackCount = Math.Max(1, action.Count);
+            for (var i = 0; i < attackCount; i++)
+            {
+                var target = selectedTargets[Math.Min(i, selectedTargets.Count - 1)];
+                if (target == null || target.IsDead)
+                {
+                    continue;
+                }
+
+                int damage;
+                message += ResolveMonsterActionAttack(source, action, target, out damage) + "\n";
+                if (damage > 0)
+                {
+                    hit = true;
+                }
+            }
+
+            Audio.GetOrCreate().PlaySoundEffect(hit ? "receive-damage" : "miss");
+            return message.TrimEnd();
+        }
+
         private static Dictionary<string, int> CaptureTargetHealth(IEnumerable<IFighter> targets)
         {
             var health = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
@@ -322,6 +361,59 @@ namespace Redpoint.DungeonEscape.Unity.UI
             if (playSounds)
             {
                 Audio.GetOrCreate().PlaySoundEffect(damage == 0 ? "miss" : "receive-damage");
+            }
+
+            return message.TrimEnd();
+        }
+
+        private string ResolveMonsterActionAttack(IFighter source, MonsterAction action, IFighter target, out int damage)
+        {
+            damage = 0;
+            if (source == null || action == null || target == null)
+            {
+                return "";
+            }
+
+            var attack = DndCombatRules.ResolveMonsterActionAttack(
+                source,
+                action,
+                target,
+                () => Dice.RollD20(),
+                sides => Dice.RollDie(sides));
+            var message = source.Name + " attacks " + target.Name + " with " + action.Name + ".\n";
+            if (attack.Critical)
+            {
+                damage = attack.Damage;
+                message += "Heroic maneuver!\n";
+                message += target.Name;
+            }
+            else if (attack.Hit)
+            {
+                damage = attack.Damage;
+                message += target.Name;
+            }
+            else
+            {
+                message += target.Name + " avoided the attack and";
+            }
+
+            if (damage <= 0)
+            {
+                message += " was unharmed";
+            }
+            else
+            {
+                target.Health -= damage;
+                target.PlayDamageAnimation();
+                StartDamageFlash(target);
+                message += " took " + damage + " points of " + (string.IsNullOrWhiteSpace(action.DamageType) ? "damage" : action.DamageType + " damage");
+                message += "\n" + target.HitCheck().TrimEnd();
+            }
+
+            if (target.IsDead)
+            {
+                target.Health = 0;
+                message += "\nand has died!";
             }
 
             return message.TrimEnd();

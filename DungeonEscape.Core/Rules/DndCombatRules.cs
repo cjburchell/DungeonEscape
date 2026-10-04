@@ -1,4 +1,5 @@
 using System;
+using Redpoint.DungeonEscape.Data;
 using Redpoint.DungeonEscape.State;
 
 namespace Redpoint.DungeonEscape.Rules
@@ -33,6 +34,35 @@ namespace Redpoint.DungeonEscape.Rules
             return result;
         }
 
+        public static CombatAttackResult ResolveMonsterActionAttack(
+            IFighter source,
+            MonsterAction action,
+            IFighter target,
+            Func<int> rollD20,
+            Func<int, int> rollDie)
+        {
+            var result = new CombatAttackResult
+            {
+                TargetArmorClass = GetArmorClass(target)
+            };
+
+            if (source == null || action == null || target == null)
+            {
+                return result;
+            }
+
+            result.Roll = rollD20 == null ? Dice.RollD20() : rollD20();
+            result.Total = result.Roll + GetMonsterActionAttackBonus(source, action);
+            result.Critical = result.Roll == 20;
+            result.Hit = result.Critical || result.Total >= result.TargetArmorClass;
+            if (result.Hit)
+            {
+                result.Damage = RollMonsterActionDamage(source, action, result.Critical, rollDie);
+            }
+
+            return result;
+        }
+
         public static int GetAttackBonus(IFighter fighter)
         {
             return DndStatRules.GetAttackBonus(fighter);
@@ -61,6 +91,36 @@ namespace Redpoint.DungeonEscape.Rules
 
             var bonus = DndStatRules.GetDamageBonus(fighter);
             return Math.Max(1, damage + bonus);
+        }
+
+        public static int RollMonsterActionDamage(IFighter source, MonsterAction action, bool critical, Func<int, int> rollDie)
+        {
+            if (source == null || action == null)
+            {
+                return 0;
+            }
+
+            var die = action.DamageDie > 0 ? action.DamageDie : DndStatRules.GetDamageDie(source);
+            var dice = Math.Max(1, action.DamageDice > 0 ? action.DamageDice : DndStatRules.GetDamageDice(source));
+            var totalDice = critical ? dice * 2 : dice;
+            var damage = 0;
+            for (var i = 0; i < totalDice; i++)
+            {
+                damage += rollDie == null ? Dice.RollDie(die) : rollDie(die);
+            }
+
+            var bonus = action.DamageBonus != 0 ? action.DamageBonus : DndStatRules.GetDamageBonus(source);
+            return Math.Max(1, damage + bonus);
+        }
+
+        public static int GetMonsterActionAttackBonus(IFighter source, MonsterAction action)
+        {
+            if (action != null && action.AttackBonus != 0)
+            {
+                return action.AttackBonus;
+            }
+
+            return DndStatRules.GetAttackBonus(source);
         }
 
         public static int GetProficiencyBonus(IFighter fighter)

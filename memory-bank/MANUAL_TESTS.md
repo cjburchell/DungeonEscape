@@ -978,16 +978,22 @@ active or waiting according to the current party-size limit.
 
 ### [ ] D&D HP Data Naming
 
-- Open the Game Editor Class, Stat Names, Skills, and Monster tabs.
-- Expected: character/stat data uses `HP` rather than `Health`, and monster HP rolls edit through `HitPoints`, `HitPointRandom`, and `HitPointTimes`-backed fields.
+- Open the Game Editor Class, Stat Names, Skills, Item Definitions, and Monster tabs.
+- Expected: character/stat data uses `HP` rather than `Health`; most monsters omit fixed `HitPoints` and use `HitDice`; fixed-HP exceptions keep a positive `HitPoints` value.
 - Start a new quest and enter combat.
 - Expected: player and monster HP values still initialize, display, and change correctly during combat.
+- Inspect `Twig Blight` in the Game Editor or data file.
+- Expected: it shows `2d6` Hit Dice, no fixed HP override, AC `14`, CR `1/8`, and a `Claw` action using `1d4+2`; encounter previews/combat average that to 7 HP.
 - Trigger random encounters in several areas, including a dungeon/tower map with map-specific monsters.
 - Expected: monsters use the renamed D&D-style display names, such as `Goblin Archer`, `Troll`, `Dire Wolf`, or `Green Dragon Wyrmling`, and encounters still resolve without missing-monster lookup errors.
 - Equip a weapon with `DamageDice`, `DamageDie`, and `DamageBonus` set in item data.
 - Expected: Fight damage uses those weapon dice and bonus.
 - Fight a monster with explicit `ArmorClass`, `AttackBonus`, `DamageDice`, `DamageDie`, and `DamageBonus`.
-- Expected: monster Fight actions use those values without requiring legacy Attack/Defence tuning.
+- Expected: monster D&D `Actions` use those values without requiring legacy monster `Skills` or Attack/Defence tuning.
+- Inspect `allmonsters.json` or a monster in the Game Editor.
+- Expected: monsters no longer expose legacy `Skills`; D&D actions may optionally reference an item but do not reference JRPG skills.
+- Inspect generated weapon and armor definitions.
+- Expected: weapons expose D&D damage dice/bonus fields, and armor exposes an `ArmorClass` value used by the current equipment bridge.
 - Trigger a combat round with multiple heroes and monsters.
 - Expected: action resolution order follows initiative, using d20 plus Dexterity modifier, rather than only legacy Agility.
 - Force or observe a critical hit if practical.

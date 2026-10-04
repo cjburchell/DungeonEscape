@@ -46,6 +46,7 @@
       "properties": {
         "Name": { "type": "string" },
         "Description": { "type": "string" },
+        "Item": { "type": "string" },
         "AttackBonus": { "type": "integer" },
         "DamageDice": { "type": "integer", "minimum": 0 },
         "DamageDie": { "type": "integer", "minimum": 0 },
@@ -66,7 +67,6 @@
         "MinLevel": { "type": "integer", "minimum": 0 },
         "GroupSize": { "type": "integer", "minimum": 0 },
         "Spells": { "type": "array", "items": { "type": "string" } },
-        "Skills": { "type": "array", "items": { "type": "string" } },
         "Items": { "type": "array", "items": { "type": "string" } },
         "Biomes": { "type": "array", "items": { "$ref": "#/$defs/biome" } },
         "Rarity": { "$ref": "#/$defs/rarity" },
@@ -77,6 +77,7 @@
         "Wisdom": { "type": "integer" },
         "Charisma": { "type": "integer" },
         "ArmorClass": { "type": "integer", "minimum": 0 },
+        "HitPoints": { "type": "integer", "minimum": 0 },
         "ProficiencyBonus": { "type": "integer" },
         "AttackBonus": { "type": "integer" },
         "DamageDice": { "type": "integer", "minimum": 0 },
@@ -155,7 +156,11 @@
       "additionalProperties": true,
       "properties": {
         "Type": { "$ref": "#/$defs/itemType" },
-        "BaseStat": { "$ref": "#/$defs/statType" },
+        "BaseStat": { "type": "integer" },
+        "DamageDice": { "type": "integer", "minimum": 0 },
+        "DamageDie": { "type": "integer", "minimum": 0 },
+        "DamageBonus": { "type": "integer" },
+        "ArmorClass": { "type": "integer", "minimum": 0 },
         "Slots": { "type": "array", "items": { "$ref": "#/$defs/slot" } },
         "Classes": { "type": "array", "items": { "$ref": "#/$defs/className" } },
         "Names": { "type": "array", "items": { "$ref": "#/$defs/itemName" } }

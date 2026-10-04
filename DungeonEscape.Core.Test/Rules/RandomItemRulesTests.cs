@@ -65,10 +65,44 @@ namespace DungeonEscape.Core.Test.Rules
             Assert.Equal("Mystic Sword of Giants", item.Name);
             Assert.Equal(new[] { "Paladin" }, item.Classes);
             Assert.Equal(new[] { Slot.PrimaryHand }, item.Slots);
+            Assert.Equal(1, item.DamageDice);
+            Assert.Equal(8, item.DamageDie);
+            Assert.Equal(1, item.DamageBonus);
             Assert.Equal(3, item.Stats.Count);
             Assert.Contains(item.Stats, stat => stat.Type == StatType.Attack && stat.Value == 5);
             Assert.Contains(item.Stats, stat => stat.Type == StatType.HP && stat.Value == 1);
             Assert.Contains(item.Stats, stat => stat.Type == StatType.Magic && stat.Value == 1);
+        }
+
+        [Fact]
+        public void CreateRandomArmorUsesDefinitionArmorClassAsDefenceBridge()
+        {
+            var random = new Queue<int>(new[] { 0, 0, 0 });
+            var item = RandomItemRules.CreateRandomEquipment(
+                1,
+                1,
+                Rarity.Common,
+                ItemType.Armor,
+                Class.Paladin,
+                Slot.Chest,
+                new[]
+                {
+                    new ItemDefinition
+                    {
+                        Type = ItemType.Armor,
+                        ArmorClass = 16,
+                        Classes = new List<string> { "Paladin" },
+                        Slots = new List<Slot> { Slot.Chest },
+                        Names = new List<ItemName> { new ItemName { Name = "Chain Mail", ImageId = 10 } }
+                    }
+                },
+                CreateStatNames(),
+                null,
+                max => random.Dequeue(),
+                () => "armor-id");
+
+            Assert.NotNull(item);
+            Assert.Contains(item.Stats, stat => stat.Type == StatType.Defence && stat.Value == 30);
         }
 
         [Fact]
@@ -95,6 +129,9 @@ namespace DungeonEscape.Core.Test.Rules
             {
                 Type = ItemType.Weapon,
                 BaseStat = 5,
+                DamageDice = 1,
+                DamageDie = 8,
+                DamageBonus = 1,
                 Classes = new List<string> { "Paladin" },
                 Slots = new List<Slot> { Slot.PrimaryHand },
                 Names = new List<ItemName>

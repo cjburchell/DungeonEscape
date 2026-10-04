@@ -15,6 +15,10 @@ else
         <div class="field-grid" style="flex:1">
             <EnumSelect TEnum="ItemType" Label="Type" Value="Definition.Type" ValueChanged="v => Set(() => Definition.Type = v)" />
             <NumberField Label="Base Stat" Value="Definition.BaseStat" ValueChanged="v => Set(() => Definition.BaseStat = v)" />
+            <NumberField Label="Damage Dice" Value="Definition.DamageDice" ValueChanged="v => Set(() => Definition.DamageDice = v)" />
+            <NumberField Label="Damage Die" Value="Definition.DamageDie" ValueChanged="v => Set(() => Definition.DamageDie = v)" />
+            <NumberField Label="Damage Bonus" Value="Definition.DamageBonus" ValueChanged="v => Set(() => Definition.DamageBonus = v)" />
+            <NumberField Label="Armor Class" Value="Definition.ArmorClass" ValueChanged="v => Set(() => Definition.ArmorClass = v)" />
         </div>
     </div>
 

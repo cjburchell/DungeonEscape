@@ -142,6 +142,64 @@ namespace Redpoint.DungeonEscape.Rules
             return Math.Max(1, averageRoll + GetAbilityModifier(GetConstitution(hero)));
         }
 
+        public static int GetMonsterHitPoints(Monster monster, Func<int, int> rollDie)
+        {
+            if (monster == null)
+            {
+                return 1;
+            }
+
+            if (monster.HitPoints > 0)
+            {
+                return monster.HitPoints;
+            }
+
+            return Math.Max(1, RollHitDice(monster.HitDice, rollDie));
+        }
+
+        public static int GetMonsterAverageHitPoints(Monster monster)
+        {
+            if (monster == null)
+            {
+                return 1;
+            }
+
+            if (monster.HitPoints > 0)
+            {
+                return monster.HitPoints;
+            }
+
+            return Math.Max(1, GetAverageHitDice(monster.HitDice));
+        }
+
+        public static int RollHitDice(string hitDice, Func<int, int> rollDie)
+        {
+            var parsed = ParseHitDice(hitDice);
+            if (parsed.Dice <= 0 || parsed.Die <= 0)
+            {
+                return 0;
+            }
+
+            var total = parsed.Bonus;
+            for (var i = 0; i < parsed.Dice; i++)
+            {
+                total += rollDie == null ? Dice.RollDie(parsed.Die) : rollDie(parsed.Die);
+            }
+
+            return total;
+        }
+
+        public static int GetAverageHitDice(string hitDice)
+        {
+            var parsed = ParseHitDice(hitDice);
+            if (parsed.Dice <= 0 || parsed.Die <= 0)
+            {
+                return 0;
+            }
+
+            return parsed.Dice * (parsed.Die + 1) / 2 + parsed.Bonus;
+        }
+
         public static void RefreshHeroDerivedStats(Hero hero)
         {
             if (hero == null)
@@ -179,6 +237,41 @@ namespace Redpoint.DungeonEscape.Rules
             return classStats != null && classStats.HitDie > 0 ? classStats.HitDie : 8;
         }
 
+        private static HitDice ParseHitDice(string hitDice)
+        {
+            if (string.IsNullOrWhiteSpace(hitDice))
+            {
+                return new HitDice();
+            }
+
+            var value = hitDice.Trim().ToLowerInvariant().Replace(" ", string.Empty);
+            var separatorIndex = value.IndexOf('d');
+            if (separatorIndex < 0)
+            {
+                return new HitDice();
+            }
+
+            var diceText = value.Substring(0, separatorIndex);
+            var remainder = value.Substring(separatorIndex + 1);
+            var bonusIndex = remainder.IndexOfAny(new[] { '+', '-' });
+            var dieText = bonusIndex < 0 ? remainder : remainder.Substring(0, bonusIndex);
+            var bonusText = bonusIndex < 0 ? string.Empty : remainder.Substring(bonusIndex);
+
+            int dice;
+            int die;
+            int bonus;
+            dice = string.IsNullOrEmpty(diceText) ? 1 : int.TryParse(diceText, out dice) ? dice : 0;
+            die = int.TryParse(dieText, out die) ? die : 0;
+            bonus = string.IsNullOrEmpty(bonusText) ? 0 : int.TryParse(bonusText, out bonus) ? bonus : 0;
+
+            return new HitDice
+            {
+                Dice = dice,
+                Die = die,
+                Bonus = bonus
+            };
+        }
+
         private static int InferLegacyDamageDie(int attack)
         {
             if (attack >= 32)
@@ -202,6 +295,13 @@ namespace Redpoint.DungeonEscape.Rules
         private static int Clamp(int value, int min, int max)
         {
             return Math.Min(max, Math.Max(min, value));
+        }
+
+        private struct HitDice
+        {
+            public int Dice { get; set; }
+            public int Die { get; set; }
+            public int Bonus { get; set; }
         }
     }
 }

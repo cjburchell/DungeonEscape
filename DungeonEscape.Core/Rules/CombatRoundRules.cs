@@ -13,7 +13,6 @@ namespace Redpoint.DungeonEscape.Rules
             IEnumerable<IFighter> aliveHeroes,
             IEnumerable<IFighter> aliveMonsters,
             IEnumerable<Spell> spells,
-            IEnumerable<Skill> skills,
             Func<int, int> nextInt,
             Func<int> rollD100)
         {
@@ -82,29 +81,19 @@ namespace Redpoint.DungeonEscape.Rules
                 }
             }
 
-            var availableSkills = (skills == null
-                    ? new List<Skill>()
-                    : monster.GetSkills(skills).Where(skill => skill != null && skill.IsEncounterSkill))
+            var availableActions = (monster as MonsterInstance)?.GetActions()
+                .Where(action => action != null)
                 .ToList();
-            if (availableSkills.Count > 0 && (rollD100 == null ? 100 : rollD100()) > 75)
+            if (availableActions != null && availableActions.Count > 0)
             {
-                var skill = availableSkills[Next(nextInt, availableSkills.Count)];
-                if (skill.Type == SkillType.Flee)
-                {
-                    return new CombatRoundAction
-                    {
-                        Source = monster,
-                        State = CombatRoundActionState.Run,
-                        Targets = availableTargets
-                    };
-                }
+                var monsterAction = availableActions[Next(nextInt, availableActions.Count)];
 
                 return new CombatRoundAction
                 {
                     Source = monster,
-                    State = CombatRoundActionState.Skill,
-                    Skill = skill,
-                    Targets = GetTargets(skill.Targets, skill.MaxTargets, availableTargets, rollD100)
+                    State = CombatRoundActionState.MonsterAction,
+                    MonsterAction = monsterAction,
+                    Targets = new List<IFighter> { ChooseFighter(availableTargets, rollD100) }
                 };
             }
 
@@ -198,6 +187,7 @@ namespace Redpoint.DungeonEscape.Rules
             Func<Spell, List<IFighter>, IFighter, string> castSpell,
             Func<ItemInstance, List<IFighter>, IFighter, string> useItem,
             Func<Skill, List<IFighter>, IFighter, string> doSkill,
+            Func<MonsterAction, List<IFighter>, IFighter, string> doMonsterAction,
             Func<IFighter, List<IFighter>> getOpposingTargets,
             out bool endFight)
         {
@@ -244,6 +234,9 @@ namespace Redpoint.DungeonEscape.Rules
                     break;
                 case CombatRoundActionState.Skill:
                     message += doSkill == null ? "" : doSkill(action.Skill, ResolveActionTargets(action, getOpposingTargets), action.Source);
+                    break;
+                case CombatRoundActionState.MonsterAction:
+                    message += doMonsterAction == null ? "" : doMonsterAction(action.MonsterAction, ResolveActionTargets(action, getOpposingTargets), action.Source);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -342,6 +335,8 @@ namespace Redpoint.DungeonEscape.Rules
                     return action.Spell == null ? Target.Single : action.Spell.Targets;
                 case CombatRoundActionState.Skill:
                     return action.Skill == null ? Target.Single : action.Skill.Targets;
+                case CombatRoundActionState.MonsterAction:
+                    return Target.Single;
                 case CombatRoundActionState.Item:
                     return action.Item == null ? Target.Single : action.Item.Target;
                 default:
@@ -357,6 +352,8 @@ namespace Redpoint.DungeonEscape.Rules
                     return action.Spell == null ? 1 : action.Spell.MaxTargets;
                 case CombatRoundActionState.Skill:
                     return action.Skill == null ? 1 : action.Skill.MaxTargets;
+                case CombatRoundActionState.MonsterAction:
+                    return 1;
                 case CombatRoundActionState.Item:
                     return action.Item == null || action.Item.Item == null || action.Item.Item.Skill == null
                         ? 1
@@ -397,6 +394,8 @@ namespace Redpoint.DungeonEscape.Rules
                     return action.Spell != null && action.Spell.IsAttackSpell;
                 case CombatRoundActionState.Skill:
                     return action.Skill != null && (action.Skill.IsAttackSkill || action.Skill.DoAttack);
+                case CombatRoundActionState.MonsterAction:
+                    return action.MonsterAction != null;
                 case CombatRoundActionState.Item:
                     return action.Item != null &&
                            action.Item.Item != null &&

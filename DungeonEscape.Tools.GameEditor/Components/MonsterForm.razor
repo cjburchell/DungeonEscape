@@ -136,11 +136,9 @@ else
     </fieldset>
 
     <fieldset>
-        <legend>HP <RollPreview Label="HP" Times="Monster.HitPointTimes" Random="Monster.HitPointRandom" Const="Monster.HitPoints" /></legend>
+        <legend>HP</legend>
         <div class="field-grid">
             <NumberField Label="HP" Value="Monster.HitPoints" ValueChanged="v => Set(() => Monster.HitPoints = v)" />
-            <NumberField Label="HP Random" Value="Monster.HitPointRandom" ValueChanged="v => Set(() => Monster.HitPointRandom = v)" />
-            <NumberField Label="HP Times" Value="Monster.HitPointTimes" ValueChanged="v => Set(() => Monster.HitPointTimes = v)" />
         </div>
     </fieldset>
 
@@ -163,11 +161,6 @@ else
     <fieldset>
         <legend>Spells</legend>
         <StringListEditor Items="EnsureList(Monster.SpellList)" Options="DataSources.Spells" OnChanged="RaiseChanged" />
-    </fieldset>
-
-    <fieldset>
-        <legend>Skills</legend>
-        <StringListEditor Items="EnsureList(Monster.SkillList)" Options="DataSources.Skills" OnChanged="RaiseChanged" />
     </fieldset>
 
     <fieldset>
@@ -216,6 +209,8 @@ else
                             <label>Name</label>
                             <input value="@action.Name" @onchange="e => Set(() => action.Name = e.Value?.ToString())" />
                         </div>
+                        <TextReferenceSelect Label="Item" Value="@action.ItemId" ValueChanged="v => Set(() => action.ItemId = v)"
+                                             Options="DataSources.Items" IncludeNone="true" />
                         <NumberField Label="Count" Value="action.Count" ValueChanged="v => Set(() => action.Count = v)" />
                         <NumberField Label="Attack Bonus" Value="action.AttackBonus" ValueChanged="v => Set(() => action.AttackBonus = v)" />
                         <NumberField Label="Damage Dice" Value="action.DamageDice" ValueChanged="v => Set(() => action.DamageDice = v)" />

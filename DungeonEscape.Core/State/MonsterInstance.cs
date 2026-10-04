@@ -12,7 +12,7 @@ namespace Redpoint.DungeonEscape.State
         public MonsterInstance(Monster info, IGame gameState)
         {
             _info = info;
-            Health = Dice.Roll(info.HitPointRandom, info.HitPointTimes, info.HitPoints);
+            Health = DndStatRules.GetMonsterHitPoints(info, null);
             MaxHealth = Health;
             Magic = Dice.Roll(info.MagicRandom, info.MagicTimes, info.MagicConst);
             MaxMagic = Magic;
@@ -57,8 +57,12 @@ namespace Redpoint.DungeonEscape.State
 
         public override IEnumerable<Skill> GetSkills(IEnumerable<Skill> availableSkills)
         {
-            return _info.SkillList.Select(id => availableSkills.FirstOrDefault(item => item.Name == id))
-                .Where(skill => skill != null).ToList();
+            return Enumerable.Empty<Skill>();
+        }
+
+        public IEnumerable<MonsterAction> GetActions()
+        {
+            return _info.Actions ?? Enumerable.Empty<MonsterAction>();
         }
 
         private static int GetLegacyAttack(Monster info)

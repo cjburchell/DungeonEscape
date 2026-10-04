@@ -55,6 +55,8 @@
 - Roadmap cleanup: Game Editor coverage, in-editor validation, and map validator work have been moved out of the open future-feature list as completed/mostly completed. Remaining tool backlog now focuses on polish, JSON schemas, graph/simulator tooling, missing-asset validation, and future metadata rules.
 - Data Editor tools: added checked-in JSON Schemas under `DungeonEscape.Tools.GameEditor/Schemas/`; added read-only **Quest Graph** and **Encounter Simulator** tabs; expanded validation for map `song` audio files, map biome values, generated item-definition image IDs, tileset source image files, and missing monster PNGs.
 - Data Editor Maps tab: added a cached read-only map preview and used-tile gallery that lists each rendered tile gid/local tileset tile with usage counts.
+- D&D monster data pass: updated all monster stat blocks to listed D&D-style HP/Hit Dice/AC/ability scores/CR/XP/action dice, including 2024 Twig Blight `7 (2d6)`, and removed old monster HP roll fields from data and runtime loading.
+- D&D combat/data pass: monster instances now roll or average HP from `HitDice` unless `HitPoints` is explicitly set; monster AI now queues D&D `Actions` rather than legacy monster `Skills`; monster `Skills` were removed from data/editor validation; and item definitions gained first-pass D&D weapon damage dice and armor AC fields.
 - Narrative data pass: improved quest journal descriptions, branching dialog copy, and direct map NPC text for the seashell/ship quests, town guards, shrine NPCs, recruitable NPCs, and Estark hints without changing quest IDs, stages, rewards, or map hooks.
 - Interactive NPC conversation pass: replaced all ordinary map NPC `Text` prompts with referenced branching dialogs across the pyramid, shrines, Coast, Forest Palace, Isis, Oasis, and the walled city.
 - Recruit conversation pass: implemented the existing dialog `Join` action in Unity and converted the dungeon, Healing Shrine, and Isis recruits from static Yes/No prompts to distinct branching conversations with background, skills, recruit, and leave choices.
@@ -71,7 +73,7 @@
 ## In Progress
 
 - Feature development and next-phase architecture planning.
-- D&D-style combat migration phase 1 is started but not complete; fuller monster action data, encounter CR balancing, spell slots, saving throws, and dialogue ability checks still need dedicated follow-up passes.
+- D&D-style combat migration phase 1 is started but not complete; encounter CR balancing, fuller D&D item/armor semantics, spell slots, saving throws, and dialogue ability checks still need dedicated follow-up passes.
 - Active architecture ideas are tracked in `memory-bank/ARCHITECTURE_BACKLOG.md`.
 - Completed architecture work is archived in `memory-bank/ARCHITECTURE_COMPLETED.md`.
 

@@ -96,7 +96,7 @@ public sealed class DataValidationService
         ValidateDuplicates(issues, "Stat name type", data.StatNames.Select(statName => statName.Type.ToString()));
         ValidateDuplicates(issues, "Class level class", data.ClassLevels.Select(classStats => classStats.Class));
 
-        ValidateMonsters(issues, skillNames, spellNames, itemRefs);
+        ValidateMonsters(issues, spellNames, itemRefs);
         ValidateSpells(issues, skillNames, classValues);
         ValidateItems(issues, skillNames, questIds, classValues);
         ValidateItemDefinitions(issues, classValues);
@@ -116,7 +116,6 @@ public sealed class DataValidationService
 
     private void ValidateMonsters(
         List<DataValidationIssue> issues,
-        HashSet<string> skillNames,
         HashSet<string> spellNames,
         HashSet<string> itemRefs)
     {
@@ -130,8 +129,11 @@ public sealed class DataValidationService
             }
 
             ValidateReferences(issues, location, "spell", monster.SpellList, spellNames);
-            ValidateReferences(issues, location, "skill", monster.SkillList, skillNames);
             ValidateReferences(issues, location, "item", monster.Items, itemRefs);
+            foreach (var action in monster.Actions ?? new List<MonsterAction>())
+            {
+                ValidateReference(issues, location, "action item", action.ItemId, itemRefs);
+            }
         }
     }
 

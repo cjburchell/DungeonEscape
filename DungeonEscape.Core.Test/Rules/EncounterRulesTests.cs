@@ -104,8 +104,7 @@ namespace DungeonEscape.Core.Test.Rules
                 Rarity = rarity,
                 GroupSize = groupSize,
                 Biomes = new List<Biome> { biome },
-                HitPoints = 1,
-                HitPointTimes = 1
+                HitPoints = 1
             };
         }
     }

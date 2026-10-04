@@ -49,7 +49,6 @@ namespace DungeonEscape.Core.Test.Rules
                 {
                     Name = "Ogre",
                     HitPoints = 10,
-                    HitPointTimes = 1,
                     MagicTimes = 1,
                     Strength = 18,
                     DamageBonus = 4
@@ -57,6 +56,31 @@ namespace DungeonEscape.Core.Test.Rules
                 null);
 
             Assert.Equal(4, DndStatRules.GetDamageBonus(monster));
+        }
+
+        [Fact]
+        public void MonsterHitPointsUseExplicitHitPointsWhenSet()
+        {
+            var monster = new Monster
+            {
+                HitPoints = 7,
+                HitDice = "2d6"
+            };
+
+            Assert.Equal(7, DndStatRules.GetMonsterHitPoints(monster, _ => 6));
+            Assert.Equal(7, DndStatRules.GetMonsterAverageHitPoints(monster));
+        }
+
+        [Fact]
+        public void MonsterHitPointsRollHitDiceWhenHitPointsAreUnset()
+        {
+            var monster = new Monster
+            {
+                HitDice = "2d6+2"
+            };
+
+            Assert.Equal(8, DndStatRules.GetMonsterHitPoints(monster, _ => 3));
+            Assert.Equal(9, DndStatRules.GetMonsterAverageHitPoints(monster));
         }
 
         [Fact]

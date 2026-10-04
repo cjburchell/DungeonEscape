@@ -11,6 +11,7 @@ namespace Redpoint.DungeonEscape.Rules
         public Spell Spell { get; set; }
         public ItemInstance Item { get; set; }
         public Skill Skill { get; set; }
+        public MonsterAction MonsterAction { get; set; }
         public List<IFighter> Targets { get; set; }
         public int InitiativeRoll { get; set; }
         public int InitiativeTotal { get; set; }

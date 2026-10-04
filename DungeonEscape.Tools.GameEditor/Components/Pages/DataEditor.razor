@@ -735,7 +735,7 @@ else
             .Select(value => value!)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var candidate in Enum.GetValues<Class>())
+        foreach (var candidate in Redpoint.DungeonEscape.Rules.DndCharacterRules.GetPlayableClasses())
         {
             var className = candidate.ToString();
             if (!usedClasses.Contains(className))

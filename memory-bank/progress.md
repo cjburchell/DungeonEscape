@@ -56,15 +56,19 @@
 - Data Editor tools: added checked-in JSON Schemas under `DungeonEscape.Tools.GameEditor/Schemas/`; added read-only **Quest Graph** and **Encounter Simulator** tabs; expanded validation for map `song` audio files, map biome values, generated item-definition image IDs, tileset source image files, and missing monster PNGs.
 - Data Editor Maps tab: added a cached read-only map preview and used-tile gallery that lists each rendered tile gid/local tileset tile with usage counts.
 - Narrative data pass: improved quest journal descriptions, branching dialog copy, and direct map NPC text for the seashell/ship quests, town guards, shrine NPCs, recruitable NPCs, and Estark hints without changing quest IDs, stages, rewards, or map hooks.
-- Interactive NPC conversation pass: replaced all ordinary map NPC `Text` prompts with referenced branching dialogs across the pyramid, shrines, Coast, Forest Palace, Isis, Oasis, and the walled city; recruitable NPC prompts remain on their dedicated Yes/No flow.
+- Interactive NPC conversation pass: replaced all ordinary map NPC `Text` prompts with referenced branching dialogs across the pyramid, shrines, Coast, Forest Palace, Isis, Oasis, and the walled city.
+- Recruit conversation pass: implemented the existing dialog `Join` action in Unity and converted the dungeon, Healing Shrine, and Isis recruits from static Yes/No prompts to distinct branching conversations with background, skills, recruit, and leave choices.
 - Began the D&D 5.5e / 2024 SRD-inspired combat migration: added optional ability scores, armor class, proficiency, attack bonus, weapon damage dice, damage bonus, and monster challenge rating fields; normal combat attacks now resolve with a d20 attack roll against AC and damage dice/critical dice; existing JRPG stats are still used as fallback bridge values for old data.
+- Mapped the existing monster roster to explicit D&D-style stat-block fields in `allmonsters.json`, including ability scores, AC, proficiency, attack bonus, damage dice, damage bonus, and challenge rating. Added species-aware character creation support with Human/Elf/Dwarf/Halfling, persisted `Hero.Species`, role-to-D&D-class labels for existing roles, and class metadata for D&D class, primary ability, and hit die.
+- Updated the role-to-D&D-class mapping to: Soldier=Fighter, Hero=Paladin, Cleric=Cleric, Wizard=Wizard, Fighter=Monk, Merchant=Warlock, Bard=Bard, Thief=Rogue, and Sage=Sorcerer.
+- Replaced the separate `DndClass` type with the existing `Class` enum updated to D&D class names only. Current data stores D&D class names directly.
 
 
 
 ## In Progress
 
 - Feature development and next-phase architecture planning.
-- D&D-style combat migration phase 1 is started but not complete; spells, skills, class progression, saves, encounter CR, and dialogue ability checks still need dedicated follow-up passes.
+- D&D-style combat migration phase 1 is started but not complete; initiative, fuller monster action data, encounter CR balancing, spell slots, saving throws, and dialogue ability checks still need dedicated follow-up passes.
 - Active architecture ideas are tracked in `memory-bank/ARCHITECTURE_BACKLOG.md`.
 - Completed architecture work is archived in `memory-bank/ARCHITECTURE_COMPLETED.md`.
 

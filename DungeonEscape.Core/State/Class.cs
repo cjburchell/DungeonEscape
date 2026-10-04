@@ -3,14 +3,14 @@ namespace Redpoint.DungeonEscape.State
 {
     public enum Class
     {
-        Hero = 0,
-        Soldier = 1,
+        Paladin = 0,
+        Fighter = 1,
         Cleric = 2,
         Wizard = 3,
-        Fighter = 4,
-        Merchant = 5,
+        Monk = 4,
+        Warlock = 5,
         Bard = 6,
-        Thief = 7,
-        Sage = 8,
+        Rogue = 7,
+        Sorcerer = 8
     }
 }

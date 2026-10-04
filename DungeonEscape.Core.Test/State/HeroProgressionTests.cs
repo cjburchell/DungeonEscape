@@ -65,7 +65,7 @@ namespace DungeonEscape.Core.Test.State
             return new Hero
             {
                 Name = "Test Hero",
-                Class = Class.Hero,
+                Class = Class.Paladin,
                 Gender = Gender.Male,
                 Level = 1,
                 Xp = 9,
@@ -89,7 +89,7 @@ namespace DungeonEscape.Core.Test.State
             {
                 new ClassStats
                 {
-                    Class = "Hero",
+                    Class = "Paladin",
                     FirstLevel = 10,
                     Skills = new List<string> { "Swipe" },
                     Stats = new List<Stats>
@@ -132,13 +132,13 @@ namespace DungeonEscape.Core.Test.State
                 {
                     Name = "Heal",
                     MinLevel = 2,
-                    Classes = new List<string> { "Hero" }
+                    Classes = new List<string> { "Paladin" }
                 },
                 new Spell
                 {
                     Name = "Lightning",
                     MinLevel = 3,
-                    Classes = new List<string> { "Hero" }
+                    Classes = new List<string> { "Paladin" }
                 },
                 new Spell
                 {

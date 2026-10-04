@@ -4,6 +4,7 @@ namespace Redpoint.DungeonEscape.ViewModels
     {
         None,
         Gender,
+        Species,
         Class
     }
 }

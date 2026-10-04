@@ -1,4 +1,4 @@
-﻿using Redpoint.DungeonEscape.Data;
+using Redpoint.DungeonEscape.Data;
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -2418,18 +2418,23 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         public void RestartNewGame()
         {
-            RestartNewGame("Player", Class.Hero, Gender.Male, null);
+            RestartNewGame("Player", Class.Paladin, Gender.Male, Species.Human, null);
         }
 
         public void RestartNewGame(string playerName, Class playerClass, Gender gender)
         {
-            RestartNewGame(playerName, playerClass, gender, null);
+            RestartNewGame(playerName, playerClass, gender, Species.Human, null);
         }
 
         public void RestartNewGame(string playerName, Class playerClass, Gender gender, int? spriteFrameIndex)
         {
+            RestartNewGame(playerName, playerClass, gender, Species.Human, spriteFrameIndex);
+        }
+
+        public void RestartNewGame(string playerName, Class playerClass, Gender gender, Species species, int? spriteFrameIndex)
+        {
             GameFile = LoadGameFile();
-            CurrentSave = CreateDefaultSave(playerName, playerClass, gender, spriteFrameIndex);
+            CurrentSave = CreateDefaultSave(playerName, playerClass, gender, species, spriteFrameIndex);
             CurrentSave.IsQuick = false;
             ShouldApplyInitialSpawn = true;
             MarkDirty();
@@ -2441,12 +2446,17 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         public Hero CreatePlayerPreviewHero(string playerName, Class playerClass, Gender gender)
         {
-            return CreatePlayerPreviewHero(playerName, playerClass, gender, null);
+            return CreatePlayerPreviewHero(playerName, playerClass, gender, Species.Human, null);
         }
 
         public Hero CreatePlayerPreviewHero(string playerName, Class playerClass, Gender gender, int? spriteFrameIndex)
         {
-            return CreateHero(playerName, playerClass, gender, 1, false, spriteFrameIndex);
+            return CreatePlayerPreviewHero(playerName, playerClass, gender, Species.Human, spriteFrameIndex);
+        }
+
+        public Hero CreatePlayerPreviewHero(string playerName, Class playerClass, Gender gender, Species species, int? spriteFrameIndex)
+        {
+            return CreateHero(playerName, playerClass, gender, species, 1, false, spriteFrameIndex);
         }
 
         public void MarkInitialSpawnApplied()
@@ -2456,10 +2466,15 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private GameSave CreateDefaultSave()
         {
-            return CreateDefaultSave("Player", Class.Hero, Gender.Male, null);
+            return CreateDefaultSave("Player", Class.Paladin, Gender.Male, Species.Human, null);
         }
 
         private GameSave CreateDefaultSave(string playerName, Class playerClass, Gender gender, int? spriteFrameIndex)
+        {
+            return CreateDefaultSave(playerName, playerClass, gender, Species.Human, spriteFrameIndex);
+        }
+
+        private GameSave CreateDefaultSave(string playerName, Class playerClass, Gender gender, Species species, int? spriteFrameIndex)
         {
             if (string.IsNullOrEmpty(playerName))
             {
@@ -2474,7 +2489,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             };
             party.CurrentMapIsOverWorld = party.CurrentMapId == "overworld";
             party.OverWorldPosition = party.CurrentPosition.Value;
-            party.Members.Add(CreateHero(party.PlayerName, playerClass, gender, 1, true, spriteFrameIndex));
+            party.Members.Add(CreateHero(party.PlayerName, playerClass, gender, species, 1, true, spriteFrameIndex));
 
             return new GameSave
             {
@@ -2486,11 +2501,17 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private Hero CreateHero(string heroName, Class heroClass, Gender gender, int level, bool generateItems, int? spriteFrameIndex)
         {
+            return CreateHero(heroName, heroClass, gender, Species.Human, level, generateItems, spriteFrameIndex);
+        }
+
+        private Hero CreateHero(string heroName, Class heroClass, Gender gender, Species species, int level, bool generateItems, int? spriteFrameIndex)
+        {
             var hero = new Hero
             {
                 Name = string.IsNullOrEmpty(heroName) ? "Player" : heroName,
                 Class = heroClass,
                 Gender = gender,
+                Species = species,
                 SpriteFrameIndex = spriteFrameIndex,
                 IsActive = true,
                 Order = 0,
@@ -2499,6 +2520,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             };
 
             ApplyStartingClassStats(hero);
+            DndCharacterRules.ApplyStartingAbilityScores(hero);
             var classLevels = GameDataCache.Current == null ? null : GameDataCache.Current.ClassLevels;
             if (classLevels != null && classLevels.Any(item => IsClass(item.Class, hero.Class)))
             {
@@ -2553,7 +2575,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private static bool IsClass(string className, Class heroClass)
         {
-            return string.Equals(className, heroClass.ToString(), StringComparison.OrdinalIgnoreCase);
+            return DndCharacterRules.IsClassNameMatch(className, heroClass);
         }
 
         private static void ApplyFallbackStartingStats(Hero hero)

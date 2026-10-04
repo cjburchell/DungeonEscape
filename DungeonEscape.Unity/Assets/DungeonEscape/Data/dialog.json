@@ -373,5 +373,95 @@
         { "Text": "I will leave him be", "Dialog": { "Text": "Probably kindest. He usually emerges when he runs out of soup." } }
       ]
     }]
+  },
+  {
+    "Id": "Dungeon_Lost_Recruit_Dialog",
+    "Dialogs": [{
+      "Text": "At last, someone alive. I lost my way in these tunnels, but I can still hold a weapon. Will you hear me out?",
+      "Choices": [
+        {
+          "Text": "How did you get lost?",
+          "Dialog": {
+            "Text": "I followed a scraping sound, expecting treasure or trouble. I found both, then fled through three identical passages. The treasure is gone, but the trouble may still be looking for me.",
+            "Choices": [
+              { "Text": "Join us", "Actions": ["Join"] },
+              { "Text": "Stay here", "Dialog": { "Text": "I understand. I will mark the walls and try not to make the same turn twice." } }
+            ]
+          }
+        },
+        {
+          "Text": "What can you do?",
+          "Dialog": {
+            "Text": "I know dungeon signs, I keep a cool head when blades come out, and after today I have a powerful respect for staying close to the group.",
+            "Choices": [
+              { "Text": "Join us", "Actions": ["Join"] },
+              { "Text": "Not now", "Dialog": { "Text": "Then I will wait here and listen for anything approaching." } }
+            ]
+          }
+        },
+        { "Text": "Join us", "Actions": ["Join"] },
+        { "Text": "Farewell", "Dialog": { "Text": "Watch the corners. Things down here know how to hide better than I do." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Healing_Shrine_Recruit_Dialog",
+    "Dialogs": [{
+      "Text": "You look like you could use a steady hand on the road. I am rested, supplied, and looking for a worthy cause.",
+      "Choices": [
+        {
+          "Text": "Why are you here?",
+          "Dialog": {
+            "Text": "I escorted an injured traveler to the shrine. They are safe now, and I would rather put my skills to use than wait for another wounded stranger to arrive.",
+            "Choices": [
+              { "Text": "Travel with us", "Actions": ["Join"] },
+              { "Text": "Remain at the shrine", "Dialog": { "Text": "A fair choice. There is useful work here too." } }
+            ]
+          }
+        },
+        {
+          "Text": "What do you offer?",
+          "Dialog": {
+            "Text": "Patience under pressure, a strong arm, and enough road sense to know when the party needs rest more than another fight.",
+            "Choices": [
+              { "Text": "Travel with us", "Actions": ["Join"] },
+              { "Text": "Perhaps later", "Dialog": { "Text": "I will be nearby until the road calls me elsewhere." } }
+            ]
+          }
+        },
+        { "Text": "Travel with us", "Actions": ["Join"] },
+        { "Text": "We travel alone", "Dialog": { "Text": "Then may the shrine's blessing keep pace with you." } }
+      ]
+    }]
+  },
+  {
+    "Id": "Isis_Recruit_Dialog",
+    "Dialogs": [{
+      "Text": "I know the streets of Isis and the roads beyond them. If you need another blade, we may be useful to each other.",
+      "Choices": [
+        {
+          "Text": "Why leave Isis?",
+          "Dialog": {
+            "Text": "Rumors arrive here every day, but answers never do. Estark, dragons, ships vanishing at sea... I am tired of hearing frightened stories from people who never looked for the truth.",
+            "Choices": [
+              { "Text": "Find the truth with us", "Actions": ["Join"] },
+              { "Text": "Isis still needs you", "Dialog": { "Text": "Perhaps. I will keep listening until I am certain." } }
+            ]
+          }
+        },
+        {
+          "Text": "Can you handle the road?",
+          "Dialog": {
+            "Text": "I can read a crowd, spot an ambush, and fight without losing track of the nearest exit. The road is dangerous, but so is standing still when darkness is spreading.",
+            "Choices": [
+              { "Text": "Come with us", "Actions": ["Join"] },
+              { "Text": "Not today", "Dialog": { "Text": "Then I will keep my gear ready." } }
+            ]
+          }
+        },
+        { "Text": "Come with us", "Actions": ["Join"] },
+        { "Text": "We have enough help", "Dialog": { "Text": "For your sake, I hope you are right." } }
+      ]
+    }]
   }
 ]

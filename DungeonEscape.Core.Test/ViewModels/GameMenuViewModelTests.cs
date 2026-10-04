@@ -194,7 +194,7 @@ namespace DungeonEscape.Core.Test.ViewModels
         {
             var viewModel = new GameMenuViewModel();
             var hero = CreateHero("Hero", true, 0);
-            hero.Class = Class.Hero;
+            hero.Class = Class.Paladin;
             var equipped = CreateItemInstance("Old Sword", ItemType.Weapon, Slot.PrimaryHand);
             var candidate = CreateItemInstance("New Sword", ItemType.Weapon, Slot.PrimaryHand);
             var wrongSlot = CreateItemInstance("Armor", ItemType.Armor, Slot.Chest);
@@ -483,7 +483,7 @@ namespace DungeonEscape.Core.Test.ViewModels
                 Name = name,
                 IsActive = isActive,
                 Order = order,
-                Class = Class.Hero,
+                Class = Class.Paladin,
                 Health = 10,
                 MaxHealth = 10,
                 Items = new List<ItemInstance>()
@@ -498,7 +498,7 @@ namespace DungeonEscape.Core.Test.ViewModels
                 Name = name,
                 Type = type,
                 Slots = new List<Slot> { slot },
-                Classes = new List<string> { "Hero" }
+                Classes = new List<string> { "Paladin" }
             });
         }
 
@@ -529,7 +529,7 @@ namespace DungeonEscape.Core.Test.ViewModels
                 Type = ItemType.OneUse,
                 Target = target,
                 Slots = new List<Slot> { Slot.PrimaryHand },
-                Classes = new List<string> { "Hero" },
+                Classes = new List<string> { "Paladin" },
                 Skill = new Skill { Name = name, Type = skillType }
             });
         }

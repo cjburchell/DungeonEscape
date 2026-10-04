@@ -174,7 +174,12 @@ Status legend:
 - Visit the maps with updated NPC conversations: `shrine/first`, `shrine/heal`, `towns/isis`, `towns/coast`, `towns/forest`, `towns/oasis`, `towns/walled`, and `pyramid/main`.
 - Expected: ordinary NPCs offer two or three relevant conversation choices, each choice opens the expected follow-up text, and the dialogue closes without clipping, missing text, or broken navigation.
 - Talk to recruitable NPCs in `dungeon/first`, `shrine/heal`, and `towns/isis`.
-- Expected: recruitable NPCs retain their existing Yes/No recruitment interaction.
+- Expected: each recruit offers distinct background and skills topics plus direct
+recruit/leave choices; selecting a topic provides a follow-up chance to recruit.
+- Recruit each NPC from both the opening menu and a nested follow-up choice on
+separate runs.
+- Expected: the selected NPC joins exactly once, disappears from the map, and is
+active or waiting according to the current party-size limit.
 - Open the Quest menu during `Lost_Sea_Shell` and `Find_Ship`.
 - Expected: quest descriptions and current-stage text read clearly and match the current objective.
 
@@ -976,6 +981,17 @@ Status legend:
 - Expected: monster Fight actions use those values without requiring legacy Attack/Defence tuning.
 - Force or observe a critical hit if practical.
 - Expected: the combat message shows the heroic maneuver text and damage rolls doubled weapon dice.
+
+### [ ] D&D-Style Character Creation Fields
+
+- Start New Quest from the title menu.
+- Expected: character creation shows Gender, Species, Role, and Image selectors.
+- Cycle Species with keyboard/gamepad and the dropdown.
+- Expected: Species changes between Human, Elf, Dwarf, and Halfling, and the preview ability-score rows update.
+- Cycle Class.
+- Expected: D&D class names are available directly, such as `Paladin`, `Fighter`, `Monk`, `Warlock`, `Rogue`, and `Sorcerer`.
+- Start a new game after selecting a non-Human species.
+- Expected: the created hero keeps the selected species after save/load and uses the mapped ability scores for combat calculations.
 
 ## Tools - Game Editor (standalone)
 

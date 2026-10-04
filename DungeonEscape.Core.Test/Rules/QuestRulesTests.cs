@@ -100,7 +100,7 @@ namespace DungeonEscape.Core.Test.Rules
             {
                 Name = "Able",
                 IsActive = true,
-                Class = Class.Hero,
+                Class = Class.Paladin,
                 Level = 1,
                 NextLevel = 100,
                 Health = 10,
@@ -133,7 +133,7 @@ namespace DungeonEscape.Core.Test.Rules
             {
                 new ClassStats
                 {
-                    Class = "Hero",
+                    Class = "Paladin",
                     FirstLevel = 100,
                     Skills = new List<string>(),
                     Stats = new List<Stats>

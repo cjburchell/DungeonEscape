@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
+using Redpoint.DungeonEscape.Rules;
 
 namespace Redpoint.DungeonEscape.State
 {
@@ -16,6 +17,9 @@ namespace Redpoint.DungeonEscape.State
 
         [JsonConverter(typeof(StringEnumConverter))]
         public Gender Gender { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public Species Species { get; set; }
 
         public ulong NextLevel { get; set; }
         public bool IsActive { get; set; }
@@ -59,6 +63,7 @@ namespace Redpoint.DungeonEscape.State
             MaxMagic = classStats.Stats.First(item => item.Type == StatType.Magic).RollStartValue();
             Agility = classStats.Stats.First(item => item.Type == StatType.Agility).RollStartValue();
             Skills = classStats.Skills.ToList();
+            DndCharacterRules.ApplyStartingAbilityScores(this);
 
             Health = MaxHealth;
             Magic = MaxMagic;
@@ -194,7 +199,7 @@ namespace Redpoint.DungeonEscape.State
 
         private static bool IsClass(string className, Class heroClass)
         {
-            return string.Equals(className, heroClass.ToString(), StringComparison.OrdinalIgnoreCase);
+            return DndCharacterRules.IsClassNameMatch(className, heroClass);
         }
 
         public void UnEquip(ItemInstance item)

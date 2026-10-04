@@ -369,7 +369,7 @@
     <property name="Gender" value="Male"/>
     <property name="Level" type="int" value="2"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Text" value="You look like you could use a steady hand. Shall I come along?"/>
+    <property name="Dialog" value="Healing_Shrine_Recruit_Dialog"/>
    </properties>
   </object>
  </objectgroup>

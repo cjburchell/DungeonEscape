@@ -83,13 +83,13 @@ namespace DungeonEscape.Core.Test.ViewModels
             var fieldSkill = new Skill { Name = "OutsideSkill", Type = SkillType.Outside };
             var spells = new List<Spell>
             {
-                CreateSpell("Heal", encounterSkill, 3, 1, Class.Hero),
-                CreateSpell("Too Much", encounterSkill, 8, 1, Class.Hero),
-                CreateSpell("Too High", encounterSkill, 3, 3, Class.Hero),
+                CreateSpell("Heal", encounterSkill, 3, 1, Class.Paladin),
+                CreateSpell("Too Much", encounterSkill, 8, 1, Class.Paladin),
+                CreateSpell("Too High", encounterSkill, 3, 3, Class.Paladin),
                 CreateSpell("Wrong Class", encounterSkill, 3, 1, Class.Wizard),
-                CreateSpell("Outside", fieldSkill, 3, 1, Class.Hero)
+                CreateSpell("Outside", fieldSkill, 3, 1, Class.Paladin)
             };
-            var hero = new Hero { Class = Class.Hero, Health = 10, Level = 2, Magic = 5 };
+            var hero = new Hero { Class = Class.Paladin, Health = 10, Level = 2, Magic = 5 };
 
             var available = viewModel.GetAvailableEncounterSpells(hero, spells);
 

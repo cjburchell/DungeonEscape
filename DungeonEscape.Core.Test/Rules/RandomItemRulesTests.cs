@@ -49,7 +49,7 @@ namespace DungeonEscape.Core.Test.Rules
                 1,
                 Rarity.Rare,
                 ItemType.Weapon,
-                Class.Hero,
+                Class.Paladin,
                 Slot.PrimaryHand,
                 new[] { CreateWeaponDefinition() },
                 CreateStatNames(),
@@ -63,7 +63,7 @@ namespace DungeonEscape.Core.Test.Rules
             Assert.Equal(ItemType.Weapon, item.Type);
             Assert.Equal(5, item.MinLevel);
             Assert.Equal("Mystic Sword of Giants", item.Name);
-            Assert.Equal(new[] { "Hero" }, item.Classes);
+            Assert.Equal(new[] { "Paladin" }, item.Classes);
             Assert.Equal(new[] { Slot.PrimaryHand }, item.Slots);
             Assert.Equal(3, item.Stats.Count);
             Assert.Contains(item.Stats, stat => stat.Type == StatType.Attack && stat.Value == 5);
@@ -83,7 +83,7 @@ namespace DungeonEscape.Core.Test.Rules
             var definitions = RandomItemRules.GetAvailableItemDefinitions(
                 new[] { matching, wrongClass, wrongSlot },
                 ItemType.Weapon,
-                Class.Hero,
+                Class.Paladin,
                 Slot.PrimaryHand).ToList();
 
             Assert.Equal(new[] { matching }, definitions);
@@ -95,7 +95,7 @@ namespace DungeonEscape.Core.Test.Rules
             {
                 Type = ItemType.Weapon,
                 BaseStat = 5,
-                Classes = new List<string> { "Hero" },
+                Classes = new List<string> { "Paladin" },
                 Slots = new List<Slot> { Slot.PrimaryHand },
                 Names = new List<ItemName>
                 {

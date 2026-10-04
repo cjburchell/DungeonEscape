@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Tools;
 using Redpoint.DungeonEscape.ViewModels;
@@ -26,6 +27,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private const int CreateNameIndex = TitleViewModel.CreateNameIndex;
         private const int CreateGenerateNameIndex = TitleViewModel.CreateGenerateNameIndex;
         private const int CreateGenderIndex = TitleViewModel.CreateGenderIndex;
+        private const int CreateSpeciesIndex = TitleViewModel.CreateSpeciesIndex;
         private const int CreateClassIndex = TitleViewModel.CreateClassIndex;
         private const int CreateImageIndex = TitleViewModel.CreateImageIndex;
         private const int CreateRerollIndex = TitleViewModel.CreateRerollIndex;
@@ -56,8 +58,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private float nextMoveYTime;
         private Rect createMenuAreaOffset;
         private Rect genderDropdownAnchor;
+        private Rect speciesDropdownAnchor;
         private Rect classDropdownAnchor;
         private Vector2 genderDropdownScrollPosition;
+        private Vector2 speciesDropdownScrollPosition;
         private Vector2 classDropdownScrollPosition;
         private Vector2 loadQuestScrollPosition;
         private Hero createPreviewHero;
@@ -127,6 +131,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             get { return viewModel.CreatePlayerGender; }
             set { viewModel.SetCreatePlayerGender(value); }
+        }
+
+        private Species createPlayerSpecies
+        {
+            get { return viewModel.CreatePlayerSpecies; }
+            set { viewModel.SetCreatePlayerSpecies(value); }
         }
 
         private int createPlayerSpriteIndex
@@ -635,7 +645,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             EnsureCreatePreviewHero();
 
             var width = Mathf.Min(660f * scale, Screen.width - 32f * scale);
-            var height = 266f * scale;
+            var height = 304f * scale;
             var titleHeight = 44f * scale;
             var titleGap = 8f * scale;
             var totalHeight = titleHeight + titleGap + height;
@@ -686,7 +696,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             DrawGenderDropdown(selectedIndex == CreateGenderIndex);
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Class:", labelStyle, GUILayout.Width(74f * scale), GUILayout.Height(32f * scale));
+            GUILayout.Label("Species:", labelStyle, GUILayout.Width(74f * scale), GUILayout.Height(32f * scale));
+            DrawSpeciesDropdown(selectedIndex == CreateSpeciesIndex);
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Role:", labelStyle, GUILayout.Width(74f * scale), GUILayout.Height(32f * scale));
             DrawClassDropdown(selectedIndex == CreateClassIndex);
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
@@ -740,17 +754,32 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawClassDropdown(bool selected)
         {
-            if (UiControls.Button(createPlayerClass.ToString(), selected || activeCreateDropdown == CreateDropdown.Class, uiTheme, GUILayout.Width(136f * GetPixelScale()), GUILayout.Height(32f * GetPixelScale())) &&
+            if (UiControls.Button(DndCharacterRules.GetRoleClassLabel(createPlayerClass), selected || activeCreateDropdown == CreateDropdown.Class, uiTheme, GUILayout.Width(186f * GetPixelScale()), GUILayout.Height(32f * GetPixelScale())) &&
                 !waitingForConfirmRelease &&
                 (activeCreateDropdown == CreateDropdown.None || activeCreateDropdown == CreateDropdown.Class))
             {
                 selectedIndex = CreateClassIndex;
                 activeCreateDropdown = activeCreateDropdown == CreateDropdown.Class ? CreateDropdown.None : CreateDropdown.Class;
-                selectedDropdownIndex = System.Array.IndexOf(System.Enum.GetValues(typeof(Class)), createPlayerClass);
+                selectedDropdownIndex = System.Array.IndexOf(DndCharacterRules.GetPlayableClasses(), createPlayerClass);
                 WaitForConfirmRelease();
             }
 
             classDropdownAnchor = ToScreenRect(GUILayoutUtility.GetLastRect());
+        }
+
+        private void DrawSpeciesDropdown(bool selected)
+        {
+            if (UiControls.Button(createPlayerSpecies.ToString(), selected || activeCreateDropdown == CreateDropdown.Species, uiTheme, GUILayout.Width(136f * GetPixelScale()), GUILayout.Height(32f * GetPixelScale())) &&
+                !waitingForConfirmRelease &&
+                (activeCreateDropdown == CreateDropdown.None || activeCreateDropdown == CreateDropdown.Species))
+            {
+                selectedIndex = CreateSpeciesIndex;
+                activeCreateDropdown = activeCreateDropdown == CreateDropdown.Species ? CreateDropdown.None : CreateDropdown.Species;
+                selectedDropdownIndex = System.Array.IndexOf(System.Enum.GetValues(typeof(Species)), createPlayerSpecies);
+                WaitForConfirmRelease();
+            }
+
+            speciesDropdownAnchor = ToScreenRect(GUILayoutUtility.GetLastRect());
         }
 
         private void DrawImageSelector(bool selected)
@@ -810,7 +839,24 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            var classes = System.Enum.GetValues(typeof(Class)).Cast<Class>().ToArray();
+            if (activeCreateDropdown == CreateDropdown.Species)
+            {
+                DrawDropdownOverlay(
+                    speciesDropdownAnchor,
+                    System.Enum.GetValues(typeof(Species)).Cast<Species>().ToArray(),
+                    createPlayerSpecies,
+                    value =>
+                    {
+                        createPlayerSpecies = value;
+                        RerollCreatePreviewHero();
+                        activeCreateDropdown = CreateDropdown.None;
+                    },
+                    ref speciesDropdownScrollPosition,
+                    selectedDropdownIndex);
+                return;
+            }
+
+            var classes = DndCharacterRules.GetPlayableClasses();
             DrawDropdownOverlay(
                 classDropdownAnchor,
                 classes,
@@ -905,7 +951,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 var value = values[i];
                 var selectedRow = EqualityComparer<T>.Default.Equals(value, selectedValue);
                 var style = selectedRow || i == keyboardSelectedIndex ? uiTheme.SelectedTabStyle : uiTheme.ButtonStyle;
-                if (UiControls.Button(new Rect(0f, y, width, rowHeight), value.ToString(), style) &&
+                if (UiControls.Button(new Rect(0f, y, width, rowHeight), GetDropdownText(value), style) &&
                     !waitingForConfirmRelease)
                 {
                     selected(value);
@@ -920,12 +966,23 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var extraPadding = 24f * GetPixelScale();
             foreach (var value in values)
             {
-                var text = value == null ? string.Empty : value.ToString();
+                var text = GetDropdownText(value);
                 var size = uiTheme.ButtonStyle.CalcSize(new GUIContent(text));
                 width = Mathf.Max(width, size.x + uiTheme.ButtonStyle.padding.horizontal + uiTheme.BorderThickness * 2f + extraPadding);
             }
 
             return width;
+        }
+
+        private static string GetDropdownText<T>(T value)
+        {
+            var boxed = (object)value;
+            if (boxed is Class)
+            {
+                return DndCharacterRules.GetClassLabel((Class)boxed);
+            }
+
+            return value == null ? string.Empty : value.ToString();
         }
 
         private Rect ToScreenRect(Rect localRect)
@@ -939,7 +996,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawCreateStatsPanel(float scale, bool controlsEnabled)
         {
-            GUILayout.BeginVertical(panelStyle, GUILayout.Width(268f * scale), GUILayout.Height(164f * scale));
+            GUILayout.BeginVertical(panelStyle, GUILayout.Width(268f * scale), GUILayout.Height(204f * scale));
             var title = new GUIStyle(labelStyle)
             {
                 alignment = TextAnchor.MiddleCenter,
@@ -953,6 +1010,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
             DrawStatRow("Defence:", createPreviewHero == null ? 0 : createPreviewHero.Defence);
             DrawStatRow("Magic Defence:", createPreviewHero == null ? 0 : createPreviewHero.MagicDefence);
             DrawStatRow("Agility:", createPreviewHero == null ? 0 : createPreviewHero.Agility);
+            DrawStatRow("STR/DEX:", createPreviewHero == null ? 0 : createPreviewHero.Strength, createPreviewHero == null ? 0 : createPreviewHero.Dexterity);
+            DrawStatRow("CON/INT:", createPreviewHero == null ? 0 : createPreviewHero.Constitution, createPreviewHero == null ? 0 : createPreviewHero.Intelligence);
+            DrawStatRow("WIS/CHA:", createPreviewHero == null ? 0 : createPreviewHero.Wisdom, createPreviewHero == null ? 0 : createPreviewHero.Charisma);
             GUILayout.EndVertical();
             GUILayout.FlexibleSpace();
             GUILayout.BeginHorizontal();
@@ -977,6 +1037,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.BeginHorizontal();
             GUILayout.Label(label, labelStyle, GUILayout.Width(150f * GetPixelScale()));
             GUILayout.Label(value.ToString(), labelStyle, GUILayout.Width(44f * GetPixelScale()));
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawStatRow(string label, int firstValue, int secondValue)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(label, labelStyle, GUILayout.Width(150f * GetPixelScale()));
+            GUILayout.Label(firstValue + "/" + secondValue, labelStyle, GUILayout.Width(72f * GetPixelScale()));
             GUILayout.EndHorizontal();
         }
 
@@ -1098,7 +1166,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             createPreviewHero = gameState == null
                 ? null
-                : gameState.CreatePlayerPreviewHero(createPlayerName, createPlayerClass, createPlayerGender, GetCreatePlayerSpriteFrameIndex());
+                : gameState.CreatePlayerPreviewHero(createPlayerName, createPlayerClass, createPlayerGender, createPlayerSpecies, GetCreatePlayerSpriteFrameIndex());
         }
 
         private void UpdateCreatePreviewHeroIdentity()
@@ -1111,9 +1179,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             createPreviewHero.Name = string.IsNullOrEmpty(createPlayerName) ? "Player" : createPlayerName;
             createPreviewHero.Gender = createPlayerGender;
+            createPreviewHero.Species = createPlayerSpecies;
             createPreviewHero.SpriteFrameIndex = GetCreatePlayerSpriteFrameIndex();
             createPreviewHero.SpriteTilesetPath = null;
             createPreviewHero.SpriteTileId = null;
+            DndCharacterRules.ApplyStartingAbilityScores(createPreviewHero);
         }
 
         private IEnumerable<TitleRow> GetMainRows()
@@ -1185,6 +1255,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
             if (selectedIndex == CreateGenderIndex)
             {
                 CycleCreateGender(delta);
+                return true;
+            }
+
+            if (selectedIndex == CreateSpeciesIndex)
+            {
+                CycleCreateSpecies(delta);
                 return true;
             }
 
@@ -1301,6 +1377,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     CycleCreateGender(1);
                     WaitForConfirmRelease();
                     break;
+                case CreateSpeciesIndex:
+                    CycleCreateSpecies(1);
+                    WaitForConfirmRelease();
+                    break;
                 case CreateClassIndex:
                     CycleCreateClass(1);
                     WaitForConfirmRelease();
@@ -1349,9 +1429,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            var count = activeCreateDropdown == CreateDropdown.Gender
-                ? System.Enum.GetValues(typeof(Gender)).Length
-                : System.Enum.GetValues(typeof(Class)).Length;
+            var count = GetActiveCreateDropdownCount();
             var moveY = GetMenuMoveY();
             if (moveY != 0)
             {
@@ -1369,10 +1447,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 createPlayerGender = (Gender)values.GetValue(Mathf.Clamp(selectedDropdownIndex, 0, values.Length - 1));
                 UpdateCreatePreviewHeroIdentity();
             }
+            else if (activeCreateDropdown == CreateDropdown.Species)
+            {
+                var values = System.Enum.GetValues(typeof(Species));
+                createPlayerSpecies = (Species)values.GetValue(Mathf.Clamp(selectedDropdownIndex, 0, values.Length - 1));
+                RerollCreatePreviewHero();
+            }
             else
             {
-                var values = System.Enum.GetValues(typeof(Class));
-                createPlayerClass = (Class)values.GetValue(Mathf.Clamp(selectedDropdownIndex, 0, values.Length - 1));
+                var values = DndCharacterRules.GetPlayableClasses();
+                createPlayerClass = values[Mathf.Clamp(selectedDropdownIndex, 0, values.Length - 1)];
                 ApplyDefaultImageForCreateClass();
                 RerollCreatePreviewHero();
             }
@@ -1386,6 +1470,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             viewModel.CycleCreateGender(delta);
             UpdateCreatePreviewHeroIdentity();
+            UiControls.PlaySelectSound();
+        }
+
+        private void CycleCreateSpecies(int delta)
+        {
+            viewModel.CycleCreateSpecies(delta);
+            RerollCreatePreviewHero();
             UiControls.PlaySelectSound();
         }
 
@@ -1461,7 +1552,22 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private static bool IsClass(string className, Class heroClass)
         {
-            return string.Equals(className, heroClass.ToString(), StringComparison.OrdinalIgnoreCase);
+            return DndCharacterRules.IsClassNameMatch(className, heroClass);
+        }
+
+        private int GetActiveCreateDropdownCount()
+        {
+            switch (activeCreateDropdown)
+            {
+                case CreateDropdown.Gender:
+                    return System.Enum.GetValues(typeof(Gender)).Length;
+                case CreateDropdown.Species:
+                    return System.Enum.GetValues(typeof(Species)).Length;
+                case CreateDropdown.Class:
+                    return DndCharacterRules.GetPlayableClasses().Length;
+                default:
+                    return 0;
+            }
         }
 
         private void WaitForConfirmRelease()
@@ -1508,7 +1614,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (gameState != null)
             {
-                gameState.RestartNewGame(createPlayerName, createPlayerClass, createPlayerGender, GetCreatePlayerSpriteFrameIndex());
+                gameState.RestartNewGame(createPlayerName, createPlayerClass, createPlayerGender, createPlayerSpecies, GetCreatePlayerSpriteFrameIndex());
             }
 
             Close();

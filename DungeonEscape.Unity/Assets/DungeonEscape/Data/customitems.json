@@ -1,175 +1,175 @@
 [
-  {
-    "ImageId": 916,
-    "Skill": "Heal",
-    "Type": "OneUse",
-    "Name": "Medical Herb",
-    "Rarity": "Common",
-    "Cost": 16
-  },
-  {
-    "ImageId": 754,
-    "Skill": "Heal",
-    "Type": "RepeatableUse",
-    "Name": "Bag of Herbs",
-    "Rarity": "Common",
-    "Cost": 160,
-    "Charges": 10
-  },
-  {
-    "ImageId": 913,
-    "Skill": "Heal All",
-    "Type": "OneUse",
-    "Name": "Potent Herb",
-    "Rarity": "Uncommon",
-    "Cost": 100,
-    "MinLevel": 6
-  },
-  {
-    "ImageId": 785,
-    "Skill": "Heal",
-    "Type": "RepeatableUse",
-    "Name": "Rod of Healing",
-    "Rarity": "Common",
-    "Cost": 44000,
-    "MinLevel": 15
-  },
-  {
-    "ImageId": 923,
-    "Skill": "Energise",
-    "Type": "OneUse",
-    "Name": "Potion of Magic",
-    "Rarity": "Common",
-    "Cost": 16,
-    "MinLevel": 5
-  },
-  {
-    "ImageId": 917,
-    "Skill": "Full Energise",
-    "Type": "OneUse",
-    "Name": "Elixir of Magic",
-    "Rarity": "Uncommon",
-    "Cost": 100,
-    "MinLevel": 10
-  },
-  {
-    "ImageId": 815,
-    "Skill": "Attack Up",
-    "Type": "OneUse",
-    "Name": "Scroll of Strength",
-    "Rarity": "Epic",
-    "Cost": 5000,
-    "MinLevel": 18
-  },
-  {
-    "ImageId": 816,
-    "Skill": "Defence Up",
-    "Type": "OneUse",
-    "Name": "Scroll of Defence",
-    "Rarity": "Epic",
-    "Cost": 5000,
-    "MinLevel": 18
-  },
-  {
-    "ImageId": 822,
-    "Skill": "Agility Up",
-    "Type": "OneUse",
-    "Name": "Scroll of Agility",
-    "Rarity": "Epic",
-    "Cost": 5000,
-    "MinLevel": 18
-  },
-  {
-    "ImageId": 909,
-    "Skill": "Open",
-    "Type": "OneUse",
-    "Name": "Iron Key",
-    "Rarity": "Common",
-    "Cost": 250
-  },
-  {
-    "ImageId": 894,
-    "Skill": "Open",
-    "Type": "OneUse",
-    "Name": "Silver Key",
-    "Rarity": "Uncommon",
-    "Cost": 250,
-    "MinLevel": 5
-  },
-  {
-    "ImageId": 899,
-    "Skill": "Open",
-    "Type": "OneUse",
-    "Name": "Gold Key",
-    "Rarity": "Rare",
-    "Cost": 250,
-    "MinLevel": 10
-  },
-  {
-    "ImageId": 895,
-    "Skill": "Open",
-    "Type": "OneUse",
-    "Name": "Jeweled Key",
-    "Rarity": "Epic",
-    "Cost": 250,
-    "MinLevel": 20
-  },
-  {
-    "ImageId": 866,
-    "QuestId": "Lost_Sea_Shell",
-    "StartQuest": true,
-    "ForStage": [
-      1
-    ],
-    "NextStage": 2,
-    "Type": "Quest",
-    "Name": "Boy's Sea Shell",
-    "Rarity": "Common"
-  },
-  {
-    "ImageId": 909,
-    "QuestId": "Find_Ship",
-    "ForStage": [
-      3
-    ],
-    "NextStage": 4,
-    "Type": "Quest",
-    "Name": "Old Man's Key",
-    "Rarity": "Common"
-  },
-  {
-    "ImageId": 768,
-    "Skill": "Return",
-    "Type": "OneUse",
-    "Name": "Wings",
-    "Rarity": "Common",
-    "Cost": 25
-  },
-  {
-    "ImageId": 749,
-    "Skill": "Antidote",
-    "Type": "OneUse",
-    "Name": "Antidote",
-    "Rarity": "Common",
-    "Cost": 10
-  },
-  {
-    "ImageId": 774,
-    "Skill": "Repel",
-    "Type": "OneUse",
-    "Name": "Fairy Water",
-    "Rarity": "Common",
-    "Cost": 20
-  },
-  {
-    "ImageId": 951,
-    "QuestId": "Find_Ship",
-    "ForStage": [
-      5
-    ],
-    "NextStage": 6,
-    "Type": "Quest",
-    "Name": "Deed to the ship",
-    "Rarity": "Common"
-  }
+    {
+        "ImageId":  916,
+        "Skill":  "Heal",
+        "Type":  "OneUse",
+        "Name":  "Medical Herb",
+        "Rarity":  "Common",
+        "Cost":  16
+    },
+    {
+        "ImageId":  754,
+        "Skill":  "Heal",
+        "Type":  "RepeatableUse",
+        "Name":  "Bag of Herbs",
+        "Rarity":  "Common",
+        "Cost":  160,
+        "Charges":  10
+    },
+    {
+        "ImageId":  913,
+        "Skill":  "Heal All",
+        "Type":  "OneUse",
+        "Name":  "Potent Herb",
+        "Rarity":  "Uncommon",
+        "Cost":  100,
+        "MinLevel":  6
+    },
+    {
+        "ImageId":  785,
+        "Skill":  "Heal",
+        "Type":  "RepeatableUse",
+        "Name":  "Rod of Healing",
+        "Rarity":  "Common",
+        "Cost":  44000,
+        "MinLevel":  15
+    },
+    {
+        "ImageId":  923,
+        "Skill":  "Energise",
+        "Type":  "OneUse",
+        "Name":  "Potion of Magic",
+        "Rarity":  "Common",
+        "Cost":  16,
+        "MinLevel":  5
+    },
+    {
+        "ImageId":  917,
+        "Skill":  "Full Energise",
+        "Type":  "OneUse",
+        "Name":  "Elixir of Magic",
+        "Rarity":  "Uncommon",
+        "Cost":  100,
+        "MinLevel":  10
+    },
+    {
+        "ImageId":  815,
+        "Skill":  "Attack Up",
+        "Type":  "OneUse",
+        "Name":  "Scroll of Strength",
+        "Rarity":  "Epic",
+        "Cost":  5000,
+        "MinLevel":  18
+    },
+    {
+        "ImageId":  816,
+        "Skill":  "Defence Up",
+        "Type":  "OneUse",
+        "Name":  "Scroll of Defence",
+        "Rarity":  "Epic",
+        "Cost":  5000,
+        "MinLevel":  18
+    },
+    {
+        "ImageId":  822,
+        "Skill":  "Agility Up",
+        "Type":  "OneUse",
+        "Name":  "Scroll of Agility",
+        "Rarity":  "Epic",
+        "Cost":  5000,
+        "MinLevel":  18
+    },
+    {
+        "ImageId":  909,
+        "Skill":  "Open",
+        "Type":  "OneUse",
+        "Name":  "Iron Key",
+        "Rarity":  "Common",
+        "Cost":  250
+    },
+    {
+        "ImageId":  894,
+        "Skill":  "Open",
+        "Type":  "OneUse",
+        "Name":  "Silver Key",
+        "Rarity":  "Uncommon",
+        "Cost":  250,
+        "MinLevel":  5
+    },
+    {
+        "ImageId":  899,
+        "Skill":  "Open",
+        "Type":  "OneUse",
+        "Name":  "Gold Key",
+        "Rarity":  "Rare",
+        "Cost":  250,
+        "MinLevel":  10
+    },
+    {
+        "ImageId":  895,
+        "Skill":  "Open",
+        "Type":  "OneUse",
+        "Name":  "Jeweled Key",
+        "Rarity":  "Epic",
+        "Cost":  250,
+        "MinLevel":  20
+    },
+    {
+        "ImageId":  866,
+        "QuestId":  "Lost_Sea_Shell",
+        "StartQuest":  true,
+        "ForStage":  [
+                         1
+                     ],
+        "NextStage":  2,
+        "Type":  "Quest",
+        "Name":  "Boy\u0027s Sea Shell",
+        "Rarity":  "Common"
+    },
+    {
+        "ImageId":  909,
+        "QuestId":  "Find_Ship",
+        "ForStage":  [
+                         3
+                     ],
+        "NextStage":  4,
+        "Type":  "Quest",
+        "Name":  "Old Man\u0027s Key",
+        "Rarity":  "Common"
+    },
+    {
+        "ImageId":  768,
+        "Skill":  "Return",
+        "Type":  "OneUse",
+        "Name":  "Wings",
+        "Rarity":  "Common",
+        "Cost":  25
+    },
+    {
+        "ImageId":  749,
+        "Skill":  "Antidote",
+        "Type":  "OneUse",
+        "Name":  "Antidote",
+        "Rarity":  "Common",
+        "Cost":  10
+    },
+    {
+        "ImageId":  774,
+        "Skill":  "Repel",
+        "Type":  "OneUse",
+        "Name":  "Fairy Water",
+        "Rarity":  "Common",
+        "Cost":  20
+    },
+    {
+        "ImageId":  951,
+        "QuestId":  "Find_Ship",
+        "ForStage":  [
+                         5
+                     ],
+        "NextStage":  6,
+        "Type":  "Quest",
+        "Name":  "Deed to the ship",
+        "Rarity":  "Common"
+    }
 ]

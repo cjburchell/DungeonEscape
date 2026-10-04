@@ -56,15 +56,18 @@ namespace DungeonEscape.Core.Test.ViewModels
         {
             var viewModel = new TitleViewModel();
             viewModel.SetCreatePlayerGender(Gender.Male);
-            viewModel.SetCreatePlayerClass(Class.Hero);
+            viewModel.SetCreatePlayerSpecies(Species.Human);
+            viewModel.SetCreatePlayerClass(Class.Paladin);
             viewModel.SetCreatePlayerSpriteIndex(0);
 
             viewModel.CycleCreateGender(-1);
+            viewModel.CycleCreateSpecies(-1);
             viewModel.CycleCreateClass(-1);
             viewModel.CycleCreateImage(-1, 4);
 
             Assert.Equal(Gender.Female, viewModel.CreatePlayerGender);
-            Assert.NotEqual(Class.Hero, viewModel.CreatePlayerClass);
+            Assert.Equal(Species.Halfling, viewModel.CreatePlayerSpecies);
+            Assert.NotEqual(Class.Paladin, viewModel.CreatePlayerClass);
             Assert.Equal(3, viewModel.CreatePlayerSpriteIndex);
         }
 

@@ -203,6 +203,8 @@
       "required": ["Class"],
       "properties": {
         "Class": { "$ref": "#/$defs/className" },
+        "PrimaryAbility": { "type": "string" },
+        "HitDie": { "type": "integer", "minimum": 0 },
         "FirstLevel": { "type": "integer", "minimum": 0 },
         "DefaultImage": { "type": "integer", "minimum": 0 },
         "Stats": { "type": "array", "items": { "$ref": "#/$defs/statRoll" } },

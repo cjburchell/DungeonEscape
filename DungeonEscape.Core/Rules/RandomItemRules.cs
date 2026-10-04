@@ -235,7 +235,7 @@ namespace Redpoint.DungeonEscape.Rules
         private static bool ContainsClass(IEnumerable<string> classes, Class itemClass)
         {
             return classes != null &&
-                   classes.Any(value => string.Equals(value, itemClass.ToString(), StringComparison.OrdinalIgnoreCase));
+                   classes.Any(value => DndCharacterRules.IsClassNameMatch(value, itemClass));
         }
 
         public static string BuildEquipmentName(string baseName, string prefix, string suffix)

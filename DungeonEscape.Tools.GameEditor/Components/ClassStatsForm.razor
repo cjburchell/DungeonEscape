@@ -16,6 +16,11 @@ else
                 <label>Class</label>
                 <input value="@ClassStats.Class" @onchange="e => Set(() => ClassStats.Class = e.Value?.ToString() ?? string.Empty)" />
             </div>
+            <div class="field">
+                <label>Primary Ability</label>
+                <input value="@ClassStats.PrimaryAbility" @onchange="e => Set(() => ClassStats.PrimaryAbility = e.Value?.ToString() ?? string.Empty)" />
+            </div>
+            <NumberField Label="Hit Die" Value="ClassStats.HitDie" ValueChanged="v => Set(() => ClassStats.HitDie = v)" />
             <NumberField Label="First Level" Value="@((long)ClassStats.FirstLevel)" ValueChanged="v => Set(() => ClassStats.FirstLevel = (ulong)Math.Max(0, v))" />
         </div>
     </div>

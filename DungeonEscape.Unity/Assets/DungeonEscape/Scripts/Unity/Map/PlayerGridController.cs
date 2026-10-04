@@ -1,4 +1,4 @@
-﻿using Redpoint.DungeonEscape.Data;
+using Redpoint.DungeonEscape.Data;
 using System.Collections.Generic;
 using System.Collections;
 using System;
@@ -718,6 +718,20 @@ namespace Redpoint.DungeonEscape.Unity.Map
 
         private void ShowRecruitDialog(TiledObjectInfo mapObject)
         {
+            string dialogId;
+            DialogText dialogText;
+            if (TryGetProperty(mapObject, "Dialog", out dialogId) &&
+                !string.IsNullOrEmpty(dialogId) &&
+                GameDataCache.Current != null &&
+                GameDataCache.Current.TryGetDialog(
+                    dialogId,
+                    gameState == null ? null : gameState.Party,
+                    out dialogText))
+            {
+                ShowDialog(GetObjectDisplayName(mapObject), dialogText, null, mapObject);
+                return;
+            }
+
             string text;
             if (!TryGetProperty(mapObject, "Text", out text) || string.IsNullOrEmpty(text))
             {
@@ -1021,7 +1035,11 @@ namespace Redpoint.DungeonEscape.Unity.Map
             }
         }
 
-        private void ShowDialog(string speakerName, DialogText dialog, string questContext)
+        private void ShowDialog(
+            string speakerName,
+            DialogText dialog,
+            string questContext,
+            TiledObjectInfo sourceObject = null)
         {
             if (messageBox == null || dialog == null)
             {
@@ -1052,10 +1070,18 @@ namespace Redpoint.DungeonEscape.Unity.Map
                 speakerName,
                 dialog.Text,
                 choices.Select(choice => choice.Text),
-                selectedIndex => ProcessDialogChoice(speakerName, effectiveQuest, choices[selectedIndex]));
+                selectedIndex => ProcessDialogChoice(
+                    speakerName,
+                    effectiveQuest,
+                    choices[selectedIndex],
+                    sourceObject));
         }
 
-        private void ProcessDialogChoice(string speakerName, string questId, Choice choice)
+        private void ProcessDialogChoice(
+            string speakerName,
+            string questId,
+            Choice choice,
+            TiledObjectInfo sourceObject)
         {
             if (choice == null)
             {
@@ -1094,9 +1120,24 @@ namespace Redpoint.DungeonEscape.Unity.Map
                 }
             }
 
+            if (choice.Actions != null && choice.Actions.Contains(QuestAction.Join))
+            {
+                AppendMessage(
+                    resultMessage,
+                    gameState == null || sourceObject == null
+                        ? "Cannot recruit without game state."
+                        : gameState.RecruitPartyMember(sourceObject));
+                if (sourceObject != null && mapView != null)
+                {
+                    mapView.RemoveRuntimeNpc(sourceObject);
+                }
+
+                SyncPartyFollowers();
+            }
+
             if (choice.Dialog != null)
             {
-                ShowDialog(speakerName, choice.Dialog, effectiveQuest);
+                ShowDialog(speakerName, choice.Dialog, effectiveQuest, sourceObject);
                 return;
             }
 
@@ -1585,7 +1626,7 @@ namespace Redpoint.DungeonEscape.Unity.Map
         private DirectionalSpriteSet LoadHeroSprites()
         {
             return HeroSpriteResolver.GetHeroSpriteSet(
-                HeroSpriteResolver.GetDefaultFrameIndex(Class.Hero, Gender.Male),
+                HeroSpriteResolver.GetDefaultFrameIndex(Class.Paladin, Gender.Male),
                 CreateFallbackSprite());
         }
 
@@ -1686,6 +1727,5 @@ namespace Redpoint.DungeonEscape.Unity.Map
             texture.Apply();
             return Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
         }
-
     }
 }

@@ -49,7 +49,7 @@ public sealed class DataSourceCatalog
 
         if (Classes.Count == 0)
         {
-            Classes = Enum.GetValues<Redpoint.DungeonEscape.State.Class>()
+            Classes = Redpoint.DungeonEscape.Rules.DndCharacterRules.GetPlayableClasses()
                 .Select(value => value.ToString())
                 .ToList();
         }

@@ -10,11 +10,12 @@ namespace Redpoint.DungeonEscape.ViewModels
         public const int CreateNameIndex = 0;
         public const int CreateGenerateNameIndex = 1;
         public const int CreateGenderIndex = 2;
-        public const int CreateClassIndex = 3;
-        public const int CreateImageIndex = 4;
-        public const int CreateRerollIndex = 5;
-        public const int CreateStartIndex = 6;
-        public const int CreateBackIndex = 7;
+        public const int CreateSpeciesIndex = 3;
+        public const int CreateClassIndex = 4;
+        public const int CreateImageIndex = 5;
+        public const int CreateRerollIndex = 6;
+        public const int CreateStartIndex = 7;
+        public const int CreateBackIndex = 8;
         public const int FirstBlockedCreateSpriteIndex = 18;
         public const int SecondBlockedCreateSpriteIndex = 19;
 
@@ -24,6 +25,7 @@ namespace Redpoint.DungeonEscape.ViewModels
         public bool CreatePlayerNameInitialized { get; private set; }
         public Class CreatePlayerClass { get; private set; }
         public Gender CreatePlayerGender { get; private set; }
+        public Species CreatePlayerSpecies { get; private set; }
         public int CreatePlayerSpriteIndex { get; private set; }
         public TitleCreateDropdown ActiveCreateDropdown { get; private set; }
         public int SelectedDropdownIndex { get; private set; }
@@ -39,8 +41,9 @@ namespace Redpoint.DungeonEscape.ViewModels
             SelectedIndex = 0;
             CreatePlayerName = "Player";
             CreatePlayerNameInitialized = false;
-            CreatePlayerClass = Class.Hero;
+            CreatePlayerClass = Class.Paladin;
             CreatePlayerGender = Gender.Male;
+            CreatePlayerSpecies = Species.Human;
             CreatePlayerSpriteIndex = 0;
             ActiveCreateDropdown = TitleCreateDropdown.None;
             SelectedDropdownIndex = 0;
@@ -85,6 +88,11 @@ namespace Redpoint.DungeonEscape.ViewModels
         public void SetCreatePlayerGender(Gender value)
         {
             CreatePlayerGender = value;
+        }
+
+        public void SetCreatePlayerSpecies(Species value)
+        {
+            CreatePlayerSpecies = value;
         }
 
         public void SetCreatePlayerClass(Class value)
@@ -134,7 +142,7 @@ namespace Redpoint.DungeonEscape.ViewModels
 
             if (Mode == TitleMode.Create)
             {
-                return 8;
+                return 9;
             }
 
             return GetMainRows(hasQuickSave, manualSaveCount).Count;
@@ -248,6 +256,7 @@ namespace Redpoint.DungeonEscape.ViewModels
         public bool CanCycleCreateSelection()
         {
             return SelectedIndex == CreateGenderIndex ||
+                   SelectedIndex == CreateSpeciesIndex ||
                    SelectedIndex == CreateClassIndex ||
                    SelectedIndex == CreateImageIndex;
         }
@@ -260,12 +269,20 @@ namespace Redpoint.DungeonEscape.ViewModels
             CreatePlayerGender = (Gender)values.GetValue(nextIndex);
         }
 
+        public void CycleCreateSpecies(int delta)
+        {
+            var values = Enum.GetValues(typeof(Species));
+            var currentIndex = Array.IndexOf(values, CreatePlayerSpecies);
+            var nextIndex = WrapIndex(currentIndex + delta, values.Length);
+            CreatePlayerSpecies = (Species)values.GetValue(nextIndex);
+        }
+
         public void CycleCreateClass(int delta)
         {
-            var values = Enum.GetValues(typeof(Class));
+            var values = DndCharacterRules.GetPlayableClasses();
             var currentIndex = Array.IndexOf(values, CreatePlayerClass);
             var nextIndex = WrapIndex(currentIndex + delta, values.Length);
-            CreatePlayerClass = (Class)values.GetValue(nextIndex);
+            CreatePlayerClass = values[nextIndex];
         }
 
         public void CycleCreateImage(int delta, int heroCharacterCount)
@@ -293,8 +310,10 @@ namespace Redpoint.DungeonEscape.ViewModels
             {
                 case CreateGenderIndex:
                     return CreateNameIndex;
-                case CreateClassIndex:
+                case CreateSpeciesIndex:
                     return CreateGenderIndex;
+                case CreateClassIndex:
+                    return CreateSpeciesIndex;
                 case CreateRerollIndex:
                     return CreateImageIndex;
                 case CreateImageIndex:
@@ -314,6 +333,8 @@ namespace Redpoint.DungeonEscape.ViewModels
                 case CreateNameIndex:
                     return CreateGenderIndex;
                 case CreateGenderIndex:
+                    return CreateSpeciesIndex;
+                case CreateSpeciesIndex:
                     return CreateClassIndex;
                 case CreateClassIndex:
                     return CreateImageIndex;

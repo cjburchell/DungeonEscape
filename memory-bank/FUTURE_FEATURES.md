@@ -78,8 +78,8 @@ This file tracks post-migration feature and architecture ideas. Items here are n
 ## Combat And Monsters
 
 - Explore a staged D&D 5.5e / 2024 SRD-inspired rules migration:
-  - Phase 1: add D&D-style ability scores, armor class, d20 attack rolls, initiative, weapon damage dice, and basic monster action data while preserving the current quest/map/UI flow. Status: started; base stats, AC/d20 Fight attacks, weapon dice, monster challenge rating fields, schemas, and Game Editor controls exist, while initiative and fuller monster action data still need follow-up.
-  - Phase 2: map existing monsters to D&D-style stat blocks, challenge rating, proficiency, XP/reward expectations, encounter difficulty, and Game Editor validation.
+  - Phase 1: add D&D-style ability scores, armor class, d20 attack rolls, initiative, weapon damage dice, and basic monster action data while preserving the current quest/map/UI flow. Status: started; base stats, AC/d20 Fight attacks, weapon dice, mapped monster stat-block fields, class/species character creation fields, schemas, and Game Editor controls exist, while initiative and fuller monster action data still need follow-up.
+  - Phase 2: refine mapped monsters with challenge rating, proficiency, XP/reward expectations, encounter difficulty, and Game Editor validation.
   - Phase 3: migrate spellcasting from the current magic-point model toward spell selection, prepared/known spells, spell slots, spell save DCs, and attack/save spell resolution.
   - Phase 4: add ability checks and saving throws to dialog choices, exploration interactions, traps, locks, and quest outcomes.
   - Keep the scope SRD-safe and attribution-aware if using D&D SRD material directly.

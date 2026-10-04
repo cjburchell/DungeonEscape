@@ -12,5 +12,7 @@ namespace Redpoint.DungeonEscape.Rules
         public ItemInstance Item { get; set; }
         public Skill Skill { get; set; }
         public List<IFighter> Targets { get; set; }
+        public int InitiativeRoll { get; set; }
+        public int InitiativeTotal { get; set; }
     }
 }

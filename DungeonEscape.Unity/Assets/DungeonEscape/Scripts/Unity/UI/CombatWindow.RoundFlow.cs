@@ -25,7 +25,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             foreach (var monster in AliveMonsters())
             {
-                roundActions.Add(ChooseMonsterAction(monster.Instance));
+                var action = ChooseMonsterAction(monster.Instance);
+                CombatRoundRules.RollInitiative(action, () => Dice.RollD20());
+                roundActions.Add(action);
             }
 
             ChooseNextHeroAction();
@@ -91,6 +93,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (action != null)
             {
+                CombatRoundRules.RollInitiative(action, () => Dice.RollD20());
                 roundActions.Add(action);
             }
 

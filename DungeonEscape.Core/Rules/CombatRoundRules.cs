@@ -145,8 +145,21 @@ namespace Redpoint.DungeonEscape.Rules
         {
             return (actions ?? new List<CombatRoundAction>())
                 .Where(action => IsActionResolvable(action, getOpposingTargets))
-                .OrderByDescending(item => item.Source.Agility)
+                .OrderByDescending(GetInitiativeTotal)
+                .ThenByDescending(item => DndStatRules.GetInitiativeBonus(item.Source))
+                .ThenByDescending(item => item.Source.Agility)
                 .FirstOrDefault();
+        }
+
+        public static void RollInitiative(CombatRoundAction action, Func<int> rollD20)
+        {
+            if (action == null || action.Source == null)
+            {
+                return;
+            }
+
+            action.InitiativeRoll = rollD20 == null ? Dice.RollD20() : rollD20();
+            action.InitiativeTotal = action.InitiativeRoll + DndStatRules.GetInitiativeBonus(action.Source);
         }
 
         public static bool IsActionResolvable(
@@ -482,6 +495,18 @@ namespace Redpoint.DungeonEscape.Rules
         private static int Next(Func<int, int> nextInt, int maxValue)
         {
             return maxValue <= 1 || nextInt == null ? 0 : nextInt(maxValue);
+        }
+
+        private static int GetInitiativeTotal(CombatRoundAction action)
+        {
+            if (action == null || action.Source == null)
+            {
+                return int.MinValue;
+            }
+
+            return action.InitiativeTotal != 0
+                ? action.InitiativeTotal
+                : DndStatRules.GetInitiativeBonus(action.Source);
         }
     }
 }

@@ -979,6 +979,8 @@ active or waiting according to the current party-size limit.
 - Expected: Fight damage uses those weapon dice and bonus.
 - Fight a monster with explicit `ArmorClass`, `AttackBonus`, `DamageDice`, `DamageDie`, and `DamageBonus`.
 - Expected: monster Fight actions use those values without requiring legacy Attack/Defence tuning.
+- Trigger a combat round with multiple heroes and monsters.
+- Expected: action resolution order follows initiative, using d20 plus Dexterity modifier, rather than only legacy Agility.
 - Force or observe a critical hit if practical.
 - Expected: the combat message shows the heroic maneuver text and damage rolls doubled weapon dice.
 
@@ -991,7 +993,7 @@ active or waiting according to the current party-size limit.
 - Cycle Class.
 - Expected: D&D class names are available directly, such as `Paladin`, `Fighter`, `Monk`, `Warlock`, `Rogue`, and `Sorcerer`.
 - Start a new game after selecting a non-Human species.
-- Expected: the created hero keeps the selected species after save/load and uses the mapped ability scores for combat calculations.
+- Expected: the created hero keeps the selected species after save/load, uses mapped ability scores for combat calculations, and starts with HP based on class hit die plus Constitution modifier.
 
 ## Tools - Game Editor (standalone)
 

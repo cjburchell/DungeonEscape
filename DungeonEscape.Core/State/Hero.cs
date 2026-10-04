@@ -64,7 +64,9 @@ namespace Redpoint.DungeonEscape.State
             Agility = classStats.Stats.First(item => item.Type == StatType.Agility).RollStartValue();
             Skills = classStats.Skills.ToList();
             DndCharacterRules.ApplyStartingAbilityScores(this);
+            DndStatRules.RefreshHeroDerivedStats(this);
 
+            MaxHealth = DndStatRules.GetHeroHitPointsForLevel(this, classStats, Level);
             Health = MaxHealth;
             Magic = MaxMagic;
             while (Level < level)
@@ -109,29 +111,31 @@ namespace Redpoint.DungeonEscape.State
             var oldLevel = Level;
             Level++;
             NextLevel = CalculateNextLevel(oldLevel, NextLevel);
+            var oldMaxHealth = MaxHealth;
 
             levelUpMessage = Name + " has advanced to level " + Level + "\n";
 
-            var health = classStats.Stats.First(item => item.Type == StatType.Health).RollNextValue();
             var attack = classStats.Stats.First(item => item.Type == StatType.Attack).RollNextValue();
             var defence = classStats.Stats.First(item => item.Type == StatType.Defence).RollNextValue();
             var magicDefence = classStats.Stats.First(item => item.Type == StatType.MagicDefence).RollNextValue();
             var magic = classStats.Stats.First(item => item.Type == StatType.Magic).RollNextValue();
             var agility = classStats.Stats.First(item => item.Type == StatType.Agility).RollNextValue();
 
+            Attack += attack;
+            Defence += defence;
+            MagicDefence += magicDefence;
+            MaxMagic += magic;
+            Agility += agility;
+            MaxHealth = DndStatRules.GetHeroHitPointsForLevel(this, classStats, Level);
+            DndStatRules.RefreshHeroDerivedStats(this);
+
+            var health = MaxHealth - oldMaxHealth;
             if (health != 0) levelUpMessage += "Health +" + health + "\n";
             if (attack != 0) levelUpMessage += "Attack +" + attack + "\n";
             if (defence != 0) levelUpMessage += "Defence +" + defence + "\n";
             if (magicDefence != 0) levelUpMessage += "Defence +" + magicDefence + "\n";
             if (magic != 0) levelUpMessage += "Magic +" + magic + "\n";
             if (agility != 0) levelUpMessage += "Agility +" + agility + "\n";
-
-            MaxHealth += health;
-            Attack += attack;
-            Defence += defence;
-            MagicDefence += magicDefence;
-            MaxMagic += magic;
-            Agility += agility;
 
             if (availableSpells != null)
             {

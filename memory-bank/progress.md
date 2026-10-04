@@ -62,13 +62,14 @@
 - Mapped the existing monster roster to explicit D&D-style stat-block fields in `allmonsters.json`, including ability scores, AC, proficiency, attack bonus, damage dice, damage bonus, and challenge rating. Added species-aware character creation support with Human/Elf/Dwarf/Halfling, persisted `Hero.Species`, role-to-D&D-class labels for existing roles, and class metadata for D&D class, primary ability, and hit die.
 - Updated the role-to-D&D-class mapping to: Soldier=Fighter, Hero=Paladin, Cleric=Cleric, Wizard=Wizard, Fighter=Monk, Merchant=Warlock, Bard=Bard, Thief=Rogue, and Sage=Sorcerer.
 - Replaced the separate `DndClass` type with the existing `Class` enum updated to D&D class names only. Current data stores D&D class names directly.
+- Added a shared D&D stat rules layer for ability modifiers, proficiency, AC, attack bonus, damage bonus/dice, initiative, and class hit-die HP. Hero setup/level-up now refreshes D&D-derived proficiency and HP from class hit dice plus Constitution modifier, combat attacks use the shared stat rules, monster damage bonuses remain explicit stat-block values, and round action order now rolls initiative using d20 plus Dexterity modifier.
 
 
 
 ## In Progress
 
 - Feature development and next-phase architecture planning.
-- D&D-style combat migration phase 1 is started but not complete; initiative, fuller monster action data, encounter CR balancing, spell slots, saving throws, and dialogue ability checks still need dedicated follow-up passes.
+- D&D-style combat migration phase 1 is started but not complete; fuller monster action data, encounter CR balancing, spell slots, saving throws, and dialogue ability checks still need dedicated follow-up passes.
 - Active architecture ideas are tracked in `memory-bank/ARCHITECTURE_BACKLOG.md`.
 - Completed architecture work is archived in `memory-bank/ARCHITECTURE_COMPLETED.md`.
 

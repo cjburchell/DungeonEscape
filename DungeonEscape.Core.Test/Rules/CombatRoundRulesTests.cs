@@ -71,20 +71,20 @@ namespace DungeonEscape.Core.Test.Rules
         }
 
         [Fact]
-        public void SelectNextResolvableActionChoosesHighestAgilityResolvableAction()
+        public void SelectNextResolvableActionChoosesHighestInitiativeResolvableAction()
         {
             var slow = CreateHero("Slow", agility: 1);
             var fast = CreateHero("Fast", agility: 9);
             var target = CreateMonster("Target");
             var actions = new[]
             {
-                new CombatRoundAction { Source = slow, State = CombatRoundActionState.Fight, Targets = new List<IFighter> { target } },
-                new CombatRoundAction { Source = fast, State = CombatRoundActionState.Fight, Targets = new List<IFighter> { target } }
+                new CombatRoundAction { Source = slow, State = CombatRoundActionState.Fight, InitiativeTotal = 20, Targets = new List<IFighter> { target } },
+                new CombatRoundAction { Source = fast, State = CombatRoundActionState.Fight, InitiativeTotal = 10, Targets = new List<IFighter> { target } }
             };
 
             var selected = CombatRoundRules.SelectNextResolvableAction(actions, source => new List<IFighter> { target });
 
-            Assert.Same(fast, selected.Source);
+            Assert.Same(slow, selected.Source);
         }
 
         [Fact]

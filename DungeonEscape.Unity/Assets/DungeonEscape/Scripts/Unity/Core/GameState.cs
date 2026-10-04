@@ -1641,6 +1641,40 @@ namespace Redpoint.DungeonEscape.Unity.Core
             return "Your party has been fully restored.";
         }
 
+        public string ShortRest()
+        {
+            EnsureInitialized();
+            if (Party == null)
+            {
+                return "There is no party to rest.";
+            }
+
+            var result = Party.ShortRest();
+            if (result.Contains("short rest", StringComparison.OrdinalIgnoreCase))
+            {
+                MarkDirty();
+            }
+
+            return result;
+        }
+
+        public string LongRest(int cost)
+        {
+            EnsureInitialized();
+            if (Party == null)
+            {
+                return "There is no party to rest.";
+            }
+
+            var result = Party.LongRest(cost);
+            if (result.Contains("rested", StringComparison.OrdinalIgnoreCase))
+            {
+                MarkDirty();
+            }
+
+            return result;
+        }
+
         public string HealHero(Hero hero, int cost)
         {
             EnsureInitialized();

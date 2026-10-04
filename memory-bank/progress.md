@@ -71,8 +71,7 @@
 - Added a shared D&D stat rules layer for ability modifiers, proficiency, AC, attack bonus, damage bonus/dice, initiative, and class hit-die HP. Hero setup/level-up now refreshes D&D-derived proficiency and HP from class hit dice plus Constitution modifier, combat attacks use the shared stat rules, monster damage bonuses remain explicit stat-block values, and round action order now rolls initiative using d20 plus Dexterity modifier.
 - Added `memory-bank/DND_MONSTER_MAPPING.md`, mapping all 50 current monsters to suggested D&D/SRD anchors or custom stat-block inspirations for the monster balance pass.
 - Renamed active monsters toward D&D/SRD-style equivalents, populated monster D&D identity fields, traits, and actions from SRD anchors where available, updated random encounter/dialog/map references, and removed monster-side legacy `Attack`, `Defence`, `MagicDefence`, and `Agility` data fields. `MonsterInstance` derives old compatibility values from D&D stats for remaining legacy skill/effect code.
-
-
+- Added a party short-rest action in the in-game misc menu, plus a long-rest inn flow that restores hit points/status/spell slots and charges the inn cost when the party can afford it.
 
 ## In Progress
 

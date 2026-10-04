@@ -1841,6 +1841,17 @@ namespace Redpoint.DungeonEscape.Unity.UI
             ShowMenuModal("Party", string.IsNullOrEmpty(message) ? "Done." : message, null, null);
         }
 
+        private void ShortRest()
+        {
+            if (gameState == null)
+            {
+                ShowPartyMessage("There is no party to rest.");
+                return;
+            }
+
+            ShowPartyMessage(gameState.ShortRest());
+        }
+
         private void ApplyInventoryChange(Func<bool> action)
         {
             EnsureReferences();

@@ -122,6 +122,75 @@ namespace Redpoint.DungeonEscape.State
             return AliveMembers.Any(item => item.Level >= level);
         }
 
+        public string ShortRest()
+        {
+            if (Members == null || Members.Count == 0)
+            {
+                return "There is no party to rest.";
+            }
+
+            var healed = 0;
+            var restedMembers = 0;
+            foreach (var member in AliveMembers)
+            {
+                if (member == null)
+                {
+                    continue;
+                }
+
+                var beforeHealth = member.Health;
+                var recoverAmount = Math.Max(1, member.MaxHealth / 4);
+                member.Health = Math.Min(member.MaxHealth, member.Health + recoverAmount);
+                if (member.Status != null && member.Status.Count > 0)
+                {
+                    member.Status.Clear();
+                }
+
+                healed += Math.Max(0, member.Health - beforeHealth);
+                restedMembers++;
+            }
+
+            if (restedMembers == 0)
+            {
+                return "Your party does not need to rest.";
+            }
+
+            return "Your party takes a short rest and recovers " + healed + " HP.";
+        }
+
+        public string LongRest(int cost)
+        {
+            if (Members == null || Members.Count == 0)
+            {
+                return "There is no party to rest.";
+            }
+
+            cost = Math.Max(0, cost);
+            if (Gold < cost)
+            {
+                return "You do not have " + cost + " gold for the inn.";
+            }
+
+            Gold -= cost;
+            foreach (var member in ActiveMembers)
+            {
+                if (member == null)
+                {
+                    continue;
+                }
+
+                member.Health = member.MaxHealth;
+                if (member.Status != null)
+                {
+                    member.Status.Clear();
+                }
+
+                member.RestoreSpellSlots();
+            }
+
+            return "Your party has rested at the inn and is fully restored.";
+        }
+
         public string OpenDoor(ObjectState door, IGame game)
         {
             ItemInstance key = null;

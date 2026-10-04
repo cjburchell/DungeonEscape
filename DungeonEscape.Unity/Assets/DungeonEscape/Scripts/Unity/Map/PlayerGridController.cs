@@ -774,6 +774,12 @@ namespace Redpoint.DungeonEscape.Unity.Map
                 return;
             }
 
+            if (IsInnObject(mapObject))
+            {
+                ShowInnDialog(mapObject);
+                return;
+            }
+
             if (IsSaveObject(mapObject))
             {
                 ShowSaveDialog(mapObject);
@@ -784,6 +790,39 @@ namespace Redpoint.DungeonEscape.Unity.Map
             {
                 StoreWindow.Show(gameState, mapObject);
             }
+        }
+
+        private void ShowInnDialog(TiledObjectInfo mapObject)
+        {
+            if (gameState == null || gameState.Party == null)
+            {
+                messageBox.Show(GetObjectDisplayName(mapObject), "Cannot rest without game state.");
+                return;
+            }
+
+            var cost = GetIntProperty(mapObject, "Cost", 25);
+            var options = new[] { "Short Rest", "Long Rest (" + cost + "g)", "Leave" };
+            var text = GetStringProperty(mapObject, "Text", "Welcome to the inn. Would you like to rest here?");
+            messageBox.Show(
+                GetObjectDisplayName(mapObject),
+                text + "\nGold: " + gameState.Party.Gold,
+                options,
+                selectedIndex =>
+                {
+                    if (selectedIndex == 0)
+                    {
+                        messageBox.Show(GetObjectDisplayName(mapObject), gameState.ShortRest());
+                        RefreshPartyVisuals();
+                        return;
+                    }
+
+                    if (selectedIndex == 1)
+                    {
+                        messageBox.Show(GetObjectDisplayName(mapObject), gameState.LongRest(cost));
+                        RefreshPartyVisuals();
+                        return;
+                    }
+                });
         }
 
         private void ShowHealerDialog(TiledObjectInfo mapObject)
@@ -1269,13 +1308,19 @@ namespace Redpoint.DungeonEscape.Unity.Map
 
         private static bool IsServiceNpc(TiledObjectInfo mapObject)
         {
-            return IsHealerObject(mapObject) || IsSaveObject(mapObject) || IsStoreObject(mapObject);
+            return IsHealerObject(mapObject) || IsInnObject(mapObject) || IsSaveObject(mapObject) || IsStoreObject(mapObject);
         }
 
         private static bool IsHealerObject(TiledObjectInfo mapObject)
         {
             return mapObject != null &&
                    string.Equals(mapObject.Class, "NpcHeal", System.StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsInnObject(TiledObjectInfo mapObject)
+        {
+            return mapObject != null &&
+                   string.Equals(mapObject.Class, "NpcInn", System.StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool IsSaveObject(TiledObjectInfo mapObject)

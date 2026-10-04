@@ -75,6 +75,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             private static readonly List<string> Actions = new List<string>
             {
+                "Short Rest",
                 "Save",
                 "Load",
                 "Settings",
@@ -102,18 +103,21 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 switch (Menu.selectedRowIndex)
                 {
                     case 0:
-                        Menu.OpenMenuScreen(MenuScreen.Save);
+                        Menu.ShortRest();
                         break;
                     case 1:
-                        Menu.OpenMenuScreen(MenuScreen.Load);
+                        Menu.OpenMenuScreen(MenuScreen.Save);
                         break;
                     case 2:
-                        Menu.OpenMenuScreen(MenuScreen.Settings);
+                        Menu.OpenMenuScreen(MenuScreen.Load);
                         break;
                     case 3:
-                        Menu.ConfirmReturnToMainMenu();
+                        Menu.OpenMenuScreen(MenuScreen.Settings);
                         break;
                     case 4:
+                        Menu.ConfirmReturnToMainMenu();
+                        break;
+                    case 5:
                         Menu.ConfirmQuitGame();
                         break;
                 }

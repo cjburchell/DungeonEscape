@@ -123,6 +123,43 @@ namespace DungeonEscape.Core.Test.Rules
             Assert.Equal(new[] { matching }, definitions);
         }
 
+        [Fact]
+        public void DndItemRulesClassifiesMagicAndEquipmentByDndCategories()
+        {
+            var weapon = new Item
+            {
+                Name = "Longsword +1",
+                Type = ItemType.Weapon,
+                Category = ItemCategory.Weapon,
+                Rarity = Rarity.Uncommon,
+                IsMagicItem = true
+            };
+
+            var potion = new Item
+            {
+                Name = "Potion of Healing",
+                Type = ItemType.OneUse,
+                Category = ItemCategory.Potion,
+                Rarity = Rarity.Uncommon,
+                IsMagicItem = true
+            };
+
+            var gold = new Item
+            {
+                Name = "Gold",
+                Type = ItemType.Gold,
+                Category = ItemCategory.AdventuringGear,
+                Rarity = Rarity.Common,
+                IsMagicItem = false
+            };
+
+            Assert.Equal(ItemCategory.Weapon, weapon.Category);
+            Assert.True(DndItemRules.IsMagicItem(weapon));
+            Assert.Equal(ItemCategory.Potion, potion.Category);
+            Assert.True(DndItemRules.IsMagicItem(potion));
+            Assert.False(DndItemRules.IsMagicItem(gold));
+        }
+
         private static ItemDefinition CreateWeaponDefinition()
         {
             return new ItemDefinition

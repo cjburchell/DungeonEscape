@@ -14,12 +14,20 @@ namespace Redpoint.DungeonEscape.Data
     {
         [JsonConverter(typeof(StringEnumConverter))]
         public ItemType Type { get; set; }
-        
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public ItemCategory Category { get; set; }
+
         [JsonProperty("Slots", ItemConverterType=typeof(StringEnumConverter))]
         public List<Slot> Slots { get; set; }
-        
+
         public List<string> Classes { get; set; }
         public List<ItemName> Names { get; set; }
+
+        public bool IsMagicItem { get; set; }
+        public bool RequiresAttunement { get; set; }
+        public List<Class> AttunementClasses { get; set; }
+        public List<string> AttunementRequirements { get; set; }
 
         public int BaseStat { get; set; }
         public int DamageDice { get; set; }

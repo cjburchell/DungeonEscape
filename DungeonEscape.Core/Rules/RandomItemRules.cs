@@ -90,6 +90,8 @@ namespace Redpoint.DungeonEscape.Rules
             {
                 Rarity = rarity.Value,
                 Type = type.Value,
+                Category = DndItemRules.GetCategory(new Item { Type = type.Value }),
+                IsMagicItem = rarity.Value >= Rarity.Uncommon,
                 ImageId = 202,
                 Id = newId == null ? Guid.NewGuid().ToString() : newId()
             };

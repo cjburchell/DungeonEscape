@@ -44,10 +44,18 @@ namespace Redpoint.DungeonEscape.Data
         [JsonConverter(typeof(StringEnumConverter))]
         public ItemType Type { get; set; }
 
+        [JsonConverter(typeof(StringEnumConverter))]
+        public ItemCategory Category { get; set; }
+
         public string Name { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public Rarity Rarity { get; set; }
+
+        public bool IsMagicItem { get; set; }
+        public bool RequiresAttunement { get; set; }
+        public List<Class> AttunementClasses { get; set; }
+        public List<string> AttunementRequirements { get; set; }
 
         public List<StatValue> Stats { get; set; }
         public int Cost { get; set; }
@@ -85,8 +93,13 @@ namespace Redpoint.DungeonEscape.Data
         public Item()
         {
             Type = ItemType.Unknown;
+            Category = ItemCategory.Unknown;
+            IsMagicItem = false;
+            RequiresAttunement = false;
             Stats = new List<StatValue>();
             Target = Target.Single;
+            AttunementClasses = new List<Class>();
+            AttunementRequirements = new List<string>();
         }
 
         public void Setup(IEnumerable<Skill> skills)

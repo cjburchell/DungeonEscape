@@ -36,7 +36,11 @@ namespace DungeonEscape.Core.Test.ViewModels
         {
             var party = new Party();
             var wounded = CreateHero("Wounded", health: 5, maxHealth: 10, magic: 10, maxMagic: 10);
-            var magicMissing = CreateHero("Mage", health: 10, maxHealth: 10, magic: 2, maxMagic: 10);
+            var magicMissing = CreateHero("Mage", health: 10, maxHealth: 10, magic: 0, maxMagic: 0);
+            magicMissing.Class = Class.Cleric;
+            magicMissing.Level = 1;
+            magicMissing.RefreshSpellSlots();
+            magicMissing.UsedSpellSlots[0] = 1;
             var status = CreateHero("Status", health: 10, maxHealth: 10, magic: 10, maxMagic: 10);
             status.Status.Add(new StatusEffect { Type = EffectType.Sleep });
             var dead = CreateHero("Dead", health: 0, maxHealth: 10, magic: 0, maxMagic: 10);

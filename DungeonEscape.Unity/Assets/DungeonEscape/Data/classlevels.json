@@ -45,7 +45,6 @@
                           "RollConst":  5
                       }
                   ],
-        "FirstLevel":  29,
         "HitDie":  10,
         "PrimaryAbility":  "Strength, Charisma"
     },
@@ -93,7 +92,6 @@
                           "RollTimes":  1
                       }
                   ],
-        "FirstLevel":  12,
         "HitDie":  10,
         "PrimaryAbility":  "Strength or Dexterity"
     },
@@ -144,7 +142,6 @@
                           "RollConst":  5
                       }
                   ],
-        "FirstLevel":  15,
         "HitDie":  6,
         "PrimaryAbility":  "Intelligence"
     },
@@ -195,7 +192,6 @@
                           "RollConst":  5
                       }
                   ],
-        "FirstLevel":  14,
         "HitDie":  8,
         "PrimaryAbility":  "Wisdom"
     },
@@ -243,7 +239,6 @@
                           "RollTimes":  1
                       }
                   ],
-        "FirstLevel":  29,
         "Skills":  [
                        "Swipe"
                    ],
@@ -297,7 +292,6 @@
                           "RollConst":  5
                       }
                   ],
-        "FirstLevel":  12,
         "HitDie":  8,
         "PrimaryAbility":  "Charisma"
     },
@@ -345,7 +339,6 @@
                           "RollTimes":  1
                       }
                   ],
-        "FirstLevel":  14,
         "Skills":  [
                        "Steal"
                    ],
@@ -399,7 +392,6 @@
                           "RollConst":  5
                       }
                   ],
-        "FirstLevel":  14,
         "HitDie":  6,
         "PrimaryAbility":  "Charisma"
     },
@@ -450,7 +442,6 @@
                           "RollConst":  5
                       }
                   ],
-        "FirstLevel":  29,
         "Skills":  [
                        "Weird Dance",
                        "Play Song"

@@ -1005,11 +1005,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.Label("Stats", title, GUILayout.Height(24f * scale));
             GUILayout.BeginVertical();
             DrawStatRow("HP:", createPreviewHero == null ? 0 : createPreviewHero.MaxHealth);
-            DrawStatRow("Magic:", createPreviewHero == null ? 0 : createPreviewHero.MaxMagic);
-            DrawStatRow("Attack:", createPreviewHero == null ? 0 : createPreviewHero.Attack);
-            DrawStatRow("Defence:", createPreviewHero == null ? 0 : createPreviewHero.Defence);
-            DrawStatRow("Magic Defence:", createPreviewHero == null ? 0 : createPreviewHero.MagicDefence);
-            DrawStatRow("Agility:", createPreviewHero == null ? 0 : createPreviewHero.Agility);
+            DrawStatRow("Armor Class:", createPreviewHero == null ? 0 : DndStatRules.GetArmorClass(createPreviewHero));
+            DrawStatRow("Proficiency:", createPreviewHero == null ? 0 : DndStatRules.GetProficiencyBonus(createPreviewHero));
+            DrawSignedStatRow("Attack Bonus:", createPreviewHero == null ? 0 : DndStatRules.GetAttackBonus(createPreviewHero));
+            DrawSignedStatRow("Damage Bonus:", createPreviewHero == null ? 0 : DndStatRules.GetDamageBonus(createPreviewHero));
+            DrawSignedStatRow("Initiative:", createPreviewHero == null ? 0 : DndStatRules.GetInitiativeBonus(createPreviewHero));
+            DrawTextStatRow("Slots:", createPreviewHero == null ? "None" : createPreviewHero.GetSpellSlotSummary());
             DrawStatRow("STR/DEX:", createPreviewHero == null ? 0 : createPreviewHero.Strength, createPreviewHero == null ? 0 : createPreviewHero.Dexterity);
             DrawStatRow("CON/INT:", createPreviewHero == null ? 0 : createPreviewHero.Constitution, createPreviewHero == null ? 0 : createPreviewHero.Intelligence);
             DrawStatRow("WIS/CHA:", createPreviewHero == null ? 0 : createPreviewHero.Wisdom, createPreviewHero == null ? 0 : createPreviewHero.Charisma);
@@ -1037,6 +1038,22 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.BeginHorizontal();
             GUILayout.Label(label, labelStyle, GUILayout.Width(150f * GetPixelScale()));
             GUILayout.Label(value.ToString(), labelStyle, GUILayout.Width(44f * GetPixelScale()));
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawSignedStatRow(string label, int value)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(label, labelStyle, GUILayout.Width(150f * GetPixelScale()));
+            GUILayout.Label(value >= 0 ? "+" + value : value.ToString(), labelStyle, GUILayout.Width(44f * GetPixelScale()));
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawTextStatRow(string label, string value)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(label, labelStyle, GUILayout.Width(150f * GetPixelScale()));
+            GUILayout.Label(value ?? string.Empty, labelStyle, GUILayout.Width(104f * GetPixelScale()));
             GUILayout.EndHorizontal();
         }
 

@@ -1,11 +1,10 @@
-﻿[
+[
     {
         "ImageId":  1,
         "MinLevel":  5,
         "GroupSize":  5,
         "Xp":  50,
         "Gold":  12,
-        "MagicTimes":  1,
         "Name":  "Giant Centipede",
         "Biomes":  [
                        "Grassland",
@@ -50,9 +49,6 @@
         "Traits":  [
 
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -61,13 +57,8 @@
         "ImageId":  2,
         "MinLevel":  1,
         "GroupSize":  5,
-        "Spells":  [
-                       "Increase"
-                   ],
         "Xp":  50,
         "Gold":  13,
-        "MagicTimes":  1,
-        "MagicConst":  4,
         "Name":  "Goblin Archer",
         "Biomes":  [
                        "Grassland",
@@ -126,7 +117,6 @@
         "GroupSize":  5,
         "Xp":  100,
         "Gold":  20,
-        "MagicTimes":  1,
         "Name":  "Giant Wasp",
         "Biomes":  [
                        "Grassland",
@@ -171,9 +161,6 @@
         "Traits":  [
 
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -184,7 +171,6 @@
         "GroupSize":  8,
         "Xp":  10,
         "Gold":  4,
-        "MagicTimes":  1,
         "Name":  "Giant Fire Beetle",
         "Biomes":  [
                        "Grassland",
@@ -232,9 +218,6 @@
                            "Description":  "The beetle sheds bright light in a 10-foot radius and dim light for an additional 10 ft.."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -243,13 +226,8 @@
         "ImageId":  5,
         "MinLevel":  10,
         "GroupSize":  3,
-        "Spells":  [
-                       "Blaze"
-                   ],
         "Xp":  700,
         "Gold":  45,
-        "MagicTimes":  1,
-        "MagicConst":  12,
         "Name":  "Minotaur",
         "Biomes":  [
                        "Grassland",
@@ -290,6 +268,18 @@
                             "Reach":  "10 ft.",
                             "Range":  null,
                             "Count":  1
+                        },
+                        {
+                            "Name":  "Gore",
+                            "Description":  "Melee Attack Roll: +6, reach 5 ft., one target. Hit: 4d6+4 piercing damage. If the target is a Large or smaller creature and the minotaur moved 10+ feet straight toward it immediately before the hit, the target takes an extra 3d6 piercing damage and has the Prone condition.",
+                            "AttackBonus":  6,
+                            "DamageDice":  4,
+                            "DamageDie":  6,
+                            "DamageBonus":  4,
+                            "DamageType":  "Piercing",
+                            "Reach":  "5 ft.",
+                            "Range":  null,
+                            "Count":  1
                         }
                     ],
         "Traits":  [
@@ -316,7 +306,6 @@
         "GroupSize":  3,
         "Xp":  100,
         "Gold":  16,
-        "MagicTimes":  1,
         "Name":  "Scout Archer",
         "Biomes":  [
                        "Grassland",
@@ -364,9 +353,6 @@
                            "Description":  "The scout has advantage on Wisdom (Perception) checks that rely on hearing or sight."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -377,7 +363,6 @@
         "GroupSize":  4,
         "Xp":  100,
         "Gold":  72,
-        "MagicTimes":  1,
         "Name":  "Venomous Giant Wasp",
         "Biomes":  [
                        "Grassland",
@@ -422,9 +407,6 @@
         "Traits":  [
 
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -435,7 +417,6 @@
         "GroupSize":  10,
         "Xp":  100,
         "Gold":  8,
-        "MagicTimes":  1,
         "Name":  "Gray Ooze",
         "Biomes":  [
                        "Grassland",
@@ -491,9 +472,6 @@
                            "Description":  "While the ooze remains motionless, it is indistinguishable from an oily pool or wet rock."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -504,7 +482,6 @@
         "GroupSize":  10,
         "Xp":  100,
         "Gold":  2,
-        "MagicTimes":  1,
         "Name":  "Swarm of Insects",
         "Biomes":  [
                        "Grassland",
@@ -553,9 +530,6 @@
                            "Description":  "The swarm can occupy another creature\u0027s space and vice versa, and the swarm can move through any opening large enough for a Tiny insect. The swarm can\u0027t regain hit points or gain temporary hit points."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -566,7 +540,6 @@
         "GroupSize":  3,
         "Xp":  200,
         "Gold":  55,
-        "MagicTimes":  1,
         "Name":  "Tiger",
         "Biomes":  [
                        "Grassland",
@@ -618,9 +591,6 @@
                            "Description":  "If the tiger moves at least 20 ft. straight toward a creature and then hits it with a claw attack on the same turn, that target must succeed on a DC 13 Strength saving throw or be knocked prone. If the target is prone, the tiger can make one bite attack against it as a bonus action."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -629,14 +599,9 @@
         "ImageId":  11,
         "MinLevel":  1,
         "GroupSize":  1,
-        "Spells":  [
-                       "Blaze"
-                   ],
         "Xp":  200,
         "Gold":  5,
         "HitPoints":  4,
-        "MagicTimes":  1,
-        "MagicConst":  2,
         "Name":  "Metal Ooze",
         "Biomes":  [
                        "Grassland",
@@ -694,7 +659,6 @@
         "GroupSize":  1,
         "Xp":  5000,
         "Gold":  150,
-        "MagicTimes":  1,
         "Name":  "Young Blue Dragon",
         "Biomes":  [
                        "Grassland",
@@ -740,9 +704,6 @@
         "Traits":  [
 
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -753,7 +714,6 @@
         "GroupSize":  3,
         "Xp":  450,
         "Gold":  54,
-        "MagicTimes":  1,
         "Name":  "Giant Constrictor Snake",
         "Biomes":  [
                        "Water"
@@ -797,9 +757,6 @@
         "Traits":  [
 
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -810,7 +767,6 @@
         "GroupSize":  2,
         "Xp":  700,
         "Gold":  24,
-        "MagicTimes":  1,
         "Name":  "Water Weird",
         "Biomes":  [
                        "Water"
@@ -854,9 +810,6 @@
                            "Description":  "The water weird dies if it leaves the water to which it is bound or if that water is destroyed."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ],
@@ -873,7 +826,6 @@
         "GroupSize":  3,
         "Xp":  50,
         "Gold":  96,
-        "MagicTimes":  1,
         "Name":  "Giant Poisonous Snake",
         "Biomes":  [
                        "Water"
@@ -917,9 +869,6 @@
         "Traits":  [
 
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -930,7 +879,6 @@
         "GroupSize":  2,
         "Xp":  1800,
         "Gold":  104,
-        "MagicTimes":  1,
         "Name":  "Giant Shark",
         "Biomes":  [
                        "Water"
@@ -981,9 +929,6 @@
                            "Description":  "The shark can breathe only underwater."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -994,7 +939,6 @@
         "GroupSize":  3,
         "Xp":  2300,
         "Gold":  56,
-        "MagicTimes":  1,
         "Name":  "Wyvern",
         "Biomes":  [
                        "Water"
@@ -1038,9 +982,6 @@
         "Traits":  [
 
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -1051,7 +992,6 @@
         "GroupSize":  4,
         "Xp":  450,
         "Gold":  37,
-        "MagicTimes":  1,
         "Name":  "Ochre Jelly",
         "Biomes":  [
                        "Water"
@@ -1102,9 +1042,6 @@
                            "Description":  "The jelly can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -1115,7 +1052,6 @@
         "GroupSize":  3,
         "Xp":  700,
         "Gold":  81,
-        "MagicTimes":  1,
         "Name":  "Aberrant Eye",
         "Biomes":  [
                        "Water"
@@ -1152,9 +1088,6 @@
         "Traits":  [
 
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ],
@@ -1172,7 +1105,6 @@
         "GroupSize":  2,
         "Xp":  200,
         "Gold":  160,
-        "MagicTimes":  1,
         "Name":  "Kraken Spawn",
         "Biomes":  [
                        "Water"
@@ -1227,9 +1159,6 @@
                            "Description":  "The octopus can breathe only underwater."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -1240,7 +1169,6 @@
         "GroupSize":  1,
         "Xp":  700,
         "Gold":  180,
-        "MagicTimes":  1,
         "Name":  "Phase Serpent",
         "Biomes":  [
                        "Water"
@@ -1295,9 +1223,6 @@
                            "Description":  "The spider ignores movement restrictions caused by webbing."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -1308,7 +1233,6 @@
         "GroupSize":  1,
         "Xp":  200,
         "Gold":  70,
-        "MagicTimes":  1,
         "Name":  "Giant Octopus",
         "Biomes":  [
                        "Water"
@@ -1363,9 +1287,6 @@
                            "Description":  "The octopus can breathe only underwater."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -1376,7 +1297,6 @@
         "GroupSize":  1,
         "Xp":  1800,
         "Gold":  134,
-        "MagicTimes":  1,
         "Name":  "Triceratops",
         "Biomes":  [
                        "Water"
@@ -1423,9 +1343,6 @@
                            "Description":  "If the triceratops moves at least 20 ft. straight toward a creature and then hits it with a gore attack on the same turn, that target must succeed on a DC 13 Strength saving throw or be knocked prone. If the target is prone, the triceratops can make one stomp attack against it as a bonus action."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -1436,7 +1353,6 @@
         "GroupSize":  2,
         "Xp":  2300,
         "Gold":  88,
-        "MagicTimes":  1,
         "Name":  "Lesser Wyvern",
         "Biomes":  [
                        "Desert"
@@ -1480,9 +1396,6 @@
         "Traits":  [
 
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -1493,7 +1406,6 @@
         "GroupSize":  5,
         "Xp":  25,
         "Gold":  9,
-        "MagicTimes":  1,
         "Name":  "Poisonous Snake",
         "Biomes":  [
                        "Desert"
@@ -1537,9 +1449,6 @@
         "Traits":  [
 
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -1550,7 +1459,6 @@
         "GroupSize":  5,
         "Xp":  50,
         "Gold":  58,
-        "MagicTimes":  1,
         "Name":  "Giant Cobra",
         "Biomes":  [
                        "Desert"
@@ -1594,9 +1502,6 @@
         "Traits":  [
 
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -1605,13 +1510,8 @@
         "ImageId":  27,
         "MinLevel":  10,
         "GroupSize":  3,
-        "Spells":  [
-                       "Lightning"
-                   ],
         "Xp":  100,
         "Gold":  31,
-        "MagicTimes":  1,
-        "MagicConst":  30,
         "Name":  "Shadow",
         "Biomes":  [
                        "Desert"
@@ -1640,10 +1540,10 @@
         "HitDice":  "5d8+5",
         "Actions":  [
                         {
-                            "Name":  "Strength Drain",
-                            "Description":  "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 2d6+2 necrotic damage.",
+                            "Name":  "Draining Swipe",
+                            "Description":  "Melee Attack Roll: +4, reach 5 ft. Hit: 1d6+2 necrotic damage, and the target\u0027s Strength score decreases by 1d4.",
                             "AttackBonus":  4,
-                            "DamageDice":  2,
+                            "DamageDice":  1,
                             "DamageDie":  6,
                             "DamageBonus":  2,
                             "DamageType":  "Necrotic",
@@ -1676,7 +1576,6 @@
         "GroupSize":  3,
         "Xp":  700,
         "Gold":  44,
-        "MagicTimes":  1,
         "Name":  "Giant Scorpion",
         "Biomes":  [
                        "Desert"
@@ -1720,9 +1619,6 @@
         "Traits":  [
 
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -1731,13 +1627,8 @@
         "ImageId":  29,
         "MinLevel":  1,
         "GroupSize":  5,
-        "Spells":  [
-                       "Sleep"
-                   ],
         "Xp":  25,
         "Gold":  15,
-        "MagicTimes":  1,
-        "MagicConst":  6,
         "Name":  "Twig Blight",
         "Biomes":  [
                        "Desert"
@@ -1792,13 +1683,8 @@
         "ImageId":  30,
         "MinLevel":  10,
         "GroupSize":  2,
-        "Spells":  [
-                       "Lightning"
-                   ],
         "Xp":  200,
         "Gold":  61,
-        "MagicTimes":  1,
-        "MagicConst":  60,
         "Name":  "Giant Eagle",
         "Biomes":  [
                        "Desert",
@@ -1828,13 +1714,13 @@
         "HitDice":  "4d10+4",
         "Actions":  [
                         {
-                            "Name":  "Talons",
-                            "Description":  "Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 2d6+3 slashing damage.",
+                            "Name":  "Rend",
+                            "Description":  "Melee Attack Roll: +5, reach 5 ft. Hit: 1d4+3 slashing damage plus 1d6 radiant damage.",
                             "AttackBonus":  5,
                             "DamageDice":  2,
-                            "DamageDie":  6,
+                            "DamageDie":  4,
                             "DamageBonus":  3,
-                            "DamageType":  "Slashing",
+                            "DamageType":  "Slashing/Radiant",
                             "Reach":  "5 ft.",
                             "Range":  null,
                             "Count":  1
@@ -1856,7 +1742,6 @@
         "GroupSize":  5,
         "Xp":  1800,
         "Gold":  150,
-        "MagicTimes":  1,
         "Name":  "Troll",
         "Biomes":  [
                        "Desert"
@@ -1903,9 +1788,6 @@
                            "Description":  "The troll regains 10 Hit Points at the start of each of its turns unless it has taken Fire or Acid damage since the end of its last turn."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -1916,7 +1798,6 @@
         "GroupSize":  3,
         "Xp":  2300,
         "Gold":  74,
-        "MagicTimes":  1,
         "Name":  "Wyvern Matriarch",
         "Biomes":  [
                        "Desert"
@@ -1960,9 +1841,6 @@
         "Traits":  [
 
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -1971,14 +1849,8 @@
         "ImageId":  33,
         "MinLevel":  15,
         "GroupSize":  2,
-        "Spells":  [
-                       "Lightning",
-                       "Heal All"
-                   ],
         "Xp":  700,
         "Gold":  120,
-        "MagicTimes":  1,
-        "MagicConst":  60,
         "Name":  "Manticore",
         "Biomes":  [
                        "Desert"
@@ -2007,8 +1879,8 @@
         "HitDice":  "8d10+24",
         "Actions":  [
                         {
-                            "Name":  "Spike",
-                            "Description":  "Ranged Attack Roll: +5 to hit, range 100/200 ft., one target. Hit: 1d8+3 piercing damage.",
+                            "Name":  "Tail Spike",
+                            "Description":  "Ranged Attack Roll: +5, range 100/200 ft. Hit: 1d8+3 piercing damage.",
                             "AttackBonus":  5,
                             "DamageDice":  1,
                             "DamageDie":  8,
@@ -2016,6 +1888,18 @@
                             "DamageType":  "Piercing",
                             "Reach":  "5 ft.",
                             "Range":  "100/200 ft.",
+                            "Count":  1
+                        },
+                        {
+                            "Name":  "Rend",
+                            "Description":  "Melee Attack Roll: +5, reach 5 ft. Hit: 1d8+3 slashing damage.",
+                            "AttackBonus":  5,
+                            "DamageDice":  1,
+                            "DamageDie":  8,
+                            "DamageBonus":  3,
+                            "DamageType":  "Slashing",
+                            "Reach":  "5 ft.",
+                            "Range":  null,
                             "Count":  1
                         }
                     ],
@@ -2033,14 +1917,8 @@
         "ImageId":  34,
         "MinLevel":  20,
         "GroupSize":  2,
-        "Spells":  [
-                       "Lightning",
-                       "Lightning Storm"
-                   ],
         "Xp":  2300,
         "Gold":  140,
-        "MagicTimes":  1,
-        "MagicConst":  100,
         "Name":  "Chimera",
         "Biomes":  [
                        "Desert",
@@ -2080,6 +1958,42 @@
                             "Reach":  "5 ft.",
                             "Range":  null,
                             "Count":  1
+                        },
+                        {
+                            "Name":  "Claw",
+                            "Description":  "Melee Attack Roll: +7, reach 5 ft. Hit: 1d6+4 slashing damage.",
+                            "AttackBonus":  7,
+                            "DamageDice":  1,
+                            "DamageDie":  6,
+                            "DamageBonus":  4,
+                            "DamageType":  "Slashing",
+                            "Reach":  "5 ft.",
+                            "Range":  null,
+                            "Count":  1
+                        },
+                        {
+                            "Name":  "Ram",
+                            "Description":  "Melee Attack Roll: +7, reach 5 ft. Hit: 1d12+4 bludgeoning damage. If the target is Medium or smaller, it has the Prone condition.",
+                            "AttackBonus":  7,
+                            "DamageDice":  1,
+                            "DamageDie":  12,
+                            "DamageBonus":  4,
+                            "DamageType":  "Bludgeoning",
+                            "Reach":  "5 ft.",
+                            "Range":  null,
+                            "Count":  1
+                        },
+                        {
+                            "Name":  "Fire Breath",
+                            "Description":  "Dexterity Saving Throw: DC 15, each creature in a 15-foot cone. Failure: 7d8 fire damage. Success: Half damage.",
+                            "AttackBonus":  7,
+                            "DamageDice":  7,
+                            "DamageDie":  8,
+                            "DamageBonus":  0,
+                            "DamageType":  "Fire",
+                            "Reach":  null,
+                            "Range":  "15-foot cone",
+                            "Count":  1
                         }
                     ],
         "Traits":  [
@@ -2093,13 +2007,8 @@
         "ImageId":  35,
         "MinLevel":  20,
         "GroupSize":  1,
-        "Spells":  [
-                       "Heal"
-                   ],
         "Xp":  7200,
         "Gold":  5000,
-        "MagicTimes":  1,
-        "MagicConst":  255,
         "Name":  "Horned Devil",
         "Rarity":  "Epic",
         "Strength":  22,
@@ -2126,14 +2035,26 @@
         "Actions":  [
                         {
                             "Name":  "Searing Fork",
-                            "Description":  "Melee Attack Roll: +10 to hit, reach 10 ft., one target. Hit: 2d8+6 piercing damage.",
+                            "Description":  "Melee Attack Roll: +10, reach 10 ft. Hit: 2d8+6 piercing damage plus 2d8 fire damage.",
                             "AttackBonus":  10,
-                            "DamageDice":  2,
+                            "DamageDice":  4,
                             "DamageDie":  8,
                             "DamageBonus":  6,
-                            "DamageType":  "Piercing",
+                            "DamageType":  "Piercing/Fire",
                             "Reach":  "10 ft.",
                             "Range":  null,
+                            "Count":  1
+                        },
+                        {
+                            "Name":  "Hurl Flame",
+                            "Description":  "Ranged Attack Roll: +8, range 150 ft. Hit: 5d8+4 fire damage.",
+                            "AttackBonus":  8,
+                            "DamageDice":  5,
+                            "DamageDie":  8,
+                            "DamageBonus":  4,
+                            "DamageType":  "Fire",
+                            "Reach":  null,
+                            "Range":  "150 ft.",
                             "Count":  1
                         }
                     ],
@@ -2160,7 +2081,6 @@
         "GroupSize":  2,
         "Xp":  100,
         "Gold":  18,
-        "MagicTimes":  1,
         "Name":  "Ape",
         "Biomes":  [
                        "Forest"
@@ -2204,9 +2124,6 @@
         "Traits":  [
 
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -2217,7 +2134,6 @@
         "GroupSize":  3,
         "Xp":  10,
         "Gold":  45,
-        "MagicTimes":  1,
         "Name":  "Baboon",
         "Biomes":  [
                        "Forest"
@@ -2264,9 +2180,6 @@
                            "Description":  "The baboon has advantage on an attack roll against a creature if at least one of the baboon\u0027s allies is within 5 ft. of the creature and the ally isn\u0027t incapacitated."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -2277,7 +2190,6 @@
         "GroupSize":  3,
         "Xp":  200,
         "Gold":  55,
-        "MagicTimes":  1,
         "Name":  "Brown Bear",
         "Biomes":  [
                        "Forest"
@@ -2324,9 +2236,6 @@
                            "Description":  "The bear has advantage on Wisdom (Perception) checks that rely on smell."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -2337,7 +2246,6 @@
         "GroupSize":  5,
         "Xp":  1800,
         "Gold":  22,
-        "MagicTimes":  1,
         "Name":  "Dire Troll",
         "Biomes":  [
                        "Forest"
@@ -2384,9 +2292,6 @@
                            "Description":  "The troll regains 10 Hit Points at the start of each of its turns unless it has taken Fire or Acid damage since the end of its last turn."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -2397,7 +2302,6 @@
         "GroupSize":  10,
         "Xp":  25,
         "Gold":  5,
-        "MagicTimes":  1,
         "Name":  "Giant Rat",
         "Biomes":  [
                        "Forest"
@@ -2448,9 +2352,6 @@
                            "Description":  "The rat has advantage on an attack roll against a creature if at least one of the rat\u0027s allies is within 5 ft. of the creature and the ally isn\u0027t incapacitated."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -2461,7 +2362,6 @@
         "GroupSize":  6,
         "Xp":  25,
         "Gold":  2,
-        "MagicTimes":  1,
         "Name":  "Animated Walking Stick",
         "Biomes":  [
                        "Forest"
@@ -2501,9 +2401,6 @@
                            "Description":  "The creature has Advantage on an attack roll against a creature if at least one ally is within 5 feet of the creature and the ally doesn\u0027t have the Incapacitated condition."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ],
@@ -2521,7 +2418,6 @@
         "GroupSize":  5,
         "Xp":  200,
         "Gold":  17,
-        "MagicTimes":  1,
         "Name":  "Dire Wolf",
         "Biomes":  [
                        "Forest"
@@ -2572,9 +2468,6 @@
                            "Description":  "The wolf has advantage on an attack roll against a creature if at least one of the wolf\u0027s allies is within 5 ft. of the creature and the ally isn\u0027t incapacitated."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -2583,13 +2476,8 @@
         "ImageId":  43,
         "MinLevel":  10,
         "GroupSize":  3,
-        "Spells":  [
-                       "Lightning"
-                   ],
         "Xp":  450,
         "Gold":  71,
-        "MagicTimes":  1,
-        "MagicConst":  30,
         "Name":  "Griffon",
         "Biomes":  [
                        "Forest"
@@ -2618,8 +2506,8 @@
         "HitDice":  "7d10+21",
         "Actions":  [
                         {
-                            "Name":  "Beak",
-                            "Description":  "Melee Attack Roll: +6 to hit, reach 5 ft., one target. Hit: 1d8+4 piercing damage.",
+                            "Name":  "Rend",
+                            "Description":  "Melee Attack Roll: +6, reach 5 ft. Hit: 1d8+4 piercing damage. If the target is Medium or smaller, it has the Grappled condition.",
                             "AttackBonus":  6,
                             "DamageDice":  1,
                             "DamageDie":  8,
@@ -2646,7 +2534,6 @@
         "GroupSize":  2,
         "Xp":  450,
         "Gold":  65,
-        "MagicTimes":  1,
         "Name":  "Polar Bear",
         "Biomes":  [
                        "Forest"
@@ -2693,9 +2580,6 @@
                            "Description":  "The bear has advantage on Wisdom (Perception) checks that rely on smell."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -2706,7 +2590,6 @@
         "GroupSize":  2,
         "Xp":  450,
         "Gold":  128,
-        "MagicTimes":  1,
         "Name":  "Saber-Toothed Tiger",
         "Biomes":  [
                        "Forest"
@@ -2757,9 +2640,6 @@
                            "Description":  "If the tiger moves at least 20 ft. straight toward a creature and then hits it with a claw attack on the same turn, that target must succeed on a DC 14 Strength saving throw or be knocked prone. If the target is prone, the tiger can make one bite attack against it as a bonus action."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -2770,7 +2650,6 @@
         "GroupSize":  1,
         "Xp":  450,
         "Gold":  160,
-        "MagicTimes":  1,
         "Name":  "Green Dragon Wyrmling",
         "Biomes":  [
                        "Forest"
@@ -2817,9 +2696,6 @@
                            "Description":  "The dragon can breathe air and water."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -2830,7 +2706,6 @@
         "GroupSize":  2,
         "Xp":  2900,
         "Gold":  140,
-        "MagicTimes":  1,
         "Name":  "Dire Bear",
         "Rarity":  "Rare",
         "Strength":  23,
@@ -2871,9 +2746,6 @@
         "Traits":  [
 
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ],
@@ -2887,7 +2759,6 @@
         "GroupSize":  10,
         "Xp":  25,
         "Gold":  12,
-        "MagicTimes":  1,
         "Name":  "Giant Crab",
         "Biomes":  [
                        "Water"
@@ -2934,9 +2805,6 @@
                            "Description":  "The crab can breathe air and water."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -2947,7 +2815,6 @@
         "GroupSize":  10,
         "Xp":  100,
         "Gold":  28,
-        "MagicTimes":  1,
         "Name":  "Shelled Ooze",
         "Biomes":  [
                        "Water"
@@ -3002,9 +2869,6 @@
                            "Description":  "While the ooze remains motionless, it is indistinguishable from an oily pool or wet rock."
                        }
                    ],
-        "Spells":  [
-
-                   ],
         "Items":  [
 
                   ]
@@ -3015,7 +2879,6 @@
         "GroupSize":  10,
         "Xp":  100,
         "Gold":  45,
-        "MagicTimes":  1,
         "Name":  "Sea Ooze",
         "Biomes":  [
                        "Water"
@@ -3069,9 +2932,6 @@
                            "Name":  "False Appearance",
                            "Description":  "While the ooze remains motionless, it is indistinguishable from an oily pool or wet rock."
                        }
-                   ],
-        "Spells":  [
-
                    ],
         "Items":  [
 

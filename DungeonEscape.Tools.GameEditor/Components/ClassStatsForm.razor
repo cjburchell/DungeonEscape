@@ -1,5 +1,5 @@
 @*
-    Property editor for classlevels.json entries: one class, its first level XP,
+    Property editor for classlevels.json entries: one class, its D&D metadata,
     stat growth rows, and skill unlock references.
 *@
 @inject DataSourceCatalog DataSources
@@ -21,7 +21,6 @@ else
                 <input value="@ClassStats.PrimaryAbility" @onchange="e => Set(() => ClassStats.PrimaryAbility = e.Value?.ToString() ?? string.Empty)" />
             </div>
             <NumberField Label="Hit Die" Value="ClassStats.HitDie" ValueChanged="v => Set(() => ClassStats.HitDie = v)" />
-            <NumberField Label="First Level" Value="@((long)ClassStats.FirstLevel)" ValueChanged="v => Set(() => ClassStats.FirstLevel = (ulong)Math.Max(0, v))" />
         </div>
     </div>
 

@@ -34,12 +34,19 @@ namespace Redpoint.DungeonEscape.Data
         public string SkillId { get; set; }
 
         public int ImageId { get; set; }
-        public int Cost { get; set; }
+        public int SpellLevel { get; set; }
+        public string School { get; set; }
+        public string DndSpell { get; set; }
         public int MinLevel { get; set; }
 
         public List<string> Classes { get; set; }
 
         public string Name { get; set; }
+
+        public Spell()
+        {
+            SpellLevel = 1;
+        }
 
         public void Setup(IEnumerable<Skill> skills)
         {
@@ -48,12 +55,16 @@ namespace Redpoint.DungeonEscape.Data
 
         public string Cast(IEnumerable<IFighter> targets, IEnumerable<BaseState> targetObjects, IFighter caster, IGame game, int round = 0)
         {
-            if (caster.Magic < Cost)
+            var heroCaster = caster as Hero;
+            if (heroCaster != null && !heroCaster.HasAvailableSpellSlot(SpellLevel))
             {
-                return caster.Name + ": I do not have enough magic to cast " + Name + ".";
+                return caster.Name + ": I do not have a spell slot for " + Name + ".";
             }
 
-            caster.Magic -= Cost;
+            if (heroCaster != null)
+            {
+                heroCaster.UseSpellSlot(SpellLevel);
+            }
 
             if (game != null && game.Sounds != null)
             {

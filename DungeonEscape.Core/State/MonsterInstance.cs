@@ -14,8 +14,8 @@ namespace Redpoint.DungeonEscape.State
             _info = info;
             Health = DndStatRules.GetMonsterHitPoints(info, null);
             MaxHealth = Health;
-            Magic = Dice.Roll(info.MagicRandom, info.MagicTimes, info.MagicConst);
-            MaxMagic = Magic;
+            Magic = 0;
+            MaxMagic = 0;
             Attack = GetLegacyAttack(info);
             Defence = GetLegacyDefence(info);
             MagicDefence = GetLegacyMagicDefence(info);

@@ -62,7 +62,7 @@ namespace DungeonEscape.Core.Test.Rules
             Assert.Equal(Rarity.Rare, item.Rarity);
             Assert.Equal(ItemType.Weapon, item.Type);
             Assert.Equal(5, item.MinLevel);
-            Assert.Equal("Mystic Sword of Giants", item.Name);
+            Assert.Equal("Sword of Giants", item.Name);
             Assert.Equal(new[] { "Paladin" }, item.Classes);
             Assert.Equal(new[] { Slot.PrimaryHand }, item.Slots);
             Assert.Equal(1, item.DamageDice);
@@ -71,7 +71,7 @@ namespace DungeonEscape.Core.Test.Rules
             Assert.Equal(3, item.Stats.Count);
             Assert.Contains(item.Stats, stat => stat.Type == StatType.Attack && stat.Value == 5);
             Assert.Contains(item.Stats, stat => stat.Type == StatType.HP && stat.Value == 1);
-            Assert.Contains(item.Stats, stat => stat.Type == StatType.Magic && stat.Value == 1);
+            Assert.DoesNotContain(item.Stats, stat => stat.Type == StatType.Magic);
         }
 
         [Fact]

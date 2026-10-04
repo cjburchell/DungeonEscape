@@ -46,41 +46,6 @@ namespace Redpoint.DungeonEscape.Rules
                 };
             }
 
-            var availableSpells = (spells == null
-                    ? new List<Spell>()
-                    : monster.GetSpells(spells)
-                        .Where(spell => spell != null && spell.IsEncounterSpell && spell.Cost <= monster.Magic))
-                .ToList();
-            if (!HasStatus(monster, EffectType.StopSpell) && availableSpells.Count > 0)
-            {
-                var lowHealthHealSpells = availableSpells
-                    .Where(spell => spell.Type == SkillType.Heal && monster.MaxHealth > 0 && (float)monster.Health / monster.MaxHealth < 0.1f)
-                    .ToList();
-                if (lowHealthHealSpells.Count > 0)
-                {
-                    return new CombatRoundAction
-                    {
-                        Source = monster,
-                        State = CombatRoundActionState.Spell,
-                        Spell = lowHealthHealSpells[Next(nextInt, lowHealthHealSpells.Count)],
-                        Targets = new List<IFighter> { monster }
-                    };
-                }
-
-                var attackSpells = availableSpells.Where(spell => spell.IsAttackSpell).ToList();
-                if (attackSpells.Count > 0)
-                {
-                    var spell = attackSpells[Next(nextInt, attackSpells.Count)];
-                    return new CombatRoundAction
-                    {
-                        Source = monster,
-                        State = CombatRoundActionState.Spell,
-                        Spell = spell,
-                        Targets = GetTargets(spell.Targets, spell.MaxTargets, availableTargets, rollD100)
-                    };
-                }
-            }
-
             var availableActions = (monster as MonsterInstance)?.GetActions()
                 .Where(action => action != null)
                 .ToList();

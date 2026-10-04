@@ -408,7 +408,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     var spells = GetKnownSpells(hero);
                     if (selectedDetailIndex >= 0 && selectedDetailIndex < spells.Count)
                     {
-                        ShowSpellTargetPicker(hero, spells[selectedDetailIndex]);
+                        ShowPartySpellActionModal(hero, spells[selectedDetailIndex]);
                     }
                     break;
                 case MenuScreen.Abilities:

@@ -37,8 +37,16 @@ else
                 }
             </select>
         </div>
-        <NumberField Label="Cost" Value="Spell.Cost" ValueChanged="v => Set(() => Spell.Cost = v)" />
+        <NumberField Label="Spell Level" Value="Spell.SpellLevel" ValueChanged="v => Set(() => Spell.SpellLevel = v)" />
         <NumberField Label="Min Level" Value="Spell.MinLevel" ValueChanged="v => Set(() => Spell.MinLevel = v)" />
+        <div class="field">
+            <label>School</label>
+            <input value="@Spell.School" @onchange="e => Set(() => Spell.School = e.Value?.ToString())" />
+        </div>
+        <div class="field">
+            <label>D&amp;D Spell</label>
+            <input value="@Spell.DndSpell" @onchange="e => Set(() => Spell.DndSpell = e.Value?.ToString())" />
+        </div>
     </div>
 
     <fieldset>

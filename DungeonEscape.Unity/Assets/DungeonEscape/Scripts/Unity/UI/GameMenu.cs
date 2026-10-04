@@ -537,7 +537,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             viewModel.ClampSelectedDetailIndex(spells.Count);
             var spell = spells[selectedDetailIndex];
-            DrawSpellDetailHeader(spell);
+            DrawSpellDetailHeader(hero, spell);
         }
 
         private void DrawMenuAbilitiesList(Hero hero)
@@ -770,13 +770,19 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 DrawSpriteIconNoFrame(UiAssetResolver.TryGetSpellSprite(spell, out sprite) ? sprite : null, 32f * GetPixelScale());
                 GUILayout.Label(spell.Name, GetMenuListLabelStyle(selected), GUILayout.Height(rowHeight));
                 GUILayout.FlexibleSpace();
-                GUILayout.Label(spell.Cost + " MP", GetMenuListLabelStyle(selected), GUILayout.Width(58f * GetPixelScale()), GUILayout.Height(rowHeight));
+                if (hero != null && hero.IsSpellPrepared(spell))
+                {
+                    GUILayout.Label("Prepared", GetMenuListLabelStyle(selected), GUILayout.Width(92f * GetPixelScale()), GUILayout.Height(rowHeight));
+                }
+
+                GUILayout.Label("L" + spell.SpellLevel, GetMenuListLabelStyle(selected), GUILayout.Width(58f * GetPixelScale()), GUILayout.Height(rowHeight));
                 GUILayout.EndHorizontal();
                 var rowIndex = i;
                 HandleDetailRowMouseClick(rowIndex, () =>
                 {
                     selectedDetailIndex = rowIndex;
                     currentFocus = MenuFocus.Detail;
+                    ShowPartySpellActionModal(GetSelectedMenuHero(), spell);
                 });
             }
 
@@ -792,7 +798,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
         }
 
-        private void DrawSpellDetailHeader(Spell spell)
+        private void DrawSpellDetailHeader(Hero hero, Spell spell)
         {
             if (spell == null)
             {
@@ -805,8 +811,53 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.BeginVertical();
             GUILayout.Label(spell.Name, labelStyle);
             GUILayout.Label(spell.Type + "  " + spell.Targets, smallStyle);
-            GUILayout.Label("MP: " + spell.Cost, smallStyle);
+            GUILayout.Label("Level " + spell.SpellLevel + " " + (string.IsNullOrWhiteSpace(spell.School) ? "Spell" : spell.School), smallStyle);
+            if (hero != null)
+            {
+                GUILayout.Label(
+                    (hero.IsSpellPrepared(spell) ? "Prepared" : "Not prepared") +
+                    "  " + GetPreparedSpellCount(hero) + "/" + hero.GetPreparedSpellLimit(),
+                    smallStyle);
+            }
+
             GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+
+            if (hero == null)
+            {
+                return;
+            }
+
+            GUILayout.Space(8f * GetPixelScale());
+            GUILayout.BeginHorizontal();
+            if (hero.IsSpellPrepared(spell))
+            {
+                if (CanCastSpellFromPartyMenu(hero, spell) && UiControls.Button("Cast", buttonStyle))
+                {
+                    ShowSpellTargetPicker(hero, spell);
+                }
+
+                if (UiControls.Button("Unprepare", buttonStyle))
+                {
+                    ShowPartyMessage(gameState != null && gameState.UnprepareHeroSpell(hero, spell)
+                        ? hero.Name + " no longer has " + spell.Name + " prepared."
+                        : "Cannot unprepare spell.");
+                }
+            }
+            else if (hero.CanPrepareSpell(spell, GameDataCache.Current == null ? null : GameDataCache.Current.Spells))
+            {
+                if (UiControls.Button("Prepare", buttonStyle))
+                {
+                    ShowPartyMessage(gameState != null && gameState.PrepareHeroSpell(hero, spell)
+                        ? hero.Name + " prepares " + spell.Name + "."
+                        : "Cannot prepare spell.");
+                }
+            }
+            else
+            {
+                GUILayout.Label("Preparation limit reached.", smallStyle);
+            }
+
             GUILayout.EndHorizontal();
         }
 
@@ -853,13 +904,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 72f * GetPixelScale(),
                 uiTheme);
             GUILayout.BeginVertical();
-            GUILayout.Label("Level " + hero.Level + " " + hero.Class + "  " + hero.Gender, labelStyle);
+            GUILayout.Label("Level " + hero.Level + " " + hero.Species + " " + hero.Class + "  " + hero.Gender, labelStyle);
             GUILayout.Space(4f * GetPixelScale());
             DrawProgressValue("HP", hero.Health, hero.MaxHealth, hero.Health + " / " + hero.MaxHealth, GetHealthColor(hero.Health, hero.MaxHealth));
-            if (HeroHasMagic(hero))
+            if (HeroHasSpellSlots(hero))
             {
                 GUILayout.Space(3f * GetPixelScale());
-                DrawProgressValue("MP", hero.Magic, hero.MaxMagic, hero.Magic + " / " + hero.MaxMagic, Color.blue);
+                GUILayout.Label("Slots: " + hero.GetSpellSlotSummary(), smallStyle);
             }
 
             GUILayout.Space(3f * GetPixelScale());
@@ -871,16 +922,19 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.Label("Attributes", labelStyle);
             GUILayout.BeginHorizontal();
             GUILayout.BeginVertical();
-            DrawDetailValue("Attack", hero.Attack.ToString());
-            DrawDetailValue("Defence", hero.Defence.ToString());
+            DrawDetailValue("Armor Class", DndStatRules.GetArmorClass(hero).ToString());
+            DrawSignedDetailValue("Attack Bonus", DndStatRules.GetAttackBonus(hero));
+            DrawSignedDetailValue("Damage Bonus", DndStatRules.GetDamageBonus(hero));
+            DrawSignedDetailValue("Initiative", DndStatRules.GetInitiativeBonus(hero));
+            DrawDetailValue("Proficiency", DndStatRules.GetProficiencyBonus(hero).ToString());
             GUILayout.EndVertical();
             GUILayout.BeginVertical();
-            if (HeroHasMagic(hero))
-            {
-                DrawDetailValue("Magic Defence", hero.MagicDefence.ToString());
-            }
-
-            DrawDetailValue("Agility", hero.Agility.ToString());
+            DrawDetailValue("Strength", hero.Strength.ToString());
+            DrawDetailValue("Dexterity", hero.Dexterity.ToString());
+            DrawDetailValue("Constitution", hero.Constitution.ToString());
+            DrawDetailValue("Intelligence", hero.Intelligence.ToString());
+            DrawDetailValue("Wisdom", hero.Wisdom.ToString());
+            DrawDetailValue("Charisma", hero.Charisma.ToString());
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
@@ -894,6 +948,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.Label(label + ":", smallStyle, GUILayout.Width(112f * GetPixelScale()));
             GUILayout.Label(value, smallStyle);
             GUILayout.EndHorizontal();
+        }
+
+        private void DrawSignedDetailValue(string label, int value)
+        {
+            DrawDetailValue(label, value >= 0 ? "+" + value : value.ToString());
         }
 
         private void DrawProgressValue(string label, ulong value, ulong maxValue, string text)
@@ -1306,9 +1365,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private static List<Spell> GetKnownSpells(Hero hero)
         {
-            return hero == null || !HeroHasMagic(hero) || GameDataCache.Current == null || GameDataCache.Current.Spells == null
-                ? new List<Spell>()
-                : hero.GetSpells(GameDataCache.Current.Spells)
+            if (hero == null || !HeroHasSpellSlots(hero) || GameDataCache.Current == null || GameDataCache.Current.Spells == null)
+            {
+                return new List<Spell>();
+            }
+
+            hero.RefreshPreparedSpells(GameDataCache.Current.Spells);
+            return hero.GetKnownSpells(GameDataCache.Current.Spells)
                     .Where(spell => spell != null && spell.IsNonEncounterSpell)
                     .ToList();
         }
@@ -1415,10 +1478,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private static bool HasKnownSpells(Hero hero)
         {
             return hero != null &&
-                   HeroHasMagic(hero) &&
-                   GameDataCache.Current != null &&
-                   GameDataCache.Current.Spells != null &&
-                   hero.GetSpells(GameDataCache.Current.Spells).Any(spell => spell != null && spell.IsNonEncounterSpell);
+                    HeroHasSpellSlots(hero) &&
+                    GameDataCache.Current != null &&
+                    GameDataCache.Current.Spells != null &&
+                    hero.GetKnownSpells(GameDataCache.Current.Spells).Any(spell => spell != null && spell.IsNonEncounterSpell);
         }
 
         private static bool CanUseMapSkills(Hero hero)
@@ -1431,9 +1494,25 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return hero != null && !hero.IsDead && HasKnownSpells(hero);
         }
 
+        private static int GetPreparedSpellCount(Hero hero)
+        {
+            return hero == null || hero.PreparedSpells == null ? 0 : hero.PreparedSpells.Count;
+        }
+
         private static bool HeroHasMagic(Hero hero)
         {
-            return hero != null && hero.MaxMagic > 0;
+            return HeroHasSpellSlots(hero);
+        }
+
+        private static bool HeroHasSpellSlots(Hero hero)
+        {
+            if (hero == null)
+            {
+                return false;
+            }
+
+            hero.RefreshSpellSlots();
+            return hero.SpellSlots.Any(slot => slot > 0);
         }
 
         private ItemInstance GetEquippedItem(Hero hero, Slot slot)
@@ -2036,6 +2115,55 @@ namespace Redpoint.DungeonEscape.Unity.UI
                         break;
                     case "Drop":
                         ShowDropItemConfirmation(hero, item);
+                        break;
+                }
+            });
+        }
+
+        private void ShowPartySpellActionModal(Hero hero, Spell spell)
+        {
+            if (hero == null || spell == null)
+            {
+                return;
+            }
+
+            var choices = new List<string>();
+            if (CanCastSpellFromPartyMenu(hero, spell))
+            {
+                choices.Add("Cast");
+            }
+
+            if (hero.IsSpellPrepared(spell))
+            {
+                choices.Add("Unprepare");
+            }
+            else if (hero.CanPrepareSpell(spell, GameDataCache.Current == null ? null : GameDataCache.Current.Spells))
+            {
+                choices.Add("Prepare");
+            }
+
+            choices.Add("Cancel");
+            ShowMenuModal(spell.Name, "Choose an action.", choices, selectedIndex =>
+            {
+                if (selectedIndex < 0 || selectedIndex >= choices.Count)
+                {
+                    return;
+                }
+
+                switch (choices[selectedIndex])
+                {
+                    case "Cast":
+                        ShowSpellTargetPicker(hero, spell);
+                        break;
+                    case "Prepare":
+                        ShowPartyMessage(gameState != null && gameState.PrepareHeroSpell(hero, spell)
+                            ? hero.Name + " prepares " + spell.Name + "."
+                            : "Cannot prepare spell.");
+                        break;
+                    case "Unprepare":
+                        ShowPartyMessage(gameState != null && gameState.UnprepareHeroSpell(hero, spell)
+                            ? hero.Name + " no longer has " + spell.Name + " prepared."
+                            : "Cannot unprepare spell.");
                         break;
                 }
             });

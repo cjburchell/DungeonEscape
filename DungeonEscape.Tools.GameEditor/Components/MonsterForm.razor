@@ -143,24 +143,9 @@ else
     </fieldset>
 
     <fieldset>
-        <legend>Magic <RollPreview Label="Magic" Times="Monster.MagicTimes" Random="Monster.MagicRandom" Const="Monster.MagicConst" /></legend>
-        <div class="field-grid">
-            <NumberField Label="Magic Const" Value="Monster.MagicConst" ValueChanged="v => Set(() => Monster.MagicConst = v)" />
-            <NumberField Label="Magic Random" Value="Monster.MagicRandom" ValueChanged="v => Set(() => Monster.MagicRandom = v)" />
-            <NumberField Label="Magic Times" Value="Monster.MagicTimes" ValueChanged="v => Set(() => Monster.MagicTimes = v)" />
-        </div>
-    </fieldset>
-
-    <fieldset>
         <legend>Biomes</legend>
         <EnumMultiSelect TEnum="Biome" Selected="Monster.Biomes" SelectedChanged="OnBiomesChanged"
                          Exclude="ExcludedBiomes" OnChanged="RaiseChanged" />
-    </fieldset>
-
-
-    <fieldset>
-        <legend>Spells</legend>
-        <StringListEditor Items="EnsureList(Monster.SpellList)" Options="DataSources.Spells" OnChanged="RaiseChanged" />
     </fieldset>
 
     <fieldset>

@@ -133,15 +133,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.BeginVertical(GUILayout.Width(statusWidth));
             GUILayout.Label(GetShortName(member.Name), style, GUILayout.Width(statusWidth), GUILayout.Height(GetLineHeight(scale)));
             DrawProgressRow("HP", member.Health, member.MaxHealth, style, statusWidth, scale);
-            if (member.MaxMagic != 0)
-            {
-                DrawProgressRow("MP", member.Magic, member.MaxMagic, style, statusWidth, scale);
-            }
-            else
-            {
-                GUILayout.Label(" ", style, GUILayout.Width(statusWidth), GUILayout.Height(GetLineHeight(scale)));
-            }
-
+            GUILayout.Label(GetSlotStatus(member), style, GUILayout.Width(statusWidth), GUILayout.Height(GetLineHeight(scale)));
             DrawLevelLabel(GetClassPrefix(member.Class) + ":", member.Level.ToString(), style, statusWidth, scale);
             GUILayout.EndVertical();
 
@@ -151,6 +143,25 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 DrawSelectionBorder(memberRect, scale);
             }
+        }
+
+        private static string GetSlotStatus(Hero member)
+        {
+            if (member == null)
+            {
+                return " ";
+            }
+
+            member.RefreshSpellSlots();
+            var remaining = 0;
+            var max = 0;
+            for (var i = 0; i < member.SpellSlots.Count && i < member.UsedSpellSlots.Count; i++)
+            {
+                max += member.SpellSlots[i];
+                remaining += Math.Max(0, member.SpellSlots[i] - member.UsedSpellSlots[i]);
+            }
+
+            return max == 0 ? " " : "Slots " + remaining + "/" + max;
         }
 
         private void DrawSelectionBorder(Rect rect, float scale)

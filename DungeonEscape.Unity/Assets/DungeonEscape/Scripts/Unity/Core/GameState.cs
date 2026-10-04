@@ -1237,8 +1237,53 @@ namespace Redpoint.DungeonEscape.Unity.Core
                    GameDataCache.Current.Spells != null &&
                    Party.Members.Contains(caster) &&
                    !caster.IsDead &&
-                   spell.IsNonEncounterSpell &&
-                   caster.GetSpells(GameDataCache.Current.Spells).Contains(spell);
+                    spell.IsNonEncounterSpell &&
+                    caster.HasAvailableSpellSlot(spell.SpellLevel) &&
+                    caster.GetSpells(GameDataCache.Current.Spells).Contains(spell);
+        }
+
+        public bool PrepareHeroSpell(Hero caster, Spell spell)
+        {
+            EnsureInitialized();
+            EnsureSpellLinked(spell);
+            if (caster == null ||
+                spell == null ||
+                Party == null ||
+                GameDataCache.Current == null ||
+                GameDataCache.Current.Spells == null ||
+                !Party.Members.Contains(caster))
+            {
+                return false;
+            }
+
+            var prepared = caster.PrepareSpell(spell, GameDataCache.Current.Spells);
+            if (prepared)
+            {
+                MarkDirty();
+            }
+
+            return prepared;
+        }
+
+        public bool UnprepareHeroSpell(Hero caster, Spell spell)
+        {
+            EnsureInitialized();
+            EnsureSpellLinked(spell);
+            if (caster == null ||
+                spell == null ||
+                Party == null ||
+                !Party.Members.Contains(caster))
+            {
+                return false;
+            }
+
+            var unprepared = caster.UnprepareSpell(spell);
+            if (unprepared)
+            {
+                MarkDirty();
+            }
+
+            return unprepared;
         }
 
         public string CastHeroSpell(Hero caster, Spell spell, Hero target)
@@ -1321,9 +1366,9 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return caster.Name + " casts " + spell.Name + "\nbut you are already outside.";
             }
 
-            if (!SpendSpellCost(caster, spell))
+            if (!SpendSpellSlot(caster, spell))
             {
-                return caster.Name + ": I do not have enough magic to cast " + spell.Name + ".";
+                return caster.Name + ": I do not have a spell slot for " + spell.Name + ".";
             }
 
             var sourceMapId = Party.CurrentMapId;
@@ -1362,9 +1407,9 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return "Choose a place to return to.";
             }
 
-            if (!SpendSpellCost(caster, spell))
+            if (!SpendSpellSlot(caster, spell))
             {
-                return caster.Name + ": I do not have enough magic to cast " + spell.Name + ".";
+                return caster.Name + ": I do not have a spell slot for " + spell.Name + ".";
             }
 
             var sourceMapId = Party.CurrentMapId;
@@ -1585,7 +1630,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             foreach (var hero in Party.Members)
             {
                 hero.Health = hero.MaxHealth;
-                hero.Magic = hero.MaxMagic;
+                hero.RestoreSpellSlots();
                 if (hero.Status != null)
                 {
                     hero.Status.Clear();
@@ -1641,11 +1686,11 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             foreach (var hero in Party.AliveMembers)
             {
-                hero.Magic = hero.MaxMagic;
+                hero.RestoreSpellSlots();
             }
 
             MarkDirty();
-            return "All party members' magic has been replenished.";
+            return "All party members' spell slots have been restored.";
         }
 
         public string CureHero(Hero hero, int cost)
@@ -1863,12 +1908,11 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             if (spell.Type == SkillType.Open)
             {
-                if (caster.Magic < spell.Cost)
+                if (!SpendSpellSlot(caster, spell))
                 {
-                    return caster.Name + ": I do not have enough magic to cast " + spell.Name + ".";
+                    return caster.Name + ": I do not have a spell slot for " + spell.Name + ".";
                 }
 
-                caster.Magic -= spell.Cost;
                 var result = OpenMapObject(mapObject);
                 MarkDirty();
                 return caster.Name + " casts " + spell.Name + ".\n" + result;
@@ -1900,14 +1944,14 @@ namespace Redpoint.DungeonEscape.Unity.Core
             spell.Setup(GameDataCache.Current.Skills);
         }
 
-        private bool SpendSpellCost(Hero caster, Spell spell)
+        private bool SpendSpellSlot(Hero caster, Spell spell)
         {
-            if (caster == null || spell == null || caster.Magic < spell.Cost)
+            if (caster == null || spell == null || !caster.HasAvailableSpellSlot(spell.SpellLevel))
             {
                 return false;
             }
 
-            caster.Magic -= spell.Cost;
+            caster.UseSpellSlot(spell.SpellLevel);
             MarkDirty();
             return true;
         }
@@ -2521,6 +2565,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             ApplyStartingClassStats(hero);
             DndCharacterRules.ApplyStartingAbilityScores(hero);
+            ApplyStartingDndDerivedStats(hero);
             var classLevels = GameDataCache.Current == null ? null : GameDataCache.Current.ClassLevels;
             if (classLevels != null && classLevels.Any(item => IsClass(item.Class, hero.Class)))
             {
@@ -2555,16 +2600,35 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return;
             }
 
-            hero.NextLevel = classStats.FirstLevel;
+            hero.NextLevel = DndLevelProgressionRules.GetNextLevelXp(hero.Level);
             hero.MaxHealth = RollStartingStat(classStats, StatType.HP, 30);
             hero.Health = hero.MaxHealth;
             hero.MaxMagic = RollStartingStat(classStats, StatType.Magic, 8);
-            hero.Magic = hero.MaxMagic;
+            hero.Magic = 0;
+            hero.MaxMagic = 0;
             hero.Attack = RollStartingStat(classStats, StatType.Attack, 8);
             hero.Defence = RollStartingStat(classStats, StatType.Defence, 6);
             hero.MagicDefence = RollStartingStat(classStats, StatType.MagicDefence, 4);
             hero.Agility = RollStartingStat(classStats, StatType.Agility, 6);
             hero.Skills = classStats.Skills == null ? new List<string>() : classStats.Skills.ToList();
+            hero.RestoreSpellSlots();
+        }
+
+        private static void ApplyStartingDndDerivedStats(Hero hero)
+        {
+            var classStats = GameDataCache.Current == null ||
+                             GameDataCache.Current.ClassLevels == null
+                ? null
+                : GameDataCache.Current.ClassLevels.FirstOrDefault(item => IsClass(item.Class, hero.Class));
+
+            DndStatRules.RefreshHeroDerivedStats(hero);
+            if (classStats == null)
+            {
+                return;
+            }
+
+            hero.MaxHealth = DndStatRules.GetHeroHitPointsForLevel(hero, classStats, hero.Level);
+            hero.Health = hero.MaxHealth;
         }
 
         private static int RollStartingStat(ClassStats classStats, StatType type, int fallbackValue)
@@ -2580,11 +2644,12 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private static void ApplyFallbackStartingStats(Hero hero)
         {
-            hero.NextLevel = 100;
+            hero.NextLevel = DndLevelProgressionRules.GetNextLevelXp(hero.Level);
             hero.MaxHealth = 30;
             hero.Health = 30;
             hero.MaxMagic = 8;
-            hero.Magic = 8;
+            hero.Magic = 0;
+            hero.MaxMagic = 0;
             hero.Attack = 8;
             hero.Defence = 6;
             hero.MagicDefence = 4;

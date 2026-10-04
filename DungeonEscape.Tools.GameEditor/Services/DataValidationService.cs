@@ -96,7 +96,7 @@ public sealed class DataValidationService
         ValidateDuplicates(issues, "Stat name type", data.StatNames.Select(statName => statName.Type.ToString()));
         ValidateDuplicates(issues, "Class level class", data.ClassLevels.Select(classStats => classStats.Class));
 
-        ValidateMonsters(issues, spellNames, itemRefs);
+        ValidateMonsters(issues, itemRefs);
         ValidateSpells(issues, skillNames, classValues);
         ValidateItems(issues, skillNames, questIds, classValues);
         ValidateItemDefinitions(issues, classValues);
@@ -116,7 +116,6 @@ public sealed class DataValidationService
 
     private void ValidateMonsters(
         List<DataValidationIssue> issues,
-        HashSet<string> spellNames,
         HashSet<string> itemRefs)
     {
         for (var i = 0; i < data.Monsters.Count; i++)
@@ -128,7 +127,6 @@ public sealed class DataValidationService
                 Warning(issues, location, $"Image #{monster.ImageId} was not found in allmonsters.tsx.");
             }
 
-            ValidateReferences(issues, location, "spell", monster.SpellList, spellNames);
             ValidateReferences(issues, location, "item", monster.Items, itemRefs);
             foreach (var action in monster.Actions ?? new List<MonsterAction>())
             {
@@ -214,11 +212,6 @@ public sealed class DataValidationService
             if (heroImages.Entries.Count > 0 && !heroImages.TryGet(classStats.DefaultImage, out _))
             {
                 Warning(issues, location, $"Default image #{classStats.DefaultImage} was not found in hero.png.");
-            }
-
-            if (classStats.FirstLevel == 0)
-            {
-                Warning(issues, location, "First level is 0.");
             }
 
             var stats = classStats.Stats ?? new List<Stats>();

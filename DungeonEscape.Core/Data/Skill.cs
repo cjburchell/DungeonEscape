@@ -154,6 +154,18 @@ namespace Redpoint.DungeonEscape.Data
 
         private (string, bool) DoHeal(IFighter target)
         {
+            if (StatType == StatType.Magic)
+            {
+                var hero = target as Hero;
+                if (hero == null)
+                {
+                    return (target.Name + " is unaffected by " + Name + "\n", false);
+                }
+
+                hero.RestoreSpellSlots();
+                return (target.Name + " regains spell slots\n", true);
+            }
+
             var oldHealth = target.Health;
             target.Health = StatRandom != 0 ? target.Health + Dice.Roll(StatRandom, StatTimes, StatConst) : target.MaxHealth;
 

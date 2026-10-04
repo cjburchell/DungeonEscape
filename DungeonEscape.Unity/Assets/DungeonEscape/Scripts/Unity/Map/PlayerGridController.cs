@@ -796,7 +796,7 @@ namespace Redpoint.DungeonEscape.Unity.Map
 
             var cost = GetIntProperty(mapObject, "Cost", 25);
             var wounded = gameState.Party.AliveMembers.Where(member => member.Health != member.MaxHealth).ToList();
-            var magicMissing = gameState.Party.AliveMembers.Where(member => member.Magic != member.MaxMagic).ToList();
+            var spellSlotsMissing = gameState.Party.AliveMembers.Where(HasMissingSpellSlots).ToList();
             var statusMembers = gameState.Party.AliveMembers.Where(member => member.Status != null && member.Status.Count != 0).ToList();
             var dead = gameState.Party.DeadMembers.ToList();
             var labels = new List<string>();
@@ -810,9 +810,9 @@ namespace Redpoint.DungeonEscape.Unity.Map
                 }
             }
 
-            if (magicMissing.Count > 0)
+            if (spellSlotsMissing.Count > 0)
             {
-                labels.Add("Renew Magic " + cost * 2 * magicMissing.Count + "g");
+                labels.Add("Restore Spell Slots " + cost * 2 * spellSlotsMissing.Count + "g");
             }
 
             if (statusMembers.Count > 0)
@@ -852,9 +852,9 @@ namespace Redpoint.DungeonEscape.Unity.Map
                     {
                         ShowHealerHeroPicker(mapObject, wounded, "Heal", hero => gameState.HealHero(hero, cost));
                     }
-                    else if (selected.StartsWith("Renew Magic", StringComparison.OrdinalIgnoreCase))
+                    else if (selected.StartsWith("Restore Spell Slots", StringComparison.OrdinalIgnoreCase))
                     {
-                        messageBox.Show(GetObjectDisplayName(mapObject), ApplyHealerAction(() => gameState.RenewMagic(cost * 2 * magicMissing.Count)));
+                        messageBox.Show(GetObjectDisplayName(mapObject), ApplyHealerAction(() => gameState.RenewMagic(cost * 2 * spellSlotsMissing.Count)));
                     }
                     else if (selected.StartsWith("Cure", StringComparison.OrdinalIgnoreCase))
                     {
@@ -1075,6 +1075,25 @@ namespace Redpoint.DungeonEscape.Unity.Map
                     effectiveQuest,
                     choices[selectedIndex],
                     sourceObject));
+        }
+
+        private static bool HasMissingSpellSlots(Hero hero)
+        {
+            if (hero == null)
+            {
+                return false;
+            }
+
+            hero.RefreshSpellSlots();
+            for (var i = 0; i < hero.SpellSlots.Count && i < hero.UsedSpellSlots.Count; i++)
+            {
+                if (hero.UsedSpellSlots[i] > 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void ProcessDialogChoice(

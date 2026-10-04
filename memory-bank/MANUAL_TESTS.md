@@ -213,13 +213,13 @@ active or waiting according to the current party-size limit.
 - Start or load a game with at least one active party member.
 - Stop moving.
 - Expected: a compact status window appears in the top-left corner and shows active party members only, not reserve members.
-- Expected: HP and MP are shown as compact progress bars rather than text-only values.
+- Expected: HP is shown as a compact progress bar and spellcasters show compact spell slot summaries rather than MP.
 - Hold movement in any direction.
 - Expected: the status window hides while the player is moving, then returns after movement stops.
 - Open the title menu, game menu, store window, or a dialog/message box.
 - Expected: the status window is hidden while blocking UI is visible.
-- Damage a party member, spend magic, or revive/death-test a member if available.
-- Expected: HP, MP, class, level, dead red text, and low-health orange text update without reopening the scene.
+- Damage a party member, spend a spell slot, or revive/death-test a member if available.
+- Expected: HP, spell slot summaries, class, level, dead red text, and low-health orange text update without reopening the scene.
 
 ### [x] Gold Status Window
 
@@ -318,7 +318,7 @@ active or waiting according to the current party-size limit.
 - Expected: focus returns to the equipment slot list.
 - Select `Status`.
 - Expected: party members appear on the left and detailed status appears on the right.
-- Expected: HP and MP use progress bars styled consistently with the other status progress bars.
+- Expected: HP uses progress bars styled consistently with the other status progress bars, and spellcasters show spell slot summaries instead of MP.
 - Select `Party`.
 - Expected: selecting a party member opens party actions such as moving order, reserve, or add to party.
 - Select `Misc.`.
@@ -409,8 +409,8 @@ active or waiting according to the current party-size limit.
 - Expected: each detail sub-tab uses a consistent height matching the menu body.
 - Expected: the selected sub-tab text is bold.
 - Expected: the selected member's name is shown once above the detail sub-tabs and is not repeated in Status.
-- Expected: HP, MP, and XP show progress bars with current/max text.
-- Expected: HP, MP, and XP progress bar fill is white on black, with text shown to the right of the bar.
+- Expected: HP and XP show progress bars with current/max text; spellcasters show spell slot summaries instead of MP.
+- Expected: HP and XP progress bar fill is white on black, with text shown to the right of the bar.
 - Expected: Skills and Spells tabs are hidden for members that do not know any.
 - Expected: Effects is hidden when the selected member has no status effects.
 - On the Items sub-tab, select items with a mix of equippable, usable, quest, and regular items.
@@ -418,7 +418,7 @@ active or waiting according to the current party-size limit.
 - Expected: the Equipment sub-tab shows item images beside equipped item names.
 - Expected: item icons, rarity coloring, details, and available actions match the old Inventory behavior.
 - Expected: Use actions are hidden when the selected item cannot currently be used.
-- Expected: spell rows show a spell icon, the spell name, and a Cast button; Cast is disabled when the member does not have enough MP or cannot currently cast it.
+- Expected: spell rows show a spell icon, spell name, spell level, and a Cast button; Cast is disabled when the member does not have an available slot or cannot currently cast it.
 - Expected: party ordering buttons are not shown inline in the member list.
 - Use keyboard/gamepad up/down in the Party tab.
 - Expected: selection moves only between active and reserve party members.
@@ -531,7 +531,7 @@ active or waiting according to the current party-size limit.
 - Expected: the message says there is nothing there.
 - If a hero has an `Open` spell, stand next to a closed door and cast it from the Party spell list.
 - Expected: no party-member target picker appears.
-- Expected: MP is deducted, the door opens, and the map refreshes.
+- Expected: a spell slot is spent, the door opens, and the map refreshes.
 - Stand next to a closed chest and face it.
 - Use the `Open` spell or an item with the `Open` skill.
 - Expected: the facing chest opens with the same contents, level-gating, and persistence behavior as pressing interact.
@@ -851,7 +851,7 @@ active or waiting according to the current party-size limit.
 - Damage a monster below half health and below ten percent health if practical.
 - Expected: monster target text keeps the existing health threshold colors, and monster health bar fill is green above 50%, yellow below 50%, orange below 10%, and red at 0 HP, while the progress bar border stays white.
 - Damage an active party member below the same thresholds if practical.
-- Expected: party HP bar fill uses the same green/yellow/orange/red threshold colors, MP bar fill is blue, and party status text only changes color when a party member is dead.
+- Expected: party HP bar fill uses the same green/yellow/orange/red threshold colors, spell slot summaries update after casting, and party status text only changes color when a party member is dead.
 - Expected: after all party members have chosen actions, queued hero and monster actions resolve in agility order.
 - Expected: Fight attacks roll d20 against target Armor Class, critical hits double weapon damage dice, and target HP bars update as actions resolve.
 - Expected: when a monster takes damage, that monster sprite flashes briefly a few times.
@@ -917,7 +917,7 @@ active or waiting according to the current party-size limit.
 - Press OK on the encounter message until a hero action prompt appears.
 - Expected: the action panel is titled `<HeroName> Action`.
 - Expected: Fight and Run are always shown.
-- Expected: Spell appears only when the hero has an encounter spell, enough MP, and is not affected by StopSpell.
+- Expected: Spell appears only when the hero has an encounter spell, an available slot, and is not affected by StopSpell.
 - Expected: known encounter skills are shown as action rows.
 - Expected: Item appears only when the hero has at least one usable combat item with charges.
 - Use keyboard or gamepad up/down and Interact/Cancel across the action, spell, item, and target selectors.
@@ -933,7 +933,7 @@ active or waiting according to the current party-size limit.
 - Expected: only dead party members are shown as valid targets.
 - Trigger combat with a spellcaster.
 - Choose Spell from the action panel.
-- Expected: each available spell row shows the same icon, name, and MP cost.
+- Expected: each available spell row shows the same icon, name, and spell level.
 - Choose Item from the action panel with a usable combat item available.
 - Expected: each item row shows its item icon and name/stats.
 
@@ -942,7 +942,7 @@ active or waiting according to the current party-size limit.
 - Trigger combat with a spellcaster that has an attack spell such as Blaze.
 - Choose Spell, then choose an attack spell.
 - If multiple monsters are alive, choose a monster target.
-- Expected: MP is deducted, the shared spell effect runs, damage/status text is shown, and monster HP updates.
+- Expected: a spell slot is spent, the shared spell effect runs, damage/status text is shown, and monster HP updates.
 - Trigger combat with a hero that has a non-attack encounter spell or skill such as Heal, Revive, Clear, Buff, or a similar skill.
 - Choose the spell or skill.
 - Expected: party-member targets are selected from the always-visible party status window when needed, the selected member has a highlight border, dead members are valid targets only for revive effects, and the party status window updates after the effect.
@@ -1007,8 +1007,39 @@ active or waiting according to the current party-size limit.
 - Expected: Species changes between Human, Elf, Dwarf, and Halfling, and the preview ability-score rows update.
 - Cycle Class.
 - Expected: D&D class names are available directly, such as `Paladin`, `Fighter`, `Monk`, `Warlock`, `Rogue`, and `Sorcerer`.
+- Inspect the New Quest stat preview.
+- Expected: it shows D&D-facing HP, Armor Class, Proficiency, Attack Bonus, Damage Bonus, Initiative, and STR/DEX/CON/INT/WIS/CHA rows, with no JRPG Attack/Defence/MagicDefence/Agility rows.
 - Start a new game after selecting a non-Human species.
 - Expected: the created hero keeps the selected species after save/load, uses mapped ability scores for combat calculations, and starts with HP based on class hit die plus Constitution modifier.
+- Open the in-game Status screen for the created character.
+- Expected: the header includes Species and Class, and the Attributes section shows D&D-facing AC/bonus/proficiency/ability-score values rather than JRPG combat stat labels.
+
+### [ ] D&D-Style Spell Slots
+
+- Start New Quest with a Wizard, Cleric, Bard, Sorcerer, Paladin, Warlock, and a non-caster class.
+- Expected: caster previews and status screens show spell slot summaries; non-casters show no slots.
+- Open the combat spell list for a caster.
+- Expected: only prepared encounter spells with available slots are offered; spells show D&D spell levels rather than MP costs, and unavailable higher-level slot spells are not offered.
+- Open the Party Spells screen for a caster with known spells.
+- Expected: known spells show prepared/unprepared state and spell level.
+- Select an unprepared known spell and choose Prepare.
+- Expected: the spell becomes prepared if the caster has preparation capacity remaining, and the prepared count updates.
+- Select a prepared spell and choose Unprepare.
+- Expected: the spell is removed from the prepared list and no longer appears in combat/map casting choices until prepared again.
+- Cast a spell repeatedly until its available slots are spent.
+- Expected: each cast spends one slot of the spell's level or higher, and the spell becomes unavailable when no valid slots remain.
+- Use a healer's restore service or a spell-recovery item.
+- Expected: spent spell slots are restored; no MP bar or MP cost is shown.
+- Trigger encounters with monsters that formerly had spell lists.
+- Expected: monsters use D&D `Actions` from their stat blocks rather than player spell names or the player spell-slot system.
+
+### [ ] D&D-Style Level Advancement
+
+- Start or load a character with XP just below the next D&D advancement threshold, such as level 1 with less than `300` XP.
+- Win a combat or complete a quest that awards enough XP to cross the threshold.
+- Expected: the hero advances to the next level at the D&D XP threshold: `300`, `900`, `2700`, `6500`, `14000`, and so on.
+- Expected: level-up text reports HP from class hit die plus Constitution modifier, proficiency bonus changes when applicable, spell slot changes when applicable, and no JRPG Attack/Defence/Magic/Agility growth lines.
+- Expected: the status screen shows the next D&D XP threshold, and level 20 characters do not advance past level 20.
 
 ## Tools - Game Editor (standalone)
 

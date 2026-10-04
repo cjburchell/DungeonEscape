@@ -160,15 +160,7 @@ namespace Redpoint.DungeonEscape.State
                         }
                         break;
                     case StatType.Magic:
-                        if (target.Magic + value > target.MaxMagic)
-                        {
-                            target.Magic = target.MaxMagic;
-                            value = target.MaxMagic - target.Magic;
-                        }
-                        else
-                        {
-                            target.Magic += value;
-                        }
+                        (target as Hero)?.RestoreSpellSlots();
                         break;
                     case StatType.Agility:
                         target.Agility += value;

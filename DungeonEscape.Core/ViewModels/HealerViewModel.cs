@@ -56,7 +56,7 @@ namespace Redpoint.DungeonEscape.ViewModels
 
             var cost = GetHealerCost(healerObject);
             var wounded = party.AliveMembers.Where(member => member.Health != member.MaxHealth).ToList();
-            var magicMissing = party.AliveMembers.Where(member => member.Magic != member.MaxMagic).ToList();
+            var spellSlotsMissing = party.AliveMembers.Where(HasMissingSpellSlots).ToList();
             var statusMembers = party.AliveMembers.Where(member => member.Status != null && member.Status.Count != 0).ToList();
             var dead = party.DeadMembers.ToList();
             var rows = new List<HealerServiceRow>();
@@ -69,9 +69,9 @@ namespace Redpoint.DungeonEscape.ViewModels
                 }
             }
 
-            if (magicMissing.Count > 0)
+            if (spellSlotsMissing.Count > 0)
             {
-                rows.Add(new HealerServiceRow { Service = HealerService.RenewMagic, Label = "Renew Magic", Cost = cost * 2 * magicMissing.Count });
+                rows.Add(new HealerServiceRow { Service = HealerService.RenewMagic, Label = "Restore Spell Slots", Cost = cost * 2 * spellSlotsMissing.Count });
             }
 
             if (statusMembers.Count > 0)
@@ -85,6 +85,25 @@ namespace Redpoint.DungeonEscape.ViewModels
             }
 
             return rows;
+        }
+
+        private static bool HasMissingSpellSlots(Hero hero)
+        {
+            if (hero == null)
+            {
+                return false;
+            }
+
+            hero.RefreshSpellSlots();
+            for (var i = 0; i < hero.SpellSlots.Count && i < hero.UsedSpellSlots.Count; i++)
+            {
+                if (hero.UsedSpellSlots[i] > 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void ClampServiceSelection(IList<HealerServiceRow> services)

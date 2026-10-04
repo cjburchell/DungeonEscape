@@ -57,6 +57,10 @@
 - Data Editor Maps tab: added a cached read-only map preview and used-tile gallery that lists each rendered tile gid/local tileset tile with usage counts.
 - D&D monster data pass: updated all monster stat blocks to listed D&D-style HP/Hit Dice/AC/ability scores/CR/XP/action dice, including 2024 Twig Blight `7 (2d6)`, and removed old monster HP roll fields from data and runtime loading.
 - D&D combat/data pass: monster instances now roll or average HP from `HitDice` unless `HitPoints` is explicitly set; monster AI now queues D&D `Actions` rather than legacy monster `Skills`; monster `Skills` were removed from data/editor validation; and item definitions gained first-pass D&D weapon damage dice and armor AC fields.
+- D&D UI cleanup: New Quest character creation and the in-game Status/character info detail now show D&D-facing HP, AC, proficiency, attack/damage/initiative bonuses, species/class, and ability scores instead of JRPG Attack/Defence/MagicDefence/Agility rows.
+- D&D spell-slot pass: player spells now use spell slots instead of MP costs; spell data was renamed/mapped to D&D-style spell names, levels, schools, and class lists; the old `Spell.Cost` model/editor surface was removed; monster spell lists and magic-roll fields were removed from data in favor of innate action text; healer/item recovery now restores slots; generated equipment no longer rolls Magic or MagicDefence bonuses.
+- D&D monster/player progression pass: audited monsters with leftover player-spell action names and removed/replaced them with SRD-native actions where available; added a shared D&D level advancement table; hero level-up now uses D&D XP thresholds, max level 20, hit-die HP, proficiency refreshes, spell-slot refreshes, and no JRPG random stat growth; `FirstLevel` was removed from class data/editor/schema.
+- D&D prepared-spell pass: heroes now persist prepared spell IDs, known spells remain based on class/level/slot capability, combat/map casting uses prepared spells only, and the Party Spells screen can prepare/unprepare spells with prepared count/limit feedback.
 - Narrative data pass: improved quest journal descriptions, branching dialog copy, and direct map NPC text for the seashell/ship quests, town guards, shrine NPCs, recruitable NPCs, and Estark hints without changing quest IDs, stages, rewards, or map hooks.
 - Interactive NPC conversation pass: replaced all ordinary map NPC `Text` prompts with referenced branching dialogs across the pyramid, shrines, Coast, Forest Palace, Isis, Oasis, and the walled city.
 - Recruit conversation pass: implemented the existing dialog `Join` action in Unity and converted the dungeon, Healing Shrine, and Isis recruits from static Yes/No prompts to distinct branching conversations with background, skills, recruit, and leave choices.
@@ -73,7 +77,7 @@
 ## In Progress
 
 - Feature development and next-phase architecture planning.
-- D&D-style combat migration phase 1 is started but not complete; encounter CR balancing, fuller D&D item/armor semantics, spell slots, saving throws, and dialogue ability checks still need dedicated follow-up passes.
+- D&D-style combat migration phase 1 is started but not complete; encounter CR balancing, fuller D&D item/armor semantics, saving throws, and dialogue ability checks still need dedicated follow-up passes.
 - Active architecture ideas are tracked in `memory-bank/ARCHITECTURE_BACKLOG.md`.
 - Completed architecture work is archived in `memory-bank/ARCHITECTURE_COMPLETED.md`.
 

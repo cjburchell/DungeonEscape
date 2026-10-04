@@ -64,10 +64,10 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
   null/default values, zeroes, `false`, empty strings, empty arrays, and empty
   objects are omitted.
 - Per-entity property editors:
-  - **Monster** &mdash; image (with preview), rarity, levels, combat stats,
-    health/magic rolls, biomes, and Spell/Skill/Item references.
-  - **Spell** &mdash; image (with preview), skill reference, cost, min level,
-    classes.
+  - **Monster** &mdash; image (with preview), rarity, levels, D&D stat-block
+    fields, biomes, actions, and Skill/Item references.
+  - **Spell** &mdash; image (with preview), skill reference, spell level,
+    school, D&D spell name, min level, classes.
   - **Skill** &mdash; type/targets/stat type/duration type, max targets,
     piercing, do-attack, effect name, stat & duration rolls.
   - **Item** &mdash; image (with preview), type, rarity, target, cost, min
@@ -79,9 +79,10 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
     item references, and quest stages.
   - **Dialog** &mdash; dialog ids, quest-conditioned heads, text, choices, quest
     actions, item/monster/map references, and nested response dialogs.
-  - **Class** &mdash; free-text class name, first-level XP threshold, fixed stat
-    growth rows with initial roll previews, default hero-sheet image, and skill
-    unlock references. Spell/item/item-definition class selectors are populated
+  - **Class** &mdash; free-text class name, primary ability, hit die, fixed stat
+    rows with initial roll previews, default hero-sheet image, and skill
+    unlock references. XP thresholds come from the D&D advancement table.
+    Spell/item/item-definition class selectors are populated
     from `classlevels.json`.
   - **Stat Names** &mdash; fixed stat rows plus prefix/suffix word pools.
   - **Names** &mdash; male and female character name pools.

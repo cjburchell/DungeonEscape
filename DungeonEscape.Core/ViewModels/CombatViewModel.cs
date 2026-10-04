@@ -85,7 +85,7 @@ namespace Redpoint.DungeonEscape.ViewModels
                 var spell = spells[i];
                 if (spell != null)
                 {
-                    rows.Add(new CombatMenuRow { Index = i, Label = spell.Name + "  " + spell.Cost + " MP" });
+                    rows.Add(new CombatMenuRow { Index = i, Label = spell.Name + "  L" + spell.SpellLevel });
                 }
             }
 
@@ -120,7 +120,7 @@ namespace Redpoint.DungeonEscape.ViewModels
             }
 
             return hero.GetSpells(spells)
-                .Where(spell => spell != null && spell.IsEncounterSpell && spell.Cost <= hero.Magic)
+                .Where(spell => spell != null && spell.IsEncounterSpell && hero.HasAvailableSpellSlot(spell.SpellLevel))
                 .ToList();
         }
 

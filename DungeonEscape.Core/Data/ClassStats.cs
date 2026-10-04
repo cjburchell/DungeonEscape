@@ -14,7 +14,6 @@ namespace Redpoint.DungeonEscape.Data
         public int HitDie { get; set; }
         public int DefaultImage { get; set; }
         public List<Stats> Stats { get; set; } = new List<Stats>();
-        public ulong FirstLevel { get; set; }
 
         public List<string> Skills { get; set; } = new List<string>();
     }

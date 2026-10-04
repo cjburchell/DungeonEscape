@@ -20,6 +20,7 @@ namespace DungeonEscape.Core.Test.State
             Assert.Null(message);
             Assert.Equal(1, hero.Level);
             Assert.Equal((ulong)9, hero.Xp);
+            Assert.Equal((ulong)300, hero.NextLevel);
         }
 
         [Fact]
@@ -33,18 +34,23 @@ namespace DungeonEscape.Core.Test.State
 
             Assert.True(leveled);
             Assert.Equal(2, hero.Level);
-            Assert.Equal((ulong)30, hero.NextLevel);
+            Assert.Equal((ulong)900, hero.NextLevel);
             Assert.Equal(13, hero.MaxHealth);
             Assert.Equal(hero.MaxHealth, hero.Health);
-            Assert.Equal(4, hero.Attack);
-            Assert.Equal(4, hero.Defence);
-            Assert.Equal(3, hero.MagicDefence);
-            Assert.Equal(6, hero.MaxMagic);
-            Assert.Equal(hero.MaxMagic, hero.Magic);
-            Assert.Equal(3, hero.Agility);
+            Assert.Equal(2, hero.Attack);
+            Assert.Equal(3, hero.Defence);
+            Assert.Equal(2, hero.MagicDefence);
+            Assert.Equal(0, hero.MaxMagic);
+            Assert.Equal(0, hero.Magic);
+            Assert.Contains(hero.SpellSlots, slot => slot > 0);
+            Assert.Equal(2, hero.Agility);
             Assert.Contains("Test Hero has advanced to level 2", message);
+            Assert.Contains("Health +3", message);
+            Assert.Contains("Spell slots:", message);
             Assert.Contains("Has learned the Heal Spell", message);
             Assert.DoesNotContain("Has learned the Lightning Spell", message);
+            Assert.DoesNotContain("Attack +", message);
+            Assert.DoesNotContain("Agility +", message);
         }
 
         [Fact]
@@ -60,6 +66,25 @@ namespace DungeonEscape.Core.Test.State
             Assert.Equal(new[] { "Heal" }, hero.GetSpells(CreateSpells()).Select(spell => spell.Name).ToArray());
         }
 
+        [Fact]
+        public void PreparedSpellsCanBeAddedAndRemovedFromKnownSpells()
+        {
+            var hero = CreateHero();
+            hero.Level = 5;
+            var spells = CreateSpells();
+            var heal = spells.First(spell => spell.Name == "Heal");
+            var lightning = spells.First(spell => spell.Name == "Lightning");
+
+            hero.PreparedSpells = new List<string> { "Heal" };
+
+            Assert.True(hero.IsSpellPrepared(heal));
+            Assert.False(hero.IsSpellPrepared(lightning));
+            Assert.True(hero.PrepareSpell(lightning, spells));
+            Assert.Contains(lightning, hero.GetSpells(spells));
+            Assert.True(hero.UnprepareSpell(heal));
+            Assert.DoesNotContain(heal, hero.GetSpells(spells));
+        }
+
         private static Hero CreateHero()
         {
             return new Hero
@@ -69,7 +94,7 @@ namespace DungeonEscape.Core.Test.State
                 Gender = Gender.Male,
                 Level = 1,
                 Xp = 9,
-                NextLevel = 10,
+                NextLevel = 300,
                 MaxHealth = 10,
                 Health = 10,
                 Attack = 2,
@@ -90,7 +115,6 @@ namespace DungeonEscape.Core.Test.State
                 new ClassStats
                 {
                     Class = "Paladin",
-                    FirstLevel = 10,
                     Skills = new List<string> { "Swipe" },
                     Stats = new List<Stats>
                     {

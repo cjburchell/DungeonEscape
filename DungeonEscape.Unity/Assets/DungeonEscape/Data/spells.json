@@ -1,252 +1,295 @@
-[
+﻿[
     {
         "Skill":  "Heal",
         "ImageId":  54,
-        "Cost":  3,
-        "MinLevel":  2,
+        "MinLevel":  1,
         "Classes":  [
-                        "Paladin",
+                        "Bard",
                         "Cleric",
-                        "Sorcerer"
+                        "Paladin"
                     ],
-        "Name":  "Heal"
+        "Name":  "Cure Wounds",
+        "SpellLevel":  1,
+        "School":  "Abjuration",
+        "DndSpell":  "Cure Wounds"
     },
     {
         "Skill":  "Outside",
         "ImageId":  344,
-        "Cost":  6,
-        "MinLevel":  10,
+        "MinLevel":  11,
         "Classes":  [
-                        "Paladin",
-                        "Rogue"
+                        "Cleric"
                     ],
-        "Name":  "Outside"
+        "Name":  "Word of Recall",
+        "SpellLevel":  6,
+        "School":  "Conjuration",
+        "DndSpell":  "Word of Recall"
     },
     {
         "Skill":  "Fire",
         "ImageId":  1,
-        "Cost":  2,
-        "MinLevel":  2,
+        "MinLevel":  1,
         "Classes":  [
-                        "Wizard",
-                        "Paladin",
-                        "Sorcerer"
+                        "Sorcerer",
+                        "Wizard"
                     ],
-        "Name":  "Blaze"
+        "Name":  "Burning Hands",
+        "SpellLevel":  1,
+        "School":  "Evocation",
+        "DndSpell":  "Burning Hands"
     },
     {
         "Skill":  "Lighting",
         "ImageId":  8,
-        "Cost":  15,
-        "MinLevel":  8,
+        "MinLevel":  5,
         "Classes":  [
-                        "Wizard",
-                        "Paladin",
-                        "Sorcerer"
+                        "Sorcerer",
+                        "Wizard"
                     ],
-        "Name":  "Lightning"
+        "Name":  "Lightning Bolt",
+        "SpellLevel":  3,
+        "School":  "Evocation",
+        "DndSpell":  "Lightning Bolt"
     },
     {
         "Skill":  "Fire Breath",
         "ImageId":  57,
-        "Cost":  25,
-        "MinLevel":  10,
+        "MinLevel":  5,
         "Classes":  [
-                        "Wizard",
-                        "Sorcerer"
+                        "Sorcerer",
+                        "Wizard"
                     ],
-        "Name":  "Fire Blast"
+        "Name":  "Fireball",
+        "SpellLevel":  3,
+        "School":  "Evocation",
+        "DndSpell":  "Fireball"
     },
     {
         "Skill":  "Lighting Breath",
         "ImageId":  50,
-        "Cost":  30,
-        "MinLevel":  12,
+        "MinLevel":  11,
         "Classes":  [
-                        "Wizard",
-                        "Sorcerer"
+                        "Sorcerer",
+                        "Wizard"
                     ],
-        "Name":  "Lightning Storm"
+        "Name":  "Chain Lightning",
+        "SpellLevel":  6,
+        "School":  "Evocation",
+        "DndSpell":  "Chain Lightning"
     },
     {
         "Skill":  "Return",
         "ImageId":  220,
-        "Cost":  6,
-        "MinLevel":  12,
+        "MinLevel":  9,
         "Classes":  [
-                        "Paladin",
-                        "Rogue",
-                        "Sorcerer"
+                        "Bard",
+                        "Sorcerer",
+                        "Wizard"
                     ],
-        "Name":  "Return"
+        "Name":  "Teleportation Circle",
+        "SpellLevel":  5,
+        "School":  "Conjuration",
+        "DndSpell":  "Teleportation Circle"
     },
     {
         "Skill":  "Revive",
         "ImageId":  53,
-        "Cost":  25,
-        "MinLevel":  20,
+        "MinLevel":  5,
         "Classes":  [
-                        "Paladin",
                         "Cleric",
-                        "Sorcerer"
+                        "Paladin"
                     ],
-        "Name":  "Revive"
+        "Name":  "Revivify",
+        "SpellLevel":  3,
+        "School":  "Necromancy",
+        "DndSpell":  "Revivify"
     },
     {
         "Skill":  "Vivify",
         "ImageId":  53,
-        "Cost":  40,
-        "MinLevel":  27,
+        "MinLevel":  9,
         "Classes":  [
+                        "Bard",
                         "Cleric",
-                        "Sorcerer"
+                        "Paladin"
                     ],
-        "Name":  "Vivify"
+        "Name":  "Raise Dead",
+        "SpellLevel":  5,
+        "School":  "Necromancy",
+        "DndSpell":  "Raise Dead"
     },
     {
         "Skill":  "Heal All",
         "ImageId":  54,
-        "Cost":  7,
-        "MinLevel":  30,
+        "MinLevel":  5,
         "Classes":  [
-                        "Paladin",
-                        "Cleric",
-                        "Sorcerer"
+                        "Cleric"
                     ],
-        "Name":  "Heal All"
+        "Name":  "Mass Healing Word",
+        "SpellLevel":  3,
+        "School":  "Abjuration",
+        "DndSpell":  "Mass Healing Word"
     },
     {
         "Skill":  "Heal Us",
         "ImageId":  54,
-        "Cost":  18,
-        "MinLevel":  34,
+        "MinLevel":  9,
         "Classes":  [
-                        "Cleric",
-                        "Sorcerer"
+                        "Bard",
+                        "Cleric"
                     ],
-        "Name":  "Heal Us"
+        "Name":  "Mass Cure Wounds",
+        "SpellLevel":  5,
+        "School":  "Abjuration",
+        "DndSpell":  "Mass Cure Wounds"
     },
     {
         "ImageId":  54,
-        "Cost":  62,
-        "MinLevel":  38,
+        "MinLevel":  17,
         "Classes":  [
-                        "Cleric",
-                        "Sorcerer"
+                        "Cleric"
                     ],
-        "Name":  "Heal Us All"
+        "Name":  "Mass Heal",
+        "Skill":  "Heal Us All",
+        "SpellLevel":  9,
+        "School":  "Abjuration",
+        "DndSpell":  "Mass Heal"
     },
     {
         "Skill":  "Antidote",
         "ImageId":  54,
-        "Cost":  3,
-        "MinLevel":  11,
+        "MinLevel":  3,
         "Classes":  [
+                        "Bard",
                         "Cleric",
-                        "Sorcerer"
+                        "Paladin"
                     ],
-        "Name":  "Antidote"
+        "Name":  "Lesser Restoration",
+        "SpellLevel":  2,
+        "School":  "Abjuration",
+        "DndSpell":  "Lesser Restoration"
     },
     {
         "Skill":  "Speed Up",
         "ImageId":  60,
-        "Cost":  3,
         "MinLevel":  5,
         "Classes":  [
-                        "Cleric",
-                        "Sorcerer"
+                        "Sorcerer",
+                        "Wizard"
                     ],
-        "Name":  "Speed Up"
+        "Name":  "Haste",
+        "SpellLevel":  3,
+        "School":  "Transmutation",
+        "DndSpell":  "Haste"
     },
     {
         "Skill":  "Upper",
         "ImageId":  56,
-        "Cost":  3,
-        "MinLevel":  4,
+        "MinLevel":  1,
         "Classes":  [
-                        "Wizard",
-                        "Sorcerer"
+                        "Cleric",
+                        "Paladin"
                     ],
-        "Name":  "Upper"
+        "Name":  "Shield of Faith",
+        "SpellLevel":  1,
+        "School":  "Abjuration",
+        "DndSpell":  "Shield of Faith"
     },
     {
         "Skill":  "Increase",
         "ImageId":  56,
-        "Cost":  4,
-        "MinLevel":  10,
+        "MinLevel":  3,
         "Classes":  [
-                        "Wizard",
-                        "Sorcerer"
+                        "Cleric",
+                        "Paladin"
                     ],
-        "Name":  "Increase"
+        "Name":  "Aid",
+        "SpellLevel":  2,
+        "School":  "Abjuration",
+        "DndSpell":  "Aid"
     },
     {
         "Skill":  "Sap",
         "ImageId":  58,
-        "Cost":  3,
-        "MinLevel":  8,
+        "MinLevel":  5,
         "Classes":  [
+                        "Bard",
                         "Cleric",
-                        "Sorcerer"
+                        "Wizard"
                     ],
-        "Name":  "Sap"
+        "Name":  "Bestow Curse",
+        "SpellLevel":  3,
+        "School":  "Necromancy",
+        "DndSpell":  "Bestow Curse"
     },
     {
         "Skill":  "Sleep",
         "ImageId":  56,
-        "Cost":  3,
-        "MinLevel":  8,
+        "MinLevel":  1,
         "Classes":  [
-                        "Cleric",
-                        "Paladin",
-                        "Sorcerer"
+                        "Bard",
+                        "Sorcerer",
+                        "Wizard"
                     ],
-        "Name":  "Sleep"
+        "Name":  "Sleep",
+        "SpellLevel":  1,
+        "School":  "Enchantment",
+        "DndSpell":  "Sleep"
     },
     {
         "Skill":  "Disruptive Wave",
         "ImageId":  5,
-        "Cost":  3,
-        "MinLevel":  13,
+        "MinLevel":  3,
         "Classes":  [
-                        "Cleric",
-                        "Paladin",
-                        "Sorcerer"
+                        "Bard",
+                        "Cleric"
                     ],
-        "Name":  "Stop Spell"
+        "Name":  "Silence",
+        "SpellLevel":  2,
+        "School":  "Illusion",
+        "DndSpell":  "Silence"
     },
     {
         "Skill":  "Slow",
         "ImageId":  61,
-        "Cost":  3,
-        "MinLevel":  12,
+        "MinLevel":  5,
         "Classes":  [
-                        "Wizard",
-                        "Sorcerer"
+                        "Bard",
+                        "Sorcerer",
+                        "Wizard"
                     ],
-        "Name":  "Slow"
+        "Name":  "Slow",
+        "SpellLevel":  3,
+        "School":  "Transmutation",
+        "DndSpell":  "Slow"
     },
     {
         "Skill":  "Chaos",
         "ImageId":  62,
-        "Cost":  5,
-        "MinLevel":  27,
+        "MinLevel":  7,
         "Classes":  [
-                        "Wizard",
-                        "Sorcerer"
+                        "Bard",
+                        "Sorcerer",
+                        "Wizard"
                     ],
-        "Name":  "Chaos"
+        "Name":  "Confusion",
+        "SpellLevel":  4,
+        "School":  "Enchantment",
+        "DndSpell":  "Confusion"
     },
     {
         "Skill":  "Repel",
         "ImageId":  220,
-        "Cost":  2,
-        "MinLevel":  12,
+        "MinLevel":  1,
         "Classes":  [
+                        "Cleric",
                         "Paladin",
-                        "Rogue",
-                        "Sorcerer"
+                        "Warlock",
+                        "Wizard"
                     ],
-        "Name":  "Repel"
+        "Name":  "Protection from Evil and Good",
+        "SpellLevel":  1,
+        "School":  "Abjuration",
+        "DndSpell":  "Protection from Evil and Good"
     }
 ]

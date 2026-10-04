@@ -28,12 +28,11 @@ namespace DungeonEscape.Core.Test.Rules
         }
 
         [Fact]
-        public void ChooseMonsterActionUsesHealSpellWhenMonsterHealthIsLow()
+        public void ChooseMonsterActionIgnoresLegacyMonsterSpells()
         {
             var monster = CreateMonster("Caster", new[] { "Heal" });
             monster.Health = 5;
             monster.MaxHealth = 100;
-            monster.Magic = 10;
             var heal = CreateSpell("Heal", SkillType.Heal);
 
             var action = CombatRoundRules.ChooseMonsterAction(
@@ -44,9 +43,8 @@ namespace DungeonEscape.Core.Test.Rules
                 max => 0,
                 () => 1);
 
-            Assert.Equal(CombatRoundActionState.Spell, action.State);
-            Assert.Same(heal, action.Spell);
-            Assert.Same(action.Source, action.Targets.Single());
+            Assert.Equal(CombatRoundActionState.Fight, action.State);
+            Assert.Null(action.Spell);
         }
 
         [Fact]

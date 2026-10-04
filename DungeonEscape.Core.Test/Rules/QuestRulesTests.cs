@@ -134,7 +134,6 @@ namespace DungeonEscape.Core.Test.Rules
                 new ClassStats
                 {
                     Class = "Paladin",
-                    FirstLevel = 100,
                     Skills = new List<string>(),
                     Stats = new List<Stats>
                     {

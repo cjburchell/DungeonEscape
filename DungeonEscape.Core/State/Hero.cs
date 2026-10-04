@@ -10,8 +10,6 @@ namespace Redpoint.DungeonEscape.State
 {
     public class Hero : Fighter
     {
-        private static readonly Random Random = new Random();
-
         [JsonConverter(typeof(StringEnumConverter))]
         public Class Class { get; set; }
 
@@ -29,17 +27,159 @@ namespace Redpoint.DungeonEscape.State
         public int? SpriteTileId { get; set; }
         public Dictionary<Slot, string> Slots { get; set; }
         public List<string> Skills { get; set; }
+        public List<int> SpellSlots { get; set; }
+        public List<int> UsedSpellSlots { get; set; }
+        public List<string> PreparedSpells { get; set; }
 
         public Hero()
         {
             IsActive = true;
             Slots = new Dictionary<Slot, string>();
             Skills = new List<string>();
+            SpellSlots = new List<int>();
+            UsedSpellSlots = new List<int>();
         }
 
         public override IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells)
         {
-            return availableSpells.Where(spell => spell.MinLevel <= Level && HasClass(spell.Classes, Class));
+            return GetPreparedSpells(availableSpells);
+        }
+
+        public IEnumerable<Spell> GetKnownSpells(IEnumerable<Spell> availableSpells)
+        {
+            return availableSpells.Where(spell =>
+                spell.MinLevel <= Level &&
+                HasClass(spell.Classes, Class) &&
+                CanEverCastSpellLevel(spell.SpellLevel));
+        }
+
+        public IEnumerable<Spell> GetPreparedSpells(IEnumerable<Spell> availableSpells)
+        {
+            var knownSpells = GetKnownSpellList(availableSpells);
+            EnsurePreparedSpells(knownSpells);
+            return knownSpells.Where(IsSpellPrepared);
+        }
+
+        public void RefreshPreparedSpells(IEnumerable<Spell> availableSpells)
+        {
+            EnsurePreparedSpells(GetKnownSpellList(availableSpells));
+        }
+
+        public int GetPreparedSpellLimit()
+        {
+            return DndSpellcastingRules.GetPreparedSpellLimit(this);
+        }
+
+        public bool IsSpellPrepared(Spell spell)
+        {
+            return spell != null &&
+                   PreparedSpells != null &&
+                   PreparedSpells.Any(id => IsSpellId(id, spell));
+        }
+
+        public bool CanPrepareSpell(Spell spell, IEnumerable<Spell> availableSpells)
+        {
+            if (spell == null)
+            {
+                return false;
+            }
+
+            var knownSpells = GetKnownSpellList(availableSpells);
+            EnsurePreparedSpells(knownSpells);
+            return knownSpells.Contains(spell) &&
+                   !IsSpellPrepared(spell) &&
+                   PreparedSpells.Count < GetPreparedSpellLimit();
+        }
+
+        public bool PrepareSpell(Spell spell, IEnumerable<Spell> availableSpells)
+        {
+            if (!CanPrepareSpell(spell, availableSpells))
+            {
+                return false;
+            }
+
+            PreparedSpells.Add(GetSpellId(spell));
+            return true;
+        }
+
+        public bool UnprepareSpell(Spell spell)
+        {
+            if (spell == null || PreparedSpells == null)
+            {
+                return false;
+            }
+
+            var removed = PreparedSpells.RemoveAll(id => IsSpellId(id, spell));
+            return removed > 0;
+        }
+
+        public void RefreshSpellSlots()
+        {
+            SpellSlots = DndSpellcastingRules.GetMaxSpellSlots(Class, Level).ToList();
+            EnsureUsedSpellSlotList();
+            for (var i = 0; i < UsedSpellSlots.Count; i++)
+            {
+                var max = i < SpellSlots.Count ? SpellSlots[i] : 0;
+                if (UsedSpellSlots[i] > max)
+                {
+                    UsedSpellSlots[i] = max;
+                }
+            }
+        }
+
+        public void RestoreSpellSlots()
+        {
+            RefreshSpellSlots();
+            for (var i = 0; i < UsedSpellSlots.Count; i++)
+            {
+                UsedSpellSlots[i] = 0;
+            }
+        }
+
+        public bool HasAvailableSpellSlot(int spellLevel)
+        {
+            RefreshSpellSlots();
+            spellLevel = Math.Max(1, Math.Min(DndSpellcastingRules.MaxSpellLevel, spellLevel));
+            for (var i = spellLevel - 1; i < SpellSlots.Count; i++)
+            {
+                if (SpellSlots[i] - UsedSpellSlots[i] > 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool UseSpellSlot(int spellLevel)
+        {
+            RefreshSpellSlots();
+            spellLevel = Math.Max(1, Math.Min(DndSpellcastingRules.MaxSpellLevel, spellLevel));
+            for (var i = spellLevel - 1; i < SpellSlots.Count; i++)
+            {
+                if (SpellSlots[i] - UsedSpellSlots[i] > 0)
+                {
+                    UsedSpellSlots[i]++;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public string GetSpellSlotSummary()
+        {
+            RefreshSpellSlots();
+            var parts = new List<string>();
+            for (var i = 0; i < SpellSlots.Count; i++)
+            {
+                if (SpellSlots[i] > 0)
+                {
+                    parts.Add((i + 1) + ":" + Math.Max(0, SpellSlots[i] - UsedSpellSlots[i]) + "/" + SpellSlots[i]);
+                }
+            }
+
+            return parts.Count == 0 ? "None" : string.Join("  ", parts.ToArray());
         }
 
         public override IEnumerable<Skill> GetSkills(IEnumerable<Skill> availableSkills)
@@ -54,7 +194,7 @@ namespace Redpoint.DungeonEscape.State
             var classStatList = game.ClassLevelStats.ToList();
             var classStats = classStatList.First(stats => IsClass(stats.Class, Class));
             Xp = 0;
-            NextLevel = classStats.FirstLevel;
+            NextLevel = DndLevelProgressionRules.GetNextLevelXp(Level);
 
             MaxHealth = classStats.Stats.First(item => item.Type == StatType.HP).RollStartValue();
             Attack = classStats.Stats.First(item => item.Type == StatType.Attack).RollStartValue();
@@ -65,10 +205,12 @@ namespace Redpoint.DungeonEscape.State
             Skills = classStats.Skills.ToList();
             DndCharacterRules.ApplyStartingAbilityScores(this);
             DndStatRules.RefreshHeroDerivedStats(this);
+            RestoreSpellSlots();
 
             MaxHealth = DndStatRules.GetHeroHitPointsForLevel(this, classStats, Level);
             Health = MaxHealth;
-            Magic = MaxMagic;
+            Magic = 0;
+            MaxMagic = 0;
             while (Level < level)
             {
                 Xp = NextLevel;
@@ -101,7 +243,8 @@ namespace Redpoint.DungeonEscape.State
 
         public bool CheckLevelUp(IEnumerable<ClassStats> classLevels, IEnumerable<Spell> availableSpells, out string levelUpMessage)
         {
-            if (Xp < NextLevel)
+            NextLevel = DndLevelProgressionRules.GetNextLevelXp(Level);
+            if (!DndLevelProgressionRules.CanLevelUp(Level, Xp))
             {
                 levelUpMessage = null;
                 return false;
@@ -109,78 +252,89 @@ namespace Redpoint.DungeonEscape.State
 
             var classStats = classLevels.First(stats => IsClass(stats.Class, Class));
             var oldLevel = Level;
+            var oldProficiencyBonus = DndStatRules.GetProficiencyBonus(Level);
+            var oldSpellSlotSummary = GetSpellSlotSummary();
             Level++;
-            NextLevel = CalculateNextLevel(oldLevel, NextLevel);
+            NextLevel = DndLevelProgressionRules.GetNextLevelXp(Level);
             var oldMaxHealth = MaxHealth;
 
             levelUpMessage = Name + " has advanced to level " + Level + "\n";
 
-            var attack = classStats.Stats.First(item => item.Type == StatType.Attack).RollNextValue();
-            var defence = classStats.Stats.First(item => item.Type == StatType.Defence).RollNextValue();
-            var magicDefence = classStats.Stats.First(item => item.Type == StatType.MagicDefence).RollNextValue();
-            var magic = classStats.Stats.First(item => item.Type == StatType.Magic).RollNextValue();
-            var agility = classStats.Stats.First(item => item.Type == StatType.Agility).RollNextValue();
-
-            Attack += attack;
-            Defence += defence;
-            MagicDefence += magicDefence;
-            MaxMagic += magic;
-            Agility += agility;
             MaxHealth = DndStatRules.GetHeroHitPointsForLevel(this, classStats, Level);
             DndStatRules.RefreshHeroDerivedStats(this);
+            RefreshSpellSlots();
 
             var health = MaxHealth - oldMaxHealth;
             if (health != 0) levelUpMessage += "Health +" + health + "\n";
-            if (attack != 0) levelUpMessage += "Attack +" + attack + "\n";
-            if (defence != 0) levelUpMessage += "Defence +" + defence + "\n";
-            if (magicDefence != 0) levelUpMessage += "Defence +" + magicDefence + "\n";
-            if (magic != 0) levelUpMessage += "Magic +" + magic + "\n";
-            if (agility != 0) levelUpMessage += "Agility +" + agility + "\n";
+            if (DndStatRules.GetProficiencyBonus(Level) != oldProficiencyBonus)
+            {
+                levelUpMessage += "Proficiency Bonus is now +" + DndStatRules.GetProficiencyBonus(Level) + "\n";
+            }
+
+            var newSpellSlotSummary = GetSpellSlotSummary();
+            if (newSpellSlotSummary != oldSpellSlotSummary)
+            {
+                levelUpMessage += "Spell slots: " + newSpellSlotSummary + "\n";
+            }
 
             if (availableSpells != null)
             {
-                foreach (var spell in availableSpells.Where(spell => spell.MinLevel <= Level && spell.MinLevel > oldLevel && HasClass(spell.Classes, Class)))
+                foreach (var spell in availableSpells.Where(spell => spell.MinLevel <= Level && spell.MinLevel > oldLevel && HasClass(spell.Classes, Class) && CanEverCastSpellLevel(spell.SpellLevel)))
                 {
                     levelUpMessage += "Has learned the " + spell.Name + " Spell\n";
                 }
             }
 
             levelUpMessage += "Next Level is " + NextLevel + " XP\n";
-            Magic = MaxMagic;
+            RestoreSpellSlots();
+            EnsurePreparedSpells(GetKnownSpellList(availableSpells));
+            Magic = 0;
+            MaxMagic = 0;
             Health = MaxHealth;
             return true;
         }
 
-        private static ulong CalculateNextLevel(int oldLevel, ulong currentLevel)
+        private void EnsureUsedSpellSlotList()
         {
-            var factors = new Dictionary<int, double>
+            if (SpellSlots == null)
             {
-                {1, 3.0},
-                {2, 2.0},
-                {3, 1.75},
-                {4, 1.65},
-                {5, 1.5},
-                {10, 1.35},
-                {15, 1.2},
-                {20, 1.1},
-                {45, 1}
-            };
-
-            var factor = 1.0;
-            foreach (var pair in factors)
-            {
-                if (oldLevel < pair.Key)
-                {
-                    break;
-                }
-
-                factor = pair.Value;
+                SpellSlots = new List<int>();
             }
 
-            const double randomFactor = 0.05;
-            var randomMax = (int)(Math.Min(currentLevel, int.MaxValue) * randomFactor);
-            var randomValue = randomMax > 0 ? Random.Next(randomMax) : 0;
-            return (ulong)(currentLevel * factor) + (ulong)randomValue;
+            if (UsedSpellSlots == null)
+            {
+                UsedSpellSlots = new List<int>();
+            }
+
+            while (SpellSlots.Count < DndSpellcastingRules.MaxSpellLevel)
+            {
+                SpellSlots.Add(0);
+            }
+
+            while (UsedSpellSlots.Count < DndSpellcastingRules.MaxSpellLevel)
+            {
+                UsedSpellSlots.Add(0);
+            }
+        }
+
+        private void EnsurePreparedSpells(IList<Spell> knownSpells)
+        {
+            knownSpells = knownSpells ?? new List<Spell>();
+            if (PreparedSpells == null)
+            {
+                PreparedSpells = new List<string>();
+                foreach (var spell in knownSpells.Take(GetPreparedSpellLimit()))
+                {
+                    PreparedSpells.Add(GetSpellId(spell));
+                }
+            }
+
+            PreparedSpells.RemoveAll(id => !knownSpells.Any(spell => IsSpellId(id, spell)));
+            var limit = GetPreparedSpellLimit();
+            if (limit >= 0 && PreparedSpells.Count > limit)
+            {
+                PreparedSpells.RemoveRange(limit, PreparedSpells.Count - limit);
+            }
         }
 
         public bool CanUseItem(ItemInstance item)
@@ -199,6 +353,40 @@ namespace Redpoint.DungeonEscape.State
         private static bool HasClass(IEnumerable<string> classes, Class heroClass)
         {
             return classes != null && classes.Any(item => IsClass(item, heroClass));
+        }
+
+        private bool CanEverCastSpellLevel(int spellLevel)
+        {
+            var slots = DndSpellcastingRules.GetMaxSpellSlots(Class, Level);
+            spellLevel = Math.Max(1, Math.Min(DndSpellcastingRules.MaxSpellLevel, spellLevel));
+            return slots.Length >= spellLevel && slots[spellLevel - 1] > 0;
+        }
+
+        private List<Spell> GetKnownSpellList(IEnumerable<Spell> availableSpells)
+        {
+            return availableSpells == null
+                ? new List<Spell>()
+                : availableSpells.Where(spell =>
+                    spell != null &&
+                    spell.MinLevel <= Level &&
+                    HasClass(spell.Classes, Class) &&
+                    CanEverCastSpellLevel(spell.SpellLevel)).ToList();
+        }
+
+        private static string GetSpellId(Spell spell)
+        {
+            return spell == null ? null : string.IsNullOrWhiteSpace(spell.DndSpell) ? spell.Name : spell.DndSpell;
+        }
+
+        private static bool IsSpellId(string id, Spell spell)
+        {
+            if (string.IsNullOrWhiteSpace(id) || spell == null)
+            {
+                return false;
+            }
+
+            return string.Equals(id, spell.Name, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(id, spell.DndSpell, StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool IsClass(string className, Class heroClass)

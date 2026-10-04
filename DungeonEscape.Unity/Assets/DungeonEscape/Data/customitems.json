@@ -1,4 +1,4 @@
-[
+﻿[
     {
         "ImageId":  916,
         "Skill":  "Heal",
@@ -36,18 +36,18 @@
     },
     {
         "ImageId":  923,
-        "Skill":  "Energise",
+        "Skill":  "Recover Spell Slot",
         "Type":  "OneUse",
-        "Name":  "Potion of Magic",
+        "Name":  "Potion of Spell Recovery",
         "Rarity":  "Common",
         "Cost":  16,
         "MinLevel":  5
     },
     {
         "ImageId":  917,
-        "Skill":  "Full Energise",
+        "Skill":  "Recover All Spell Slots",
         "Type":  "OneUse",
-        "Name":  "Elixir of Magic",
+        "Name":  "Elixir of Spell Recovery",
         "Rarity":  "Uncommon",
         "Cost":  100,
         "MinLevel":  10

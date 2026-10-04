@@ -105,7 +105,7 @@ namespace Redpoint.DungeonEscape.Rules
             switch (type.Value)
             {
                 case ItemType.Weapon:
-                    availableStats = new List<StatType> { StatType.Agility, StatType.Attack, StatType.HP, StatType.Magic };
+                    availableStats = new List<StatType> { StatType.Agility, StatType.Attack, StatType.HP };
                     item.MinLevel = RandomLevel(maxLevel, minLevel, nextInt);
                     item.DamageDice = itemDefinition.DamageDice;
                     item.DamageDie = itemDefinition.DamageDie;
@@ -121,9 +121,7 @@ namespace Redpoint.DungeonEscape.Rules
                     {
                         StatType.Agility,
                         StatType.Defence,
-                        StatType.HP,
-                        StatType.Magic,
-                        StatType.MagicDefence
+                        StatType.HP
                     };
                     item.MinLevel = RandomLevel(maxLevel, minLevel, nextInt);
                     item.Stats.Add(new StatValue
@@ -305,7 +303,12 @@ namespace Redpoint.DungeonEscape.Rules
 
         private static int Next(Func<int, int> nextInt, int maxValue)
         {
-            return maxValue <= 1 || nextInt == null ? 0 : nextInt(maxValue);
+            if (maxValue <= 1 || nextInt == null)
+            {
+                return 0;
+            }
+
+            return Math.Max(0, Math.Min(maxValue - 1, nextInt(maxValue)));
         }
     }
 }

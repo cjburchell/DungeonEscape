@@ -68,29 +68,34 @@ namespace DungeonEscape.Core.Test.ViewModels
         public void SpellAndItemRowsBuildDisplayLabels()
         {
             var viewModel = new CombatViewModel();
-            var spell = new Spell { Name = "Heal", Cost = 4 };
+            var spell = new Spell { Name = "Heal", SpellLevel = 1 };
             var item = new ItemInstance(new Item { Name = "Potion", Type = ItemType.OneUse, Slots = new List<Slot>() });
 
-            Assert.Equal("Heal  4 MP", Assert.Single(viewModel.GetSpellRows(new[] { spell })).Label);
+            Assert.Equal("Heal  L1", Assert.Single(viewModel.GetSpellRows(new[] { spell })).Label);
             Assert.StartsWith("Potion", Assert.Single(viewModel.GetItemRows(new[] { item })).Label);
         }
 
         [Fact]
-        public void AvailableEncounterSpellsRespectHeroStateLevelClassAndMagic()
+        public void AvailableEncounterSpellsRespectHeroStateLevelClassSlotsAndPreparation()
         {
             var viewModel = new CombatViewModel();
             var encounterSkill = new Skill { Name = "HealSkill", Type = SkillType.Heal };
             var fieldSkill = new Skill { Name = "OutsideSkill", Type = SkillType.Outside };
             var spells = new List<Spell>
             {
-                CreateSpell("Heal", encounterSkill, 3, 1, Class.Paladin),
-                CreateSpell("Too Much", encounterSkill, 8, 1, Class.Paladin),
-                CreateSpell("Too High", encounterSkill, 3, 3, Class.Paladin),
-                CreateSpell("Wrong Class", encounterSkill, 3, 1, Class.Wizard),
-                CreateSpell("Outside", fieldSkill, 3, 1, Class.Paladin)
+                CreateSpell("Heal", encounterSkill, 1, 1, Class.Paladin),
+                CreateSpell("Too High Slot", encounterSkill, 2, 1, Class.Paladin),
+                CreateSpell("Too High Level", encounterSkill, 1, 3, Class.Paladin),
+                CreateSpell("Wrong Class", encounterSkill, 1, 1, Class.Wizard),
+                CreateSpell("Outside", fieldSkill, 1, 1, Class.Paladin)
             };
-            var hero = new Hero { Class = Class.Paladin, Health = 10, Level = 2, Magic = 5 };
+            var hero = new Hero { Class = Class.Paladin, Health = 10, Level = 2 };
+            hero.RefreshPreparedSpells(spells);
+            hero.UnprepareSpell(spells[0]);
 
+            Assert.Empty(viewModel.GetAvailableEncounterSpells(hero, spells));
+
+            hero.PrepareSpell(spells[0], spells);
             var available = viewModel.GetAvailableEncounterSpells(hero, spells);
 
             Assert.Equal(new[] { "Heal" }, available.Select(spell => spell.Name).ToArray());
@@ -155,12 +160,12 @@ namespace DungeonEscape.Core.Test.ViewModels
             Assert.False(viewModel.IsTargetCandidate(candidates, new Hero { Name = "Other" }));
         }
 
-        private static Spell CreateSpell(string name, Skill skill, int cost, int minLevel, Class heroClass)
+        private static Spell CreateSpell(string name, Skill skill, int spellLevel, int minLevel, Class heroClass)
         {
             var spell = new Spell
             {
                 Name = name,
-                Cost = cost,
+                SpellLevel = spellLevel,
                 MinLevel = minLevel,
                 Classes = new List<string> { heroClass.ToString() },
                 SkillId = skill.Name

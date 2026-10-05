@@ -21,21 +21,7 @@ namespace Redpoint.DungeonEscape.Rules
                 return null;
             }
 
-            if (HasStatus(monster, EffectType.Sleep))
-            {
-                return new CombatRoundAction
-                {
-                    Source = monster,
-                    State = CombatRoundActionState.Nothing
-                };
-            }
-
             var availableTargets = (aliveHeroes ?? new List<IFighter>()).Where(CanBeAttacked).ToList();
-            if (HasStatus(monster, EffectType.Confusion))
-            {
-                availableTargets.AddRange((aliveMonsters ?? new List<IFighter>()).Where(CanBeAttacked));
-                availableTargets.Remove(monster);
-            }
 
             if (availableTargets.Count == 0)
             {
@@ -167,12 +153,6 @@ namespace Redpoint.DungeonEscape.Rules
             if (action.Source.IsDead)
             {
                 return string.IsNullOrEmpty(message) ? action.Source.Name + " cannot act." : message.TrimEnd();
-            }
-
-            if (action.State != CombatRoundActionState.Nothing && HasStatus(action.Source, EffectType.Sleep))
-            {
-                message += action.Source.Name + " is asleep.";
-                return message.TrimEnd();
             }
 
             switch (action.State)

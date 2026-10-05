@@ -79,6 +79,32 @@ namespace DungeonEscape.Core.Test.Rules
         }
 
         [Fact]
+        public void ConcentrationTracksTheActiveSpellAndStopsWhenConditionsBreakIt()
+        {
+            var hero = new Hero
+            {
+                Name = "Ada",
+                Level = 4,
+                Strength = 14,
+                Dexterity = 16,
+                Constitution = 14,
+                Health = 12,
+                MaxHealth = 12
+            };
+
+            DndStatRules.StartConcentration(hero, "Faerie Fire");
+
+            Assert.True(DndStatRules.IsConcentrating(hero));
+            Assert.True(DndStatRules.CanConcentrate(hero));
+
+            hero.AddEffect(new StatusEffect { Type = EffectType.Stunned, Name = "Stunned" });
+            Assert.False(DndStatRules.CanConcentrate(hero));
+
+            DndStatRules.EndConcentration(hero);
+            Assert.False(DndStatRules.IsConcentrating(hero));
+        }
+
+        [Fact]
         public void MonsterDamageBonusUsesExplicitStatBlockValue()
         {
             var monster = new MonsterInstance(

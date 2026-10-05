@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Redpoint.DungeonEscape.Data;
 using Redpoint.DungeonEscape.State;
 
@@ -44,6 +45,95 @@ namespace Redpoint.DungeonEscape.Rules
             var ability = GetSkillAbility(skillName);
             var modifier = GetAbilityModifier(GetAbilityScoreValue(fighter, ability));
             return proficient ? modifier + GetEffectiveProficiencyBonus(fighter) : modifier;
+        }
+
+        public static void StartConcentration(IFighter fighter, string spellName)
+        {
+            if (fighter == null)
+            {
+                return;
+            }
+
+            if (fighter.Status == null)
+            {
+                return;
+            }
+
+            EndConcentration(fighter);
+            var concentrationEffect = new StatusEffect
+            {
+                Type = EffectType.Concentration,
+                Name = string.IsNullOrWhiteSpace(spellName) ? "Concentration" : spellName,
+                DurationType = DurationType.Rounds,
+                Duration = 1,
+                StartTime = 0
+            };
+
+            fighter.Status.Add(concentrationEffect);
+        }
+
+        public static void EndConcentration(IFighter fighter)
+        {
+            if (fighter == null || fighter.Status == null)
+            {
+                return;
+            }
+
+            var concentration = fighter.Status.FirstOrDefault(effect => effect.Type == EffectType.Concentration);
+            if (concentration != null)
+            {
+                fighter.Status.Remove(concentration);
+            }
+        }
+
+        public static bool IsConcentrating(IFighter fighter)
+        {
+            return fighter != null && fighter.Status != null && fighter.Status.Any(effect => effect.Type == EffectType.Concentration);
+        }
+
+        public static bool HasCondition(IFighter fighter, EffectType condition)
+        {
+            if (fighter == null || fighter.Status == null || condition == default)
+            {
+                return false;
+            }
+
+            return fighter.Status.Any(effect => effect.Type == condition);
+        }
+
+        public static bool CanConcentrate(IFighter fighter)
+        {
+            if (fighter == null || fighter.Status == null)
+            {
+                return false;
+            }
+
+            if (fighter.IsDead)
+            {
+                return false;
+            }
+
+            return !HasAnyCondition(fighter,
+                EffectType.Incapacitated,
+                EffectType.Paralyzed,
+                EffectType.Petrified,
+                EffectType.Stunned,
+                EffectType.Unconscious,
+                EffectType.Charmed,
+                EffectType.Frightened,
+                EffectType.Grappled,
+                EffectType.Restrained,
+                EffectType.Prone);
+        }
+
+        public static bool HasAnyCondition(IFighter fighter, params EffectType[] conditions)
+        {
+            if (fighter == null || fighter.Status == null || conditions == null || conditions.Length == 0)
+            {
+                return false;
+            }
+
+            return conditions.Any(condition => HasCondition(fighter, condition));
         }
 
         public static int GetStrength(IFighter fighter)

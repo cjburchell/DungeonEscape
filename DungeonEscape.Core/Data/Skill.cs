@@ -13,18 +13,32 @@ namespace Redpoint.DungeonEscape.Data
 
         private static readonly List<SkillType> AttackSkill = new List<SkillType>
         {
-            SkillType.Damage, SkillType.Dot, SkillType.Sleep, SkillType.Confusion, SkillType.StopSpell, SkillType.Decrease
+            SkillType.Damage,
+            SkillType.Dot,
+            SkillType.Decrease
         };
 
         private static readonly List<SkillType> NonEncounterSkill = new List<SkillType>
         {
-            SkillType.Heal, SkillType.Outside, SkillType.Return, SkillType.Revive, SkillType.Clear, SkillType.Repel, SkillType.StatIncrease, SkillType.Open
+            SkillType.Heal,
+            SkillType.Outside,
+            SkillType.Return,
+            SkillType.Revive,
+            SkillType.Clear,
+            SkillType.Repel,
+            SkillType.StatIncrease,
+            SkillType.Open
         };
 
         private static readonly List<SkillType> EncounterSkill = new List<SkillType>
         {
-            SkillType.Heal, SkillType.Damage, SkillType.Revive, SkillType.Dot, SkillType.Sleep, SkillType.Confusion, SkillType.StopSpell,
-            SkillType.Buff, SkillType.Decrease, SkillType.Clear, SkillType.StatDecrease, SkillType.Steal
+            SkillType.Heal,
+            SkillType.Damage,
+            SkillType.Revive,
+            SkillType.Dot,
+            SkillType.Clear,
+            SkillType.StatDecrease,
+            SkillType.Steal
         };
 
         public string Name { get; set; }
@@ -77,16 +91,8 @@ namespace Redpoint.DungeonEscape.Data
                     return DoReturn(game);
                 case SkillType.Revive:
                     return DoHeal(target);
-                case SkillType.Buff:
-                    return DoBuff(target, game, round, true);
                 case SkillType.Decrease:
                     return DoBuff(target, game, round, false);
-                case SkillType.StopSpell:
-                    return DoStopSpell(target, game, round);
-                case SkillType.Sleep:
-                    return DoSleep(target, game, round);
-                case SkillType.Confusion:
-                    return DoConfusion(target, game, round);
                 case SkillType.Dot:
                     return DoDot(target, game, round);
                 case SkillType.Steal:
@@ -141,16 +147,6 @@ namespace Redpoint.DungeonEscape.Data
             return ("Enemies are " + EffectName + "\n", true);
         }
 
-        private (string, bool) DoStopSpell(IFighter target, IGame game, int round)
-        {
-            if (target.Status.Any(i => i.Type == EffectType.StopSpell))
-            {
-                return (target.Name + " was not affected\n", false);
-            }
-
-            target.AddEffect(CreateEffect(EffectType.StopSpell, round, game));
-            return (target.Name + " is " + EffectName + "\n", true);
-        }
 
         private (string, bool) DoHeal(IFighter target)
         {
@@ -322,13 +318,14 @@ namespace Redpoint.DungeonEscape.Data
         {
             var roll = Dice.Roll(StatRandom, StatTimes, StatConst);
             var buff = increase ? roll : target.CalculateDamage(roll, IsPiercing);
-            if (buff == 0 || target.Status.Any(i => i.Type == EffectType.Buff && i.Name == EffectName))
+            if (buff == 0)
             {
                 return (target.Name + " was not affected by " + Name + "\n", false);
             }
 
-            var effect = CreateEffect(EffectType.Buff, round, gameState);
+            var effect = CreateEffect(EffectType.OverTime, round, gameState);
             effect.StatValue = increase ? buff : -buff;
+            effect.StatType = StatType;
             target.AddEffect(effect);
 
             var changed = increase ? "increased" : "decreased";
@@ -367,28 +364,6 @@ namespace Redpoint.DungeonEscape.Data
 
             var changed = increase ? "increased" : "decreased";
             return (target.Name + " permanently " + changed + " " + StatType + " " + buff + " points\n", true);
-        }
-
-        private (string, bool) DoSleep(IFighter target, IGame gameState, int round)
-        {
-            if (target.Status.Any(i => i.Type == EffectType.Sleep))
-            {
-                return (target.Name + " was not affected by " + Name + "\n", false);
-            }
-
-            target.AddEffect(CreateEffect(EffectType.Sleep, round, gameState));
-            return (target.Name + " is put to sleep\n", true);
-        }
-
-        private (string, bool) DoConfusion(IFighter target, IGame gameState, int round)
-        {
-            if (target.Status.Any(i => i.Type == EffectType.Confusion))
-            {
-                return (target.Name + " was not affected by " + Name + "\n", false);
-            }
-
-            target.AddEffect(CreateEffect(EffectType.Confusion, round, gameState));
-            return (target.Name + " is " + EffectName + "\n", true);
         }
 
         private (string, bool) DoDot(IFighter target, IGame gameState, int round)

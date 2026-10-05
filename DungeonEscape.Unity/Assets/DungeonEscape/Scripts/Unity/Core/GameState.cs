@@ -309,16 +309,12 @@ namespace Redpoint.DungeonEscape.Unity.Core
             }
 
             var filtered = new StringBuilder();
-            var sleepMessage = hero.Name + " is asleep";
-            var confusionMessage = hero.Name + " is confused";
             var damageMessagePrefix = hero.Name + " took ";
             const string damageMessageSuffix = " points of damage";
             var lines = message.Replace("\r\n", "\n").Split('\n');
             foreach (var line in lines)
             {
                 if (string.IsNullOrEmpty(line) ||
-                    string.Equals(line, sleepMessage, StringComparison.Ordinal) ||
-                    string.Equals(line, confusionMessage, StringComparison.Ordinal) ||
                     (line.StartsWith(damageMessagePrefix, StringComparison.Ordinal) &&
                      line.EndsWith(damageMessageSuffix, StringComparison.Ordinal)))
                 {

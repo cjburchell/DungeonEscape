@@ -42,7 +42,7 @@ namespace DungeonEscape.Core.Test.ViewModels
             magicMissing.RefreshSpellSlots();
             magicMissing.UsedSpellSlots[0] = 1;
             var status = CreateHero("Status", health: 10, maxHealth: 10, magic: 10, maxMagic: 10);
-            status.Status.Add(new StatusEffect { Type = EffectType.Sleep });
+            status.Status.Add(new StatusEffect { Type = EffectType.Poisoned });
             var dead = CreateHero("Dead", health: 0, maxHealth: 10, magic: 0, maxMagic: 10);
             party.Members.Add(wounded);
             party.Members.Add(magicMissing);

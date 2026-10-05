@@ -53,15 +53,14 @@ namespace DungeonEscape.Core.Test.ViewModels
         }
 
         [Fact]
-        public void ActionRowsHideSpellWhenHeroIsStopped()
+        public void ActionRowsKeepSpellOptionForReadyHero()
         {
             var viewModel = new CombatViewModel();
             var hero = new Hero { Name = "Able" };
-            hero.Status.Add(new StatusEffect { Type = EffectType.StopSpell });
 
             var rows = viewModel.GetActionRows(hero, true, new List<Skill>(), false);
 
-            Assert.Equal(new[] { "Fight", "Run" }, rows.Select(row => row.Label).ToArray());
+            Assert.Equal(new[] { "Fight", "Spell", "Run" }, rows.Select(row => row.Label).ToArray());
         }
 
         [Fact]

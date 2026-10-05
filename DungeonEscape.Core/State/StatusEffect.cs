@@ -27,10 +27,21 @@ namespace Redpoint.DungeonEscape.State
         {
             get
             {
-                return (Type == EffectType.Buff || Type == EffectType.OverTime) && StatValue <= 0 ||
-                       Type == EffectType.Confusion ||
-                       Type == EffectType.Sleep ||
-                       Type == EffectType.StopSpell;
+                return Type == EffectType.Blinded ||
+                       Type == EffectType.Charmed ||
+                       Type == EffectType.Deafened ||
+                       Type == EffectType.Exhaustion ||
+                       Type == EffectType.Frightened ||
+                       Type == EffectType.Grappled ||
+                       Type == EffectType.Incapacitated ||
+                       Type == EffectType.Invisible ||
+                       Type == EffectType.Paralyzed ||
+                       Type == EffectType.Petrified ||
+                       Type == EffectType.Poisoned ||
+                       Type == EffectType.Prone ||
+                       Type == EffectType.Restrained ||
+                       Type == EffectType.Stunned ||
+                       Type == EffectType.Unconscious;
             }
         }
     }

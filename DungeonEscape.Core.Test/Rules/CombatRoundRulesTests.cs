@@ -10,10 +10,10 @@ namespace DungeonEscape.Core.Test.Rules
     public sealed class CombatRoundRulesTests
     {
         [Fact]
-        public void ChooseMonsterActionReturnsNothingWhenMonsterIsAsleep()
+        public void ChooseMonsterActionKeepsFightingWhenMonsterIsNotIncapacitated()
         {
             var monster = CreateMonster("Slime");
-            monster.Status.Add(new StatusEffect { Type = EffectType.Sleep });
+            monster.Status.Add(new StatusEffect { Type = EffectType.Poisoned });
 
             var action = CombatRoundRules.ChooseMonsterAction(
                 monster,
@@ -23,7 +23,7 @@ namespace DungeonEscape.Core.Test.Rules
                 max => 0,
                 () => 1);
 
-            Assert.Equal(CombatRoundActionState.Nothing, action.State);
+            Assert.Equal(CombatRoundActionState.Fight, action.State);
             Assert.Same(monster, action.Source);
         }
 

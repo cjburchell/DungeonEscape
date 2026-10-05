@@ -3,10 +3,22 @@
     public enum EffectType
     {
         OverTime,
-        Sleep,
-        Confusion,
-        StopSpell,
-        Buff,
-        Repel
+        Repel,
+        Concentration,
+        Blinded,
+        Charmed,
+        Deafened,
+        Exhaustion,
+        Frightened,
+        Grappled,
+        Incapacitated,
+        Invisible,
+        Paralyzed,
+        Petrified,
+        Poisoned,
+        Prone,
+        Restrained,
+        Stunned,
+        Unconscious
     }
 }

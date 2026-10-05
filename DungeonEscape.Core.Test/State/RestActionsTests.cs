@@ -19,7 +19,7 @@ namespace DungeonEscape.Core.Test.State
                 IsActive = true,
                 Status = new List<StatusEffect>
                 {
-                    new StatusEffect { Name = "Poisoned", Type = EffectType.Confusion }
+                    new StatusEffect { Name = "Poisoned", Type = EffectType.Poisoned }
                 },
                 UsedSpellSlots = new List<int> { 2, 1 }
             };
@@ -46,7 +46,7 @@ namespace DungeonEscape.Core.Test.State
                 IsActive = true,
                 Status = new List<StatusEffect>
                 {
-                    new StatusEffect { Name = "Poisoned", Type = EffectType.Confusion }
+                    new StatusEffect { Name = "Poisoned", Type = EffectType.Poisoned }
                 },
                 UsedSpellSlots = new List<int> { 2, 1 }
             };

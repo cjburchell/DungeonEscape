@@ -56,30 +56,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     continue;
                 }
 
-                if (actingHero.Status.Any(effect => effect.Type == EffectType.Sleep))
-                {
-                    QueueHeroAction(new CombatRoundAction
-                    {
-                        Source = actingHero,
-                        State = CombatRoundActionState.Nothing
-                    });
-                    continue;
-                }
-
-                if (actingHero.Status.Any(effect => effect.Type == EffectType.Confusion))
-                {
-                    var confusedAction = CombatRoundRules.ChooseConfusedHeroAction(
-                        actingHero,
-                        AliveHeroes().Cast<IFighter>(),
-                        AliveMonsters().Select(monster => monster.Instance).Cast<IFighter>(),
-                        maxValue => CombatRandom.Next(maxValue));
-                    if (confusedAction != null)
-                    {
-                        QueueHeroAction(confusedAction);
-                        continue;
-                    }
-                }
-
                 state = CombatState.ChooseAction;
                 selectedMenuIndex = GetRememberedActionIndex(BuildActionButtons().ToList());
                 messageText = actingHero.Name + "'s action.";

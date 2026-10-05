@@ -46,7 +46,7 @@ namespace Redpoint.DungeonEscape.ViewModels
                 new CombatActionRow { Label = "Fight", Kind = CombatActionKind.Fight }
             };
 
-            if (hero != null && !HasStopSpell(hero) && hasEncounterSpells)
+            if (hero != null && hasEncounterSpells)
             {
                 rows.Add(new CombatActionRow { Label = "Spell", Kind = CombatActionKind.Spell });
             }
@@ -233,24 +233,6 @@ namespace Redpoint.DungeonEscape.ViewModels
             }
 
             return value > max ? max : value;
-        }
-
-        private static bool HasStopSpell(Hero hero)
-        {
-            if (hero == null || hero.Status == null)
-            {
-                return false;
-            }
-
-            for (var i = 0; i < hero.Status.Count; i++)
-            {
-                if (hero.Status[i] != null && hero.Status[i].Type == EffectType.StopSpell)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         private static bool HasTargetType<T>(IList<IFighter> candidates)

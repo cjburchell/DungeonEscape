@@ -77,55 +77,12 @@ namespace Redpoint.DungeonEscape.State
 
         public void RemoveEffect(StatusEffect effect)
         {
-            if (effect.Type == EffectType.Buff)
-            {
-                ApplyBuff(effect, -effect.StatValue);
-            }
-
             Status.Remove(effect);
         }
 
         public void AddEffect(StatusEffect effect)
         {
-            if (effect.Type == EffectType.Buff)
-            {
-                ApplyBuff(effect, effect.StatValue);
-            }
-
             Status.Add(effect);
-        }
-
-        private void ApplyBuff(StatusEffect effect, int value)
-        {
-            switch (effect.StatType)
-            {
-                case StatType.HP:
-                    MaxHealth += value;
-                    if (Health > MaxHealth)
-                    {
-                        Health = MaxHealth;
-                    }
-                    break;
-                case StatType.Attack:
-                    Attack += value;
-                    break;
-                case StatType.Defence:
-                    Defence += value;
-                    break;
-                case StatType.MagicDefence:
-                    MagicDefence += value;
-                    break;
-                case StatType.Agility:
-                    Agility += value;
-                    break;
-                case StatType.Magic:
-                    MaxMagic += value;
-                    if (Magic > MaxMagic)
-                    {
-                        Magic = MaxMagic;
-                    }
-                    break;
-            }
         }
 
         public virtual void Equip(ItemInstance item)
@@ -156,16 +113,6 @@ namespace Redpoint.DungeonEscape.State
         public string UpdateStatusEffects(IGame game)
         {
             var message = "";
-            if (Status.Any(i => i.Type == EffectType.Sleep))
-            {
-                message += Name + " is asleep\n";
-            }
-
-            if (Status.Any(i => i.Type == EffectType.Confusion))
-            {
-                message += Name + " is confused\n";
-            }
-
             foreach (var effect in Status.FindAll(i => i.Type == EffectType.OverTime))
             {
                 switch (effect.StatType)
@@ -267,15 +214,7 @@ namespace Redpoint.DungeonEscape.State
                 return "";
             }
 
-            var message = "";
-            var sleepEffect = Status.FirstOrDefault(i => i.Type == EffectType.Sleep);
-            if (sleepEffect != null && Dice.RollD20() > 15)
-            {
-                message += sleepEffect.Name + " on " + Name + " has worn off\n";
-                RemoveEffect(sleepEffect);
-            }
-
-            return message;
+            return "";
         }
 
         public void Update()

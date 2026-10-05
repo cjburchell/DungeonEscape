@@ -108,6 +108,16 @@ namespace DungeonEscape.Core.Test.Rules
         }
 
         [Fact]
+        public void SkillTypeIncludesDndMigrationNames()
+        {
+            var names = new HashSet<string>(System.Enum.GetNames(typeof(SkillType)));
+
+            Assert.Contains(nameof(SkillType.Disengage), names);
+            Assert.Contains(nameof(SkillType.RemoveCondition), names);
+            Assert.Contains(nameof(SkillType.AbilityModifier), names);
+        }
+
+        [Fact]
         public void ReviveSpellTargetsDeadPartyMembers()
         {
             var alive = CreateHero("Alive");

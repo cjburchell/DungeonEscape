@@ -69,13 +69,13 @@ namespace DungeonEscape.Core.Test.Rules
         }
 
         [Fact]
-        public void ApplyRepelRemovesMonstersBelowPartyMaxHealth()
+        public void ApplyDisengageRemovesMonstersBelowPartyMaxHealth()
         {
             var weak = CreateMonster("Weak", Biome.Cave, 1, Rarity.Common);
             var strong = CreateMonster("Strong", Biome.Cave, 1, Rarity.Common);
             var monsters = new List<Monster> { weak, strong };
 
-            EncounterRules.ApplyRepel(
+            EncounterRules.ApplyDisengage(
                 monsters,
                 true,
                 20,

@@ -24,9 +24,9 @@ namespace Redpoint.DungeonEscape.Data
             SkillType.Outside,
             SkillType.Return,
             SkillType.Revive,
-            SkillType.Clear,
-            SkillType.Repel,
-            SkillType.StatIncrease,
+            SkillType.RemoveCondition,
+            SkillType.Disengage,
+            SkillType.AbilityModifier,
             SkillType.Open
         };
 
@@ -36,8 +36,8 @@ namespace Redpoint.DungeonEscape.Data
             SkillType.Damage,
             SkillType.Revive,
             SkillType.Dot,
-            SkillType.Clear,
-            SkillType.StatDecrease,
+            SkillType.RemoveCondition,
+            SkillType.AbilityModifier,
             SkillType.Steal
         };
 
@@ -56,6 +56,7 @@ namespace Redpoint.DungeonEscape.Data
         [JsonConverter(typeof(StringEnumConverter))] public StatType StatType { get; set; }
         public string EffectName { get; set; }
         public bool DoAttack { get; set; }
+        public bool IsPositive { get; set; } = true;
 
         [JsonIgnore] public bool IsAttackSkill { get { return AttackSkill.Contains(Type); } }
         [JsonIgnore] public bool IsEncounterSkill { get { return EncounterSkill.Contains(Type); } }
@@ -85,8 +86,6 @@ namespace Redpoint.DungeonEscape.Data
                     return DoOutside(game);
                 case SkillType.Damage:
                     return DoDamage(target, source, isMagic);
-                case SkillType.Repel:
-                    return DoRepel(source, game, round);
                 case SkillType.Return:
                     return DoReturn(game);
                 case SkillType.Revive:
@@ -97,12 +96,12 @@ namespace Redpoint.DungeonEscape.Data
                     return DoDot(target, game, round);
                 case SkillType.Steal:
                     return DoSteal(target, source, game);
-                case SkillType.Clear:
-                    return DoClearEffects(target);
-                case SkillType.StatDecrease:
-                    return DoStat(target, false);
-                case SkillType.StatIncrease:
-                    return DoStat(target, true);
+                case SkillType.Disengage:
+                    return DoDisengage(source, game, round);
+                case SkillType.RemoveCondition:
+                    return DoRemoveCondition(target);
+                case SkillType.AbilityModifier:
+                    return DoAbilityModifier(target, IsPositive);
                 case SkillType.None:
                     return (source.Name + " " + EffectName, false);
                 default:
@@ -136,17 +135,26 @@ namespace Redpoint.DungeonEscape.Data
             return (source.Name + " Is unable to Open Door\n", false);
         }
 
-        private (string, bool) DoRepel(IFighter source, IGame game, int round)
+        private (string, bool) DoDisengage(IFighter source, IGame game, int round)
         {
-            if (game.Party.AliveMembers.Any(partyMember => partyMember.Status.Any(i => i.Type == EffectType.Repel)))
+            if (source == null)
             {
-                return (source.Name + " was not affected\n", false);
+                return ("", false);
             }
 
-            source.AddEffect(CreateEffect(EffectType.Repel, round, game));
-            return ("Enemies are " + EffectName + "\n", true);
-        }
+            var fighter = source as Fighter;
+            if (fighter != null)
+            {
+                fighter.RanAway = true;
+            }
 
+            if (game != null && source.Status.All(status => status.Type != EffectType.Disengaged))
+            {
+                source.AddEffect(CreateEffect(EffectType.Disengaged, round, game));
+            }
+
+            return (source.Name + " disengages and retreats.\n", true);
+        }
 
         private (string, bool) DoHeal(IFighter target)
         {
@@ -175,7 +183,7 @@ namespace Redpoint.DungeonEscape.Data
                 : target.Name + " gains " + (target.Health - oldHealth) + " HP\n", true);
         }
 
-        private (string, bool) DoClearEffects(IFighter target)
+        private (string, bool) DoRemoveCondition(IFighter target)
         {
             if (target.Status.Count(i => i.IsNegativeEffect) == 0)
             {
@@ -190,6 +198,11 @@ namespace Redpoint.DungeonEscape.Data
             }
 
             return (message, true);
+        }
+
+        private (string, bool) DoClearEffects(IFighter target)
+        {
+            return DoRemoveCondition(target);
         }
 
         private (string, bool) DoSteal(IFighter target, IFighter source, IGame game)
@@ -330,6 +343,11 @@ namespace Redpoint.DungeonEscape.Data
 
             var changed = increase ? "increased" : "decreased";
             return (target.Name + " " + changed + " " + StatType + " " + buff + " points\n", true);
+        }
+
+        private (string, bool) DoAbilityModifier(IFighter target, bool increase)
+        {
+            return DoStat(target, increase);
         }
 
         private (string, bool) DoStat(IFighter target, bool increase)

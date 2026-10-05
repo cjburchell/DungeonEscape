@@ -119,7 +119,7 @@ namespace Redpoint.DungeonEscape.Rules
                 }
             }
 
-            ApplyRepel(monsters, repelActive, repelMaxHealth, rollMonsterHealth);
+            ApplyDisengage(monsters, repelActive, repelMaxHealth, rollMonsterHealth);
             return monsters;
         }
 
@@ -157,9 +157,9 @@ namespace Redpoint.DungeonEscape.Rules
             }
         }
 
-        public static void ApplyRepel(ICollection<Monster> monsters, bool repelActive, int maxPartyHealth, Func<Monster, int> rollMonsterHealth)
+        public static void ApplyDisengage(ICollection<Monster> monsters, bool disengageActive, int maxPartyHealth, Func<Monster, int> rollMonsterHealth)
         {
-            if (!repelActive || monsters == null)
+            if (!disengageActive || monsters == null)
             {
                 return;
             }
@@ -173,6 +173,7 @@ namespace Redpoint.DungeonEscape.Rules
                 }
             }
         }
+
 
         private static void AddMonsterGroup(ICollection<Monster> monsters, Monster monster, int count)
         {

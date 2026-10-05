@@ -3101,16 +3101,16 @@ namespace Redpoint.DungeonEscape.Unity.Core
         private List<Monster> BuildRandomEncounter(IEnumerable<RandomMonster> randomMonsters, BiomeInfo biomeInfo)
         {
             var aliveMembers = Party == null ? new List<Hero>() : Party.AliveMembers.ToList();
-            var repelActive = aliveMembers.Any(partyMember =>
-                partyMember.Status != null && partyMember.Status.Any(status => status.Type == EffectType.Repel));
-            var repelMaxHealth = aliveMembers.Count == 0 ? 0 : aliveMembers.Max(member => member.MaxHealth);
+            var disengageActive = aliveMembers.Any(partyMember =>
+                partyMember.Status != null && partyMember.Status.Any(status => status.Type == EffectType.Disengaged));
+            var disengageMaxHealth = aliveMembers.Count == 0 ? 0 : aliveMembers.Max(member => member.MaxHealth);
             return EncounterRules.BuildRandomEncounter(
                 randomMonsters,
                 biomeInfo,
                 GetAverageActivePartyLevel(),
                 aliveMembers.Count,
-                repelActive,
-                repelMaxHealth,
+                disengageActive,
+                disengageMaxHealth,
                 maxValue => Random.Next(maxValue),
                 () => Dice.RollD20(),
                 DndStatRules.GetMonsterAverageHitPoints);

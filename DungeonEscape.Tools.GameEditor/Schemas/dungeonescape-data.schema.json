@@ -8,7 +8,7 @@
     "biome": { "type": "string", "enum": ["None", "Grassland", "Forest", "Water", "Hills", "Desert", "Swamp", "Cave", "Town", "Tower"] },
     "statType": { "type": "string", "enum": ["None", "HP", "Attack", "Defence", "MagicDefence", "Agility", "Magic"] },
     "target": { "type": "string", "enum": ["Single", "Group", "Object", "None"] },
-    "skillType": { "type": "string", "enum": ["Heal", "Outside", "Damage", "Return", "Revive", "Dot", "Sleep", "Confusion", "StopSpell", "Buff", "Decrease", "Clear", "Steal", "Flee", "Attack", "None", "StatDecrease", "StatIncrease", "Repel", "Open"] },
+    "skillType": { "type": "string", "enum": ["Heal", "Outside", "Damage", "Return", "Revive", "Dot", "Decrease", "Steal", "Attack", "None", "Disengage", "Open", "RemoveCondition", "AbilityModifier"] },
     "durationType": { "type": "string", "enum": ["Distance", "Rounds"] },
     "itemType": { "type": "string", "enum": ["OneUse", "Weapon", "Armor", "Gold", "Quest", "Unknown", "RepeatableUse"] },
     "slot": { "type": "string", "enum": ["OffHand", "PrimaryHand", "Hands", "Head", "Chest", "Legs", "Feet"] },

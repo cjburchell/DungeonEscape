@@ -9,14 +9,12 @@
         Revive,
         Dot,
         Decrease,
-        Clear,
         Steal,
-        Flee,
         Attack,
         None,
-        StatDecrease,
-        StatIncrease,
-        Repel,
-        Open
+        Disengage,
+        Open,
+        RemoveCondition,
+        AbilityModifier
     }
 }

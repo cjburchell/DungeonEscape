@@ -100,7 +100,7 @@ namespace Redpoint.DungeonEscape.State
             var expiredList = Status.FindAll(i => i.DurationType == durationType && i.Duration <= round - i.StartTime);
             foreach (var expired in expiredList)
             {
-                message += expired.Type != EffectType.Repel
+                message += expired.Type != EffectType.Disengaged
                     ? expired.Name + " on " + Name + " has worn off\n"
                     : expired.Name + " has worn off\n";
 

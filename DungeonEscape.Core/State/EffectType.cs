@@ -3,7 +3,7 @@
     public enum EffectType
     {
         OverTime,
-        Repel,
+        Disengaged,
         Concentration,
         Blinded,
         Charmed,

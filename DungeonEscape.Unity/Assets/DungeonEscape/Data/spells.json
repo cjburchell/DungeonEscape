@@ -278,7 +278,7 @@
         "DndSpell":  "Confusion"
     },
     {
-        "Skill":  "Repel",
+        "Skill":  "Disengage",
         "ImageId":  220,
         "MinLevel":  1,
         "Classes":  [

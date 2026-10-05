@@ -33,7 +33,7 @@
     {
         "Name":  "Paralysis",
         "Targets":  "Single",
-        "Type":  "Sleep",
+        "Type":  "RemoveCondition",
         "StatTimes":  1,
         "DurationConst":  100,
         "DurationTimes":  1,
@@ -46,7 +46,7 @@
     {
         "Name":  "Sleep",
         "Targets":  "Single",
-        "Type":  "Sleep",
+        "Type":  "RemoveCondition",
         "StatTimes":  1,
         "DurationConst":  1,
         "DurationTimes":  1,
@@ -59,7 +59,7 @@
     {
         "Name":  "Disruptive Wave",
         "Targets":  "Group",
-        "Type":  "StopSpell",
+        "Type":  "RemoveCondition",
         "StatTimes":  1,
         "DurationConst":  2,
         "DurationTimes":  1,
@@ -71,7 +71,7 @@
     {
         "Name":  "Stop Spell",
         "Targets":  "Single",
-        "Type":  "StopSpell",
+        "Type":  "RemoveCondition",
         "StatTimes":  1,
         "DurationConst":  2,
         "DurationTimes":  1,
@@ -83,7 +83,7 @@
     {
         "Name":  "Repel",
         "Targets":  "Group",
-        "Type":  "Repel",
+        "Type":  "Disengage",
         "StatTimes":  1,
         "DurationConst":  127,
         "DurationTimes":  1,
@@ -117,7 +117,7 @@
     {
         "Name":  "Flee",
         "Targets":  "Single",
-        "Type":  "Flee",
+        "Type":  "Disengage",
         "StatTimes":  1,
         "DurationTimes":  1,
         "DurationType":  "Distance",
@@ -325,7 +325,7 @@
     {
         "Name":  "Antidote",
         "Targets":  "Single",
-        "Type":  "Clear",
+        "Type":  "RemoveCondition",
         "StatTimes":  1,
         "DurationTimes":  1,
         "DurationType":  "Distance",
@@ -335,7 +335,7 @@
     {
         "Name":  "Speed Up",
         "Targets":  "Group",
-        "Type":  "Buff",
+        "Type":  "AbilityModifier",
         "StatConst":  20,
         "StatTimes":  1,
         "StatRandom":  10,
@@ -349,7 +349,7 @@
     {
         "Name":  "Upper",
         "Targets":  "Single",
-        "Type":  "Buff",
+        "Type":  "AbilityModifier",
         "StatConst":  20,
         "StatTimes":  1,
         "StatRandom":  10,
@@ -363,7 +363,7 @@
     {
         "Name":  "Increase",
         "Targets":  "Group",
-        "Type":  "Buff",
+        "Type":  "AbilityModifier",
         "StatConst":  20,
         "StatTimes":  1,
         "StatRandom":  10,
@@ -405,7 +405,7 @@
     {
         "Name":  "Chaos",
         "Targets":  "Single",
-        "Type":  "Confusion",
+        "Type":  "RemoveCondition",
         "StatTimes":  1,
         "DurationConst":  2,
         "DurationTimes":  1,
@@ -439,7 +439,7 @@
     {
         "Name":  "Defence Up",
         "Targets":  "Single",
-        "Type":  "StatIncrease",
+        "Type":  "AbilityModifier",
         "StatConst":  1,
         "StatTimes":  1,
         "DurationTimes":  1,
@@ -450,7 +450,7 @@
     {
         "Name":  "Agility Up",
         "Targets":  "Single",
-        "Type":  "StatIncrease",
+        "Type":  "AbilityModifier",
         "StatConst":  1,
         "StatTimes":  1,
         "DurationTimes":  1,
@@ -461,7 +461,7 @@
     {
         "Name":  "Attack Up",
         "Targets":  "Single",
-        "Type":  "StatIncrease",
+        "Type":  "AbilityModifier",
         "StatConst":  1,
         "StatTimes":  1,
         "DurationTimes":  1,
@@ -472,7 +472,7 @@
     {
         "Name":  "Play Song",
         "Targets":  "Group",
-        "Type":  "Buff",
+        "Type":  "AbilityModifier",
         "StatConst":  20,
         "StatTimes":  1,
         "StatRandom":  10,

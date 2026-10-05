@@ -260,7 +260,7 @@ namespace Redpoint.DungeonEscape.ViewModels
             return actions;
         }
 
-        public List<string> GetPartyItemActionLabels(bool canUse, ItemInstance item, bool canEquip, bool hasTransferTarget)
+        public List<string> GetPartyItemActionLabels(bool canUse, ItemInstance item, bool canEquip, bool canAttune, bool hasTransferTarget)
         {
             var choices = new List<string>();
             if (canUse)
@@ -271,6 +271,10 @@ namespace Redpoint.DungeonEscape.ViewModels
             if (item != null && item.IsEquipped)
             {
                 choices.Add("Unequip");
+            }
+            else if (canAttune)
+            {
+                choices.Add("Attune");
             }
             else if (canEquip)
             {

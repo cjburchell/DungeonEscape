@@ -160,6 +160,39 @@ namespace DungeonEscape.Core.Test.Rules
             Assert.False(DndItemRules.IsMagicItem(gold));
         }
 
+        [Fact]
+        public void HeroRequiresAttunementBeforeEquippingRestrictedMagicItem()
+        {
+            var hero = new Hero
+            {
+                Name = "Ari",
+                Class = Class.Paladin,
+                Level = 5,
+                Health = 10,
+                MaxHealth = 10,
+                IsActive = true
+            };
+
+            var item = new ItemInstance(new Item
+            {
+                Name = "Ring of Protection",
+                Type = ItemType.Armor,
+                Category = ItemCategory.Ring,
+                Rarity = Rarity.Rare,
+                IsMagicItem = true,
+                RequiresAttunement = true,
+                AttunementClasses = new List<Class> { Class.Paladin },
+                Slots = new List<Slot> { Slot.Ring }
+            });
+
+            Assert.False(hero.CanEquipItem(item));
+            Assert.True(hero.CanAttuneItem(item));
+
+            hero.AttuneItem(item);
+            Assert.True(item.IsAttuned);
+            Assert.True(hero.CanEquipItem(item));
+        }
+
         private static ItemDefinition CreateWeaponDefinition()
         {
             return new ItemDefinition

@@ -345,9 +345,41 @@ namespace Redpoint.DungeonEscape.State
                    (item.Classes == null || HasClass(item.Classes, Class));
         }
 
+        public bool CanAttuneItem(ItemInstance item)
+        {
+            if (item == null || item.Item == null || IsDead || !item.RequiresAttunement || item.IsAttuned)
+            {
+                return false;
+            }
+
+            if (item.Item.AttunementClasses != null &&
+                item.Item.AttunementClasses.Count > 0 &&
+                !item.Item.AttunementClasses.Contains(Class))
+            {
+                return false;
+            }
+
+            return item.Classes == null || HasClass(item.Classes, Class);
+        }
+
+        public bool AttuneItem(ItemInstance item)
+        {
+            if (!CanAttuneItem(item))
+            {
+                return false;
+            }
+
+            item.IsAttuned = true;
+            return true;
+        }
+
         public bool CanEquipItem(ItemInstance item)
         {
-            return !IsDead && item.IsEquippable && !item.IsEquipped && (item.Classes == null || HasClass(item.Classes, Class));
+            return !IsDead &&
+                   item.IsEquippable &&
+                   !item.IsEquipped &&
+                   (!item.RequiresAttunement || item.IsAttuned) &&
+                   (item.Classes == null || HasClass(item.Classes, Class));
         }
 
         private static bool HasClass(IEnumerable<string> classes, Class heroClass)

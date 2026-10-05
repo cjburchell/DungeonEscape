@@ -23,7 +23,11 @@ namespace Redpoint.DungeonEscape.State
         public string Id { get; set; }
         public string EquippedTo { get; set; }
         public bool IsEquipped { get; set; }
+        public bool IsAttuned { get; set; }
         public int Charges { get; set; }
+
+        [JsonIgnore]
+        public bool RequiresAttunement { get { return Item != null && Item.RequiresAttunement; } }
 
         [JsonIgnore]
         public Rarity Rarity { get { return Item.Rarity; } }

@@ -218,15 +218,15 @@ namespace DungeonEscape.Core.Test.ViewModels
 
             Assert.Equal(
                 new[] { "Use", "Equip", "Transfer", "Drop", "Cancel" },
-                viewModel.GetPartyItemActionLabels(true, item, true, true));
+                viewModel.GetPartyItemActionLabels(true, item, true, false, true));
 
             item.IsEquipped = true;
             Assert.Equal(
                 new[] { "Unequip", "Drop", "Cancel" },
-                viewModel.GetPartyItemActionLabels(false, item, false, false));
+                viewModel.GetPartyItemActionLabels(false, item, false, false, false));
 
             var quest = CreateItemInstance("Gem", ItemType.Quest, Slot.PrimaryHand);
-            Assert.Equal(new[] { "Cancel" }, viewModel.GetPartyItemActionLabels(false, quest, false, false));
+            Assert.Equal(new[] { "Cancel" }, viewModel.GetPartyItemActionLabels(false, quest, false, false, false));
         }
 
         [Fact]

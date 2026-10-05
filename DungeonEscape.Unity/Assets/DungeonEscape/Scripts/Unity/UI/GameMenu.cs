@@ -1458,6 +1458,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item));
             }
+            else if (hero.CanAttuneItem(item))
+            {
+                ApplyInventoryChange(() => gameState.AttuneHeroItem(hero, item));
+            }
             else
             {
                 ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item));
@@ -1595,6 +1599,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
             if (UiControls.Button("Unequip", buttonStyle))
                 {
                     ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item));
+                }
+            }
+            else if (hero.CanAttuneItem(item))
+            {
+            if (UiControls.Button("Attune", buttonStyle))
+                {
+                    ApplyInventoryChange(() => gameState.AttuneHeroItem(hero, item));
                 }
             }
             else if (hero.CanEquipItem(item))
@@ -2102,6 +2113,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 gameState != null && CanUseItemFromInventory(hero, item),
                 item,
                 hero.CanEquipItem(item),
+                hero.CanAttuneItem(item),
                 HasTransferTarget(hero));
             ShowMenuModal(item.Name, "Choose an action.", choices, selectedIndex =>
             {
@@ -2117,6 +2129,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
                         break;
                     case "Unequip":
                         ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item));
+                        break;
+                    case "Attune":
+                        ApplyInventoryChange(() => gameState.AttuneHeroItem(hero, item));
                         break;
                     case "Equip":
                         ApplyInventoryChange(() => gameState.EquipHeroItem(hero, item));
@@ -2219,6 +2234,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
             else if (item.IsEquipped)
             {
                 ApplyInventoryChange(() => gameState.UnequipHeroItem(hero, item));
+            }
+            else if (hero.CanAttuneItem(item))
+            {
+                ApplyInventoryChange(() => gameState.AttuneHeroItem(hero, item));
             }
             else if (hero.CanEquipItem(item))
             {

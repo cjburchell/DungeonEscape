@@ -1126,6 +1126,19 @@ namespace Redpoint.DungeonEscape.Unity.Core
             return true;
         }
 
+        public bool AttuneHeroItem(Hero hero, ItemInstance item)
+        {
+            EnsureInitialized();
+            if (hero == null || item == null || !Party.Members.Contains(hero) || !hero.CanAttuneItem(item))
+            {
+                return false;
+            }
+
+            item.IsAttuned = true;
+            MarkDirty();
+            return true;
+        }
+
         public bool TransferHeroItem(Hero source, Hero target, ItemInstance item)
         {
             EnsureInitialized();

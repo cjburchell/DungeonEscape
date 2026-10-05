@@ -9,5 +9,10 @@
         Chest,
         Legs,
         Feet,
+        Ring,
+        Neck,
+        Belt,
+        Cloak,
+        Wrist
     }
 }

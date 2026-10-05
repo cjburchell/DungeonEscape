@@ -40,6 +40,9 @@ namespace Redpoint.DungeonEscape.Data
         public string Size { get; set; }
         public string MonsterType { get; set; }
         public string Alignment { get; set; }
+        public bool Hostile { get; set; }
+        public bool CanBeReasonedWith { get; set; }
+        public bool NonAggressive { get; set; }
         public string Speed { get; set; }
         public string Senses { get; set; }
         public string Languages { get; set; }

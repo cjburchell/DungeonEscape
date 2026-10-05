@@ -821,6 +821,21 @@ active or waiting according to the current party-size limit.
 - Expected: map movement resumes after combat is closed.
 - If no combat opens after many steps, confirm Settings > Debug > `Monster encounters` is enabled.
 
+### [ ] Random Encounter Avoidance Choices
+
+- Trigger a random encounter with the party hidden from the monsters.
+- Expected: the encounter prompt offers `Sneak Away`; a successful Stealth check closes the encounter and awards partial XP without gold or item loot.
+- Trigger a random encounter with an intelligent monster that has a spoken language.
+- Expected: if the monster is explicitly marked `CanBeReasonedWith`, the prompt offers `Talk`; a successful Persuasion, Deception, or Intimidation check closes the encounter and awards full encounter XP without gold or item loot.
+- Trigger a random encounter with a monster explicitly marked `NonAggressive`, such as `Giant Eagle`.
+- Expected: the prompt offers `Leave Peacefully`; choosing it closes the encounter without XP, gold, or item loot.
+- Fail a `Sneak Away`, `Withdraw`, or `Talk` attempt.
+- Expected: the failure message appears, then choosing `Fight` opens the normal combat view with the same monsters.
+- Choose `Fight` from the initial encounter prompt.
+- Expected: combat opens normally with the biome/map encounter background and standard combat rewards if the monsters are defeated.
+- Open the monster in the Game Editor.
+- Expected: the Monster form exposes `Hostile encounter`, `Can be reasoned with`, and `Non-aggressive encounter` flags under D&D Identity.
+
 ### [x] Combat Shows Biome Background And Monsters
 
 - Start or load a quest and walk until a random encounter triggers.

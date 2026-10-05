@@ -355,7 +355,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return;
             }
 
-            CombatWindow.Open(monsters, biomeInfo.Type);
+            ShowRandomEncounterOptions(monsters, biomeInfo.Type);
         }
 
         public string ApplyCombatRewards(IEnumerable<MonsterInstance> monsters)
@@ -413,6 +413,171 @@ namespace Redpoint.DungeonEscape.Unity.Core
             MarkDirty();
             Sounds.PlaySoundEffect("victory");
             return message.ToString().TrimEnd();
+        }
+
+        public string ApplyEncounterAvoidanceRewards(IEnumerable<Monster> monsters, double xpMultiplier, string resolutionMessage)
+        {
+            EnsureInitialized();
+            var party = Party;
+            var aliveMembers = party == null || party.AliveMembers == null
+                ? new List<Hero>()
+                : party.AliveMembers.Where(member => member != null && !member.IsDead).ToList();
+            if (aliveMembers.Count == 0)
+            {
+                return resolutionMessage ?? "";
+            }
+
+            var xpTotal = EncounterAvoidanceRules.GetEncounterXp(monsters, xpMultiplier);
+            var xp = xpTotal <= 0 ? 0 : Math.Max(1, xpTotal / aliveMembers.Count);
+            var message = new StringBuilder();
+            if (!string.IsNullOrWhiteSpace(resolutionMessage))
+            {
+                message.AppendLine(resolutionMessage);
+            }
+
+            if (xp > 0)
+            {
+                message.AppendLine("Each party member has gained " + xp + " XP.");
+                foreach (var member in aliveMembers)
+                {
+                    member.Xp += (ulong)xp;
+                    AppendLevelUpMessages(message, member);
+                }
+
+                MarkDirty();
+                Sounds.PlaySoundEffect("victory");
+            }
+
+            return message.ToString().TrimEnd();
+        }
+
+        private void ShowRandomEncounterOptions(List<Monster> monsters, Biome biome)
+        {
+            var context = EncounterAvoidanceRules.CreateContext(
+                Party,
+                monsters,
+                die => Random.Next(1, Math.Max(1, die) + 1));
+            var labels = new List<string>();
+            var methods = new List<EncounterAvoidanceMethod?>();
+            labels.Add(context.PartyUnnoticed ? "Sneak Away" : "Withdraw");
+            methods.Add(EncounterAvoidanceMethod.SneakAway);
+            if (context.CanTalk)
+            {
+                labels.Add("Talk");
+                methods.Add(EncounterAvoidanceMethod.TalkDown);
+            }
+
+            if (context.NonAggressive)
+            {
+                labels.Add("Leave Peacefully");
+                methods.Add(EncounterAvoidanceMethod.LeavePeacefully);
+            }
+
+            labels.Add("Fight");
+            methods.Add(null);
+
+            var messageBox = GetOrCreateMessageBox();
+            messageBox.Show(
+                "Encounter",
+                GetEncounterAvoidancePrompt(monsters, context),
+                labels,
+                selectedIndex =>
+                {
+                    var method = selectedIndex >= 0 && selectedIndex < methods.Count ? methods[selectedIndex] : null;
+                    if (!method.HasValue)
+                    {
+                        CombatWindow.Open(monsters, biome);
+                        return;
+                    }
+
+                    ResolveRandomEncounterAvoidance(monsters, biome, context, method.Value);
+                });
+        }
+
+        private void ResolveRandomEncounterAvoidance(
+            List<Monster> monsters,
+            Biome biome,
+            EncounterAvoidanceContext context,
+            EncounterAvoidanceMethod method)
+        {
+            var result = EncounterAvoidanceRules.Resolve(
+                Party,
+                monsters,
+                context,
+                method,
+                die => Random.Next(1, Math.Max(1, die) + 1));
+            if (result.Success)
+            {
+                GetOrCreateMessageBox().Show(
+                    "Encounter",
+                    ApplyEncounterAvoidanceRewards(monsters, result.XpMultiplier, FormatAvoidanceResult(result)));
+                return;
+            }
+
+            GetOrCreateMessageBox().Show(
+                "Encounter",
+                FormatAvoidanceResult(result),
+                new[] { "Fight" },
+                _ => CombatWindow.Open(monsters, biome));
+        }
+
+        private static string GetEncounterAvoidancePrompt(IEnumerable<Monster> monsters, EncounterAvoidanceContext context)
+        {
+            var monsterName = GetEncounterMonsterName(monsters);
+            if (context != null && context.PartyUnnoticed)
+            {
+                return "The party spots " + monsterName + " before being noticed.";
+            }
+
+            if (context != null && context.NonAggressive)
+            {
+                return "The party encounters " + monsterName + ". They do not seem eager to attack.";
+            }
+
+            if (context != null && context.CanTalk)
+            {
+                return "The party encounters " + monsterName + ". They might be willing to listen.";
+            }
+
+            return "The party encounters " + monsterName + ".";
+        }
+
+        private static string FormatAvoidanceResult(EncounterAvoidanceResult result)
+        {
+            if (result == null)
+            {
+                return "";
+            }
+
+            var details = string.IsNullOrWhiteSpace(result.SkillName)
+                ? ""
+                : "\n" + result.SkillName + " check: " + result.RollTotal + " vs DC " + result.DifficultyClass + ".";
+            return (result.Message ?? "") + details;
+        }
+
+        private static string GetEncounterMonsterName(IEnumerable<Monster> monsters)
+        {
+            var monsterList = (monsters ?? new List<Monster>()).Where(monster => monster != null).ToList();
+            if (monsterList.Count == 0)
+            {
+                return "something nearby";
+            }
+
+            var distinctNames = monsterList.Select(monster => monster.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            if (distinctNames.Count == 1)
+            {
+                return monsterList.Count == 1 ? "a " + distinctNames[0] : monsterList.Count + " " + distinctNames[0] + "s";
+            }
+
+            return "several creatures";
+        }
+
+        private static MessageBox GetOrCreateMessageBox()
+        {
+            var messageBox = FindAnyObjectByType<MessageBox>();
+            return messageBox != null
+                ? messageBox
+                : new GameObject("MessageBox").AddComponent<MessageBox>();
         }
 
         public string StartQuest(string questId)

@@ -130,6 +130,102 @@ namespace DungeonEscape.Core.Test.Rules
             Assert.Equal(new[] { strong }, monsters);
         }
 
+        [Fact]
+        public void EncounterAvoidanceAllowsUnnoticedPartyToSneakAwayForPartialXp()
+        {
+            var party = CreateParty(new Hero
+            {
+                Dexterity = 16,
+                SkillProficiencies = new List<string> { "Stealth" }
+            });
+            var monster = CreateMonster("Guard", Biome.Cave, 2, Rarity.Common);
+            monster.Wisdom = 10;
+            monster.ProficiencyBonus = 2;
+            monster.Xp = 100;
+            var rolls = new Queue<int>(new[] { 16, 12 });
+
+            var context = EncounterAvoidanceRules.CreateContext(party, new[] { monster }, _ => rolls.Dequeue());
+            var result = EncounterAvoidanceRules.Resolve(
+                party,
+                new[] { monster },
+                context,
+                EncounterAvoidanceMethod.SneakAway,
+                _ => rolls.Dequeue());
+
+            Assert.True(context.PartyUnnoticed);
+            Assert.True(result.Success);
+            Assert.Equal(50, EncounterAvoidanceRules.GetEncounterXp(new[] { monster }, result.XpMultiplier));
+        }
+
+        [Fact]
+        public void EncounterAvoidanceAllowsTalkingDownIntelligentMonstersForFullXp()
+        {
+            var party = CreateParty(new Hero
+            {
+                Charisma = 16,
+                SkillProficiencies = new List<string> { "Persuasion" }
+            });
+            var monster = CreateMonster("Goblin", Biome.Cave, 2, Rarity.Common);
+            monster.Intelligence = 10;
+            monster.Wisdom = 8;
+            monster.Languages = "Common, Goblin";
+            monster.Alignment = "neutral";
+            monster.CanBeReasonedWith = true;
+            monster.Xp = 100;
+            var context = EncounterAvoidanceRules.CreateContext(party, new[] { monster }, _ => 1);
+
+            var result = EncounterAvoidanceRules.Resolve(
+                party,
+                new[] { monster },
+                context,
+                EncounterAvoidanceMethod.TalkDown,
+                _ => 18);
+
+            Assert.True(context.CanTalk);
+            Assert.True(result.Success);
+            Assert.Equal(100, EncounterAvoidanceRules.GetEncounterXp(new[] { monster }, result.XpMultiplier));
+        }
+
+        [Fact]
+        public void EncounterAvoidanceRequiresExplicitReasonableMonsterFlag()
+        {
+            var party = CreateParty(new Hero
+            {
+                Charisma = 16,
+                SkillProficiencies = new List<string> { "Persuasion" }
+            });
+            var monster = CreateMonster("Silent Guard", Biome.Cave, 2, Rarity.Common);
+            monster.Intelligence = 12;
+            monster.Languages = "Common";
+
+            var context = EncounterAvoidanceRules.CreateContext(party, new[] { monster }, _ => 20);
+
+            Assert.False(context.CanTalk);
+        }
+
+        [Fact]
+        public void EncounterAvoidanceLeavesNonAggressiveCreaturesWithoutXp()
+        {
+            var party = CreateParty(new Hero());
+            var monster = CreateMonster("Deer", Biome.Forest, 1, Rarity.Common);
+            monster.MonsterType = "beast";
+            monster.Alignment = "unaligned";
+            monster.NonAggressive = true;
+            monster.Xp = 25;
+            var context = EncounterAvoidanceRules.CreateContext(party, new[] { monster }, _ => 1);
+
+            var result = EncounterAvoidanceRules.Resolve(
+                party,
+                new[] { monster },
+                context,
+                EncounterAvoidanceMethod.LeavePeacefully,
+                _ => 1);
+
+            Assert.True(context.NonAggressive);
+            Assert.True(result.Success);
+            Assert.Equal(0, EncounterAvoidanceRules.GetEncounterXp(new[] { monster }, result.XpMultiplier));
+        }
+
         private static RandomMonster CreateRandomMonster(string name, Biome biome, int minLevel, Rarity rarity, int groupSize = 1)
         {
             return new RandomMonster
@@ -152,6 +248,20 @@ namespace DungeonEscape.Core.Test.Rules
                 Biomes = new List<Biome> { biome },
                 HitPoints = 1
             };
+        }
+
+        private static Party CreateParty(params Hero[] heroes)
+        {
+            var party = new Party();
+            foreach (var hero in heroes)
+            {
+                hero.IsActive = true;
+                hero.Health = hero.Health <= 0 ? 10 : hero.Health;
+                hero.MaxHealth = hero.MaxHealth <= 0 ? 10 : hero.MaxHealth;
+                party.Members.Add(hero);
+            }
+
+            return party;
         }
     }
 }

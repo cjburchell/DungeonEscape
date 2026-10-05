@@ -92,6 +92,18 @@ else
                 <label>Alignment</label>
                 <input value="@Monster.Alignment" @onchange="e => Set(() => Monster.Alignment = e.Value?.ToString())" />
             </div>
+            <label class="checkbox-field">
+                <input type="checkbox" checked="@Monster.Hostile" @onchange="e => Set(() => Monster.Hostile = e.Value is bool value && value)" />
+                Hostile encounter
+            </label>
+            <label class="checkbox-field">
+                <input type="checkbox" checked="@Monster.CanBeReasonedWith" @onchange="e => Set(() => Monster.CanBeReasonedWith = e.Value is bool value && value)" />
+                Can be reasoned with
+            </label>
+            <label class="checkbox-field">
+                <input type="checkbox" checked="@Monster.NonAggressive" @onchange="e => Set(() => Monster.NonAggressive = e.Value is bool value && value)" />
+                Non-aggressive encounter
+            </label>
             <div class="field">
                 <label>Speed</label>
                 <input value="@Monster.Speed" @onchange="e => Set(() => Monster.Speed = e.Value?.ToString())" />

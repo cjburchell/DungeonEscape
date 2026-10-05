@@ -1248,7 +1248,18 @@ namespace Redpoint.DungeonEscape.Unity.Core
                    !caster.IsDead &&
                     spell.IsNonEncounterSpell &&
                     caster.HasAvailableSpellSlot(spell.SpellLevel) &&
-                    caster.GetSpells(GameDataCache.Current.Spells).Contains(spell);
+                    caster.GetSpells(GameDataCache.Current.Spells).Contains(spell) &&
+                    (!spell.RequiresConcentration || spell.CanBeCastBy(caster));
+        }
+
+        public bool RollHeroSavingThrow(Hero hero, DndStatRules.AbilityScore ability, bool proficient, int dc, bool advantage = false)
+        {
+            return hero != null && DndStatRules.RollSavingThrow(hero, ability, proficient, dc, null, advantage);
+        }
+
+        public bool RollHeroSkillCheck(Hero hero, string skillName, bool proficient, int dc, bool advantage = false)
+        {
+            return hero != null && DndStatRules.RollSkillCheck(hero, skillName, proficient, dc, null, advantage);
         }
 
         public bool PrepareHeroSpell(Hero caster, Spell spell)

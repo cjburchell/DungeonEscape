@@ -79,6 +79,26 @@ namespace DungeonEscape.Core.Test.Rules
         }
 
         [Fact]
+        public void SavingThrowAndSkillCheckResolutionUseDndFormulaAndDifficultyClass()
+        {
+            var hero = new Hero
+            {
+                Class = Class.Rogue,
+                Level = 5,
+                Dexterity = 16,
+                Wisdom = 12,
+                Intelligence = 14,
+                Charisma = 10,
+                Strength = 12
+            };
+
+            Assert.True(DndStatRules.RollSavingThrow(hero, DndStatRules.AbilityScore.Dexterity, true, 10, _ => 9));
+            Assert.False(DndStatRules.RollSavingThrow(hero, DndStatRules.AbilityScore.Wisdom, false, 15, _ => 4));
+            Assert.True(DndStatRules.RollSkillCheck(hero, "Acrobatics", true, 13, _ => 8));
+            Assert.False(DndStatRules.RollSkillCheck(hero, "Perception", false, 12, _ => 3));
+        }
+
+        [Fact]
         public void ConcentrationTracksTheActiveSpellAndStopsWhenConditionsBreakIt()
         {
             var hero = new Hero
@@ -102,6 +122,40 @@ namespace DungeonEscape.Core.Test.Rules
 
             DndStatRules.EndConcentration(hero);
             Assert.False(DndStatRules.IsConcentrating(hero));
+        }
+
+        [Fact]
+        public void ConcentrationSpellsCannotBeCastWhenTheCasterCannotConcentrate()
+        {
+            var hero = new Hero
+            {
+                Name = "Ada",
+                Level = 4,
+                Strength = 14,
+                Dexterity = 16,
+                Constitution = 14,
+                Health = 12,
+                MaxHealth = 12,
+                IsActive = true
+            };
+
+            var concentrationSpell = new Spell
+            {
+                Name = "Slow",
+                DndSpell = "Slow",
+                SpellLevel = 3,
+                School = "Transmutation"
+            };
+
+            Assert.True(concentrationSpell.RequiresConcentration);
+            Assert.True(DndStatRules.CanConcentrate(hero));
+
+            DndStatRules.StartConcentration(hero, "Faerie Fire");
+            Assert.True(concentrationSpell.CanBeCastBy(hero));
+
+            DndStatRules.EndConcentration(hero);
+            hero.AddEffect(new StatusEffect { Type = EffectType.Stunned, Name = "Stunned" });
+            Assert.False(concentrationSpell.CanBeCastBy(hero));
         }
 
         [Fact]

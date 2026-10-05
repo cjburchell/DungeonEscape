@@ -1,3 +1,4 @@
+using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,57 @@ namespace Redpoint.DungeonEscape.Data
 
         [JsonIgnore]
         public bool IsAttackSpell { get { return Skill != null && Skill.IsAttackSkill; } }
+
+        [JsonIgnore]
+        public bool RequiresConcentration
+        {
+            get
+            {
+                var spellName = string.IsNullOrWhiteSpace(DndSpell) ? Name : DndSpell;
+                if (string.IsNullOrWhiteSpace(spellName))
+                {
+                    return false;
+                }
+
+                return new[]
+                {
+                    "Bane",
+                    "Bestow Curse",
+                    "Blur",
+                    "Cloud of Daggers",
+                    "Confusion",
+                    "Conjure Barrage",
+                    "Conjure Minor Elementals",
+                    "Conjure Volley",
+                    "Darkness",
+                    "Faerie Fire",
+                    "Flaming Sphere",
+                    "Gaseous Form",
+                    "Haste",
+                    "Hold Person",
+                    "Hypnotic Pattern",
+                    "Invisibility",
+                    "Keen",
+                    "Lesser Restoration",
+                    "Magic Mouth",
+                    "Moonbeam",
+                    "Protection from Energy",
+                    "Sleet Storm",
+                    "Slow",
+                    "Silence",
+                    "Spike Growth",
+                    "Stinking Cloud",
+                    "Wall of Fire",
+                    "Web",
+                    "Wind Wall"
+                }.Any(candidate => string.Equals(candidate, spellName, StringComparison.OrdinalIgnoreCase));
+            }
+        }
+
+        public bool CanBeCastBy(IFighter caster)
+        {
+            return !RequiresConcentration || DndStatRules.CanConcentrate(caster);
+        }
 
         [JsonIgnore]
         private Skill Skill { get; set; }
@@ -59,6 +111,16 @@ namespace Redpoint.DungeonEscape.Data
             if (heroCaster != null && !heroCaster.HasAvailableSpellSlot(SpellLevel))
             {
                 return caster.Name + ": I do not have a spell slot for " + Name + ".";
+            }
+
+            if (RequiresConcentration && !CanBeCastBy(caster))
+            {
+                return caster == null ? "The spell cannot be cast while the caster cannot concentrate." : caster.Name + " cannot concentrate on " + Name + " right now.";
+            }
+
+            if (heroCaster != null && RequiresConcentration)
+            {
+                DndStatRules.StartConcentration(heroCaster, Name);
             }
 
             if (heroCaster != null)

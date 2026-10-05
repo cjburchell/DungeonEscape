@@ -47,6 +47,35 @@ namespace Redpoint.DungeonEscape.Rules
             return proficient ? modifier + GetEffectiveProficiencyBonus(fighter) : modifier;
         }
 
+        public static int RollAbilityCheck(Func<int, int> rollDie, int modifier, bool advantage = false)
+        {
+            var firstRoll = rollDie == null ? Dice.RollDie(20) : rollDie(20);
+            var secondRoll = advantage ? (rollDie == null ? Dice.RollDie(20) : rollDie(20)) : firstRoll;
+            return Math.Max(firstRoll, secondRoll) + modifier;
+        }
+
+        public static bool RollSavingThrow(IFighter fighter, AbilityScore abilityScore, bool proficient, int dc, Func<int, int> rollDie = null, bool advantage = false)
+        {
+            if (fighter == null)
+            {
+                return false;
+            }
+
+            var total = RollAbilityCheck(rollDie, GetSavingThrowModifier(fighter, abilityScore, proficient), advantage);
+            return total >= dc;
+        }
+
+        public static bool RollSkillCheck(IFighter fighter, string skillName, bool proficient, int dc, Func<int, int> rollDie = null, bool advantage = false)
+        {
+            if (fighter == null || string.IsNullOrWhiteSpace(skillName))
+            {
+                return false;
+            }
+
+            var total = RollAbilityCheck(rollDie, GetSkillCheckModifier(fighter, skillName, proficient), advantage);
+            return total >= dc;
+        }
+
         public static void StartConcentration(IFighter fighter, string spellName)
         {
             if (fighter == null)

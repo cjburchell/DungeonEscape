@@ -1403,7 +1403,7 @@
     {
         "ImageId":  25,
         "MinLevel":  1,
-        "GroupSize":  5,
+        "GroupSize":  3,
         "Xp":  25,
         "Gold":  9,
         "Name":  "Poisonous Snake",
@@ -1456,7 +1456,7 @@
     {
         "ImageId":  26,
         "MinLevel":  10,
-        "GroupSize":  5,
+        "GroupSize":  3,
         "Xp":  50,
         "Gold":  58,
         "Name":  "Giant Cobra",
@@ -1626,7 +1626,7 @@
     {
         "ImageId":  29,
         "MinLevel":  1,
-        "GroupSize":  5,
+        "GroupSize":  3,
         "Xp":  25,
         "Gold":  15,
         "Name":  "Twig Blight",
@@ -1739,7 +1739,7 @@
     {
         "ImageId":  31,
         "MinLevel":  15,
-        "GroupSize":  5,
+        "GroupSize":  2,
         "Xp":  1800,
         "Gold":  150,
         "Name":  "Troll",
@@ -1795,7 +1795,7 @@
     {
         "ImageId":  32,
         "MinLevel":  20,
-        "GroupSize":  3,
+        "GroupSize":  1,
         "Xp":  2300,
         "Gold":  74,
         "Name":  "Wyvern Matriarch",
@@ -2243,7 +2243,7 @@
     {
         "ImageId":  39,
         "MinLevel":  15,
-        "GroupSize":  5,
+        "GroupSize":  2,
         "Xp":  1800,
         "Gold":  22,
         "Name":  "Dire Troll",
@@ -2299,7 +2299,7 @@
     {
         "ImageId":  40,
         "MinLevel":  1,
-        "GroupSize":  10,
+        "GroupSize":  4,
         "Xp":  25,
         "Gold":  5,
         "Name":  "Giant Rat",
@@ -2359,7 +2359,7 @@
     {
         "ImageId":  41,
         "MinLevel":  1,
-        "GroupSize":  6,
+        "GroupSize":  3,
         "Xp":  25,
         "Gold":  2,
         "Name":  "Animated Walking Stick",
@@ -2415,7 +2415,7 @@
     {
         "ImageId":  42,
         "MinLevel":  5,
-        "GroupSize":  5,
+        "GroupSize":  2,
         "Xp":  200,
         "Gold":  17,
         "Name":  "Dire Wolf",
@@ -2756,7 +2756,7 @@
     {
         "ImageId":  48,
         "MinLevel":  1,
-        "GroupSize":  10,
+        "GroupSize":  4,
         "Xp":  25,
         "Gold":  12,
         "Name":  "Giant Crab",
@@ -2812,7 +2812,7 @@
     {
         "ImageId":  49,
         "MinLevel":  1,
-        "GroupSize":  10,
+        "GroupSize":  4,
         "Xp":  100,
         "Gold":  28,
         "Name":  "Shelled Ooze",
@@ -2876,7 +2876,7 @@
     {
         "ImageId":  50,
         "MinLevel":  5,
-        "GroupSize":  10,
+        "GroupSize":  4,
         "Xp":  100,
         "Gold":  45,
         "Name":  "Sea Ooze",

@@ -73,9 +73,9 @@ namespace Redpoint.DungeonEscape.Rules
             }
 
             var weightedMonsters = new List<Monster>();
-            foreach (var randomMonster in FilterRandomMonsters(randomMonsters, biomeInfo))
+            foreach (var randomMonster in FilterRandomMonsters(randomMonsters, biomeInfo, partyLevel))
             {
-                var probability = GetMonsterProbability(randomMonster.Rarity, rollD20);
+                var probability = GetMonsterProbabilityForEncounter(randomMonster, partyLevel, rollD20);
                 for (var i = 0; i < probability; i++)
                 {
                     weightedMonsters.Add(randomMonster.Data);
@@ -123,7 +123,7 @@ namespace Redpoint.DungeonEscape.Rules
             return monsters;
         }
 
-        public static IEnumerable<RandomMonster> FilterRandomMonsters(IEnumerable<RandomMonster> randomMonsters, BiomeInfo biomeInfo)
+        public static IEnumerable<RandomMonster> FilterRandomMonsters(IEnumerable<RandomMonster> randomMonsters, BiomeInfo biomeInfo, int partyLevel = 0)
         {
             if (biomeInfo == null)
             {
@@ -135,7 +135,8 @@ namespace Redpoint.DungeonEscape.Rules
                 monster.Data != null &&
                 monster.InBiome(biomeInfo.Type) &&
                 (biomeInfo.MaxMonsterLevel == 0 || monster.Data.MinLevel < biomeInfo.MaxMonsterLevel) &&
-                monster.Data.MinLevel >= biomeInfo.MinMonsterLevel);
+                monster.Data.MinLevel >= biomeInfo.MinMonsterLevel &&
+                IsLevelAppropriateForParty(monster.Data, partyLevel));
         }
 
         public static int GetMonsterProbability(Rarity rarity, Func<int> rollD20)
@@ -157,6 +158,47 @@ namespace Redpoint.DungeonEscape.Rules
             }
         }
 
+        public static int GetMonsterProbabilityForEncounter(RandomMonster randomMonster, int partyLevel, Func<int> rollD20)
+        {
+            if (randomMonster == null || randomMonster.Data == null)
+            {
+                return 0;
+            }
+
+            var probability = GetMonsterProbability(randomMonster.Rarity, rollD20);
+            if (partyLevel <= 0)
+            {
+                return probability;
+            }
+
+            var levelDelta = randomMonster.Data.MinLevel - partyLevel;
+            if (levelDelta > 3)
+            {
+                return 0;
+            }
+
+            if (levelDelta >= 2)
+            {
+                probability /= 4;
+            }
+            else if (levelDelta == 1)
+            {
+                probability /= 2;
+            }
+
+            if (partyLevel <= 3 && randomMonster.Rarity >= Rarity.Uncommon)
+            {
+                probability /= 3;
+            }
+
+            if (partyLevel <= 5 && randomMonster.Data.GroupSize >= 6)
+            {
+                probability /= 2;
+            }
+
+            return Math.Max(0, probability);
+        }
+
         public static void ApplyDisengage(ICollection<Monster> monsters, bool disengageActive, int maxPartyHealth, Func<Monster, int> rollMonsterHealth)
         {
             if (!disengageActive || monsters == null)
@@ -174,6 +216,32 @@ namespace Redpoint.DungeonEscape.Rules
             }
         }
 
+
+        private static bool IsLevelAppropriateForParty(Monster monster, int partyLevel)
+        {
+            if (monster == null || partyLevel <= 0)
+            {
+                return true;
+            }
+
+            var levelDelta = monster.MinLevel - partyLevel;
+            if (levelDelta > 3)
+            {
+                return false;
+            }
+
+            if (partyLevel <= 3 && levelDelta >= 1)
+            {
+                return false;
+            }
+
+            if (partyLevel <= 5 && monster.GroupSize >= 6)
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         private static void AddMonsterGroup(ICollection<Monster> monsters, Monster monster, int count)
         {

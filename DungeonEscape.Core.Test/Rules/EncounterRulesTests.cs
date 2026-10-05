@@ -69,6 +69,52 @@ namespace DungeonEscape.Core.Test.Rules
         }
 
         [Fact]
+        public void BuildRandomEncounterRejectsHighLevelThreatForLowLevelParty()
+        {
+            var randoms = new[]
+            {
+                CreateRandomMonster("Boss", Biome.Cave, 15, Rarity.Common, 5),
+                CreateRandomMonster("Weakling", Biome.Cave, 1, Rarity.Common, 2)
+            };
+
+            var monsters = EncounterRules.BuildRandomEncounter(
+                randoms,
+                new BiomeInfo { Type = Biome.Cave },
+                2,
+                2,
+                false,
+                0,
+                max => 0,
+                () => 20,
+                monster => 999);
+
+            Assert.DoesNotContain(monsters, monster => monster.Name == "Boss");
+            Assert.Contains(monsters, monster => monster.Name == "Weakling");
+        }
+
+        [Fact]
+        public void BuildRandomEncounterReducesPackHeavySpawnsForEarlyParties()
+        {
+            var randoms = new[]
+            {
+                CreateRandomMonster("Pack", Biome.Cave, 2, Rarity.Uncommon, 6)
+            };
+
+            var monsters = EncounterRules.BuildRandomEncounter(
+                randoms,
+                new BiomeInfo { Type = Biome.Cave },
+                2,
+                2,
+                false,
+                0,
+                max => 0,
+                () => 20,
+                monster => 999);
+
+            Assert.True(monsters.Count <= 4);
+        }
+
+        [Fact]
         public void ApplyDisengageRemovesMonstersBelowPartyMaxHealth()
         {
             var weak = CreateMonster("Weak", Biome.Cave, 1, Rarity.Common);

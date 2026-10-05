@@ -1262,6 +1262,61 @@ namespace Redpoint.DungeonEscape.Unity.Core
             return hero != null && DndStatRules.RollSkillCheck(hero, skillName, proficient, dc, null, advantage);
         }
 
+        private bool TryResolveLockedObjectCheck(Hero actor, TiledObjectInfo mapObject)
+        {
+            if (actor == null || mapObject == null || !IsLockedMapObject(mapObject))
+            {
+                return true;
+            }
+
+            var skillName = GetObjectSkillName(mapObject, "Acrobatics");
+            var dc = GetObjectDifficultyClass(mapObject,
+                IsDoorObject(mapObject)
+                    ? Math.Max(10, 10 + GetIntProperty(mapObject, "DoorLevel", GetMapPickupLevel(mapObject)))
+                    : Math.Max(10, 10 + GetMapPickupLevel(mapObject)));
+
+            return RollHeroSkillCheck(actor, skillName, false, dc);
+        }
+
+        private static string GetObjectSkillName(TiledObjectInfo mapObject, string defaultSkill)
+        {
+            if (mapObject == null || mapObject.Properties == null)
+            {
+                return defaultSkill;
+            }
+
+            foreach (var propertyName in new[] { "OpenSkill", "ObjectSkill", "SkillCheck", "CheckSkill" })
+            {
+                string value;
+                if (mapObject.Properties.TryGetValue(propertyName, out value) && !string.IsNullOrWhiteSpace(value))
+                {
+                    return value;
+                }
+            }
+
+            return defaultSkill;
+        }
+
+        private static int GetObjectDifficultyClass(TiledObjectInfo mapObject, int defaultDc)
+        {
+            if (mapObject == null || mapObject.Properties == null)
+            {
+                return defaultDc;
+            }
+
+            foreach (var propertyName in new[] { "OpenDC", "ObjectDC", "SkillDC", "CheckDC", "DifficultyClass" })
+            {
+                string value;
+                int result;
+                if (mapObject.Properties.TryGetValue(propertyName, out value) && int.TryParse(value, out result))
+                {
+                    return Math.Max(1, result);
+                }
+            }
+
+            return defaultDc;
+        }
+
         public bool PrepareHeroSpell(Hero caster, Spell spell)
         {
             EnsureInitialized();
@@ -1923,8 +1978,13 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             if (item.Item.IsKey || item.Item.Skill != null && item.Item.Skill.Type == SkillType.Open)
             {
-                var wasOpen = IsObjectOpen(Party.CurrentMapId, mapObject.Id);
                 var wasLocked = IsLockedMapObject(mapObject);
+                if (wasLocked && !CanOpenWithKey(mapObject) && !TryResolveLockedObjectCheck(source, mapObject))
+                {
+                    return source.Name + " fails to open the " + (IsDoorObject(mapObject) ? "door" : "chest") + ".";
+                }
+
+                var wasOpen = IsObjectOpen(Party.CurrentMapId, mapObject.Id);
                 var result = OpenMapObject(mapObject);
                 if (wasLocked && !wasOpen && IsObjectOpen(Party.CurrentMapId, mapObject.Id))
                 {
@@ -1962,6 +2022,11 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             if (spell.Type == SkillType.Open)
             {
+                if (IsLockedMapObject(mapObject) && !CanOpenWithKey(mapObject) && !TryResolveLockedObjectCheck(caster, mapObject))
+                {
+                    return caster.Name + " fails to open the " + (IsDoorObject(mapObject) ? "door" : "chest") + ".";
+                }
+
                 if (!SpendSpellSlot(caster, spell))
                 {
                     return caster.Name + ": I do not have a spell slot for " + spell.Name + ".";

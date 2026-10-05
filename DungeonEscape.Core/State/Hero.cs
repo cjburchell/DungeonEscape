@@ -224,18 +224,9 @@ namespace Redpoint.DungeonEscape.State
 
             Items = new List<ItemInstance>();
 
-            var armor = game.CreateRandomEquipment(Level, Math.Max(Level - 5, 1), Rarity.Common, ItemType.Armor, Class, Slot.Chest);
-            if (armor != null)
+            foreach (var startingItem in DndCharacterRules.GetStartingEquipment(Class))
             {
-                var item = new ItemInstance(armor);
-                Items.Add(item);
-                Equip(item);
-            }
-
-            var weapon = game.CreateRandomEquipment(Level, Math.Max(Level - 5, 1), Rarity.Common, ItemType.Weapon, Class);
-            if (weapon != null)
-            {
-                var item = new ItemInstance(weapon);
+                var item = new ItemInstance(startingItem);
                 Items.Add(item);
                 Equip(item);
             }

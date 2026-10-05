@@ -1,0 +1,144 @@
+[
+  {
+    "ImageId": 923,
+    "Name": "Potion of Healing",
+    "Type": "OneUse",
+    "Skill": "Heal",
+    "Rarity": "Uncommon",
+    "Cost": 50,
+    "MinLevel": 1,
+    "IsMagicItem": true
+  },
+  {
+    "ImageId": 917,
+    "Name": "Potion of Greater Healing",
+    "Type": "OneUse",
+    "Skill": "Heal All",
+    "Rarity": "Rare",
+    "Cost": 250,
+    "MinLevel": 5,
+    "IsMagicItem": true
+  },
+  {
+    "ImageId": 916,
+    "Name": "Potion of Heroism",
+    "Type": "OneUse",
+    "Skill": "Heal All",
+    "Rarity": "Rare",
+    "Cost": 250,
+    "MinLevel": 3,
+    "IsMagicItem": true
+  },
+  {
+    "ImageId": 785,
+    "Name": "Rod of Healing",
+    "Type": "RepeatableUse",
+    "Skill": "Heal",
+    "Rarity": "Rare",
+    "Cost": 44000,
+    "MinLevel": 15,
+    "Charges": 10,
+    "IsMagicItem": true
+  },
+  {
+    "ImageId": 719,
+    "Name": "Ring of Protection",
+    "Type": "Armor",
+    "Slots": ["Ring"],
+    "Classes": ["Paladin","Fighter","Cleric","Wizard","Warlock","Monk","Bard","Rogue","Sorcerer"],
+    "Rarity": "Rare",
+    "Cost": 1500,
+    "MinLevel": 5,
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": ["Paladin","Fighter","Cleric","Wizard","Warlock","Monk","Bard","Rogue","Sorcerer"],
+    "Stats": [
+      { "Type": "Defence", "Value": 1 },
+      { "Type": "MagicDefence", "Value": 1 }
+    ]
+  },
+  {
+    "ImageId": 223,
+    "Name": "Amulet of Health",
+    "Type": "Armor",
+    "Slots": ["Neck"],
+    "Classes": ["Paladin","Fighter","Cleric","Wizard","Warlock","Monk","Bard","Rogue","Sorcerer"],
+    "Rarity": "Rare",
+    "Cost": 1800,
+    "MinLevel": 8,
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": ["Paladin","Fighter","Cleric","Wizard","Warlock","Monk","Bard","Rogue","Sorcerer"],
+    "Stats": [
+      { "Type": "HP", "Value": 5 }
+    ]
+  },
+  {
+    "ImageId": 110,
+    "Name": "Longsword +1",
+    "Type": "Weapon",
+    "Slots": ["PrimaryHand"],
+    "Classes": ["Paladin","Fighter","Bard","Rogue"],
+    "Rarity": "Uncommon",
+    "Cost": 2000,
+    "MinLevel": 3,
+    "IsMagicItem": true,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 2,
+    "Stats": [
+      { "Type": "Attack", "Value": 1 }
+    ]
+  },
+  {
+    "ImageId": 145,
+    "Name": "Flame Tongue",
+    "Type": "Weapon",
+    "Slots": ["PrimaryHand"],
+    "Classes": ["Paladin","Fighter","Bard","Rogue"],
+    "Rarity": "Rare",
+    "Cost": 5000,
+    "MinLevel": 5,
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": ["Paladin","Fighter","Bard","Rogue"],
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 2,
+    "Stats": [
+      { "Type": "Attack", "Value": 1 }
+    ]
+  },
+  {
+    "ImageId": 170,
+    "Name": "Shield +1",
+    "Type": "Armor",
+    "Slots": ["OffHand"],
+    "Classes": ["Paladin","Fighter","Cleric"],
+    "Rarity": "Uncommon",
+    "Cost": 2000,
+    "MinLevel": 3,
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": ["Paladin","Fighter","Cleric"],
+    "Stats": [
+      { "Type": "Defence", "Value": 1 }
+    ]
+  },
+  {
+    "ImageId": 284,
+    "Name": "Chain Mail +1",
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "Classes": ["Paladin","Fighter","Cleric"],
+    "Rarity": "Rare",
+    "Cost": 4000,
+    "MinLevel": 5,
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": ["Paladin","Fighter","Cleric"],
+    "Stats": [
+      { "Type": "Defence", "Value": 1 }
+    ]
+  }
+]

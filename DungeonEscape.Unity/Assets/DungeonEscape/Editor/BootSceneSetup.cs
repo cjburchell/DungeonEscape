@@ -33,6 +33,11 @@ namespace Redpoint.DungeonEscape.UnityEditor
 
             AssignTextAsset(bootstrap, "itemDefinitionsJson", "Assets/DungeonEscape/Data/itemdef.json");
             AssignTextAsset(bootstrap, "customItemsJson", "Assets/DungeonEscape/Data/customitems.json");
+            AssignTextAsset(bootstrap, "questItemsJson", "Assets/DungeonEscape/Data/questitems.json");
+            AssignTextAsset(bootstrap, "magicItemsJson", "Assets/DungeonEscape/Data/magicitems.json");
+            AssignTextAsset(bootstrap, "nonMagicItemsJson", "Assets/DungeonEscape/Data/nonmagicitems.json");
+            AssignTextAsset(bootstrap, "weaponItemsJson", "Assets/DungeonEscape/Data/weaponitems.json");
+            AssignTextAsset(bootstrap, "armorItemsJson", "Assets/DungeonEscape/Data/armoritems.json");
             AssignTextAsset(bootstrap, "skillsJson", "Assets/DungeonEscape/Data/skills.json");
             AssignTextAsset(bootstrap, "spellsJson", "Assets/DungeonEscape/Data/spells.json");
             AssignTextAsset(bootstrap, "monstersJson", "Assets/DungeonEscape/Data/allmonsters.json");

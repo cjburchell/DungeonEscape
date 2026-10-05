@@ -14,11 +14,16 @@ namespace Redpoint.DungeonEscape.Unity.Tests.EditMode
         [TestCase("default_settings.json")]
         [TestCase("dialog.json")]
         [TestCase("itemdef.json")]
+        [TestCase("magicitems.json")]
         [TestCase("names.json")]
+        [TestCase("nonmagicitems.json")]
         [TestCase("quests.json")]
+        [TestCase("questitems.json")]
         [TestCase("skills.json")]
         [TestCase("spells.json")]
         [TestCase("statnames.json")]
+        [TestCase("weaponitems.json")]
+        [TestCase("armoritems.json")]
         public void RequiredDataFileExists(string fileName)
         {
             var path = Path.Combine(Application.dataPath, "DungeonEscape", "Data", fileName);

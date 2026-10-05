@@ -2778,8 +2778,10 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private void AddStartingEquipment(Hero hero)
         {
-            EquipStartingItem(hero, CreateRandomEquipment(hero.Level, Math.Max(hero.Level - 5, 1), Rarity.Common, ItemType.Armor, hero.Class, Slot.Chest));
-            EquipStartingItem(hero, CreateRandomEquipment(hero.Level, Math.Max(hero.Level - 5, 1), Rarity.Common, ItemType.Weapon, hero.Class));
+            foreach (var item in DndCharacterRules.GetStartingEquipment(hero.Class))
+            {
+                EquipStartingItem(hero, item);
+            }
         }
 
         private static void EquipStartingItem(Hero hero, Item item)

@@ -20,9 +20,7 @@ namespace Redpoint.DungeonEscape.Rules
             Func<int, int, int, int> roll,
             Func<string> newId)
         {
-            return Chance(0.25d, nextDouble)
-                ? CreateRandomItem(level, 1, rarity, customItems, itemDefinitions, statNames, skills, nextDouble, nextInt, newId)
-                : CreateGold(roll == null ? 0 : roll(5, Math.Max(1, level) * 3, 1));
+            return CreateGold(roll == null ? 0 : roll(5, Math.Max(1, level) * 3, 1));
         }
 
         public static Item CreateRandomItem(
@@ -40,22 +38,31 @@ namespace Redpoint.DungeonEscape.Rules
             maxLevel = Math.Max(maxLevel, 1);
             minLevel = Math.Max(minLevel, 1);
 
-            if (Chance(0.50d, nextDouble))
-            {
-                var staticItems = (customItems ?? new List<Item>())
-                    .Where(item => item != null &&
-                                   (item.Type == ItemType.OneUse || item.Type == ItemType.RepeatableUse) &&
-                                   !item.IsKey &&
-                                   item.MinLevel < maxLevel)
-                    .ToList();
+            var staticMagicItems = (customItems ?? new List<Item>())
+                .Where(item => item != null &&
+                               item.IsMagicItem &&
+                               !item.IsKey &&
+                               item.MinLevel <= maxLevel)
+                .ToList();
 
-                if (staticItems.Count > 0)
-                {
-                    return staticItems[Next(nextInt, staticItems.Count)];
-                }
+            if (staticMagicItems.Count > 0 && (nextDouble == null || Chance(0.75d, nextDouble)))
+            {
+                return staticMagicItems[Next(nextInt, staticMagicItems.Count)];
             }
 
-            return CreateRandomEquipment(maxLevel, minLevel, rarity, null, null, null, itemDefinitions, statNames, skills, nextInt, newId);
+            var staticConsumables = (customItems ?? new List<Item>())
+                .Where(item => item != null &&
+                               (item.Type == ItemType.OneUse || item.Type == ItemType.RepeatableUse) &&
+                               !item.IsKey &&
+                               item.MinLevel <= maxLevel)
+                .ToList();
+
+            if (Chance(0.50d, nextDouble) && staticConsumables.Count > 0)
+            {
+                return staticConsumables[Next(nextInt, staticConsumables.Count)];
+            }
+
+            return CreateGold(0);
         }
 
         public static Item CreateRandomEquipment(

@@ -1,0 +1,184 @@
+[
+  {
+    "ImageId": 312,
+    "Name": "Padded Armor",
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "Classes": ["Wizard", "Sorcerer", "Bard", "Rogue"],
+    "Rarity": "Common",
+    "Cost": 5,
+    "MinLevel": 1,
+    "Stats": [
+      { "Type": "Defence", "Value": 1 }
+    ]
+  },
+  {
+    "ImageId": 278,
+    "Name": "Leather Armor",
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "Classes": ["Monk", "Rogue", "Bard", "Paladin"],
+    "Rarity": "Common",
+    "Cost": 10,
+    "MinLevel": 1,
+    "Stats": [
+      { "Type": "Defence", "Value": 2 }
+    ]
+  },
+  {
+    "ImageId": 285,
+    "Name": "Studded Leather",
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "Classes": ["Monk", "Rogue", "Bard", "Paladin"],
+    "Rarity": "Common",
+    "Cost": 45,
+    "MinLevel": 2,
+    "Stats": [
+      { "Type": "Defence", "Value": 3 }
+    ]
+  },
+  {
+    "ImageId": 331,
+    "Name": "Hide Armor",
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "Classes": ["Paladin", "Fighter", "Rogue", "Monk"],
+    "Rarity": "Common",
+    "Cost": 10,
+    "MinLevel": 1,
+    "Stats": [
+      { "Type": "Defence", "Value": 2 }
+    ]
+  },
+  {
+    "ImageId": 333,
+    "Name": "Chain Shirt",
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "Classes": ["Paladin", "Fighter", "Cleric"],
+    "Rarity": "Common",
+    "Cost": 50,
+    "MinLevel": 2,
+    "Stats": [
+      { "Type": "Defence", "Value": 3 }
+    ]
+  },
+  {
+    "ImageId": 279,
+    "Name": "Scale Mail",
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "Classes": ["Paladin", "Fighter", "Cleric"],
+    "Rarity": "Uncommon",
+    "Cost": 50,
+    "MinLevel": 2,
+    "Stats": [
+      { "Type": "Defence", "Value": 3 }
+    ]
+  },
+  {
+    "ImageId": 280,
+    "Name": "Ring Mail",
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "Classes": ["Paladin", "Fighter", "Cleric"],
+    "Rarity": "Uncommon",
+    "Cost": 30,
+    "MinLevel": 2,
+    "Stats": [
+      { "Type": "Defence", "Value": 3 }
+    ]
+  },
+  {
+    "ImageId": 284,
+    "Name": "Chain Mail",
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "Classes": ["Paladin", "Fighter", "Cleric"],
+    "Rarity": "Uncommon",
+    "Cost": 75,
+    "MinLevel": 3,
+    "Stats": [
+      { "Type": "Defence", "Value": 4 }
+    ]
+  },
+  {
+    "ImageId": 298,
+    "Name": "Splint Armor",
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "Classes": ["Paladin", "Fighter"],
+    "Rarity": "Rare",
+    "Cost": 200,
+    "MinLevel": 4,
+    "Stats": [
+      { "Type": "Defence", "Value": 5 }
+    ]
+  },
+  {
+    "ImageId": 340,
+    "Name": "Half Plate",
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "Classes": ["Paladin", "Fighter"],
+    "Rarity": "Rare",
+    "Cost": 600,
+    "MinLevel": 5,
+    "Stats": [
+      { "Type": "Defence", "Value": 6 }
+    ]
+  },
+  {
+    "ImageId": 170,
+    "Name": "Shield",
+    "Type": "Armor",
+    "Slots": ["OffHand"],
+    "Classes": ["Paladin", "Fighter", "Cleric", "Wizard", "Warlock", "Monk", "Bard", "Rogue", "Sorcerer"],
+    "Rarity": "Common",
+    "Cost": 10,
+    "MinLevel": 1,
+    "Stats": [
+      { "Type": "Defence", "Value": 2 }
+    ]
+  },
+  {
+    "ImageId": 171,
+    "Name": "Buckler",
+    "Type": "Armor",
+    "Slots": ["OffHand"],
+    "Classes": ["Paladin", "Fighter", "Cleric", "Rogue", "Bard"],
+    "Rarity": "Common",
+    "Cost": 5,
+    "MinLevel": 1,
+    "Stats": [
+      { "Type": "Defence", "Value": 1 }
+    ]
+  },
+  {
+    "ImageId": 214,
+    "Name": "Helm",
+    "Type": "Armor",
+    "Slots": ["Head"],
+    "Classes": ["Paladin", "Fighter", "Cleric", "Warlock", "Rogue"],
+    "Rarity": "Common",
+    "Cost": 20,
+    "MinLevel": 1,
+    "Stats": [
+      { "Type": "Defence", "Value": 1 }
+    ]
+  },
+  {
+    "ImageId": 235,
+    "Name": "Cap",
+    "Type": "Armor",
+    "Slots": ["Head"],
+    "Classes": ["Wizard", "Sorcerer", "Warlock", "Bard", "Rogue"],
+    "Rarity": "Common",
+    "Cost": 5,
+    "MinLevel": 1,
+    "Stats": [
+      { "Type": "Defence", "Value": 1 }
+    ]
+  }
+]

@@ -41,6 +41,54 @@ namespace DungeonEscape.Core.Test.Rules
         }
 
         [Fact]
+        public void CreateRandomItemPrefersExistingMagicItemsBeforeSynthesizingRandomEquipment()
+        {
+            var ring = new Item
+            {
+                Name = "Ring of Protection",
+                Type = ItemType.Armor,
+                Slots = new List<Slot> { Slot.Ring },
+                MinLevel = 5,
+                IsMagicItem = true,
+                Rarity = Rarity.Rare,
+                Category = ItemCategory.Ring
+            };
+
+            var item = RandomItemRules.CreateRandomItem(
+                10,
+                1,
+                null,
+                new[] { ring },
+                null,
+                null,
+                null,
+                () => 0.1d,
+                max => 0,
+                () => "id");
+
+            Assert.Same(ring, item);
+        }
+
+        [Fact]
+        public void CreateRandomItemFallsBackToGoldWhenNoStaticLootExists()
+        {
+            var item = RandomItemRules.CreateRandomItem(
+                10,
+                1,
+                null,
+                null,
+                null,
+                null,
+                null,
+                () => 0.9d,
+                max => 0,
+                () => "id");
+
+            Assert.NotNull(item);
+            Assert.Equal(ItemType.Gold, item.Type);
+        }
+
+        [Fact]
         public void CreateRandomEquipmentHonorsLevelRarityClassSlotAndBuildsName()
         {
             var random = new Queue<int>(new[] { 4, 0, 2, 2, 4, 0, 4, 0, 0 });
@@ -158,6 +206,20 @@ namespace DungeonEscape.Core.Test.Rules
             Assert.Equal(ItemCategory.Potion, potion.Category);
             Assert.True(DndItemRules.IsMagicItem(potion));
             Assert.False(DndItemRules.IsMagicItem(gold));
+        }
+
+        [Fact]
+        public void DndCharacterRulesUsesClassSpecificStartingGear()
+        {
+            var gear = DndCharacterRules.GetStartingEquipment(Class.Paladin);
+
+            Assert.Contains(gear, item => item.Name == "Chain Mail" && item.Type == ItemType.Armor && item.Slots.Contains(Slot.Chest));
+            Assert.Contains(gear, item => item.Name == "Longsword" && item.Type == ItemType.Weapon && item.Slots.Contains(Slot.PrimaryHand));
+            Assert.Contains(gear, item => item.Name == "Shield" && item.Type == ItemType.Armor && item.Slots.Contains(Slot.OffHand));
+
+            var wizardGear = DndCharacterRules.GetStartingEquipment(Class.Wizard);
+            Assert.Contains(wizardGear, item => item.Name == "Robe" && item.Type == ItemType.Armor && item.Slots.Contains(Slot.Chest));
+            Assert.Contains(wizardGear, item => item.Name == "Dagger" && item.Type == ItemType.Weapon && item.Slots.Contains(Slot.PrimaryHand));
         }
 
         [Fact]

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 using Redpoint.DungeonEscape.Unity.UI;
@@ -15,6 +16,21 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         [SerializeField]
         private TextAsset customItemsJson;
+
+        [SerializeField]
+        private TextAsset questItemsJson;
+
+        [SerializeField]
+        private TextAsset magicItemsJson;
+
+        [SerializeField]
+        private TextAsset nonMagicItemsJson;
+
+        [SerializeField]
+        private TextAsset weaponItemsJson;
+
+        [SerializeField]
+        private TextAsset armorItemsJson;
 
         [SerializeField]
         private TextAsset skillsJson;
@@ -79,7 +95,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             Data = new DungeonEscapeDataSet
             {
                 ItemDefinitions = LoadJson<List<ItemDefinition>>(itemDefinitionsJson, "item definitions"),
-                CustomItems = LoadJson<List<Item>>(customItemsJson, "custom items"),
+                CustomItems = LoadCustomItems(customItemsJson, questItemsJson, magicItemsJson, nonMagicItemsJson, weaponItemsJson, armorItemsJson),
                 Skills = LoadJson<List<Skill>>(skillsJson, "skills"),
                 Spells = LoadJson<List<Spell>>(spellsJson, "spells"),
                 Monsters = LoadJson<List<Monster>>(monstersJson, "monsters"),
@@ -125,6 +141,27 @@ namespace Redpoint.DungeonEscape.Unity.Core
             }
 
             EnsureTitleMenu();
+        }
+
+        private static List<Item> LoadCustomItems(params TextAsset[] assets)
+        {
+            var loadedItems = new List<Item>();
+            foreach (var asset in assets.Where(item => item != null))
+            {
+                var items = LoadJson<List<Item>>(asset, "custom items");
+                if (items != null)
+                {
+                    loadedItems.AddRange(items);
+                }
+            }
+
+            return loadedItems
+                .Where(item => item != null)
+                .GroupBy(item => string.IsNullOrWhiteSpace(item.Id)
+                    ? string.Format("{0}|{1}|{2}", item.Name ?? "", item.Type, item.MinLevel)
+                    : item.Id)
+                .Select(group => group.First())
+                .ToList();
         }
 
         private static T LoadJson<T>(TextAsset asset, string label)

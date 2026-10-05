@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Redpoint.DungeonEscape.Data;
 using Redpoint.DungeonEscape.State;
 
 namespace Redpoint.DungeonEscape.Rules
@@ -30,6 +32,79 @@ namespace Redpoint.DungeonEscape.Rules
         public static string GetRoleClassLabel(Class heroClass)
         {
             return GetClassLabel(heroClass);
+        }
+
+        public static List<Item> GetStartingEquipment(Class heroClass)
+        {
+            switch (heroClass)
+            {
+                case Class.Paladin:
+                    return new List<Item>
+                    {
+                        CreateStartingArmor(heroClass, "Chain Mail", Slot.Chest, 3),
+                        CreateStartingWeapon(heroClass, "Longsword", Slot.PrimaryHand, 2, 1, 8, 2),
+                        CreateStartingArmor(heroClass, "Shield", Slot.OffHand, 2)
+                    };
+                case Class.Fighter:
+                    return new List<Item>
+                    {
+                        CreateStartingArmor(heroClass, "Chain Mail", Slot.Chest, 3),
+                        CreateStartingWeapon(heroClass, "Longsword", Slot.PrimaryHand, 2, 1, 8, 2),
+                        CreateStartingArmor(heroClass, "Shield", Slot.OffHand, 2)
+                    };
+                case Class.Cleric:
+                    return new List<Item>
+                    {
+                        CreateStartingArmor(heroClass, "Scale Mail", Slot.Chest, 2),
+                        CreateStartingWeapon(heroClass, "Mace", Slot.PrimaryHand, 1, 1, 6, 1),
+                        CreateStartingArmor(heroClass, "Shield", Slot.OffHand, 2)
+                    };
+                case Class.Wizard:
+                    return new List<Item>
+                    {
+                        CreateStartingArmor(heroClass, "Robe", Slot.Chest, 1),
+                        CreateStartingWeapon(heroClass, "Dagger", Slot.PrimaryHand, 1, 1, 4, 0)
+                    };
+                case Class.Monk:
+                    return new List<Item>
+                    {
+                        CreateStartingArmor(heroClass, "Leather Armor", Slot.Chest, 1),
+                        CreateStartingWeapon(heroClass, "Quarterstaff", Slot.PrimaryHand, 1, 1, 6, 0)
+                    };
+                case Class.Warlock:
+                    return new List<Item>
+                    {
+                        CreateStartingArmor(heroClass, "Leather Armor", Slot.Chest, 1),
+                        CreateStartingWeapon(heroClass, "Light Crossbow", Slot.PrimaryHand, 1, 1, 8, 0),
+                        CreateStartingWeapon(heroClass, "Dagger", Slot.OffHand, 1, 1, 4, 0)
+                    };
+                case Class.Bard:
+                    return new List<Item>
+                    {
+                        CreateStartingArmor(heroClass, "Leather Armor", Slot.Chest, 1),
+                        CreateStartingWeapon(heroClass, "Rapier", Slot.PrimaryHand, 2, 1, 8, 2),
+                        CreateStartingWeapon(heroClass, "Dagger", Slot.OffHand, 1, 1, 4, 0)
+                    };
+                case Class.Rogue:
+                    return new List<Item>
+                    {
+                        CreateStartingArmor(heroClass, "Leather Armor", Slot.Chest, 1),
+                        CreateStartingWeapon(heroClass, "Rapier", Slot.PrimaryHand, 2, 1, 8, 2),
+                        CreateStartingWeapon(heroClass, "Dagger", Slot.OffHand, 1, 1, 4, 0)
+                    };
+                case Class.Sorcerer:
+                    return new List<Item>
+                    {
+                        CreateStartingArmor(heroClass, "Robe", Slot.Chest, 1),
+                        CreateStartingWeapon(heroClass, "Dagger", Slot.PrimaryHand, 1, 1, 4, 0)
+                    };
+                default:
+                    return new List<Item>
+                    {
+                        CreateStartingArmor(heroClass, "Leather Armor", Slot.Chest, 1),
+                        CreateStartingWeapon(heroClass, "Dagger", Slot.PrimaryHand, 1, 1, 4, 0)
+                    };
+            }
         }
 
         public static bool IsClassNameMatch(string className, Class heroClass)
@@ -113,6 +188,50 @@ namespace Redpoint.DungeonEscape.Rules
                     hero.Charisma += 1;
                     break;
             }
+        }
+
+        private static Item CreateStartingArmor(Class heroClass, string name, Slot slot, int defenceBonus)
+        {
+            return new Item
+            {
+                Name = name,
+                Type = ItemType.Armor,
+                Category = ItemCategory.Armor,
+                Slots = new List<Slot> { slot },
+                Classes = new List<string> { heroClass.ToString() },
+                Rarity = Rarity.Common,
+                Stats = new List<StatValue>
+                {
+                    new StatValue { Type = StatType.Defence, Value = defenceBonus }
+                }
+            };
+        }
+
+        private static Item CreateStartingWeapon(
+            Class heroClass,
+            string name,
+            Slot slot,
+            int attackBonus,
+            int damageDice,
+            int damageDie,
+            int damageBonus)
+        {
+            return new Item
+            {
+                Name = name,
+                Type = ItemType.Weapon,
+                Category = ItemCategory.Weapon,
+                Slots = new List<Slot> { slot },
+                Classes = new List<string> { heroClass.ToString() },
+                Rarity = Rarity.Common,
+                DamageDice = damageDice,
+                DamageDie = damageDie,
+                DamageBonus = damageBonus,
+                Stats = new List<StatValue>
+                {
+                    new StatValue { Type = StatType.Attack, Value = attackBonus }
+                }
+            };
         }
 
         private static void SetScores(

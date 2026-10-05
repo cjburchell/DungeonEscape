@@ -1,120 +1,5 @@
 ﻿[
     {
-        "ImageId":  916,
-        "Skill":  "Heal",
-        "Type":  "OneUse",
-        "Name":  "Medical Herb",
-        "Rarity":  "Common",
-        "Cost":  16
-    },
-    {
-        "ImageId":  754,
-        "Skill":  "Heal",
-        "Type":  "RepeatableUse",
-        "Name":  "Bag of Herbs",
-        "Rarity":  "Common",
-        "Cost":  160,
-        "Charges":  10
-    },
-    {
-        "ImageId":  913,
-        "Skill":  "Heal All",
-        "Type":  "OneUse",
-        "Name":  "Potent Herb",
-        "Rarity":  "Uncommon",
-        "Cost":  100,
-        "MinLevel":  6
-    },
-    {
-        "ImageId":  785,
-        "Skill":  "Heal",
-        "Type":  "RepeatableUse",
-        "Name":  "Rod of Healing",
-        "Rarity":  "Common",
-        "Cost":  44000,
-        "MinLevel":  15
-    },
-    {
-        "ImageId":  923,
-        "Skill":  "Recover Spell Slot",
-        "Type":  "OneUse",
-        "Name":  "Potion of Spell Recovery",
-        "Rarity":  "Common",
-        "Cost":  16,
-        "MinLevel":  5
-    },
-    {
-        "ImageId":  917,
-        "Skill":  "Recover All Spell Slots",
-        "Type":  "OneUse",
-        "Name":  "Elixir of Spell Recovery",
-        "Rarity":  "Uncommon",
-        "Cost":  100,
-        "MinLevel":  10
-    },
-    {
-        "ImageId":  815,
-        "Skill":  "Attack Up",
-        "Type":  "OneUse",
-        "Name":  "Scroll of Strength",
-        "Rarity":  "Epic",
-        "Cost":  5000,
-        "MinLevel":  18
-    },
-    {
-        "ImageId":  816,
-        "Skill":  "Defence Up",
-        "Type":  "OneUse",
-        "Name":  "Scroll of Defence",
-        "Rarity":  "Epic",
-        "Cost":  5000,
-        "MinLevel":  18
-    },
-    {
-        "ImageId":  822,
-        "Skill":  "Agility Up",
-        "Type":  "OneUse",
-        "Name":  "Scroll of Agility",
-        "Rarity":  "Epic",
-        "Cost":  5000,
-        "MinLevel":  18
-    },
-    {
-        "ImageId":  909,
-        "Skill":  "Open",
-        "Type":  "OneUse",
-        "Name":  "Iron Key",
-        "Rarity":  "Common",
-        "Cost":  250
-    },
-    {
-        "ImageId":  894,
-        "Skill":  "Open",
-        "Type":  "OneUse",
-        "Name":  "Silver Key",
-        "Rarity":  "Uncommon",
-        "Cost":  250,
-        "MinLevel":  5
-    },
-    {
-        "ImageId":  899,
-        "Skill":  "Open",
-        "Type":  "OneUse",
-        "Name":  "Gold Key",
-        "Rarity":  "Rare",
-        "Cost":  250,
-        "MinLevel":  10
-    },
-    {
-        "ImageId":  895,
-        "Skill":  "Open",
-        "Type":  "OneUse",
-        "Name":  "Jeweled Key",
-        "Rarity":  "Epic",
-        "Cost":  250,
-        "MinLevel":  20
-    },
-    {
         "ImageId":  866,
         "QuestId":  "Lost_Sea_Shell",
         "StartQuest":  true,
@@ -138,30 +23,6 @@
         "Rarity":  "Common"
     },
     {
-        "ImageId":  768,
-        "Skill":  "Return",
-        "Type":  "OneUse",
-        "Name":  "Wings",
-        "Rarity":  "Common",
-        "Cost":  25
-    },
-    {
-        "ImageId":  749,
-        "Skill":  "Antidote",
-        "Type":  "OneUse",
-        "Name":  "Antidote",
-        "Rarity":  "Common",
-        "Cost":  10
-    },
-    {
-        "ImageId":  774,
-        "Skill":  "Disengage",
-        "Type":  "OneUse",
-        "Name":  "Fairy Water",
-        "Rarity":  "Common",
-        "Cost":  20
-    },
-    {
         "ImageId":  951,
         "QuestId":  "Find_Ship",
         "ForStage":  [
@@ -171,5 +32,195 @@
         "Type":  "Quest",
         "Name":  "Deed to the ship",
         "Rarity":  "Common"
+    },
+    {
+        "ImageId": 923,
+        "Name":  "Potion of Healing",
+        "Type":  "OneUse",
+        "Skill":  "Heal",
+        "Rarity":  "Uncommon",
+        "Cost":  50,
+        "MinLevel":  1,
+        "IsMagicItem":  true
+    },
+    {
+        "ImageId": 917,
+        "Name":  "Potion of Greater Healing",
+        "Type":  "OneUse",
+        "Skill":  "Heal All",
+        "Rarity":  "Rare",
+        "Cost":  250,
+        "MinLevel":  5,
+        "IsMagicItem":  true
+    },
+    {
+        "ImageId": 916,
+        "Name":  "Potion of Heroism",
+        "Type":  "OneUse",
+        "Skill":  "Heal All",
+        "Rarity":  "Rare",
+        "Cost":  250,
+        "MinLevel":  3,
+        "IsMagicItem":  true
+    },
+    {
+        "ImageId": 785,
+        "Name":  "Rod of Healing",
+        "Type":  "RepeatableUse",
+        "Skill":  "Heal",
+        "Rarity":  "Rare",
+        "Cost":  44000,
+        "MinLevel":  15,
+        "Charges":  10,
+        "IsMagicItem":  true
+    },
+    {
+        "ImageId": 719,
+        "Name":  "Ring of Protection",
+        "Type":  "Armor",
+        "Slots":  [
+                     "Ring"
+                 ],
+        "Classes":  [
+                        "Paladin",
+                        "Fighter",
+                        "Cleric",
+                        "Wizard",
+                        "Warlock",
+                        "Monk",
+                        "Bard",
+                        "Rogue",
+                        "Sorcerer"
+                    ],
+        "Rarity":  "Rare",
+        "Cost":  1500,
+        "MinLevel":  5,
+        "IsMagicItem":  true,
+        "RequiresAttunement":  true,
+        "AttunementClasses":  [
+                                  "Paladin",
+                                  "Fighter",
+                                  "Cleric",
+                                  "Wizard",
+                                  "Warlock",
+                                  "Monk",
+                                  "Bard",
+                                  "Rogue",
+                                  "Sorcerer"
+                              ],
+        "Stats":  [
+                      {
+                          "Type":  "Defence",
+                          "Value":  1
+                      },
+                      {
+                          "Type":  "MagicDefence",
+                          "Value":  1
+                      }
+                  ]
+    },
+    {
+        "ImageId": 223,
+        "Name":  "Amulet of Health",
+        "Type":  "Armor",
+        "Slots":  [
+                     "Neck"
+                 ],
+        "Classes":  [
+                        "Paladin",
+                        "Fighter",
+                        "Cleric",
+                        "Wizard",
+                        "Warlock",
+                        "Monk",
+                        "Bard",
+                        "Rogue",
+                        "Sorcerer"
+                    ],
+        "Rarity":  "Rare",
+        "Cost":  1800,
+        "MinLevel":  8,
+        "IsMagicItem":  true,
+        "RequiresAttunement":  true,
+        "AttunementClasses":  [
+                                  "Paladin",
+                                  "Fighter",
+                                  "Cleric",
+                                  "Wizard",
+                                  "Warlock",
+                                  "Monk",
+                                  "Bard",
+                                  "Rogue",
+                                  "Sorcerer"
+                              ],
+        "Stats":  [
+                      {
+                          "Type":  "HP",
+                          "Value":  5
+                      }
+                  ]
+    },
+    {
+        "Name":  "Backpack",
+        "Type":  "OneUse",
+        "Rarity":  "Common",
+        "Cost":  2,
+        "MinLevel":  1
+    },
+    {
+        "Name":  "Bedroll",
+        "Type":  "OneUse",
+        "Rarity":  "Common",
+        "Cost":  1,
+        "MinLevel":  1
+    },
+    {
+        "Name":  "Torch",
+        "Type":  "OneUse",
+        "Rarity":  "Common",
+        "Cost":  1,
+        "MinLevel":  1
+    },
+    {
+        "Name":  "Waterskin",
+        "Type":  "OneUse",
+        "Rarity":  "Common",
+        "Cost":  2,
+        "MinLevel":  1
+    },
+    {
+        "Name":  "Rope, Hempen",
+        "Type":  "OneUse",
+        "Rarity":  "Common",
+        "Cost":  2,
+        "MinLevel":  1
+    },
+    {
+        "Name":  "Lantern",
+        "Type":  "OneUse",
+        "Rarity":  "Common",
+        "Cost":  5,
+        "MinLevel":  1
+    },
+    {
+        "Name":  "Flint and Steel",
+        "Type":  "OneUse",
+        "Rarity":  "Common",
+        "Cost":  1,
+        "MinLevel":  1
+    },
+    {
+        "Name":  "Mess Kit",
+        "Type":  "OneUse",
+        "Rarity":  "Common",
+        "Cost":  2,
+        "MinLevel":  1
+    },
+    {
+        "Name":  "Tinderbox",
+        "Type":  "OneUse",
+        "Rarity":  "Common",
+        "Cost":  5,
+        "MinLevel":  1
     }
 ]

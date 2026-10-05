@@ -492,5 +492,262 @@
         "BaseStat": 0,
         "DamageDice": 1,
         "DamageDie": 6
+    },
+    {
+        "Type": "Armor",
+        "Slots": [
+            "OffHand"
+        ],
+        "Classes": [
+            "Paladin",
+            "Fighter",
+            "Cleric",
+            "Wizard",
+            "Warlock",
+            "Monk",
+            "Bard",
+            "Rogue",
+            "Sorcerer"
+        ],
+        "Names": [
+            {
+                "Name": "Shield",
+                "ImageId": 170
+            },
+            {
+                "Name": "Buckler",
+                "ImageId": 171
+            }
+        ],
+        "BaseStat": 1,
+        "ArmorClass": 12
+    },
+    {
+        "Type": "Weapon",
+        "Slots": [
+            "PrimaryHand"
+        ],
+        "Classes": [
+            "Paladin",
+            "Fighter",
+            "Bard",
+            "Rogue"
+        ],
+        "Names": [
+            {
+                "Name": "Longsword",
+                "ImageId": 110
+            },
+            {
+                "Name": "Rapier",
+                "ImageId": 111
+            },
+            {
+                "Name": "Warhammer",
+                "ImageId": 112
+            }
+        ],
+        "BaseStat": 0,
+        "DamageDice": 1,
+        "DamageDie": 8,
+        "DamageBonus": 2
+    },
+    {
+        "Type": "Weapon",
+        "Slots": [
+            "PrimaryHand"
+        ],
+        "Classes": [
+            "Wizard",
+            "Sorcerer",
+            "Warlock",
+            "Cleric",
+            "Monk"
+        ],
+        "Names": [
+            {
+                "Name": "Quarterstaff",
+                "ImageId": 113
+            },
+            {
+                "Name": "Light Crossbow",
+                "ImageId": 114
+            },
+            {
+                "Name": "Shortbow",
+                "ImageId": 115
+            },
+            {
+                "Name": "Longbow",
+                "ImageId": 116
+            }
+        ],
+        "BaseStat": 0,
+        "DamageDice": 1,
+        "DamageDie": 6,
+        "DamageBonus": 1
+    },
+    {
+        "Type": "Weapon",
+        "Slots": [
+            "PrimaryHand"
+        ],
+        "Classes": [
+            "Paladin",
+            "Fighter",
+            "Rogue",
+            "Bard"
+        ],
+        "Names": [
+            {
+                "Name": "Spear",
+                "ImageId": 150
+            },
+            {
+                "Name": "Javelin",
+                "ImageId": 151
+            },
+            {
+                "Name": "Handaxe",
+                "ImageId": 152
+            },
+            {
+                "Name": "Light Hammer",
+                "ImageId": 153
+            }
+        ],
+        "BaseStat": 0,
+        "DamageDice": 1,
+        "DamageDie": 6,
+        "DamageBonus": 1
+    },
+    {
+        "Type": "Weapon",
+        "Slots": [
+            "PrimaryHand",
+            "OffHand"
+        ],
+        "Classes": [
+            "Paladin",
+            "Fighter",
+            "Cleric"
+        ],
+        "Names": [
+            {
+                "Name": "Greatclub",
+                "ImageId": 154
+            },
+            {
+                "Name": "Morningstar",
+                "ImageId": 155
+            },
+            {
+                "Name": "Flail",
+                "ImageId": 156
+            },
+            {
+                "Name": "War Pick",
+                "ImageId": 157
+            }
+        ],
+        "BaseStat": 0,
+        "DamageDice": 1,
+        "DamageDie": 8,
+        "DamageBonus": 2
+    },
+    {
+        "Type": "Weapon",
+        "Slots": [
+            "PrimaryHand"
+        ],
+        "Classes": [
+            "Wizard",
+            "Sorcerer",
+            "Rogue",
+            "Bard",
+            "Warlock"
+        ],
+        "Names": [
+            {
+                "Name": "Sling",
+                "ImageId": 158
+            },
+            {
+                "Name": "Heavy Crossbow",
+                "ImageId": 159
+            },
+            {
+                "Name": "Shortbow",
+                "ImageId": 160
+            },
+            {
+                "Name": "Net",
+                "ImageId": 161
+            }
+        ],
+        "BaseStat": 0,
+        "DamageDice": 1,
+        "DamageDie": 4,
+        "DamageBonus": 1
+    },
+    {
+        "Type": "Armor",
+        "Slots": [
+            "Chest"
+        ],
+        "Classes": [
+            "Cleric",
+            "Warlock",
+            "Monk",
+            "Paladin",
+            "Fighter",
+            "Rogue",
+            "Wizard",
+            "Sorcerer",
+            "Bard"
+        ],
+        "Names": [
+            {
+                "Name": "Padded Armor",
+                "ImageId": 330
+            },
+            {
+                "Name": "Hide Armor",
+                "ImageId": 331
+            },
+            {
+                "Name": "Chain Shirt",
+                "ImageId": 333
+            }
+        ],
+        "BaseStat": 0,
+        "ArmorClass": 11
+    },
+    {
+        "Type": "Armor",
+        "Slots": [
+            "Chest"
+        ],
+        "Classes": [
+            "Paladin",
+            "Fighter",
+            "Cleric"
+        ],
+        "Names": [
+            {
+                "Name": "Half Plate",
+                "ImageId": 340
+            },
+            {
+                "Name": "Splint Armor",
+                "ImageId": 341
+            },
+            {
+                "Name": "Banded Mail",
+                "ImageId": 342
+            }
+        ],
+        "BaseStat": 0,
+        "ArmorClass": 17
     }
 ]

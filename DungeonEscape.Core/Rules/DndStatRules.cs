@@ -8,9 +8,42 @@ namespace Redpoint.DungeonEscape.Rules
     {
         private const int DefaultDamageDie = 6;
 
+        public enum AbilityScore
+        {
+            Strength,
+            Dexterity,
+            Constitution,
+            Intelligence,
+            Wisdom,
+            Charisma
+        }
+
         public static int GetAbilityModifier(int score)
         {
             return (int)Math.Floor((score - 10) / 2.0);
+        }
+
+        public static int GetSavingThrowModifier(IFighter fighter, AbilityScore abilityScore, bool proficient)
+        {
+            if (fighter == null)
+            {
+                return 0;
+            }
+
+            var abilityModifier = GetAbilityModifier(GetAbilityScoreValue(fighter, abilityScore));
+            return proficient ? abilityModifier + GetEffectiveProficiencyBonus(fighter) : abilityModifier;
+        }
+
+        public static int GetSkillCheckModifier(IFighter fighter, string skillName, bool proficient)
+        {
+            if (fighter == null || string.IsNullOrWhiteSpace(skillName))
+            {
+                return 0;
+            }
+
+            var ability = GetSkillAbility(skillName);
+            var modifier = GetAbilityModifier(GetAbilityScoreValue(fighter, ability));
+            return proficient ? modifier + GetEffectiveProficiencyBonus(fighter) : modifier;
         }
 
         public static int GetStrength(IFighter fighter)
@@ -215,6 +248,64 @@ namespace Redpoint.DungeonEscape.Rules
         private static int GetEffectiveProficiencyBonus(IFighter fighter)
         {
             return fighter.ProficiencyBonus > 0 ? fighter.ProficiencyBonus : GetProficiencyBonus(fighter);
+        }
+
+        private static int GetAbilityScoreValue(IFighter fighter, AbilityScore abilityScore)
+        {
+            switch (abilityScore)
+            {
+                case AbilityScore.Strength:
+                    return GetStrength(fighter);
+                case AbilityScore.Dexterity:
+                    return GetDexterity(fighter);
+                case AbilityScore.Constitution:
+                    return GetConstitution(fighter);
+                case AbilityScore.Intelligence:
+                    return GetIntelligence(fighter);
+                case AbilityScore.Wisdom:
+                    return GetWisdom(fighter);
+                case AbilityScore.Charisma:
+                    return GetCharisma(fighter);
+                default:
+                    return 10;
+            }
+        }
+
+        private static AbilityScore GetSkillAbility(string skillName)
+        {
+            if (string.IsNullOrWhiteSpace(skillName))
+            {
+                return AbilityScore.Strength;
+            }
+
+            switch (skillName.Trim())
+            {
+                case "Acrobatics":
+                case "Sleight of Hand":
+                case "Stealth":
+                    return AbilityScore.Dexterity;
+                case "Athletics":
+                    return AbilityScore.Strength;
+                case "Arcana":
+                case "History":
+                case "Investigation":
+                case "Nature":
+                case "Religion":
+                    return AbilityScore.Intelligence;
+                case "Animal Handling":
+                case "Insight":
+                case "Medicine":
+                case "Perception":
+                case "Survival":
+                    return AbilityScore.Wisdom;
+                case "Deception":
+                case "Intimidation":
+                case "Performance":
+                case "Persuasion":
+                    return AbilityScore.Charisma;
+                default:
+                    return AbilityScore.Strength;
+            }
         }
 
         private static int GetWeaponAbilityModifier(IFighter fighter)

@@ -42,6 +42,43 @@ namespace DungeonEscape.Core.Test.Rules
         }
 
         [Fact]
+        public void SavingThrowsUseAbilityModifierPlusProficiencyWhenTrained()
+        {
+            var hero = new Hero
+            {
+                Class = Class.Fighter,
+                Level = 5,
+                Strength = 16,
+                Dexterity = 12,
+                Constitution = 14,
+                Wisdom = 10,
+                Charisma = 12
+            };
+
+            Assert.Equal(6, DndStatRules.GetSavingThrowModifier(hero, DndStatRules.AbilityScore.Strength, true));
+            Assert.Equal(5, DndStatRules.GetSavingThrowModifier(hero, DndStatRules.AbilityScore.Constitution, true));
+            Assert.Equal(0, DndStatRules.GetSavingThrowModifier(hero, DndStatRules.AbilityScore.Wisdom, false));
+        }
+
+        [Fact]
+        public void SkillChecksUseAbilityModifierPlusProficiencyWhenApplicable()
+        {
+            var hero = new Hero
+            {
+                Class = Class.Rogue,
+                Level = 4,
+                Dexterity = 16,
+                Wisdom = 12,
+                Intelligence = 14,
+                Charisma = 10
+            };
+
+            Assert.Equal(5, DndStatRules.GetSkillCheckModifier(hero, "Acrobatics", true));
+            Assert.Equal(1, DndStatRules.GetSkillCheckModifier(hero, "Perception", false));
+            Assert.Equal(2, DndStatRules.GetSkillCheckModifier(hero, "Investigation", false));
+        }
+
+        [Fact]
         public void MonsterDamageBonusUsesExplicitStatBlockValue()
         {
             var monster = new MonsterInstance(

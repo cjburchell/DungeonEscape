@@ -134,7 +134,7 @@
     "Name": "Shield",
     "Type": "Armor",
     "Slots": ["OffHand"],
-    "Classes": ["Paladin", "Fighter", "Cleric", "Wizard", "Warlock", "Monk", "Bard", "Rogue", "Sorcerer"],
+    "Classes": ["Paladin", "Fighter", "Cleric", "Warlock", "Monk", "Bard", "Rogue"],
     "Rarity": "Common",
     "Cost": 10,
     "MinLevel": 1,

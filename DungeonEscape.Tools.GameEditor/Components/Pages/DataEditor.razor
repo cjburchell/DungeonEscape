@@ -192,7 +192,7 @@ else
                                 <img class="thumb" src="@ClassThumb(current.DefaultImage)" alt="" />
                                 <div class="meta">
                                     <span class="name">@current.Class</span>
-                                    <span class="sub">d@current.HitDie hit die &middot; @(current.Stats?.Count ?? 0) stats &middot; @(current.Skills?.Count ?? 0) skills</span>
+                                    <span class="sub">d@current.HitDie hit die &middot; @(current.SkillProficiencies?.Count ?? 0) proficiencies</span>
                                 </div>
                             </div>
                         }
@@ -566,9 +566,12 @@ else
                     {
                         new() { Type = StatType.HP, StartConst = 1, Roll = 1, RollTimes = 1 },
                         new() { Type = StatType.Attack, StartConst = 1, Roll = 1, RollTimes = 1 },
-                        new() { Type = StatType.Defence, StartConst = 1, Roll = 1, RollTimes = 1 }
+                        new() { Type = StatType.Defence, StartConst = 1, Roll = 1, RollTimes = 1 },
+                        new() { Type = StatType.MagicDefence, StartConst = 1, Roll = 1, RollTimes = 1 },
+                        new() { Type = StatType.Agility, StartConst = 1, Roll = 1, RollTimes = 1 },
+                        new() { Type = StatType.Magic, RollTimes = 1 }
                     },
-                    Skills = new List<string>()
+                    SkillProficiencies = new List<string>()
                 };
                 Data.ClassLevels.Add(selectedClassStats);
                 break;

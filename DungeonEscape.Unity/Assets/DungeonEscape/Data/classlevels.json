@@ -3,6 +3,10 @@
     "Class": "Paladin",
     "PrimaryAbility": "Strength, Charisma",
     "HitDie": 10,
+    "SkillProficiencies": [
+      "Athletics",
+      "Persuasion"
+    ],
     "Stats": [
       {
         "Type": "HP",
@@ -53,6 +57,10 @@
     "PrimaryAbility": "Strength or Dexterity",
     "HitDie": 10,
     "DefaultImage": 2,
+    "SkillProficiencies": [
+      "Athletics",
+      "Intimidation"
+    ],
     "Stats": [
       {
         "Type": "HP",
@@ -100,6 +108,10 @@
     "PrimaryAbility": "Intelligence",
     "HitDie": 6,
     "DefaultImage": 6,
+    "SkillProficiencies": [
+      "Arcana",
+      "Investigation"
+    ],
     "Stats": [
       {
         "Type": "HP",
@@ -150,6 +162,10 @@
     "PrimaryAbility": "Wisdom",
     "HitDie": 8,
     "DefaultImage": 4,
+    "SkillProficiencies": [
+      "Insight",
+      "Religion"
+    ],
     "Stats": [
       {
         "Type": "HP",
@@ -200,6 +216,10 @@
     "PrimaryAbility": "Dexterity, Wisdom",
     "HitDie": 8,
     "DefaultImage": 8,
+    "SkillProficiencies": [
+      "Acrobatics",
+      "Athletics"
+    ],
     "Stats": [
       {
         "Type": "HP",
@@ -240,9 +260,6 @@
         "Type": "Magic",
         "RollTimes": 1
       }
-    ],
-    "Skills": [
-      "Swipe"
     ]
   },
   {
@@ -250,6 +267,10 @@
     "PrimaryAbility": "Charisma",
     "HitDie": 8,
     "DefaultImage": 10,
+    "SkillProficiencies": [
+      "Arcana",
+      "Deception"
+    ],
     "Stats": [
       {
         "Type": "HP",
@@ -300,6 +321,10 @@
     "PrimaryAbility": "Dexterity",
     "HitDie": 8,
     "DefaultImage": 14,
+    "SkillProficiencies": [
+      "Sleight of Hand",
+      "Stealth"
+    ],
     "Stats": [
       {
         "Type": "HP",
@@ -340,9 +365,6 @@
         "Type": "Magic",
         "RollTimes": 1
       }
-    ],
-    "Skills": [
-      "Steal"
     ]
   },
   {
@@ -350,6 +372,10 @@
     "PrimaryAbility": "Charisma",
     "HitDie": 6,
     "DefaultImage": 16,
+    "SkillProficiencies": [
+      "Arcana",
+      "Persuasion"
+    ],
     "Stats": [
       {
         "Type": "HP",
@@ -400,6 +426,10 @@
     "PrimaryAbility": "Charisma",
     "HitDie": 8,
     "DefaultImage": 12,
+    "SkillProficiencies": [
+      "Performance",
+      "Persuasion"
+    ],
     "Stats": [
       {
         "Type": "HP",
@@ -443,10 +473,6 @@
         "RollTimes": 1,
         "RollConst": 5
       }
-    ],
-    "Skills": [
-      "Weird Dance",
-      "Play Song"
     ]
   }
 ]

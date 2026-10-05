@@ -79,9 +79,9 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
     item references, and quest stages.
   - **Dialog** &mdash; dialog ids, quest-conditioned heads, text, choices, quest
     actions, item/monster/map references, and nested response dialogs.
-  - **Class** &mdash; free-text class name, primary ability, hit die, fixed stat
-    rows with initial roll previews, default hero-sheet image, and skill
-    unlock references. XP thresholds come from the D&D advancement table.
+  - **Class** &mdash; free-text class name, primary ability, hit die, default
+    hero-sheet image, and D&D skill proficiency references. XP thresholds come
+    from the D&D advancement table.
     Spell/item class selectors are populated from `classlevels.json`.
   - **Names** &mdash; male and female character name pools.
   - **Maps** &mdash; map class/properties, object `name`/`class`, NPC/chest/door/warp

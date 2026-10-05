@@ -15,6 +15,6 @@ namespace Redpoint.DungeonEscape.Data
         public int DefaultImage { get; set; }
         public List<Stats> Stats { get; set; } = new List<Stats>();
 
-        public List<string> Skills { get; set; } = new List<string>();
+        public List<string> SkillProficiencies { get; set; } = new List<string>();
     }
 }

@@ -1259,7 +1259,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         public bool RollHeroSkillCheck(Hero hero, string skillName, bool proficient, int dc, bool advantage = false)
         {
-            return hero != null && DndStatRules.RollSkillCheck(hero, skillName, proficient, dc, null, advantage);
+            return hero != null && DndStatRules.RollSkillCheck(hero, skillName, proficient || hero.HasSkillProficiency(skillName), dc, null, advantage);
         }
 
         private bool TryResolveLockedObjectCheck(Hero actor, TiledObjectInfo mapObject)
@@ -2124,7 +2124,9 @@ namespace Redpoint.DungeonEscape.Unity.Core
             return item != null &&
                    item.Item != null &&
                    item.MinLevel == keyLevel &&
-                   (item.Item.IsKey || string.Equals(item.Item.SkillId, "Open", StringComparison.OrdinalIgnoreCase));
+                   (item.Item.IsKey ||
+                    item.Item.Skill != null && item.Item.Skill.Type == SkillType.Open ||
+                    string.Equals(item.Item.SkillId, "Knock", StringComparison.OrdinalIgnoreCase));
         }
 
         private static bool IsItemMatch(ItemInstance item, string itemId)
@@ -2705,7 +2707,8 @@ namespace Redpoint.DungeonEscape.Unity.Core
             hero.Defence = RollStartingStat(classStats, StatType.Defence, 6);
             hero.MagicDefence = RollStartingStat(classStats, StatType.MagicDefence, 4);
             hero.Agility = RollStartingStat(classStats, StatType.Agility, 6);
-            hero.Skills = classStats.Skills == null ? new List<string>() : classStats.Skills.ToList();
+            hero.Skills = new List<string>();
+            hero.SkillProficiencies = classStats.SkillProficiencies == null ? new List<string>() : classStats.SkillProficiencies.ToList();
             hero.RestoreSpellSlots();
         }
 
@@ -2750,6 +2753,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             hero.MagicDefence = 4;
             hero.Agility = 6;
             hero.Skills = new List<string>();
+            hero.SkillProficiencies = new List<string>();
         }
 
         private void AddStartingEquipment(Hero hero)

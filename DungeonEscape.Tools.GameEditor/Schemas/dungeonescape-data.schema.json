@@ -14,6 +14,29 @@
     "slot": { "type": "string", "enum": ["OffHand", "PrimaryHand", "Hands", "Head", "Chest", "Legs", "Feet"] },
     "questAction": { "type": "string", "enum": ["None", "GiveItem", "TakeItem", "Fight", "Warp", "Join", "OpenDoor"] },
     "className": { "type": "string", "minLength": 1 },
+    "dndSkillName": {
+      "type": "string",
+      "enum": [
+        "Acrobatics",
+        "Animal Handling",
+        "Arcana",
+        "Athletics",
+        "Deception",
+        "History",
+        "Insight",
+        "Intimidation",
+        "Investigation",
+        "Medicine",
+        "Nature",
+        "Perception",
+        "Performance",
+        "Persuasion",
+        "Religion",
+        "Sleight of Hand",
+        "Stealth",
+        "Survival"
+      ]
+    },
     "statRoll": {
       "type": "object",
       "additionalProperties": true,
@@ -224,7 +247,7 @@
         "HitDie": { "type": "integer", "minimum": 0 },
         "DefaultImage": { "type": "integer", "minimum": 0 },
         "Stats": { "type": "array", "items": { "$ref": "#/$defs/statRoll" } },
-        "Skills": { "type": "array", "items": { "type": "string" } }
+        "SkillProficiencies": { "type": "array", "items": { "$ref": "#/$defs/dndSkillName" } }
       }
     },
     "names": {

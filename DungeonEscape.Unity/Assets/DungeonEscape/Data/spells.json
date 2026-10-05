@@ -1,6 +1,6 @@
 [
   {
-    "Skill": "Heal",
+    "Skill": "Cure Wounds",
     "ImageId": 54,
     "SpellLevel": 1,
     "School": "Abjuration",
@@ -14,7 +14,7 @@
     "Name": "Cure Wounds"
   },
   {
-    "Skill": "Outside",
+    "Skill": "Word of Recall",
     "ImageId": 344,
     "SpellLevel": 6,
     "School": "Conjuration",
@@ -26,7 +26,7 @@
     "Name": "Word of Recall"
   },
   {
-    "Skill": "Fire",
+    "Skill": "Burning Hands",
     "ImageId": 1,
     "SpellLevel": 1,
     "School": "Evocation",
@@ -39,7 +39,7 @@
     "Name": "Burning Hands"
   },
   {
-    "Skill": "Lighting",
+    "Skill": "Lightning Bolt",
     "ImageId": 8,
     "SpellLevel": 3,
     "School": "Evocation",
@@ -52,7 +52,7 @@
     "Name": "Lightning Bolt"
   },
   {
-    "Skill": "Fire Breath",
+    "Skill": "Fireball",
     "ImageId": 57,
     "SpellLevel": 3,
     "School": "Evocation",
@@ -65,7 +65,7 @@
     "Name": "Fireball"
   },
   {
-    "Skill": "Lighting Breath",
+    "Skill": "Chain Lightning",
     "ImageId": 50,
     "SpellLevel": 6,
     "School": "Evocation",
@@ -78,7 +78,7 @@
     "Name": "Chain Lightning"
   },
   {
-    "Skill": "Return",
+    "Skill": "Teleportation Circle",
     "ImageId": 220,
     "SpellLevel": 5,
     "School": "Conjuration",
@@ -92,7 +92,7 @@
     "Name": "Teleportation Circle"
   },
   {
-    "Skill": "Revive",
+    "Skill": "Revivify",
     "ImageId": 53,
     "SpellLevel": 3,
     "School": "Necromancy",
@@ -105,7 +105,7 @@
     "Name": "Revivify"
   },
   {
-    "Skill": "Vivify",
+    "Skill": "Raise Dead",
     "ImageId": 53,
     "SpellLevel": 5,
     "School": "Necromancy",
@@ -119,7 +119,7 @@
     "Name": "Raise Dead"
   },
   {
-    "Skill": "Heal All",
+    "Skill": "Mass Healing Word",
     "ImageId": 54,
     "SpellLevel": 3,
     "School": "Abjuration",
@@ -131,7 +131,7 @@
     "Name": "Mass Healing Word"
   },
   {
-    "Skill": "Heal Us",
+    "Skill": "Mass Cure Wounds",
     "ImageId": 54,
     "SpellLevel": 5,
     "School": "Abjuration",
@@ -144,7 +144,7 @@
     "Name": "Mass Cure Wounds"
   },
   {
-    "Skill": "Heal Us All",
+    "Skill": "Mass Heal",
     "ImageId": 54,
     "SpellLevel": 9,
     "School": "Abjuration",
@@ -156,7 +156,7 @@
     "Name": "Mass Heal"
   },
   {
-    "Skill": "Antidote",
+    "Skill": "Lesser Restoration",
     "ImageId": 54,
     "SpellLevel": 2,
     "School": "Abjuration",
@@ -170,7 +170,7 @@
     "Name": "Lesser Restoration"
   },
   {
-    "Skill": "Speed Up",
+    "Skill": "Haste",
     "ImageId": 60,
     "SpellLevel": 3,
     "School": "Transmutation",
@@ -183,7 +183,7 @@
     "Name": "Haste"
   },
   {
-    "Skill": "Upper",
+    "Skill": "Shield of Faith",
     "ImageId": 56,
     "SpellLevel": 1,
     "School": "Abjuration",
@@ -196,7 +196,7 @@
     "Name": "Shield of Faith"
   },
   {
-    "Skill": "Increase",
+    "Skill": "Aid",
     "ImageId": 56,
     "SpellLevel": 2,
     "School": "Abjuration",
@@ -209,7 +209,7 @@
     "Name": "Aid"
   },
   {
-    "Skill": "Sap",
+    "Skill": "Bestow Curse",
     "ImageId": 58,
     "SpellLevel": 3,
     "School": "Necromancy",
@@ -237,7 +237,7 @@
     "Name": "Sleep"
   },
   {
-    "Skill": "Disruptive Wave",
+    "Skill": "Silence",
     "ImageId": 5,
     "SpellLevel": 2,
     "School": "Illusion",
@@ -264,7 +264,7 @@
     "Name": "Slow"
   },
   {
-    "Skill": "Chaos",
+    "Skill": "Confusion",
     "ImageId": 62,
     "SpellLevel": 4,
     "School": "Enchantment",
@@ -278,7 +278,7 @@
     "Name": "Confusion"
   },
   {
-    "Skill": "Disengage",
+    "Skill": "Protection from Evil and Good",
     "ImageId": 220,
     "SpellLevel": 1,
     "School": "Abjuration",

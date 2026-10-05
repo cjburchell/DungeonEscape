@@ -1041,6 +1041,17 @@ active or waiting according to the current party-size limit.
 - Expected: level-up text reports HP from class hit die plus Constitution modifier, proficiency bonus changes when applicable, spell slot changes when applicable, and no JRPG Attack/Defence/Magic/Agility growth lines.
 - Expected: the status screen shows the next D&D XP threshold, and level 20 characters do not advance past level 20.
 
+### [ ] D&D Skill Proficiencies
+
+- Open the Game Editor Class tab.
+- Expected: class entries show skill proficiencies such as `Athletics`, `Arcana`, `Stealth`, and `Persuasion`, with no legacy class actions such as `Swipe`, `Weird Dance`, or `Play Song`.
+- Start New Quest for classes with different proficiencies, such as Rogue and Paladin.
+- Expected: created heroes do not gain legacy class skills from `classlevels.json`; Rogue heroes with `Sleight of Hand` proficiency still receive the combat `Steal` pickpocket action.
+- Interact with a locked object that uses a D&D skill check property such as `SkillCheck=Acrobatics`.
+- Expected: the check uses the hero's D&D ability modifier and proficiency when the hero has the matching D&D skill proficiency.
+- Open the Game Editor Skills, Spells, and Items tabs.
+- Expected: spell/item skill references use D&D-facing effect names such as `Cure Wounds`, `Knock`, `Shield of Faith`, `Bestow Curse`, `Confusion`, and `Lightning Bolt` instead of legacy labels like `Heal`, `Open`, `Upper`, `Sap`, `Chaos`, or `Lighting`.
+
 ## Tools - Game Editor (standalone)
 
 The Game Editor is a separate Photino.Blazor desktop app under

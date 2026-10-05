@@ -134,7 +134,7 @@ namespace DungeonEscape.Core.Test.Rules
                 new ClassStats
                 {
                     Class = "Paladin",
-                    Skills = new List<string>(),
+                    SkillProficiencies = new List<string>(),
                     Stats = new List<Stats>
                     {
                         new Stats { Type = StatType.HP },

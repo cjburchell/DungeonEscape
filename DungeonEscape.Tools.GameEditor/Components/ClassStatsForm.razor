@@ -1,8 +1,7 @@
 @*
     Property editor for classlevels.json entries: one class, its D&D metadata,
-    stat growth rows, and skill unlock references.
+    default hero image, and skill proficiency references.
 *@
-@inject DataSourceCatalog DataSources
 
 @if (ClassStats == null)
 {
@@ -28,13 +27,8 @@ else
                      ImageIdChanged="id => Set(() => ClassStats.DefaultImage = id)" />
 
     <fieldset>
-        <legend>Stats</legend>
-        <StatsListEditor Items="EnsureStats()" OnChanged="RaiseChanged" />
-    </fieldset>
-
-    <fieldset>
-        <legend>Skills</legend>
-        <StringListEditor Items="EnsureSkills()" Options="DataSources.Skills" OnChanged="RaiseChanged" />
+        <legend>Skill Proficiencies</legend>
+        <StringListEditor Items="EnsureSkillProficiencies()" Options="DndSkills" OnChanged="RaiseChanged" />
     </fieldset>
 }
 
@@ -42,8 +36,10 @@ else
     [Parameter] public ClassStats? ClassStats { get; set; }
     [Parameter] public EventCallback OnChanged { get; set; }
 
-    private List<Stats> EnsureStats() => ClassStats == null ? new List<Stats>() : (ClassStats.Stats ??= new List<Stats>());
-    private List<string> EnsureSkills() => ClassStats == null ? new List<string>() : (ClassStats.Skills ??= new List<string>());
+    private static readonly IReadOnlyList<string> DndSkills = DndStatRules.GetDndSkillNames();
+
+    private List<string> EnsureSkillProficiencies() =>
+        ClassStats == null ? new List<string>() : (ClassStats.SkillProficiencies ??= new List<string>());
 
     private async Task Set(Action mutate)
     {

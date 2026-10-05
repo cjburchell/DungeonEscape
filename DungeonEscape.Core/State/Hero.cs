@@ -27,6 +27,7 @@ namespace Redpoint.DungeonEscape.State
         public int? SpriteTileId { get; set; }
         public Dictionary<Slot, string> Slots { get; set; }
         public List<string> Skills { get; set; }
+        public List<string> SkillProficiencies { get; set; }
         public List<int> SpellSlots { get; set; }
         public List<int> UsedSpellSlots { get; set; }
         public List<string> PreparedSpells { get; set; }
@@ -36,6 +37,7 @@ namespace Redpoint.DungeonEscape.State
             IsActive = true;
             Slots = new Dictionary<Slot, string>();
             Skills = new List<string>();
+            SkillProficiencies = new List<string>();
             SpellSlots = new List<int>();
             UsedSpellSlots = new List<int>();
         }
@@ -184,8 +186,24 @@ namespace Redpoint.DungeonEscape.State
 
         public override IEnumerable<Skill> GetSkills(IEnumerable<Skill> availableSkills)
         {
-            return Skills.Select(id => availableSkills.FirstOrDefault(item => item.Name == id))
-                .Where(skill => skill != null).ToList();
+            var skillIds = Skills == null ? new List<string>() : Skills.ToList();
+            if (Class == Class.Rogue && HasSkillProficiency("Sleight of Hand"))
+            {
+                skillIds.Add("Sleight of Hand");
+            }
+
+            return skillIds
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Select(id => availableSkills.FirstOrDefault(item => string.Equals(item.Name, id, StringComparison.OrdinalIgnoreCase)))
+                .Where(skill => skill != null)
+                .ToList();
+        }
+
+        public bool HasSkillProficiency(string skillName)
+        {
+            return !string.IsNullOrWhiteSpace(skillName) &&
+                   SkillProficiencies != null &&
+                   SkillProficiencies.Any(skill => string.Equals(skill, skillName, StringComparison.OrdinalIgnoreCase));
         }
 
         public void Setup(IGame game, int level = 1, bool generateItems = true)
@@ -202,7 +220,10 @@ namespace Redpoint.DungeonEscape.State
             MagicDefence = classStats.Stats.First(item => item.Type == StatType.MagicDefence).RollStartValue();
             MaxMagic = classStats.Stats.First(item => item.Type == StatType.Magic).RollStartValue();
             Agility = classStats.Stats.First(item => item.Type == StatType.Agility).RollStartValue();
-            Skills = classStats.Skills.ToList();
+            Skills = new List<string>();
+            SkillProficiencies = classStats.SkillProficiencies == null
+                ? new List<string>()
+                : classStats.SkillProficiencies.ToList();
             DndCharacterRules.ApplyStartingAbilityScores(this);
             DndStatRules.RefreshHeroDerivedStats(this);
             RestoreSpellSlots();

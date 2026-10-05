@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Redpoint.DungeonEscape.Data;
 using Redpoint.DungeonEscape.State;
@@ -8,6 +9,27 @@ namespace Redpoint.DungeonEscape.Rules
     public static class DndStatRules
     {
         private const int DefaultDamageDie = 6;
+        private static readonly string[] DndSkillNames =
+        {
+            "Acrobatics",
+            "Animal Handling",
+            "Arcana",
+            "Athletics",
+            "Deception",
+            "History",
+            "Insight",
+            "Intimidation",
+            "Investigation",
+            "Medicine",
+            "Nature",
+            "Perception",
+            "Performance",
+            "Persuasion",
+            "Religion",
+            "Sleight of Hand",
+            "Stealth",
+            "Survival"
+        };
 
         public enum AbilityScore
         {
@@ -45,6 +67,17 @@ namespace Redpoint.DungeonEscape.Rules
             var ability = GetSkillAbility(skillName);
             var modifier = GetAbilityModifier(GetAbilityScoreValue(fighter, ability));
             return proficient ? modifier + GetEffectiveProficiencyBonus(fighter) : modifier;
+        }
+
+        public static IReadOnlyList<string> GetDndSkillNames()
+        {
+            return DndSkillNames;
+        }
+
+        public static bool IsDndSkillName(string skillName)
+        {
+            return !string.IsNullOrWhiteSpace(skillName) &&
+                   DndSkillNames.Any(skill => string.Equals(skill, skillName.Trim(), StringComparison.OrdinalIgnoreCase));
         }
 
         public static int RollAbilityCheck(Func<int, int> rollDie, int modifier, bool advantage = false)

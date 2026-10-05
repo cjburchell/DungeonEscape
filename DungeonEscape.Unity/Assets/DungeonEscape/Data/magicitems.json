@@ -232,7 +232,7 @@
   },
   {
     "ImageId": 917,
-    "Skill": "Heal All",
+    "Skill": "Mass Healing Word",
     "Type": "OneUse",
     "Category": "Unknown",
     "Name": "Potion of Greater Healing",
@@ -244,7 +244,7 @@
   },
   {
     "ImageId": 923,
-    "Skill": "Heal",
+    "Skill": "Cure Wounds",
     "Type": "OneUse",
     "Category": "Unknown",
     "Name": "Potion of Healing",
@@ -256,7 +256,7 @@
   },
   {
     "ImageId": 912,
-    "Skill": "Heal All",
+    "Skill": "Mass Healing Word",
     "Type": "OneUse",
     "Category": "Unknown",
     "Name": "Potion of Heroism",
@@ -343,7 +343,7 @@
   },
   {
     "ImageId": 785,
-    "Skill": "Heal",
+    "Skill": "Cure Wounds",
     "Type": "RepeatableUse",
     "Category": "Unknown",
     "Name": "Rod of Healing",

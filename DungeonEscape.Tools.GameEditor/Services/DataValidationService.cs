@@ -1,4 +1,5 @@
 using Redpoint.DungeonEscape.Data;
+using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 
 namespace DungeonEscape.Tools.GameEditor.Services;
@@ -90,7 +91,7 @@ public sealed class DataValidationService
         ValidateItems(issues, skillNames, questIds, classValues);
         ValidateQuests(issues, itemRefs);
         ValidateDialogs(issues, questIds, itemRefs, monsterNames);
-        ValidateClassLevels(issues, skillNames);
+        ValidateClassLevels(issues);
         ValidateMaps(issues, itemRefs, dialogIds, monsterNames, mapIds, classValues);
         ValidateAssetFiles(issues);
 
@@ -172,7 +173,7 @@ public sealed class DataValidationService
         }
     }
 
-    private void ValidateClassLevels(List<DataValidationIssue> issues, HashSet<string> skillNames)
+    private void ValidateClassLevels(List<DataValidationIssue> issues)
     {
         for (var i = 0; i < data.ClassLevels.Count; i++)
         {
@@ -207,7 +208,14 @@ public sealed class DataValidationService
                 }
             }
 
-            ValidateReferences(issues, location, "skill", classStats.Skills, skillNames);
+            ValidateDuplicates(issues, location + " skill proficiency", classStats.SkillProficiencies);
+            foreach (var skillProficiency in classStats.SkillProficiencies ?? new List<string>())
+            {
+                if (!DndStatRules.IsDndSkillName(skillProficiency))
+                {
+                    Error(issues, location, $"Unknown D&D skill proficiency '{skillProficiency}'.");
+                }
+            }
         }
     }
 

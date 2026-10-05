@@ -10,7 +10,7 @@ namespace DungeonEscape.Core.Test.Data;
 public class GameDataReferenceTests
 {
     [Fact]
-    public void DataFilesContainCanonicalDisengageSkillAndIronKey()
+    public void DataFilesContainDndNamedSkillsAndIronKey()
     {
         var repoRoot = FindRepositoryRoot();
         var dataFolder = Path.Combine(repoRoot, "DungeonEscape.Unity", "Assets", "DungeonEscape", "Data");
@@ -19,15 +19,15 @@ public class GameDataReferenceTests
         var spells = ReadJson<List<Spell>>(Path.Combine(dataFolder, "spells.json"));
         var items = ReadJson<List<Item>>(Path.Combine(dataFolder, "customitems.json"));
 
-        Assert.True(skills.Exists(skill => skill.Name == "Disengage"),
-            "Canonical Disengage skill should exist in the skill catalog.");
+        Assert.True(skills.Exists(skill => skill.Name == "Protection from Evil and Good"),
+            "Protection from Evil and Good should exist in the skill catalog.");
 
         Assert.True(spells.Exists(spell =>
-            spell.Name == "Protection from Evil and Good" && spell.SkillId == "Disengage"),
-            "Protection from Evil and Good should reference the Disengage skill.");
+            spell.Name == "Protection from Evil and Good" && spell.SkillId == "Protection from Evil and Good"),
+            "Protection from Evil and Good should reference the matching D&D-named skill.");
 
-        Assert.True(items.Exists(item => item.Name == "Iron Key" && item.SkillId == "Open"),
-            "Iron Key should exist as a key item that satisfies the chest lock.");
+        Assert.True(items.Exists(item => item.Name == "Iron Key" && item.SkillId == "Knock"),
+            "Iron Key should exist as a key item that satisfies the chest lock through Knock.");
     }
 
     private static T ReadJson<T>(string path)

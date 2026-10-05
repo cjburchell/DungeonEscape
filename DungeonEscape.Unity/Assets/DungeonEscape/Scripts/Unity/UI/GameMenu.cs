@@ -758,6 +758,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var maxPage = Math.Max(0, (spells.Count - 1) / pageSize);
             detailPageIndex = Mathf.Clamp(detailPageIndex, 0, maxPage);
             viewModel.ClampSelectedDetailIndex(spells.Count);
+            var hero = GetSelectedMenuHero();
             var start = detailPageIndex * pageSize;
             var end = Math.Min(spells.Count, start + pageSize);
             var rowHeight = 36f * GetPixelScale();

@@ -7,6 +7,7 @@
     "Rarity": "Uncommon",
     "Cost": 50,
     "MinLevel": 1,
+    "Weight": 1,
     "IsMagicItem": true
   },
   {
@@ -17,6 +18,7 @@
     "Rarity": "Rare",
     "Cost": 250,
     "MinLevel": 5,
+    "Weight": 1,
     "IsMagicItem": true
   },
   {
@@ -27,6 +29,7 @@
     "Rarity": "Rare",
     "Cost": 250,
     "MinLevel": 3,
+    "Weight": 1,
     "IsMagicItem": true
   },
   {
@@ -37,6 +40,7 @@
     "Rarity": "Rare",
     "Cost": 44000,
     "MinLevel": 15,
+    "Weight": 2,
     "Charges": 10,
     "IsMagicItem": true
   },
@@ -49,6 +53,7 @@
     "Rarity": "Rare",
     "Cost": 1500,
     "MinLevel": 5,
+    "Weight": 1,
     "IsMagicItem": true,
     "RequiresAttunement": true,
     "AttunementClasses": ["Paladin","Fighter","Cleric","Wizard","Warlock","Monk","Bard","Rogue","Sorcerer"],
@@ -66,6 +71,7 @@
     "Rarity": "Rare",
     "Cost": 1800,
     "MinLevel": 8,
+    "Weight": 1,
     "IsMagicItem": true,
     "RequiresAttunement": true,
     "AttunementClasses": ["Paladin","Fighter","Cleric","Wizard","Warlock","Monk","Bard","Rogue","Sorcerer"],
@@ -82,6 +88,7 @@
     "Rarity": "Uncommon",
     "Cost": 2000,
     "MinLevel": 3,
+    "Weight": 3,
     "IsMagicItem": true,
     "DamageDice": 1,
     "DamageDie": 8,
@@ -99,6 +106,7 @@
     "Rarity": "Rare",
     "Cost": 5000,
     "MinLevel": 5,
+    "Weight": 3,
     "IsMagicItem": true,
     "RequiresAttunement": true,
     "AttunementClasses": ["Paladin","Fighter","Bard","Rogue"],
@@ -118,6 +126,7 @@
     "Rarity": "Uncommon",
     "Cost": 2000,
     "MinLevel": 3,
+    "Weight": 6,
     "IsMagicItem": true,
     "RequiresAttunement": true,
     "AttunementClasses": ["Paladin","Fighter","Cleric"],
@@ -134,9 +143,117 @@
     "Rarity": "Rare",
     "Cost": 4000,
     "MinLevel": 5,
+    "Weight": 55,
     "IsMagicItem": true,
     "RequiresAttunement": true,
     "AttunementClasses": ["Paladin","Fighter","Cleric"],
+    "Stats": [
+      { "Type": "Defence", "Value": 1 }
+    ]
+  },
+  {
+    "ImageId": 145,
+    "Name": "Mace of Disruption",
+    "Type": "Weapon",
+    "Slots": ["PrimaryHand"],
+    "Classes": ["Cleric","Paladin","Fighter"],
+    "Rarity": "Rare",
+    "Cost": 6000,
+    "MinLevel": 6,
+    "Weight": 4,
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": ["Cleric","Paladin","Fighter"],
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 2,
+    "Stats": [
+      { "Type": "Attack", "Value": 1 }
+    ]
+  },
+  {
+    "ImageId": 111,
+    "Name": "Rapier +1",
+    "Type": "Weapon",
+    "Slots": ["PrimaryHand"],
+    "Classes": ["Paladin","Fighter","Bard","Rogue"],
+    "Rarity": "Uncommon",
+    "Cost": 2500,
+    "MinLevel": 4,
+    "Weight": 2,
+    "IsMagicItem": true,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 2,
+    "Stats": [
+      { "Type": "Attack", "Value": 1 }
+    ]
+  },
+  {
+    "ImageId": 115,
+    "Name": "Shortbow +1",
+    "Type": "Weapon",
+    "Slots": ["PrimaryHand"],
+    "Classes": ["Wizard","Sorcerer","Warlock","Cleric","Monk","Rogue"],
+    "Rarity": "Uncommon",
+    "Cost": 3000,
+    "MinLevel": 4,
+    "Weight": 3,
+    "IsMagicItem": true,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 2,
+    "Stats": [
+      { "Type": "Attack", "Value": 1 }
+    ]
+  },
+  {
+    "ImageId": 170,
+    "Name": "Defender Shield",
+    "Type": "Armor",
+    "Slots": ["OffHand"],
+    "Classes": ["Paladin","Fighter","Cleric"],
+    "Rarity": "Rare",
+    "Cost": 8000,
+    "MinLevel": 7,
+    "Weight": 6,
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": ["Paladin","Fighter","Cleric"],
+    "Stats": [
+      { "Type": "Defence", "Value": 2 }
+    ]
+  },
+  {
+    "ImageId": 279,
+    "Name": "Scale Mail +1",
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "Classes": ["Paladin","Fighter","Cleric"],
+    "Rarity": "Uncommon",
+    "Cost": 3000,
+    "MinLevel": 4,
+    "Weight": 22,
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": ["Paladin","Fighter","Cleric"],
+    "Stats": [
+      { "Type": "Defence", "Value": 1 }
+    ]
+  },
+  {
+    "ImageId": 278,
+    "Name": "Leather Armor +1",
+    "Type": "Armor",
+    "Slots": ["Chest"],
+    "Classes": ["Monk","Rogue","Bard","Paladin"],
+    "Rarity": "Uncommon",
+    "Cost": 2500,
+    "MinLevel": 4,
+    "Weight": 10,
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": ["Monk","Rogue","Bard","Paladin"],
     "Stats": [
       { "Type": "Defence", "Value": 1 }
     ]

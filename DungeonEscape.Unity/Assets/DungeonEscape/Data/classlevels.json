@@ -1,452 +1,452 @@
 [
-    {
-        "Class":  "Paladin",
-        "Stats":  [
-                      {
-                          "Type":  "HP",
-                          "StartConst":  40,
-                          "Roll":  7,
-                          "RollTimes":  1,
-                          "RollConst":  3
-                      },
-                      {
-                          "Type":  "Attack",
-                          "StartConst":  5,
-                          "Roll":  7,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Defence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "MagicDefence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Agility",
-                          "StartConst":  1,
-                          "Roll":  3,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Magic",
-                          "StartConst":  5,
-                          "Roll":  6,
-                          "RollTimes":  1,
-                          "RollConst":  5
-                      }
-                  ],
-        "HitDie":  10,
-        "PrimaryAbility":  "Strength, Charisma"
-    },
-    {
-        "Class":  "Fighter",
-        "DefaultImage":  2,
-        "Stats":  [
-                      {
-                          "Type":  "HP",
-                          "StartConst":  50,
-                          "Roll":  7,
-                          "RollTimes":  1,
-                          "RollConst":  3
-                      },
-                      {
-                          "Type":  "Attack",
-                          "StartConst":  5,
-                          "Roll":  7,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Defence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "MagicDefence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Agility",
-                          "StartConst":  1,
-                          "Roll":  3,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Magic",
-                          "RollTimes":  1
-                      }
-                  ],
-        "HitDie":  10,
-        "PrimaryAbility":  "Strength or Dexterity"
-    },
-    {
-        "Class":  "Wizard",
-        "DefaultImage":  6,
-        "Stats":  [
-                      {
-                          "Type":  "HP",
-                          "StartConst":  20,
-                          "Roll":  5,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Attack",
-                          "StartConst":  1,
-                          "Roll":  2,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Defence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "MagicDefence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Agility",
-                          "StartConst":  1,
-                          "Roll":  3,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Magic",
-                          "StartConst":  10,
-                          "Roll":  10,
-                          "RollTimes":  1,
-                          "RollConst":  5
-                      }
-                  ],
-        "HitDie":  6,
-        "PrimaryAbility":  "Intelligence"
-    },
-    {
-        "Class":  "Cleric",
-        "DefaultImage":  4,
-        "Stats":  [
-                      {
-                          "Type":  "HP",
-                          "StartConst":  40,
-                          "Roll":  7,
-                          "RollTimes":  1,
-                          "RollConst":  3
-                      },
-                      {
-                          "Type":  "Attack",
-                          "StartConst":  5,
-                          "Roll":  7,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Defence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "MagicDefence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Agility",
-                          "StartConst":  1,
-                          "Roll":  3,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Magic",
-                          "StartConst":  5,
-                          "Roll":  6,
-                          "RollTimes":  1,
-                          "RollConst":  5
-                      }
-                  ],
-        "HitDie":  8,
-        "PrimaryAbility":  "Wisdom"
-    },
-    {
-        "Class":  "Monk",
-        "DefaultImage":  8,
-        "Stats":  [
-                      {
-                          "Type":  "HP",
-                          "StartConst":  40,
-                          "Roll":  7,
-                          "RollTimes":  1,
-                          "RollConst":  3
-                      },
-                      {
-                          "Type":  "Attack",
-                          "StartConst":  5,
-                          "Roll":  7,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Defence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "MagicDefence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Agility",
-                          "StartConst":  1,
-                          "Roll":  3,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Magic",
-                          "RollTimes":  1
-                      }
-                  ],
-        "Skills":  [
-                       "Swipe"
-                   ],
-        "HitDie":  8,
-        "PrimaryAbility":  "Dexterity, Wisdom"
-    },
-    {
-        "Class":  "Warlock",
-        "DefaultImage":  10,
-        "Stats":  [
-                      {
-                          "Type":  "HP",
-                          "StartConst":  40,
-                          "Roll":  7,
-                          "RollTimes":  1,
-                          "RollConst":  3
-                      },
-                      {
-                          "Type":  "Attack",
-                          "StartConst":  5,
-                          "Roll":  7,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Defence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "MagicDefence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Agility",
-                          "StartConst":  1,
-                          "Roll":  3,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Magic",
-                          "StartConst":  5,
-                          "Roll":  6,
-                          "RollTimes":  1,
-                          "RollConst":  5
-                      }
-                  ],
-        "HitDie":  8,
-        "PrimaryAbility":  "Charisma"
-    },
-    {
-        "Class":  "Rogue",
-        "DefaultImage":  14,
-        "Stats":  [
-                      {
-                          "Type":  "HP",
-                          "StartConst":  40,
-                          "Roll":  7,
-                          "RollTimes":  1,
-                          "RollConst":  3
-                      },
-                      {
-                          "Type":  "Attack",
-                          "StartConst":  5,
-                          "Roll":  7,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Defence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "MagicDefence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Agility",
-                          "StartConst":  1,
-                          "Roll":  3,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Magic",
-                          "RollTimes":  1
-                      }
-                  ],
-        "Skills":  [
-                       "Steal"
-                   ],
-        "HitDie":  8,
-        "PrimaryAbility":  "Dexterity"
-    },
-    {
-        "Class":  "Sorcerer",
-        "DefaultImage":  16,
-        "Stats":  [
-                      {
-                          "Type":  "HP",
-                          "StartConst":  40,
-                          "Roll":  7,
-                          "RollTimes":  1,
-                          "RollConst":  3
-                      },
-                      {
-                          "Type":  "Attack",
-                          "StartConst":  5,
-                          "Roll":  7,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Defence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "MagicDefence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Agility",
-                          "StartConst":  1,
-                          "Roll":  3,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Magic",
-                          "StartConst":  5,
-                          "Roll":  6,
-                          "RollTimes":  1,
-                          "RollConst":  5
-                      }
-                  ],
-        "HitDie":  6,
-        "PrimaryAbility":  "Charisma"
-    },
-    {
-        "Class":  "Bard",
-        "DefaultImage":  12,
-        "Stats":  [
-                      {
-                          "Type":  "HP",
-                          "StartConst":  40,
-                          "Roll":  7,
-                          "RollTimes":  1,
-                          "RollConst":  3
-                      },
-                      {
-                          "Type":  "Attack",
-                          "StartConst":  1,
-                          "Roll":  1,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Defence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "MagicDefence",
-                          "StartConst":  1,
-                          "Roll":  4,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Agility",
-                          "StartConst":  1,
-                          "Roll":  3,
-                          "RollTimes":  1,
-                          "RollConst":  1
-                      },
-                      {
-                          "Type":  "Magic",
-                          "StartConst":  5,
-                          "Roll":  6,
-                          "RollTimes":  1,
-                          "RollConst":  5
-                      }
-                  ],
-        "Skills":  [
-                       "Weird Dance",
-                       "Play Song"
-                   ],
-        "HitDie":  8,
-        "PrimaryAbility":  "Charisma"
-    }
+  {
+    "Class": "Paladin",
+    "PrimaryAbility": "Strength, Charisma",
+    "HitDie": 10,
+    "Stats": [
+      {
+        "Type": "HP",
+        "StartConst": 40,
+        "Roll": 7,
+        "RollTimes": 1,
+        "RollConst": 3
+      },
+      {
+        "Type": "Attack",
+        "StartConst": 5,
+        "Roll": 7,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "MagicDefence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Agility",
+        "StartConst": 1,
+        "Roll": 3,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Magic",
+        "StartConst": 5,
+        "Roll": 6,
+        "RollTimes": 1,
+        "RollConst": 5
+      }
+    ]
+  },
+  {
+    "Class": "Fighter",
+    "PrimaryAbility": "Strength or Dexterity",
+    "HitDie": 10,
+    "DefaultImage": 2,
+    "Stats": [
+      {
+        "Type": "HP",
+        "StartConst": 50,
+        "Roll": 7,
+        "RollTimes": 1,
+        "RollConst": 3
+      },
+      {
+        "Type": "Attack",
+        "StartConst": 5,
+        "Roll": 7,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "MagicDefence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Agility",
+        "StartConst": 1,
+        "Roll": 3,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Magic",
+        "RollTimes": 1
+      }
+    ]
+  },
+  {
+    "Class": "Wizard",
+    "PrimaryAbility": "Intelligence",
+    "HitDie": 6,
+    "DefaultImage": 6,
+    "Stats": [
+      {
+        "Type": "HP",
+        "StartConst": 20,
+        "Roll": 5,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Attack",
+        "StartConst": 1,
+        "Roll": 2,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "MagicDefence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Agility",
+        "StartConst": 1,
+        "Roll": 3,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Magic",
+        "StartConst": 10,
+        "Roll": 10,
+        "RollTimes": 1,
+        "RollConst": 5
+      }
+    ]
+  },
+  {
+    "Class": "Cleric",
+    "PrimaryAbility": "Wisdom",
+    "HitDie": 8,
+    "DefaultImage": 4,
+    "Stats": [
+      {
+        "Type": "HP",
+        "StartConst": 40,
+        "Roll": 7,
+        "RollTimes": 1,
+        "RollConst": 3
+      },
+      {
+        "Type": "Attack",
+        "StartConst": 5,
+        "Roll": 7,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "MagicDefence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Agility",
+        "StartConst": 1,
+        "Roll": 3,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Magic",
+        "StartConst": 5,
+        "Roll": 6,
+        "RollTimes": 1,
+        "RollConst": 5
+      }
+    ]
+  },
+  {
+    "Class": "Monk",
+    "PrimaryAbility": "Dexterity, Wisdom",
+    "HitDie": 8,
+    "DefaultImage": 8,
+    "Stats": [
+      {
+        "Type": "HP",
+        "StartConst": 40,
+        "Roll": 7,
+        "RollTimes": 1,
+        "RollConst": 3
+      },
+      {
+        "Type": "Attack",
+        "StartConst": 5,
+        "Roll": 7,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "MagicDefence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Agility",
+        "StartConst": 1,
+        "Roll": 3,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Magic",
+        "RollTimes": 1
+      }
+    ],
+    "Skills": [
+      "Swipe"
+    ]
+  },
+  {
+    "Class": "Warlock",
+    "PrimaryAbility": "Charisma",
+    "HitDie": 8,
+    "DefaultImage": 10,
+    "Stats": [
+      {
+        "Type": "HP",
+        "StartConst": 40,
+        "Roll": 7,
+        "RollTimes": 1,
+        "RollConst": 3
+      },
+      {
+        "Type": "Attack",
+        "StartConst": 5,
+        "Roll": 7,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "MagicDefence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Agility",
+        "StartConst": 1,
+        "Roll": 3,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Magic",
+        "StartConst": 5,
+        "Roll": 6,
+        "RollTimes": 1,
+        "RollConst": 5
+      }
+    ]
+  },
+  {
+    "Class": "Rogue",
+    "PrimaryAbility": "Dexterity",
+    "HitDie": 8,
+    "DefaultImage": 14,
+    "Stats": [
+      {
+        "Type": "HP",
+        "StartConst": 40,
+        "Roll": 7,
+        "RollTimes": 1,
+        "RollConst": 3
+      },
+      {
+        "Type": "Attack",
+        "StartConst": 5,
+        "Roll": 7,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "MagicDefence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Agility",
+        "StartConst": 1,
+        "Roll": 3,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Magic",
+        "RollTimes": 1
+      }
+    ],
+    "Skills": [
+      "Steal"
+    ]
+  },
+  {
+    "Class": "Sorcerer",
+    "PrimaryAbility": "Charisma",
+    "HitDie": 6,
+    "DefaultImage": 16,
+    "Stats": [
+      {
+        "Type": "HP",
+        "StartConst": 40,
+        "Roll": 7,
+        "RollTimes": 1,
+        "RollConst": 3
+      },
+      {
+        "Type": "Attack",
+        "StartConst": 5,
+        "Roll": 7,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "MagicDefence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Agility",
+        "StartConst": 1,
+        "Roll": 3,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Magic",
+        "StartConst": 5,
+        "Roll": 6,
+        "RollTimes": 1,
+        "RollConst": 5
+      }
+    ]
+  },
+  {
+    "Class": "Bard",
+    "PrimaryAbility": "Charisma",
+    "HitDie": 8,
+    "DefaultImage": 12,
+    "Stats": [
+      {
+        "Type": "HP",
+        "StartConst": 40,
+        "Roll": 7,
+        "RollTimes": 1,
+        "RollConst": 3
+      },
+      {
+        "Type": "Attack",
+        "StartConst": 1,
+        "Roll": 1,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Defence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "MagicDefence",
+        "StartConst": 1,
+        "Roll": 4,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Agility",
+        "StartConst": 1,
+        "Roll": 3,
+        "RollTimes": 1,
+        "RollConst": 1
+      },
+      {
+        "Type": "Magic",
+        "StartConst": 5,
+        "Roll": 6,
+        "RollTimes": 1,
+        "RollConst": 5
+      }
+    ],
+    "Skills": [
+      "Weird Dance",
+      "Play Song"
+    ]
+  }
 ]

@@ -144,29 +144,6 @@
         "Target": { "$ref": "#/$defs/target" }
       }
     },
-    "itemName": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "Name": { "type": "string" },
-        "ImageId": { "type": "integer", "minimum": 0 }
-      }
-    },
-    "itemDefinition": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "Type": { "$ref": "#/$defs/itemType" },
-        "BaseStat": { "type": "integer" },
-        "DamageDice": { "type": "integer", "minimum": 0 },
-        "DamageDie": { "type": "integer", "minimum": 0 },
-        "DamageBonus": { "type": "integer" },
-        "ArmorClass": { "type": "integer", "minimum": 0 },
-        "Slots": { "type": "array", "items": { "$ref": "#/$defs/slot" } },
-        "Classes": { "type": "array", "items": { "$ref": "#/$defs/className" } },
-        "Names": { "type": "array", "items": { "$ref": "#/$defs/itemName" } }
-      }
-    },
     "questStage": {
       "type": "object",
       "additionalProperties": true,
@@ -248,15 +225,6 @@
         "DefaultImage": { "type": "integer", "minimum": 0 },
         "Stats": { "type": "array", "items": { "$ref": "#/$defs/statRoll" } },
         "Skills": { "type": "array", "items": { "type": "string" } }
-      }
-    },
-    "statName": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "Type": { "$ref": "#/$defs/statType" },
-        "Prefix": { "type": "array", "items": { "type": "string" } },
-        "Suffix": { "type": "array", "items": { "type": "string" } }
       }
     },
     "names": {

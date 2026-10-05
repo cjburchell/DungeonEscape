@@ -16,24 +16,16 @@ namespace DungeonEscape.Tools.GameEditor.Services;
 /// </summary>
 public sealed class DataFolderService
 {
-    private static readonly StatType[] RequiredStatNameTypes =
-    {
-        StatType.Agility,
-        StatType.Defence,
-        StatType.HP,
-        StatType.Attack,
-        StatType.Magic,
-        StatType.MagicDefence
-    };
-
     private const string MonstersFileName = "allmonsters.json";
     private const string SpellsFileName = "spells.json";
     private const string SkillsFileName = "skills.json";
     private const string ItemsFileName = "customitems.json";
-    private const string ItemDefinitionsFileName = "itemdef.json";
+    private const string MagicItemsFileName = "magicitems.json";
+    private const string NonMagicItemsFileName = "nonmagicitems.json";
+    private const string WeaponItemsFileName = "weaponitems.json";
+    private const string ArmorItemsFileName = "armoritems.json";
     private const string QuestsFileName = "quests.json";
     private const string DialogsFileName = "dialog.json";
-    private const string StatNamesFileName = "statnames.json";
     private const string NamesFileName = "names.json";
     private const string ClassLevelsFileName = "classlevels.json";
 
@@ -66,10 +58,13 @@ public sealed class DataFolderService
     public List<Spell> Spells { get; private set; } = new();
     public List<Skill> Skills { get; private set; } = new();
     public List<Item> Items { get; private set; } = new();
-    public List<ItemDefinition> ItemDefinitions { get; private set; } = new();
+    public List<Item> CustomItems { get; private set; } = new();
+    public List<Item> MagicItems { get; private set; } = new();
+    public List<Item> NonMagicItems { get; private set; } = new();
+    public List<Item> WeaponItems { get; private set; } = new();
+    public List<Item> ArmorItems { get; private set; } = new();
     public List<Quest> Quests { get; private set; } = new();
     public List<Dialog> Dialogs { get; private set; } = new();
-    public List<StatName> StatNames { get; private set; } = new();
     public List<ClassStats> ClassLevels { get; private set; } = new();
     public Names Names { get; private set; } = new() { Male = new List<string>(), Female = new List<string>() };
     public List<MapDocument> Maps { get; private set; } = new();
@@ -93,12 +88,14 @@ public sealed class DataFolderService
         Monsters = LoadList<Monster>(Path.Combine(folderPath, MonstersFileName));
         Spells = LoadList<Spell>(Path.Combine(folderPath, SpellsFileName));
         Skills = LoadList<Skill>(Path.Combine(folderPath, SkillsFileName));
-        Items = LoadList<Item>(Path.Combine(folderPath, ItemsFileName));
-        ItemDefinitions = LoadList<ItemDefinition>(Path.Combine(folderPath, ItemDefinitionsFileName));
+        CustomItems = LoadList<Item>(Path.Combine(folderPath, ItemsFileName));
+        MagicItems = LoadList<Item>(Path.Combine(folderPath, MagicItemsFileName));
+        NonMagicItems = LoadList<Item>(Path.Combine(folderPath, NonMagicItemsFileName));
+        WeaponItems = LoadList<Item>(Path.Combine(folderPath, WeaponItemsFileName));
+        ArmorItems = LoadList<Item>(Path.Combine(folderPath, ArmorItemsFileName));
+        Items = MergeItemCatalogs(CustomItems, MagicItems, NonMagicItems, WeaponItems, ArmorItems);
         Quests = LoadList<Quest>(Path.Combine(folderPath, QuestsFileName));
         Dialogs = LoadList<Dialog>(Path.Combine(folderPath, DialogsFileName));
-        StatNames = LoadList<StatName>(Path.Combine(folderPath, StatNamesFileName));
-        NormalizeStatNames();
         ClassLevels = LoadList<ClassStats>(Path.Combine(folderPath, ClassLevelsFileName));
         Names = LoadObject(Path.Combine(folderPath, NamesFileName), new Names());
         Names.Male ??= new List<string>();
@@ -134,12 +131,18 @@ public sealed class DataFolderService
         SaveList(Path.Combine(FolderPath, MonstersFileName), Monsters);
         SaveList(Path.Combine(FolderPath, SpellsFileName), Spells);
         SaveList(Path.Combine(FolderPath, SkillsFileName), Skills);
-        SaveList(Path.Combine(FolderPath, ItemsFileName), Items);
-        SaveList(Path.Combine(FolderPath, ItemDefinitionsFileName), ItemDefinitions);
+        CustomItems = Items.Where(item => !item.IsMagicItem && item.Type != ItemType.Weapon && item.Type != ItemType.Armor && item.Type != ItemType.OneUse && item.Type != ItemType.RepeatableUse && item.Type != ItemType.Gold).ToList();
+        MagicItems = Items.Where(item => item.IsMagicItem).ToList();
+        NonMagicItems = Items.Where(item => !item.IsMagicItem && (item.Type == ItemType.OneUse || item.Type == ItemType.RepeatableUse || item.Type == ItemType.Gold)).ToList();
+        WeaponItems = Items.Where(item => item.Type == ItemType.Weapon).ToList();
+        ArmorItems = Items.Where(item => item.Type == ItemType.Armor).ToList();
+        SaveList(Path.Combine(FolderPath, ItemsFileName), CustomItems);
+        SaveList(Path.Combine(FolderPath, MagicItemsFileName), MagicItems);
+        SaveList(Path.Combine(FolderPath, NonMagicItemsFileName), NonMagicItems);
+        SaveList(Path.Combine(FolderPath, WeaponItemsFileName), WeaponItems);
+        SaveList(Path.Combine(FolderPath, ArmorItemsFileName), ArmorItems);
         SaveList(Path.Combine(FolderPath, QuestsFileName), Quests);
         SaveList(Path.Combine(FolderPath, DialogsFileName), Dialogs);
-        NormalizeStatNames();
-        SaveList(Path.Combine(FolderPath, StatNamesFileName), StatNames);
         SaveList(Path.Combine(FolderPath, ClassLevelsFileName), ClassLevels);
         SaveObject(Path.Combine(FolderPath, NamesFileName), Names);
         maps.SaveMaps(Maps, assetContext.MapDataDirectory);
@@ -154,6 +157,19 @@ public sealed class DataFolderService
         IsDirty = true;
         NotifyDataChanged();
         NotifyChanged();
+    }
+
+    private static List<Item> MergeItemCatalogs(params List<Item>[] itemLists)
+    {
+        return itemLists
+            .SelectMany(list => list ?? new List<Item>())
+            .Where(item => item != null)
+            .GroupBy(item => string.IsNullOrWhiteSpace(item.Id)
+                ? $"{item.Name}|{item.Type}|{item.MinLevel}"
+                : item.Id)
+            .Select(group => group.First())
+            .OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
     }
 
     private static List<T> LoadList<T>(string path)
@@ -242,27 +258,6 @@ public sealed class DataFolderService
 
             default:
                 return false;
-        }
-    }
-
-    private void NormalizeStatNames()
-    {
-        var byType = StatNames
-            .Where(statName => statName != null)
-            .GroupBy(statName => statName.Type)
-            .ToDictionary(group => group.Key, group => group.First());
-
-        StatNames.Clear();
-        foreach (var statType in RequiredStatNameTypes)
-        {
-            var statName = byType.TryGetValue(statType, out var existing)
-                ? existing
-                : new StatName { Type = statType, Prefix = new List<string>(), Suffix = new List<string>() };
-
-            statName.Type = statType;
-            statName.Prefix ??= new List<string>();
-            statName.Suffix ??= new List<string>();
-            StatNames.Add(statName);
         }
     }
 

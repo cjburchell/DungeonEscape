@@ -12,11 +12,13 @@ Use the per-file schemas for editor validation or future CI checks:
 | `spells.json` | `spells.schema.json` |
 | `skills.json` | `skills.schema.json` |
 | `customitems.json` | `customitems.schema.json` |
-| `itemdef.json` | `itemdef.schema.json` |
+| `magicitems.json` | `customitems.schema.json` |
+| `nonmagicitems.json` | `customitems.schema.json` |
+| `weaponitems.json` | `customitems.schema.json` |
+| `armoritems.json` | `customitems.schema.json` |
 | `quests.json` | `quests.schema.json` |
 | `dialog.json` | `dialog.schema.json` |
 | `classlevels.json` | `classlevels.schema.json` |
-| `statnames.json` | `statnames.schema.json` |
 | `names.json` | `names.schema.json` |
 | `Data/maps/**/*_monsters.json` | `map-monsters.schema.json` |
 

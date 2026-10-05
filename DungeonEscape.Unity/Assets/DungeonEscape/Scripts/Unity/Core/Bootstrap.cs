@@ -12,12 +12,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
     public sealed class Bootstrap : MonoBehaviour
     {
         [SerializeField]
-        private TextAsset itemDefinitionsJson;
-
-        [SerializeField]
-        private TextAsset customItemsJson;
-
-        [SerializeField]
         private TextAsset questItemsJson;
 
         [SerializeField]
@@ -52,9 +46,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         [SerializeField]
         private TextAsset namesJson;
-
-        [SerializeField]
-        private TextAsset statNamesJson;
 
         [SerializeField]
         private TextAsset testMapTmx;
@@ -94,8 +85,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             startupComplete = true;
             Data = new DungeonEscapeDataSet
             {
-                ItemDefinitions = LoadJson<List<ItemDefinition>>(itemDefinitionsJson, "item definitions"),
-                CustomItems = LoadCustomItems(customItemsJson, questItemsJson, magicItemsJson, nonMagicItemsJson, weaponItemsJson, armorItemsJson),
+                CustomItems = LoadCustomItems(questItemsJson, magicItemsJson, nonMagicItemsJson, weaponItemsJson, armorItemsJson),
                 Skills = LoadJson<List<Skill>>(skillsJson, "skills"),
                 Spells = LoadJson<List<Spell>>(spellsJson, "spells"),
                 Monsters = LoadJson<List<Monster>>(monstersJson, "monsters"),
@@ -103,7 +93,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 Dialogs = LoadJson<List<Dialog>>(dialogJson, "dialog"),
                 ClassLevels = LoadJson<List<ClassStats>>(classLevelsJson, "class levels"),
                 Names = LoadJson<Names>(namesJson, "names"),
-                StatNames = LoadJson<List<StatName>>(statNamesJson, "stat names"),
                 TestMap = LoadTiledMap(testMapTmx, testMapAssetPath, "test map")
             };
 

@@ -8,6 +8,7 @@
     "Rarity": "Common",
     "Cost": 5,
     "MinLevel": 1,
+    "Weight": 8,
     "Stats": [
       { "Type": "Defence", "Value": 1 }
     ]
@@ -21,6 +22,7 @@
     "Rarity": "Common",
     "Cost": 10,
     "MinLevel": 1,
+    "Weight": 10,
     "Stats": [
       { "Type": "Defence", "Value": 2 }
     ]
@@ -34,6 +36,7 @@
     "Rarity": "Common",
     "Cost": 45,
     "MinLevel": 2,
+    "Weight": 12,
     "Stats": [
       { "Type": "Defence", "Value": 3 }
     ]
@@ -47,6 +50,7 @@
     "Rarity": "Common",
     "Cost": 10,
     "MinLevel": 1,
+    "Weight": 12,
     "Stats": [
       { "Type": "Defence", "Value": 2 }
     ]
@@ -60,6 +64,7 @@
     "Rarity": "Common",
     "Cost": 50,
     "MinLevel": 2,
+    "Weight": 20,
     "Stats": [
       { "Type": "Defence", "Value": 3 }
     ]
@@ -73,6 +78,7 @@
     "Rarity": "Uncommon",
     "Cost": 50,
     "MinLevel": 2,
+    "Weight": 22,
     "Stats": [
       { "Type": "Defence", "Value": 3 }
     ]
@@ -86,6 +92,7 @@
     "Rarity": "Uncommon",
     "Cost": 30,
     "MinLevel": 2,
+    "Weight": 40,
     "Stats": [
       { "Type": "Defence", "Value": 3 }
     ]
@@ -99,6 +106,7 @@
     "Rarity": "Uncommon",
     "Cost": 75,
     "MinLevel": 3,
+    "Weight": 55,
     "Stats": [
       { "Type": "Defence", "Value": 4 }
     ]
@@ -112,6 +120,7 @@
     "Rarity": "Rare",
     "Cost": 200,
     "MinLevel": 4,
+    "Weight": 60,
     "Stats": [
       { "Type": "Defence", "Value": 5 }
     ]
@@ -125,6 +134,7 @@
     "Rarity": "Rare",
     "Cost": 600,
     "MinLevel": 5,
+    "Weight": 65,
     "Stats": [
       { "Type": "Defence", "Value": 6 }
     ]
@@ -138,6 +148,7 @@
     "Rarity": "Common",
     "Cost": 10,
     "MinLevel": 1,
+    "Weight": 6,
     "Stats": [
       { "Type": "Defence", "Value": 2 }
     ]
@@ -151,6 +162,7 @@
     "Rarity": "Common",
     "Cost": 5,
     "MinLevel": 1,
+    "Weight": 6,
     "Stats": [
       { "Type": "Defence", "Value": 1 }
     ]
@@ -164,6 +176,7 @@
     "Rarity": "Common",
     "Cost": 20,
     "MinLevel": 1,
+    "Weight": 3,
     "Stats": [
       { "Type": "Defence", "Value": 1 }
     ]
@@ -177,6 +190,7 @@
     "Rarity": "Common",
     "Cost": 5,
     "MinLevel": 1,
+    "Weight": 3,
     "Stats": [
       { "Type": "Defence", "Value": 1 }
     ]

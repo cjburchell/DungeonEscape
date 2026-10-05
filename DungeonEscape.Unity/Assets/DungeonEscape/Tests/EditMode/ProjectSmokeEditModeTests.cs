@@ -13,7 +13,6 @@ namespace Redpoint.DungeonEscape.Unity.Tests.EditMode
         [TestCase("customitems.json")]
         [TestCase("default_settings.json")]
         [TestCase("dialog.json")]
-        [TestCase("itemdef.json")]
         [TestCase("magicitems.json")]
         [TestCase("names.json")]
         [TestCase("nonmagicitems.json")]
@@ -21,7 +20,6 @@ namespace Redpoint.DungeonEscape.Unity.Tests.EditMode
         [TestCase("questitems.json")]
         [TestCase("skills.json")]
         [TestCase("spells.json")]
-        [TestCase("statnames.json")]
         [TestCase("weaponitems.json")]
         [TestCase("armoritems.json")]
         public void RequiredDataFileExists(string fileName)

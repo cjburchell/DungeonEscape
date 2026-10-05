@@ -58,6 +58,7 @@ namespace Redpoint.DungeonEscape.Data
         public List<string> AttunementRequirements { get; set; }
 
         public List<StatValue> Stats { get; set; }
+        public int Weight { get; set; }
         public int Cost { get; set; }
         public int MinLevel { get; set; }
         public int DamageDice { get; set; }
@@ -96,6 +97,7 @@ namespace Redpoint.DungeonEscape.Data
             Category = ItemCategory.Unknown;
             IsMagicItem = false;
             RequiresAttunement = false;
+            Weight = 0;
             Stats = new List<StatValue>();
             Target = Target.Single;
             AttunementClasses = new List<Class>();

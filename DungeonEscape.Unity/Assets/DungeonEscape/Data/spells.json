@@ -1,295 +1,295 @@
-﻿[
-    {
-        "Skill":  "Heal",
-        "ImageId":  54,
-        "MinLevel":  1,
-        "Classes":  [
-                        "Bard",
-                        "Cleric",
-                        "Paladin"
-                    ],
-        "Name":  "Cure Wounds",
-        "SpellLevel":  1,
-        "School":  "Abjuration",
-        "DndSpell":  "Cure Wounds"
-    },
-    {
-        "Skill":  "Outside",
-        "ImageId":  344,
-        "MinLevel":  11,
-        "Classes":  [
-                        "Cleric"
-                    ],
-        "Name":  "Word of Recall",
-        "SpellLevel":  6,
-        "School":  "Conjuration",
-        "DndSpell":  "Word of Recall"
-    },
-    {
-        "Skill":  "Fire",
-        "ImageId":  1,
-        "MinLevel":  1,
-        "Classes":  [
-                        "Sorcerer",
-                        "Wizard"
-                    ],
-        "Name":  "Burning Hands",
-        "SpellLevel":  1,
-        "School":  "Evocation",
-        "DndSpell":  "Burning Hands"
-    },
-    {
-        "Skill":  "Lighting",
-        "ImageId":  8,
-        "MinLevel":  5,
-        "Classes":  [
-                        "Sorcerer",
-                        "Wizard"
-                    ],
-        "Name":  "Lightning Bolt",
-        "SpellLevel":  3,
-        "School":  "Evocation",
-        "DndSpell":  "Lightning Bolt"
-    },
-    {
-        "Skill":  "Fire Breath",
-        "ImageId":  57,
-        "MinLevel":  5,
-        "Classes":  [
-                        "Sorcerer",
-                        "Wizard"
-                    ],
-        "Name":  "Fireball",
-        "SpellLevel":  3,
-        "School":  "Evocation",
-        "DndSpell":  "Fireball"
-    },
-    {
-        "Skill":  "Lighting Breath",
-        "ImageId":  50,
-        "MinLevel":  11,
-        "Classes":  [
-                        "Sorcerer",
-                        "Wizard"
-                    ],
-        "Name":  "Chain Lightning",
-        "SpellLevel":  6,
-        "School":  "Evocation",
-        "DndSpell":  "Chain Lightning"
-    },
-    {
-        "Skill":  "Return",
-        "ImageId":  220,
-        "MinLevel":  9,
-        "Classes":  [
-                        "Bard",
-                        "Sorcerer",
-                        "Wizard"
-                    ],
-        "Name":  "Teleportation Circle",
-        "SpellLevel":  5,
-        "School":  "Conjuration",
-        "DndSpell":  "Teleportation Circle"
-    },
-    {
-        "Skill":  "Revive",
-        "ImageId":  53,
-        "MinLevel":  5,
-        "Classes":  [
-                        "Cleric",
-                        "Paladin"
-                    ],
-        "Name":  "Revivify",
-        "SpellLevel":  3,
-        "School":  "Necromancy",
-        "DndSpell":  "Revivify"
-    },
-    {
-        "Skill":  "Vivify",
-        "ImageId":  53,
-        "MinLevel":  9,
-        "Classes":  [
-                        "Bard",
-                        "Cleric",
-                        "Paladin"
-                    ],
-        "Name":  "Raise Dead",
-        "SpellLevel":  5,
-        "School":  "Necromancy",
-        "DndSpell":  "Raise Dead"
-    },
-    {
-        "Skill":  "Heal All",
-        "ImageId":  54,
-        "MinLevel":  5,
-        "Classes":  [
-                        "Cleric"
-                    ],
-        "Name":  "Mass Healing Word",
-        "SpellLevel":  3,
-        "School":  "Abjuration",
-        "DndSpell":  "Mass Healing Word"
-    },
-    {
-        "Skill":  "Heal Us",
-        "ImageId":  54,
-        "MinLevel":  9,
-        "Classes":  [
-                        "Bard",
-                        "Cleric"
-                    ],
-        "Name":  "Mass Cure Wounds",
-        "SpellLevel":  5,
-        "School":  "Abjuration",
-        "DndSpell":  "Mass Cure Wounds"
-    },
-    {
-        "ImageId":  54,
-        "MinLevel":  17,
-        "Classes":  [
-                        "Cleric"
-                    ],
-        "Name":  "Mass Heal",
-        "Skill":  "Heal Us All",
-        "SpellLevel":  9,
-        "School":  "Abjuration",
-        "DndSpell":  "Mass Heal"
-    },
-    {
-        "Skill":  "Antidote",
-        "ImageId":  54,
-        "MinLevel":  3,
-        "Classes":  [
-                        "Bard",
-                        "Cleric",
-                        "Paladin"
-                    ],
-        "Name":  "Lesser Restoration",
-        "SpellLevel":  2,
-        "School":  "Abjuration",
-        "DndSpell":  "Lesser Restoration"
-    },
-    {
-        "Skill":  "Speed Up",
-        "ImageId":  60,
-        "MinLevel":  5,
-        "Classes":  [
-                        "Sorcerer",
-                        "Wizard"
-                    ],
-        "Name":  "Haste",
-        "SpellLevel":  3,
-        "School":  "Transmutation",
-        "DndSpell":  "Haste"
-    },
-    {
-        "Skill":  "Upper",
-        "ImageId":  56,
-        "MinLevel":  1,
-        "Classes":  [
-                        "Cleric",
-                        "Paladin"
-                    ],
-        "Name":  "Shield of Faith",
-        "SpellLevel":  1,
-        "School":  "Abjuration",
-        "DndSpell":  "Shield of Faith"
-    },
-    {
-        "Skill":  "Increase",
-        "ImageId":  56,
-        "MinLevel":  3,
-        "Classes":  [
-                        "Cleric",
-                        "Paladin"
-                    ],
-        "Name":  "Aid",
-        "SpellLevel":  2,
-        "School":  "Abjuration",
-        "DndSpell":  "Aid"
-    },
-    {
-        "Skill":  "Sap",
-        "ImageId":  58,
-        "MinLevel":  5,
-        "Classes":  [
-                        "Bard",
-                        "Cleric",
-                        "Wizard"
-                    ],
-        "Name":  "Bestow Curse",
-        "SpellLevel":  3,
-        "School":  "Necromancy",
-        "DndSpell":  "Bestow Curse"
-    },
-    {
-        "Skill":  "Sleep",
-        "ImageId":  56,
-        "MinLevel":  1,
-        "Classes":  [
-                        "Bard",
-                        "Sorcerer",
-                        "Wizard"
-                    ],
-        "Name":  "Sleep",
-        "SpellLevel":  1,
-        "School":  "Enchantment",
-        "DndSpell":  "Sleep"
-    },
-    {
-        "Skill":  "Disruptive Wave",
-        "ImageId":  5,
-        "MinLevel":  3,
-        "Classes":  [
-                        "Bard",
-                        "Cleric"
-                    ],
-        "Name":  "Silence",
-        "SpellLevel":  2,
-        "School":  "Illusion",
-        "DndSpell":  "Silence"
-    },
-    {
-        "Skill":  "Slow",
-        "ImageId":  61,
-        "MinLevel":  5,
-        "Classes":  [
-                        "Bard",
-                        "Sorcerer",
-                        "Wizard"
-                    ],
-        "Name":  "Slow",
-        "SpellLevel":  3,
-        "School":  "Transmutation",
-        "DndSpell":  "Slow"
-    },
-    {
-        "Skill":  "Chaos",
-        "ImageId":  62,
-        "MinLevel":  7,
-        "Classes":  [
-                        "Bard",
-                        "Sorcerer",
-                        "Wizard"
-                    ],
-        "Name":  "Confusion",
-        "SpellLevel":  4,
-        "School":  "Enchantment",
-        "DndSpell":  "Confusion"
-    },
-    {
-        "Skill":  "Disengage",
-        "ImageId":  220,
-        "MinLevel":  1,
-        "Classes":  [
-                        "Cleric",
-                        "Paladin",
-                        "Warlock",
-                        "Wizard"
-                    ],
-        "Name":  "Protection from Evil and Good",
-        "SpellLevel":  1,
-        "School":  "Abjuration",
-        "DndSpell":  "Protection from Evil and Good"
-    }
+[
+  {
+    "Skill": "Heal",
+    "ImageId": 54,
+    "SpellLevel": 1,
+    "School": "Abjuration",
+    "DndSpell": "Cure Wounds",
+    "MinLevel": 1,
+    "Classes": [
+      "Bard",
+      "Cleric",
+      "Paladin"
+    ],
+    "Name": "Cure Wounds"
+  },
+  {
+    "Skill": "Outside",
+    "ImageId": 344,
+    "SpellLevel": 6,
+    "School": "Conjuration",
+    "DndSpell": "Word of Recall",
+    "MinLevel": 11,
+    "Classes": [
+      "Cleric"
+    ],
+    "Name": "Word of Recall"
+  },
+  {
+    "Skill": "Fire",
+    "ImageId": 1,
+    "SpellLevel": 1,
+    "School": "Evocation",
+    "DndSpell": "Burning Hands",
+    "MinLevel": 1,
+    "Classes": [
+      "Sorcerer",
+      "Wizard"
+    ],
+    "Name": "Burning Hands"
+  },
+  {
+    "Skill": "Lighting",
+    "ImageId": 8,
+    "SpellLevel": 3,
+    "School": "Evocation",
+    "DndSpell": "Lightning Bolt",
+    "MinLevel": 5,
+    "Classes": [
+      "Sorcerer",
+      "Wizard"
+    ],
+    "Name": "Lightning Bolt"
+  },
+  {
+    "Skill": "Fire Breath",
+    "ImageId": 57,
+    "SpellLevel": 3,
+    "School": "Evocation",
+    "DndSpell": "Fireball",
+    "MinLevel": 5,
+    "Classes": [
+      "Sorcerer",
+      "Wizard"
+    ],
+    "Name": "Fireball"
+  },
+  {
+    "Skill": "Lighting Breath",
+    "ImageId": 50,
+    "SpellLevel": 6,
+    "School": "Evocation",
+    "DndSpell": "Chain Lightning",
+    "MinLevel": 11,
+    "Classes": [
+      "Sorcerer",
+      "Wizard"
+    ],
+    "Name": "Chain Lightning"
+  },
+  {
+    "Skill": "Return",
+    "ImageId": 220,
+    "SpellLevel": 5,
+    "School": "Conjuration",
+    "DndSpell": "Teleportation Circle",
+    "MinLevel": 9,
+    "Classes": [
+      "Bard",
+      "Sorcerer",
+      "Wizard"
+    ],
+    "Name": "Teleportation Circle"
+  },
+  {
+    "Skill": "Revive",
+    "ImageId": 53,
+    "SpellLevel": 3,
+    "School": "Necromancy",
+    "DndSpell": "Revivify",
+    "MinLevel": 5,
+    "Classes": [
+      "Cleric",
+      "Paladin"
+    ],
+    "Name": "Revivify"
+  },
+  {
+    "Skill": "Vivify",
+    "ImageId": 53,
+    "SpellLevel": 5,
+    "School": "Necromancy",
+    "DndSpell": "Raise Dead",
+    "MinLevel": 9,
+    "Classes": [
+      "Bard",
+      "Cleric",
+      "Paladin"
+    ],
+    "Name": "Raise Dead"
+  },
+  {
+    "Skill": "Heal All",
+    "ImageId": 54,
+    "SpellLevel": 3,
+    "School": "Abjuration",
+    "DndSpell": "Mass Healing Word",
+    "MinLevel": 5,
+    "Classes": [
+      "Cleric"
+    ],
+    "Name": "Mass Healing Word"
+  },
+  {
+    "Skill": "Heal Us",
+    "ImageId": 54,
+    "SpellLevel": 5,
+    "School": "Abjuration",
+    "DndSpell": "Mass Cure Wounds",
+    "MinLevel": 9,
+    "Classes": [
+      "Bard",
+      "Cleric"
+    ],
+    "Name": "Mass Cure Wounds"
+  },
+  {
+    "Skill": "Heal Us All",
+    "ImageId": 54,
+    "SpellLevel": 9,
+    "School": "Abjuration",
+    "DndSpell": "Mass Heal",
+    "MinLevel": 17,
+    "Classes": [
+      "Cleric"
+    ],
+    "Name": "Mass Heal"
+  },
+  {
+    "Skill": "Antidote",
+    "ImageId": 54,
+    "SpellLevel": 2,
+    "School": "Abjuration",
+    "DndSpell": "Lesser Restoration",
+    "MinLevel": 3,
+    "Classes": [
+      "Bard",
+      "Cleric",
+      "Paladin"
+    ],
+    "Name": "Lesser Restoration"
+  },
+  {
+    "Skill": "Speed Up",
+    "ImageId": 60,
+    "SpellLevel": 3,
+    "School": "Transmutation",
+    "DndSpell": "Haste",
+    "MinLevel": 5,
+    "Classes": [
+      "Sorcerer",
+      "Wizard"
+    ],
+    "Name": "Haste"
+  },
+  {
+    "Skill": "Upper",
+    "ImageId": 56,
+    "SpellLevel": 1,
+    "School": "Abjuration",
+    "DndSpell": "Shield of Faith",
+    "MinLevel": 1,
+    "Classes": [
+      "Cleric",
+      "Paladin"
+    ],
+    "Name": "Shield of Faith"
+  },
+  {
+    "Skill": "Increase",
+    "ImageId": 56,
+    "SpellLevel": 2,
+    "School": "Abjuration",
+    "DndSpell": "Aid",
+    "MinLevel": 3,
+    "Classes": [
+      "Cleric",
+      "Paladin"
+    ],
+    "Name": "Aid"
+  },
+  {
+    "Skill": "Sap",
+    "ImageId": 58,
+    "SpellLevel": 3,
+    "School": "Necromancy",
+    "DndSpell": "Bestow Curse",
+    "MinLevel": 5,
+    "Classes": [
+      "Bard",
+      "Cleric",
+      "Wizard"
+    ],
+    "Name": "Bestow Curse"
+  },
+  {
+    "Skill": "Sleep",
+    "ImageId": 56,
+    "SpellLevel": 1,
+    "School": "Enchantment",
+    "DndSpell": "Sleep",
+    "MinLevel": 1,
+    "Classes": [
+      "Bard",
+      "Sorcerer",
+      "Wizard"
+    ],
+    "Name": "Sleep"
+  },
+  {
+    "Skill": "Disruptive Wave",
+    "ImageId": 5,
+    "SpellLevel": 2,
+    "School": "Illusion",
+    "DndSpell": "Silence",
+    "MinLevel": 3,
+    "Classes": [
+      "Bard",
+      "Cleric"
+    ],
+    "Name": "Silence"
+  },
+  {
+    "Skill": "Slow",
+    "ImageId": 61,
+    "SpellLevel": 3,
+    "School": "Transmutation",
+    "DndSpell": "Slow",
+    "MinLevel": 5,
+    "Classes": [
+      "Bard",
+      "Sorcerer",
+      "Wizard"
+    ],
+    "Name": "Slow"
+  },
+  {
+    "Skill": "Chaos",
+    "ImageId": 62,
+    "SpellLevel": 4,
+    "School": "Enchantment",
+    "DndSpell": "Confusion",
+    "MinLevel": 7,
+    "Classes": [
+      "Bard",
+      "Sorcerer",
+      "Wizard"
+    ],
+    "Name": "Confusion"
+  },
+  {
+    "Skill": "Disengage",
+    "ImageId": 220,
+    "SpellLevel": 1,
+    "School": "Abjuration",
+    "DndSpell": "Protection from Evil and Good",
+    "MinLevel": 1,
+    "Classes": [
+      "Cleric",
+      "Paladin",
+      "Warlock",
+      "Wizard"
+    ],
+    "Name": "Protection from Evil and Good"
+  }
 ]

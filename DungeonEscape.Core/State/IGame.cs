@@ -11,7 +11,6 @@ namespace Redpoint.DungeonEscape.State
 
         void SetMap(string mapId = null, string spawnId = null, WorldPosition? point = null);
 
-        Item CreateRandomEquipment(int maxLevel, int minLevel = 1, Rarity? rarity = null, ItemType? type = null, Class? itemClass = null, Slot? slot = null);
         Item CreateChestItem(int level, Rarity? rarity = null);
         Item CreateGold(int gold);
         Item GetCustomItem(string itemId);

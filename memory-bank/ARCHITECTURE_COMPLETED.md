@@ -34,8 +34,8 @@ Goal completed: separate engine-neutral rules from Unity scripts into `DungeonEs
 
 ### Random Item Rules
 
-- Extracted `CreateRandomItem`, `CreateRandomEquipment`, rarity selection, stat selection, and equipment naming out of `GameState`.
-- Added unit tests for generated item level ranges, rarity behavior, stat ranges, class/slot constraints, and name construction.
+- Extracted random item generation out of `GameState`; the retired procedural `CreateRandomEquipment` path was later removed when static D&D item catalogs became the runtime source of truth.
+- Added unit tests for static item selection, fallback gold, and rarity behavior.
 
 ### Quest Rules
 

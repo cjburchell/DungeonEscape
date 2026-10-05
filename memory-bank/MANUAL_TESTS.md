@@ -978,7 +978,7 @@ active or waiting according to the current party-size limit.
 
 ### [ ] D&D HP Data Naming
 
-- Open the Game Editor Class, Stat Names, Skills, Item Definitions, and Monster tabs.
+- Open the Game Editor Class, Skills, Items, and Monster tabs.
 - Expected: character/stat data uses `HP` rather than `Health`; most monsters omit fixed `HitPoints` and use `HitDice`; fixed-HP exceptions keep a positive `HitPoints` value.
 - Start a new quest and enter combat.
 - Expected: player and monster HP values still initialize, display, and change correctly during combat.
@@ -992,7 +992,7 @@ active or waiting according to the current party-size limit.
 - Expected: monster D&D `Actions` use those values without requiring legacy monster `Skills` or Attack/Defence tuning.
 - Inspect `allmonsters.json` or a monster in the Game Editor.
 - Expected: monsters no longer expose legacy `Skills`; D&D actions may optionally reference an item but do not reference JRPG skills.
-- Inspect generated weapon and armor definitions.
+- Inspect the static weapon and armor catalogs.
 - Expected: weapons expose D&D damage dice/bonus fields, and armor exposes an `ArmorClass` value used by the current equipment bridge.
 - Trigger a combat round with multiple heroes and monsters.
 - Expected: action resolution order follows initiative, using d20 plus Dexterity modifier, rather than only legacy Agility.
@@ -1047,7 +1047,7 @@ The Game Editor is a separate Photino.Blazor desktop app under
 `DungeonEscape.Tools.GameEditor`. Run it with
 `dotnet run --project DungeonEscape.Tools.GameEditor`.
 
-Implementation evidence as of the current roadmap cleanup: the Game Editor is implemented as a Data-folder editor with a single **File** dropdown, auto-load of the last opened folder, tabs for monsters, spells, skills, items, item definitions, quests, dialogs, class, stat names, names, and maps, and a collapsible validation panel. The checks below remain unchecked because they still require launching the desktop tool and manually confirming the workflow end-to-end.
+Implementation evidence as of the current roadmap cleanup: the Game Editor is implemented as a Data-folder editor with a single **File** dropdown, auto-load of the last opened folder, tabs for monsters, spells, skills, items, quests, dialogs, class, names, and maps, and a collapsible validation panel. The checks below remain unchecked because they still require launching the desktop tool and manually confirming the workflow end-to-end.
 
 ### [ ] Open Data Folder, File Menu, And Auto-Load Last Folder
 
@@ -1064,7 +1064,7 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 - Launch the tool; a desktop window titled "Dungeon Escape - Game Editor" opens.
 - Open `DungeonEscape.Unity/Assets/DungeonEscape/Data` from the **File** menu.
 
-- Expected: tabs appear for Monsters, Spells, Skills, Items, Item Definitions, Quests, Dialogs, Class, Stat Names, Names, and Maps.
+- Expected: tabs appear for Monsters, Spells, Skills, Items, Quests, Dialogs, Class, Names, and Maps.
 - Expected: the validation panel shows the current issue count and can be collapsed/expanded.
 - Select the Monsters tab and choose a monster.
 - Expected: the right form shows its properties and a large image preview.
@@ -1072,21 +1072,21 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 - Expected: the preview and the list thumbnail update to the selected tileset image.
 - Edit Name, stats, Rarity, Biomes, and add/remove Spells/Skills/Items via the dropdowns.
 - Expected: the project name shows a "• unsaved" indicator after any change.
-- Visit several other tabs and make a reversible edit, such as quest text, dialog choice metadata, class default image, stat-name text, or map gameplay metadata.
+- Visit several other tabs and make a reversible edit, such as quest text, dialog choice metadata, class default image, item metadata, or map gameplay metadata.
 - Expected: each edit marks the project unsaved and updates validation when references or required fields change.
 - Click Save Project.
 - Expected: the indicator clears and changed JSON/TMX/map-monster files on disk are updated; reopening the Data folder shows the changes, and saved JSON still matches the game format.
 
 ### [ ] Add, Duplicate, And Remove Array-Backed Data
 
-- With a Data folder open, use Monsters, Spells, Skills, Items, Item Definitions, Quests, Dialogs, or Class.
+- With a Data folder open, use Monsters, Spells, Skills, Items, Quests, Dialogs, or Class.
 - Click Add.
 - Expected: a new default entry for the active tab is added and selected.
 - Select an entry and click Duplicate.
 - Expected: a copy named "<name> (Copy)" is inserted after it and selected.
 - Click Remove and confirm.
 - Expected: the selected entry is removed and the project is marked unsaved.
-- Switch to Stat Names, Names, or Maps.
+- Switch to Names or Maps.
 - Expected: Add, Duplicate, and Remove are disabled for fixed/single-object/map-backed tabs.
 
 ### [ ] Unsaved-Changes Guard And Reload
@@ -1139,5 +1139,5 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 
 - Inspect `DungeonEscape.Tools.GameEditor/Schemas/`.
 - Expected: per-file schemas exist for all editor-owned JSON data files and shared definitions live in `dungeonescape-data.schema.json`.
-- Temporarily point a map `song` property or item-definition image ID at a missing value in a reversible working copy.
-- Expected: the validation panel warns for missing map music and generated item-definition image references, then clears after reverting the edit.
+- Temporarily point a map `song` property or item image ID at a missing value in a reversible working copy.
+- Expected: the validation panel warns for missing map music and missing item image references, then clears after reverting the edit.

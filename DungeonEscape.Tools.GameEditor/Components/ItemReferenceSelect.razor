@@ -100,10 +100,6 @@
             return item.ImageId;
         }
 
-        var itemName = Data.ItemDefinitions
-            .SelectMany(definition => definition.Names ?? new List<ItemName>())
-            .FirstOrDefault(candidate => string.Equals(candidate.Name, value, StringComparison.OrdinalIgnoreCase));
-
-        return itemName?.ImageId;
+        return null;
     }
 }

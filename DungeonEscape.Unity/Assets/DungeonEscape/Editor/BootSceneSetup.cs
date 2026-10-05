@@ -31,8 +31,6 @@ namespace Redpoint.DungeonEscape.UnityEditor
 
             CreateCamera();
 
-            AssignTextAsset(bootstrap, "itemDefinitionsJson", "Assets/DungeonEscape/Data/itemdef.json");
-            AssignTextAsset(bootstrap, "customItemsJson", "Assets/DungeonEscape/Data/customitems.json");
             AssignTextAsset(bootstrap, "questItemsJson", "Assets/DungeonEscape/Data/questitems.json");
             AssignTextAsset(bootstrap, "magicItemsJson", "Assets/DungeonEscape/Data/magicitems.json");
             AssignTextAsset(bootstrap, "nonMagicItemsJson", "Assets/DungeonEscape/Data/nonmagicitems.json");
@@ -45,7 +43,6 @@ namespace Redpoint.DungeonEscape.UnityEditor
             AssignTextAsset(bootstrap, "dialogJson", "Assets/DungeonEscape/Data/dialog.json");
             AssignTextAsset(bootstrap, "classLevelsJson", "Assets/DungeonEscape/Data/classlevels.json");
             AssignTextAsset(bootstrap, "namesJson", "Assets/DungeonEscape/Data/names.json");
-            AssignTextAsset(bootstrap, "statNamesJson", "Assets/DungeonEscape/Data/statnames.json");
             AssignString(bootstrap, "testMapAssetPath", "Assets/DungeonEscape/Maps/overworld.tmx");
 
             CreatePreviewStatusView();

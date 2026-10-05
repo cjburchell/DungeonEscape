@@ -33,8 +33,7 @@ public sealed class DataSourceCatalog
         Spells = Names(data.Spells.Select(s => s.Name));
         Skills = Names(data.Skills.Select(s => s.Name));
         Items = Names(data.Items.Select(i => i.Name)
-            .Concat(data.Items.Select(i => i.Id))
-            .Concat(data.ItemDefinitions.SelectMany(d => d.Names ?? new List<Redpoint.DungeonEscape.Data.ItemName>()).Select(n => n.Name)));
+            .Concat(data.Items.Select(i => i.Id)));
         Items = Items.Prepend(RandomItemId).ToList();
         Quests = Names(data.Quests.Select(q => q.Id));
         Dialogs = Names(data.Dialogs.Select(d => d.Id));

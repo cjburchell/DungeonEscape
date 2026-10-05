@@ -157,20 +157,6 @@ else
                             </div>
                         }
                         break;
-                    case EditorTab.ItemDefinitions:
-                        @foreach (var definition in Filter(Data.ItemDefinitions, ItemDefinitionName))
-                        {
-                            var current = definition;
-                            <div class="monster-item @(ReferenceEquals(current, selectedItemDefinition) ? "selected" : string.Empty)"
-                                 @onclick="() => selectedItemDefinition = current">
-                                <img class="thumb" src="@ItemDefinitionThumb(current)" alt="" />
-                                <div class="meta">
-                                    <span class="name">@Display(ItemDefinitionName(current))</span>
-                                    <span class="sub">@current.Type &middot; Base @current.BaseStat</span>
-                                </div>
-                            </div>
-                        }
-                        break;
                     case EditorTab.Quests:
                         @foreach (var quest in Filter(Data.Quests, q => q.Name))
                         {
@@ -211,19 +197,6 @@ else
                             </div>
                         }
                         break;
-                    case EditorTab.StatNames:
-                        @foreach (var statName in Filter(Data.StatNames, s => s.Type.ToString()))
-                        {
-                            var current = statName;
-                            <div class="monster-item @(ReferenceEquals(current, selectedStatName) ? "selected" : string.Empty)"
-                                 @onclick="() => selectedStatName = current">
-                                <div class="meta">
-                                    <span class="name">@current.Type</span>
-                                    <span class="sub">@(current.Prefix?.Count ?? 0) prefixes &middot; @(current.Suffix?.Count ?? 0) suffixes</span>
-                                </div>
-                            </div>
-                        }
-                        break;
                     case EditorTab.Names:
                         <div class="empty-state">Names are edited as a single document.</div>
                         break;
@@ -260,9 +233,6 @@ else
                 case EditorTab.Items:
                     <ItemForm Item="selectedItem" OnChanged="OnDataChanged" />
                     break;
-                case EditorTab.ItemDefinitions:
-                    <ItemDefinitionForm Definition="selectedItemDefinition" OnChanged="OnDataChanged" />
-                    break;
                 case EditorTab.Quests:
                     <QuestForm Quest="selectedQuest" OnChanged="OnDataChanged" />
                     break;
@@ -271,9 +241,6 @@ else
                     break;
                 case EditorTab.Classes:
                     <ClassStatsForm ClassStats="selectedClassStats" OnChanged="OnDataChanged" />
-                    break;
-                case EditorTab.StatNames:
-                    <StatNameForm StatName="selectedStatName" OnChanged="OnDataChanged" />
                     break;
                 case EditorTab.Names:
                     <NamesForm Names="Data.Names" OnChanged="OnDataChanged" />
@@ -298,7 +265,7 @@ else
 }
 
 @code {
-    private enum EditorTab { Monsters, Spells, Skills, Items, ItemDefinitions, Quests, Dialogs, Classes, StatNames, Names, Maps, QuestGraph, EncounterSimulator }
+    private enum EditorTab { Monsters, Spells, Skills, Items, Quests, Dialogs, Classes, Names, Maps, QuestGraph, EncounterSimulator }
 
     private EditorTab activeTab = EditorTab.Monsters;
     private string searchText = string.Empty;
@@ -311,11 +278,9 @@ else
     private Spell? selectedSpell;
     private Skill? selectedSkill;
     private Item? selectedItem;
-    private ItemDefinition? selectedItemDefinition;
     private Quest? selectedQuest;
     private Dialog? selectedDialog;
     private ClassStats? selectedClassStats;
-    private StatName? selectedStatName;
     private MapDocument? selectedMap;
 
     protected override void OnInitialized()
@@ -438,11 +403,9 @@ else
         selectedSpell = Data.Spells.FirstOrDefault();
         selectedSkill = Data.Skills.FirstOrDefault();
         selectedItem = Data.Items.FirstOrDefault();
-        selectedItemDefinition = Data.ItemDefinitions.FirstOrDefault();
         selectedQuest = Data.Quests.FirstOrDefault();
         selectedDialog = Data.Dialogs.FirstOrDefault();
         selectedClassStats = Data.ClassLevels.FirstOrDefault();
-        selectedStatName = Data.StatNames.FirstOrDefault();
         selectedMap = Data.Maps.FirstOrDefault();
     }
 
@@ -454,9 +417,7 @@ else
 
     private static string TabLabel(EditorTab tab) => tab switch
     {
-        EditorTab.ItemDefinitions => "Item Definitions",
         EditorTab.Classes => "Class",
-        EditorTab.StatNames => "Stat Names",
         EditorTab.QuestGraph => "Quest Graph",
         EditorTab.EncounterSimulator => "Encounter Simulator",
         _ => tab.ToString()
@@ -468,11 +429,9 @@ else
         EditorTab.Spells => Data.Spells.Count,
         EditorTab.Skills => Data.Skills.Count,
         EditorTab.Items => Data.Items.Count,
-        EditorTab.ItemDefinitions => Data.ItemDefinitions.Count,
         EditorTab.Quests => Data.Quests.Count,
         EditorTab.Dialogs => Data.Dialogs.Count,
         EditorTab.Classes => Data.ClassLevels.Count,
-        EditorTab.StatNames => Data.StatNames.Count,
         EditorTab.Names => (Data.Names.Male?.Count ?? 0) + (Data.Names.Female?.Count ?? 0),
         EditorTab.Maps => Data.Maps.Count,
         EditorTab.QuestGraph => Data.Quests.Count + Data.Dialogs.Count,
@@ -481,10 +440,9 @@ else
     };
 
     private bool IsSingleObjectTab => activeTab == EditorTab.Names;
-    private bool IsFixedListTab => activeTab == EditorTab.StatNames;
     private bool IsMapTab => activeTab == EditorTab.Maps;
     private bool IsToolTab => activeTab == EditorTab.QuestGraph || activeTab == EditorTab.EncounterSimulator;
-    private bool AreListActionsDisabled => IsSingleObjectTab || IsFixedListTab || IsMapTab || IsToolTab;
+    private bool AreListActionsDisabled => IsSingleObjectTab || IsMapTab || IsToolTab;
 
     private object? SelectedObject => activeTab switch
     {
@@ -492,11 +450,9 @@ else
         EditorTab.Spells => selectedSpell,
         EditorTab.Skills => selectedSkill,
         EditorTab.Items => selectedItem,
-        EditorTab.ItemDefinitions => selectedItemDefinition,
         EditorTab.Quests => selectedQuest,
         EditorTab.Dialogs => selectedDialog,
         EditorTab.Classes => selectedClassStats,
-        EditorTab.StatNames => selectedStatName,
         EditorTab.Names => Data.Names,
         EditorTab.Maps => selectedMap,
         EditorTab.QuestGraph => null,
@@ -517,12 +473,6 @@ else
 
     private static string Display(string? name) => string.IsNullOrEmpty(name) ? "(unnamed)" : name;
 
-    private static string ItemDefinitionName(ItemDefinition definition)
-    {
-        var firstName = definition.Names?.FirstOrDefault(n => !string.IsNullOrEmpty(n.Name))?.Name;
-        return string.IsNullOrEmpty(firstName) ? definition.Type.ToString() : firstName;
-    }
-
     private string MonsterThumb(int imageId) => MonsterImages.GetImageDataUri(imageId) ?? string.Empty;
 
     private string ItemThumb(int imageId) => ItemImages.Catalog.GetImageDataUri(imageId) ?? string.Empty;
@@ -530,14 +480,6 @@ else
     private string SpellThumb(int imageId) => SpellImages.Catalog.GetImageDataUri(imageId) ?? string.Empty;
 
     private string ClassThumb(int imageId) => HeroImages.GetImageDataUri(imageId) ?? string.Empty;
-
-    private string ItemDefinitionThumb(ItemDefinition definition)
-    {
-        var imageId = definition.Names?.FirstOrDefault(name => name.ImageId != 0)?.ImageId
-            ?? definition.Names?.FirstOrDefault()?.ImageId
-            ?? 0;
-        return ItemThumb(imageId);
-    }
 
     private void OnDataChanged() => Data.MarkDirty();
 
@@ -588,16 +530,6 @@ else
                 selectedItem = new Item { Name = "New Item" };
                 Data.Items.Add(selectedItem);
                 break;
-            case EditorTab.ItemDefinitions:
-                selectedItemDefinition = new ItemDefinition
-                {
-                    Type = ItemType.Weapon,
-                    Slots = new List<Slot>(),
-                    Classes = new List<string>(),
-                    Names = new List<ItemName> { new() { Name = "New Item Definition" } }
-                };
-                Data.ItemDefinitions.Add(selectedItemDefinition);
-                break;
             case EditorTab.Quests:
                 selectedQuest = new Quest
                 {
@@ -640,15 +572,6 @@ else
                 };
                 Data.ClassLevels.Add(selectedClassStats);
                 break;
-            case EditorTab.StatNames:
-                selectedStatName = new StatName
-                {
-                    Type = StatType.HP,
-                    Prefix = new List<string>(),
-                    Suffix = new List<string>()
-                };
-                Data.StatNames.Add(selectedStatName);
-                break;
         }
 
         Data.MarkDirty();
@@ -670,9 +593,6 @@ else
             case EditorTab.Items when selectedItem != null:
                 selectedItem = Clone(selectedItem, Data.Items, i => i.Name, (i, n) => i.Name = n);
                 break;
-            case EditorTab.ItemDefinitions when selectedItemDefinition != null:
-                selectedItemDefinition = Clone(selectedItemDefinition, Data.ItemDefinitions, ItemDefinitionName, SetItemDefinitionName);
-                break;
             case EditorTab.Quests when selectedQuest != null:
                 selectedQuest = Clone(selectedQuest, Data.Quests, q => q.Name, (q, n) => q.Name = n);
                 selectedQuest.Id = UniqueId(
@@ -685,9 +605,6 @@ else
             case EditorTab.Classes when selectedClassStats != null:
                 selectedClassStats = Clone(selectedClassStats, Data.ClassLevels, c => c.Class, (_, _) => { });
                 selectedClassStats.Class = NextAvailableClass(selectedClassStats.Class);
-                break;
-            case EditorTab.StatNames when selectedStatName != null:
-                selectedStatName = Clone(selectedStatName, Data.StatNames, s => s.Type.ToString(), (_, _) => { });
                 break;
         }
 
@@ -712,17 +629,6 @@ else
         }
 
         return clone;
-    }
-
-    private static void SetItemDefinitionName(ItemDefinition definition, string name)
-    {
-        definition.Names ??= new List<ItemName>();
-        if (definition.Names.Count == 0)
-        {
-            definition.Names.Add(new ItemName());
-        }
-
-        definition.Names[0].Name = name;
     }
 
     private string NextAvailableClass(string? fallback = null)
@@ -777,11 +683,9 @@ else
             EditorTab.Spells => selectedSpell?.Name,
             EditorTab.Skills => selectedSkill?.Name,
             EditorTab.Items => selectedItem?.Name,
-            EditorTab.ItemDefinitions => selectedItemDefinition == null ? null : ItemDefinitionName(selectedItemDefinition),
             EditorTab.Quests => selectedQuest?.Name,
             EditorTab.Dialogs => selectedDialog?.Id,
             EditorTab.Classes => selectedClassStats?.Class,
-            EditorTab.StatNames => selectedStatName?.Type.ToString(),
             EditorTab.Maps => selectedMap?.Id,
             _ => null
         };
@@ -815,10 +719,6 @@ else
                 Data.Items.Remove(selectedItem);
                 selectedItem = Data.Items.FirstOrDefault();
                 break;
-            case EditorTab.ItemDefinitions when selectedItemDefinition != null:
-                Data.ItemDefinitions.Remove(selectedItemDefinition);
-                selectedItemDefinition = Data.ItemDefinitions.FirstOrDefault();
-                break;
             case EditorTab.Quests when selectedQuest != null:
                 Data.Quests.Remove(selectedQuest);
                 selectedQuest = Data.Quests.FirstOrDefault();
@@ -830,10 +730,6 @@ else
             case EditorTab.Classes when selectedClassStats != null:
                 Data.ClassLevels.Remove(selectedClassStats);
                 selectedClassStats = Data.ClassLevels.FirstOrDefault();
-                break;
-            case EditorTab.StatNames when selectedStatName != null:
-                Data.StatNames.Remove(selectedStatName);
-                selectedStatName = Data.StatNames.FirstOrDefault();
                 break;
         }
 

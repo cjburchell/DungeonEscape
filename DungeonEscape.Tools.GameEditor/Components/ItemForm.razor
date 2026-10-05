@@ -30,27 +30,51 @@ else
         <EnumSelect TEnum="ItemType" Label="Type" Value="Item.Type" ValueChanged="v => Set(() => Item.Type = v)" />
         <EnumSelect TEnum="Rarity" Label="Rarity" Value="Item.Rarity" ValueChanged="v => Set(() => Item.Rarity = v)" />
         <EnumSelect TEnum="Target" Label="Target" Value="Item.Target" ValueChanged="v => Set(() => Item.Target = v)" />
+        <NumberField Label="Weight" Value="Item.Weight" ValueChanged="v => Set(() => Item.Weight = v)" />
         <NumberField Label="Cost" Value="Item.Cost" ValueChanged="v => Set(() => Item.Cost = v)" />
         <NumberField Label="Min Level" Value="Item.MinLevel" ValueChanged="v => Set(() => Item.MinLevel = v)" />
         <NumberField Label="Charges" Value="Item.Charges" ValueChanged="v => Set(() => Item.Charges = v)" />
     </div>
 
-    <div class="field-grid">
-        <div class="field">
-            <label>Skill</label>
-            <select value="@Item.SkillId" @onchange="e => Set(() => Item.SkillId = e.Value?.ToString())">
-                <option value="">-- none --</option>
-                @if (!string.IsNullOrEmpty(Item.SkillId) && !DataSources.Skills.Contains(Item.SkillId))
-                {
-                    <option value="@Item.SkillId">@Item.SkillId (custom)</option>
-                }
-                @foreach (var skill in DataSources.Skills)
-                {
-                    <option value="@skill">@skill</option>
-                }
-            </select>
+    <fieldset>
+        <legend>Magic Item</legend>
+        <div class="field-grid">
+            <div class="field">
+                <label>Is Magic Item</label>
+                <input type="checkbox" checked="@Item.IsMagicItem"
+                       @onchange="e => Set(() => Item.IsMagicItem = (bool)(e.Value ?? false))" />
+            </div>
+            <div class="field">
+                <label>Requires Attunement</label>
+                <input type="checkbox" checked="@Item.RequiresAttunement"
+                       @onchange="e => Set(() => Item.RequiresAttunement = (bool)(e.Value ?? false))" />
+            </div>
         </div>
-    </div>
+
+        <div class="field-grid">
+            <div class="field">
+                <label>Skill</label>
+                <select value="@Item.SkillId" @onchange="e => Set(() => Item.SkillId = e.Value?.ToString())">
+                    <option value="">-- none --</option>
+                    @if (!string.IsNullOrEmpty(Item.SkillId) && !DataSources.Skills.Contains(Item.SkillId))
+                    {
+                        <option value="@Item.SkillId">@Item.SkillId (custom)</option>
+                    }
+                    @foreach (var skill in DataSources.Skills)
+                    {
+                        <option value="@skill">@skill</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="field-grid">
+            <div class="field" style="grid-column: 1 / -1;">
+                <label>Attunement Classes</label>
+                <EnumMultiSelect TEnum="Class" Selected="EnsureAttunementClasses()" SelectedChanged="OnAttunementClassesChanged" OnChanged="RaiseChanged" />
+            </div>
+        </div>
+    </fieldset>
 
     <fieldset>
         <legend>Stats</legend>
@@ -106,6 +130,7 @@ else
     private List<StatValue> EnsureStats() => Item == null ? new List<StatValue>() : (Item.Stats ??= new List<StatValue>());
     private List<Slot> EnsureSlots() => Item == null ? new List<Slot>() : (Item.Slots ??= new List<Slot>());
     private List<string> EnsureClasses() => Item == null ? new List<string>() : (Item.Classes ??= new List<string>());
+    private List<Class> EnsureAttunementClasses() => Item == null ? new List<Class>() : (Item.AttunementClasses ??= new List<Class>());
 
     private async Task OnSlotsChanged(List<Slot> slots)
     {
@@ -122,6 +147,16 @@ else
         if (Item != null)
         {
             Item.Classes = classes;
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task OnAttunementClassesChanged(List<Class> classes)
+    {
+        if (Item != null)
+        {
+            Item.AttunementClasses = classes;
         }
 
         await Task.CompletedTask;

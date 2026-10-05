@@ -1647,32 +1647,8 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 minLevel,
                 rarity,
                 GameDataCache.Current == null ? null : GameDataCache.Current.CustomItems,
-                GameDataCache.Current == null ? null : GameDataCache.Current.ItemDefinitions,
-                GameDataCache.Current == null ? null : GameDataCache.Current.StatNames,
                 GameDataCache.Current == null ? null : GameDataCache.Current.Skills,
                 () => Random.NextDouble(),
-                maxValue => Random.Next(maxValue),
-                () => Guid.NewGuid().ToString());
-        }
-
-        public Item CreateRandomEquipment(
-            int maxLevel,
-            int minLevel = 1,
-            Rarity? rarity = null,
-            ItemType? type = null,
-            Class? itemClass = null,
-            Slot? slot = null)
-        {
-            return RandomItemRules.CreateRandomEquipment(
-                maxLevel,
-                minLevel,
-                rarity,
-                type,
-                itemClass,
-                slot,
-                GameDataCache.Current == null ? null : GameDataCache.Current.ItemDefinitions,
-                GameDataCache.Current == null ? null : GameDataCache.Current.StatNames,
-                GameDataCache.Current == null ? null : GameDataCache.Current.Skills,
                 maxValue => Random.Next(maxValue),
                 () => Guid.NewGuid().ToString());
         }

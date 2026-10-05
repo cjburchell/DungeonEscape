@@ -1,2940 +1,2696 @@
 [
-    {
-        "ImageId":  1,
-        "MinLevel":  5,
-        "GroupSize":  5,
-        "Xp":  50,
-        "Gold":  12,
-        "Name":  "Giant Centipede",
-        "Biomes":  [
-                       "Grassland",
-                       "Hills"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  5,
-        "Charisma":  3,
-        "ProficiencyBonus":  2,
-        "Wisdom":  7,
-        "ArmorClass":  14,
-        "Constitution":  12,
-        "DamageDie":  4,
-        "Intelligence":  1,
-        "ChallengeRating":  "1/4",
-        "AttackBonus":  4,
-        "Dexterity":  14,
-        "DamageDice":  1,
-        "DamageBonus":  2,
-        "DndMonster":  "Giant Centipede",
-        "Size":  "Small",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 30 ft., climb 30 ft.",
-        "Senses":  "blindsight 30 ft., passive perception 8",
-        "Languages":  "",
-        "HitDice":  "2d6+2",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d4+2 piercing damage.",
-                            "AttackBonus":  4,
-                            "DamageDice":  1,
-                            "DamageDie":  4,
-                            "DamageBonus":  2,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  2,
-        "MinLevel":  1,
-        "GroupSize":  5,
-        "Xp":  50,
-        "Gold":  13,
-        "Name":  "Goblin Archer",
-        "Biomes":  [
-                       "Grassland",
-                       "Hills",
-                       "Forest"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  8,
-        "Charisma":  8,
-        "ProficiencyBonus":  2,
-        "Wisdom":  8,
-        "ArmorClass":  15,
-        "Constitution":  10,
-        "DamageDie":  6,
-        "Intelligence":  10,
-        "ChallengeRating":  "1/4",
-        "AttackBonus":  4,
-        "Dexterity":  15,
-        "DamageDice":  1,
-        "DamageBonus":  2,
-        "DndMonster":  "Goblin Warrior",
-        "Size":  "Small",
-        "MonsterType":  "fey (goblinoid)",
-        "Alignment":  "chaotic neutral",
-        "Speed":  "walk 30 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 9",
-        "Languages":  "Common, Goblin",
-        "HitDice":  "3d6",
-        "Actions":  [
-                        {
-                            "Name":  "Shortbow",
-                            "Description":  "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d6+2 piercing damage.",
-                            "AttackBonus":  4,
-                            "DamageDice":  1,
-                            "DamageDie":  6,
-                            "DamageBonus":  2,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Nimble Escape",
-                           "Description":  "The goblin can take the Disengage or Hide action as a bonus action on each of its turns."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  3,
-        "MinLevel":  5,
-        "GroupSize":  5,
-        "Xp":  100,
-        "Gold":  20,
-        "Name":  "Giant Wasp",
-        "Biomes":  [
-                       "Grassland",
-                       "Hills"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  10,
-        "Charisma":  3,
-        "ProficiencyBonus":  2,
-        "Wisdom":  10,
-        "ArmorClass":  13,
-        "Constitution":  10,
-        "DamageDie":  6,
-        "Intelligence":  1,
-        "ChallengeRating":  "1/2",
-        "AttackBonus":  4,
-        "Dexterity":  14,
-        "DamageDice":  1,
-        "DamageBonus":  2,
-        "DndMonster":  "Giant Wasp",
-        "Size":  "Medium",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 10 ft., fly 50 ft.",
-        "Senses":  "passive perception 10",
-        "Languages":  "",
-        "HitDice":  "5d8",
-        "Actions":  [
-                        {
-                            "Name":  "Sting",
-                            "Description":  "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d6+2 piercing damage.",
-                            "AttackBonus":  4,
-                            "DamageDice":  1,
-                            "DamageDie":  6,
-                            "DamageBonus":  2,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  4,
-        "MinLevel":  1,
-        "GroupSize":  8,
-        "Xp":  10,
-        "Gold":  4,
-        "Name":  "Giant Fire Beetle",
-        "Biomes":  [
-                       "Grassland",
-                       "Hills"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  8,
-        "Charisma":  3,
-        "ProficiencyBonus":  2,
-        "Wisdom":  7,
-        "ArmorClass":  13,
-        "Constitution":  12,
-        "DamageDie":  6,
-        "Intelligence":  1,
-        "ChallengeRating":  "0",
-        "AttackBonus":  1,
-        "Dexterity":  10,
-        "DamageDice":  1,
-        "DamageBonus":  -1,
-        "DndMonster":  "Giant Fire Beetle",
-        "Size":  "Small",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 30 ft., climb 30 ft.",
-        "Senses":  "blindsight 30 ft., passive perception 8",
-        "Languages":  "",
-        "HitDice":  "1d6+1",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +1 to hit, reach 5 ft., one target. Hit: 1d6-1 slashing damage.",
-                            "AttackBonus":  1,
-                            "DamageDice":  1,
-                            "DamageDie":  6,
-                            "DamageBonus":  -1,
-                            "DamageType":  "Slashing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Illumination",
-                           "Description":  "The beetle sheds bright light in a 10-foot radius and dim light for an additional 10 ft.."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  5,
-        "MinLevel":  10,
-        "GroupSize":  3,
-        "Xp":  700,
-        "Gold":  45,
-        "Name":  "Minotaur",
-        "Biomes":  [
-                       "Grassland",
-                       "Hills",
-                       "Forest"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  18,
-        "Charisma":  9,
-        "ProficiencyBonus":  2,
-        "Wisdom":  16,
-        "ArmorClass":  14,
-        "Constitution":  16,
-        "DamageDie":  12,
-        "Intelligence":  6,
-        "ChallengeRating":  "3",
-        "AttackBonus":  6,
-        "Dexterity":  11,
-        "DamageDice":  1,
-        "DamageBonus":  4,
-        "DndMonster":  "Minotaur of Baphomet",
-        "Size":  "Large",
-        "MonsterType":  "monstrosity",
-        "Alignment":  "chaotic evil",
-        "Speed":  "walk 40 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 17",
-        "Languages":  "Abyssal",
-        "HitDice":  "10d10+30",
-        "Actions":  [
-                        {
-                            "Name":  "Abyssal Glaive",
-                            "Description":  "Melee Attack Roll: +6 to hit, reach 10 ft., one target. Hit: 1d12+4 slashing damage.",
-                            "AttackBonus":  6,
-                            "DamageDice":  1,
-                            "DamageDie":  12,
-                            "DamageBonus":  4,
-                            "DamageType":  "Slashing",
-                            "Reach":  "10 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        },
-                        {
-                            "Name":  "Gore",
-                            "Description":  "Melee Attack Roll: +6, reach 5 ft., one target. Hit: 4d6+4 piercing damage. If the target is a Large or smaller creature and the minotaur moved 10+ feet straight toward it immediately before the hit, the target takes an extra 3d6 piercing damage and has the Prone condition.",
-                            "AttackBonus":  6,
-                            "DamageDice":  4,
-                            "DamageDie":  6,
-                            "DamageBonus":  4,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Charge",
-                           "Description":  "If the minotaur moves at least 10 ft. straight toward a target and then hits it with a gore attack on the same turn, the target takes an extra 9 (2d8) piercing damage. If the target is a creature, it must succeed on a DC 14 Strength saving throw or be pushed up to 10 ft. away and knocked prone."
-                       },
-                       {
-                           "Name":  "Labyrinthine Recall",
-                           "Description":  "The minotaur can perfectly recall any path it has traveled."
-                       },
-                       {
-                           "Name":  "Reckless",
-                           "Description":  "At the start of its turn, the minotaur can gain advantage on all melee weapon attack rolls it makes during that turn, but attack rolls against it have advantage until the start of its next turn."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  6,
-        "MinLevel":  5,
-        "GroupSize":  3,
-        "Xp":  100,
-        "Gold":  16,
-        "Name":  "Scout Archer",
-        "Biomes":  [
-                       "Grassland",
-                       "Hills"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  11,
-        "Charisma":  11,
-        "ProficiencyBonus":  2,
-        "Wisdom":  13,
-        "ArmorClass":  13,
-        "Constitution":  12,
-        "DamageDie":  8,
-        "Intelligence":  11,
-        "ChallengeRating":  "1/2",
-        "AttackBonus":  4,
-        "Dexterity":  14,
-        "DamageDice":  1,
-        "DamageBonus":  2,
-        "DndMonster":  "Scout",
-        "Size":  "Medium",
-        "MonsterType":  "humanoid",
-        "Alignment":  "neutral",
-        "Speed":  "walk 30 ft.",
-        "Senses":  "passive perception 15",
-        "Languages":  "Common plus one other language",
-        "HitDice":  "3d8+3",
-        "Actions":  [
-                        {
-                            "Name":  "Longbow",
-                            "Description":  "Ranged Attack Roll: +4 to hit, range 150/600 ft., one target. Hit: 1d8+2 piercing damage.",
-                            "AttackBonus":  4,
-                            "DamageDice":  1,
-                            "DamageDie":  8,
-                            "DamageBonus":  2,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  "150/600 ft.",
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Keen Hearing and Sight",
-                           "Description":  "The scout has advantage on Wisdom (Perception) checks that rely on hearing or sight."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  7,
-        "MinLevel":  10,
-        "GroupSize":  4,
-        "Xp":  100,
-        "Gold":  72,
-        "Name":  "Venomous Giant Wasp",
-        "Biomes":  [
-                       "Grassland",
-                       "Hills"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  10,
-        "Charisma":  3,
-        "ProficiencyBonus":  2,
-        "Wisdom":  10,
-        "ArmorClass":  13,
-        "Constitution":  10,
-        "DamageDie":  6,
-        "Intelligence":  1,
-        "ChallengeRating":  "1/2",
-        "AttackBonus":  4,
-        "Dexterity":  14,
-        "DamageDice":  1,
-        "DamageBonus":  2,
-        "DndMonster":  "Giant Wasp",
-        "Size":  "Medium",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 10 ft., fly 50 ft.",
-        "Senses":  "passive perception 10",
-        "Languages":  "",
-        "HitDice":  "5d8",
-        "Actions":  [
-                        {
-                            "Name":  "Sting",
-                            "Description":  "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d6+2 piercing damage.",
-                            "AttackBonus":  4,
-                            "DamageDice":  1,
-                            "DamageDie":  6,
-                            "DamageBonus":  2,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  8,
-        "MinLevel":  1,
-        "GroupSize":  10,
-        "Xp":  100,
-        "Gold":  8,
-        "Name":  "Gray Ooze",
-        "Biomes":  [
-                       "Grassland",
-                       "Hills"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  12,
-        "Charisma":  2,
-        "ProficiencyBonus":  2,
-        "Wisdom":  6,
-        "ArmorClass":  9,
-        "Constitution":  16,
-        "DamageDie":  6,
-        "Intelligence":  1,
-        "ChallengeRating":  "1/2",
-        "AttackBonus":  3,
-        "Dexterity":  6,
-        "DamageDice":  1,
-        "DamageBonus":  1,
-        "DndMonster":  "Gray Ooze",
-        "Size":  "Medium",
-        "MonsterType":  "ooze",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 10 ft., climb 10 ft.",
-        "Senses":  "blindsight 60 ft., passive perception 8",
-        "Languages":  "",
-        "HitDice":  "3d8+9",
-        "Actions":  [
-                        {
-                            "Name":  "Pseudopod",
-                            "Description":  "Melee Attack Roll: +3 to hit, reach 5 ft., one target. Hit: 1d6+1 acid damage.",
-                            "AttackBonus":  3,
-                            "DamageDice":  1,
-                            "DamageDie":  6,
-                            "DamageBonus":  1,
-                            "DamageType":  "Acid",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Amorphous",
-                           "Description":  "The ooze can move through a space as narrow as 1 inch wide without squeezing."
-                       },
-                       {
-                           "Name":  "Corrode Metal",
-                           "Description":  "Any nonmagical weapon made of metal that hits the ooze corrodes. After dealing damage, the weapon takes a permanent and cumulative -1 penalty to damage rolls. If its penalty drops to -5, the weapon is destroyed. Nonmagical ammunition made of metal that hits the ooze is destroyed after dealing damage.\nThe ooze can eat through 2-inch-thick, nonmagical metal in 1 round."
-                       },
-                       {
-                           "Name":  "False Appearance",
-                           "Description":  "While the ooze remains motionless, it is indistinguishable from an oily pool or wet rock."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  9,
-        "MinLevel":  1,
-        "GroupSize":  10,
-        "Xp":  100,
-        "Gold":  2,
-        "Name":  "Swarm of Insects",
-        "Biomes":  [
-                       "Grassland",
-                       "Desert",
-                       "Hills"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  3,
-        "Charisma":  1,
-        "ProficiencyBonus":  2,
-        "Wisdom":  7,
-        "ArmorClass":  11,
-        "Constitution":  14,
-        "DamageDie":  4,
-        "Intelligence":  1,
-        "ChallengeRating":  "1/2",
-        "AttackBonus":  3,
-        "Dexterity":  13,
-        "DamageDice":  2,
-        "DamageBonus":  1,
-        "DndMonster":  "Swarm of Insects",
-        "Size":  "Medium",
-        "MonsterType":  "swarm of Tiny beasts",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 20 ft., climb or fly 20 ft.",
-        "Senses":  "blindsight 30 ft., passive perception 8",
-        "Languages":  "",
-        "HitDice":  "3d8+6",
-        "Actions":  [
-                        {
-                            "Name":  "Bites",
-                            "Description":  "Melee Attack Roll: +3 to hit, reach 5 ft., one target. Hit: 2d4+1 poison damage.",
-                            "AttackBonus":  3,
-                            "DamageDice":  2,
-                            "DamageDie":  4,
-                            "DamageBonus":  1,
-                            "DamageType":  "Poison",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Swarm",
-                           "Description":  "The swarm can occupy another creature\u0027s space and vice versa, and the swarm can move through any opening large enough for a Tiny insect. The swarm can\u0027t regain hit points or gain temporary hit points."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  10,
-        "MinLevel":  10,
-        "GroupSize":  3,
-        "Xp":  200,
-        "Gold":  55,
-        "Name":  "Tiger",
-        "Biomes":  [
-                       "Grassland",
-                       "Hills"
-                   ],
-        "Rarity":  "Rare",
-        "Strength":  17,
-        "Charisma":  8,
-        "ProficiencyBonus":  2,
-        "Wisdom":  12,
-        "ArmorClass":  13,
-        "Constitution":  14,
-        "DamageDie":  6,
-        "Intelligence":  3,
-        "ChallengeRating":  "1",
-        "AttackBonus":  5,
-        "Dexterity":  16,
-        "DamageDice":  2,
-        "DamageBonus":  3,
-        "DndMonster":  "Tiger",
-        "Size":  "Large",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 40 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 13",
-        "Languages":  "",
-        "HitDice":  "4d10+8",
-        "Actions":  [
-                        {
-                            "Name":  "Rend",
-                            "Description":  "Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 2d6+3 slashing damage.",
-                            "AttackBonus":  5,
-                            "DamageDice":  2,
-                            "DamageDie":  6,
-                            "DamageBonus":  3,
-                            "DamageType":  "Slashing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Keen Smell",
-                           "Description":  "The tiger has advantage on Wisdom (Perception) checks that rely on smell."
-                       },
-                       {
-                           "Name":  "Pounce",
-                           "Description":  "If the tiger moves at least 20 ft. straight toward a creature and then hits it with a claw attack on the same turn, that target must succeed on a DC 13 Strength saving throw or be knocked prone. If the target is prone, the tiger can make one bite attack against it as a bonus action."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  11,
-        "MinLevel":  1,
-        "GroupSize":  1,
-        "Xp":  200,
-        "Gold":  5,
-        "HitPoints":  4,
-        "Name":  "Metal Ooze",
-        "Biomes":  [
-                       "Grassland",
-                       "Hills"
-                   ],
-        "Rarity":  "Epic",
-        "Strength":  8,
-        "Charisma":  2,
-        "ProficiencyBonus":  2,
-        "Wisdom":  6,
-        "ArmorClass":  19,
-        "Constitution":  12,
-        "DamageDie":  4,
-        "Intelligence":  1,
-        "ChallengeRating":  "1",
-        "AttackBonus":  6,
-        "Dexterity":  18,
-        "DamageDice":  1,
-        "DamageBonus":  4,
-        "DndMonster":  "Metal Ooze (custom)",
-        "Size":  "Small",
-        "MonsterType":  "ooze",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 20 ft.",
-        "Senses":  "blindsight 60 ft., passive perception 8",
-        "Languages":  "",
-        "HitDice":  "1d6+1",
-        "Actions":  [
-                        {
-                            "Name":  "Pseudopod",
-                            "Description":  "Melee Attack Roll: +6 to hit, reach 5 ft., one target. Hit: 1d4+4 acid damage.",
-                            "AttackBonus":  6,
-                            "DamageDice":  1,
-                            "DamageDie":  4,
-                            "DamageBonus":  4,
-                            "DamageType":  "Acid",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Evasive Metal",
-                           "Description":  "This custom ooze is unusually hard to hit and carries only a few Hit Points."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  12,
-        "MinLevel":  20,
-        "GroupSize":  1,
-        "Xp":  5000,
-        "Gold":  150,
-        "Name":  "Young Blue Dragon",
-        "Biomes":  [
-                       "Grassland",
-                       "Desert",
-                       "Hills"
-                   ],
-        "Rarity":  "Epic",
-        "Strength":  21,
-        "Charisma":  17,
-        "ProficiencyBonus":  4,
-        "Wisdom":  13,
-        "ArmorClass":  18,
-        "Constitution":  19,
-        "DamageDie":  6,
-        "Intelligence":  14,
-        "ChallengeRating":  "9",
-        "AttackBonus":  9,
-        "Dexterity":  10,
-        "DamageDice":  2,
-        "DamageBonus":  5,
-        "DndMonster":  "Young Blue Dragon",
-        "Size":  "Large",
-        "MonsterType":  "dragon (chromatic)",
-        "Alignment":  "lawful evil",
-        "Speed":  "walk 40 ft., burrow 20 ft., fly 80 ft.",
-        "Senses":  "blindsight 30 ft., darkvision 120 ft., passive perception 19",
-        "Languages":  "Common, Draconic",
-        "HitDice":  "16d10+64",
-        "Actions":  [
-                        {
-                            "Name":  "Rend",
-                            "Description":  "Melee Attack Roll: +9 to hit, reach 10 ft., one target. Hit: 2d6+5 slashing damage.",
-                            "AttackBonus":  9,
-                            "DamageDice":  2,
-                            "DamageDie":  6,
-                            "DamageBonus":  5,
-                            "DamageType":  "Slashing",
-                            "Reach":  "10 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  13,
-        "MinLevel":  15,
-        "GroupSize":  3,
-        "Xp":  450,
-        "Gold":  54,
-        "Name":  "Giant Constrictor Snake",
-        "Biomes":  [
-                       "Water"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  19,
-        "Charisma":  3,
-        "ProficiencyBonus":  2,
-        "Wisdom":  10,
-        "ArmorClass":  12,
-        "Constitution":  12,
-        "DamageDie":  8,
-        "Intelligence":  1,
-        "ChallengeRating":  "2",
-        "AttackBonus":  6,
-        "Dexterity":  14,
-        "DamageDice":  2,
-        "DamageBonus":  4,
-        "DndMonster":  "Giant Constrictor Snake",
-        "Size":  "Huge",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 30 ft., swim 30 ft.",
-        "Senses":  "blindsight 10 ft., passive perception 12",
-        "Languages":  "",
-        "HitDice":  "8d12+8",
-        "Actions":  [
-                        {
-                            "Name":  "Constrict",
-                            "Description":  "Melee Attack Roll: +6 to hit, reach 5 ft., one target. Hit: 2d8+4 bludgeoning damage.",
-                            "AttackBonus":  6,
-                            "DamageDice":  2,
-                            "DamageDie":  8,
-                            "DamageBonus":  4,
-                            "DamageType":  "Bludgeoning",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  14,
-        "MinLevel":  10,
-        "GroupSize":  2,
-        "Xp":  700,
-        "Gold":  24,
-        "Name":  "Water Weird",
-        "Biomes":  [
-                       "Water"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  17,
-        "Charisma":  10,
-        "ProficiencyBonus":  2,
-        "Wisdom":  10,
-        "ArmorClass":  13,
-        "Constitution":  13,
-        "DamageDie":  6,
-        "Intelligence":  11,
-        "ChallengeRating":  "3",
-        "AttackBonus":  5,
-        "Dexterity":  16,
-        "DamageDice":  3,
-        "DamageBonus":  3,
-        "DndMonster":  "Water Weird",
-        "Actions":  [
-                        {
-                            "Name":  "Surge",
-                            "Description":  "Melee Attack Roll: +5 to hit, reach 10 ft., one target. Hit: 3d6+3 cold damage.",
-                            "AttackBonus":  5,
-                            "DamageDice":  3,
-                            "DamageDie":  6,
-                            "DamageBonus":  3,
-                            "DamageType":  "Cold",
-                            "Reach":  "10 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Invisible in Water",
-                           "Description":  "The water weird has the Invisible condition while fully immersed in water."
-                       },
-                       {
-                           "Name":  "Water Bound",
-                           "Description":  "The water weird dies if it leaves the water to which it is bound or if that water is destroyed."
-                       }
-                   ],
-        "Items":  [
-
-                  ],
-        "Size":  "Large",
-        "MonsterType":  "elemental",
-        "Alignment":  "neutral",
-        "HitDice":  "10d10+10",
-        "Speed":  "walk 5 ft., swim 60 ft.",
-        "Senses":  "blindsight 30 ft., passive perception 10",
-        "Languages":  "understands Primordial but can\u0027t speak"
-    },
-    {
-        "ImageId":  15,
-        "GroupSize":  3,
-        "Xp":  50,
-        "Gold":  96,
-        "Name":  "Giant Poisonous Snake",
-        "Biomes":  [
-                       "Water"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  10,
-        "Charisma":  3,
-        "ProficiencyBonus":  2,
-        "Wisdom":  10,
-        "ArmorClass":  14,
-        "Constitution":  13,
-        "DamageDie":  4,
-        "Intelligence":  2,
-        "ChallengeRating":  "1/4",
-        "AttackBonus":  6,
-        "Dexterity":  18,
-        "DamageDice":  1,
-        "DamageBonus":  4,
-        "DndMonster":  "Giant Venomous Snake",
-        "Size":  "Medium",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 40 ft., swim 40 ft.",
-        "Senses":  "blindsight 10 ft., passive perception 12",
-        "Languages":  "",
-        "HitDice":  "2d8+2",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +6 to hit, reach 10 ft., one target. Hit: 1d4+4 piercing damage.",
-                            "AttackBonus":  6,
-                            "DamageDice":  1,
-                            "DamageDie":  4,
-                            "DamageBonus":  4,
-                            "DamageType":  "Piercing",
-                            "Reach":  "10 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  16,
-        "MinLevel":  15,
-        "GroupSize":  2,
-        "Xp":  1800,
-        "Gold":  104,
-        "Name":  "Giant Shark",
-        "Biomes":  [
-                       "Water"
-                   ],
-        "Rarity":  "Rare",
-        "Strength":  23,
-        "Charisma":  5,
-        "ProficiencyBonus":  3,
-        "Wisdom":  10,
-        "ArmorClass":  13,
-        "Constitution":  21,
-        "DamageDie":  10,
-        "Intelligence":  1,
-        "ChallengeRating":  "5",
-        "AttackBonus":  9,
-        "Dexterity":  11,
-        "DamageDice":  3,
-        "DamageBonus":  6,
-        "DndMonster":  "Giant Shark",
-        "Size":  "Huge",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 5 ft., swim 60 ft.",
-        "Senses":  "blindsight 60 ft., passive perception 13",
-        "Languages":  "",
-        "HitDice":  "8d12+40",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +9 to hit, reach 5 ft., one target. Hit: 3d10+6 piercing damage.",
-                            "AttackBonus":  9,
-                            "DamageDice":  3,
-                            "DamageDie":  10,
-                            "DamageBonus":  6,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Blood Frenzy",
-                           "Description":  "The shark has advantage on melee attack rolls against any creature that doesn\u0027t have all its hit points."
-                       },
-                       {
-                           "Name":  "Water Breathing",
-                           "Description":  "The shark can breathe only underwater."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  17,
-        "MinLevel":  15,
-        "GroupSize":  3,
-        "Xp":  2300,
-        "Gold":  56,
-        "Name":  "Wyvern",
-        "Biomes":  [
-                       "Water"
-                   ],
-        "Rarity":  "Rare",
-        "Strength":  19,
-        "Charisma":  6,
-        "ProficiencyBonus":  3,
-        "Wisdom":  12,
-        "ArmorClass":  14,
-        "Constitution":  16,
-        "DamageDie":  8,
-        "Intelligence":  5,
-        "ChallengeRating":  "6",
-        "AttackBonus":  7,
-        "Dexterity":  10,
-        "DamageDice":  2,
-        "DamageBonus":  4,
-        "DndMonster":  "Wyvern",
-        "Size":  "Large",
-        "MonsterType":  "dragon",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 30 ft., fly 80 ft.",
-        "Senses":  "darkvision 120 ft., passive perception 14",
-        "Languages":  "",
-        "HitDice":  "15d10+45",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +7 to hit, reach 5 ft., one target. Hit: 2d8+4 piercing damage.",
-                            "AttackBonus":  7,
-                            "DamageDice":  2,
-                            "DamageDie":  8,
-                            "DamageBonus":  4,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  18,
-        "MinLevel":  10,
-        "GroupSize":  4,
-        "Xp":  450,
-        "Gold":  37,
-        "Name":  "Ochre Jelly",
-        "Biomes":  [
-                       "Water"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  15,
-        "Charisma":  1,
-        "ProficiencyBonus":  2,
-        "Wisdom":  6,
-        "ArmorClass":  8,
-        "Constitution":  14,
-        "DamageDie":  6,
-        "Intelligence":  2,
-        "ChallengeRating":  "2",
-        "AttackBonus":  4,
-        "Dexterity":  6,
-        "DamageDice":  3,
-        "DamageBonus":  2,
-        "DndMonster":  "Ochre Jelly",
-        "Size":  "Large",
-        "MonsterType":  "ooze",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 20 ft., climb 20 ft.",
-        "Senses":  "blindsight 60 ft., passive perception 8",
-        "Languages":  "",
-        "HitDice":  "7d10+14",
-        "Actions":  [
-                        {
-                            "Name":  "Pseudopod",
-                            "Description":  "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 3d6+2 acid damage.",
-                            "AttackBonus":  4,
-                            "DamageDice":  3,
-                            "DamageDie":  6,
-                            "DamageBonus":  2,
-                            "DamageType":  "Acid",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Amorphous",
-                           "Description":  "The jelly can move through a space as narrow as 1 inch wide without squeezing."
-                       },
-                       {
-                           "Name":  "Spider Climb",
-                           "Description":  "The jelly can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  19,
-        "MinLevel":  10,
-        "GroupSize":  3,
-        "Xp":  700,
-        "Gold":  81,
-        "Name":  "Aberrant Eye",
-        "Biomes":  [
-                       "Water"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  8,
-        "Charisma":  11,
-        "ProficiencyBonus":  2,
-        "Wisdom":  14,
-        "ArmorClass":  14,
-        "Constitution":  14,
-        "DamageDie":  8,
-        "Intelligence":  13,
-        "ChallengeRating":  "3",
-        "AttackBonus":  5,
-        "Dexterity":  14,
-        "DamageDice":  2,
-        "DamageBonus":  2,
-        "DndMonster":  "Aberrant Eye (custom)",
-        "Actions":  [
-                        {
-                            "Name":  "Eye Ray",
-                            "Description":  "Ranged Attack Roll: +5 to hit, range 90 ft., one target. Hit: 2d8+2 necrotic damage.",
-                            "AttackBonus":  5,
-                            "DamageDice":  2,
-                            "DamageDie":  8,
-                            "DamageBonus":  2,
-                            "DamageType":  "Necrotic",
-                            "Reach":  "5 ft.",
-                            "Range":  "90 ft.",
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ],
-        "Size":  "Medium",
-        "MonsterType":  "aberration",
-        "Alignment":  "lawful neutral",
-        "HitDice":  "6d8+12",
-        "Speed":  "fly 30 ft. (hover)",
-        "Senses":  "darkvision 120 ft., passive perception 14",
-        "Languages":  "Deep Speech, Undercommon"
-    },
-    {
-        "ImageId":  20,
-        "MinLevel":  20,
-        "GroupSize":  2,
-        "Xp":  200,
-        "Gold":  160,
-        "Name":  "Kraken Spawn",
-        "Biomes":  [
-                       "Water"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  17,
-        "Charisma":  4,
-        "ProficiencyBonus":  2,
-        "Wisdom":  10,
-        "ArmorClass":  11,
-        "Constitution":  13,
-        "DamageDie":  6,
-        "Intelligence":  5,
-        "ChallengeRating":  "1",
-        "AttackBonus":  5,
-        "Dexterity":  13,
-        "DamageDice":  2,
-        "DamageBonus":  3,
-        "DndMonster":  "Giant Octopus",
-        "Size":  "Large",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 10 ft., swim 60 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 14",
-        "Languages":  "",
-        "HitDice":  "7d10+7",
-        "Actions":  [
-                        {
-                            "Name":  "Tentacles",
-                            "Description":  "Melee Attack Roll: +5 to hit, reach 15 ft., one target. Hit: 2d6+3 bludgeoning damage.",
-                            "AttackBonus":  5,
-                            "DamageDice":  2,
-                            "DamageDie":  6,
-                            "DamageBonus":  3,
-                            "DamageType":  "Bludgeoning",
-                            "Reach":  "15 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Hold Breath",
-                           "Description":  "While out of water, the octopus can hold its breath for 1 hour."
-                       },
-                       {
-                           "Name":  "Underwater Camouflage",
-                           "Description":  "The octopus has advantage on Dexterity (Stealth) checks made while underwater."
-                       },
-                       {
-                           "Name":  "Water Breathing",
-                           "Description":  "The octopus can breathe only underwater."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  21,
-        "MinLevel":  10,
-        "GroupSize":  1,
-        "Xp":  700,
-        "Gold":  180,
-        "Name":  "Phase Serpent",
-        "Biomes":  [
-                       "Water"
-                   ],
-        "Rarity":  "Rare",
-        "Strength":  15,
-        "Charisma":  6,
-        "ProficiencyBonus":  2,
-        "Wisdom":  10,
-        "ArmorClass":  14,
-        "Constitution":  12,
-        "DamageDie":  10,
-        "Intelligence":  6,
-        "ChallengeRating":  "3",
-        "AttackBonus":  5,
-        "Dexterity":  16,
-        "DamageDice":  1,
-        "DamageBonus":  3,
-        "DndMonster":  "Phase Spider",
-        "Size":  "Large",
-        "MonsterType":  "monstrosity",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 30 ft., climb 30 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 10",
-        "Languages":  "",
-        "HitDice":  "7d10+7",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 1d10+3 piercing damage.",
-                            "AttackBonus":  5,
-                            "DamageDice":  1,
-                            "DamageDie":  10,
-                            "DamageBonus":  3,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Ethereal Jaunt",
-                           "Description":  "As a bonus action, the spider can magically shift from the Material Plane to the Ethereal Plane, or vice versa."
-                       },
-                       {
-                           "Name":  "Spider Climb",
-                           "Description":  "The spider can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
-                       },
-                       {
-                           "Name":  "Web Walker",
-                           "Description":  "The spider ignores movement restrictions caused by webbing."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  22,
-        "MinLevel":  15,
-        "GroupSize":  1,
-        "Xp":  200,
-        "Gold":  70,
-        "Name":  "Giant Octopus",
-        "Biomes":  [
-                       "Water"
-                   ],
-        "Rarity":  "Rare",
-        "Strength":  17,
-        "Charisma":  4,
-        "ProficiencyBonus":  2,
-        "Wisdom":  10,
-        "ArmorClass":  11,
-        "Constitution":  13,
-        "DamageDie":  6,
-        "Intelligence":  5,
-        "ChallengeRating":  "1",
-        "AttackBonus":  5,
-        "Dexterity":  13,
-        "DamageDice":  2,
-        "DamageBonus":  3,
-        "DndMonster":  "Giant Octopus",
-        "Size":  "Large",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 10 ft., swim 60 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 14",
-        "Languages":  "",
-        "HitDice":  "7d10+7",
-        "Actions":  [
-                        {
-                            "Name":  "Tentacles",
-                            "Description":  "Melee Attack Roll: +5 to hit, reach 15 ft., one target. Hit: 2d6+3 bludgeoning damage.",
-                            "AttackBonus":  5,
-                            "DamageDice":  2,
-                            "DamageDie":  6,
-                            "DamageBonus":  3,
-                            "DamageType":  "Bludgeoning",
-                            "Reach":  "15 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Hold Breath",
-                           "Description":  "While out of water, the octopus can hold its breath for 1 hour."
-                       },
-                       {
-                           "Name":  "Underwater Camouflage",
-                           "Description":  "The octopus has advantage on Dexterity (Stealth) checks made while underwater."
-                       },
-                       {
-                           "Name":  "Water Breathing",
-                           "Description":  "The octopus can breathe only underwater."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  23,
-        "MinLevel":  20,
-        "GroupSize":  1,
-        "Xp":  1800,
-        "Gold":  134,
-        "Name":  "Triceratops",
-        "Biomes":  [
-                       "Water"
-                   ],
-        "Rarity":  "Epic",
-        "Strength":  22,
-        "Charisma":  5,
-        "ProficiencyBonus":  3,
-        "Wisdom":  11,
-        "ArmorClass":  14,
-        "Constitution":  17,
-        "DamageDie":  8,
-        "Intelligence":  2,
-        "ChallengeRating":  "5",
-        "AttackBonus":  9,
-        "Dexterity":  9,
-        "DamageDice":  4,
-        "DamageBonus":  6,
-        "DndMonster":  "Triceratops",
-        "Size":  "Huge",
-        "MonsterType":  "beast (dinosaur)",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 50 ft.",
-        "Senses":  "passive perception 10",
-        "Languages":  "",
-        "HitDice":  "12d12+36",
-        "Actions":  [
-                        {
-                            "Name":  "Gore",
-                            "Description":  "Melee Attack Roll: +9 to hit, reach 5 ft., one target. Hit: 4d8+6 piercing damage.",
-                            "AttackBonus":  9,
-                            "DamageDice":  4,
-                            "DamageDie":  8,
-                            "DamageBonus":  6,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Trampling Charge",
-                           "Description":  "If the triceratops moves at least 20 ft. straight toward a creature and then hits it with a gore attack on the same turn, that target must succeed on a DC 13 Strength saving throw or be knocked prone. If the target is prone, the triceratops can make one stomp attack against it as a bonus action."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  24,
-        "MinLevel":  15,
-        "GroupSize":  2,
-        "Xp":  2300,
-        "Gold":  88,
-        "Name":  "Lesser Wyvern",
-        "Biomes":  [
-                       "Desert"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  19,
-        "Charisma":  6,
-        "ProficiencyBonus":  3,
-        "Wisdom":  12,
-        "ArmorClass":  14,
-        "Constitution":  16,
-        "DamageDie":  8,
-        "Intelligence":  5,
-        "ChallengeRating":  "6",
-        "AttackBonus":  7,
-        "Dexterity":  10,
-        "DamageDice":  2,
-        "DamageBonus":  4,
-        "DndMonster":  "Wyvern",
-        "Size":  "Large",
-        "MonsterType":  "dragon",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 30 ft., fly 80 ft.",
-        "Senses":  "darkvision 120 ft., passive perception 14",
-        "Languages":  "",
-        "HitDice":  "15d10+45",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +7 to hit, reach 5 ft., one target. Hit: 2d8+4 piercing damage.",
-                            "AttackBonus":  7,
-                            "DamageDice":  2,
-                            "DamageDie":  8,
-                            "DamageBonus":  4,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  25,
-        "MinLevel":  1,
-        "GroupSize":  3,
-        "Xp":  25,
-        "Gold":  9,
-        "Name":  "Poisonous Snake",
-        "Biomes":  [
-                       "Desert"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  2,
-        "Charisma":  3,
-        "ProficiencyBonus":  2,
-        "Wisdom":  10,
-        "ArmorClass":  12,
-        "Constitution":  11,
-        "DamageDie":  4,
-        "Intelligence":  1,
-        "ChallengeRating":  "1/8",
-        "AttackBonus":  4,
-        "Dexterity":  15,
-        "DamageDice":  1,
-        "DamageBonus":  2,
-        "DndMonster":  "Venomous Snake",
-        "Size":  "Tiny",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 30 ft., swim 30 ft.",
-        "Senses":  "blindsight 10 ft., passive perception 10",
-        "Languages":  "",
-        "HitDice":  "2d4",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d4+2 piercing damage.",
-                            "AttackBonus":  4,
-                            "DamageDice":  1,
-                            "DamageDie":  4,
-                            "DamageBonus":  2,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  26,
-        "MinLevel":  10,
-        "GroupSize":  3,
-        "Xp":  50,
-        "Gold":  58,
-        "Name":  "Giant Cobra",
-        "Biomes":  [
-                       "Desert"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  10,
-        "Charisma":  3,
-        "ProficiencyBonus":  2,
-        "Wisdom":  10,
-        "ArmorClass":  14,
-        "Constitution":  13,
-        "DamageDie":  4,
-        "Intelligence":  2,
-        "ChallengeRating":  "1/4",
-        "AttackBonus":  6,
-        "Dexterity":  18,
-        "DamageDice":  1,
-        "DamageBonus":  4,
-        "DndMonster":  "Giant Venomous Snake",
-        "Size":  "Medium",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 40 ft., swim 40 ft.",
-        "Senses":  "blindsight 10 ft., passive perception 12",
-        "Languages":  "",
-        "HitDice":  "2d8+2",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +6 to hit, reach 10 ft., one target. Hit: 1d4+4 piercing damage.",
-                            "AttackBonus":  6,
-                            "DamageDice":  1,
-                            "DamageDie":  4,
-                            "DamageBonus":  4,
-                            "DamageType":  "Piercing",
-                            "Reach":  "10 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  27,
-        "MinLevel":  10,
-        "GroupSize":  3,
-        "Xp":  100,
-        "Gold":  31,
-        "Name":  "Shadow",
-        "Biomes":  [
-                       "Desert"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  6,
-        "Charisma":  8,
-        "ProficiencyBonus":  2,
-        "Wisdom":  10,
-        "ArmorClass":  12,
-        "Constitution":  13,
-        "DamageDie":  6,
-        "Intelligence":  6,
-        "ChallengeRating":  "1/2",
-        "AttackBonus":  4,
-        "Dexterity":  14,
-        "DamageDice":  2,
-        "DamageBonus":  2,
-        "DndMonster":  "Shadow",
-        "Size":  "Medium",
-        "MonsterType":  "undead",
-        "Alignment":  "chaotic evil",
-        "Speed":  "walk 40 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 10",
-        "Languages":  "",
-        "HitDice":  "5d8+5",
-        "Actions":  [
-                        {
-                            "Name":  "Draining Swipe",
-                            "Description":  "Melee Attack Roll: +4, reach 5 ft. Hit: 1d6+2 necrotic damage, and the target\u0027s Strength score decreases by 1d4.",
-                            "AttackBonus":  4,
-                            "DamageDice":  1,
-                            "DamageDie":  6,
-                            "DamageBonus":  2,
-                            "DamageType":  "Necrotic",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Amorphous",
-                           "Description":  "The shadow can move through a space as narrow as 1 inch wide without squeezing."
-                       },
-                       {
-                           "Name":  "Shadow Stealth",
-                           "Description":  "While in dim light or darkness, the shadow can take the Hide action as a bonus action. Its stealth bonus is also improved to +6."
-                       },
-                       {
-                           "Name":  "Sunlight Weakness",
-                           "Description":  "While in sunlight, the shadow has disadvantage on attack rolls, ability checks, and saving throws."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  28,
-        "MinLevel":  5,
-        "GroupSize":  3,
-        "Xp":  700,
-        "Gold":  44,
-        "Name":  "Giant Scorpion",
-        "Biomes":  [
-                       "Desert"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  16,
-        "Charisma":  3,
-        "ProficiencyBonus":  2,
-        "Wisdom":  9,
-        "ArmorClass":  15,
-        "Constitution":  15,
-        "DamageDie":  8,
-        "Intelligence":  1,
-        "ChallengeRating":  "3",
-        "AttackBonus":  4,
-        "Dexterity":  13,
-        "DamageDice":  1,
-        "DamageBonus":  2,
-        "DndMonster":  "Giant Scorpion",
-        "Size":  "Large",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 40 ft.",
-        "Senses":  "blindsight 60 ft., passive perception 9",
-        "Languages":  "",
-        "HitDice":  "7d10+14",
-        "Actions":  [
-                        {
-                            "Name":  "Claw",
-                            "Description":  "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d8+2 bludgeoning damage.",
-                            "AttackBonus":  4,
-                            "DamageDice":  1,
-                            "DamageDie":  8,
-                            "DamageBonus":  2,
-                            "DamageType":  "Bludgeoning",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  29,
-        "MinLevel":  1,
-        "GroupSize":  3,
-        "Xp":  25,
-        "Gold":  15,
-        "Name":  "Twig Blight",
-        "Biomes":  [
-                       "Desert"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  6,
-        "Charisma":  3,
-        "ProficiencyBonus":  2,
-        "Wisdom":  8,
-        "ArmorClass":  14,
-        "Constitution":  11,
-        "DamageDie":  4,
-        "Intelligence":  4,
-        "ChallengeRating":  "1/8",
-        "AttackBonus":  4,
-        "Dexterity":  14,
-        "DamageDice":  1,
-        "DamageBonus":  2,
-        "DndMonster":  "Twig Blight",
-        "Actions":  [
-                        {
-                            "Name":  "Claw",
-                            "Description":  "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d4+2 slashing damage.",
-                            "AttackBonus":  4,
-                            "DamageDice":  1,
-                            "DamageDie":  4,
-                            "DamageBonus":  2,
-                            "DamageType":  "Slashing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Pack Tactics",
-                           "Description":  "The creature has Advantage on an attack roll against a creature if at least one ally is within 5 feet of the creature and the ally doesn\u0027t have the Incapacitated condition."
-                       }
-                   ],
-        "Items":  [
-
-                  ],
-        "Size":  "Small",
-        "MonsterType":  "plant",
-        "Alignment":  "neutral evil",
-        "HitDice":  "2d6",
-        "Speed":  "walk 20 ft.",
-        "Senses":  "blindsight 60 ft., passive perception 9",
-        "Languages":  "understands Common but can\u0027t speak"
-    },
-    {
-        "ImageId":  30,
-        "MinLevel":  10,
-        "GroupSize":  2,
-        "Xp":  200,
-        "Gold":  61,
-        "Name":  "Giant Eagle",
-        "Biomes":  [
-                       "Desert",
-                       "Forest"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  16,
-        "Charisma":  10,
-        "ProficiencyBonus":  2,
-        "Wisdom":  14,
-        "ArmorClass":  13,
-        "Constitution":  13,
-        "DamageDie":  6,
-        "Intelligence":  8,
-        "ChallengeRating":  "1",
-        "AttackBonus":  5,
-        "Dexterity":  17,
-        "DamageDice":  2,
-        "DamageBonus":  3,
-        "DndMonster":  "Giant Eagle",
-        "Size":  "Large",
-        "MonsterType":  "celestial",
-        "Alignment":  "neutral good",
-        "Speed":  "walk 10 ft., fly 80 ft.",
-        "Senses":  "passive perception 16",
-        "Languages":  "Celestial; understands Common and Primordial",
-        "HitDice":  "4d10+4",
-        "Actions":  [
-                        {
-                            "Name":  "Rend",
-                            "Description":  "Melee Attack Roll: +5, reach 5 ft. Hit: 1d4+3 slashing damage plus 1d6 radiant damage.",
-                            "AttackBonus":  5,
-                            "DamageDice":  2,
-                            "DamageDie":  4,
-                            "DamageBonus":  3,
-                            "DamageType":  "Slashing/Radiant",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Keen Sight",
-                           "Description":  "The eagle has advantage on Wisdom (Perception) checks that rely on sight."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  31,
-        "MinLevel":  15,
-        "GroupSize":  2,
-        "Xp":  1800,
-        "Gold":  150,
-        "Name":  "Troll",
-        "Biomes":  [
-                       "Desert"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  18,
-        "Charisma":  7,
-        "ProficiencyBonus":  3,
-        "Wisdom":  9,
-        "ArmorClass":  15,
-        "Constitution":  20,
-        "DamageDie":  6,
-        "Intelligence":  7,
-        "ChallengeRating":  "5",
-        "AttackBonus":  7,
-        "Dexterity":  13,
-        "DamageDice":  2,
-        "DamageBonus":  4,
-        "DndMonster":  "Troll",
-        "Size":  "Large",
-        "MonsterType":  "giant",
-        "Alignment":  "chaotic evil",
-        "Speed":  "walk 30 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 15",
-        "Languages":  "Giant",
-        "HitDice":  "9d10+45",
-        "Actions":  [
-                        {
-                            "Name":  "Rend",
-                            "Description":  "Melee Attack Roll: +7 to hit, reach 5 ft., one target. Hit: 2d6+4 slashing damage.",
-                            "AttackBonus":  7,
-                            "DamageDice":  2,
-                            "DamageDie":  6,
-                            "DamageBonus":  4,
-                            "DamageType":  "Slashing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Regeneration",
-                           "Description":  "The troll regains 10 Hit Points at the start of each of its turns unless it has taken Fire or Acid damage since the end of its last turn."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  32,
-        "MinLevel":  20,
-        "GroupSize":  1,
-        "Xp":  2300,
-        "Gold":  74,
-        "Name":  "Wyvern Matriarch",
-        "Biomes":  [
-                       "Desert"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  19,
-        "Charisma":  6,
-        "ProficiencyBonus":  3,
-        "Wisdom":  12,
-        "ArmorClass":  14,
-        "Constitution":  16,
-        "DamageDie":  8,
-        "Intelligence":  5,
-        "ChallengeRating":  "6",
-        "AttackBonus":  7,
-        "Dexterity":  10,
-        "DamageDice":  2,
-        "DamageBonus":  4,
-        "DndMonster":  "Wyvern",
-        "Size":  "Large",
-        "MonsterType":  "dragon",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 30 ft., fly 80 ft.",
-        "Senses":  "darkvision 120 ft., passive perception 14",
-        "Languages":  "",
-        "HitDice":  "15d10+45",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +7 to hit, reach 5 ft., one target. Hit: 2d8+4 piercing damage.",
-                            "AttackBonus":  7,
-                            "DamageDice":  2,
-                            "DamageDie":  8,
-                            "DamageBonus":  4,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  33,
-        "MinLevel":  15,
-        "GroupSize":  2,
-        "Xp":  700,
-        "Gold":  120,
-        "Name":  "Manticore",
-        "Biomes":  [
-                       "Desert"
-                   ],
-        "Rarity":  "Rare",
-        "Strength":  17,
-        "Charisma":  8,
-        "ProficiencyBonus":  2,
-        "Wisdom":  12,
-        "ArmorClass":  14,
-        "Constitution":  17,
-        "DamageDie":  8,
-        "Intelligence":  7,
-        "ChallengeRating":  "3",
-        "AttackBonus":  5,
-        "Dexterity":  16,
-        "DamageDice":  1,
-        "DamageBonus":  3,
-        "DndMonster":  "Manticore",
-        "Size":  "Large",
-        "MonsterType":  "monstrosity",
-        "Alignment":  "lawful evil",
-        "Speed":  "walk 30 ft., fly 50 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 11",
-        "Languages":  "Common",
-        "HitDice":  "8d10+24",
-        "Actions":  [
-                        {
-                            "Name":  "Tail Spike",
-                            "Description":  "Ranged Attack Roll: +5, range 100/200 ft. Hit: 1d8+3 piercing damage.",
-                            "AttackBonus":  5,
-                            "DamageDice":  1,
-                            "DamageDie":  8,
-                            "DamageBonus":  3,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  "100/200 ft.",
-                            "Count":  1
-                        },
-                        {
-                            "Name":  "Rend",
-                            "Description":  "Melee Attack Roll: +5, reach 5 ft. Hit: 1d8+3 slashing damage.",
-                            "AttackBonus":  5,
-                            "DamageDice":  1,
-                            "DamageDie":  8,
-                            "DamageBonus":  3,
-                            "DamageType":  "Slashing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Tail Spike Regrowth",
-                           "Description":  "The manticore has twenty-four tail spikes. Used spikes regrow when the manticore finishes a long rest."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  34,
-        "MinLevel":  20,
-        "GroupSize":  2,
-        "Xp":  2300,
-        "Gold":  140,
-        "Name":  "Chimera",
-        "Biomes":  [
-                       "Desert",
-                       "Forest"
-                   ],
-        "Rarity":  "Epic",
-        "Strength":  19,
-        "Charisma":  10,
-        "ProficiencyBonus":  3,
-        "Wisdom":  14,
-        "ArmorClass":  14,
-        "Constitution":  19,
-        "DamageDie":  6,
-        "Intelligence":  3,
-        "ChallengeRating":  "6",
-        "AttackBonus":  7,
-        "Dexterity":  11,
-        "DamageDice":  2,
-        "DamageBonus":  4,
-        "DndMonster":  "Chimera",
-        "Size":  "Large",
-        "MonsterType":  "monstrosity",
-        "Alignment":  "chaotic evil",
-        "Speed":  "walk 30 ft., fly 60 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 18",
-        "Languages":  "understands Draconic but can\u0027t speak",
-        "HitDice":  "12d10+48",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +7 to hit, reach 5 ft., one target. Hit: 2d6+4 piercing damage.",
-                            "AttackBonus":  7,
-                            "DamageDice":  2,
-                            "DamageDie":  6,
-                            "DamageBonus":  4,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        },
-                        {
-                            "Name":  "Claw",
-                            "Description":  "Melee Attack Roll: +7, reach 5 ft. Hit: 1d6+4 slashing damage.",
-                            "AttackBonus":  7,
-                            "DamageDice":  1,
-                            "DamageDie":  6,
-                            "DamageBonus":  4,
-                            "DamageType":  "Slashing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        },
-                        {
-                            "Name":  "Ram",
-                            "Description":  "Melee Attack Roll: +7, reach 5 ft. Hit: 1d12+4 bludgeoning damage. If the target is Medium or smaller, it has the Prone condition.",
-                            "AttackBonus":  7,
-                            "DamageDice":  1,
-                            "DamageDie":  12,
-                            "DamageBonus":  4,
-                            "DamageType":  "Bludgeoning",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        },
-                        {
-                            "Name":  "Fire Breath",
-                            "Description":  "Dexterity Saving Throw: DC 15, each creature in a 15-foot cone. Failure: 7d8 fire damage. Success: Half damage.",
-                            "AttackBonus":  7,
-                            "DamageDice":  7,
-                            "DamageDie":  8,
-                            "DamageBonus":  0,
-                            "DamageType":  "Fire",
-                            "Reach":  null,
-                            "Range":  "15-foot cone",
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  35,
-        "MinLevel":  20,
-        "GroupSize":  1,
-        "Xp":  7200,
-        "Gold":  5000,
-        "Name":  "Horned Devil",
-        "Rarity":  "Epic",
-        "Strength":  22,
-        "Charisma":  18,
-        "ProficiencyBonus":  4,
-        "Wisdom":  16,
-        "ArmorClass":  18,
-        "Constitution":  21,
-        "DamageDie":  8,
-        "Intelligence":  12,
-        "ChallengeRating":  "11",
-        "AttackBonus":  10,
-        "Dexterity":  17,
-        "DamageDice":  2,
-        "DamageBonus":  6,
-        "DndMonster":  "Horned Devil",
-        "Size":  "Large",
-        "MonsterType":  "fiend (devil)",
-        "Alignment":  "lawful evil",
-        "Speed":  "walk 30 ft., fly 60 ft.",
-        "Senses":  "darkvision 150 ft., passive perception 13",
-        "Languages":  "Infernal; telepathy 120 ft.",
-        "HitDice":  "19d10+95",
-        "Actions":  [
-                        {
-                            "Name":  "Searing Fork",
-                            "Description":  "Melee Attack Roll: +10, reach 10 ft. Hit: 2d8+6 piercing damage plus 2d8 fire damage.",
-                            "AttackBonus":  10,
-                            "DamageDice":  4,
-                            "DamageDie":  8,
-                            "DamageBonus":  6,
-                            "DamageType":  "Piercing/Fire",
-                            "Reach":  "10 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        },
-                        {
-                            "Name":  "Hurl Flame",
-                            "Description":  "Ranged Attack Roll: +8, range 150 ft. Hit: 5d8+4 fire damage.",
-                            "AttackBonus":  8,
-                            "DamageDice":  5,
-                            "DamageDie":  8,
-                            "DamageBonus":  4,
-                            "DamageType":  "Fire",
-                            "Reach":  null,
-                            "Range":  "150 ft.",
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Devil\u0027s Sight",
-                           "Description":  "Magical darkness doesn\u0027t impede the devil\u0027s darkvision."
-                       },
-                       {
-                           "Name":  "Magic Resistance",
-                           "Description":  "The devil has advantage on saving throws against spells and other magical effects."
-                       }
-                   ],
-        "Items":  [
-
-                  ],
-        "Biomes":  [
-
-                   ]
-    },
-    {
-        "ImageId":  36,
-        "MinLevel":  5,
-        "GroupSize":  2,
-        "Xp":  100,
-        "Gold":  18,
-        "Name":  "Ape",
-        "Biomes":  [
-                       "Forest"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  16,
-        "Charisma":  7,
-        "ProficiencyBonus":  2,
-        "Wisdom":  12,
-        "ArmorClass":  12,
-        "Constitution":  14,
-        "DamageDie":  6,
-        "Intelligence":  6,
-        "ChallengeRating":  "1/2",
-        "AttackBonus":  5,
-        "Dexterity":  14,
-        "DamageDice":  1,
-        "DamageBonus":  3,
-        "DndMonster":  "Ape",
-        "Size":  "Medium",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 30 ft., climb 30 ft.",
-        "Senses":  "passive perception 13",
-        "Languages":  "",
-        "HitDice":  "3d8+6",
-        "Actions":  [
-                        {
-                            "Name":  "Fist",
-                            "Description":  "Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 1d6+3 bludgeoning damage.",
-                            "AttackBonus":  5,
-                            "DamageDice":  1,
-                            "DamageDie":  6,
-                            "DamageBonus":  3,
-                            "DamageType":  "Bludgeoning",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  37,
-        "MinLevel":  5,
-        "GroupSize":  3,
-        "Xp":  10,
-        "Gold":  45,
-        "Name":  "Baboon",
-        "Biomes":  [
-                       "Forest"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  8,
-        "Charisma":  6,
-        "ProficiencyBonus":  2,
-        "Wisdom":  12,
-        "ArmorClass":  12,
-        "Constitution":  11,
-        "DamageDie":  4,
-        "Intelligence":  4,
-        "ChallengeRating":  "0",
-        "AttackBonus":  1,
-        "Dexterity":  14,
-        "DamageDice":  1,
-        "DamageBonus":  -1,
-        "DndMonster":  "Baboon",
-        "Size":  "Small",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 30 ft., climb 30 ft.",
-        "Senses":  "passive perception 11",
-        "Languages":  "",
-        "HitDice":  "1d6",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +1 to hit, reach 5 ft., one target. Hit: 1d4-1 piercing damage.",
-                            "AttackBonus":  1,
-                            "DamageDice":  1,
-                            "DamageDie":  4,
-                            "DamageBonus":  -1,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Pack Tactics",
-                           "Description":  "The baboon has advantage on an attack roll against a creature if at least one of the baboon\u0027s allies is within 5 ft. of the creature and the ally isn\u0027t incapacitated."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  38,
-        "MinLevel":  10,
-        "GroupSize":  3,
-        "Xp":  200,
-        "Gold":  55,
-        "Name":  "Brown Bear",
-        "Biomes":  [
-                       "Forest"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  17,
-        "Charisma":  7,
-        "ProficiencyBonus":  2,
-        "Wisdom":  13,
-        "ArmorClass":  11,
-        "Constitution":  15,
-        "DamageDie":  8,
-        "Intelligence":  2,
-        "ChallengeRating":  "1",
-        "AttackBonus":  5,
-        "Dexterity":  12,
-        "DamageDice":  1,
-        "DamageBonus":  3,
-        "DndMonster":  "Brown Bear",
-        "Size":  "Large",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 40 ft., climb 30 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 13",
-        "Languages":  "",
-        "HitDice":  "3d10+6",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 1d8+3 piercing damage.",
-                            "AttackBonus":  5,
-                            "DamageDice":  1,
-                            "DamageDie":  8,
-                            "DamageBonus":  3,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Keen Smell",
-                           "Description":  "The bear has advantage on Wisdom (Perception) checks that rely on smell."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  39,
-        "MinLevel":  15,
-        "GroupSize":  2,
-        "Xp":  1800,
-        "Gold":  22,
-        "Name":  "Dire Troll",
-        "Biomes":  [
-                       "Forest"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  18,
-        "Charisma":  7,
-        "ProficiencyBonus":  3,
-        "Wisdom":  9,
-        "ArmorClass":  15,
-        "Constitution":  20,
-        "DamageDie":  6,
-        "Intelligence":  7,
-        "ChallengeRating":  "5",
-        "AttackBonus":  7,
-        "Dexterity":  13,
-        "DamageDice":  2,
-        "DamageBonus":  4,
-        "DndMonster":  "Troll",
-        "Size":  "Large",
-        "MonsterType":  "giant",
-        "Alignment":  "chaotic evil",
-        "Speed":  "walk 30 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 15",
-        "Languages":  "Giant",
-        "HitDice":  "9d10+45",
-        "Actions":  [
-                        {
-                            "Name":  "Rend",
-                            "Description":  "Melee Attack Roll: +7 to hit, reach 5 ft., one target. Hit: 2d6+4 slashing damage.",
-                            "AttackBonus":  7,
-                            "DamageDice":  2,
-                            "DamageDie":  6,
-                            "DamageBonus":  4,
-                            "DamageType":  "Slashing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Regeneration",
-                           "Description":  "The troll regains 10 Hit Points at the start of each of its turns unless it has taken Fire or Acid damage since the end of its last turn."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  40,
-        "MinLevel":  1,
-        "GroupSize":  4,
-        "Xp":  25,
-        "Gold":  5,
-        "Name":  "Giant Rat",
-        "Biomes":  [
-                       "Forest"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  7,
-        "Charisma":  4,
-        "ProficiencyBonus":  2,
-        "Wisdom":  10,
-        "ArmorClass":  13,
-        "Constitution":  11,
-        "DamageDie":  4,
-        "Intelligence":  2,
-        "ChallengeRating":  "1/8",
-        "AttackBonus":  5,
-        "Dexterity":  16,
-        "DamageDice":  1,
-        "DamageBonus":  3,
-        "DndMonster":  "Giant Rat",
-        "Size":  "Small",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 30 ft., climb 30 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 12",
-        "Languages":  "",
-        "HitDice":  "2d6",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 1d4+3 piercing damage.",
-                            "AttackBonus":  5,
-                            "DamageDice":  1,
-                            "DamageDie":  4,
-                            "DamageBonus":  3,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Keen Smell",
-                           "Description":  "The rat has advantage on Wisdom (Perception) checks that rely on smell."
-                       },
-                       {
-                           "Name":  "Pack Tactics",
-                           "Description":  "The rat has advantage on an attack roll against a creature if at least one of the rat\u0027s allies is within 5 ft. of the creature and the ally isn\u0027t incapacitated."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  41,
-        "MinLevel":  1,
-        "GroupSize":  3,
-        "Xp":  25,
-        "Gold":  2,
-        "Name":  "Animated Walking Stick",
-        "Biomes":  [
-                       "Forest"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  6,
-        "Charisma":  3,
-        "ProficiencyBonus":  2,
-        "Wisdom":  8,
-        "ArmorClass":  14,
-        "Constitution":  11,
-        "DamageDie":  4,
-        "Intelligence":  4,
-        "ChallengeRating":  "1/8",
-        "AttackBonus":  4,
-        "Dexterity":  14,
-        "DamageDice":  1,
-        "DamageBonus":  2,
-        "DndMonster":  "Animated Walking Stick (custom)",
-        "Actions":  [
-                        {
-                            "Name":  "Scratch",
-                            "Description":  "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d4+2 slashing damage.",
-                            "AttackBonus":  4,
-                            "DamageDice":  1,
-                            "DamageDie":  4,
-                            "DamageBonus":  2,
-                            "DamageType":  "Slashing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Pack Tactics",
-                           "Description":  "The creature has Advantage on an attack roll against a creature if at least one ally is within 5 feet of the creature and the ally doesn\u0027t have the Incapacitated condition."
-                       }
-                   ],
-        "Items":  [
-
-                  ],
-        "Size":  "Small",
-        "MonsterType":  "plant",
-        "Alignment":  "unaligned",
-        "HitDice":  "2d6",
-        "Speed":  "walk 20 ft., climb 20 ft.",
-        "Senses":  "blindsight 30 ft., passive perception 9",
-        "Languages":  ""
-    },
-    {
-        "ImageId":  42,
-        "MinLevel":  5,
-        "GroupSize":  2,
-        "Xp":  200,
-        "Gold":  17,
-        "Name":  "Dire Wolf",
-        "Biomes":  [
-                       "Forest"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  17,
-        "Charisma":  7,
-        "ProficiencyBonus":  2,
-        "Wisdom":  12,
-        "ArmorClass":  14,
-        "Constitution":  15,
-        "DamageDie":  10,
-        "Intelligence":  3,
-        "ChallengeRating":  "1",
-        "AttackBonus":  5,
-        "Dexterity":  15,
-        "DamageDice":  1,
-        "DamageBonus":  3,
-        "DndMonster":  "Dire Wolf",
-        "Size":  "Large",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 50 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 15",
-        "Languages":  "",
-        "HitDice":  "3d10+6",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 1d10+3 piercing damage.",
-                            "AttackBonus":  5,
-                            "DamageDice":  1,
-                            "DamageDie":  10,
-                            "DamageBonus":  3,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Keen Hearing and Smell",
-                           "Description":  "The wolf has advantage on Wisdom (Perception) checks that rely on hearing or smell."
-                       },
-                       {
-                           "Name":  "Pack Tactics",
-                           "Description":  "The wolf has advantage on an attack roll against a creature if at least one of the wolf\u0027s allies is within 5 ft. of the creature and the ally isn\u0027t incapacitated."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  43,
-        "MinLevel":  10,
-        "GroupSize":  3,
-        "Xp":  450,
-        "Gold":  71,
-        "Name":  "Griffon",
-        "Biomes":  [
-                       "Forest"
-                   ],
-        "Rarity":  "Rare",
-        "Strength":  18,
-        "Charisma":  8,
-        "ProficiencyBonus":  2,
-        "Wisdom":  13,
-        "ArmorClass":  12,
-        "Constitution":  16,
-        "DamageDie":  8,
-        "Intelligence":  2,
-        "ChallengeRating":  "2",
-        "AttackBonus":  6,
-        "Dexterity":  15,
-        "DamageDice":  1,
-        "DamageBonus":  4,
-        "DndMonster":  "Griffon",
-        "Size":  "Large",
-        "MonsterType":  "monstrosity",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 30 ft., fly 80 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 15",
-        "Languages":  "",
-        "HitDice":  "7d10+21",
-        "Actions":  [
-                        {
-                            "Name":  "Rend",
-                            "Description":  "Melee Attack Roll: +6, reach 5 ft. Hit: 1d8+4 piercing damage. If the target is Medium or smaller, it has the Grappled condition.",
-                            "AttackBonus":  6,
-                            "DamageDice":  1,
-                            "DamageDie":  8,
-                            "DamageBonus":  4,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Keen Sight",
-                           "Description":  "The griffon has advantage on Wisdom (Perception) checks that rely on sight."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  44,
-        "MinLevel":  15,
-        "GroupSize":  2,
-        "Xp":  450,
-        "Gold":  65,
-        "Name":  "Polar Bear",
-        "Biomes":  [
-                       "Forest"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  20,
-        "Charisma":  7,
-        "ProficiencyBonus":  2,
-        "Wisdom":  13,
-        "ArmorClass":  12,
-        "Constitution":  16,
-        "DamageDie":  8,
-        "Intelligence":  2,
-        "ChallengeRating":  "2",
-        "AttackBonus":  7,
-        "Dexterity":  14,
-        "DamageDice":  1,
-        "DamageBonus":  5,
-        "DndMonster":  "Polar Bear",
-        "Size":  "Large",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 40 ft., swim 40 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 15",
-        "Languages":  "",
-        "HitDice":  "5d10+15",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +7 to hit, reach 5 ft., one target. Hit: 1d8+5 piercing damage.",
-                            "AttackBonus":  7,
-                            "DamageDice":  1,
-                            "DamageDie":  8,
-                            "DamageBonus":  5,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Keen Smell",
-                           "Description":  "The bear has advantage on Wisdom (Perception) checks that rely on smell."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  45,
-        "MinLevel":  10,
-        "GroupSize":  2,
-        "Xp":  450,
-        "Gold":  128,
-        "Name":  "Saber-Toothed Tiger",
-        "Biomes":  [
-                       "Forest"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  18,
-        "Charisma":  8,
-        "ProficiencyBonus":  2,
-        "Wisdom":  12,
-        "ArmorClass":  13,
-        "Constitution":  15,
-        "DamageDie":  6,
-        "Intelligence":  3,
-        "ChallengeRating":  "2",
-        "AttackBonus":  6,
-        "Dexterity":  17,
-        "DamageDice":  2,
-        "DamageBonus":  4,
-        "DndMonster":  "Saber-Toothed Tiger",
-        "Size":  "Large",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 40 ft.",
-        "Senses":  "darkvision 60 ft., passive perception 15",
-        "Languages":  "",
-        "HitDice":  "7d10+14",
-        "Actions":  [
-                        {
-                            "Name":  "Rend",
-                            "Description":  "Melee Attack Roll: +6 to hit, reach 5 ft., one target. Hit: 2d6+4 slashing damage.",
-                            "AttackBonus":  6,
-                            "DamageDice":  2,
-                            "DamageDie":  6,
-                            "DamageBonus":  4,
-                            "DamageType":  "Slashing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Keen Smell",
-                           "Description":  "The tiger has advantage on Wisdom (Perception) checks that rely on smell."
-                       },
-                       {
-                           "Name":  "Pounce",
-                           "Description":  "If the tiger moves at least 20 ft. straight toward a creature and then hits it with a claw attack on the same turn, that target must succeed on a DC 14 Strength saving throw or be knocked prone. If the target is prone, the tiger can make one bite attack against it as a bonus action."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  46,
-        "MinLevel":  10,
-        "GroupSize":  1,
-        "Xp":  450,
-        "Gold":  160,
-        "Name":  "Green Dragon Wyrmling",
-        "Biomes":  [
-                       "Forest"
-                   ],
-        "Rarity":  "Epic",
-        "Strength":  15,
-        "Charisma":  13,
-        "ProficiencyBonus":  2,
-        "Wisdom":  11,
-        "ArmorClass":  17,
-        "Constitution":  13,
-        "DamageDie":  10,
-        "Intelligence":  14,
-        "ChallengeRating":  "2",
-        "AttackBonus":  4,
-        "Dexterity":  12,
-        "DamageDice":  1,
-        "DamageBonus":  2,
-        "DndMonster":  "Green Dragon Wyrmling",
-        "Size":  "Medium",
-        "MonsterType":  "dragon (chromatic)",
-        "Alignment":  "lawful evil",
-        "Speed":  "walk 30 ft., fly 60 ft., swim 30 ft.",
-        "Senses":  "blindsight 10 ft., darkvision 60 ft., passive perception 10",
-        "Languages":  "Draconic",
-        "HitDice":  "7d8+7",
-        "Actions":  [
-                        {
-                            "Name":  "Bite",
-                            "Description":  "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d10+2 piercing damage.",
-                            "AttackBonus":  4,
-                            "DamageDice":  1,
-                            "DamageDie":  10,
-                            "DamageBonus":  2,
-                            "DamageType":  "Piercing",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Amphibious",
-                           "Description":  "The dragon can breathe air and water."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  47,
-        "MinLevel":  20,
-        "GroupSize":  2,
-        "Xp":  2900,
-        "Gold":  140,
-        "Name":  "Dire Bear",
-        "Rarity":  "Rare",
-        "Strength":  23,
-        "Charisma":  7,
-        "ProficiencyBonus":  3,
-        "Wisdom":  12,
-        "ArmorClass":  12,
-        "Constitution":  18,
-        "DamageDie":  10,
-        "Intelligence":  5,
-        "ChallengeRating":  "7",
-        "AttackBonus":  9,
-        "Dexterity":  14,
-        "DamageDice":  3,
-        "DamageBonus":  6,
-        "DndMonster":  "Giant Ape",
-        "Size":  "Huge",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 40 ft., climb 40 ft.",
-        "Senses":  "passive perception 14",
-        "Languages":  "",
-        "HitDice":  "16d12+64",
-        "Actions":  [
-                        {
-                            "Name":  "Fist",
-                            "Description":  "Melee Attack Roll: +9 to hit, reach 10 ft., one target. Hit: 3d10+6 bludgeoning damage.",
-                            "AttackBonus":  9,
-                            "DamageDice":  3,
-                            "DamageDie":  10,
-                            "DamageBonus":  6,
-                            "DamageType":  "Bludgeoning",
-                            "Reach":  "10 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-
-                   ],
-        "Items":  [
-
-                  ],
-        "Biomes":  [
-
-                   ]
-    },
-    {
-        "ImageId":  48,
-        "MinLevel":  1,
-        "GroupSize":  4,
-        "Xp":  25,
-        "Gold":  12,
-        "Name":  "Giant Crab",
-        "Biomes":  [
-                       "Water"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  13,
-        "Charisma":  3,
-        "ProficiencyBonus":  2,
-        "Wisdom":  9,
-        "ArmorClass":  15,
-        "Constitution":  11,
-        "DamageDie":  6,
-        "Intelligence":  1,
-        "ChallengeRating":  "1/8",
-        "AttackBonus":  3,
-        "Dexterity":  13,
-        "DamageDice":  1,
-        "DamageBonus":  1,
-        "DndMonster":  "Giant Crab",
-        "Size":  "Medium",
-        "MonsterType":  "beast",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 30 ft., swim 30 ft.",
-        "Senses":  "blindsight 30 ft., passive perception 9",
-        "Languages":  "",
-        "HitDice":  "3d8",
-        "Actions":  [
-                        {
-                            "Name":  "Claw",
-                            "Description":  "Melee Attack Roll: +3 to hit, reach 5 ft., one target. Hit: 1d6+1 bludgeoning damage.",
-                            "AttackBonus":  3,
-                            "DamageDice":  1,
-                            "DamageDie":  6,
-                            "DamageBonus":  1,
-                            "DamageType":  "Bludgeoning",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Amphibious",
-                           "Description":  "The crab can breathe air and water."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  49,
-        "MinLevel":  1,
-        "GroupSize":  4,
-        "Xp":  100,
-        "Gold":  28,
-        "Name":  "Shelled Ooze",
-        "Biomes":  [
-                       "Water"
-                   ],
-        "Rarity":  "Common",
-        "Strength":  12,
-        "Charisma":  2,
-        "ProficiencyBonus":  2,
-        "Wisdom":  6,
-        "ArmorClass":  16,
-        "Constitution":  12,
-        "DamageDie":  6,
-        "Intelligence":  1,
-        "ChallengeRating":  "1/2",
-        "AttackBonus":  3,
-        "Dexterity":  8,
-        "DamageDice":  1,
-        "DamageBonus":  1,
-        "DndMonster":  "Shelled Ooze (custom)",
-        "Size":  "Small",
-        "MonsterType":  "ooze",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 20 ft., swim 20 ft.",
-        "Senses":  "blindsight 60 ft., passive perception 8",
-        "Languages":  "",
-        "HitDice":  "4d6+4",
-        "Actions":  [
-                        {
-                            "Name":  "Pseudopod",
-                            "Description":  "Melee Attack Roll: +3 to hit, reach 5 ft., one target. Hit: 1d6+1 acid damage.",
-                            "AttackBonus":  3,
-                            "DamageDice":  1,
-                            "DamageDie":  6,
-                            "DamageBonus":  1,
-                            "DamageType":  "Acid",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Amorphous",
-                           "Description":  "The ooze can move through a space as narrow as 1 inch wide without squeezing."
-                       },
-                       {
-                           "Name":  "Corrode Metal",
-                           "Description":  "Any nonmagical weapon made of metal that hits the ooze corrodes. After dealing damage, the weapon takes a permanent and cumulative -1 penalty to damage rolls. If its penalty drops to -5, the weapon is destroyed. Nonmagical ammunition made of metal that hits the ooze is destroyed after dealing damage.\nThe ooze can eat through 2-inch-thick, nonmagical metal in 1 round."
-                       },
-                       {
-                           "Name":  "False Appearance",
-                           "Description":  "While the ooze remains motionless, it is indistinguishable from an oily pool or wet rock."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    },
-    {
-        "ImageId":  50,
-        "MinLevel":  5,
-        "GroupSize":  4,
-        "Xp":  100,
-        "Gold":  45,
-        "Name":  "Sea Ooze",
-        "Biomes":  [
-                       "Water"
-                   ],
-        "Rarity":  "Uncommon",
-        "Strength":  12,
-        "Charisma":  2,
-        "ProficiencyBonus":  2,
-        "Wisdom":  6,
-        "ArmorClass":  9,
-        "Constitution":  16,
-        "DamageDie":  6,
-        "Intelligence":  1,
-        "ChallengeRating":  "1/2",
-        "AttackBonus":  3,
-        "Dexterity":  6,
-        "DamageDice":  1,
-        "DamageBonus":  1,
-        "DndMonster":  "Sea Ooze (custom)",
-        "Size":  "Medium",
-        "MonsterType":  "ooze",
-        "Alignment":  "unaligned",
-        "Speed":  "walk 10 ft., swim 30 ft., climb 10 ft.",
-        "Senses":  "blindsight 60 ft., passive perception 8",
-        "Languages":  "",
-        "HitDice":  "3d8+9",
-        "Actions":  [
-                        {
-                            "Name":  "Pseudopod",
-                            "Description":  "Melee Attack Roll: +3 to hit, reach 5 ft., one target. Hit: 1d6+1 acid damage.",
-                            "AttackBonus":  3,
-                            "DamageDice":  1,
-                            "DamageDie":  6,
-                            "DamageBonus":  1,
-                            "DamageType":  "Acid",
-                            "Reach":  "5 ft.",
-                            "Range":  null,
-                            "Count":  1
-                        }
-                    ],
-        "Traits":  [
-                       {
-                           "Name":  "Amorphous",
-                           "Description":  "The ooze can move through a space as narrow as 1 inch wide without squeezing."
-                       },
-                       {
-                           "Name":  "Corrode Metal",
-                           "Description":  "Any nonmagical weapon made of metal that hits the ooze corrodes. After dealing damage, the weapon takes a permanent and cumulative -1 penalty to damage rolls. If its penalty drops to -5, the weapon is destroyed. Nonmagical ammunition made of metal that hits the ooze is destroyed after dealing damage.\nThe ooze can eat through 2-inch-thick, nonmagical metal in 1 round."
-                       },
-                       {
-                           "Name":  "False Appearance",
-                           "Description":  "While the ooze remains motionless, it is indistinguishable from an oily pool or wet rock."
-                       }
-                   ],
-        "Items":  [
-
-                  ]
-    }
+  {
+    "ImageId": 1,
+    "MinLevel": 5,
+    "GroupSize": 5,
+    "Xp": 50,
+    "Gold": 12,
+    "MagicTimes": 1,
+    "Name": "Giant Centipede",
+    "Strength": 5,
+    "Dexterity": 14,
+    "Constitution": 12,
+    "Intelligence": 1,
+    "Wisdom": 7,
+    "Charisma": 3,
+    "ArmorClass": 14,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 4,
+    "DamageDice": 1,
+    "DamageDie": 4,
+    "DamageBonus": 2,
+    "ChallengeRating": "1/4",
+    "DndMonster": "Giant Centipede",
+    "Size": "Small",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 30 ft., climb 30 ft.",
+    "Senses": "blindsight 30 ft., passive perception 8",
+    "HitDice": "2d6+2",
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d4+2 piercing damage.",
+        "AttackBonus": 4,
+        "DamageDice": 1,
+        "DamageDie": 4,
+        "DamageBonus": 2,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Grassland",
+      "Hills"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 2,
+    "MinLevel": 1,
+    "GroupSize": 5,
+    "Xp": 50,
+    "Gold": 13,
+    "MagicTimes": 1,
+    "Name": "Goblin Archer",
+    "Strength": 8,
+    "Dexterity": 15,
+    "Constitution": 10,
+    "Intelligence": 10,
+    "Wisdom": 8,
+    "Charisma": 8,
+    "ArmorClass": 15,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 4,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 2,
+    "ChallengeRating": "1/4",
+    "DndMonster": "Goblin Warrior",
+    "Size": "Small",
+    "MonsterType": "fey (goblinoid)",
+    "Alignment": "chaotic neutral",
+    "Speed": "walk 30 ft.",
+    "Senses": "darkvision 60 ft., passive perception 9",
+    "Languages": "Common, Goblin",
+    "HitDice": "3d6",
+    "Traits": [
+      {
+        "Name": "Nimble Escape",
+        "Description": "The goblin can take the Disengage or Hide action as a bonus action on each of its turns."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Shortbow",
+        "Description": "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d6+2 piercing damage.",
+        "AttackBonus": 4,
+        "DamageDice": 1,
+        "DamageDie": 6,
+        "DamageBonus": 2,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Grassland",
+      "Hills",
+      "Forest"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 3,
+    "MinLevel": 5,
+    "GroupSize": 5,
+    "Xp": 100,
+    "Gold": 20,
+    "MagicTimes": 1,
+    "Name": "Giant Wasp",
+    "Strength": 10,
+    "Dexterity": 14,
+    "Constitution": 10,
+    "Intelligence": 1,
+    "Wisdom": 10,
+    "Charisma": 3,
+    "ArmorClass": 13,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 4,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 2,
+    "ChallengeRating": "1/2",
+    "DndMonster": "Giant Wasp",
+    "Size": "Medium",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 10 ft., fly 50 ft.",
+    "Senses": "passive perception 10",
+    "HitDice": "5d8",
+    "Actions": [
+      {
+        "Name": "Sting",
+        "Description": "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d6+2 piercing damage.",
+        "AttackBonus": 4,
+        "DamageDice": 1,
+        "DamageDie": 6,
+        "DamageBonus": 2,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Grassland",
+      "Hills"
+    ],
+    "Rarity": "Uncommon"
+  },
+  {
+    "ImageId": 4,
+    "MinLevel": 1,
+    "GroupSize": 8,
+    "Xp": 10,
+    "Gold": 4,
+    "MagicTimes": 1,
+    "Name": "Giant Fire Beetle",
+    "Strength": 8,
+    "Dexterity": 10,
+    "Constitution": 12,
+    "Intelligence": 1,
+    "Wisdom": 7,
+    "Charisma": 3,
+    "ArmorClass": 13,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 1,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": -1,
+    "ChallengeRating": "0",
+    "DndMonster": "Giant Fire Beetle",
+    "Size": "Small",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 30 ft., climb 30 ft.",
+    "Senses": "blindsight 30 ft., passive perception 8",
+    "HitDice": "1d6+1",
+    "Traits": [
+      {
+        "Name": "Illumination",
+        "Description": "The beetle sheds bright light in a 10-foot radius and dim light for an additional 10 ft.."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +1 to hit, reach 5 ft., one target. Hit: 1d6-1 slashing damage.",
+        "AttackBonus": 1,
+        "DamageDice": 1,
+        "DamageDie": 6,
+        "DamageBonus": -1,
+        "DamageType": "Slashing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Grassland",
+      "Hills"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 5,
+    "MinLevel": 10,
+    "GroupSize": 3,
+    "Xp": 700,
+    "Gold": 45,
+    "MagicTimes": 1,
+    "Name": "Minotaur",
+    "Strength": 18,
+    "Dexterity": 11,
+    "Constitution": 16,
+    "Intelligence": 6,
+    "Wisdom": 16,
+    "Charisma": 9,
+    "ArmorClass": 14,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 6,
+    "DamageDice": 1,
+    "DamageDie": 12,
+    "DamageBonus": 4,
+    "ChallengeRating": "3",
+    "DndMonster": "Minotaur of Baphomet",
+    "Size": "Large",
+    "MonsterType": "monstrosity",
+    "Alignment": "chaotic evil",
+    "Speed": "walk 40 ft.",
+    "Senses": "darkvision 60 ft., passive perception 17",
+    "Languages": "Abyssal",
+    "HitDice": "10d10+30",
+    "Traits": [
+      {
+        "Name": "Charge",
+        "Description": "If the minotaur moves at least 10 ft. straight toward a target and then hits it with a gore attack on the same turn, the target takes an extra 9 (2d8) piercing damage. If the target is a creature, it must succeed on a DC 14 Strength saving throw or be pushed up to 10 ft. away and knocked prone."
+      },
+      {
+        "Name": "Labyrinthine Recall",
+        "Description": "The minotaur can perfectly recall any path it has traveled."
+      },
+      {
+        "Name": "Reckless",
+        "Description": "At the start of its turn, the minotaur can gain advantage on all melee weapon attack rolls it makes during that turn, but attack rolls against it have advantage until the start of its next turn."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Abyssal Glaive",
+        "Description": "Melee Attack Roll: +6 to hit, reach 10 ft., one target. Hit: 1d12+4 slashing damage.",
+        "AttackBonus": 6,
+        "DamageDice": 1,
+        "DamageDie": 12,
+        "DamageBonus": 4,
+        "DamageType": "Slashing",
+        "Reach": "10 ft.",
+        "Count": 1
+      },
+      {
+        "Name": "Gore",
+        "Description": "Melee Attack Roll: +6, reach 5 ft., one target. Hit: 4d6+4 piercing damage. If the target is a Large or smaller creature and the minotaur moved 10+ feet straight toward it immediately before the hit, the target takes an extra 3d6 piercing damage and has the Prone condition.",
+        "AttackBonus": 6,
+        "DamageDice": 4,
+        "DamageDie": 6,
+        "DamageBonus": 4,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Grassland",
+      "Hills",
+      "Forest"
+    ],
+    "Rarity": "Uncommon"
+  },
+  {
+    "ImageId": 6,
+    "MinLevel": 5,
+    "GroupSize": 3,
+    "Xp": 100,
+    "Gold": 16,
+    "MagicTimes": 1,
+    "Name": "Scout Archer",
+    "Strength": 11,
+    "Dexterity": 14,
+    "Constitution": 12,
+    "Intelligence": 11,
+    "Wisdom": 13,
+    "Charisma": 11,
+    "ArmorClass": 13,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 4,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 2,
+    "ChallengeRating": "1/2",
+    "DndMonster": "Scout",
+    "Size": "Medium",
+    "MonsterType": "humanoid",
+    "Alignment": "neutral",
+    "Speed": "walk 30 ft.",
+    "Senses": "passive perception 15",
+    "Languages": "Common plus one other language",
+    "HitDice": "3d8+3",
+    "Traits": [
+      {
+        "Name": "Keen Hearing and Sight",
+        "Description": "The scout has advantage on Wisdom (Perception) checks that rely on hearing or sight."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Longbow",
+        "Description": "Ranged Attack Roll: +4 to hit, range 150/600 ft., one target. Hit: 1d8+2 piercing damage.",
+        "AttackBonus": 4,
+        "DamageDice": 1,
+        "DamageDie": 8,
+        "DamageBonus": 2,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Range": "150/600 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Grassland",
+      "Hills"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 7,
+    "MinLevel": 10,
+    "GroupSize": 4,
+    "Xp": 100,
+    "Gold": 72,
+    "MagicTimes": 1,
+    "Name": "Venomous Giant Wasp",
+    "Strength": 10,
+    "Dexterity": 14,
+    "Constitution": 10,
+    "Intelligence": 1,
+    "Wisdom": 10,
+    "Charisma": 3,
+    "ArmorClass": 13,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 4,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 2,
+    "ChallengeRating": "1/2",
+    "DndMonster": "Giant Wasp",
+    "Size": "Medium",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 10 ft., fly 50 ft.",
+    "Senses": "passive perception 10",
+    "HitDice": "5d8",
+    "Actions": [
+      {
+        "Name": "Sting",
+        "Description": "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d6+2 piercing damage.",
+        "AttackBonus": 4,
+        "DamageDice": 1,
+        "DamageDie": 6,
+        "DamageBonus": 2,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Grassland",
+      "Hills"
+    ],
+    "Rarity": "Uncommon"
+  },
+  {
+    "ImageId": 8,
+    "MinLevel": 1,
+    "GroupSize": 10,
+    "Xp": 100,
+    "Gold": 8,
+    "MagicTimes": 1,
+    "Name": "Gray Ooze",
+    "Strength": 12,
+    "Dexterity": 6,
+    "Constitution": 16,
+    "Intelligence": 1,
+    "Wisdom": 6,
+    "Charisma": 2,
+    "ArmorClass": 9,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 3,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 1,
+    "ChallengeRating": "1/2",
+    "DndMonster": "Gray Ooze",
+    "Size": "Medium",
+    "MonsterType": "ooze",
+    "Alignment": "unaligned",
+    "Speed": "walk 10 ft., climb 10 ft.",
+    "Senses": "blindsight 60 ft., passive perception 8",
+    "HitDice": "3d8+9",
+    "Traits": [
+      {
+        "Name": "Amorphous",
+        "Description": "The ooze can move through a space as narrow as 1 inch wide without squeezing."
+      },
+      {
+        "Name": "Corrode Metal",
+        "Description": "Any nonmagical weapon made of metal that hits the ooze corrodes. After dealing damage, the weapon takes a permanent and cumulative -1 penalty to damage rolls. If its penalty drops to -5, the weapon is destroyed. Nonmagical ammunition made of metal that hits the ooze is destroyed after dealing damage.\nThe ooze can eat through 2-inch-thick, nonmagical metal in 1 round."
+      },
+      {
+        "Name": "False Appearance",
+        "Description": "While the ooze remains motionless, it is indistinguishable from an oily pool or wet rock."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Pseudopod",
+        "Description": "Melee Attack Roll: +3 to hit, reach 5 ft., one target. Hit: 1d6+1 acid damage.",
+        "AttackBonus": 3,
+        "DamageDice": 1,
+        "DamageDie": 6,
+        "DamageBonus": 1,
+        "DamageType": "Acid",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Grassland",
+      "Hills"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 9,
+    "MinLevel": 1,
+    "GroupSize": 10,
+    "Xp": 100,
+    "Gold": 2,
+    "MagicTimes": 1,
+    "Name": "Swarm of Insects",
+    "Strength": 3,
+    "Dexterity": 13,
+    "Constitution": 14,
+    "Intelligence": 1,
+    "Wisdom": 7,
+    "Charisma": 1,
+    "ArmorClass": 11,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 3,
+    "DamageDice": 2,
+    "DamageDie": 4,
+    "DamageBonus": 1,
+    "ChallengeRating": "1/2",
+    "DndMonster": "Swarm of Insects",
+    "Size": "Medium",
+    "MonsterType": "swarm of Tiny beasts",
+    "Alignment": "unaligned",
+    "Speed": "walk 20 ft., climb or fly 20 ft.",
+    "Senses": "blindsight 30 ft., passive perception 8",
+    "HitDice": "3d8+6",
+    "Traits": [
+      {
+        "Name": "Swarm",
+        "Description": "The swarm can occupy another creature's space and vice versa, and the swarm can move through any opening large enough for a Tiny insect. The swarm can't regain hit points or gain temporary hit points."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Bites",
+        "Description": "Melee Attack Roll: +3 to hit, reach 5 ft., one target. Hit: 2d4+1 poison damage.",
+        "AttackBonus": 3,
+        "DamageDice": 2,
+        "DamageDie": 4,
+        "DamageBonus": 1,
+        "DamageType": "Poison",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Grassland",
+      "Desert",
+      "Hills"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 10,
+    "MinLevel": 10,
+    "GroupSize": 3,
+    "Xp": 200,
+    "Gold": 55,
+    "MagicTimes": 1,
+    "Name": "Tiger",
+    "Strength": 17,
+    "Dexterity": 16,
+    "Constitution": 14,
+    "Intelligence": 3,
+    "Wisdom": 12,
+    "Charisma": 8,
+    "ArmorClass": 13,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 5,
+    "DamageDice": 2,
+    "DamageDie": 6,
+    "DamageBonus": 3,
+    "ChallengeRating": "1",
+    "DndMonster": "Tiger",
+    "Size": "Large",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 40 ft.",
+    "Senses": "darkvision 60 ft., passive perception 13",
+    "HitDice": "4d10+8",
+    "Traits": [
+      {
+        "Name": "Keen Smell",
+        "Description": "The tiger has advantage on Wisdom (Perception) checks that rely on smell."
+      },
+      {
+        "Name": "Pounce",
+        "Description": "If the tiger moves at least 20 ft. straight toward a creature and then hits it with a claw attack on the same turn, that target must succeed on a DC 13 Strength saving throw or be knocked prone. If the target is prone, the tiger can make one bite attack against it as a bonus action."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Rend",
+        "Description": "Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 2d6+3 slashing damage.",
+        "AttackBonus": 5,
+        "DamageDice": 2,
+        "DamageDie": 6,
+        "DamageBonus": 3,
+        "DamageType": "Slashing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Grassland",
+      "Hills"
+    ],
+    "Rarity": "Rare"
+  },
+  {
+    "ImageId": 11,
+    "MinLevel": 1,
+    "GroupSize": 1,
+    "Xp": 200,
+    "Gold": 5,
+    "HitPoints": 4,
+    "MagicTimes": 1,
+    "Name": "Metal Ooze",
+    "Strength": 8,
+    "Dexterity": 18,
+    "Constitution": 12,
+    "Intelligence": 1,
+    "Wisdom": 6,
+    "Charisma": 2,
+    "ArmorClass": 19,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 6,
+    "DamageDice": 1,
+    "DamageDie": 4,
+    "DamageBonus": 4,
+    "ChallengeRating": "1",
+    "DndMonster": "Metal Ooze (custom)",
+    "Size": "Small",
+    "MonsterType": "ooze",
+    "Alignment": "unaligned",
+    "Speed": "walk 20 ft.",
+    "Senses": "blindsight 60 ft., passive perception 8",
+    "HitDice": "1d6+1",
+    "Traits": [
+      {
+        "Name": "Evasive Metal",
+        "Description": "This custom ooze is unusually hard to hit and carries only a few Hit Points."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Pseudopod",
+        "Description": "Melee Attack Roll: +6 to hit, reach 5 ft., one target. Hit: 1d4+4 acid damage.",
+        "AttackBonus": 6,
+        "DamageDice": 1,
+        "DamageDie": 4,
+        "DamageBonus": 4,
+        "DamageType": "Acid",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Grassland",
+      "Hills"
+    ],
+    "Rarity": "Epic"
+  },
+  {
+    "ImageId": 12,
+    "MinLevel": 20,
+    "GroupSize": 1,
+    "Xp": 5000,
+    "Gold": 150,
+    "MagicTimes": 1,
+    "Name": "Young Blue Dragon",
+    "Strength": 21,
+    "Dexterity": 10,
+    "Constitution": 19,
+    "Intelligence": 14,
+    "Wisdom": 13,
+    "Charisma": 17,
+    "ArmorClass": 18,
+    "ProficiencyBonus": 4,
+    "AttackBonus": 9,
+    "DamageDice": 2,
+    "DamageDie": 6,
+    "DamageBonus": 5,
+    "ChallengeRating": "9",
+    "DndMonster": "Young Blue Dragon",
+    "Size": "Large",
+    "MonsterType": "dragon (chromatic)",
+    "Alignment": "lawful evil",
+    "Speed": "walk 40 ft., burrow 20 ft., fly 80 ft.",
+    "Senses": "blindsight 30 ft., darkvision 120 ft., passive perception 19",
+    "Languages": "Common, Draconic",
+    "HitDice": "16d10+64",
+    "Actions": [
+      {
+        "Name": "Rend",
+        "Description": "Melee Attack Roll: +9 to hit, reach 10 ft., one target. Hit: 2d6+5 slashing damage.",
+        "AttackBonus": 9,
+        "DamageDice": 2,
+        "DamageDie": 6,
+        "DamageBonus": 5,
+        "DamageType": "Slashing",
+        "Reach": "10 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Grassland",
+      "Desert",
+      "Hills"
+    ],
+    "Rarity": "Epic"
+  },
+  {
+    "ImageId": 13,
+    "MinLevel": 15,
+    "GroupSize": 3,
+    "Xp": 450,
+    "Gold": 54,
+    "MagicTimes": 1,
+    "Name": "Giant Constrictor Snake",
+    "Strength": 19,
+    "Dexterity": 14,
+    "Constitution": 12,
+    "Intelligence": 1,
+    "Wisdom": 10,
+    "Charisma": 3,
+    "ArmorClass": 12,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 6,
+    "DamageDice": 2,
+    "DamageDie": 8,
+    "DamageBonus": 4,
+    "ChallengeRating": "2",
+    "DndMonster": "Giant Constrictor Snake",
+    "Size": "Huge",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 30 ft., swim 30 ft.",
+    "Senses": "blindsight 10 ft., passive perception 12",
+    "HitDice": "8d12+8",
+    "Actions": [
+      {
+        "Name": "Constrict",
+        "Description": "Melee Attack Roll: +6 to hit, reach 5 ft., one target. Hit: 2d8+4 bludgeoning damage.",
+        "AttackBonus": 6,
+        "DamageDice": 2,
+        "DamageDie": 8,
+        "DamageBonus": 4,
+        "DamageType": "Bludgeoning",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Water"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 14,
+    "MinLevel": 10,
+    "GroupSize": 2,
+    "Xp": 700,
+    "Gold": 24,
+    "MagicTimes": 1,
+    "Name": "Water Weird",
+    "Strength": 17,
+    "Dexterity": 16,
+    "Constitution": 13,
+    "Intelligence": 11,
+    "Wisdom": 10,
+    "Charisma": 10,
+    "ArmorClass": 13,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 5,
+    "DamageDice": 3,
+    "DamageDie": 6,
+    "DamageBonus": 3,
+    "ChallengeRating": "3",
+    "DndMonster": "Water Weird",
+    "Size": "Large",
+    "MonsterType": "elemental",
+    "Alignment": "neutral",
+    "Speed": "walk 5 ft., swim 60 ft.",
+    "Senses": "blindsight 30 ft., passive perception 10",
+    "Languages": "understands Primordial but can't speak",
+    "HitDice": "10d10+10",
+    "Traits": [
+      {
+        "Name": "Invisible in Water",
+        "Description": "The water weird has the Invisible condition while fully immersed in water."
+      },
+      {
+        "Name": "Water Bound",
+        "Description": "The water weird dies if it leaves the water to which it is bound or if that water is destroyed."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Surge",
+        "Description": "Melee Attack Roll: +5 to hit, reach 10 ft., one target. Hit: 3d6+3 cold damage.",
+        "AttackBonus": 5,
+        "DamageDice": 3,
+        "DamageDie": 6,
+        "DamageBonus": 3,
+        "DamageType": "Cold",
+        "Reach": "10 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Water"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 15,
+    "GroupSize": 3,
+    "Xp": 50,
+    "Gold": 96,
+    "MagicTimes": 1,
+    "Name": "Giant Poisonous Snake",
+    "Strength": 10,
+    "Dexterity": 18,
+    "Constitution": 13,
+    "Intelligence": 2,
+    "Wisdom": 10,
+    "Charisma": 3,
+    "ArmorClass": 14,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 6,
+    "DamageDice": 1,
+    "DamageDie": 4,
+    "DamageBonus": 4,
+    "ChallengeRating": "1/4",
+    "DndMonster": "Giant Venomous Snake",
+    "Size": "Medium",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 40 ft., swim 40 ft.",
+    "Senses": "blindsight 10 ft., passive perception 12",
+    "HitDice": "2d8+2",
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +6 to hit, reach 10 ft., one target. Hit: 1d4+4 piercing damage.",
+        "AttackBonus": 6,
+        "DamageDice": 1,
+        "DamageDie": 4,
+        "DamageBonus": 4,
+        "DamageType": "Piercing",
+        "Reach": "10 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Water"
+    ],
+    "Rarity": "Uncommon"
+  },
+  {
+    "ImageId": 16,
+    "MinLevel": 15,
+    "GroupSize": 2,
+    "Xp": 1800,
+    "Gold": 104,
+    "MagicTimes": 1,
+    "Name": "Giant Shark",
+    "Strength": 23,
+    "Dexterity": 11,
+    "Constitution": 21,
+    "Intelligence": 1,
+    "Wisdom": 10,
+    "Charisma": 5,
+    "ArmorClass": 13,
+    "ProficiencyBonus": 3,
+    "AttackBonus": 9,
+    "DamageDice": 3,
+    "DamageDie": 10,
+    "DamageBonus": 6,
+    "ChallengeRating": "5",
+    "DndMonster": "Giant Shark",
+    "Size": "Huge",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 5 ft., swim 60 ft.",
+    "Senses": "blindsight 60 ft., passive perception 13",
+    "HitDice": "8d12+40",
+    "Traits": [
+      {
+        "Name": "Blood Frenzy",
+        "Description": "The shark has advantage on melee attack rolls against any creature that doesn't have all its hit points."
+      },
+      {
+        "Name": "Water Breathing",
+        "Description": "The shark can breathe only underwater."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +9 to hit, reach 5 ft., one target. Hit: 3d10+6 piercing damage.",
+        "AttackBonus": 9,
+        "DamageDice": 3,
+        "DamageDie": 10,
+        "DamageBonus": 6,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Water"
+    ],
+    "Rarity": "Rare"
+  },
+  {
+    "ImageId": 17,
+    "MinLevel": 15,
+    "GroupSize": 3,
+    "Xp": 2300,
+    "Gold": 56,
+    "MagicTimes": 1,
+    "Name": "Wyvern",
+    "Strength": 19,
+    "Dexterity": 10,
+    "Constitution": 16,
+    "Intelligence": 5,
+    "Wisdom": 12,
+    "Charisma": 6,
+    "ArmorClass": 14,
+    "ProficiencyBonus": 3,
+    "AttackBonus": 7,
+    "DamageDice": 2,
+    "DamageDie": 8,
+    "DamageBonus": 4,
+    "ChallengeRating": "6",
+    "DndMonster": "Wyvern",
+    "Size": "Large",
+    "MonsterType": "dragon",
+    "Alignment": "unaligned",
+    "Speed": "walk 30 ft., fly 80 ft.",
+    "Senses": "darkvision 120 ft., passive perception 14",
+    "HitDice": "15d10+45",
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +7 to hit, reach 5 ft., one target. Hit: 2d8+4 piercing damage.",
+        "AttackBonus": 7,
+        "DamageDice": 2,
+        "DamageDie": 8,
+        "DamageBonus": 4,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Water"
+    ],
+    "Rarity": "Rare"
+  },
+  {
+    "ImageId": 18,
+    "MinLevel": 10,
+    "GroupSize": 4,
+    "Xp": 450,
+    "Gold": 37,
+    "MagicTimes": 1,
+    "Name": "Ochre Jelly",
+    "Strength": 15,
+    "Dexterity": 6,
+    "Constitution": 14,
+    "Intelligence": 2,
+    "Wisdom": 6,
+    "Charisma": 1,
+    "ArmorClass": 8,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 4,
+    "DamageDice": 3,
+    "DamageDie": 6,
+    "DamageBonus": 2,
+    "ChallengeRating": "2",
+    "DndMonster": "Ochre Jelly",
+    "Size": "Large",
+    "MonsterType": "ooze",
+    "Alignment": "unaligned",
+    "Speed": "walk 20 ft., climb 20 ft.",
+    "Senses": "blindsight 60 ft., passive perception 8",
+    "HitDice": "7d10+14",
+    "Traits": [
+      {
+        "Name": "Amorphous",
+        "Description": "The jelly can move through a space as narrow as 1 inch wide without squeezing."
+      },
+      {
+        "Name": "Spider Climb",
+        "Description": "The jelly can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Pseudopod",
+        "Description": "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 3d6+2 acid damage.",
+        "AttackBonus": 4,
+        "DamageDice": 3,
+        "DamageDie": 6,
+        "DamageBonus": 2,
+        "DamageType": "Acid",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Water"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 19,
+    "MinLevel": 10,
+    "GroupSize": 3,
+    "Xp": 700,
+    "Gold": 81,
+    "MagicTimes": 1,
+    "Name": "Aberrant Eye",
+    "Strength": 8,
+    "Dexterity": 14,
+    "Constitution": 14,
+    "Intelligence": 13,
+    "Wisdom": 14,
+    "Charisma": 11,
+    "ArmorClass": 14,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 5,
+    "DamageDice": 2,
+    "DamageDie": 8,
+    "DamageBonus": 2,
+    "ChallengeRating": "3",
+    "DndMonster": "Aberrant Eye (custom)",
+    "Size": "Medium",
+    "MonsterType": "aberration",
+    "Alignment": "lawful neutral",
+    "Speed": "fly 30 ft. (hover)",
+    "Senses": "darkvision 120 ft., passive perception 14",
+    "Languages": "Deep Speech, Undercommon",
+    "HitDice": "6d8+12",
+    "Actions": [
+      {
+        "Name": "Eye Ray",
+        "Description": "Ranged Attack Roll: +5 to hit, range 90 ft., one target. Hit: 2d8+2 necrotic damage.",
+        "AttackBonus": 5,
+        "DamageDice": 2,
+        "DamageDie": 8,
+        "DamageBonus": 2,
+        "DamageType": "Necrotic",
+        "Reach": "5 ft.",
+        "Range": "90 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Water"
+    ],
+    "Rarity": "Uncommon"
+  },
+  {
+    "ImageId": 20,
+    "MinLevel": 20,
+    "GroupSize": 2,
+    "Xp": 200,
+    "Gold": 160,
+    "MagicTimes": 1,
+    "Name": "Kraken Spawn",
+    "Strength": 17,
+    "Dexterity": 13,
+    "Constitution": 13,
+    "Intelligence": 5,
+    "Wisdom": 10,
+    "Charisma": 4,
+    "ArmorClass": 11,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 5,
+    "DamageDice": 2,
+    "DamageDie": 6,
+    "DamageBonus": 3,
+    "ChallengeRating": "1",
+    "DndMonster": "Giant Octopus",
+    "Size": "Large",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 10 ft., swim 60 ft.",
+    "Senses": "darkvision 60 ft., passive perception 14",
+    "HitDice": "7d10+7",
+    "Traits": [
+      {
+        "Name": "Hold Breath",
+        "Description": "While out of water, the octopus can hold its breath for 1 hour."
+      },
+      {
+        "Name": "Underwater Camouflage",
+        "Description": "The octopus has advantage on Dexterity (Stealth) checks made while underwater."
+      },
+      {
+        "Name": "Water Breathing",
+        "Description": "The octopus can breathe only underwater."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Tentacles",
+        "Description": "Melee Attack Roll: +5 to hit, reach 15 ft., one target. Hit: 2d6+3 bludgeoning damage.",
+        "AttackBonus": 5,
+        "DamageDice": 2,
+        "DamageDie": 6,
+        "DamageBonus": 3,
+        "DamageType": "Bludgeoning",
+        "Reach": "15 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Water"
+    ],
+    "Rarity": "Uncommon"
+  },
+  {
+    "ImageId": 21,
+    "MinLevel": 10,
+    "GroupSize": 1,
+    "Xp": 700,
+    "Gold": 180,
+    "MagicTimes": 1,
+    "Name": "Phase Serpent",
+    "Strength": 15,
+    "Dexterity": 16,
+    "Constitution": 12,
+    "Intelligence": 6,
+    "Wisdom": 10,
+    "Charisma": 6,
+    "ArmorClass": 14,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 5,
+    "DamageDice": 1,
+    "DamageDie": 10,
+    "DamageBonus": 3,
+    "ChallengeRating": "3",
+    "DndMonster": "Phase Spider",
+    "Size": "Large",
+    "MonsterType": "monstrosity",
+    "Alignment": "unaligned",
+    "Speed": "walk 30 ft., climb 30 ft.",
+    "Senses": "darkvision 60 ft., passive perception 10",
+    "HitDice": "7d10+7",
+    "Traits": [
+      {
+        "Name": "Ethereal Jaunt",
+        "Description": "As a bonus action, the spider can magically shift from the Material Plane to the Ethereal Plane, or vice versa."
+      },
+      {
+        "Name": "Spider Climb",
+        "Description": "The spider can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+      },
+      {
+        "Name": "Web Walker",
+        "Description": "The spider ignores movement restrictions caused by webbing."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 1d10+3 piercing damage.",
+        "AttackBonus": 5,
+        "DamageDice": 1,
+        "DamageDie": 10,
+        "DamageBonus": 3,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Water"
+    ],
+    "Rarity": "Rare"
+  },
+  {
+    "ImageId": 22,
+    "MinLevel": 15,
+    "GroupSize": 1,
+    "Xp": 200,
+    "Gold": 70,
+    "MagicTimes": 1,
+    "Name": "Giant Octopus",
+    "Strength": 17,
+    "Dexterity": 13,
+    "Constitution": 13,
+    "Intelligence": 5,
+    "Wisdom": 10,
+    "Charisma": 4,
+    "ArmorClass": 11,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 5,
+    "DamageDice": 2,
+    "DamageDie": 6,
+    "DamageBonus": 3,
+    "ChallengeRating": "1",
+    "DndMonster": "Giant Octopus",
+    "Size": "Large",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 10 ft., swim 60 ft.",
+    "Senses": "darkvision 60 ft., passive perception 14",
+    "HitDice": "7d10+7",
+    "Traits": [
+      {
+        "Name": "Hold Breath",
+        "Description": "While out of water, the octopus can hold its breath for 1 hour."
+      },
+      {
+        "Name": "Underwater Camouflage",
+        "Description": "The octopus has advantage on Dexterity (Stealth) checks made while underwater."
+      },
+      {
+        "Name": "Water Breathing",
+        "Description": "The octopus can breathe only underwater."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Tentacles",
+        "Description": "Melee Attack Roll: +5 to hit, reach 15 ft., one target. Hit: 2d6+3 bludgeoning damage.",
+        "AttackBonus": 5,
+        "DamageDice": 2,
+        "DamageDie": 6,
+        "DamageBonus": 3,
+        "DamageType": "Bludgeoning",
+        "Reach": "15 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Water"
+    ],
+    "Rarity": "Rare"
+  },
+  {
+    "ImageId": 23,
+    "MinLevel": 20,
+    "GroupSize": 1,
+    "Xp": 1800,
+    "Gold": 134,
+    "MagicTimes": 1,
+    "Name": "Triceratops",
+    "Strength": 22,
+    "Dexterity": 9,
+    "Constitution": 17,
+    "Intelligence": 2,
+    "Wisdom": 11,
+    "Charisma": 5,
+    "ArmorClass": 14,
+    "ProficiencyBonus": 3,
+    "AttackBonus": 9,
+    "DamageDice": 4,
+    "DamageDie": 8,
+    "DamageBonus": 6,
+    "ChallengeRating": "5",
+    "DndMonster": "Triceratops",
+    "Size": "Huge",
+    "MonsterType": "beast (dinosaur)",
+    "Alignment": "unaligned",
+    "Speed": "walk 50 ft.",
+    "Senses": "passive perception 10",
+    "HitDice": "12d12+36",
+    "Traits": [
+      {
+        "Name": "Trampling Charge",
+        "Description": "If the triceratops moves at least 20 ft. straight toward a creature and then hits it with a gore attack on the same turn, that target must succeed on a DC 13 Strength saving throw or be knocked prone. If the target is prone, the triceratops can make one stomp attack against it as a bonus action."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Gore",
+        "Description": "Melee Attack Roll: +9 to hit, reach 5 ft., one target. Hit: 4d8+6 piercing damage.",
+        "AttackBonus": 9,
+        "DamageDice": 4,
+        "DamageDie": 8,
+        "DamageBonus": 6,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Water"
+    ],
+    "Rarity": "Epic"
+  },
+  {
+    "ImageId": 24,
+    "MinLevel": 15,
+    "GroupSize": 2,
+    "Xp": 2300,
+    "Gold": 88,
+    "MagicTimes": 1,
+    "Name": "Lesser Wyvern",
+    "Strength": 19,
+    "Dexterity": 10,
+    "Constitution": 16,
+    "Intelligence": 5,
+    "Wisdom": 12,
+    "Charisma": 6,
+    "ArmorClass": 14,
+    "ProficiencyBonus": 3,
+    "AttackBonus": 7,
+    "DamageDice": 2,
+    "DamageDie": 8,
+    "DamageBonus": 4,
+    "ChallengeRating": "6",
+    "DndMonster": "Wyvern",
+    "Size": "Large",
+    "MonsterType": "dragon",
+    "Alignment": "unaligned",
+    "Speed": "walk 30 ft., fly 80 ft.",
+    "Senses": "darkvision 120 ft., passive perception 14",
+    "HitDice": "15d10+45",
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +7 to hit, reach 5 ft., one target. Hit: 2d8+4 piercing damage.",
+        "AttackBonus": 7,
+        "DamageDice": 2,
+        "DamageDie": 8,
+        "DamageBonus": 4,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Desert"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 25,
+    "MinLevel": 1,
+    "GroupSize": 3,
+    "Xp": 25,
+    "Gold": 9,
+    "MagicTimes": 1,
+    "Name": "Poisonous Snake",
+    "Strength": 2,
+    "Dexterity": 15,
+    "Constitution": 11,
+    "Intelligence": 1,
+    "Wisdom": 10,
+    "Charisma": 3,
+    "ArmorClass": 12,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 4,
+    "DamageDice": 1,
+    "DamageDie": 4,
+    "DamageBonus": 2,
+    "ChallengeRating": "1/8",
+    "DndMonster": "Venomous Snake",
+    "Size": "Tiny",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 30 ft., swim 30 ft.",
+    "Senses": "blindsight 10 ft., passive perception 10",
+    "HitDice": "2d4",
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d4+2 piercing damage.",
+        "AttackBonus": 4,
+        "DamageDice": 1,
+        "DamageDie": 4,
+        "DamageBonus": 2,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Desert"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 26,
+    "MinLevel": 10,
+    "GroupSize": 3,
+    "Xp": 50,
+    "Gold": 58,
+    "MagicTimes": 1,
+    "Name": "Giant Cobra",
+    "Strength": 10,
+    "Dexterity": 18,
+    "Constitution": 13,
+    "Intelligence": 2,
+    "Wisdom": 10,
+    "Charisma": 3,
+    "ArmorClass": 14,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 6,
+    "DamageDice": 1,
+    "DamageDie": 4,
+    "DamageBonus": 4,
+    "ChallengeRating": "1/4",
+    "DndMonster": "Giant Venomous Snake",
+    "Size": "Medium",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 40 ft., swim 40 ft.",
+    "Senses": "blindsight 10 ft., passive perception 12",
+    "HitDice": "2d8+2",
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +6 to hit, reach 10 ft., one target. Hit: 1d4+4 piercing damage.",
+        "AttackBonus": 6,
+        "DamageDice": 1,
+        "DamageDie": 4,
+        "DamageBonus": 4,
+        "DamageType": "Piercing",
+        "Reach": "10 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Desert"
+    ],
+    "Rarity": "Uncommon"
+  },
+  {
+    "ImageId": 27,
+    "MinLevel": 10,
+    "GroupSize": 3,
+    "Xp": 100,
+    "Gold": 31,
+    "MagicTimes": 1,
+    "Name": "Shadow",
+    "Strength": 6,
+    "Dexterity": 14,
+    "Constitution": 13,
+    "Intelligence": 6,
+    "Wisdom": 10,
+    "Charisma": 8,
+    "ArmorClass": 12,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 4,
+    "DamageDice": 2,
+    "DamageDie": 6,
+    "DamageBonus": 2,
+    "ChallengeRating": "1/2",
+    "DndMonster": "Shadow",
+    "Size": "Medium",
+    "MonsterType": "undead",
+    "Alignment": "chaotic evil",
+    "Speed": "walk 40 ft.",
+    "Senses": "darkvision 60 ft., passive perception 10",
+    "HitDice": "5d8+5",
+    "Traits": [
+      {
+        "Name": "Amorphous",
+        "Description": "The shadow can move through a space as narrow as 1 inch wide without squeezing."
+      },
+      {
+        "Name": "Shadow Stealth",
+        "Description": "While in dim light or darkness, the shadow can take the Hide action as a bonus action. Its stealth bonus is also improved to +6."
+      },
+      {
+        "Name": "Sunlight Weakness",
+        "Description": "While in sunlight, the shadow has disadvantage on attack rolls, ability checks, and saving throws."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Draining Swipe",
+        "Description": "Melee Attack Roll: +4, reach 5 ft. Hit: 1d6+2 necrotic damage, and the target's Strength score decreases by 1d4.",
+        "AttackBonus": 4,
+        "DamageDice": 1,
+        "DamageDie": 6,
+        "DamageBonus": 2,
+        "DamageType": "Necrotic",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Desert"
+    ],
+    "Rarity": "Uncommon"
+  },
+  {
+    "ImageId": 28,
+    "MinLevel": 5,
+    "GroupSize": 3,
+    "Xp": 700,
+    "Gold": 44,
+    "MagicTimes": 1,
+    "Name": "Giant Scorpion",
+    "Strength": 16,
+    "Dexterity": 13,
+    "Constitution": 15,
+    "Intelligence": 1,
+    "Wisdom": 9,
+    "Charisma": 3,
+    "ArmorClass": 15,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 4,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 2,
+    "ChallengeRating": "3",
+    "DndMonster": "Giant Scorpion",
+    "Size": "Large",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 40 ft.",
+    "Senses": "blindsight 60 ft., passive perception 9",
+    "HitDice": "7d10+14",
+    "Actions": [
+      {
+        "Name": "Claw",
+        "Description": "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d8+2 bludgeoning damage.",
+        "AttackBonus": 4,
+        "DamageDice": 1,
+        "DamageDie": 8,
+        "DamageBonus": 2,
+        "DamageType": "Bludgeoning",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Desert"
+    ],
+    "Rarity": "Uncommon"
+  },
+  {
+    "ImageId": 29,
+    "MinLevel": 1,
+    "GroupSize": 3,
+    "Xp": 25,
+    "Gold": 15,
+    "MagicTimes": 1,
+    "Name": "Twig Blight",
+    "Strength": 6,
+    "Dexterity": 14,
+    "Constitution": 11,
+    "Intelligence": 4,
+    "Wisdom": 8,
+    "Charisma": 3,
+    "ArmorClass": 14,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 4,
+    "DamageDice": 1,
+    "DamageDie": 4,
+    "DamageBonus": 2,
+    "ChallengeRating": "1/8",
+    "DndMonster": "Twig Blight",
+    "Size": "Small",
+    "MonsterType": "plant",
+    "Alignment": "neutral evil",
+    "Speed": "walk 20 ft.",
+    "Senses": "blindsight 60 ft., passive perception 9",
+    "Languages": "understands Common but can't speak",
+    "HitDice": "2d6",
+    "Traits": [
+      {
+        "Name": "Pack Tactics",
+        "Description": "The creature has Advantage on an attack roll against a creature if at least one ally is within 5 feet of the creature and the ally doesn't have the Incapacitated condition."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Claw",
+        "Description": "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d4+2 slashing damage.",
+        "AttackBonus": 4,
+        "DamageDice": 1,
+        "DamageDie": 4,
+        "DamageBonus": 2,
+        "DamageType": "Slashing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Desert"
+    ],
+    "Rarity": "Uncommon"
+  },
+  {
+    "ImageId": 30,
+    "MinLevel": 10,
+    "GroupSize": 2,
+    "Xp": 200,
+    "Gold": 61,
+    "MagicTimes": 1,
+    "Name": "Giant Eagle",
+    "Strength": 16,
+    "Dexterity": 17,
+    "Constitution": 13,
+    "Intelligence": 8,
+    "Wisdom": 14,
+    "Charisma": 10,
+    "ArmorClass": 13,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 5,
+    "DamageDice": 2,
+    "DamageDie": 6,
+    "DamageBonus": 3,
+    "ChallengeRating": "1",
+    "DndMonster": "Giant Eagle",
+    "Size": "Large",
+    "MonsterType": "celestial",
+    "Alignment": "neutral good",
+    "Speed": "walk 10 ft., fly 80 ft.",
+    "Senses": "passive perception 16",
+    "Languages": "Celestial; understands Common and Primordial",
+    "HitDice": "4d10+4",
+    "Traits": [
+      {
+        "Name": "Keen Sight",
+        "Description": "The eagle has advantage on Wisdom (Perception) checks that rely on sight."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Rend",
+        "Description": "Melee Attack Roll: +5, reach 5 ft. Hit: 1d4+3 slashing damage plus 1d6 radiant damage.",
+        "AttackBonus": 5,
+        "DamageDice": 2,
+        "DamageDie": 4,
+        "DamageBonus": 3,
+        "DamageType": "Slashing/Radiant",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Desert",
+      "Forest"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 31,
+    "MinLevel": 15,
+    "GroupSize": 2,
+    "Xp": 1800,
+    "Gold": 150,
+    "MagicTimes": 1,
+    "Name": "Troll",
+    "Strength": 18,
+    "Dexterity": 13,
+    "Constitution": 20,
+    "Intelligence": 7,
+    "Wisdom": 9,
+    "Charisma": 7,
+    "ArmorClass": 15,
+    "ProficiencyBonus": 3,
+    "AttackBonus": 7,
+    "DamageDice": 2,
+    "DamageDie": 6,
+    "DamageBonus": 4,
+    "ChallengeRating": "5",
+    "DndMonster": "Troll",
+    "Size": "Large",
+    "MonsterType": "giant",
+    "Alignment": "chaotic evil",
+    "Speed": "walk 30 ft.",
+    "Senses": "darkvision 60 ft., passive perception 15",
+    "Languages": "Giant",
+    "HitDice": "9d10+45",
+    "Traits": [
+      {
+        "Name": "Regeneration",
+        "Description": "The troll regains 10 Hit Points at the start of each of its turns unless it has taken Fire or Acid damage since the end of its last turn."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Rend",
+        "Description": "Melee Attack Roll: +7 to hit, reach 5 ft., one target. Hit: 2d6+4 slashing damage.",
+        "AttackBonus": 7,
+        "DamageDice": 2,
+        "DamageDie": 6,
+        "DamageBonus": 4,
+        "DamageType": "Slashing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Desert"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 32,
+    "MinLevel": 20,
+    "GroupSize": 1,
+    "Xp": 2300,
+    "Gold": 74,
+    "MagicTimes": 1,
+    "Name": "Wyvern Matriarch",
+    "Strength": 19,
+    "Dexterity": 10,
+    "Constitution": 16,
+    "Intelligence": 5,
+    "Wisdom": 12,
+    "Charisma": 6,
+    "ArmorClass": 14,
+    "ProficiencyBonus": 3,
+    "AttackBonus": 7,
+    "DamageDice": 2,
+    "DamageDie": 8,
+    "DamageBonus": 4,
+    "ChallengeRating": "6",
+    "DndMonster": "Wyvern",
+    "Size": "Large",
+    "MonsterType": "dragon",
+    "Alignment": "unaligned",
+    "Speed": "walk 30 ft., fly 80 ft.",
+    "Senses": "darkvision 120 ft., passive perception 14",
+    "HitDice": "15d10+45",
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +7 to hit, reach 5 ft., one target. Hit: 2d8+4 piercing damage.",
+        "AttackBonus": 7,
+        "DamageDice": 2,
+        "DamageDie": 8,
+        "DamageBonus": 4,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Desert"
+    ],
+    "Rarity": "Uncommon"
+  },
+  {
+    "ImageId": 33,
+    "MinLevel": 15,
+    "GroupSize": 2,
+    "Xp": 700,
+    "Gold": 120,
+    "MagicTimes": 1,
+    "Name": "Manticore",
+    "Strength": 17,
+    "Dexterity": 16,
+    "Constitution": 17,
+    "Intelligence": 7,
+    "Wisdom": 12,
+    "Charisma": 8,
+    "ArmorClass": 14,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 5,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 3,
+    "ChallengeRating": "3",
+    "DndMonster": "Manticore",
+    "Size": "Large",
+    "MonsterType": "monstrosity",
+    "Alignment": "lawful evil",
+    "Speed": "walk 30 ft., fly 50 ft.",
+    "Senses": "darkvision 60 ft., passive perception 11",
+    "Languages": "Common",
+    "HitDice": "8d10+24",
+    "Traits": [
+      {
+        "Name": "Tail Spike Regrowth",
+        "Description": "The manticore has twenty-four tail spikes. Used spikes regrow when the manticore finishes a long rest."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Tail Spike",
+        "Description": "Ranged Attack Roll: +5, range 100/200 ft. Hit: 1d8+3 piercing damage.",
+        "AttackBonus": 5,
+        "DamageDice": 1,
+        "DamageDie": 8,
+        "DamageBonus": 3,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Range": "100/200 ft.",
+        "Count": 1
+      },
+      {
+        "Name": "Rend",
+        "Description": "Melee Attack Roll: +5, reach 5 ft. Hit: 1d8+3 slashing damage.",
+        "AttackBonus": 5,
+        "DamageDice": 1,
+        "DamageDie": 8,
+        "DamageBonus": 3,
+        "DamageType": "Slashing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Desert"
+    ],
+    "Rarity": "Rare"
+  },
+  {
+    "ImageId": 34,
+    "MinLevel": 20,
+    "GroupSize": 2,
+    "Xp": 2300,
+    "Gold": 140,
+    "MagicTimes": 1,
+    "Name": "Chimera",
+    "Strength": 19,
+    "Dexterity": 11,
+    "Constitution": 19,
+    "Intelligence": 3,
+    "Wisdom": 14,
+    "Charisma": 10,
+    "ArmorClass": 14,
+    "ProficiencyBonus": 3,
+    "AttackBonus": 7,
+    "DamageDice": 2,
+    "DamageDie": 6,
+    "DamageBonus": 4,
+    "ChallengeRating": "6",
+    "DndMonster": "Chimera",
+    "Size": "Large",
+    "MonsterType": "monstrosity",
+    "Alignment": "chaotic evil",
+    "Speed": "walk 30 ft., fly 60 ft.",
+    "Senses": "darkvision 60 ft., passive perception 18",
+    "Languages": "understands Draconic but can't speak",
+    "HitDice": "12d10+48",
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +7 to hit, reach 5 ft., one target. Hit: 2d6+4 piercing damage.",
+        "AttackBonus": 7,
+        "DamageDice": 2,
+        "DamageDie": 6,
+        "DamageBonus": 4,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      },
+      {
+        "Name": "Claw",
+        "Description": "Melee Attack Roll: +7, reach 5 ft. Hit: 1d6+4 slashing damage.",
+        "AttackBonus": 7,
+        "DamageDice": 1,
+        "DamageDie": 6,
+        "DamageBonus": 4,
+        "DamageType": "Slashing",
+        "Reach": "5 ft.",
+        "Count": 1
+      },
+      {
+        "Name": "Ram",
+        "Description": "Melee Attack Roll: +7, reach 5 ft. Hit: 1d12+4 bludgeoning damage. If the target is Medium or smaller, it has the Prone condition.",
+        "AttackBonus": 7,
+        "DamageDice": 1,
+        "DamageDie": 12,
+        "DamageBonus": 4,
+        "DamageType": "Bludgeoning",
+        "Reach": "5 ft.",
+        "Count": 1
+      },
+      {
+        "Name": "Fire Breath",
+        "Description": "Dexterity Saving Throw: DC 15, each creature in a 15-foot cone. Failure: 7d8 fire damage. Success: Half damage.",
+        "AttackBonus": 7,
+        "DamageDice": 7,
+        "DamageDie": 8,
+        "DamageType": "Fire",
+        "Range": "15-foot cone",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Desert",
+      "Forest"
+    ],
+    "Rarity": "Epic"
+  },
+  {
+    "ImageId": 35,
+    "MinLevel": 20,
+    "GroupSize": 1,
+    "Xp": 7200,
+    "Gold": 5000,
+    "MagicTimes": 1,
+    "Name": "Horned Devil",
+    "Strength": 22,
+    "Dexterity": 17,
+    "Constitution": 21,
+    "Intelligence": 12,
+    "Wisdom": 16,
+    "Charisma": 18,
+    "ArmorClass": 18,
+    "ProficiencyBonus": 4,
+    "AttackBonus": 10,
+    "DamageDice": 2,
+    "DamageDie": 8,
+    "DamageBonus": 6,
+    "ChallengeRating": "11",
+    "DndMonster": "Horned Devil",
+    "Size": "Large",
+    "MonsterType": "fiend (devil)",
+    "Alignment": "lawful evil",
+    "Speed": "walk 30 ft., fly 60 ft.",
+    "Senses": "darkvision 150 ft., passive perception 13",
+    "Languages": "Infernal; telepathy 120 ft.",
+    "HitDice": "19d10+95",
+    "Traits": [
+      {
+        "Name": "Devil's Sight",
+        "Description": "Magical darkness doesn't impede the devil's darkvision."
+      },
+      {
+        "Name": "Magic Resistance",
+        "Description": "The devil has advantage on saving throws against spells and other magical effects."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Searing Fork",
+        "Description": "Melee Attack Roll: +10, reach 10 ft. Hit: 2d8+6 piercing damage plus 2d8 fire damage.",
+        "AttackBonus": 10,
+        "DamageDice": 4,
+        "DamageDie": 8,
+        "DamageBonus": 6,
+        "DamageType": "Piercing/Fire",
+        "Reach": "10 ft.",
+        "Count": 1
+      },
+      {
+        "Name": "Hurl Flame",
+        "Description": "Ranged Attack Roll: +8, range 150 ft. Hit: 5d8+4 fire damage.",
+        "AttackBonus": 8,
+        "DamageDice": 5,
+        "DamageDie": 8,
+        "DamageBonus": 4,
+        "DamageType": "Fire",
+        "Range": "150 ft.",
+        "Count": 1
+      }
+    ],
+    "Rarity": "Epic"
+  },
+  {
+    "ImageId": 36,
+    "MinLevel": 5,
+    "GroupSize": 2,
+    "Xp": 100,
+    "Gold": 18,
+    "MagicTimes": 1,
+    "Name": "Ape",
+    "Strength": 16,
+    "Dexterity": 14,
+    "Constitution": 14,
+    "Intelligence": 6,
+    "Wisdom": 12,
+    "Charisma": 7,
+    "ArmorClass": 12,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 5,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 3,
+    "ChallengeRating": "1/2",
+    "DndMonster": "Ape",
+    "Size": "Medium",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 30 ft., climb 30 ft.",
+    "Senses": "passive perception 13",
+    "HitDice": "3d8+6",
+    "Actions": [
+      {
+        "Name": "Fist",
+        "Description": "Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 1d6+3 bludgeoning damage.",
+        "AttackBonus": 5,
+        "DamageDice": 1,
+        "DamageDie": 6,
+        "DamageBonus": 3,
+        "DamageType": "Bludgeoning",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Forest"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 37,
+    "MinLevel": 5,
+    "GroupSize": 3,
+    "Xp": 10,
+    "Gold": 45,
+    "MagicTimes": 1,
+    "Name": "Baboon",
+    "Strength": 8,
+    "Dexterity": 14,
+    "Constitution": 11,
+    "Intelligence": 4,
+    "Wisdom": 12,
+    "Charisma": 6,
+    "ArmorClass": 12,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 1,
+    "DamageDice": 1,
+    "DamageDie": 4,
+    "DamageBonus": -1,
+    "ChallengeRating": "0",
+    "DndMonster": "Baboon",
+    "Size": "Small",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 30 ft., climb 30 ft.",
+    "Senses": "passive perception 11",
+    "HitDice": "1d6",
+    "Traits": [
+      {
+        "Name": "Pack Tactics",
+        "Description": "The baboon has advantage on an attack roll against a creature if at least one of the baboon's allies is within 5 ft. of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +1 to hit, reach 5 ft., one target. Hit: 1d4-1 piercing damage.",
+        "AttackBonus": 1,
+        "DamageDice": 1,
+        "DamageDie": 4,
+        "DamageBonus": -1,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Forest"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 38,
+    "MinLevel": 10,
+    "GroupSize": 3,
+    "Xp": 200,
+    "Gold": 55,
+    "MagicTimes": 1,
+    "Name": "Brown Bear",
+    "Strength": 17,
+    "Dexterity": 12,
+    "Constitution": 15,
+    "Intelligence": 2,
+    "Wisdom": 13,
+    "Charisma": 7,
+    "ArmorClass": 11,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 5,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 3,
+    "ChallengeRating": "1",
+    "DndMonster": "Brown Bear",
+    "Size": "Large",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 40 ft., climb 30 ft.",
+    "Senses": "darkvision 60 ft., passive perception 13",
+    "HitDice": "3d10+6",
+    "Traits": [
+      {
+        "Name": "Keen Smell",
+        "Description": "The bear has advantage on Wisdom (Perception) checks that rely on smell."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 1d8+3 piercing damage.",
+        "AttackBonus": 5,
+        "DamageDice": 1,
+        "DamageDie": 8,
+        "DamageBonus": 3,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Forest"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 39,
+    "MinLevel": 15,
+    "GroupSize": 2,
+    "Xp": 1800,
+    "Gold": 22,
+    "MagicTimes": 1,
+    "Name": "Dire Troll",
+    "Strength": 18,
+    "Dexterity": 13,
+    "Constitution": 20,
+    "Intelligence": 7,
+    "Wisdom": 9,
+    "Charisma": 7,
+    "ArmorClass": 15,
+    "ProficiencyBonus": 3,
+    "AttackBonus": 7,
+    "DamageDice": 2,
+    "DamageDie": 6,
+    "DamageBonus": 4,
+    "ChallengeRating": "5",
+    "DndMonster": "Troll",
+    "Size": "Large",
+    "MonsterType": "giant",
+    "Alignment": "chaotic evil",
+    "Speed": "walk 30 ft.",
+    "Senses": "darkvision 60 ft., passive perception 15",
+    "Languages": "Giant",
+    "HitDice": "9d10+45",
+    "Traits": [
+      {
+        "Name": "Regeneration",
+        "Description": "The troll regains 10 Hit Points at the start of each of its turns unless it has taken Fire or Acid damage since the end of its last turn."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Rend",
+        "Description": "Melee Attack Roll: +7 to hit, reach 5 ft., one target. Hit: 2d6+4 slashing damage.",
+        "AttackBonus": 7,
+        "DamageDice": 2,
+        "DamageDie": 6,
+        "DamageBonus": 4,
+        "DamageType": "Slashing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Forest"
+    ],
+    "Rarity": "Uncommon"
+  },
+  {
+    "ImageId": 40,
+    "MinLevel": 1,
+    "GroupSize": 4,
+    "Xp": 25,
+    "Gold": 5,
+    "MagicTimes": 1,
+    "Name": "Giant Rat",
+    "Strength": 7,
+    "Dexterity": 16,
+    "Constitution": 11,
+    "Intelligence": 2,
+    "Wisdom": 10,
+    "Charisma": 4,
+    "ArmorClass": 13,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 5,
+    "DamageDice": 1,
+    "DamageDie": 4,
+    "DamageBonus": 3,
+    "ChallengeRating": "1/8",
+    "DndMonster": "Giant Rat",
+    "Size": "Small",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 30 ft., climb 30 ft.",
+    "Senses": "darkvision 60 ft., passive perception 12",
+    "HitDice": "2d6",
+    "Traits": [
+      {
+        "Name": "Keen Smell",
+        "Description": "The rat has advantage on Wisdom (Perception) checks that rely on smell."
+      },
+      {
+        "Name": "Pack Tactics",
+        "Description": "The rat has advantage on an attack roll against a creature if at least one of the rat's allies is within 5 ft. of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 1d4+3 piercing damage.",
+        "AttackBonus": 5,
+        "DamageDice": 1,
+        "DamageDie": 4,
+        "DamageBonus": 3,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Forest"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 41,
+    "MinLevel": 1,
+    "GroupSize": 3,
+    "Xp": 25,
+    "Gold": 2,
+    "MagicTimes": 1,
+    "Name": "Animated Walking Stick",
+    "Strength": 6,
+    "Dexterity": 14,
+    "Constitution": 11,
+    "Intelligence": 4,
+    "Wisdom": 8,
+    "Charisma": 3,
+    "ArmorClass": 14,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 4,
+    "DamageDice": 1,
+    "DamageDie": 4,
+    "DamageBonus": 2,
+    "ChallengeRating": "1/8",
+    "DndMonster": "Animated Walking Stick (custom)",
+    "Size": "Small",
+    "MonsterType": "plant",
+    "Alignment": "unaligned",
+    "Speed": "walk 20 ft., climb 20 ft.",
+    "Senses": "blindsight 30 ft., passive perception 9",
+    "HitDice": "2d6",
+    "Traits": [
+      {
+        "Name": "Pack Tactics",
+        "Description": "The creature has Advantage on an attack roll against a creature if at least one ally is within 5 feet of the creature and the ally doesn't have the Incapacitated condition."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Scratch",
+        "Description": "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d4+2 slashing damage.",
+        "AttackBonus": 4,
+        "DamageDice": 1,
+        "DamageDie": 4,
+        "DamageBonus": 2,
+        "DamageType": "Slashing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Forest"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 42,
+    "MinLevel": 5,
+    "GroupSize": 2,
+    "Xp": 200,
+    "Gold": 17,
+    "MagicTimes": 1,
+    "Name": "Dire Wolf",
+    "Strength": 17,
+    "Dexterity": 15,
+    "Constitution": 15,
+    "Intelligence": 3,
+    "Wisdom": 12,
+    "Charisma": 7,
+    "ArmorClass": 14,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 5,
+    "DamageDice": 1,
+    "DamageDie": 10,
+    "DamageBonus": 3,
+    "ChallengeRating": "1",
+    "DndMonster": "Dire Wolf",
+    "Size": "Large",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 50 ft.",
+    "Senses": "darkvision 60 ft., passive perception 15",
+    "HitDice": "3d10+6",
+    "Traits": [
+      {
+        "Name": "Keen Hearing and Smell",
+        "Description": "The wolf has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+      },
+      {
+        "Name": "Pack Tactics",
+        "Description": "The wolf has advantage on an attack roll against a creature if at least one of the wolf's allies is within 5 ft. of the creature and the ally isn't incapacitated."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 1d10+3 piercing damage.",
+        "AttackBonus": 5,
+        "DamageDice": 1,
+        "DamageDie": 10,
+        "DamageBonus": 3,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Forest"
+    ],
+    "Rarity": "Uncommon"
+  },
+  {
+    "ImageId": 43,
+    "MinLevel": 10,
+    "GroupSize": 3,
+    "Xp": 450,
+    "Gold": 71,
+    "MagicTimes": 1,
+    "Name": "Griffon",
+    "Strength": 18,
+    "Dexterity": 15,
+    "Constitution": 16,
+    "Intelligence": 2,
+    "Wisdom": 13,
+    "Charisma": 8,
+    "ArmorClass": 12,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 6,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 4,
+    "ChallengeRating": "2",
+    "DndMonster": "Griffon",
+    "Size": "Large",
+    "MonsterType": "monstrosity",
+    "Alignment": "unaligned",
+    "Speed": "walk 30 ft., fly 80 ft.",
+    "Senses": "darkvision 60 ft., passive perception 15",
+    "HitDice": "7d10+21",
+    "Traits": [
+      {
+        "Name": "Keen Sight",
+        "Description": "The griffon has advantage on Wisdom (Perception) checks that rely on sight."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Rend",
+        "Description": "Melee Attack Roll: +6, reach 5 ft. Hit: 1d8+4 piercing damage. If the target is Medium or smaller, it has the Grappled condition.",
+        "AttackBonus": 6,
+        "DamageDice": 1,
+        "DamageDie": 8,
+        "DamageBonus": 4,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Forest"
+    ],
+    "Rarity": "Rare"
+  },
+  {
+    "ImageId": 44,
+    "MinLevel": 15,
+    "GroupSize": 2,
+    "Xp": 450,
+    "Gold": 65,
+    "MagicTimes": 1,
+    "Name": "Polar Bear",
+    "Strength": 20,
+    "Dexterity": 14,
+    "Constitution": 16,
+    "Intelligence": 2,
+    "Wisdom": 13,
+    "Charisma": 7,
+    "ArmorClass": 12,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 7,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 5,
+    "ChallengeRating": "2",
+    "DndMonster": "Polar Bear",
+    "Size": "Large",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 40 ft., swim 40 ft.",
+    "Senses": "darkvision 60 ft., passive perception 15",
+    "HitDice": "5d10+15",
+    "Traits": [
+      {
+        "Name": "Keen Smell",
+        "Description": "The bear has advantage on Wisdom (Perception) checks that rely on smell."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +7 to hit, reach 5 ft., one target. Hit: 1d8+5 piercing damage.",
+        "AttackBonus": 7,
+        "DamageDice": 1,
+        "DamageDie": 8,
+        "DamageBonus": 5,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Forest"
+    ],
+    "Rarity": "Uncommon"
+  },
+  {
+    "ImageId": 45,
+    "MinLevel": 10,
+    "GroupSize": 2,
+    "Xp": 450,
+    "Gold": 128,
+    "MagicTimes": 1,
+    "Name": "Saber-Toothed Tiger",
+    "Strength": 18,
+    "Dexterity": 17,
+    "Constitution": 15,
+    "Intelligence": 3,
+    "Wisdom": 12,
+    "Charisma": 8,
+    "ArmorClass": 13,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 6,
+    "DamageDice": 2,
+    "DamageDie": 6,
+    "DamageBonus": 4,
+    "ChallengeRating": "2",
+    "DndMonster": "Saber-Toothed Tiger",
+    "Size": "Large",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 40 ft.",
+    "Senses": "darkvision 60 ft., passive perception 15",
+    "HitDice": "7d10+14",
+    "Traits": [
+      {
+        "Name": "Keen Smell",
+        "Description": "The tiger has advantage on Wisdom (Perception) checks that rely on smell."
+      },
+      {
+        "Name": "Pounce",
+        "Description": "If the tiger moves at least 20 ft. straight toward a creature and then hits it with a claw attack on the same turn, that target must succeed on a DC 14 Strength saving throw or be knocked prone. If the target is prone, the tiger can make one bite attack against it as a bonus action."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Rend",
+        "Description": "Melee Attack Roll: +6 to hit, reach 5 ft., one target. Hit: 2d6+4 slashing damage.",
+        "AttackBonus": 6,
+        "DamageDice": 2,
+        "DamageDie": 6,
+        "DamageBonus": 4,
+        "DamageType": "Slashing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Forest"
+    ],
+    "Rarity": "Uncommon"
+  },
+  {
+    "ImageId": 46,
+    "MinLevel": 10,
+    "GroupSize": 1,
+    "Xp": 450,
+    "Gold": 160,
+    "MagicTimes": 1,
+    "Name": "Green Dragon Wyrmling",
+    "Strength": 15,
+    "Dexterity": 12,
+    "Constitution": 13,
+    "Intelligence": 14,
+    "Wisdom": 11,
+    "Charisma": 13,
+    "ArmorClass": 17,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 4,
+    "DamageDice": 1,
+    "DamageDie": 10,
+    "DamageBonus": 2,
+    "ChallengeRating": "2",
+    "DndMonster": "Green Dragon Wyrmling",
+    "Size": "Medium",
+    "MonsterType": "dragon (chromatic)",
+    "Alignment": "lawful evil",
+    "Speed": "walk 30 ft., fly 60 ft., swim 30 ft.",
+    "Senses": "blindsight 10 ft., darkvision 60 ft., passive perception 10",
+    "Languages": "Draconic",
+    "HitDice": "7d8+7",
+    "Traits": [
+      {
+        "Name": "Amphibious",
+        "Description": "The dragon can breathe air and water."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Bite",
+        "Description": "Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit: 1d10+2 piercing damage.",
+        "AttackBonus": 4,
+        "DamageDice": 1,
+        "DamageDie": 10,
+        "DamageBonus": 2,
+        "DamageType": "Piercing",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Forest"
+    ],
+    "Rarity": "Epic"
+  },
+  {
+    "ImageId": 47,
+    "MinLevel": 20,
+    "GroupSize": 2,
+    "Xp": 2900,
+    "Gold": 140,
+    "MagicTimes": 1,
+    "Name": "Dire Bear",
+    "Strength": 23,
+    "Dexterity": 14,
+    "Constitution": 18,
+    "Intelligence": 5,
+    "Wisdom": 12,
+    "Charisma": 7,
+    "ArmorClass": 12,
+    "ProficiencyBonus": 3,
+    "AttackBonus": 9,
+    "DamageDice": 3,
+    "DamageDie": 10,
+    "DamageBonus": 6,
+    "ChallengeRating": "7",
+    "DndMonster": "Giant Ape",
+    "Size": "Huge",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 40 ft., climb 40 ft.",
+    "Senses": "passive perception 14",
+    "HitDice": "16d12+64",
+    "Actions": [
+      {
+        "Name": "Fist",
+        "Description": "Melee Attack Roll: +9 to hit, reach 10 ft., one target. Hit: 3d10+6 bludgeoning damage.",
+        "AttackBonus": 9,
+        "DamageDice": 3,
+        "DamageDie": 10,
+        "DamageBonus": 6,
+        "DamageType": "Bludgeoning",
+        "Reach": "10 ft.",
+        "Count": 1
+      }
+    ],
+    "Rarity": "Rare"
+  },
+  {
+    "ImageId": 48,
+    "MinLevel": 1,
+    "GroupSize": 4,
+    "Xp": 25,
+    "Gold": 12,
+    "MagicTimes": 1,
+    "Name": "Giant Crab",
+    "Strength": 13,
+    "Dexterity": 13,
+    "Constitution": 11,
+    "Intelligence": 1,
+    "Wisdom": 9,
+    "Charisma": 3,
+    "ArmorClass": 15,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 3,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 1,
+    "ChallengeRating": "1/8",
+    "DndMonster": "Giant Crab",
+    "Size": "Medium",
+    "MonsterType": "beast",
+    "Alignment": "unaligned",
+    "Speed": "walk 30 ft., swim 30 ft.",
+    "Senses": "blindsight 30 ft., passive perception 9",
+    "HitDice": "3d8",
+    "Traits": [
+      {
+        "Name": "Amphibious",
+        "Description": "The crab can breathe air and water."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Claw",
+        "Description": "Melee Attack Roll: +3 to hit, reach 5 ft., one target. Hit: 1d6+1 bludgeoning damage.",
+        "AttackBonus": 3,
+        "DamageDice": 1,
+        "DamageDie": 6,
+        "DamageBonus": 1,
+        "DamageType": "Bludgeoning",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Water"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 49,
+    "MinLevel": 1,
+    "GroupSize": 4,
+    "Xp": 100,
+    "Gold": 28,
+    "MagicTimes": 1,
+    "Name": "Shelled Ooze",
+    "Strength": 12,
+    "Dexterity": 8,
+    "Constitution": 12,
+    "Intelligence": 1,
+    "Wisdom": 6,
+    "Charisma": 2,
+    "ArmorClass": 16,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 3,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 1,
+    "ChallengeRating": "1/2",
+    "DndMonster": "Shelled Ooze (custom)",
+    "Size": "Small",
+    "MonsterType": "ooze",
+    "Alignment": "unaligned",
+    "Speed": "walk 20 ft., swim 20 ft.",
+    "Senses": "blindsight 60 ft., passive perception 8",
+    "HitDice": "4d6+4",
+    "Traits": [
+      {
+        "Name": "Amorphous",
+        "Description": "The ooze can move through a space as narrow as 1 inch wide without squeezing."
+      },
+      {
+        "Name": "Corrode Metal",
+        "Description": "Any nonmagical weapon made of metal that hits the ooze corrodes. After dealing damage, the weapon takes a permanent and cumulative -1 penalty to damage rolls. If its penalty drops to -5, the weapon is destroyed. Nonmagical ammunition made of metal that hits the ooze is destroyed after dealing damage.\nThe ooze can eat through 2-inch-thick, nonmagical metal in 1 round."
+      },
+      {
+        "Name": "False Appearance",
+        "Description": "While the ooze remains motionless, it is indistinguishable from an oily pool or wet rock."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Pseudopod",
+        "Description": "Melee Attack Roll: +3 to hit, reach 5 ft., one target. Hit: 1d6+1 acid damage.",
+        "AttackBonus": 3,
+        "DamageDice": 1,
+        "DamageDie": 6,
+        "DamageBonus": 1,
+        "DamageType": "Acid",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Water"
+    ],
+    "Rarity": "Common"
+  },
+  {
+    "ImageId": 50,
+    "MinLevel": 5,
+    "GroupSize": 4,
+    "Xp": 100,
+    "Gold": 45,
+    "MagicTimes": 1,
+    "Name": "Sea Ooze",
+    "Strength": 12,
+    "Dexterity": 6,
+    "Constitution": 16,
+    "Intelligence": 1,
+    "Wisdom": 6,
+    "Charisma": 2,
+    "ArmorClass": 9,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 3,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 1,
+    "ChallengeRating": "1/2",
+    "DndMonster": "Sea Ooze (custom)",
+    "Size": "Medium",
+    "MonsterType": "ooze",
+    "Alignment": "unaligned",
+    "Speed": "walk 10 ft., swim 30 ft., climb 10 ft.",
+    "Senses": "blindsight 60 ft., passive perception 8",
+    "HitDice": "3d8+9",
+    "Traits": [
+      {
+        "Name": "Amorphous",
+        "Description": "The ooze can move through a space as narrow as 1 inch wide without squeezing."
+      },
+      {
+        "Name": "Corrode Metal",
+        "Description": "Any nonmagical weapon made of metal that hits the ooze corrodes. After dealing damage, the weapon takes a permanent and cumulative -1 penalty to damage rolls. If its penalty drops to -5, the weapon is destroyed. Nonmagical ammunition made of metal that hits the ooze is destroyed after dealing damage.\nThe ooze can eat through 2-inch-thick, nonmagical metal in 1 round."
+      },
+      {
+        "Name": "False Appearance",
+        "Description": "While the ooze remains motionless, it is indistinguishable from an oily pool or wet rock."
+      }
+    ],
+    "Actions": [
+      {
+        "Name": "Pseudopod",
+        "Description": "Melee Attack Roll: +3 to hit, reach 5 ft., one target. Hit: 1d6+1 acid damage.",
+        "AttackBonus": 3,
+        "DamageDice": 1,
+        "DamageDie": 6,
+        "DamageBonus": 1,
+        "DamageType": "Acid",
+        "Reach": "5 ft.",
+        "Count": 1
+      }
+    ],
+    "Biomes": [
+      "Water"
+    ],
+    "Rarity": "Uncommon"
+  }
 ]

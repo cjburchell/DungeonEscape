@@ -24,10 +24,12 @@ It loads the following files into one shared, in-memory dataset:
 | `spells.json`     | Spells        |
 | `skills.json`     | Skills        |
 | `customitems.json`| Items         |
-| `itemdef.json`    | Item Definitions |
+| `magicitems.json` | Items         |
+| `nonmagicitems.json` | Items      |
+| `weaponitems.json` | Items        |
+| `armoritems.json` | Items        |
 | `quests.json`     | Quests        |
 | `dialog.json`     | Dialogs       |
-| `statnames.json`  | Stat Names    |
 | `classlevels.json`| Class         |
 | `names.json`      | Names         |
 | `maps/**/*_monsters.json` | Maps random monsters / Encounter Simulator |
@@ -42,8 +44,8 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
 
 ## Features
 
-- Tabs for **Monsters**, **Spells**, **Skills**, **Items**, **Item Definitions**,
-  **Quests**, **Dialogs**, **Class**, **Stat Names**, **Names**, **Maps**,
+- Tabs for **Monsters**, **Spells**, **Skills**, **Items**, **Quests**,
+  **Dialogs**, **Class**, **Names**, **Maps**,
   **Quest Graph**, and **Encounter Simulator**. Array-backed data tabs include a
   searchable list and **Add**, **Duplicate**, and **Remove** actions; `names.json`
   is edited as a single document, and maps are discovered from the Unity Maps
@@ -53,8 +55,8 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
   names/IDs, broken spell/skill/item/quest/monster references, invalid image IDs,
   missing class-level definitions, dialog nesting issues, broken map object
   references, duplicate TMX object ids, missing explicit chest/door lock
-  metadata, invalid map biome values, missing map music files, generated item
-  definition image IDs, missing tileset source images, and missing monster PNGs.
+  metadata, invalid map biome values, missing map music files, missing tileset
+  source images, and missing monster PNGs.
 - All lists share a single in-memory dataset, so cross-references update
   **live** &mdash; e.g. add a new item on the Items tab and it immediately
   appears in a monster's drop list and any item dropdown; rename a skill and the
@@ -73,8 +75,6 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
   - **Item** &mdash; image (with preview), type, rarity, target, cost, min
     level, charges, skill reference, stat values, slots, classes, and quest
     fields.
-  - **Item Definition** &mdash; procedural item type/base stat, equip slots,
-    allowed classes, and generated name/image options.
   - **Quest** &mdash; id/name/description, minimum level, XP/gold rewards, reward
     item references, and quest stages.
   - **Dialog** &mdash; dialog ids, quest-conditioned heads, text, choices, quest
@@ -82,9 +82,7 @@ The last opened folder is remembered and **auto-loaded on startup** (stored in
   - **Class** &mdash; free-text class name, primary ability, hit die, fixed stat
     rows with initial roll previews, default hero-sheet image, and skill
     unlock references. XP thresholds come from the D&D advancement table.
-    Spell/item/item-definition class selectors are populated
-    from `classlevels.json`.
-  - **Stat Names** &mdash; fixed stat rows plus prefix/suffix word pools.
+    Spell/item class selectors are populated from `classlevels.json`.
   - **Names** &mdash; male and female character name pools.
   - **Maps** &mdash; map class/properties, object `name`/`class`, NPC/chest/door/warp
     gameplay properties, and per-map random monster encounter sets. Unsupported

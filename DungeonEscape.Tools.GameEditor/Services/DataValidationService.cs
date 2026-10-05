@@ -25,15 +25,6 @@ public sealed class DataValidationService
         StatType.Magic
     };
 
-    private static readonly StatType[] RequiredStatNameTypes =
-    {
-        StatType.Agility,
-        StatType.Defence,
-        StatType.HP,
-        StatType.Attack,
-        StatType.Magic,
-        StatType.MagicDefence
-    };
 
     private readonly DataFolderService data;
     private readonly MonsterImageCatalog monsterImages;
@@ -70,7 +61,6 @@ public sealed class DataValidationService
         var spellNames = NameSet(data.Spells.Select(spell => spell.Name));
         var itemRefs = NameSet(data.Items.Select(item => item.Name)
             .Concat(data.Items.Select(item => item.Id))
-            .Concat(data.ItemDefinitions.SelectMany(definition => definition.Names ?? new List<ItemName>()).Select(name => name.Name))
             .Append(DataSourceCatalog.RandomItemId));
         var questIds = NameSet(data.Quests.Select(quest => quest.Id));
         var dialogIds = NameSet(data.Dialogs.Select(dialog => dialog.Id));
@@ -93,16 +83,13 @@ public sealed class DataValidationService
         ValidateDuplicates(issues, "Item id", data.Items.Select(item => item.Id));
         ValidateDuplicates(issues, "Quest id", data.Quests.Select(quest => quest.Id));
         ValidateDuplicates(issues, "Dialog id", data.Dialogs.Select(dialog => dialog.Id));
-        ValidateDuplicates(issues, "Stat name type", data.StatNames.Select(statName => statName.Type.ToString()));
         ValidateDuplicates(issues, "Class level class", data.ClassLevels.Select(classStats => classStats.Class));
 
         ValidateMonsters(issues, itemRefs);
         ValidateSpells(issues, skillNames, classValues);
         ValidateItems(issues, skillNames, questIds, classValues);
-        ValidateItemDefinitions(issues, classValues);
         ValidateQuests(issues, itemRefs);
         ValidateDialogs(issues, questIds, itemRefs, monsterNames);
-        ValidateStatNames(issues);
         ValidateClassLevels(issues, skillNames);
         ValidateMaps(issues, itemRefs, dialogIds, monsterNames, mapIds, classValues);
         ValidateAssetFiles(issues);
@@ -168,24 +155,6 @@ public sealed class DataValidationService
         }
     }
 
-    private void ValidateItemDefinitions(List<DataValidationIssue> issues, HashSet<string> classValues)
-    {
-        for (var i = 0; i < data.ItemDefinitions.Count; i++)
-        {
-            var definition = data.ItemDefinitions[i];
-            var location = Label("Item definition", definition.Type.ToString(), i);
-            ValidateClasses(issues, location, definition.Classes, classValues);
-
-            foreach (var itemName in definition.Names ?? new List<ItemName>())
-            {
-                if (itemImages.Catalog.Entries.Count > 0 && !itemImages.Catalog.TryGet(itemName.ImageId, out _))
-                {
-                    Warning(issues, location, $"Generated item image #{itemName.ImageId} for '{itemName.Name}' was not found in items2.tsx.");
-                }
-            }
-        }
-    }
-
     private void ValidateQuests(List<DataValidationIssue> issues, HashSet<string> itemRefs)
     {
         for (var i = 0; i < data.Quests.Count; i++)
@@ -239,26 +208,6 @@ public sealed class DataValidationService
             }
 
             ValidateReferences(issues, location, "skill", classStats.Skills, skillNames);
-        }
-    }
-
-    private void ValidateStatNames(List<DataValidationIssue> issues)
-    {
-        var statNameTypes = data.StatNames.Select(statName => statName.Type).ToList();
-        foreach (var requiredType in RequiredStatNameTypes)
-        {
-            if (!statNameTypes.Contains(requiredType))
-            {
-                Error(issues, "Stat Names", $"Missing required {requiredType} row.");
-            }
-        }
-
-        foreach (var statName in data.StatNames)
-        {
-            if (!RequiredStatNameTypes.Contains(statName.Type))
-            {
-                Error(issues, "Stat Names", $"Unexpected {statName.Type} row.");
-            }
         }
     }
 

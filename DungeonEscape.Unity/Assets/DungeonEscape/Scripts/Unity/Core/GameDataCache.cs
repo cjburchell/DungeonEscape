@@ -18,11 +18,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
             this.dataSet = dataSet ?? new DungeonEscapeDataSet();
         }
 
-        public IList<ItemDefinition> ItemDefinitions
-        {
-            get { return dataSet.ItemDefinitions; }
-        }
-
         public IList<Item> CustomItems
         {
             get { return dataSet.CustomItems; }
@@ -41,11 +36,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
         public IList<Monster> Monsters
         {
             get { return dataSet.Monsters; }
-        }
-
-        public IList<StatName> StatNames
-        {
-            get { return dataSet.StatNames; }
         }
 
         public Names Names

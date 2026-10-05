@@ -1,198 +1,590 @@
 [
   {
-    "ImageId": 312,
-    "Name": "Padded Armor",
+    "ImageId": 906,
+    "Slots": [
+      "Neck"
+    ],
     "Type": "Armor",
-    "Slots": ["Chest"],
-    "Classes": ["Wizard", "Sorcerer", "Bard", "Rogue"],
-    "Rarity": "Common",
-    "Cost": 5,
-    "MinLevel": 1,
-    "Weight": 8,
-    "Stats": [
-      { "Type": "Defence", "Value": 1 }
-    ]
-  },
-  {
-    "ImageId": 278,
-    "Name": "Leather Armor",
-    "Type": "Armor",
-    "Slots": ["Chest"],
-    "Classes": ["Monk", "Rogue", "Bard", "Paladin"],
-    "Rarity": "Common",
-    "Cost": 10,
-    "MinLevel": 1,
-    "Weight": 10,
-    "Stats": [
-      { "Type": "Defence", "Value": 2 }
-    ]
-  },
-  {
-    "ImageId": 285,
-    "Name": "Studded Leather",
-    "Type": "Armor",
-    "Slots": ["Chest"],
-    "Classes": ["Monk", "Rogue", "Bard", "Paladin"],
-    "Rarity": "Common",
-    "Cost": 45,
-    "MinLevel": 2,
-    "Weight": 12,
-    "Stats": [
-      { "Type": "Defence", "Value": 3 }
-    ]
-  },
-  {
-    "ImageId": 331,
-    "Name": "Hide Armor",
-    "Type": "Armor",
-    "Slots": ["Chest"],
-    "Classes": ["Paladin", "Fighter", "Rogue", "Monk"],
-    "Rarity": "Common",
-    "Cost": 10,
-    "MinLevel": 1,
-    "Weight": 12,
-    "Stats": [
-      { "Type": "Defence", "Value": 2 }
-    ]
-  },
-  {
-    "ImageId": 333,
-    "Name": "Chain Shirt",
-    "Type": "Armor",
-    "Slots": ["Chest"],
-    "Classes": ["Paladin", "Fighter", "Cleric"],
-    "Rarity": "Common",
-    "Cost": 50,
-    "MinLevel": 2,
-    "Weight": 20,
-    "Stats": [
-      { "Type": "Defence", "Value": 3 }
-    ]
-  },
-  {
-    "ImageId": 279,
-    "Name": "Scale Mail",
-    "Type": "Armor",
-    "Slots": ["Chest"],
-    "Classes": ["Paladin", "Fighter", "Cleric"],
-    "Rarity": "Uncommon",
-    "Cost": 50,
-    "MinLevel": 2,
-    "Weight": 22,
-    "Stats": [
-      { "Type": "Defence", "Value": 3 }
-    ]
-  },
-  {
-    "ImageId": 280,
-    "Name": "Ring Mail",
-    "Type": "Armor",
-    "Slots": ["Chest"],
-    "Classes": ["Paladin", "Fighter", "Cleric"],
-    "Rarity": "Uncommon",
-    "Cost": 30,
-    "MinLevel": 2,
-    "Weight": 40,
-    "Stats": [
-      { "Type": "Defence", "Value": 3 }
-    ]
-  },
-  {
-    "ImageId": 284,
-    "Name": "Chain Mail",
-    "Type": "Armor",
-    "Slots": ["Chest"],
-    "Classes": ["Paladin", "Fighter", "Cleric"],
-    "Rarity": "Uncommon",
-    "Cost": 75,
-    "MinLevel": 3,
-    "Weight": 55,
-    "Stats": [
-      { "Type": "Defence", "Value": 4 }
-    ]
-  },
-  {
-    "ImageId": 298,
-    "Name": "Splint Armor",
-    "Type": "Armor",
-    "Slots": ["Chest"],
-    "Classes": ["Paladin", "Fighter"],
+    "Category": "Unknown",
+    "Name": "Amulet of Health",
     "Rarity": "Rare",
-    "Cost": 200,
-    "MinLevel": 4,
-    "Weight": 60,
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": [
+      1,
+      2,
+      3,
+      5,
+      4,
+      6,
+      7,
+      8
+    ],
     "Stats": [
-      { "Type": "Defence", "Value": 5 }
+      {
+        "Type": "HP",
+        "Value": 5
+      }
+    ],
+    "Weight": 1,
+    "Cost": 1800,
+    "MinLevel": 8,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric",
+      "Wizard",
+      "Warlock",
+      "Monk",
+      "Bard",
+      "Rogue",
+      "Sorcerer"
     ]
   },
   {
-    "ImageId": 340,
-    "Name": "Half Plate",
+    "ImageId": 175,
+    "Slots": [
+      "OffHand"
+    ],
     "Type": "Armor",
-    "Slots": ["Chest"],
-    "Classes": ["Paladin", "Fighter"],
-    "Rarity": "Rare",
-    "Cost": 600,
-    "MinLevel": 5,
-    "Weight": 65,
-    "Stats": [
-      { "Type": "Defence", "Value": 6 }
-    ]
-  },
-  {
-    "ImageId": 170,
-    "Name": "Shield",
-    "Type": "Armor",
-    "Slots": ["OffHand"],
-    "Classes": ["Paladin", "Fighter", "Cleric", "Warlock", "Monk", "Bard", "Rogue"],
-    "Rarity": "Common",
-    "Cost": 10,
-    "MinLevel": 1,
-    "Weight": 6,
-    "Stats": [
-      { "Type": "Defence", "Value": 2 }
-    ]
-  },
-  {
-    "ImageId": 171,
+    "Category": "Unknown",
     "Name": "Buckler",
-    "Type": "Armor",
-    "Slots": ["OffHand"],
-    "Classes": ["Paladin", "Fighter", "Cleric", "Rogue", "Bard"],
     "Rarity": "Common",
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 1
+      }
+    ],
+    "Weight": 6,
     "Cost": 5,
     "MinLevel": 1,
-    "Weight": 6,
-    "Stats": [
-      { "Type": "Defence", "Value": 1 }
-    ]
-  },
-  {
-    "ImageId": 214,
-    "Name": "Helm",
-    "Type": "Armor",
-    "Slots": ["Head"],
-    "Classes": ["Paladin", "Fighter", "Cleric", "Warlock", "Rogue"],
-    "Rarity": "Common",
-    "Cost": 20,
-    "MinLevel": 1,
-    "Weight": 3,
-    "Stats": [
-      { "Type": "Defence", "Value": 1 }
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric",
+      "Rogue",
+      "Bard"
     ]
   },
   {
     "ImageId": 235,
-    "Name": "Cap",
+    "Slots": [
+      "Head"
+    ],
     "Type": "Armor",
-    "Slots": ["Head"],
-    "Classes": ["Wizard", "Sorcerer", "Warlock", "Bard", "Rogue"],
+    "Category": "Unknown",
+    "Name": "Cap",
     "Rarity": "Common",
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 1
+      }
+    ],
+    "Weight": 3,
     "Cost": 5,
     "MinLevel": 1,
-    "Weight": 3,
+    "Classes": [
+      "Wizard",
+      "Sorcerer",
+      "Warlock",
+      "Bard",
+      "Rogue"
+    ]
+  },
+  {
+    "ImageId": 280,
+    "Slots": [
+      "Chest"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Chain Mail",
+    "Rarity": "Uncommon",
     "Stats": [
-      { "Type": "Defence", "Value": 1 }
+      {
+        "Type": "Defence",
+        "Value": 4
+      }
+    ],
+    "Weight": 55,
+    "Cost": 75,
+    "MinLevel": 3,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric"
+    ]
+  },
+  {
+    "ImageId": 284,
+    "Slots": [
+      "Chest"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Chain Mail +1",
+    "Rarity": "Rare",
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": [
+      1,
+      2
+    ],
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 1
+      }
+    ],
+    "Weight": 55,
+    "Cost": 4000,
+    "MinLevel": 5,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric"
+    ]
+  },
+  {
+    "ImageId": 298,
+    "Slots": [
+      "Chest"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Chain Shirt",
+    "Rarity": "Common",
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 3
+      }
+    ],
+    "Weight": 20,
+    "Cost": 50,
+    "MinLevel": 2,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric"
+    ]
+  },
+  {
+    "ImageId": 192,
+    "Slots": [
+      "OffHand"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Defender Shield",
+    "Rarity": "Rare",
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": [
+      1,
+      2
+    ],
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 2
+      }
+    ],
+    "Weight": 6,
+    "Cost": 8000,
+    "MinLevel": 7,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric"
+    ]
+  },
+  {
+    "ImageId": 283,
+    "Slots": [
+      "Chest"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Half Plate",
+    "Rarity": "Rare",
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 6
+      }
+    ],
+    "Weight": 65,
+    "Cost": 600,
+    "MinLevel": 5,
+    "Classes": [
+      "Paladin",
+      "Fighter"
+    ]
+  },
+  {
+    "ImageId": 213,
+    "Slots": [
+      "Head"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Helm",
+    "Rarity": "Common",
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 1
+      }
+    ],
+    "Weight": 3,
+    "Cost": 20,
+    "MinLevel": 1,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric",
+      "Warlock",
+      "Rogue"
+    ]
+  },
+  {
+    "ImageId": 279,
+    "Slots": [
+      "Chest"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Hide Armor",
+    "Rarity": "Common",
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 2
+      }
+    ],
+    "Weight": 12,
+    "Cost": 10,
+    "MinLevel": 1,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Rogue",
+      "Monk"
+    ]
+  },
+  {
+    "ImageId": 278,
+    "Slots": [
+      "Chest"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Leather Armor",
+    "Rarity": "Common",
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 2
+      }
+    ],
+    "Weight": 10,
+    "Cost": 10,
+    "MinLevel": 1,
+    "Classes": [
+      "Monk",
+      "Rogue",
+      "Bard",
+      "Paladin"
+    ]
+  },
+  {
+    "ImageId": 304,
+    "Slots": [
+      "Chest"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Leather Armor +1",
+    "Rarity": "Uncommon",
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": [
+      4,
+      7,
+      6
+    ],
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 1
+      }
+    ],
+    "Weight": 10,
+    "Cost": 2500,
+    "MinLevel": 4,
+    "Classes": [
+      "Monk",
+      "Rogue",
+      "Bard",
+      "Paladin"
+    ]
+  },
+  {
+    "ImageId": 303,
+    "Slots": [
+      "Chest"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Padded Armor",
+    "Rarity": "Common",
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 1
+      }
+    ],
+    "Weight": 8,
+    "Cost": 5,
+    "MinLevel": 1,
+    "Classes": [
+      "Wizard",
+      "Sorcerer",
+      "Bard",
+      "Rogue"
+    ]
+  },
+  {
+    "ImageId": 281,
+    "Slots": [
+      "Chest"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Ring Mail",
+    "Rarity": "Uncommon",
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 3
+      }
+    ],
+    "Weight": 40,
+    "Cost": 30,
+    "MinLevel": 2,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric"
+    ]
+  },
+  {
+    "ImageId": 719,
+    "Slots": [
+      "Ring"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Ring of Protection",
+    "Rarity": "Rare",
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": [
+      1,
+      2,
+      3,
+      5,
+      4,
+      6,
+      7,
+      8
+    ],
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 1
+      },
+      {
+        "Type": "MagicDefence",
+        "Value": 1
+      }
+    ],
+    "Weight": 1,
+    "Cost": 1500,
+    "MinLevel": 5,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric",
+      "Wizard",
+      "Warlock",
+      "Monk",
+      "Bard",
+      "Rogue",
+      "Sorcerer"
+    ]
+  },
+  {
+    "ImageId": 289,
+    "Slots": [
+      "Chest"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Scale Mail",
+    "Rarity": "Uncommon",
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 3
+      }
+    ],
+    "Weight": 22,
+    "Cost": 50,
+    "MinLevel": 2,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric"
+    ]
+  },
+  {
+    "ImageId": 290,
+    "Slots": [
+      "Chest"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Scale Mail +1",
+    "Rarity": "Uncommon",
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": [
+      1,
+      2
+    ],
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 1
+      }
+    ],
+    "Weight": 22,
+    "Cost": 3000,
+    "MinLevel": 4,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric"
+    ]
+  },
+  {
+    "ImageId": 176,
+    "Slots": [
+      "OffHand"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Shield",
+    "Rarity": "Common",
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 2
+      }
+    ],
+    "Weight": 6,
+    "Cost": 10,
+    "MinLevel": 1,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric",
+      "Warlock",
+      "Monk",
+      "Bard",
+      "Rogue"
+    ]
+  },
+  {
+    "ImageId": 181,
+    "Slots": [
+      "OffHand"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Shield +1",
+    "Rarity": "Uncommon",
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": [
+      1,
+      2
+    ],
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 1
+      }
+    ],
+    "Weight": 6,
+    "Cost": 2000,
+    "MinLevel": 3,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric"
+    ]
+  },
+  {
+    "ImageId": 298,
+    "Slots": [
+      "Chest"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Splint Armor",
+    "Rarity": "Rare",
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 5
+      }
+    ],
+    "Weight": 60,
+    "Cost": 200,
+    "MinLevel": 4,
+    "Classes": [
+      "Paladin",
+      "Fighter"
+    ]
+  },
+  {
+    "ImageId": 285,
+    "Slots": [
+      "Chest"
+    ],
+    "Type": "Armor",
+    "Category": "Unknown",
+    "Name": "Studded Leather",
+    "Rarity": "Common",
+    "Stats": [
+      {
+        "Type": "Defence",
+        "Value": 3
+      }
+    ],
+    "Weight": 12,
+    "Cost": 45,
+    "MinLevel": 2,
+    "Classes": [
+      "Monk",
+      "Rogue",
+      "Bard",
+      "Paladin"
     ]
   }
 ]

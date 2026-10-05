@@ -1,338 +1,682 @@
 [
   {
-    "ImageId": 138,
-    "Name": "Club",
+    "ImageId": 129,
+    "Slots": [
+      "PrimaryHand"
+    ],
     "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Cleric", "Paladin", "Fighter", "Monk"],
+    "Category": "Unknown",
+    "Name": "Battleaxe",
     "Rarity": "Common",
+    "Weight": 4,
+    "Cost": 10,
+    "MinLevel": 1,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 1,
+    "Classes": [
+      "Paladin",
+      "Fighter"
+    ]
+  },
+  {
+    "ImageId": 138,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Club",
+    "Rarity": "Common",
+    "Weight": 2,
     "Cost": 1,
     "MinLevel": 1,
-    "Weight": 2,
     "DamageDice": 1,
     "DamageDie": 4,
-    "DamageBonus": 0
+    "Classes": [
+      "Cleric",
+      "Paladin",
+      "Fighter",
+      "Monk"
+    ]
   },
   {
     "ImageId": 37,
-    "Name": "Dagger",
+    "Slots": [
+      "PrimaryHand"
+    ],
     "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Wizard", "Sorcerer", "Warlock", "Rogue", "Bard", "Paladin", "Fighter"],
+    "Category": "Unknown",
+    "Name": "Dagger",
     "Rarity": "Common",
+    "Weight": 1,
     "Cost": 2,
     "MinLevel": 1,
-    "Weight": 1,
     "DamageDice": 1,
     "DamageDie": 4,
-    "DamageBonus": 1
+    "DamageBonus": 1,
+    "Classes": [
+      "Wizard",
+      "Sorcerer",
+      "Warlock",
+      "Rogue",
+      "Bard",
+      "Paladin",
+      "Fighter"
+    ]
   },
   {
-    "ImageId": 154,
-    "Name": "Greatclub",
+    "ImageId": 69,
+    "Slots": [
+      "PrimaryHand"
+    ],
     "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Cleric", "Paladin", "Fighter"],
+    "Category": "Unknown",
+    "Name": "Flail",
     "Rarity": "Common",
-    "Cost": 5,
+    "Weight": 2,
+    "Cost": 10,
     "MinLevel": 1,
-    "Weight": 10,
     "DamageDice": 1,
     "DamageDie": 8,
-    "DamageBonus": 1
-  },
-  {
-    "ImageId": 152,
-    "Name": "Handaxe",
-    "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Paladin", "Fighter", "Rogue", "Bard"],
-    "Rarity": "Common",
-    "Cost": 5,
-    "MinLevel": 1,
-    "Weight": 2,
-    "DamageDice": 1,
-    "DamageDie": 6,
-    "DamageBonus": 1
-  },
-  {
-    "ImageId": 151,
-    "Name": "Javelin",
-    "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Paladin", "Fighter", "Rogue", "Bard", "Cleric"],
-    "Rarity": "Common",
-    "Cost": 5,
-    "MinLevel": 1,
-    "Weight": 2,
-    "DamageDice": 1,
-    "DamageDie": 6,
-    "DamageBonus": 1
-  },
-  {
-    "ImageId": 153,
-    "Name": "Light Hammer",
-    "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Paladin", "Fighter", "Cleric", "Bard"],
-    "Rarity": "Common",
-    "Cost": 2,
-    "MinLevel": 1,
-    "Weight": 2,
-    "DamageDice": 1,
-    "DamageDie": 4,
-    "DamageBonus": 1
+    "DamageBonus": 1,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric"
+    ]
   },
   {
     "ImageId": 145,
-    "Name": "Mace",
+    "Slots": [
+      "PrimaryHand"
+    ],
     "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Cleric", "Paladin", "Fighter"],
+    "Category": "Unknown",
+    "Name": "Flame Tongue",
+    "Rarity": "Rare",
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": [
+      1,
+      6,
+      7
+    ],
+    "Stats": [
+      {
+        "Type": "Attack",
+        "Value": 1
+      }
+    ],
+    "Weight": 3,
+    "Cost": 5000,
+    "MinLevel": 5,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 2,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Bard",
+      "Rogue"
+    ]
+  },
+  {
+    "ImageId": 139,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Greatclub",
     "Rarity": "Common",
+    "Weight": 10,
     "Cost": 5,
     "MinLevel": 1,
-    "Weight": 4,
     "DamageDice": 1,
-    "DamageDie": 6,
-    "DamageBonus": 1
+    "DamageDie": 8,
+    "DamageBonus": 1,
+    "Classes": [
+      "Cleric",
+      "Paladin",
+      "Fighter"
+    ]
   },
   {
-    "ImageId": 113,
-    "Name": "Quarterstaff",
+    "ImageId": 127,
+    "Slots": [
+      "PrimaryHand"
+    ],
     "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Wizard", "Sorcerer", "Warlock", "Cleric", "Monk", "Bard"],
+    "Category": "Unknown",
+    "Name": "Handaxe",
     "Rarity": "Common",
+    "Weight": 2,
+    "Cost": 5,
+    "MinLevel": 1,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 1,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Rogue",
+      "Bard"
+    ]
+  },
+  {
+    "ImageId": 168,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Heavy Crossbow",
+    "Rarity": "Common",
+    "Weight": 8,
+    "Cost": 50,
+    "MinLevel": 2,
+    "DamageDice": 1,
+    "DamageDie": 10,
+    "DamageBonus": 1,
+    "Classes": [
+      "Fighter",
+      "Paladin",
+      "Rogue"
+    ]
+  },
+  {
+    "ImageId": 21,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Javelin",
+    "Rarity": "Common",
+    "Weight": 2,
+    "Cost": 5,
+    "MinLevel": 1,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 1,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Rogue",
+      "Bard",
+      "Cleric"
+    ]
+  },
+  {
+    "ImageId": 162,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Light Crossbow",
+    "Rarity": "Common",
+    "Weight": 6,
+    "Cost": 25,
+    "MinLevel": 1,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 1,
+    "Classes": [
+      "Wizard",
+      "Cleric",
+      "Monk",
+      "Fighter",
+      "Rogue"
+    ]
+  },
+  {
+    "ImageId": 144,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Light Hammer",
+    "Rarity": "Common",
+    "Weight": 2,
     "Cost": 2,
     "MinLevel": 1,
-    "Weight": 4,
     "DamageDice": 1,
-    "DamageDie": 6,
-    "DamageBonus": 1
+    "DamageDie": 4,
+    "DamageBonus": 1,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric",
+      "Bard"
+    ]
   },
   {
-    "ImageId": 150,
-    "Name": "Spear",
+    "ImageId": 165,
+    "Slots": [
+      "PrimaryHand"
+    ],
     "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Paladin", "Fighter", "Rogue", "Bard", "Cleric"],
+    "Category": "Unknown",
+    "Name": "Longbow",
     "Rarity": "Common",
-    "Cost": 1,
-    "MinLevel": 1,
-    "Weight": 6,
-    "DamageDice": 1,
-    "DamageDie": 6,
-    "DamageBonus": 1
-  },
-  {
-    "ImageId": 129,
-    "Name": "Battleaxe",
-    "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Paladin", "Fighter"],
-    "Rarity": "Common",
-    "Cost": 10,
-    "MinLevel": 1,
-    "Weight": 4,
-    "DamageDice": 1,
-    "DamageDie": 8,
-    "DamageBonus": 1
-  },
-  {
-    "ImageId": 156,
-    "Name": "Flail",
-    "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Paladin", "Fighter", "Cleric"],
-    "Rarity": "Common",
-    "Cost": 10,
-    "MinLevel": 1,
-    "Weight": 2,
-    "DamageDice": 1,
-    "DamageDie": 8,
-    "DamageBonus": 1
-  },
-  {
-    "ImageId": 110,
-    "Name": "Longsword",
-    "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Paladin", "Fighter", "Bard", "Rogue"],
-    "Rarity": "Uncommon",
-    "Cost": 15,
-    "MinLevel": 1,
     "Weight": 3,
-    "DamageDice": 1,
-    "DamageDie": 8,
-    "DamageBonus": 2
-  },
-  {
-    "ImageId": 155,
-    "Name": "Morningstar",
-    "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Paladin", "Fighter", "Cleric"],
-    "Rarity": "Common",
-    "Cost": 15,
+    "Cost": 50,
     "MinLevel": 1,
-    "Weight": 4,
     "DamageDice": 1,
     "DamageDie": 8,
-    "DamageBonus": 1
-  },
-  {
-    "ImageId": 111,
-    "Name": "Rapier",
-    "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Paladin", "Fighter", "Bard", "Rogue"],
-    "Rarity": "Uncommon",
-    "Cost": 25,
-    "MinLevel": 2,
-    "Weight": 2,
-    "DamageDice": 1,
-    "DamageDie": 8,
-    "DamageBonus": 2
-  },
-  {
-    "ImageId": 8,
-    "Name": "Scimitar",
-    "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Paladin", "Fighter", "Bard", "Rogue"],
-    "Rarity": "Common",
-    "Cost": 25,
-    "MinLevel": 1,
-    "Weight": 3,
-    "DamageDice": 1,
-    "DamageDie": 6,
-    "DamageBonus": 1
+    "DamageBonus": 1,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Rogue"
+    ]
   },
   {
     "ImageId": 1,
-    "Name": "Shortsword",
+    "Slots": [
+      "PrimaryHand"
+    ],
     "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Paladin", "Fighter", "Rogue", "Bard"],
-    "Rarity": "Common",
-    "Cost": 10,
-    "MinLevel": 1,
-    "Weight": 2,
-    "DamageDice": 1,
-    "DamageDie": 6,
-    "DamageBonus": 1
-  },
-  {
-    "ImageId": 157,
-    "Name": "War Pick",
-    "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Paladin", "Fighter", "Cleric"],
-    "Rarity": "Common",
-    "Cost": 5,
-    "MinLevel": 1,
-    "Weight": 4,
-    "DamageDice": 1,
-    "DamageDie": 8,
-    "DamageBonus": 1
-  },
-  {
-    "ImageId": 112,
-    "Name": "Warhammer",
-    "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Paladin", "Fighter", "Cleric"],
-    "Rarity": "Common",
+    "Category": "Unknown",
+    "Name": "Longsword",
+    "Rarity": "Uncommon",
+    "Weight": 3,
     "Cost": 15,
     "MinLevel": 1,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 2,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Bard",
+      "Rogue"
+    ]
+  },
+  {
+    "ImageId": 2,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Longsword +1",
+    "Rarity": "Uncommon",
+    "IsMagicItem": true,
+    "Stats": [
+      {
+        "Type": "Attack",
+        "Value": 1
+      }
+    ],
+    "Weight": 3,
+    "Cost": 2000,
+    "MinLevel": 3,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 2,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Bard",
+      "Rogue"
+    ]
+  },
+  {
+    "ImageId": 50,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Mace",
+    "Rarity": "Common",
     "Weight": 4,
-    "DamageDice": 1,
-    "DamageDie": 8,
-    "DamageBonus": 2
-  },
-  {
-    "ImageId": 114,
-    "Name": "Light Crossbow",
-    "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Wizard", "Cleric", "Monk", "Fighter", "Rogue"],
-    "Rarity": "Common",
-    "Cost": 25,
+    "Cost": 5,
     "MinLevel": 1,
-    "Weight": 6,
-    "DamageDice": 1,
-    "DamageDie": 8,
-    "DamageBonus": 1
-  },
-  {
-    "ImageId": 159,
-    "Name": "Heavy Crossbow",
-    "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Fighter", "Paladin", "Rogue"],
-    "Rarity": "Common",
-    "Cost": 50,
-    "MinLevel": 2,
-    "Weight": 8,
-    "DamageDice": 1,
-    "DamageDie": 10,
-    "DamageBonus": 1
-  },
-  {
-    "ImageId": 116,
-    "Name": "Longbow",
-    "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Paladin", "Fighter", "Rogue"],
-    "Rarity": "Common",
-    "Cost": 50,
-    "MinLevel": 1,
-    "Weight": 3,
-    "DamageDice": 1,
-    "DamageDie": 8,
-    "DamageBonus": 1
-  },
-  {
-    "ImageId": 115,
-    "Name": "Shortbow",
-    "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Wizard", "Sorcerer", "Warlock", "Cleric", "Monk", "Rogue"],
-    "Rarity": "Common",
-    "Cost": 25,
-    "MinLevel": 1,
-    "Weight": 3,
     "DamageDice": 1,
     "DamageDie": 6,
-    "DamageBonus": 1
+    "DamageBonus": 1,
+    "Classes": [
+      "Cleric",
+      "Paladin",
+      "Fighter"
+    ]
   },
   {
-    "ImageId": 158,
-    "Name": "Sling",
+    "ImageId": 51,
+    "Slots": [
+      "PrimaryHand"
+    ],
     "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Wizard", "Sorcerer", "Warlock", "Bard", "Rogue"],
-    "Rarity": "Common",
-    "Cost": 1,
-    "MinLevel": 1,
-    "Weight": 1,
+    "Category": "Unknown",
+    "Name": "Mace of Disruption",
+    "Rarity": "Rare",
+    "IsMagicItem": true,
+    "RequiresAttunement": true,
+    "AttunementClasses": [
+      2,
+      1
+    ],
+    "Stats": [
+      {
+        "Type": "Attack",
+        "Value": 1
+      }
+    ],
+    "Weight": 4,
+    "Cost": 6000,
+    "MinLevel": 6,
     "DamageDice": 1,
-    "DamageDie": 4,
-    "DamageBonus": 0
+    "DamageDie": 6,
+    "DamageBonus": 2,
+    "Classes": [
+      "Cleric",
+      "Paladin",
+      "Fighter"
+    ]
+  },
+  {
+    "ImageId": 57,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Morningstar",
+    "Rarity": "Common",
+    "Weight": 4,
+    "Cost": 15,
+    "MinLevel": 1,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 1,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric"
+    ]
   },
   {
     "ImageId": 161,
-    "Name": "Net",
+    "Slots": [
+      "PrimaryHand"
+    ],
     "Type": "Weapon",
-    "Slots": ["PrimaryHand"],
-    "Classes": ["Rogue", "Fighter", "Bard"],
+    "Category": "Unknown",
+    "Name": "Net",
     "Rarity": "Common",
+    "Weight": 2,
     "Cost": 1,
     "MinLevel": 1,
+    "Classes": [
+      "Rogue",
+      "Fighter",
+      "Bard"
+    ]
+  },
+  {
+    "ImageId": 88,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Quarterstaff",
+    "Rarity": "Common",
+    "Weight": 4,
+    "Cost": 2,
+    "MinLevel": 1,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 1,
+    "Classes": [
+      "Wizard",
+      "Sorcerer",
+      "Warlock",
+      "Cleric",
+      "Monk",
+      "Bard"
+    ]
+  },
+  {
+    "ImageId": 3,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Rapier",
+    "Rarity": "Uncommon",
     "Weight": 2,
-    "DamageDice": 0,
-    "DamageDie": 0,
-    "DamageBonus": 0
+    "Cost": 25,
+    "MinLevel": 2,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 2,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Bard",
+      "Rogue"
+    ]
+  },
+  {
+    "ImageId": 4,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Rapier +1",
+    "Rarity": "Uncommon",
+    "IsMagicItem": true,
+    "Stats": [
+      {
+        "Type": "Attack",
+        "Value": 1
+      }
+    ],
+    "Weight": 2,
+    "Cost": 2500,
+    "MinLevel": 4,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 2,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Bard",
+      "Rogue"
+    ]
+  },
+  {
+    "ImageId": 8,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Scimitar",
+    "Rarity": "Common",
+    "Weight": 3,
+    "Cost": 25,
+    "MinLevel": 1,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 1,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Bard",
+      "Rogue"
+    ]
+  },
+  {
+    "ImageId": 162,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Shortbow",
+    "Rarity": "Common",
+    "Weight": 3,
+    "Cost": 25,
+    "MinLevel": 1,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 1,
+    "Classes": [
+      "Wizard",
+      "Sorcerer",
+      "Warlock",
+      "Cleric",
+      "Monk",
+      "Rogue"
+    ]
+  },
+  {
+    "ImageId": 164,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Shortbow +1",
+    "Rarity": "Uncommon",
+    "IsMagicItem": true,
+    "Stats": [
+      {
+        "Type": "Attack",
+        "Value": 1
+      }
+    ],
+    "Weight": 3,
+    "Cost": 3000,
+    "MinLevel": 4,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 2,
+    "Classes": [
+      "Wizard",
+      "Sorcerer",
+      "Warlock",
+      "Cleric",
+      "Monk",
+      "Rogue"
+    ]
+  },
+  {
+    "ImageId": 5,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Shortsword",
+    "Rarity": "Common",
+    "Weight": 2,
+    "Cost": 10,
+    "MinLevel": 1,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 1,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Rogue",
+      "Bard"
+    ]
+  },
+  {
+    "ImageId": 151,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Sling",
+    "Rarity": "Common",
+    "Weight": 1,
+    "Cost": 1,
+    "MinLevel": 1,
+    "DamageDice": 1,
+    "DamageDie": 4,
+    "Classes": [
+      "Wizard",
+      "Sorcerer",
+      "Warlock",
+      "Bard",
+      "Rogue"
+    ]
+  },
+  {
+    "ImageId": 26,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Spear",
+    "Rarity": "Common",
+    "Weight": 6,
+    "Cost": 1,
+    "MinLevel": 1,
+    "DamageDice": 1,
+    "DamageDie": 6,
+    "DamageBonus": 1,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Rogue",
+      "Bard",
+      "Cleric"
+    ]
+  },
+  {
+    "ImageId": 907,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "War Pick",
+    "Rarity": "Common",
+    "Weight": 4,
+    "Cost": 5,
+    "MinLevel": 1,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 1,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric"
+    ]
+  },
+  {
+    "ImageId": 150,
+    "Slots": [
+      "PrimaryHand"
+    ],
+    "Type": "Weapon",
+    "Category": "Unknown",
+    "Name": "Warhammer",
+    "Rarity": "Common",
+    "Weight": 4,
+    "Cost": 15,
+    "MinLevel": 1,
+    "DamageDice": 1,
+    "DamageDie": 8,
+    "DamageBonus": 2,
+    "Classes": [
+      "Paladin",
+      "Fighter",
+      "Cleric"
+    ]
   }
 ]

@@ -10,21 +10,7 @@
     "Type": "Quest",
     "Category": "Unknown",
     "Name": "Boy's Sea Shell",
-    "Rarity": "Common",
-    "Weight": 0
-  },
-  {
-    "ImageId": 909,
-    "QuestId": "Find_Ship",
-    "ForStage": [
-      3
-    ],
-    "NextStage": 4,
-    "Type": "Quest",
-    "Category": "Unknown",
-    "Name": "Old Man's Key",
-    "Rarity": "Common",
-    "Weight": 0
+    "Rarity": "Common"
   },
   {
     "ImageId": 951,
@@ -36,18 +22,27 @@
     "Type": "Quest",
     "Category": "Unknown",
     "Name": "Deed to the ship",
-    "Rarity": "Common",
-    "Weight": 0
+    "Rarity": "Common"
   },
   {
-    "ImageId": 943,
+    "ImageId": 909,
     "Skill": "Open",
     "Type": "Quest",
     "Category": "Unknown",
     "Name": "Iron Key",
     "Rarity": "Common",
-    "Cost": 0,
-    "MinLevel": 1,
-    "Weight": 0
+    "MinLevel": 1
+  },
+  {
+    "ImageId": 899,
+    "QuestId": "Find_Ship",
+    "ForStage": [
+      3
+    ],
+    "NextStage": 4,
+    "Type": "Quest",
+    "Category": "Unknown",
+    "Name": "Old Man's Key",
+    "Rarity": "Common"
   }
 ]

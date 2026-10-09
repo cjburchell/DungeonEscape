@@ -1,5 +1,5 @@
 @*
-    Property editor for classlevels.json entries: one class, its D&D metadata,
+    Property editor for class.json entries: one class, its D&D metadata,
     default hero image, and skill proficiency references.
 *@
 
@@ -20,6 +20,7 @@ else
                 <input value="@ClassStats.PrimaryAbility" @onchange="e => Set(() => ClassStats.PrimaryAbility = e.Value?.ToString() ?? string.Empty)" />
             </div>
             <NumberField Label="Hit Die" Value="ClassStats.HitDie" ValueChanged="v => Set(() => ClassStats.HitDie = v)" />
+            <NumberField Label="Skill Choice Count" Value="ClassStats.SkillChoiceCount" ValueChanged="v => Set(() => ClassStats.SkillChoiceCount = v)" />
         </div>
     </div>
 
@@ -29,6 +30,10 @@ else
     <fieldset>
         <legend>Skill Proficiencies</legend>
         <StringListEditor Items="EnsureSkillProficiencies()" Options="DndSkills" OnChanged="RaiseChanged" />
+    </fieldset>
+    <fieldset>
+        <legend>Skill Options</legend>
+        <StringListEditor Items="EnsureSkillOptions()" Options="DndSkills" OnChanged="RaiseChanged" />
     </fieldset>
 }
 
@@ -40,6 +45,9 @@ else
 
     private List<string> EnsureSkillProficiencies() =>
         ClassStats == null ? new List<string>() : (ClassStats.SkillProficiencies ??= new List<string>());
+
+    private List<string> EnsureSkillOptions() =>
+        ClassStats == null ? new List<string>() : (ClassStats.SkillOptions ??= new List<string>());
 
     private async Task Set(Action mutate)
     {

@@ -41,7 +41,8 @@ namespace Redpoint.DungeonEscape.UnityEditor
             AssignTextAsset(bootstrap, "monstersJson", "Assets/DungeonEscape/Data/allmonsters.json");
             AssignTextAsset(bootstrap, "questsJson", "Assets/DungeonEscape/Data/quests.json");
             AssignTextAsset(bootstrap, "dialogJson", "Assets/DungeonEscape/Data/dialog.json");
-            AssignTextAsset(bootstrap, "classLevelsJson", "Assets/DungeonEscape/Data/classlevels.json");
+            AssignTextAsset(bootstrap, "classesJson", "Assets/DungeonEscape/Data/class.json");
+            AssignTextAsset(bootstrap, "speciesJson", "Assets/DungeonEscape/Data/species.json");
             AssignTextAsset(bootstrap, "namesJson", "Assets/DungeonEscape/Data/names.json");
             AssignString(bootstrap, "testMapAssetPath", "Assets/DungeonEscape/Maps/overworld.tmx");
 

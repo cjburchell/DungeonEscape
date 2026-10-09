@@ -9,7 +9,7 @@ namespace Redpoint.DungeonEscape.Unity.Tests.EditMode
     public sealed class ProjectSmokeEditModeTests
     {
         [TestCase("allmonsters.json")]
-        [TestCase("classlevels.json")]
+        [TestCase("class.json")]
         [TestCase("customitems.json")]
         [TestCase("default_settings.json")]
         [TestCase("dialog.json")]
@@ -20,6 +20,7 @@ namespace Redpoint.DungeonEscape.Unity.Tests.EditMode
         [TestCase("questitems.json")]
         [TestCase("skills.json")]
         [TestCase("spells.json")]
+        [TestCase("species.json")]
         [TestCase("weaponitems.json")]
         [TestCase("armoritems.json")]
         public void RequiredDataFileExists(string fileName)

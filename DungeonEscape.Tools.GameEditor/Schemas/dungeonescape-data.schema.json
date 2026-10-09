@@ -249,7 +249,25 @@
         "PrimaryAbility": { "type": "string" },
         "HitDie": { "type": "integer", "minimum": 0 },
         "DefaultImage": { "type": "integer", "minimum": 0 },
-        "Stats": { "type": "array", "items": { "$ref": "#/$defs/statRoll" } },
+        "SkillProficiencies": { "type": "array", "items": { "$ref": "#/$defs/dndSkillName" } },
+        "SkillOptions": { "type": "array", "items": { "$ref": "#/$defs/dndSkillName" } },
+        "SkillChoiceCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "speciesDefinition": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["Species", "Name"],
+      "properties": {
+        "Species": { "type": "string" },
+        "Name": { "type": "string" },
+        "Description": { "type": "string" },
+        "Strength": { "type": "integer" },
+        "Dexterity": { "type": "integer" },
+        "Constitution": { "type": "integer" },
+        "Intelligence": { "type": "integer" },
+        "Wisdom": { "type": "integer" },
+        "Charisma": { "type": "integer" },
         "SkillProficiencies": { "type": "array", "items": { "$ref": "#/$defs/dndSkillName" } }
       }
     },

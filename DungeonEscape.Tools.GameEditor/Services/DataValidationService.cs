@@ -16,17 +16,6 @@ public sealed class DataValidationService
 {
     private const string OverworldMapClass = "Overworld";
 
-    private static readonly StatType[] RequiredClassStats =
-    {
-        StatType.HP,
-        StatType.Attack,
-        StatType.Defence,
-        StatType.MagicDefence,
-        StatType.Agility,
-        StatType.Magic
-    };
-
-
     private readonly DataFolderService data;
     private readonly MonsterImageCatalog monsterImages;
     private readonly ItemImageCatalog itemImages;
@@ -77,7 +66,8 @@ public sealed class DataValidationService
         ValidateRequiredNames(issues, "Item", data.Items.Select((item, index) => (index, Value: (string?)item.Name)));
         ValidateRequiredNames(issues, "Quest", data.Quests.Select((item, index) => (index, Value: (string?)item.Id)));
         ValidateRequiredNames(issues, "Dialog", data.Dialogs.Select((item, index) => (index, Value: (string?)item.Id)));
-        ValidateRequiredNames(issues, "Class level", data.ClassLevels.Select((item, index) => (index, Value: (string?)item.Class)));
+        ValidateRequiredNames(issues, "Class", data.ClassLevels.Select((item, index) => (index, Value: (string?)item.Class)));
+        ValidateRequiredNames(issues, "Species", data.Species.Select((item, index) => (index, Value: (string?)item.Name)));
         ValidateRequiredNames(issues, "Background", data.Backgrounds.Select((item, index) => (index, Value: (string?)item.Id)));
         ValidateRequiredNames(issues, "Background", data.Backgrounds.Select((item, index) => (index, Value: (string?)item.Name)));
 
@@ -88,7 +78,9 @@ public sealed class DataValidationService
         ValidateDuplicates(issues, "Item id", data.Items.Select(item => item.Id));
         ValidateDuplicates(issues, "Quest id", data.Quests.Select(quest => quest.Id));
         ValidateDuplicates(issues, "Dialog id", data.Dialogs.Select(dialog => dialog.Id));
-        ValidateDuplicates(issues, "Class level class", data.ClassLevels.Select(classStats => classStats.Class));
+        ValidateDuplicates(issues, "Class", data.ClassLevels.Select(classStats => classStats.Class));
+        ValidateDuplicates(issues, "Species", data.Species.Select(species => species.Species.ToString()));
+        ValidateDuplicates(issues, "Species name", data.Species.Select(species => species.Name));
         ValidateDuplicates(issues, "Background id", data.Backgrounds.Select(background => background.Id));
         ValidateDuplicates(issues, "Background name", data.Backgrounds.Select(background => background.Name));
 
@@ -98,6 +90,7 @@ public sealed class DataValidationService
         ValidateQuests(issues, itemRefs);
         ValidateDialogs(issues, questIds, itemRefs, monsterNames);
         ValidateClassLevels(issues);
+        ValidateSpecies(issues);
         ValidateBackgrounds(issues);
         ValidateMaps(issues, itemRefs, dialogIds, monsterNames, mapIds, classValues, backgroundValues);
         ValidateAssetFiles(issues);
@@ -185,38 +178,40 @@ public sealed class DataValidationService
         for (var i = 0; i < data.ClassLevels.Count; i++)
         {
             var classStats = data.ClassLevels[i];
-            var location = Label("Class level", classStats.Class, i);
+            var location = Label("Class", classStats.Class, i);
             if (heroImages.Entries.Count > 0 && !heroImages.TryGet(classStats.DefaultImage, out _))
             {
                 Warning(issues, location, $"Default image #{classStats.DefaultImage} was not found in hero.png.");
             }
 
-            var stats = classStats.Stats ?? new List<Stats>();
-            var statTypes = stats.Select(stat => stat.Type).ToList();
-            foreach (var requiredStat in RequiredClassStats)
-            {
-                if (!statTypes.Contains(requiredStat))
-                {
-                    Error(issues, location, $"Missing required {requiredStat} stat row.");
-                }
-            }
-
-            ValidateDuplicates(issues, location + " stat type", stats.Select(stat => stat.Type.ToString()));
-            foreach (var stat in stats)
-            {
-                if (!RequiredClassStats.Contains(stat.Type))
-                {
-                    Error(issues, location, $"Unexpected {stat.Type} stat row.");
-                }
-
-                if (stat.RollTimes <= 0)
-                {
-                    Error(issues, location, $"{stat.Type} roll times must be greater than 0.");
-                }
-            }
-
             ValidateDuplicates(issues, location + " skill proficiency", classStats.SkillProficiencies);
             foreach (var skillProficiency in classStats.SkillProficiencies ?? new List<string>())
+            {
+                if (!DndStatRules.IsDndSkillName(skillProficiency))
+                {
+                    Error(issues, location, $"Unknown D&D skill proficiency '{skillProficiency}'.");
+                }
+            }
+
+            ValidateDuplicates(issues, location + " skill option", classStats.SkillOptions);
+            foreach (var skillOption in classStats.SkillOptions ?? new List<string>())
+            {
+                if (!DndStatRules.IsDndSkillName(skillOption))
+                {
+                    Error(issues, location, $"Unknown D&D skill option '{skillOption}'.");
+                }
+            }
+        }
+    }
+
+    private void ValidateSpecies(List<DataValidationIssue> issues)
+    {
+        for (var i = 0; i < data.Species.Count; i++)
+        {
+            var species = data.Species[i];
+            var location = Label("Species", species.Name, i);
+            ValidateDuplicates(issues, location + " skill proficiency", species.SkillProficiencies);
+            foreach (var skillProficiency in species.SkillProficiencies ?? new List<string>())
             {
                 if (!DndStatRules.IsDndSkillName(skillProficiency))
                 {
@@ -615,7 +610,7 @@ public sealed class DataValidationService
         {
             if (!classValues.Contains(itemClass))
             {
-                Error(issues, location, $"Class '{itemClass}' is not defined in classlevels.json.");
+                Error(issues, location, $"Class '{itemClass}' is not defined in class.json.");
             }
         }
     }

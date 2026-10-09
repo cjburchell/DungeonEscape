@@ -134,16 +134,8 @@ namespace DungeonEscape.Core.Test.Rules
                 new ClassStats
                 {
                     Class = "Paladin",
-                    SkillProficiencies = new List<string>(),
-                    Stats = new List<Stats>
-                    {
-                        new Stats { Type = StatType.HP },
-                        new Stats { Type = StatType.Attack },
-                        new Stats { Type = StatType.Defence },
-                        new Stats { Type = StatType.MagicDefence },
-                        new Stats { Type = StatType.Magic },
-                        new Stats { Type = StatType.Agility }
-                    }
+                    HitDie = 10,
+                    SkillProficiencies = new List<string>()
                 }
             };
         }

@@ -602,7 +602,7 @@ active or waiting according to the current party-size limit.
 
 - Return to the title menu from the in-game menu.
 - Select New Quest.
-- Expected: New Quest screen appears over `menu2.png` with page-one Name/Gender/Race/Class/Background/Image controls, portrait, stat panel, and pinned Next/Back buttons inside a black panel with a white border.
+- Expected: New Quest screen appears over `menu2.png` with page-one Name/Gender/Race/Class/Background controls on the left, Appearance/portrait controls on the right, and pinned Next/Back buttons inside a black panel with a white border.
 - Resize the game window shorter or increase UI scale until the full form body cannot fit.
 - Expected: the form body scrolls if needed, while Start and Back remain visible at the bottom of the dialog.
 - Enter a player name or press Random.
@@ -839,15 +839,18 @@ active or waiting according to the current party-size limit.
 ### [ ] Random Encounter Avoidance Choices
 
 - Trigger a random encounter with the party hidden from the monsters.
-- Expected: the encounter prompt offers `Sneak Away`; a successful Stealth check closes the encounter and awards partial XP without gold or item loot.
+- Expected: the combat view opens with the selected monsters visible behind the prompt.
+- Expected: the encounter prompt offers `Sneak Away (+X)`, using the first living party member's Stealth modifier; a successful Stealth check closes the encounter and awards partial XP without gold or item loot.
 - Trigger a random encounter with an intelligent monster that has a spoken language.
-- Expected: if the monster is explicitly marked `CanBeReasonedWith`, the prompt offers `Talk`; a successful Persuasion, Deception, or Intimidation check closes the encounter and awards full encounter XP without gold or item loot.
+- Expected: if the monster is explicitly marked `CanBeReasonedWith`, the prompt offers separate `Persuade (+X)`, `Deceive (+X)`, and `Intimidate (+X)` choices using the first living party member's skill modifiers; a successful check closes the encounter and awards full encounter XP without gold or item loot.
 - Trigger a random encounter with a monster explicitly marked `NonAggressive`, such as `Giant Eagle`.
 - Expected: the prompt offers `Leave Peacefully`; choosing it closes the encounter without XP, gold, or item loot.
-- Fail a `Sneak Away`, `Withdraw`, or `Talk` attempt.
-- Expected: the failure message appears, then choosing `Fight` opens the normal combat view with the same monsters.
+- Trigger an encounter where one party member has poor Stealth.
+- Expected: initial spotting is based on the worst living party member's Stealth roll; if spotted by hostile monsters, some encounters immediately offer only `Fight` and start combat from the already visible combat view.
+- Fail a `Sneak Away`, `Withdraw`, `Persuade`, `Deceive`, or `Intimidate` attempt.
+- Expected: the failure message describes what the lead party member tried and how the monsters reacted, then choosing `Fight` starts normal combat with the same visible monsters.
 - Choose `Fight` from the initial encounter prompt.
-- Expected: combat opens normally with the biome/map encounter background and standard combat rewards if the monsters are defeated.
+- Expected: combat starts normally from the already visible combat view with the biome/map encounter background and standard combat rewards if the monsters are defeated.
 - Open the monster in the Game Editor.
 - Expected: the Monster form exposes `Hostile encounter`, `Can be reasoned with`, and `Non-aggressive encounter` flags under D&D Identity.
 
@@ -1036,11 +1039,15 @@ active or waiting according to the current party-size limit.
 - Open the Class dropdown and click the first class row.
 - Expected: the first row is selectable with the mouse and is not blocked by the Background selector.
 - Cycle Species with keyboard/gamepad and the dropdown.
-- Expected: Species changes between Human, Elf, Dwarf, and Halfling, and the preview ability-score rows update.
+- Expected: Species changes between Human, Elf, Dwarf, and Halfling, and species metadata comes from `species.json`.
 - Cycle Class.
 - Expected: D&D class names are available directly, such as `Paladin`, `Fighter`, `Monk`, `Warlock`, `Rogue`, and `Sorcerer`.
 - Inspect the New Quest stat preview.
 - Expected: it shows D&D-facing HP, Armor Class, Proficiency, Attack Bonus, Damage Bonus, Initiative, and STR/DEX/CON/INT/WIS/CHA rows, with no JRPG Attack/Defence/MagicDefence/Agility rows.
+- Go to the ability-score page.
+- Expected: ability scores use D&D point-buy costs with 27 points, base scores are capped at 15 before the `+2`/`+1` bonus, and Reset restores class defaults.
+- Pick Rogue and a background with two skill proficiencies.
+- Expected: race/background skill proficiencies are shown as locked/default selections; class skill choices are limited by `class.json` (`4` for Rogue), and additional choices are disabled once the class limit is reached.
 - Start a new game after selecting a non-Human species.
 - Expected: the created hero keeps the selected species after save/load, uses mapped ability scores for combat calculations, and starts with HP based on class hit die plus Constitution modifier.
 - Open the in-game Status screen for the created character.
@@ -1076,9 +1083,9 @@ active or waiting according to the current party-size limit.
 ### [ ] D&D Skill Proficiencies
 
 - Open the Game Editor Class tab.
-- Expected: class entries show skill proficiencies such as `Athletics`, `Arcana`, `Stealth`, and `Persuasion`, with no legacy class actions such as `Swipe`, `Weird Dance`, or `Play Song`.
+- Expected: class entries load from `class.json` and show hit die, default image, skill proficiencies, skill options, and skill choice count, with no legacy class actions or JRPG stat rows.
 - Start New Quest for classes with different proficiencies, such as Rogue and Paladin.
-- Expected: created heroes do not gain legacy class skills from `classlevels.json`; Rogue heroes with `Sleight of Hand` proficiency still receive the combat `Steal` pickpocket action.
+- Expected: created heroes do not gain legacy class skills from class data; Rogue heroes with `Sleight of Hand` proficiency still receive the combat `Steal` pickpocket action.
 - Interact with a locked object that uses a D&D skill check property such as `SkillCheck=Acrobatics`.
 - Expected: the check uses the hero's D&D ability modifier and proficiency when the hero has the matching D&D skill proficiency.
 - Open the Game Editor Skills, Spells, and Items tabs.
@@ -1107,7 +1114,7 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 - Launch the tool; a desktop window titled "Dungeon Escape - Game Editor" opens.
 - Open `DungeonEscape.Unity/Assets/DungeonEscape/Data` from the **File** menu.
 
-- Expected: tabs appear for Monsters, Spells, Skills, Items, Quests, Dialogs, Class, Backgrounds, Names, and Maps.
+- Expected: tabs appear for Monsters, Spells, Skills, Items, Quests, Dialogs, Class, Species, Backgrounds, Names, and Maps.
 - Expected: the validation panel shows the current issue count and can be collapsed/expanded.
 - Select the Monsters tab and choose a monster.
 - Expected: the right form shows its properties and a large image preview.
@@ -1115,14 +1122,14 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 - Expected: the preview and the list thumbnail update to the selected tileset image.
 - Edit Name, stats, Rarity, Biomes, and add/remove Spells/Skills/Items via the dropdowns.
 - Expected: the project name shows a "• unsaved" indicator after any change.
-- Visit several other tabs and make a reversible edit, such as quest text, dialog choice metadata, class default image, background ability bonuses/proficiencies, item metadata, or map gameplay metadata.
+- Visit several other tabs and make a reversible edit, such as quest text, dialog choice metadata, class default image/skill options, species ability modifiers/proficiencies, background ability bonuses/proficiencies, item metadata, or map gameplay metadata.
 - Expected: each edit marks the project unsaved and updates validation when references or required fields change.
 - Click Save Project.
 - Expected: the indicator clears and changed JSON/TMX/map-monster files on disk are updated; reopening the Data folder shows the changes, and saved JSON still matches the game format.
 
 ### [ ] Add, Duplicate, And Remove Array-Backed Data
 
-- With a Data folder open, use Monsters, Spells, Skills, Items, Quests, Dialogs, Class, or Backgrounds.
+- With a Data folder open, use Monsters, Spells, Skills, Items, Quests, Dialogs, Class, Species, or Backgrounds.
 - Click Add.
 - Expected: a new default entry for the active tab is added and selected.
 - Select an entry and click Duplicate.

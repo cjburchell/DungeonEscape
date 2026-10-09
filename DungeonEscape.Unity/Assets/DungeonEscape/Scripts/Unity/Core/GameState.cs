@@ -457,14 +457,30 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 Party,
                 monsters,
                 die => Random.Next(1, Math.Max(1, die) + 1));
+            var prompt = GetEncounterAvoidancePrompt(monsters, context);
+            CombatWindow.OpenPendingEncounter(monsters, biome, prompt);
+            if (context.ImmediateAttack)
+            {
+                GetOrCreateMessageBox().Show(
+                    "Encounter",
+                    prompt + "\n\nThe monsters spot the party and rush to attack before anyone can react.",
+                    new[] { "Fight" },
+                    _ => CombatWindow.BeginOpenEncounter());
+                return;
+            }
+
             var labels = new List<string>();
             var methods = new List<EncounterAvoidanceMethod?>();
-            labels.Add(context.PartyUnnoticed ? "Sneak Away" : "Withdraw");
+            labels.Add(FormatEncounterActionLabel(context.PartyUnnoticed ? "Sneak Away" : "Withdraw", "Stealth"));
             methods.Add(EncounterAvoidanceMethod.SneakAway);
             if (context.CanTalk)
             {
-                labels.Add("Talk");
-                methods.Add(EncounterAvoidanceMethod.TalkDown);
+                labels.Add(FormatEncounterActionLabel("Persuade", "Persuasion"));
+                methods.Add(EncounterAvoidanceMethod.Persuade);
+                labels.Add(FormatEncounterActionLabel("Deceive", "Deception"));
+                methods.Add(EncounterAvoidanceMethod.Deceive);
+                labels.Add(FormatEncounterActionLabel("Intimidate", "Intimidation"));
+                methods.Add(EncounterAvoidanceMethod.Intimidate);
             }
 
             if (context.NonAggressive)
@@ -479,14 +495,14 @@ namespace Redpoint.DungeonEscape.Unity.Core
             var messageBox = GetOrCreateMessageBox();
             messageBox.Show(
                 "Encounter",
-                GetEncounterAvoidancePrompt(monsters, context),
+                prompt,
                 labels,
                 selectedIndex =>
                 {
                     var method = selectedIndex >= 0 && selectedIndex < methods.Count ? methods[selectedIndex] : null;
                     if (!method.HasValue)
                     {
-                        CombatWindow.Open(monsters, biome);
+                        CombatWindow.BeginOpenEncounter();
                         return;
                     }
 
@@ -508,6 +524,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 die => Random.Next(1, Math.Max(1, die) + 1));
             if (result.Success)
             {
+                CombatWindow.CloseCurrent();
                 GetOrCreateMessageBox().Show(
                     "Encounter",
                     ApplyEncounterAvoidanceRewards(monsters, result.XpMultiplier, FormatAvoidanceResult(result)));
@@ -518,7 +535,17 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 "Encounter",
                 FormatAvoidanceResult(result),
                 new[] { "Fight" },
-                _ => CombatWindow.Open(monsters, biome));
+                _ => CombatWindow.BeginOpenEncounter());
+        }
+
+        private string FormatEncounterActionLabel(string label, string skillName)
+        {
+            return label + " (" + FormatSigned(EncounterAvoidanceRules.GetLeadSkillModifier(Party, skillName)) + ")";
+        }
+
+        private static string FormatSigned(int value)
+        {
+            return value >= 0 ? "+" + value : value.ToString();
         }
 
         private static string GetEncounterAvoidancePrompt(IEnumerable<Monster> monsters, EncounterAvoidanceContext context)
@@ -527,6 +554,11 @@ namespace Redpoint.DungeonEscape.Unity.Core
             if (context != null && context.PartyUnnoticed)
             {
                 return "The party spots " + monsterName + " before being noticed.";
+            }
+
+            if (context != null && context.PartySpotted)
+            {
+                return "The party encounters " + monsterName + ". They have spotted the party.";
             }
 
             if (context != null && context.NonAggressive)
@@ -2898,7 +2930,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             };
 
             ApplyStartingClassStats(hero);
-            DndCharacterRules.ApplyStartingAbilityScores(hero);
+            DndCharacterRules.ApplyStartingAbilityScores(hero, GameDataCache.Current == null ? null : GameDataCache.Current.Species);
             DndCharacterRules.ApplyBackgroundAbilityBonuses(hero, GetBackgroundDefinition(hero.Background));
             ApplyCustomAbilityScores(hero, abilityScores);
             ApplyCustomSkillProficiencies(hero, GetBackgroundDefinition(hero.Background), skillProficiencies);
@@ -2952,8 +2984,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 Species = species,
                 Background = string.IsNullOrWhiteSpace(background) ? "Acolyte" : background
             };
-            DndCharacterRules.ApplyStartingAbilityScores(hero);
-            DndCharacterRules.ApplyBackgroundAbilityBonuses(hero, GetBackgroundDefinition(hero.Background));
+            DndCharacterRules.ApplyStartingAbilityScores(hero, GameDataCache.Current == null ? null : GameDataCache.Current.Species);
             ApplyRecruitAbilityBonus(hero, abilityBonus2, 2);
             ApplyRecruitAbilityBonus(hero, abilityBonus1, 1);
             return new[]
@@ -3048,22 +3079,21 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 ? null
                 : GameDataCache.Current.ClassLevels.FirstOrDefault(item => IsClass(item.Class, hero.Class));
 
-            if (classStats == null || classStats.Stats == null)
+            if (classStats == null)
             {
                 ApplyFallbackStartingStats(hero);
                 return;
             }
 
             hero.NextLevel = DndLevelProgressionRules.GetNextLevelXp(hero.Level);
-            hero.MaxHealth = RollStartingStat(classStats, StatType.HP, 30);
+            hero.MaxHealth = 1;
             hero.Health = hero.MaxHealth;
-            hero.MaxMagic = RollStartingStat(classStats, StatType.Magic, 8);
             hero.Magic = 0;
             hero.MaxMagic = 0;
-            hero.Attack = RollStartingStat(classStats, StatType.Attack, 8);
-            hero.Defence = RollStartingStat(classStats, StatType.Defence, 6);
-            hero.MagicDefence = RollStartingStat(classStats, StatType.MagicDefence, 4);
-            hero.Agility = RollStartingStat(classStats, StatType.Agility, 6);
+            hero.Attack = 0;
+            hero.Defence = 0;
+            hero.MagicDefence = 0;
+            hero.Agility = 0;
             hero.Skills = new List<string>();
             hero.SkillProficiencies = classStats.SkillProficiencies == null ? new List<string>() : classStats.SkillProficiencies.ToList();
             hero.RestoreSpellSlots();
@@ -3084,12 +3114,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             hero.MaxHealth = DndStatRules.GetHeroHitPointsForLevel(hero, classStats, hero.Level);
             hero.Health = hero.MaxHealth;
-        }
-
-        private static int RollStartingStat(ClassStats classStats, StatType type, int fallbackValue)
-        {
-            var stat = classStats.Stats.FirstOrDefault(item => item.Type == type);
-            return stat == null ? fallbackValue : stat.RollStartValue();
         }
 
         private static bool IsClass(string className, Class heroClass)

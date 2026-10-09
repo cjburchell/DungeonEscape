@@ -129,15 +129,20 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var panelRect = new Rect(8f * scale, Screen.height - panelHeight - 8f * scale, panelWidth, panelHeight);
             GUI.Box(panelRect, GUIContent.none, panelStyle);
 
-            if (state == CombatState.Message)
+            if (state == CombatState.Message || state == CombatState.EncounterChoice)
             {
-                var messageBottomPadding = IsTextFullyRevealed ? 56f * scale : 16f * scale;
+                var messageBottomPadding = state == CombatState.Message && IsTextFullyRevealed ? 56f * scale : 16f * scale;
                 var messageRect = new Rect(
                     panelRect.x + 14f * scale,
                     panelRect.y + 12f * scale,
                     panelRect.width - 28f * scale,
                     panelRect.height - 24f * scale - messageBottomPadding);
                 DrawScrollableMessage(messageRect, DisplayedMessage, scale);
+
+                if (state == CombatState.EncounterChoice)
+                {
+                    return;
+                }
             }
 
             if (state == CombatState.ChooseAction)

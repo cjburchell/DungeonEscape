@@ -28,7 +28,8 @@ public sealed class DataFolderService
     private const string QuestsFileName = "quests.json";
     private const string DialogsFileName = "dialog.json";
     private const string NamesFileName = "names.json";
-    private const string ClassLevelsFileName = "classlevels.json";
+    private const string ClassesFileName = "class.json";
+    private const string SpeciesFileName = "species.json";
     private const string BackgroundsFileName = "backgrounds.json";
 
     private static readonly JsonSerializerSettings SerializerSettings = new()
@@ -68,6 +69,7 @@ public sealed class DataFolderService
     public List<Quest> Quests { get; private set; } = new();
     public List<Dialog> Dialogs { get; private set; } = new();
     public List<ClassStats> ClassLevels { get; private set; } = new();
+    public List<SpeciesDefinition> Species { get; private set; } = new();
     public List<BackgroundDefinition> Backgrounds { get; private set; } = new();
     public Names Names { get; private set; } = new() { Male = new List<string>(), Female = new List<string>() };
     public List<MapDocument> Maps { get; private set; } = new();
@@ -99,7 +101,13 @@ public sealed class DataFolderService
         Items = MergeItemCatalogs(CustomItems, MagicItems, NonMagicItems, WeaponItems, ArmorItems);
         Quests = LoadList<Quest>(Path.Combine(folderPath, QuestsFileName));
         Dialogs = LoadList<Dialog>(Path.Combine(folderPath, DialogsFileName));
-        ClassLevels = LoadList<ClassStats>(Path.Combine(folderPath, ClassLevelsFileName));
+        ClassLevels = LoadList<ClassStats>(Path.Combine(folderPath, ClassesFileName));
+        Species = LoadList<SpeciesDefinition>(Path.Combine(folderPath, SpeciesFileName));
+        if (Species.Count == 0)
+        {
+            Species = DndCharacterRules.GetDefaultSpeciesDefinitions();
+        }
+
         Backgrounds = LoadList<BackgroundDefinition>(Path.Combine(folderPath, BackgroundsFileName));
         if (Backgrounds.Count == 0)
         {
@@ -152,7 +160,8 @@ public sealed class DataFolderService
         SaveList(Path.Combine(FolderPath, ArmorItemsFileName), ArmorItems);
         SaveList(Path.Combine(FolderPath, QuestsFileName), Quests);
         SaveList(Path.Combine(FolderPath, DialogsFileName), Dialogs);
-        SaveList(Path.Combine(FolderPath, ClassLevelsFileName), ClassLevels);
+        SaveList(Path.Combine(FolderPath, ClassesFileName), ClassLevels);
+        SaveList(Path.Combine(FolderPath, SpeciesFileName), Species);
         SaveList(Path.Combine(FolderPath, BackgroundsFileName), Backgrounds);
         SaveObject(Path.Combine(FolderPath, NamesFileName), Names);
         maps.SaveMaps(Maps, assetContext.MapDataDirectory);

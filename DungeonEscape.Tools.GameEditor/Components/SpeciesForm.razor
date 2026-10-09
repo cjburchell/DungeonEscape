@@ -1,0 +1,71 @@
+@if (SpeciesDefinition == null)
+{
+    <div class="empty-state">Select a species from the list, or add a new one.</div>
+}
+else
+{
+    <div class="form-header">
+        <div class="field-grid" style="flex:1">
+            <div class="field">
+                <label>Species</label>
+                <select value="@SpeciesDefinition.Species" @onchange="e => SetSpecies(e.Value?.ToString())">
+                    @foreach (var value in Enum.GetValues<Species>())
+                    {
+                        <option value="@value">@value</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label>Name</label>
+                <input value="@SpeciesDefinition.Name" @onchange="e => Set(() => SpeciesDefinition.Name = e.Value?.ToString() ?? string.Empty)" />
+            </div>
+            <div class="field span-2">
+                <label>Description</label>
+                <textarea value="@SpeciesDefinition.Description" @onchange="e => Set(() => SpeciesDefinition.Description = e.Value?.ToString() ?? string.Empty)"></textarea>
+            </div>
+            <NumberField Label="Strength" Value="SpeciesDefinition.Strength" ValueChanged="v => Set(() => SpeciesDefinition.Strength = v)" />
+            <NumberField Label="Dexterity" Value="SpeciesDefinition.Dexterity" ValueChanged="v => Set(() => SpeciesDefinition.Dexterity = v)" />
+            <NumberField Label="Constitution" Value="SpeciesDefinition.Constitution" ValueChanged="v => Set(() => SpeciesDefinition.Constitution = v)" />
+            <NumberField Label="Intelligence" Value="SpeciesDefinition.Intelligence" ValueChanged="v => Set(() => SpeciesDefinition.Intelligence = v)" />
+            <NumberField Label="Wisdom" Value="SpeciesDefinition.Wisdom" ValueChanged="v => Set(() => SpeciesDefinition.Wisdom = v)" />
+            <NumberField Label="Charisma" Value="SpeciesDefinition.Charisma" ValueChanged="v => Set(() => SpeciesDefinition.Charisma = v)" />
+        </div>
+    </div>
+
+    <fieldset>
+        <legend>Skill Proficiencies</legend>
+        <StringListEditor Items="EnsureSkillProficiencies()" Options="DndSkills" OnChanged="RaiseChanged" />
+    </fieldset>
+}
+
+@code {
+    [Parameter] public SpeciesDefinition? SpeciesDefinition { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private static readonly IReadOnlyList<string> DndSkills = DndStatRules.GetDndSkillNames();
+
+    private List<string> EnsureSkillProficiencies() =>
+        SpeciesDefinition == null ? new List<string>() : (SpeciesDefinition.SkillProficiencies ??= new List<string>());
+
+    private async Task SetSpecies(string? value)
+    {
+        if (SpeciesDefinition != null && Enum.TryParse<Species>(value, out var species))
+        {
+            SpeciesDefinition.Species = species;
+            if (string.IsNullOrWhiteSpace(SpeciesDefinition.Name))
+            {
+                SpeciesDefinition.Name = species.ToString();
+            }
+        }
+
+        await RaiseChanged();
+    }
+
+    private async Task Set(Action mutate)
+    {
+        mutate();
+        await RaiseChanged();
+    }
+
+    private async Task RaiseChanged() => await OnChanged.InvokeAsync();
+}

@@ -24,6 +24,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private enum CombatState
         {
+            EncounterChoice,
             Message,
             ChooseAction,
             ChooseTarget,
@@ -162,6 +163,34 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         public static void Open(IEnumerable<Monster> encounterMonsters, Biome encounterBiome)
         {
+            var window = OpenInternal(encounterMonsters, encounterBiome);
+            window.ShowMessage(window.GetEncounterMessage(), window.BeginRound);
+        }
+
+        public static void OpenPendingEncounter(IEnumerable<Monster> encounterMonsters, Biome encounterBiome, string message)
+        {
+            var window = OpenInternal(encounterMonsters, encounterBiome);
+            window.ShowEncounterChoiceMessage(message);
+        }
+
+        public static void BeginOpenEncounter()
+        {
+            if (currentWindow != null)
+            {
+                currentWindow.BeginRound();
+            }
+        }
+
+        public static void CloseCurrent()
+        {
+            if (currentWindow != null)
+            {
+                currentWindow.Close();
+            }
+        }
+
+        private static CombatWindow OpenInternal(IEnumerable<Monster> encounterMonsters, Biome encounterBiome)
+        {
             var window = FindAnyObjectByType<CombatWindow>();
             if (window == null)
             {
@@ -190,9 +219,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
             window.selectedMenuIndex = 0;
             window.actingHero = null;
             currentWindow = window;
-            window.ShowMessage(window.GetEncounterMessage(), window.BeginRound);
             IsOpen = window.monsters.Count > 0;
             GameState.AutoSaveBlocked = IsOpen;
+            return window;
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -219,6 +248,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     ContinueMessage();
                 }
 
+                return;
+            }
+
+            if (state == CombatState.EncounterChoice)
+            {
+                AdvanceTextReveal();
                 return;
             }
 

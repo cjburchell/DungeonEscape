@@ -1,0 +1,38 @@
+[
+  {
+    "Species": "Human",
+    "Name": "Human",
+    "Description": "Adaptable and broadly capable.",
+    "Strength": 1,
+    "Dexterity": 1,
+    "Constitution": 1,
+    "Intelligence": 1,
+    "Wisdom": 1,
+    "Charisma": 1,
+    "SkillProficiencies": []
+  },
+  {
+    "Species": "Elf",
+    "Name": "Elf",
+    "Description": "Graceful, perceptive, and long-lived.",
+    "Dexterity": 2,
+    "Intelligence": 1,
+    "SkillProficiencies": []
+  },
+  {
+    "Species": "Dwarf",
+    "Name": "Dwarf",
+    "Description": "Stout, resilient, and deeply traditional.",
+    "Constitution": 2,
+    "Wisdom": 1,
+    "SkillProficiencies": []
+  },
+  {
+    "Species": "Halfling",
+    "Name": "Halfling",
+    "Description": "Small, nimble, and disarmingly bold.",
+    "Dexterity": 2,
+    "Charisma": 1,
+    "SkillProficiencies": []
+  }
+]

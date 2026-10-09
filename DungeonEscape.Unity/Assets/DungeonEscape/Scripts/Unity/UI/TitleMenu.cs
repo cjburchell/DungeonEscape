@@ -24,8 +24,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
     {
         private const float InitialNavigationRepeatDelay = 0.35f;
         private const float NavigationRepeatDelay = 0.12f;
+        private const int CreateAbilityPointBuyBudget = 27;
         private const int MinCreateAbilityScore = 8;
-        private const int MaxCreateAbilityScore = 17;
+        private const int MaxCreateAbilityScore = 15;
         private const int TitleGuiDepth = -3000;
         private const int CreateNameIndex = TitleViewModel.CreateNameIndex;
         private const int CreateGenerateNameIndex = TitleViewModel.CreateGenerateNameIndex;
@@ -35,6 +36,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private const int CreateImageIndex = TitleViewModel.CreateImageIndex;
         private const int CreateStartIndex = TitleViewModel.CreateStartIndex;
         private const int CreateBackIndex = TitleViewModel.CreateBackIndex;
+        private const float CreateDropdownLabelWidth = 104f;
         private const string MainMenuBackgroundAssetPath = "Assets/DungeonEscape/Images/ui/mainmenue.png";
         private const string SecondaryMenuBackgroundAssetPath = "Assets/DungeonEscape/Images/ui/menu2.png";
         private const string ToolkitPreviewStyleResourcePath = "UI/title-menu-toolkit-preview";
@@ -72,7 +74,6 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private Hero createPreviewHero;
         private string createPlayerBackground = "Acolyte";
         private int createStep;
-        private int createAbilityPointBudget;
         private int[] createAbilityScores;
         private List<string> createSkillProficiencies = new List<string>();
         private bool focusCreateNameNextGui;
@@ -670,12 +671,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var bodyContentHeight = createStep == 0 ? 282f * scale : createStep == 1 ? 500f * scale : 342f * scale;
             var actionGap = 12f * scale;
             var actionHeight = 32f * scale;
-            var contentHeight = bodyContentHeight + actionGap + actionHeight;
+            var footerPadding = 6f * scale;
+            var contentHeight = bodyContentHeight + actionGap + actionHeight + footerPadding;
             var titleHeight = 44f * scale;
             var titleGap = 8f * scale;
             var availableHeight = Mathf.Max(220f * scale, Screen.height - 32f * scale);
             var height = Mathf.Min(contentHeight, Mathf.Max(160f * scale, availableHeight - titleHeight - titleGap));
-            var bodyHeight = Mathf.Max(96f * scale, height - actionGap - actionHeight);
+            var bodyHeight = Mathf.Max(96f * scale, height - actionGap - actionHeight - footerPadding);
             var totalHeight = titleHeight + titleGap + height;
             var titleY = Mathf.Max(16f * scale, (Screen.height - totalHeight) / 2f);
             var panelPadding = 16f * scale;
@@ -723,7 +725,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.Space(actionGap);
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            GUI.enabled = previousEnabled && !dropdownOpen;
+            GUI.enabled = previousEnabled && !dropdownOpen && CanActivateCreatePrimaryAction();
             if (UiControls.Button(GetCreatePrimaryActionLabel(), selectedIndex == CreateStartIndex, uiTheme, GUILayout.Width(82f * scale), GUILayout.Height(32f * scale)) &&
                 !waitingForConfirmRelease)
             {
@@ -742,6 +744,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUI.enabled = previousEnabled;
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
+            GUILayout.Space(footerPadding);
             GUILayout.EndArea();
         }
 
@@ -807,7 +810,18 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.BeginHorizontal();
             GUILayout.BeginVertical(GUILayout.Width(292f * scale));
             GUILayout.Label("Ability Scores", new GUIStyle(labelStyle) { fontStyle = FontStyle.Bold }, GUILayout.Height(24f * scale));
-            GUILayout.Label("Points remaining: " + GetCreateAbilityPointsRemaining(), labelStyle, GUILayout.Height(22f * scale));
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Point-buy remaining: " + GetCreateAbilityPointsRemaining(), labelStyle, GUILayout.Width(202f * scale), GUILayout.Height(26f * scale));
+            GUI.enabled = previousEnabled && !dropdownOpen;
+            if (UiControls.Button("Reset", false, uiTheme, GUILayout.Width(74f * scale), GUILayout.Height(24f * scale)))
+            {
+                ResetCreateAbilityScores();
+                ResetCreateAbilityBonuses();
+                RefreshCreatePreviewFromChoices();
+            }
+
+            GUI.enabled = previousEnabled;
+            GUILayout.EndHorizontal();
             DrawAbilityBonusSelector(scale, previousEnabled && !dropdownOpen);
             GUILayout.Space(4f * scale);
             DrawAbilityEditorRow(scale, "STR", 0);
@@ -820,16 +834,24 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.Space(14f * scale);
             GUILayout.BeginVertical(GUILayout.Width(310f * scale));
             GUILayout.Label("Skill Proficiencies", new GUIStyle(labelStyle) { fontStyle = FontStyle.Bold }, GUILayout.Height(24f * scale));
-            GUILayout.Label("Class and background defaults are preselected.", labelStyle, GUILayout.Height(22f * scale));
-            foreach (var skill in DndCharacterRules.GetSkillNames())
+            DrawCreateFixedSkillSummary(scale);
+            var classStats = GetSelectedClassStats();
+            var fixedSkills = GetCreateFixedSkillProficiencies();
+            var classSkills = GetCreateClassSkillProficiencies(fixedSkills);
+            var classSkillLimit = DndCharacterRules.GetClassSkillChoiceCount(classStats, createPlayerClass);
+            GUILayout.Label("Class picks: " + classSkills.Count + "/" + classSkillLimit, labelStyle, GUILayout.Height(22f * scale));
+            foreach (var skill in DndCharacterRules.GetClassSkillOptions(classStats, createPlayerClass))
             {
                 GUILayout.BeginHorizontal();
                 var selected = createSkillProficiencies.Any(item => string.Equals(item, skill, StringComparison.OrdinalIgnoreCase));
+                var fixedSkill = fixedSkills.Any(item => string.Equals(item, skill, StringComparison.OrdinalIgnoreCase));
+                var canToggle = fixedSkill || selected || classSkills.Count < classSkillLimit;
                 var previous = GUI.enabled;
-                GUI.enabled = previousEnabled && !dropdownOpen;
-                var next = UiControls.Checkbox(selected, skill, uiTheme, scale);
+                GUI.enabled = previousEnabled && !dropdownOpen && canToggle && !fixedSkill;
+                var label = fixedSkill ? skill + " (background)" : skill;
+                var next = UiControls.Checkbox(selected || fixedSkill, label, uiTheme, scale);
                 GUI.enabled = previous;
-                if (next != selected)
+                if (!fixedSkill && next != selected)
                 {
                     ToggleCreateSkillProficiency(skill, next);
                     RefreshCreatePreviewFromChoices();
@@ -840,6 +862,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
+        }
+
+        private void DrawCreateFixedSkillSummary(float scale)
+        {
+            var backgroundSkills = GetCreateBackgroundSkillProficiencies();
+            var raceSkills = GetCreateSpeciesSkillProficiencies();
+            GUILayout.Label("Race: " + FormatCreateSkillList(raceSkills), labelStyle, GUILayout.Height(22f * scale));
+            GUILayout.Label("Background: " + FormatCreateSkillList(backgroundSkills), labelStyle, GUILayout.Height(22f * scale));
         }
 
         private void DrawAbilityBonusSelector(float scale, bool controlsEnabled)
@@ -880,7 +910,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             EnsureCreateBuildChoices();
             RerollCreatePreviewHero();
             GUILayout.BeginHorizontal();
-            GUILayout.BeginVertical(panelStyle, GUILayout.Width(238f * scale), GUILayout.Height(318f * scale));
+            GUILayout.BeginVertical(panelStyle, GUILayout.Width(260f * scale), GUILayout.Height(318f * scale));
             var title = new GUIStyle(labelStyle)
             {
                 alignment = TextAnchor.MiddleCenter,
@@ -902,7 +932,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             DrawReviewTextRow("Gender", createPlayerGender.ToString());
             DrawReviewTextRow("Race", createPlayerSpecies.ToString());
             DrawReviewTextRow("Class", DndCharacterRules.GetClassLabel(createPlayerClass));
-            DrawReviewTextRow("Background", DndCharacterRules.GetBackgroundLabel(GetSelectedBackgroundDefinition()));
+            DrawReviewTextRow("Background", DndCharacterRules.GetBackgroundLabel(GetSelectedBackgroundDefinition()), 106f, 118f);
             GUILayout.FlexibleSpace();
             GUILayout.EndVertical();
 
@@ -948,17 +978,22 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void DrawCreateDropdownRow(string label, float scale, Action draw)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label(label, labelStyle, GUILayout.Width(86f * scale), GUILayout.Height(32f * scale));
+            GUILayout.Label(label, labelStyle, GUILayout.Width(CreateDropdownLabelWidth * scale), GUILayout.Height(32f * scale));
             draw();
             GUILayout.EndHorizontal();
         }
 
         private void DrawReviewTextRow(string label, string value)
         {
+            DrawReviewTextRow(label, value, 82f, 112f);
+        }
+
+        private void DrawReviewTextRow(string label, string value, float labelWidth, float valueWidth)
+        {
             var scale = GetPixelScale();
             GUILayout.BeginHorizontal();
-            GUILayout.Label(label + ":", labelStyle, GUILayout.Width(82f * scale));
-            GUILayout.Label(value ?? string.Empty, labelStyle, GUILayout.Width(112f * scale));
+            GUILayout.Label(label + ":", labelStyle, GUILayout.Width(labelWidth * scale));
+            GUILayout.Label(value ?? string.Empty, labelStyle, GUILayout.Width(valueWidth * scale));
             GUILayout.EndHorizontal();
         }
 
@@ -1023,7 +1058,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.BeginHorizontal();
             GUILayout.Label(label, labelStyle, GUILayout.Width(44f * scale), GUILayout.Height(26f * scale));
             var canDecrease = createAbilityScores[index] > MinCreateAbilityScore;
-            var canIncrease = createAbilityScores[index] < MaxCreateAbilityScore && GetCreateAbilityPointsRemaining() > 0;
+            var increaseCost = GetCreateAbilityPointCost(createAbilityScores[index] + 1) - GetCreateAbilityPointCost(createAbilityScores[index]);
+            var canIncrease = createAbilityScores[index] < MaxCreateAbilityScore && GetCreateAbilityPointsRemaining() >= increaseCost;
             var previousEnabled = GUI.enabled;
             GUI.enabled = previousEnabled && canDecrease;
             if (UiControls.Button("-", false, uiTheme, GUILayout.Width(28f * scale), GUILayout.Height(24f * scale)))
@@ -1113,6 +1149,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     value =>
                     {
                         createPlayerSpecies = value;
+                        ResetCreateBuildChoices();
                         RerollCreatePreviewHero();
                         activeCreateDropdown = CreateDropdown.None;
                     },
@@ -1149,6 +1186,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 {
                     createPlayerClass = value;
                     ApplyDefaultImageForCreateClass();
+                    ResetCreateBuildChoices();
                     RerollCreatePreviewHero();
                     activeCreateDropdown = CreateDropdown.None;
                 },
@@ -1505,7 +1543,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             createPreviewHero.SpriteTileId = null;
             if (createAbilityScores == null || createAbilityScores.Length < 6)
             {
-                DndCharacterRules.ApplyStartingAbilityScores(createPreviewHero);
+                DndCharacterRules.ApplyStartingAbilityScores(createPreviewHero, GameDataCache.Current == null ? null : GameDataCache.Current.Species);
                 DndCharacterRules.ApplyBackgroundAbilityBonuses(createPreviewHero, GetSelectedBackgroundDefinition());
             }
             else
@@ -1550,6 +1588,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ActivateCreatePrimaryAction()
         {
+            if (!CanActivateCreatePrimaryAction())
+            {
+                return;
+            }
+
             if (createStep == 0)
             {
                 ShowCreateBuildPage();
@@ -1562,6 +1605,17 @@ namespace Redpoint.DungeonEscape.Unity.UI
             {
                 StartCreatedGame();
             }
+        }
+
+        private bool CanActivateCreatePrimaryAction()
+        {
+            if (createStep != 1)
+            {
+                return true;
+            }
+
+            EnsureCreateBuildChoices();
+            return GetCreateClassSkillProficiencies(GetCreateFixedSkillProficiencies()).Count <= DndCharacterRules.GetClassSkillChoiceCount(GetSelectedClassStats(), createPlayerClass);
         }
 
         private void ActivateCreateBackAction()
@@ -1609,33 +1663,194 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ResetCreateAbilityScores()
         {
-            var hero = gameState == null
-                ? null
-                : gameState.CreatePlayerPreviewHero(createPlayerName, createPlayerClass, createPlayerGender, createPlayerSpecies, createPlayerBackground, GetCreatePlayerSpriteFrameIndex(), null, null);
-            createAbilityScores = new[]
-            {
-                hero == null ? 10 : hero.Strength,
-                hero == null ? 10 : hero.Dexterity,
-                hero == null ? 10 : hero.Constitution,
-                hero == null ? 10 : hero.Intelligence,
-                hero == null ? 10 : hero.Wisdom,
-                hero == null ? 10 : hero.Charisma
-            };
-            createAbilityPointBudget = createAbilityScores.Sum();
+            createAbilityScores = GetRecommendedCreateAbilityScores(createPlayerClass);
+            ResetCreateAbilityBonuses();
         }
 
         private void ResetCreateSkillProficiencies()
         {
-            var classStats = GameDataCache.Current == null || GameDataCache.Current.ClassLevels == null
-                ? null
-                : GameDataCache.Current.ClassLevels.FirstOrDefault(item => IsClass(item.Class, createPlayerClass));
-            createSkillProficiencies = DndCharacterRules.GetStartingSkillProficiencies(classStats, GetSelectedBackgroundDefinition());
+            var classStats = GetSelectedClassStats();
+            var fixedSkills = GetCreateFixedSkillProficiencies();
+            var selectedSkills = fixedSkills.ToList();
+            var classSkillLimit = DndCharacterRules.GetClassSkillChoiceCount(classStats, createPlayerClass);
+            var classSkillOptions = DndCharacterRules.GetClassSkillOptions(classStats, createPlayerClass);
+            var classDefaults = classStats == null || classStats.SkillProficiencies == null
+                ? new List<string>()
+                : classStats.SkillProficiencies;
+            foreach (var skill in classDefaults)
+            {
+                if (selectedSkills.Count(item => !fixedSkills.Any(fixedSkill => string.Equals(fixedSkill, item, StringComparison.OrdinalIgnoreCase))) >= classSkillLimit)
+                {
+                    break;
+                }
+
+                if (string.IsNullOrWhiteSpace(skill) ||
+                    !classSkillOptions.Any(option => string.Equals(option, skill, StringComparison.OrdinalIgnoreCase)) ||
+                    selectedSkills.Any(item => string.Equals(item, skill, StringComparison.OrdinalIgnoreCase)))
+                {
+                    continue;
+                }
+
+                selectedSkills.Add(skill);
+            }
+
+            createSkillProficiencies = selectedSkills
+                .Where(skill => !string.IsNullOrWhiteSpace(skill))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
         }
 
         private int GetCreateAbilityPointsRemaining()
         {
             EnsureCreateBuildChoices();
-            return createAbilityPointBudget - createAbilityScores.Sum();
+            return CreateAbilityPointBuyBudget - createAbilityScores.Sum(GetCreateAbilityPointCost);
+        }
+
+        private static int GetCreateAbilityPointCost(int score)
+        {
+            switch (Mathf.Clamp(score, MinCreateAbilityScore, MaxCreateAbilityScore))
+            {
+                case 8:
+                    return 0;
+                case 9:
+                    return 1;
+                case 10:
+                    return 2;
+                case 11:
+                    return 3;
+                case 12:
+                    return 4;
+                case 13:
+                    return 5;
+                case 14:
+                    return 7;
+                case 15:
+                    return 9;
+                default:
+                    return 0;
+            }
+        }
+
+        private static int[] GetRecommendedCreateAbilityScores(Class heroClass)
+        {
+            switch (heroClass)
+            {
+                case Class.Bard:
+                    return new[] { 8, 14, 14, 10, 10, 15 };
+                case Class.Cleric:
+                    return new[] { 10, 10, 14, 8, 15, 14 };
+                case Class.Fighter:
+                    return new[] { 15, 14, 14, 10, 10, 8 };
+                case Class.Monk:
+                    return new[] { 10, 15, 14, 8, 14, 10 };
+                case Class.Paladin:
+                    return new[] { 15, 8, 14, 10, 10, 14 };
+                case Class.Rogue:
+                    return new[] { 8, 15, 14, 14, 10, 10 };
+                case Class.Sorcerer:
+                    return new[] { 8, 14, 14, 10, 10, 15 };
+                case Class.Warlock:
+                    return new[] { 8, 14, 14, 10, 10, 15 };
+                case Class.Wizard:
+                    return new[] { 8, 14, 14, 15, 10, 10 };
+                default:
+                    return new[] { 10, 10, 10, 10, 10, 10 };
+            }
+        }
+
+        private void ResetCreateAbilityBonuses()
+        {
+            switch (createPlayerClass)
+            {
+                case Class.Bard:
+                case Class.Sorcerer:
+                case Class.Warlock:
+                    createAbilityBonusTwoIndex = 5;
+                    createAbilityBonusOneIndex = 1;
+                    break;
+                case Class.Cleric:
+                    createAbilityBonusTwoIndex = 4;
+                    createAbilityBonusOneIndex = 2;
+                    break;
+                case Class.Fighter:
+                    createAbilityBonusTwoIndex = 0;
+                    createAbilityBonusOneIndex = 2;
+                    break;
+                case Class.Monk:
+                case Class.Rogue:
+                    createAbilityBonusTwoIndex = 1;
+                    createAbilityBonusOneIndex = 2;
+                    break;
+                case Class.Paladin:
+                    createAbilityBonusTwoIndex = 0;
+                    createAbilityBonusOneIndex = 5;
+                    break;
+                case Class.Wizard:
+                    createAbilityBonusTwoIndex = 3;
+                    createAbilityBonusOneIndex = 1;
+                    break;
+                default:
+                    createAbilityBonusTwoIndex = 0;
+                    createAbilityBonusOneIndex = 1;
+                    break;
+            }
+        }
+
+        private List<string> GetCreateFixedSkillProficiencies()
+        {
+            return GetCreateBackgroundSkillProficiencies()
+                .Concat(GetCreateSpeciesSkillProficiencies())
+                .Where(skill => !string.IsNullOrWhiteSpace(skill))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        private List<string> GetCreateBackgroundSkillProficiencies()
+        {
+            var background = GetSelectedBackgroundDefinition();
+            return background == null || background.SkillProficiencies == null
+                ? new List<string>()
+                : background.SkillProficiencies
+                    .Where(skill => !string.IsNullOrWhiteSpace(skill))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+        }
+
+        private List<string> GetCreateSpeciesSkillProficiencies()
+        {
+            var definition = DndCharacterRules.FindSpecies(
+                GameDataCache.Current == null ? null : GameDataCache.Current.Species,
+                createPlayerSpecies);
+            return definition == null || definition.SkillProficiencies == null
+                ? new List<string>()
+                : definition.SkillProficiencies
+                    .Where(skill => !string.IsNullOrWhiteSpace(skill))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+        }
+
+        private List<string> GetCreateClassSkillProficiencies(IEnumerable<string> fixedSkills)
+        {
+            var fixedSkillList = fixedSkills == null ? new List<string>() : fixedSkills.ToList();
+            return createSkillProficiencies == null
+                ? new List<string>()
+                : createSkillProficiencies
+                    .Where(skill => !string.IsNullOrWhiteSpace(skill))
+                    .Where(skill => !fixedSkillList.Any(fixedSkill => string.Equals(fixedSkill, skill, StringComparison.OrdinalIgnoreCase)))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+        }
+
+        private static string FormatCreateSkillList(IEnumerable<string> skills)
+        {
+            var skillList = skills == null
+                ? new List<string>()
+                : skills
+                    .Where(skill => !string.IsNullOrWhiteSpace(skill))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(skill => skill)
+                    .ToList();
+            return skillList.Count == 0 ? "None" : string.Join(", ", skillList.ToArray());
         }
 
         private int[] GetCreateFinalAbilityScores()
@@ -2032,9 +2247,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ApplyDefaultImageForCreateClass()
         {
-            var classStats = GameDataCache.Current == null || GameDataCache.Current.ClassLevels == null
-                ? null
-                : GameDataCache.Current.ClassLevels.FirstOrDefault(item => IsClass(item.Class, createPlayerClass));
+            var classStats = GetSelectedClassStats();
             if (classStats == null)
             {
                 return;
@@ -2057,6 +2270,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             viewModel.SetCreatePlayerSpriteIndex(imageIndex);
+        }
+
+        private ClassStats GetSelectedClassStats()
+        {
+            return GameDataCache.Current == null || GameDataCache.Current.ClassLevels == null
+                ? null
+                : GameDataCache.Current.ClassLevels.FirstOrDefault(item => IsClass(item.Class, createPlayerClass));
         }
 
         private void CycleCreateImage(int delta)

@@ -48,6 +48,11 @@ namespace Redpoint.DungeonEscape.Unity.Core
             get { return dataSet.ClassLevels; }
         }
 
+        public IList<SpeciesDefinition> Species
+        {
+            get { return dataSet.Species; }
+        }
+
         public IList<BackgroundDefinition> Backgrounds
         {
             get { return dataSet.Backgrounds; }

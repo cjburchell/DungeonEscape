@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 using Redpoint.DungeonEscape.Unity.UI;
 namespace Redpoint.DungeonEscape.Unity.Core
@@ -43,7 +44,11 @@ namespace Redpoint.DungeonEscape.Unity.Core
         private TextAsset dialogJson;
 
         [SerializeField]
-        private TextAsset classLevelsJson;
+        [FormerlySerializedAs("classLevelsJson")]
+        private TextAsset classesJson;
+
+        [SerializeField]
+        private TextAsset speciesJson;
 
         [SerializeField]
         private TextAsset backgroundsJson;
@@ -95,7 +100,8 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 Monsters = LoadJson<List<Monster>>(monstersJson, "monsters"),
                 Quests = LoadJson<List<Quest>>(questsJson, "quests"),
                 Dialogs = LoadJson<List<Dialog>>(dialogJson, "dialog"),
-                ClassLevels = LoadJson<List<ClassStats>>(classLevelsJson, "class levels"),
+                ClassLevels = LoadJson<List<ClassStats>>(classesJson, "classes", "Assets/DungeonEscape/Data/class.json"),
+                Species = LoadJson<List<SpeciesDefinition>>(speciesJson, "species", "Assets/DungeonEscape/Data/species.json") ?? DndCharacterRules.GetDefaultSpeciesDefinitions(),
                 Backgrounds = LoadJson<List<BackgroundDefinition>>(backgroundsJson, "backgrounds", "Assets/DungeonEscape/Data/backgrounds.json") ?? DndCharacterRules.GetDefaultBackgrounds(),
                 Names = LoadJson<Names>(namesJson, "names"),
                 TestMap = LoadTiledMap(testMapTmx, testMapAssetPath, "test map")

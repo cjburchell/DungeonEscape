@@ -1,0 +1,83 @@
+[
+  {
+    "Class": "Paladin",
+    "PrimaryAbility": "Strength, Charisma",
+    "HitDie": 10,
+    "DefaultImage": 0,
+    "SkillChoiceCount": 2,
+    "SkillOptions": [ "Athletics", "Insight", "Intimidation", "Medicine", "Persuasion", "Religion" ],
+    "SkillProficiencies": [ "Athletics", "Persuasion" ]
+  },
+  {
+    "Class": "Fighter",
+    "PrimaryAbility": "Strength or Dexterity",
+    "HitDie": 10,
+    "DefaultImage": 2,
+    "SkillChoiceCount": 2,
+    "SkillOptions": [ "Acrobatics", "Animal Handling", "Athletics", "History", "Insight", "Intimidation", "Perception", "Survival" ],
+    "SkillProficiencies": [ "Athletics", "Intimidation" ]
+  },
+  {
+    "Class": "Wizard",
+    "PrimaryAbility": "Intelligence",
+    "HitDie": 6,
+    "DefaultImage": 6,
+    "SkillChoiceCount": 2,
+    "SkillOptions": [ "Arcana", "History", "Insight", "Investigation", "Medicine", "Religion" ],
+    "SkillProficiencies": [ "Arcana", "Investigation" ]
+  },
+  {
+    "Class": "Cleric",
+    "PrimaryAbility": "Wisdom",
+    "HitDie": 8,
+    "DefaultImage": 4,
+    "SkillChoiceCount": 2,
+    "SkillOptions": [ "History", "Insight", "Medicine", "Persuasion", "Religion" ],
+    "SkillProficiencies": [ "Insight", "Religion" ]
+  },
+  {
+    "Class": "Monk",
+    "PrimaryAbility": "Dexterity, Wisdom",
+    "HitDie": 8,
+    "DefaultImage": 8,
+    "SkillChoiceCount": 2,
+    "SkillOptions": [ "Acrobatics", "Athletics", "History", "Insight", "Religion", "Stealth" ],
+    "SkillProficiencies": [ "Acrobatics", "Athletics" ]
+  },
+  {
+    "Class": "Warlock",
+    "PrimaryAbility": "Charisma",
+    "HitDie": 8,
+    "DefaultImage": 10,
+    "SkillChoiceCount": 2,
+    "SkillOptions": [ "Arcana", "Deception", "History", "Intimidation", "Investigation", "Nature", "Religion" ],
+    "SkillProficiencies": [ "Arcana", "Deception" ]
+  },
+  {
+    "Class": "Rogue",
+    "PrimaryAbility": "Dexterity",
+    "HitDie": 8,
+    "DefaultImage": 14,
+    "SkillChoiceCount": 4,
+    "SkillOptions": [ "Acrobatics", "Athletics", "Deception", "Insight", "Intimidation", "Investigation", "Perception", "Performance", "Persuasion", "Sleight of Hand", "Stealth" ],
+    "SkillProficiencies": [ "Sleight of Hand", "Stealth" ]
+  },
+  {
+    "Class": "Sorcerer",
+    "PrimaryAbility": "Charisma",
+    "HitDie": 6,
+    "DefaultImage": 16,
+    "SkillChoiceCount": 2,
+    "SkillOptions": [ "Arcana", "Deception", "Insight", "Intimidation", "Persuasion", "Religion" ],
+    "SkillProficiencies": [ "Arcana", "Persuasion" ]
+  },
+  {
+    "Class": "Bard",
+    "PrimaryAbility": "Charisma",
+    "HitDie": 8,
+    "DefaultImage": 12,
+    "SkillChoiceCount": 3,
+    "SkillOptions": [ "Acrobatics", "Animal Handling", "Arcana", "Athletics", "Deception", "History", "Insight", "Intimidation", "Investigation", "Medicine", "Nature", "Perception", "Performance", "Persuasion", "Religion", "Sleight of Hand", "Stealth", "Survival" ],
+    "SkillProficiencies": [ "Performance", "Persuasion" ]
+  }
+]

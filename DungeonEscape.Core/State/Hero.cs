@@ -216,12 +216,14 @@ namespace Redpoint.DungeonEscape.State
             Xp = 0;
             NextLevel = DndLevelProgressionRules.GetNextLevelXp(Level);
 
-            MaxHealth = classStats.Stats.First(item => item.Type == StatType.HP).RollStartValue();
-            Attack = classStats.Stats.First(item => item.Type == StatType.Attack).RollStartValue();
-            Defence = classStats.Stats.First(item => item.Type == StatType.Defence).RollStartValue();
-            MagicDefence = classStats.Stats.First(item => item.Type == StatType.MagicDefence).RollStartValue();
-            MaxMagic = classStats.Stats.First(item => item.Type == StatType.Magic).RollStartValue();
-            Agility = classStats.Stats.First(item => item.Type == StatType.Agility).RollStartValue();
+            MaxHealth = 1;
+            Health = MaxHealth;
+            Attack = 0;
+            Defence = 0;
+            MagicDefence = 0;
+            MaxMagic = 0;
+            Magic = 0;
+            Agility = 0;
             Skills = new List<string>();
             SkillProficiencies = classStats.SkillProficiencies == null
                 ? new List<string>()

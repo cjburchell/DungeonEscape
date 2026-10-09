@@ -13,8 +13,9 @@ namespace Redpoint.DungeonEscape.Data
         public string PrimaryAbility { get; set; }
         public int HitDie { get; set; }
         public int DefaultImage { get; set; }
-        public List<Stats> Stats { get; set; } = new List<Stats>();
 
         public List<string> SkillProficiencies { get; set; } = new List<string>();
+        public List<string> SkillOptions { get; set; } = new List<string>();
+        public int SkillChoiceCount { get; set; }
     }
 }

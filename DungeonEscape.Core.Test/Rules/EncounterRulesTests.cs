@@ -178,12 +178,117 @@ namespace DungeonEscape.Core.Test.Rules
                 party,
                 new[] { monster },
                 context,
-                EncounterAvoidanceMethod.TalkDown,
+                EncounterAvoidanceMethod.Persuade,
                 _ => 18);
 
             Assert.True(context.CanTalk);
             Assert.True(result.Success);
             Assert.Equal(100, EncounterAvoidanceRules.GetEncounterXp(new[] { monster }, result.XpMultiplier));
+        }
+
+        [Fact]
+        public void EncounterAvoidanceCanFailTalkingDownReasonableMonsters()
+        {
+            var party = CreateParty(new Hero
+            {
+                Charisma = 12,
+                SkillProficiencies = new List<string> { "Persuasion" }
+            });
+            var monster = CreateMonster("Goblin", Biome.Cave, 2, Rarity.Common);
+            monster.Intelligence = 10;
+            monster.Wisdom = 8;
+            monster.Languages = "Common, Goblin";
+            monster.Alignment = "neutral";
+            monster.CanBeReasonedWith = true;
+            monster.Hostile = true;
+            monster.Xp = 100;
+            var context = EncounterAvoidanceRules.CreateContext(party, new[] { monster }, _ => 1);
+
+            var result = EncounterAvoidanceRules.Resolve(
+                party,
+                new[] { monster },
+                context,
+                EncounterAvoidanceMethod.Persuade,
+                _ => 7);
+
+            Assert.True(context.CanTalk);
+            Assert.False(result.Success);
+            Assert.Equal(0, EncounterAvoidanceRules.GetEncounterXp(new[] { monster }, result.XpMultiplier));
+            Assert.Equal("Persuasion", result.SkillName);
+        }
+
+        [Fact]
+        public void EncounterSpottingUsesWorstPartyStealthRoll()
+        {
+            var party = CreateParty(
+                new Hero
+                {
+                    Dexterity = 20,
+                    SkillProficiencies = new List<string> { "Stealth" }
+                },
+                new Hero
+                {
+                    Dexterity = 8
+                });
+            var monster = CreateMonster("Guard", Biome.Cave, 2, Rarity.Common);
+            monster.Wisdom = 10;
+            monster.ProficiencyBonus = 2;
+            monster.Hostile = true;
+            var rolls = new Queue<int>(new[] { 20, 10, 20 });
+
+            var context = EncounterAvoidanceRules.CreateContext(party, new[] { monster }, _ => rolls.Dequeue());
+
+            Assert.False(context.PartyUnnoticed);
+            Assert.True(context.PartySpotted);
+            Assert.False(context.ImmediateAttack);
+            Assert.Equal(9, context.SpottingRollTotal);
+        }
+
+        [Fact]
+        public void EncounterContextCanTriggerImmediateAttackWhenSpotted()
+        {
+            var party = CreateParty(new Hero { Dexterity = 8 });
+            var monster = CreateMonster("Guard", Biome.Cave, 2, Rarity.Common);
+            monster.Wisdom = 10;
+            monster.ProficiencyBonus = 2;
+            monster.Hostile = true;
+            var rolls = new Queue<int>(new[] { 1, 5 });
+
+            var context = EncounterAvoidanceRules.CreateContext(party, new[] { monster }, _ => rolls.Dequeue());
+
+            Assert.True(context.PartySpotted);
+            Assert.True(context.ImmediateAttack);
+        }
+
+        [Fact]
+        public void EncounterAvoidanceUsesLeadHeroForSocialChecks()
+        {
+            var party = CreateParty(
+                new Hero
+                {
+                    Name = "Lead",
+                    Charisma = 8
+                },
+                new Hero
+                {
+                    Name = "Face",
+                    Charisma = 20,
+                    SkillProficiencies = new List<string> { "Persuasion" }
+                });
+            var monster = CreateMonster("Goblin", Biome.Cave, 2, Rarity.Common);
+            monster.CanBeReasonedWith = true;
+            var context = EncounterAvoidanceRules.CreateContext(party, new[] { monster }, _ => 20);
+
+            var result = EncounterAvoidanceRules.Resolve(
+                party,
+                new[] { monster },
+                context,
+                EncounterAvoidanceMethod.Persuade,
+                _ => 10);
+
+            Assert.False(result.Success);
+            Assert.Equal(9, result.RollTotal);
+            Assert.Contains("Lead", result.Message);
         }
 
         [Fact]

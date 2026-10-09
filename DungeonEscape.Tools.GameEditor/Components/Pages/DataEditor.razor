@@ -197,6 +197,19 @@ else
                             </div>
                         }
                         break;
+                    case EditorTab.Species:
+                        @foreach (var species in Filter(Data.Species, s => s.Name))
+                        {
+                            var current = species;
+                            <div class="monster-item @(ReferenceEquals(current, selectedSpecies) ? "selected" : string.Empty)"
+                                 @onclick="() => selectedSpecies = current">
+                                <div class="meta">
+                                    <span class="name">@Display(current.Name)</span>
+                                    <span class="sub">@current.Species &middot; @(current.SkillProficiencies?.Count ?? 0) proficiencies</span>
+                                </div>
+                            </div>
+                        }
+                        break;
                     case EditorTab.Backgrounds:
                         @foreach (var background in Filter(Data.Backgrounds, b => b.Name))
                         {
@@ -255,6 +268,9 @@ else
                 case EditorTab.Classes:
                     <ClassStatsForm ClassStats="selectedClassStats" OnChanged="OnDataChanged" />
                     break;
+                case EditorTab.Species:
+                    <SpeciesForm SpeciesDefinition="selectedSpecies" OnChanged="OnDataChanged" />
+                    break;
                 case EditorTab.Backgrounds:
                     <BackgroundForm Background="selectedBackground" OnChanged="OnDataChanged" />
                     break;
@@ -281,7 +297,7 @@ else
 }
 
 @code {
-    private enum EditorTab { Monsters, Spells, Skills, Items, Quests, Dialogs, Classes, Backgrounds, Names, Maps, QuestGraph, EncounterSimulator }
+    private enum EditorTab { Monsters, Spells, Skills, Items, Quests, Dialogs, Classes, Species, Backgrounds, Names, Maps, QuestGraph, EncounterSimulator }
 
     private EditorTab activeTab = EditorTab.Monsters;
     private string searchText = string.Empty;
@@ -297,6 +313,7 @@ else
     private Quest? selectedQuest;
     private Dialog? selectedDialog;
     private ClassStats? selectedClassStats;
+    private SpeciesDefinition? selectedSpecies;
     private BackgroundDefinition? selectedBackground;
     private MapDocument? selectedMap;
 
@@ -423,6 +440,7 @@ else
         selectedQuest = Data.Quests.FirstOrDefault();
         selectedDialog = Data.Dialogs.FirstOrDefault();
         selectedClassStats = Data.ClassLevels.FirstOrDefault();
+        selectedSpecies = Data.Species.FirstOrDefault();
         selectedBackground = Data.Backgrounds.FirstOrDefault();
         selectedMap = Data.Maps.FirstOrDefault();
     }
@@ -436,6 +454,7 @@ else
     private static string TabLabel(EditorTab tab) => tab switch
     {
         EditorTab.Classes => "Class",
+        EditorTab.Species => "Species",
         EditorTab.Backgrounds => "Backgrounds",
         EditorTab.QuestGraph => "Quest Graph",
         EditorTab.EncounterSimulator => "Encounter Simulator",
@@ -451,6 +470,7 @@ else
         EditorTab.Quests => Data.Quests.Count,
         EditorTab.Dialogs => Data.Dialogs.Count,
         EditorTab.Classes => Data.ClassLevels.Count,
+        EditorTab.Species => Data.Species.Count,
         EditorTab.Backgrounds => Data.Backgrounds.Count,
         EditorTab.Names => (Data.Names.Male?.Count ?? 0) + (Data.Names.Female?.Count ?? 0),
         EditorTab.Maps => Data.Maps.Count,
@@ -473,6 +493,7 @@ else
         EditorTab.Quests => selectedQuest,
         EditorTab.Dialogs => selectedDialog,
         EditorTab.Classes => selectedClassStats,
+        EditorTab.Species => selectedSpecies,
         EditorTab.Backgrounds => selectedBackground,
         EditorTab.Names => Data.Names,
         EditorTab.Maps => selectedMap,
@@ -583,18 +604,22 @@ else
                 {
                     Class = NextAvailableClass(),
                     DefaultImage = Data.ClassLevels.Count,
-                    Stats = new List<Stats>
-                    {
-                        new() { Type = StatType.HP, StartConst = 1, Roll = 1, RollTimes = 1 },
-                        new() { Type = StatType.Attack, StartConst = 1, Roll = 1, RollTimes = 1 },
-                        new() { Type = StatType.Defence, StartConst = 1, Roll = 1, RollTimes = 1 },
-                        new() { Type = StatType.MagicDefence, StartConst = 1, Roll = 1, RollTimes = 1 },
-                        new() { Type = StatType.Agility, StartConst = 1, Roll = 1, RollTimes = 1 },
-                        new() { Type = StatType.Magic, RollTimes = 1 }
-                    },
-                    SkillProficiencies = new List<string>()
+                    HitDie = 8,
+                    SkillChoiceCount = 2,
+                    SkillProficiencies = new List<string>(),
+                    SkillOptions = DndStatRules.GetDndSkillNames().ToList()
                 };
                 Data.ClassLevels.Add(selectedClassStats);
+                break;
+            case EditorTab.Species:
+                var species = NextAvailableSpecies();
+                selectedSpecies = new SpeciesDefinition
+                {
+                    Species = species,
+                    Name = species.ToString(),
+                    SkillProficiencies = new List<string>()
+                };
+                Data.Species.Add(selectedSpecies);
                 break;
             case EditorTab.Backgrounds:
                 selectedBackground = new BackgroundDefinition
@@ -638,6 +663,10 @@ else
             case EditorTab.Classes when selectedClassStats != null:
                 selectedClassStats = Clone(selectedClassStats, Data.ClassLevels, c => c.Class, (_, _) => { });
                 selectedClassStats.Class = NextAvailableClass(selectedClassStats.Class);
+                break;
+            case EditorTab.Species when selectedSpecies != null:
+                selectedSpecies = Clone(selectedSpecies, Data.Species, s => s.Name, (s, n) => s.Name = n);
+                selectedSpecies.Species = NextAvailableSpecies(selectedSpecies.Species);
                 break;
             case EditorTab.Backgrounds when selectedBackground != null:
                 selectedBackground = Clone(selectedBackground, Data.Backgrounds, b => b.Name, (b, n) => b.Name = n);
@@ -689,6 +718,24 @@ else
         }
 
         return string.IsNullOrWhiteSpace(fallback) ? "NewClass" : fallback;
+    }
+
+    private Species NextAvailableSpecies(Species? fallback = null)
+    {
+        var usedSpecies = Data.Species
+            .Where(species => !ReferenceEquals(species, selectedSpecies))
+            .Select(species => species.Species)
+            .ToHashSet();
+
+        foreach (var candidate in Enum.GetValues<Species>())
+        {
+            if (!usedSpecies.Contains(candidate))
+            {
+                return candidate;
+            }
+        }
+
+        return fallback ?? Species.Human;
     }
 
     private static string UniqueId(string baseId, IEnumerable<string?> existingIds)
@@ -770,6 +817,10 @@ else
             case EditorTab.Classes when selectedClassStats != null:
                 Data.ClassLevels.Remove(selectedClassStats);
                 selectedClassStats = Data.ClassLevels.FirstOrDefault();
+                break;
+            case EditorTab.Species when selectedSpecies != null:
+                Data.Species.Remove(selectedSpecies);
+                selectedSpecies = Data.Species.FirstOrDefault();
                 break;
             case EditorTab.Backgrounds when selectedBackground != null:
                 Data.Backgrounds.Remove(selectedBackground);

@@ -35,7 +35,7 @@ namespace DungeonEscape.Core.Test.State
             Assert.True(leveled);
             Assert.Equal(2, hero.Level);
             Assert.Equal((ulong)900, hero.NextLevel);
-            Assert.Equal(13, hero.MaxHealth);
+            Assert.Equal(16, hero.MaxHealth);
             Assert.Equal(hero.MaxHealth, hero.Health);
             Assert.Equal(2, hero.Attack);
             Assert.Equal(3, hero.Defence);
@@ -45,7 +45,7 @@ namespace DungeonEscape.Core.Test.State
             Assert.Contains(hero.SpellSlots, slot => slot > 0);
             Assert.Equal(2, hero.Agility);
             Assert.Contains("Test Hero has advanced to level 2", message);
-            Assert.Contains("Health +3", message);
+            Assert.Contains("Health +6", message);
             Assert.Contains("Spell slots:", message);
             Assert.Contains("Has learned the Cure Wounds Spell", message);
             Assert.DoesNotContain("Has learned the Lightning Bolt Spell", message);
@@ -141,27 +141,9 @@ namespace DungeonEscape.Core.Test.State
                 new ClassStats
                 {
                     Class = "Paladin",
-                    SkillProficiencies = new List<string> { "Athletics", "Persuasion" },
-                    Stats = new List<Stats>
-                    {
-                        CreateStat(StatType.HP, 3),
-                        CreateStat(StatType.Attack, 2),
-                        CreateStat(StatType.Defence, 1),
-                        CreateStat(StatType.MagicDefence, 1),
-                        CreateStat(StatType.Magic, 2),
-                        CreateStat(StatType.Agility, 1)
-                    }
+                    HitDie = 10,
+                    SkillProficiencies = new List<string> { "Athletics", "Persuasion" }
                 }
-            };
-        }
-
-        private static Stats CreateStat(StatType type, int rollConst)
-        {
-            return new Stats
-            {
-                Type = type,
-                Roll = 0,
-                RollConst = rollConst
             };
         }
 

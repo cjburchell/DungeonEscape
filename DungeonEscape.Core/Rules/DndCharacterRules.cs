@@ -52,6 +52,69 @@ namespace Redpoint.DungeonEscape.Rules
             return (string[])SkillNames.Clone();
         }
 
+        public static int GetClassSkillChoiceCount(Class heroClass)
+        {
+            return GetClassSkillChoiceCount(null, heroClass);
+        }
+
+        public static int GetClassSkillChoiceCount(ClassStats classStats, Class heroClass)
+        {
+            if (classStats != null && classStats.SkillChoiceCount > 0)
+            {
+                return classStats.SkillChoiceCount;
+            }
+
+            switch (heroClass)
+            {
+                case Class.Bard:
+                    return 3;
+                case Class.Rogue:
+                    return 4;
+                default:
+                    return 2;
+            }
+        }
+
+        public static List<string> GetClassSkillOptions(Class heroClass)
+        {
+            return GetClassSkillOptions(null, heroClass);
+        }
+
+        public static List<string> GetClassSkillOptions(ClassStats classStats, Class heroClass)
+        {
+            if (classStats != null && classStats.SkillOptions != null && classStats.SkillOptions.Count > 0)
+            {
+                return classStats.SkillOptions
+                    .Where(skill => !string.IsNullOrWhiteSpace(skill))
+                    .Distinct(System.StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+            }
+
+            switch (heroClass)
+            {
+                case Class.Bard:
+                    return SkillNames.ToList();
+                case Class.Cleric:
+                    return new List<string> { "History", "Insight", "Medicine", "Persuasion", "Religion" };
+                case Class.Fighter:
+                    return new List<string> { "Acrobatics", "Animal Handling", "Athletics", "History", "Insight", "Intimidation", "Perception", "Survival" };
+                case Class.Monk:
+                    return new List<string> { "Acrobatics", "Athletics", "History", "Insight", "Religion", "Stealth" };
+                case Class.Paladin:
+                    return new List<string> { "Athletics", "Insight", "Intimidation", "Medicine", "Persuasion", "Religion" };
+                case Class.Rogue:
+                    return new List<string> { "Acrobatics", "Athletics", "Deception", "Insight", "Intimidation", "Investigation", "Perception", "Performance", "Persuasion", "Sleight of Hand", "Stealth" };
+                case Class.Sorcerer:
+                    return new List<string> { "Arcana", "Deception", "Insight", "Intimidation", "Persuasion", "Religion" };
+                case Class.Warlock:
+                    return new List<string> { "Arcana", "Deception", "History", "Intimidation", "Investigation", "Nature", "Religion" };
+                case Class.Wizard:
+                    return new List<string> { "Arcana", "History", "Insight", "Investigation", "Medicine", "Religion" };
+                default:
+                    return SkillNames.ToList();
+            }
+        }
+
         public static string GetClassLabel(Class heroClass)
         {
             return heroClass.ToString();
@@ -77,6 +140,26 @@ namespace Redpoint.DungeonEscape.Rules
                 new BackgroundDefinition { Id = "Sailor", Name = "Sailor", Strength = 1, Dexterity = 2, SkillProficiencies = new List<string> { "Athletics", "Perception" } },
                 new BackgroundDefinition { Id = "Soldier", Name = "Soldier", Strength = 2, Constitution = 1, SkillProficiencies = new List<string> { "Athletics", "Intimidation" } }
             };
+        }
+
+        public static List<SpeciesDefinition> GetDefaultSpeciesDefinitions()
+        {
+            return new List<SpeciesDefinition>
+            {
+                new SpeciesDefinition { Species = Species.Human, Name = "Human", Strength = 1, Dexterity = 1, Constitution = 1, Intelligence = 1, Wisdom = 1, Charisma = 1 },
+                new SpeciesDefinition { Species = Species.Elf, Name = "Elf", Dexterity = 2, Intelligence = 1 },
+                new SpeciesDefinition { Species = Species.Dwarf, Name = "Dwarf", Constitution = 2, Wisdom = 1 },
+                new SpeciesDefinition { Species = Species.Halfling, Name = "Halfling", Dexterity = 2, Charisma = 1 }
+            };
+        }
+
+        public static SpeciesDefinition FindSpecies(IEnumerable<SpeciesDefinition> speciesDefinitions, Species species)
+        {
+            var speciesList = speciesDefinitions == null
+                ? GetDefaultSpeciesDefinitions()
+                : speciesDefinitions.Where(item => item != null).ToList();
+            return speciesList.FirstOrDefault(item => item.Species == species) ??
+                   GetDefaultSpeciesDefinitions().First(item => item.Species == species);
         }
 
         public static BackgroundDefinition FindBackground(IEnumerable<BackgroundDefinition> backgrounds, string backgroundId)
@@ -218,13 +301,18 @@ namespace Redpoint.DungeonEscape.Rules
 
         public static void ApplyStartingAbilityScores(Hero hero)
         {
+            ApplyStartingAbilityScores(hero, null);
+        }
+
+        public static void ApplyStartingAbilityScores(Hero hero, IEnumerable<SpeciesDefinition> speciesDefinitions)
+        {
             if (hero == null)
             {
                 return;
             }
 
             SetRoleBaseScores(hero);
-            ApplySpeciesModifiers(hero);
+            ApplySpeciesModifiers(hero, speciesDefinitions);
         }
 
         private static void SetRoleBaseScores(Hero hero)
@@ -264,31 +352,15 @@ namespace Redpoint.DungeonEscape.Rules
             }
         }
 
-        private static void ApplySpeciesModifiers(Hero hero)
+        private static void ApplySpeciesModifiers(Hero hero, IEnumerable<SpeciesDefinition> speciesDefinitions)
         {
-            switch (hero.Species)
-            {
-                case Species.Elf:
-                    hero.Dexterity += 2;
-                    hero.Intelligence += 1;
-                    break;
-                case Species.Dwarf:
-                    hero.Constitution += 2;
-                    hero.Wisdom += 1;
-                    break;
-                case Species.Halfling:
-                    hero.Dexterity += 2;
-                    hero.Charisma += 1;
-                    break;
-                default:
-                    hero.Strength += 1;
-                    hero.Dexterity += 1;
-                    hero.Constitution += 1;
-                    hero.Intelligence += 1;
-                    hero.Wisdom += 1;
-                    hero.Charisma += 1;
-                    break;
-            }
+            var definition = FindSpecies(speciesDefinitions, hero.Species);
+            hero.Strength += definition.Strength;
+            hero.Dexterity += definition.Dexterity;
+            hero.Constitution += definition.Constitution;
+            hero.Intelligence += definition.Intelligence;
+            hero.Wisdom += definition.Wisdom;
+            hero.Charisma += definition.Charisma;
         }
 
         private static Item CreateStartingArmor(Class heroClass, string name, Slot slot, int defenceBonus)

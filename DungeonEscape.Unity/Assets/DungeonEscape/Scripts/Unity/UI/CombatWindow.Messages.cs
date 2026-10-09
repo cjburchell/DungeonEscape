@@ -50,6 +50,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
             StartTextReveal();
         }
 
+        private void ShowEncounterChoiceMessage(string text)
+        {
+            state = CombatState.EncounterChoice;
+            selectedMenuIndex = 0;
+            messageText = text;
+            afterMessage = null;
+            messageScrollPosition = Vector2.zero;
+            StartTextReveal();
+        }
+
         private void ContinueMessage()
         {
             if (state != CombatState.Message)

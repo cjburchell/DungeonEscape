@@ -150,7 +150,7 @@ namespace DungeonEscape.Core.Test.Rules
                 null,
                 1,
                 null,
-                (source, target) => source.Name + " hits " + target.Name + ".",
+                (selectedAction, target) => selectedAction.Source.Name + " hits " + target.Name + ".",
                 null,
                 null,
                 null,
@@ -186,6 +186,32 @@ namespace DungeonEscape.Core.Test.Rules
             Assert.Equal(CombatRoundActionState.MonsterAction, action.State);
             Assert.Same(bite, action.MonsterAction);
             Assert.Null(action.Skill);
+        }
+
+        [Fact]
+        public void ChooseMonsterActionSeparatesNormalAndBonusActions()
+        {
+            var bite = new MonsterAction { Name = "Bite", AttackBonus = 4 };
+            var pounce = new MonsterAction { Name = "Pounce", AttackBonus = 4, IsBonusAction = true };
+            var monster = CreateMonster("Wolf", null, new[] { bite, pounce });
+
+            var action = CombatRoundRules.ChooseMonsterAction(
+                monster,
+                new[] { CreateHero("Hero") },
+                new[] { monster },
+                null,
+                max => 0,
+                () => 100);
+            var bonusAction = CombatRoundRules.ChooseMonsterBonusAction(
+                monster,
+                new[] { CreateHero("Hero") },
+                new[] { monster },
+                null,
+                max => 0,
+                () => 100);
+
+            Assert.Same(bite, action.MonsterAction);
+            Assert.Same(pounce, bonusAction.MonsterAction);
         }
 
         private static Hero CreateHero(string name, int agility = 5)

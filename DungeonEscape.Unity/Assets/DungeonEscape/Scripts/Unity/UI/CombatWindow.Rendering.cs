@@ -163,6 +163,18 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
+            if (state == CombatState.ChooseWeapon)
+            {
+                DrawWeaponMenu(panelRect, scale);
+                return;
+            }
+
+            if (state == CombatState.ChooseBonusAction)
+            {
+                DrawBonusActionMenu(panelRect, scale);
+                return;
+            }
+
             if (state == CombatState.ChooseItem)
             {
                 DrawItemMenu(panelRect, scale);

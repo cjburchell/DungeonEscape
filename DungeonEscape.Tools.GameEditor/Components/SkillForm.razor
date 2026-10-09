@@ -38,6 +38,11 @@ else
             <input type="checkbox" checked="@Skill.DoAttack"
                    @onchange="e => Set(() => Skill.DoAttack = (bool)(e.Value ?? false))" />
         </div>
+        <div class="field">
+            <label>Bonus Action</label>
+            <input type="checkbox" checked="@Skill.IsBonusAction"
+                   @onchange="e => Set(() => Skill.IsBonusAction = (bool)(e.Value ?? false))" />
+        </div>
     </div>
 
     <fieldset>

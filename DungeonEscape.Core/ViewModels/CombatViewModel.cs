@@ -41,10 +41,31 @@ namespace Redpoint.DungeonEscape.ViewModels
 
         public List<CombatActionRow> GetActionRows(Hero hero, bool hasEncounterSpells, IList<Skill> encounterSkills, bool hasEncounterItems)
         {
-            var rows = new List<CombatActionRow>
+            return GetActionRows(hero, hasEncounterSpells, encounterSkills, hasEncounterItems, false, false, false);
+        }
+
+        public List<CombatActionRow> GetActionRows(
+            Hero hero,
+            bool hasEncounterSpells,
+            IList<Skill> encounterSkills,
+            bool hasEncounterItems,
+            bool actionQueued,
+            bool bonusActionQueued,
+            bool hasBonusActions)
+        {
+            var rows = new List<CombatActionRow>();
+            if (actionQueued)
             {
-                new CombatActionRow { Label = "Fight", Kind = CombatActionKind.Fight }
-            };
+                if (hero != null && hasBonusActions && !bonusActionQueued)
+                {
+                    rows.Add(new CombatActionRow { Label = "Bonus", Kind = CombatActionKind.BonusAction });
+                }
+
+                rows.Add(new CombatActionRow { Label = "End Turn", Kind = CombatActionKind.EndTurn });
+                return rows;
+            }
+
+            rows.Add(new CombatActionRow { Label = "Fight", Kind = CombatActionKind.Fight });
 
             if (hero != null && hasEncounterSpells)
             {
@@ -66,6 +87,11 @@ namespace Redpoint.DungeonEscape.ViewModels
             if (hero != null && hasEncounterItems)
             {
                 rows.Add(new CombatActionRow { Label = "Item", Kind = CombatActionKind.Item });
+            }
+
+            if (hero != null && hasBonusActions && !bonusActionQueued)
+            {
+                rows.Add(new CombatActionRow { Label = "Bonus", Kind = CombatActionKind.BonusAction });
             }
 
             rows.Add(new CombatActionRow { Label = "Run", Kind = CombatActionKind.Run });

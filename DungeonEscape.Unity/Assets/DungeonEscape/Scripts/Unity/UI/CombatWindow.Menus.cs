@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Unity.Core;
 using Redpoint.DungeonEscape.ViewModels;
@@ -19,18 +20,24 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private IEnumerable<CombatButton> BuildActionButtons()
         {
-            var skills = actingHero == null ? new List<Skill>() : GetAvailableEncounterSkills(actingHero).ToList();
+            var skills = actingHero == null ? new List<Skill>() : GetAvailableActionSkills(actingHero).ToList();
             var rows = viewModel.GetActionRows(
                 actingHero,
-                actingHero != null && GetAvailableEncounterSpells(actingHero).Any(),
+                actingHero != null && GetAvailableActionSpells(actingHero).Any(),
                 skills,
-                actingHero != null && GetAvailableEncounterItems(actingHero).Any());
+                actingHero != null && GetAvailableActionItems(actingHero).Any(),
+                actingHeroActionQueued,
+                actingHeroBonusActionQueued,
+                actingHero != null && GetAvailableBonusActionButtons().Any());
             foreach (var row in rows)
             {
                 switch (row.Kind)
                 {
                     case CombatActionKind.Fight:
-                        yield return new CombatButton(row.Label, BeginTargetSelection);
+                        yield return new CombatButton(row.Label, BeginWeaponSelection);
+                        break;
+                    case CombatActionKind.BonusAction:
+                        yield return new CombatButton(row.Label, BeginBonusActionSelection);
                         break;
                     case CombatActionKind.Spell:
                         yield return new CombatButton(row.Label, BeginSpellSelection);
@@ -45,6 +52,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     case CombatActionKind.Item:
                         yield return new CombatButton(row.Label, BeginItemSelection);
                         break;
+                    case CombatActionKind.EndTurn:
+                        yield return new CombatButton(row.Label, EndHeroTurn);
+                        break;
                     case CombatActionKind.Run:
                         yield return new CombatButton(row.Label, ResolveHeroRun);
                         break;
@@ -54,7 +64,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void DrawSpellMenu(Rect panelRect, float scale)
         {
-            var spells = actingHero == null ? new List<Spell>() : GetAvailableEncounterSpells(actingHero).ToList();
+            var spells = actingHero == null ? new List<Spell>() : GetAvailableActionSpells(actingHero).ToList();
             DrawIconList(
                 panelRect,
                 scale,
@@ -65,9 +75,27 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 ResolveHeroSpell);
         }
 
+        private void DrawWeaponMenu(Rect panelRect, float scale)
+        {
+            var weapons = actingHero == null ? new List<ItemInstance>() : GetAvailableFightWeapons(actingHero).ToList();
+            DrawIconList(
+                panelRect,
+                scale,
+                "Weapon",
+                weapons,
+                GetWeaponRows(weapons),
+                (ItemInstance item, out Sprite sprite) => UiAssetResolver.TryGetItemSprite(item, out sprite),
+                ResolveHeroWeapon);
+        }
+
+        private void DrawBonusActionMenu(Rect panelRect, float scale)
+        {
+            DrawMenuButtons(panelRect, scale, "Bonus Action", GetAvailableBonusActionButtons());
+        }
+
         private void DrawItemMenu(Rect panelRect, float scale)
         {
-            var items = actingHero == null ? new List<ItemInstance>() : GetAvailableEncounterItems(actingHero).ToList();
+            var items = actingHero == null ? new List<ItemInstance>() : GetAvailableActionItems(actingHero).ToList();
             DrawIconList(
                 panelRect,
                 scale,
@@ -210,6 +238,30 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return selectionMemory.GetRememberedItemIndex(actingHero, items);
         }
 
+        private int GetCurrentWeaponIndex(IList<ItemInstance> weapons)
+        {
+            if (weapons == null || weapons.Count == 0)
+            {
+                return 0;
+            }
+
+            var primaryWeapon = GetPrimaryEquippedWeapon(actingHero);
+            if (primaryWeapon != null)
+            {
+                var primaryIndex = weapons.IndexOf(primaryWeapon);
+                if (primaryIndex >= 0)
+                {
+                    return primaryIndex;
+                }
+            }
+
+            var equippedIndex = weapons.Select((item, index) => new { item, index })
+                .Where(row => row.item != null && row.item.IsEquipped)
+                .Select(row => row.index)
+                .FirstOrDefault();
+            return equippedIndex;
+        }
+
         private int GetRememberedTargetIndex(IList<IFighter> targets)
         {
             return selectionMemory.GetRememberedTargetIndex(actingHero, targets);
@@ -222,11 +274,113 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 GameDataCache.Current == null ? null : GameDataCache.Current.Spells);
         }
 
+        private List<Spell> GetAvailableActionSpells(Hero hero)
+        {
+            return GetAvailableEncounterSpells(hero).Where(spell => spell != null && !spell.IsBonusAction).ToList();
+        }
+
+        private List<Spell> GetAvailableBonusSpells(Hero hero)
+        {
+            return GetAvailableEncounterSpells(hero).Where(spell => spell != null && spell.IsBonusAction).ToList();
+        }
+
+        private List<ItemInstance> GetAvailableFightWeapons(Hero hero)
+        {
+            if (hero == null || hero.IsDead || hero.Items == null)
+            {
+                return new List<ItemInstance>();
+            }
+
+            var weapons = new List<ItemInstance>();
+            var primaryWeapon = GetPrimaryEquippedWeapon(hero);
+            if (primaryWeapon != null)
+            {
+                weapons.Add(primaryWeapon);
+            }
+
+            weapons.AddRange(hero.Items.Where(item =>
+                item != null &&
+                !weapons.Contains(item) &&
+                item.Type == ItemType.Weapon &&
+                item.IsEquipped));
+            weapons.AddRange(hero.Items.Where(item =>
+                item != null &&
+                !weapons.Contains(item) &&
+                item.Type == ItemType.Weapon &&
+                !item.IsEquipped &&
+                hero.CanEquipItem(item)));
+            return weapons;
+        }
+
+        private List<CombatMenuRow> GetWeaponRows(IList<ItemInstance> weapons)
+        {
+            var rows = new List<CombatMenuRow>();
+            if (weapons == null)
+            {
+                return rows;
+            }
+
+            for (var i = 0; i < weapons.Count; i++)
+            {
+                var weapon = weapons[i];
+                if (weapon != null)
+                {
+                    rows.Add(new CombatMenuRow { Index = i, Label = FormatWeaponRow(weapon) });
+                }
+            }
+
+            return rows;
+        }
+
+        private string FormatWeaponRow(ItemInstance weapon)
+        {
+            if (weapon == null)
+            {
+                return "";
+            }
+
+            var attack = DndStatRules.GetAttackBonus(actingHero, weapon);
+            var damage = DndStatRules.GetDamageBonus(actingHero, weapon);
+            var dice = Math.Max(1, DndStatRules.GetDamageDice(actingHero, weapon)) + "d" + DndStatRules.GetDamageDie(actingHero, weapon);
+            return weapon.Name + "  Atk " + FormatSigned(attack) + "  " + dice + FormatSigned(damage);
+        }
+
+        private static ItemInstance GetPrimaryEquippedWeapon(Hero hero)
+        {
+            if (hero == null || hero.Slots == null || hero.Items == null)
+            {
+                return null;
+            }
+
+            string itemId;
+            if (!hero.Slots.TryGetValue(Slot.PrimaryHand, out itemId) || string.IsNullOrWhiteSpace(itemId))
+            {
+                return null;
+            }
+
+            return hero.Items.FirstOrDefault(item => item != null && item.Id == itemId && item.IsEquipped && item.Type == ItemType.Weapon);
+        }
+
+        private static string FormatSigned(int value)
+        {
+            return value >= 0 ? "+" + value : value.ToString();
+        }
+
         private List<Skill> GetAvailableEncounterSkills(Hero hero)
         {
             return viewModel.GetAvailableEncounterSkills(
                 hero,
                 GameDataCache.Current == null ? null : GameDataCache.Current.Skills);
+        }
+
+        private List<Skill> GetAvailableActionSkills(Hero hero)
+        {
+            return GetAvailableEncounterSkills(hero).Where(skill => skill != null && !skill.IsBonusAction).ToList();
+        }
+
+        private List<Skill> GetAvailableBonusSkills(Hero hero)
+        {
+            return GetAvailableEncounterSkills(hero).Where(skill => skill != null && skill.IsBonusAction).ToList();
         }
 
         private List<ItemInstance> GetAvailableEncounterItems(Hero hero)
@@ -245,6 +399,50 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             return viewModel.GetAvailableEncounterItems(hero);
+        }
+
+        private List<ItemInstance> GetAvailableActionItems(Hero hero)
+        {
+            return GetAvailableEncounterItems(hero)
+                .Where(item => item == null || item.Item == null || item.Item.Skill == null || !item.Item.Skill.IsBonusAction)
+                .ToList();
+        }
+
+        private List<ItemInstance> GetAvailableBonusItems(Hero hero)
+        {
+            return GetAvailableEncounterItems(hero)
+                .Where(item => item != null && item.Item != null && item.Item.Skill != null && item.Item.Skill.IsBonusAction)
+                .ToList();
+        }
+
+        private List<CombatButton> GetAvailableBonusActionButtons()
+        {
+            var buttons = new List<CombatButton>();
+            if (actingHero == null || actingHero.IsDead || actingHeroBonusActionQueued)
+            {
+                return buttons;
+            }
+
+            foreach (var spell in GetAvailableBonusSpells(actingHero))
+            {
+                var selectedSpell = spell;
+                buttons.Add(new CombatButton("Spell: " + selectedSpell.Name, () => ResolveHeroSpell(selectedSpell, true)));
+            }
+
+            foreach (var skill in GetAvailableBonusSkills(actingHero))
+            {
+                var selectedSkill = skill;
+                buttons.Add(new CombatButton(selectedSkill.Name, () => ResolveHeroSkill(selectedSkill, true)));
+            }
+
+            foreach (var item in GetAvailableBonusItems(actingHero))
+            {
+                var selectedItem = item;
+                buttons.Add(new CombatButton("Item: " + selectedItem.Name, () => ResolveHeroItem(selectedItem, true)));
+            }
+
+            buttons.Add(new CombatButton("Back", ReturnToActionMenu));
+            return buttons;
         }
 
         private void DrawCenteredButtons(Rect panelRect, float scale, IEnumerable<CombatButton> buttons)

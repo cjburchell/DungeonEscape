@@ -300,10 +300,20 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private string Fight(IFighter source, IFighter target)
         {
-            return Fight(source, target, out _, true);
+            return Fight(source, target, null, out _, true);
+        }
+
+        private string Fight(IFighter source, IFighter target, ItemInstance weapon)
+        {
+            return Fight(source, target, weapon, out _, true);
         }
 
         private string Fight(IFighter source, IFighter target, out int damage, bool playSounds)
+        {
+            return Fight(source, target, null, out damage, playSounds);
+        }
+
+        private string Fight(IFighter source, IFighter target, ItemInstance weapon, out int damage, bool playSounds)
         {
             if (source == null || target == null)
             {
@@ -316,10 +326,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 Audio.GetOrCreate().PlaySoundEffect("prepare-attack", true);
             }
 
-            var message = source.Name + " attacks " + target.Name + ".\n";
+            var weaponText = weapon == null ? "" : " with " + weapon.Name;
+            var message = source.Name + " attacks " + target.Name + weaponText + ".\n";
             damage = 0;
             var attack = DndCombatRules.ResolveWeaponAttack(
                 source,
+                weapon,
                 target,
                 () => Dice.RollD20(),
                 sides => Dice.RollDie(sides));

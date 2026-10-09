@@ -32,6 +32,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     return BuildActionButtons().Count();
                 case CombatState.ChooseSpell:
                     return actingHero == null ? 0 : GetAvailableEncounterSpells(actingHero).Count();
+                case CombatState.ChooseWeapon:
+                    return actingHero == null ? 0 : GetAvailableFightWeapons(actingHero).Count();
+                case CombatState.ChooseBonusAction:
+                    return GetAvailableBonusActionButtons().Count;
                 case CombatState.ChooseItem:
                     return actingHero == null ? 0 : GetAvailableEncounterItems(actingHero).Count();
                 case CombatState.ChooseTarget:
@@ -61,6 +65,24 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     {
                         UiControls.PlayConfirmSound();
                         ResolveHeroSpell(spells[selectedMenuIndex]);
+                    }
+
+                    return;
+                case CombatState.ChooseWeapon:
+                    var weapons = actingHero == null ? new List<ItemInstance>() : GetAvailableFightWeapons(actingHero).ToList();
+                    if (selectedMenuIndex >= 0 && selectedMenuIndex < weapons.Count)
+                    {
+                        UiControls.PlayConfirmSound();
+                        ResolveHeroWeapon(weapons[selectedMenuIndex]);
+                    }
+
+                    return;
+                case CombatState.ChooseBonusAction:
+                    var bonusActions = GetAvailableBonusActionButtons();
+                    if (selectedMenuIndex >= 0 && selectedMenuIndex < bonusActions.Count)
+                    {
+                        UiControls.PlayConfirmSound();
+                        bonusActions[selectedMenuIndex].Action();
                     }
 
                     return;

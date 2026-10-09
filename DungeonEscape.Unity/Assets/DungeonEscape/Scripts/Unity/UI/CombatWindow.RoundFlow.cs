@@ -28,6 +28,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 var action = ChooseMonsterAction(monster.Instance);
                 CombatRoundRules.RollInitiative(action, () => Dice.RollD20());
                 roundActions.Add(action);
+                var bonusAction = ChooseMonsterBonusAction(monster.Instance);
+                if (bonusAction != null)
+                {
+                    CombatRoundRules.RollInitiative(bonusAction, () => Dice.RollD20());
+                    roundActions.Add(bonusAction);
+                }
             }
 
             ChooseNextHeroAction();
@@ -57,6 +63,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 }
 
                 state = CombatState.ChooseAction;
+                actingHeroActionQueued = false;
+                actingHeroBonusActionQueued = false;
                 selectedMenuIndex = GetRememberedActionIndex(BuildActionButtons().ToList());
                 messageText = actingHero.Name + "'s action.";
                 return;
@@ -67,13 +75,44 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void QueueHeroAction(CombatRoundAction action)
         {
+            QueueHeroAction(action, false);
+        }
+
+        private void QueueHeroAction(CombatRoundAction action, bool bonusAction)
+        {
             if (action != null)
             {
                 CombatRoundRules.RollInitiative(action, () => Dice.RollD20());
                 roundActions.Add(action);
             }
 
+            if (bonusAction)
+            {
+                actingHeroBonusActionQueued = true;
+            }
+            else
+            {
+                actingHeroActionQueued = true;
+            }
+
+            if (actingHero != null &&
+                (!actingHeroActionQueued || (!actingHeroBonusActionQueued && HasAvailableBonusActions(actingHero))))
+            {
+                state = CombatState.ChooseAction;
+                selectedMenuIndex = GetRememberedActionIndex(BuildActionButtons().ToList());
+                messageText = actingHero.Name + "'s action.";
+                menuInput.BlockInteractUntilRelease();
+                return;
+            }
+
+            EndHeroTurn();
+        }
+
+        private void EndHeroTurn()
+        {
             actingHero = null;
+            actingHeroActionQueued = false;
+            actingHeroBonusActionQueued = false;
             ChooseNextHeroAction();
         }
 
@@ -115,7 +154,28 @@ namespace Redpoint.DungeonEscape.Unity.UI
             ResolveNextRoundAction();
         }
 
-        private void BeginTargetSelection()
+        private void BeginWeaponSelection()
+        {
+            if (actingHero == null || actingHero.IsDead)
+            {
+                ChooseNextHeroAction();
+                return;
+            }
+
+            var weapons = GetAvailableFightWeapons(actingHero).ToList();
+            if (weapons.Count <= 1)
+            {
+                BeginFightTargetSelection(weapons.FirstOrDefault());
+                return;
+            }
+
+            state = CombatState.ChooseWeapon;
+            selectedMenuIndex = GetCurrentWeaponIndex(weapons);
+            messageText = "Choose a weapon for " + actingHero.Name + ".";
+            menuInput.BlockInteractUntilRelease();
+        }
+
+        private void BeginFightTargetSelection(ItemInstance weapon)
         {
             if (actingHero == null || actingHero.IsDead)
             {
@@ -132,6 +192,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 {
                     Source = actingHero,
                     State = CombatRoundActionState.Fight,
+                    Weapon = weapon,
                     Targets = targets
                 }));
         }
@@ -144,7 +205,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            var spells = GetAvailableEncounterSpells(actingHero).ToList();
+            var spells = GetAvailableActionSpells(actingHero).ToList();
             if (spells.Count == 0)
             {
                 ShowMessage(actingHero.Name + " cannot cast any combat spells.", ChooseNextHeroAction);
@@ -165,7 +226,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return;
             }
 
-            var items = GetAvailableEncounterItems(actingHero).ToList();
+            var items = GetAvailableActionItems(actingHero).ToList();
             if (items.Count == 0)
             {
                 ShowMessage(actingHero.Name + " has no combat items.", ChooseNextHeroAction);
@@ -175,6 +236,27 @@ namespace Redpoint.DungeonEscape.Unity.UI
             state = CombatState.ChooseItem;
             selectedMenuIndex = GetRememberedItemIndex(items);
             messageText = "Choose an item for " + actingHero.Name + ".";
+            menuInput.BlockInteractUntilRelease();
+        }
+
+        private void BeginBonusActionSelection()
+        {
+            if (actingHero == null || actingHero.IsDead || actingHeroBonusActionQueued)
+            {
+                ReturnToActionMenu();
+                return;
+            }
+
+            var bonusActions = GetAvailableBonusActionButtons();
+            if (bonusActions.Count <= 1)
+            {
+                ShowMessage(actingHero.Name + " has no bonus actions.", ReturnToActionMenu);
+                return;
+            }
+
+            state = CombatState.ChooseBonusAction;
+            selectedMenuIndex = 0;
+            messageText = "Choose a bonus action for " + actingHero.Name + ".";
             menuInput.BlockInteractUntilRelease();
         }
 
@@ -219,6 +301,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ResolveHeroSpell(Spell spell)
         {
+            ResolveHeroSpell(spell, false);
+        }
+
+        private void ResolveHeroSpell(Spell spell, bool bonusAction)
+        {
             if (actingHero == null || actingHero.IsDead || spell == null)
             {
                 ChooseNextHeroAction();
@@ -242,11 +329,37 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     State = CombatRoundActionState.Spell,
                     Spell = spell,
                     Targets = targets
-                }),
+                }, bonusAction),
                 spell.Type == SkillType.Revive);
         }
 
+        private void ResolveHeroWeapon(ItemInstance weapon)
+        {
+            if (actingHero == null || actingHero.IsDead)
+            {
+                ChooseNextHeroAction();
+                return;
+            }
+
+            RememberAction("Fight");
+            if (weapon != null && !weapon.IsEquipped)
+            {
+                if (gameState == null || !gameState.EquipHeroItem(actingHero, weapon))
+                {
+                    ShowMessage(actingHero.Name + " cannot ready " + weapon.Name + ".", ChooseNextHeroAction);
+                    return;
+                }
+            }
+
+            BeginFightTargetSelection(weapon);
+        }
+
         private void ResolveHeroSkill(Skill skill)
+        {
+            ResolveHeroSkill(skill, false);
+        }
+
+        private void ResolveHeroSkill(Skill skill, bool bonusAction)
         {
             if (actingHero == null || actingHero.IsDead || skill == null)
             {
@@ -269,11 +382,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     State = CombatRoundActionState.Skill,
                     Skill = skill,
                     Targets = targets
-                }),
+                }, bonusAction),
                 skill.Type == SkillType.Revive);
         }
 
         private void ResolveHeroItem(ItemInstance item)
+        {
+            ResolveHeroItem(item, false);
+        }
+
+        private void ResolveHeroItem(ItemInstance item, bool bonusAction)
         {
             if (actingHero == null || actingHero.IsDead || item == null || item.Item == null)
             {
@@ -305,7 +423,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     State = CombatRoundActionState.Item,
                     Item = item,
                     Targets = targets
-                }),
+                }, bonusAction),
                 skill.Type == SkillType.Revive);
         }
 
@@ -337,6 +455,17 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 () => Dice.RollD100());
         }
 
+        private CombatRoundAction ChooseMonsterBonusAction(IFighter monster)
+        {
+            return CombatRoundRules.ChooseMonsterBonusAction(
+                monster,
+                AliveHeroes().Cast<IFighter>(),
+                AliveMonsters().Select(item => item.Instance).Cast<IFighter>(),
+                GameDataCache.Current == null ? null : GameDataCache.Current.Spells,
+                maxValue => CombatRandom.Next(maxValue),
+                () => Dice.RollD100());
+        }
+
         private string ExecuteRoundAction(CombatRoundAction action, out bool endFight)
         {
             return CombatRoundRules.ExecuteRoundAction(
@@ -344,7 +473,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 gameState,
                 round,
                 Run,
-                Fight,
+                (selectedAction, target) => Fight(selectedAction == null ? null : selectedAction.Source, target, selectedAction == null ? null : selectedAction.Weapon),
                 CastSpell,
                 UseItem,
                 DoSkill,
@@ -386,6 +515,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private List<IFighter> GetPartySkillTargets(Skill skill)
         {
             return CombatRoundRules.GetPartySkillTargets(skill, AliveHeroes(), DeadHeroes());
+        }
+
+        private bool HasAvailableBonusActions(Hero hero)
+        {
+            return hero != null && !actingHeroBonusActionQueued &&
+                   (GetAvailableBonusSpells(hero).Any() ||
+                    GetAvailableBonusSkills(hero).Any() ||
+                    GetAvailableBonusItems(hero).Any());
         }
     }
 }

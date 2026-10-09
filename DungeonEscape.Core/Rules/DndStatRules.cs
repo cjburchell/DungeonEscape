@@ -245,9 +245,15 @@ namespace Redpoint.DungeonEscape.Rules
                 return 10;
             }
 
-            if (fighter.ArmorClass > 0)
+            if (!(fighter is Hero) && fighter.ArmorClass > 0)
             {
                 return fighter.ArmorClass;
+            }
+
+            var hero = fighter as Hero;
+            if (hero != null)
+            {
+                return GetHeroArmorClass(hero);
             }
 
             var armorFromLegacyDefence = Clamp(fighter.Defence / 5, 0, 6);
@@ -256,20 +262,30 @@ namespace Redpoint.DungeonEscape.Rules
 
         public static int GetAttackBonus(IFighter fighter)
         {
+            return GetAttackBonus(fighter, GetActiveWeapon(fighter));
+        }
+
+        public static int GetAttackBonus(IFighter fighter, ItemInstance weapon)
+        {
             if (fighter == null)
             {
                 return 0;
             }
 
-            if (fighter.AttackBonus != 0)
+            if (!(fighter is Hero) && fighter.AttackBonus != 0)
             {
                 return fighter.AttackBonus;
             }
 
-            return GetEffectiveProficiencyBonus(fighter) + GetWeaponAbilityModifier(fighter);
+            return GetEffectiveProficiencyBonus(fighter) + GetWeaponAbilityModifier(fighter) + GetWeaponAttackBonus(weapon);
         }
 
         public static int GetDamageBonus(IFighter fighter)
+        {
+            return GetDamageBonus(fighter, GetActiveWeapon(fighter));
+        }
+
+        public static int GetDamageBonus(IFighter fighter, ItemInstance weapon)
         {
             if (fighter == null)
             {
@@ -281,14 +297,29 @@ namespace Redpoint.DungeonEscape.Rules
                 return fighter.DamageBonus;
             }
 
+            if (fighter is Hero)
+            {
+                return GetWeaponAbilityModifier(fighter) + GetWeaponDamageBonus(weapon);
+            }
+
             return GetWeaponAbilityModifier(fighter) + fighter.DamageBonus;
         }
 
         public static int GetDamageDie(IFighter fighter)
         {
+            return GetDamageDie(fighter, GetActiveWeapon(fighter));
+        }
+
+        public static int GetDamageDie(IFighter fighter, ItemInstance weapon)
+        {
             if (fighter == null)
             {
                 return DefaultDamageDie;
+            }
+
+            if (weapon != null && weapon.DamageDie > 0)
+            {
+                return weapon.DamageDie;
             }
 
             return fighter.DamageDie > 0 ? fighter.DamageDie : InferLegacyDamageDie(fighter.Attack);
@@ -296,6 +327,16 @@ namespace Redpoint.DungeonEscape.Rules
 
         public static int GetDamageDice(IFighter fighter)
         {
+            return GetDamageDice(fighter, GetActiveWeapon(fighter));
+        }
+
+        public static int GetDamageDice(IFighter fighter, ItemInstance weapon)
+        {
+            if (weapon != null && weapon.DamageDice > 0)
+            {
+                return Math.Max(1, weapon.DamageDice);
+            }
+
             return Math.Max(1, fighter == null ? 0 : fighter.DamageDice);
         }
 
@@ -400,6 +441,62 @@ namespace Redpoint.DungeonEscape.Rules
         private static int GetEffectiveProficiencyBonus(IFighter fighter)
         {
             return fighter.ProficiencyBonus > 0 ? fighter.ProficiencyBonus : GetProficiencyBonus(fighter);
+        }
+
+        private static int GetHeroArmorClass(Hero hero)
+        {
+            var baseArmorClass = Math.Max(10, hero.ArmorClass);
+            var dexterityModifier = GetAbilityModifier(GetDexterity(hero));
+            var equippedArmorBonus = hero.Items == null
+                ? 0
+                : hero.Items
+                    .Where(item => item != null && item.IsEquipped && item.Type == ItemType.Armor)
+                    .Sum(item => item.Defence);
+
+            if (equippedArmorBonus > 0)
+            {
+                return baseArmorClass + dexterityModifier + equippedArmorBonus;
+            }
+
+            var armorFromLegacyDefence = Clamp(hero.Defence / 5, 0, 6);
+            return baseArmorClass + dexterityModifier + armorFromLegacyDefence;
+        }
+
+        private static ItemInstance GetActiveWeapon(IFighter fighter)
+        {
+            var hero = fighter as Hero;
+            if (hero == null || hero.Items == null)
+            {
+                return null;
+            }
+
+            string primaryHandId;
+            if (hero.Slots != null &&
+                hero.Slots.TryGetValue(Slot.PrimaryHand, out primaryHandId) &&
+                !string.IsNullOrWhiteSpace(primaryHandId))
+            {
+                var primaryWeapon = hero.Items.FirstOrDefault(item =>
+                    item != null &&
+                    item.Id == primaryHandId &&
+                    item.IsEquipped &&
+                    item.Type == ItemType.Weapon);
+                if (primaryWeapon != null)
+                {
+                    return primaryWeapon;
+                }
+            }
+
+            return hero.Items.FirstOrDefault(item => item != null && item.IsEquipped && item.Type == ItemType.Weapon);
+        }
+
+        private static int GetWeaponAttackBonus(ItemInstance weapon)
+        {
+            return weapon == null ? 0 : weapon.DamageBonus;
+        }
+
+        private static int GetWeaponDamageBonus(ItemInstance weapon)
+        {
+            return weapon == null ? 0 : weapon.DamageBonus;
         }
 
         private static int GetAbilityScoreValue(IFighter fighter, AbilityScore abilityScore)

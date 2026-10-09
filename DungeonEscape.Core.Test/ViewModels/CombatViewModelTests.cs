@@ -53,6 +53,19 @@ namespace DungeonEscape.Core.Test.ViewModels
         }
 
         [Fact]
+        public void ActionRowsExposeBonusAndEndTurnWhenActionAlreadyQueued()
+        {
+            var viewModel = new CombatViewModel();
+            var hero = new Hero { Name = "Able" };
+
+            var rows = viewModel.GetActionRows(hero, false, new List<Skill>(), false, true, false, true);
+
+            Assert.Equal(new[] { "Bonus", "End Turn" }, rows.Select(row => row.Label).ToArray());
+            Assert.Equal(CombatActionKind.BonusAction, rows[0].Kind);
+            Assert.Equal(CombatActionKind.EndTurn, rows[1].Kind);
+        }
+
+        [Fact]
         public void ActionRowsKeepSpellOptionForReadyHero()
         {
             var viewModel = new CombatViewModel();
@@ -72,6 +85,14 @@ namespace DungeonEscape.Core.Test.ViewModels
 
             Assert.Equal("Heal  L1", Assert.Single(viewModel.GetSpellRows(new[] { spell })).Label);
             Assert.StartsWith("Potion", Assert.Single(viewModel.GetItemRows(new[] { item })).Label);
+        }
+
+        [Fact]
+        public void KnownDndBonusActionSpellsAreMarkedAsBonusActions()
+        {
+            Assert.True(new Spell { Name = "Shield of Faith", DndSpell = "Shield of Faith" }.IsBonusAction);
+            Assert.True(new Spell { Name = "Mass Healing Word", DndSpell = "Mass Healing Word" }.IsBonusAction);
+            Assert.False(new Spell { Name = "Cure Wounds", DndSpell = "Cure Wounds" }.IsBonusAction);
         }
 
         [Fact]

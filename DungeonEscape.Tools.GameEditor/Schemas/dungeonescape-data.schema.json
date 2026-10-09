@@ -77,7 +77,8 @@
         "DamageType": { "type": "string" },
         "Reach": { "type": "string" },
         "Range": { "type": "string" },
-        "Count": { "type": "integer", "minimum": 0 }
+        "Count": { "type": "integer", "minimum": 0 },
+        "IsBonusAction": { "type": "boolean" }
       }
     },
     "monster": {
@@ -146,7 +147,8 @@
         "Type": { "$ref": "#/$defs/skillType" },
         "DurationType": { "$ref": "#/$defs/durationType" },
         "StatType": { "$ref": "#/$defs/statType" },
-        "MaxTargets": { "type": "integer", "minimum": 0 }
+        "MaxTargets": { "type": "integer", "minimum": 0 },
+        "IsBonusAction": { "type": "boolean" }
       }
     },
     "item": {

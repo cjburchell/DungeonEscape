@@ -57,6 +57,7 @@ namespace Redpoint.DungeonEscape.Data
         public string EffectName { get; set; }
         public bool DoAttack { get; set; }
         public bool IsPositive { get; set; } = true;
+        public bool IsBonusAction { get; set; }
 
         [JsonIgnore] public bool IsAttackSkill { get { return AttackSkill.Contains(Type); } }
         [JsonIgnore] public bool IsEncounterSkill { get { return EncounterSkill.Contains(Type); } }

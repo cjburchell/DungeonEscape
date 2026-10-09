@@ -13,5 +13,6 @@ namespace Redpoint.DungeonEscape.Data
         public string Reach { get; set; }
         public string Range { get; set; }
         public int Count { get; set; }
+        public bool IsBonusAction { get; set; }
     }
 }

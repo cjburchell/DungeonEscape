@@ -20,6 +20,21 @@ namespace Redpoint.DungeonEscape.Data
         public bool IsAttackSpell { get { return Skill != null && Skill.IsAttackSkill; } }
 
         [JsonIgnore]
+        public bool IsBonusAction
+        {
+            get
+            {
+                if (Skill != null && Skill.IsBonusAction)
+                {
+                    return true;
+                }
+
+                var spellName = string.IsNullOrWhiteSpace(DndSpell) ? Name : DndSpell;
+                return IsDndBonusActionSpell(spellName);
+            }
+        }
+
+        [JsonIgnore]
         public bool RequiresConcentration
         {
             get
@@ -98,6 +113,23 @@ namespace Redpoint.DungeonEscape.Data
         public Spell()
         {
             SpellLevel = 1;
+        }
+
+        private static bool IsDndBonusActionSpell(string spellName)
+        {
+            if (string.IsNullOrWhiteSpace(spellName))
+            {
+                return false;
+            }
+
+            return new[]
+            {
+                "Healing Word",
+                "Mass Healing Word",
+                "Misty Step",
+                "Shield of Faith",
+                "Spiritual Weapon"
+            }.Any(candidate => string.Equals(candidate, spellName, StringComparison.OrdinalIgnoreCase));
         }
 
         public void Setup(IEnumerable<Skill> skills)

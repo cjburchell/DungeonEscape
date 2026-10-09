@@ -10,6 +10,7 @@ namespace Redpoint.DungeonEscape.Rules
         public CombatRoundActionState State { get; set; }
         public Spell Spell { get; set; }
         public ItemInstance Item { get; set; }
+        public ItemInstance Weapon { get; set; }
         public Skill Skill { get; set; }
         public MonsterAction MonsterAction { get; set; }
         public List<IFighter> Targets { get; set; }

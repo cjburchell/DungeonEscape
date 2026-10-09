@@ -16,6 +16,29 @@ namespace Redpoint.DungeonEscape.Rules
             Func<int, int> nextInt,
             Func<int> rollD100)
         {
+            return ChooseMonsterAction(monster, aliveHeroes, aliveMonsters, spells, nextInt, rollD100, false);
+        }
+
+        public static CombatRoundAction ChooseMonsterBonusAction(
+            IFighter monster,
+            IEnumerable<IFighter> aliveHeroes,
+            IEnumerable<IFighter> aliveMonsters,
+            IEnumerable<Spell> spells,
+            Func<int, int> nextInt,
+            Func<int> rollD100)
+        {
+            return ChooseMonsterAction(monster, aliveHeroes, aliveMonsters, spells, nextInt, rollD100, true);
+        }
+
+        private static CombatRoundAction ChooseMonsterAction(
+            IFighter monster,
+            IEnumerable<IFighter> aliveHeroes,
+            IEnumerable<IFighter> aliveMonsters,
+            IEnumerable<Spell> spells,
+            Func<int, int> nextInt,
+            Func<int> rollD100,
+            bool bonusAction)
+        {
             if (monster == null)
             {
                 return null;
@@ -25,15 +48,11 @@ namespace Redpoint.DungeonEscape.Rules
 
             if (availableTargets.Count == 0)
             {
-                return new CombatRoundAction
-                {
-                    Source = monster,
-                    State = CombatRoundActionState.Nothing
-                };
+                return bonusAction ? null : new CombatRoundAction { Source = monster, State = CombatRoundActionState.Nothing };
             }
 
             var availableActions = (monster as MonsterInstance)?.GetActions()
-                .Where(action => action != null)
+                .Where(action => action != null && action.IsBonusAction == bonusAction)
                 .ToList();
             if (availableActions != null && availableActions.Count > 0)
             {
@@ -46,6 +65,11 @@ namespace Redpoint.DungeonEscape.Rules
                     MonsterAction = monsterAction,
                     Targets = new List<IFighter> { ChooseFighter(availableTargets, rollD100) }
                 };
+            }
+
+            if (bonusAction)
+            {
+                return null;
             }
 
             return new CombatRoundAction
@@ -134,7 +158,7 @@ namespace Redpoint.DungeonEscape.Rules
             IGame game,
             int round,
             Func<CombatRoundAction, CombatRunResult> run,
-            Func<IFighter, IFighter, string> fight,
+            Func<CombatRoundAction, IFighter, string> fight,
             Func<Spell, List<IFighter>, IFighter, string> castSpell,
             Func<ItemInstance, List<IFighter>, IFighter, string> useItem,
             Func<Skill, List<IFighter>, IFighter, string> doSkill,
@@ -166,7 +190,7 @@ namespace Redpoint.DungeonEscape.Rules
                     }
                     break;
                 case CombatRoundActionState.Fight:
-                    message += fight == null ? "" : fight(action.Source, ResolveActionTargets(action, getOpposingTargets).FirstOrDefault());
+                    message += fight == null ? "" : fight(action, ResolveActionTargets(action, getOpposingTargets).FirstOrDefault());
                     break;
                 case CombatRoundActionState.Spell:
                     message += castSpell == null ? "" : castSpell(action.Spell, ResolveActionTargets(action, getOpposingTargets), action.Source);

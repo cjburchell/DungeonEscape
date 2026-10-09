@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Redpoint.DungeonEscape.Data;
 using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
@@ -26,19 +27,73 @@ namespace DungeonEscape.Core.Test.Rules
                 Level = 3,
                 Strength = 16,
                 Dexterity = 12,
-                Constitution = 14,
-                DamageDice = 1,
-                DamageDie = 8,
-                DamageBonus = 1
+                Constitution = 14
             };
+            var weapon = CreateWeapon("Longsword", 1, 8, 1);
+            hero.Items.Add(weapon);
+            hero.Equip(weapon);
             var classStats = new ClassStats { Class = "Paladin", HitDie = 10 };
 
             DndStatRules.RefreshHeroDerivedStats(hero);
 
             Assert.Equal(2, hero.ProficiencyBonus);
-            Assert.Equal(5, DndStatRules.GetAttackBonus(hero));
+            Assert.Equal(6, DndStatRules.GetAttackBonus(hero));
             Assert.Equal(4, DndStatRules.GetDamageBonus(hero));
             Assert.Equal(28, DndStatRules.GetHeroHitPointsForLevel(hero, classStats, hero.Level));
+        }
+
+        [Fact]
+        public void SelectedWeaponOverridesEquippedWeaponForAttackAndDamage()
+        {
+            var hero = new Hero
+            {
+                Class = Class.Fighter,
+                Level = 1,
+                Strength = 16
+            };
+            var club = CreateWeapon("Club", 1, 4, 0);
+            var greatsword = CreateWeapon("Greatsword", 2, 6, 1);
+            hero.Items.Add(club);
+            hero.Items.Add(greatsword);
+            hero.Equip(club);
+
+            Assert.Equal(5, DndStatRules.GetAttackBonus(hero));
+            Assert.Equal(4, DndStatRules.GetDamageBonus(hero, greatsword));
+            Assert.Equal(2, DndStatRules.GetDamageDice(hero, greatsword));
+            Assert.Equal(6, DndStatRules.GetDamageDie(hero, greatsword));
+        }
+
+        [Fact]
+        public void HeroArmorClassUsesBaseDexterityAndEquippedArmorBonuses()
+        {
+            var hero = new Hero
+            {
+                Class = Class.Paladin,
+                Dexterity = 12
+            };
+            var chainMail = CreateArmor("Chain Mail", Slot.Chest, 3);
+            var shield = CreateArmor("Shield", Slot.OffHand, 2);
+            hero.Items.Add(chainMail);
+            hero.Items.Add(shield);
+            hero.Equip(chainMail);
+            hero.Equip(shield);
+
+            Assert.Equal(16, DndStatRules.GetArmorClass(hero));
+        }
+
+        [Fact]
+        public void HeroExplicitArmorClassIsBaseNotFinalArmorClass()
+        {
+            var hero = new Hero
+            {
+                ArmorClass = 10,
+                Dexterity = 14
+            };
+            var leatherArmor = CreateArmor("Leather Armor", Slot.Chest, 1);
+            hero.Items.Add(leatherArmor);
+            hero.Equip(leatherArmor);
+
+            Assert.Equal(13, DndStatRules.GetArmorClass(hero));
         }
 
         [Fact]
@@ -215,6 +270,35 @@ namespace DungeonEscape.Core.Test.Rules
 
             Assert.Equal(11, action.InitiativeRoll);
             Assert.Equal(14, action.InitiativeTotal);
+        }
+
+        private static ItemInstance CreateArmor(string name, Slot slot, int defenceBonus)
+        {
+            return new ItemInstance(new Item
+            {
+                Name = name,
+                Type = ItemType.Armor,
+                Category = ItemCategory.Armor,
+                Slots = new List<Slot> { slot },
+                Stats = new List<StatValue>
+                {
+                    new StatValue { Type = StatType.Defence, Value = defenceBonus }
+                }
+            });
+        }
+
+        private static ItemInstance CreateWeapon(string name, int damageDice, int damageDie, int damageBonus)
+        {
+            return new ItemInstance(new Item
+            {
+                Name = name,
+                Type = ItemType.Weapon,
+                Category = ItemCategory.Weapon,
+                Slots = new List<Slot> { Slot.PrimaryHand },
+                DamageDice = damageDice,
+                DamageDie = damageDie,
+                DamageBonus = damageBonus
+            });
         }
     }
 }

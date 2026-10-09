@@ -28,6 +28,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             Message,
             ChooseAction,
             ChooseTarget,
+            ChooseWeapon,
+            ChooseBonusAction,
             ChooseSpell,
             ChooseItem
         }
@@ -64,6 +66,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private float revealCharacterAccumulator;
         private Vector2 messageScrollPosition;
         private int round;
+        private bool actingHeroActionQueued;
+        private bool actingHeroBonusActionQueued;
         private static CombatWindow currentWindow;
 
         public static bool IsOpen { get; private set; }

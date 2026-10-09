@@ -12,6 +12,16 @@ namespace Redpoint.DungeonEscape.Rules
             Func<int> rollD20,
             Func<int, int> rollDie)
         {
+            return ResolveWeaponAttack(source, null, target, rollD20, rollDie);
+        }
+
+        public static CombatAttackResult ResolveWeaponAttack(
+            IFighter source,
+            ItemInstance weapon,
+            IFighter target,
+            Func<int> rollD20,
+            Func<int, int> rollDie)
+        {
             var result = new CombatAttackResult
             {
                 TargetArmorClass = GetArmorClass(target)
@@ -23,12 +33,12 @@ namespace Redpoint.DungeonEscape.Rules
             }
 
             result.Roll = rollD20 == null ? Dice.RollD20() : rollD20();
-            result.Total = result.Roll + GetAttackBonus(source);
+            result.Total = result.Roll + GetAttackBonus(source, weapon);
             result.Critical = result.Roll == 20;
             result.Hit = result.Critical || result.Total >= result.TargetArmorClass;
             if (result.Hit)
             {
-                result.Damage = RollWeaponDamage(source, result.Critical, rollDie);
+                result.Damage = RollWeaponDamage(source, weapon, result.Critical, rollDie);
             }
 
             return result;
@@ -68,6 +78,11 @@ namespace Redpoint.DungeonEscape.Rules
             return DndStatRules.GetAttackBonus(fighter);
         }
 
+        public static int GetAttackBonus(IFighter fighter, ItemInstance weapon)
+        {
+            return DndStatRules.GetAttackBonus(fighter, weapon);
+        }
+
         public static int GetArmorClass(IFighter fighter)
         {
             return DndStatRules.GetArmorClass(fighter);
@@ -75,13 +90,18 @@ namespace Redpoint.DungeonEscape.Rules
 
         public static int RollWeaponDamage(IFighter fighter, bool critical, Func<int, int> rollDie)
         {
+            return RollWeaponDamage(fighter, null, critical, rollDie);
+        }
+
+        public static int RollWeaponDamage(IFighter fighter, ItemInstance weapon, bool critical, Func<int, int> rollDie)
+        {
             if (fighter == null)
             {
                 return 0;
             }
 
-            var die = DndStatRules.GetDamageDie(fighter);
-            var dice = DndStatRules.GetDamageDice(fighter);
+            var die = DndStatRules.GetDamageDie(fighter, weapon);
+            var dice = DndStatRules.GetDamageDice(fighter, weapon);
             var totalDice = critical ? dice * 2 : dice;
             var damage = 0;
             for (var i = 0; i < totalDice; i++)
@@ -89,7 +109,7 @@ namespace Redpoint.DungeonEscape.Rules
                 damage += rollDie == null ? Dice.RollDie(die) : rollDie(die);
             }
 
-            var bonus = DndStatRules.GetDamageBonus(fighter);
+            var bonus = DndStatRules.GetDamageBonus(fighter, weapon);
             return Math.Max(1, damage + bonus);
         }
 

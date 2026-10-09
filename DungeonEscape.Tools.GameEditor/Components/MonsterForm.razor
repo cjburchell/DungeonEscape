@@ -209,6 +209,11 @@ else
                         <TextReferenceSelect Label="Item" Value="@action.ItemId" ValueChanged="v => Set(() => action.ItemId = v)"
                                              Options="DataSources.Items" IncludeNone="true" />
                         <NumberField Label="Count" Value="action.Count" ValueChanged="v => Set(() => action.Count = v)" />
+                        <div class="field">
+                            <label>Bonus Action</label>
+                            <input type="checkbox" checked="@action.IsBonusAction"
+                                   @onchange="e => Set(() => action.IsBonusAction = (bool)(e.Value ?? false))" />
+                        </div>
                         <NumberField Label="Attack Bonus" Value="action.AttackBonus" ValueChanged="v => Set(() => action.AttackBonus = v)" />
                         <NumberField Label="Damage Dice" Value="action.DamageDice" ValueChanged="v => Set(() => action.DamageDice = v)" />
                         <NumberField Label="Damage Die" Value="action.DamageDie" ValueChanged="v => Set(() => action.DamageDie = v)" />

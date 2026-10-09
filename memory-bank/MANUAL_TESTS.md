@@ -1008,6 +1008,12 @@ active or waiting according to the current party-size limit.
 
 - Trigger combat with a party member using Fight against a monster.
 - Expected: the attack can hit or miss based on d20 attack roll versus target Armor Class, using explicit D&D combat fields when present and legacy Attack/Defence/Agility bridge values otherwise.
+- Give a party member more than one equippable weapon, then choose `Fight`.
+- Expected: combat offers a weapon picker; selecting a different weapon readies it and the attack message names that weapon.
+- Prepare or learn a bonus-action spell such as `Shield of Faith` or `Mass Healing Word`, then enter combat.
+- Expected: the hero can take one normal action and one `Bonus` action before ending the turn; bonus-action spells do not appear in the normal Spell list.
+- Mark a skill/item skill or monster action as `IsBonusAction` in data/editor and enter combat.
+- Expected: player bonus skills/items appear under `Bonus`, and monsters with a bonus action queue it in addition to their normal action.
 
 ### [ ] D&D HP Data Naming
 
@@ -1020,13 +1026,13 @@ active or waiting according to the current party-size limit.
 - Trigger random encounters in several areas, including a dungeon/tower map with map-specific monsters.
 - Expected: monsters use the renamed D&D-style display names, such as `Goblin Archer`, `Troll`, `Dire Wolf`, or `Green Dragon Wyrmling`, and encounters still resolve without missing-monster lookup errors.
 - Equip a weapon with `DamageDice`, `DamageDie`, and `DamageBonus` set in item data.
-- Expected: Fight damage uses those weapon dice and bonus.
+- Expected: Fight attack and damage use those weapon dice and bonus.
 - Fight a monster with explicit `ArmorClass`, `AttackBonus`, `DamageDice`, `DamageDie`, and `DamageBonus`.
 - Expected: monster D&D `Actions` use those values without requiring legacy monster `Skills` or Attack/Defence tuning.
 - Inspect `allmonsters.json` or a monster in the Game Editor.
 - Expected: monsters no longer expose legacy `Skills`; D&D actions may optionally reference an item but do not reference JRPG skills.
 - Inspect the static weapon and armor catalogs.
-- Expected: weapons expose D&D damage dice/bonus fields, and armor exposes an `ArmorClass` value used by the current equipment bridge.
+- Expected: weapons expose D&D damage dice/bonus fields, and equipped armor/shields contribute their AC bridge value to hero Armor Class.
 - Trigger a combat round with multiple heroes and monsters.
 - Expected: action resolution order follows initiative, using d20 plus Dexterity modifier, rather than only legacy Agility.
 - Force or observe a critical hit if practical.

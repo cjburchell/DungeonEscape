@@ -11,6 +11,7 @@ namespace Redpoint.DungeonEscape.Data
         public List<Quest> Quests { get; set; }
         public List<Dialog> Dialogs { get; set; }
         public List<ClassStats> ClassLevels { get; set; }
+        public List<BackgroundDefinition> Backgrounds { get; set; }
         public Names Names { get; set; }
         public TiledMapInfo TestMap { get; set; }
 
@@ -23,6 +24,7 @@ namespace Redpoint.DungeonEscape.Data
             Quests = new List<Quest>();
             Dialogs = new List<Dialog>();
             ClassLevels = new List<ClassStats>();
+            Backgrounds = new List<BackgroundDefinition>();
         }
 
         public void Link()

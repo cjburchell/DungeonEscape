@@ -13,9 +13,8 @@ namespace Redpoint.DungeonEscape.ViewModels
         public const int CreateSpeciesIndex = 3;
         public const int CreateClassIndex = 4;
         public const int CreateImageIndex = 5;
-        public const int CreateRerollIndex = 6;
-        public const int CreateStartIndex = 7;
-        public const int CreateBackIndex = 8;
+        public const int CreateStartIndex = 6;
+        public const int CreateBackIndex = 7;
         public const int FirstBlockedCreateSpriteIndex = 18;
         public const int SecondBlockedCreateSpriteIndex = 19;
 
@@ -142,7 +141,7 @@ namespace Redpoint.DungeonEscape.ViewModels
 
             if (Mode == TitleMode.Create)
             {
-                return 9;
+                return 8;
             }
 
             return GetMainRows(hasQuickSave, manualSaveCount).Count;
@@ -314,13 +313,11 @@ namespace Redpoint.DungeonEscape.ViewModels
                     return CreateGenderIndex;
                 case CreateClassIndex:
                     return CreateSpeciesIndex;
-                case CreateRerollIndex:
-                    return CreateImageIndex;
                 case CreateImageIndex:
                     return CreateClassIndex;
                 case CreateStartIndex:
                 case CreateBackIndex:
-                    return CreateRerollIndex;
+                    return CreateImageIndex;
                 default:
                     return index;
             }
@@ -331,6 +328,7 @@ namespace Redpoint.DungeonEscape.ViewModels
             switch (index)
             {
                 case CreateNameIndex:
+                case CreateGenerateNameIndex:
                     return CreateGenderIndex;
                 case CreateGenderIndex:
                     return CreateSpeciesIndex;
@@ -339,9 +337,6 @@ namespace Redpoint.DungeonEscape.ViewModels
                 case CreateClassIndex:
                     return CreateImageIndex;
                 case CreateImageIndex:
-                case CreateGenerateNameIndex:
-                    return CreateRerollIndex;
-                case CreateRerollIndex:
                     return CreateStartIndex;
                 default:
                     return index;

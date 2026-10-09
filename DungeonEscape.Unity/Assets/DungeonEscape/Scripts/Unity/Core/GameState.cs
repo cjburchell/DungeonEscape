@@ -1141,6 +1141,12 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             var gender = GetEnumProperty(mapObject, "Gender", Gender.Male);
             var memberClass = GetEnumProperty(mapObject, "Class", Class.Fighter);
+            var species = GetEnumProperty(mapObject, "Species", Species.Human);
+            var background = GetStringProperty(mapObject, "Background", "Acolyte");
+            var abilityBonus2 = GetStringProperty(mapObject, "AbilityBonus2", null);
+            var abilityBonus1 = GetStringProperty(mapObject, "AbilityBonus1", null);
+            var abilityScores = GetRecruitAbilityScores(memberClass, species, background, abilityBonus2, abilityBonus1);
+            var skillProficiencies = GetRecruitSkillProficiencies(mapObject);
             var level = Math.Max(1, GetIntProperty(mapObject, "Level", 1));
             var memberName = GetRecruitName(mapObject, gender);
             if (Party.Members.Any(member => string.Equals(member.Name, memberName, StringComparison.OrdinalIgnoreCase)))
@@ -1148,7 +1154,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 memberName = GenerateUniqueName(gender);
             }
 
-            var hero = CreateHero(memberName, memberClass, gender, level, true, null);
+            var hero = CreateHero(memberName, memberClass, gender, species, background, level, true, null, abilityScores, skillProficiencies);
             ApplyMapObjectSprite(hero, currentMapId, mapObject);
             hero.IsActive = false;
             hero.Order = 0;
@@ -2343,6 +2349,17 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 : defaultValue;
         }
 
+        private static string GetStringProperty(TiledObjectInfo mapObject, string propertyName, string defaultValue)
+        {
+            string value;
+            return mapObject != null &&
+                   mapObject.Properties != null &&
+                   mapObject.Properties.TryGetValue(propertyName, out value) &&
+                   !string.IsNullOrWhiteSpace(value)
+                ? value
+                : defaultValue;
+        }
+
         private bool SpendGold(int cost)
         {
             cost = Math.Max(0, cost);
@@ -2724,23 +2741,36 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         public void RestartNewGame()
         {
-            RestartNewGame("Player", Class.Paladin, Gender.Male, Species.Human, null);
+            RestartNewGame("Player", Class.Paladin, Gender.Male, Species.Human, "Acolyte", null, null, null);
         }
 
         public void RestartNewGame(string playerName, Class playerClass, Gender gender)
         {
-            RestartNewGame(playerName, playerClass, gender, Species.Human, null);
+            RestartNewGame(playerName, playerClass, gender, Species.Human, "Acolyte", null, null, null);
         }
 
         public void RestartNewGame(string playerName, Class playerClass, Gender gender, int? spriteFrameIndex)
         {
-            RestartNewGame(playerName, playerClass, gender, Species.Human, spriteFrameIndex);
+            RestartNewGame(playerName, playerClass, gender, Species.Human, "Acolyte", spriteFrameIndex, null, null);
         }
 
         public void RestartNewGame(string playerName, Class playerClass, Gender gender, Species species, int? spriteFrameIndex)
         {
+            RestartNewGame(playerName, playerClass, gender, species, "Acolyte", spriteFrameIndex, null, null);
+        }
+
+        public void RestartNewGame(
+            string playerName,
+            Class playerClass,
+            Gender gender,
+            Species species,
+            string background,
+            int? spriteFrameIndex,
+            int[] abilityScores,
+            IEnumerable<string> skillProficiencies)
+        {
             GameFile = LoadGameFile();
-            CurrentSave = CreateDefaultSave(playerName, playerClass, gender, species, spriteFrameIndex);
+            CurrentSave = CreateDefaultSave(playerName, playerClass, gender, species, background, spriteFrameIndex, abilityScores, skillProficiencies);
             CurrentSave.IsQuick = false;
             ShouldApplyInitialSpawn = true;
             MarkDirty();
@@ -2762,7 +2792,20 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         public Hero CreatePlayerPreviewHero(string playerName, Class playerClass, Gender gender, Species species, int? spriteFrameIndex)
         {
-            return CreateHero(playerName, playerClass, gender, species, 1, false, spriteFrameIndex);
+            return CreatePlayerPreviewHero(playerName, playerClass, gender, species, "Acolyte", spriteFrameIndex, null, null);
+        }
+
+        public Hero CreatePlayerPreviewHero(
+            string playerName,
+            Class playerClass,
+            Gender gender,
+            Species species,
+            string background,
+            int? spriteFrameIndex,
+            int[] abilityScores,
+            IEnumerable<string> skillProficiencies)
+        {
+            return CreateHero(playerName, playerClass, gender, species, background, 1, false, spriteFrameIndex, abilityScores, skillProficiencies);
         }
 
         public void MarkInitialSpawnApplied()
@@ -2772,15 +2815,28 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private GameSave CreateDefaultSave()
         {
-            return CreateDefaultSave("Player", Class.Paladin, Gender.Male, Species.Human, null);
+            return CreateDefaultSave("Player", Class.Paladin, Gender.Male, Species.Human, "Acolyte", null, null, null);
         }
 
         private GameSave CreateDefaultSave(string playerName, Class playerClass, Gender gender, int? spriteFrameIndex)
         {
-            return CreateDefaultSave(playerName, playerClass, gender, Species.Human, spriteFrameIndex);
+            return CreateDefaultSave(playerName, playerClass, gender, Species.Human, "Acolyte", spriteFrameIndex, null, null);
         }
 
         private GameSave CreateDefaultSave(string playerName, Class playerClass, Gender gender, Species species, int? spriteFrameIndex)
+        {
+            return CreateDefaultSave(playerName, playerClass, gender, species, "Acolyte", spriteFrameIndex, null, null);
+        }
+
+        private GameSave CreateDefaultSave(
+            string playerName,
+            Class playerClass,
+            Gender gender,
+            Species species,
+            string background,
+            int? spriteFrameIndex,
+            int[] abilityScores,
+            IEnumerable<string> skillProficiencies)
         {
             if (string.IsNullOrEmpty(playerName))
             {
@@ -2795,7 +2851,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             };
             party.CurrentMapIsOverWorld = party.CurrentMapId == "overworld";
             party.OverWorldPosition = party.CurrentPosition.Value;
-            party.Members.Add(CreateHero(party.PlayerName, playerClass, gender, species, 1, true, spriteFrameIndex));
+            party.Members.Add(CreateHero(party.PlayerName, playerClass, gender, species, background, 1, true, spriteFrameIndex, abilityScores, skillProficiencies));
 
             return new GameSave
             {
@@ -2807,10 +2863,25 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private Hero CreateHero(string heroName, Class heroClass, Gender gender, int level, bool generateItems, int? spriteFrameIndex)
         {
-            return CreateHero(heroName, heroClass, gender, Species.Human, level, generateItems, spriteFrameIndex);
+            return CreateHero(heroName, heroClass, gender, Species.Human, "Acolyte", level, generateItems, spriteFrameIndex, null, null);
         }
 
         private Hero CreateHero(string heroName, Class heroClass, Gender gender, Species species, int level, bool generateItems, int? spriteFrameIndex)
+        {
+            return CreateHero(heroName, heroClass, gender, species, "Acolyte", level, generateItems, spriteFrameIndex, null, null);
+        }
+
+        private Hero CreateHero(
+            string heroName,
+            Class heroClass,
+            Gender gender,
+            Species species,
+            string background,
+            int level,
+            bool generateItems,
+            int? spriteFrameIndex,
+            int[] abilityScores,
+            IEnumerable<string> skillProficiencies)
         {
             var hero = new Hero
             {
@@ -2818,6 +2889,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 Class = heroClass,
                 Gender = gender,
                 Species = species,
+                Background = string.IsNullOrWhiteSpace(background) ? "Acolyte" : background,
                 SpriteFrameIndex = spriteFrameIndex,
                 IsActive = true,
                 Order = 0,
@@ -2827,6 +2899,9 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             ApplyStartingClassStats(hero);
             DndCharacterRules.ApplyStartingAbilityScores(hero);
+            DndCharacterRules.ApplyBackgroundAbilityBonuses(hero, GetBackgroundDefinition(hero.Background));
+            ApplyCustomAbilityScores(hero, abilityScores);
+            ApplyCustomSkillProficiencies(hero, GetBackgroundDefinition(hero.Background), skillProficiencies);
             ApplyStartingDndDerivedStats(hero);
             var classLevels = GameDataCache.Current == null ? null : GameDataCache.Current.ClassLevels;
             if (classLevels != null && classLevels.Any(item => IsClass(item.Class, hero.Class)))
@@ -2847,6 +2922,123 @@ namespace Redpoint.DungeonEscape.Unity.Core
             }
 
             return hero;
+        }
+
+        private static void ApplyCustomAbilityScores(Hero hero, int[] abilityScores)
+        {
+            if (hero == null || abilityScores == null || abilityScores.Length < 6)
+            {
+                return;
+            }
+
+            hero.Strength = abilityScores[0];
+            hero.Dexterity = abilityScores[1];
+            hero.Constitution = abilityScores[2];
+            hero.Intelligence = abilityScores[3];
+            hero.Wisdom = abilityScores[4];
+            hero.Charisma = abilityScores[5];
+        }
+
+        private static int[] GetRecruitAbilityScores(
+            Class heroClass,
+            Species species,
+            string background,
+            string abilityBonus2,
+            string abilityBonus1)
+        {
+            var hero = new Hero
+            {
+                Class = heroClass,
+                Species = species,
+                Background = string.IsNullOrWhiteSpace(background) ? "Acolyte" : background
+            };
+            DndCharacterRules.ApplyStartingAbilityScores(hero);
+            DndCharacterRules.ApplyBackgroundAbilityBonuses(hero, GetBackgroundDefinition(hero.Background));
+            ApplyRecruitAbilityBonus(hero, abilityBonus2, 2);
+            ApplyRecruitAbilityBonus(hero, abilityBonus1, 1);
+            return new[]
+            {
+                hero.Strength,
+                hero.Dexterity,
+                hero.Constitution,
+                hero.Intelligence,
+                hero.Wisdom,
+                hero.Charisma
+            };
+        }
+
+        private static void ApplyRecruitAbilityBonus(Hero hero, string abilityName, int bonus)
+        {
+            if (hero == null || string.IsNullOrWhiteSpace(abilityName) || bonus == 0)
+            {
+                return;
+            }
+
+            switch (abilityName.Trim().ToLowerInvariant())
+            {
+                case "str":
+                case "strength":
+                    hero.Strength += bonus;
+                    break;
+                case "dex":
+                case "dexterity":
+                    hero.Dexterity += bonus;
+                    break;
+                case "con":
+                case "constitution":
+                    hero.Constitution += bonus;
+                    break;
+                case "int":
+                case "intelligence":
+                    hero.Intelligence += bonus;
+                    break;
+                case "wis":
+                case "wisdom":
+                    hero.Wisdom += bonus;
+                    break;
+                case "cha":
+                case "charisma":
+                    hero.Charisma += bonus;
+                    break;
+            }
+        }
+
+        private static List<string> GetRecruitSkillProficiencies(TiledObjectInfo mapObject)
+        {
+            var value = GetStringProperty(mapObject, "SkillProficiencies", null);
+            return string.IsNullOrWhiteSpace(value)
+                ? null
+                : value
+                    .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(skill => skill.Trim())
+                    .Where(skill => !string.IsNullOrWhiteSpace(skill))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+        }
+
+        private static void ApplyCustomSkillProficiencies(Hero hero, BackgroundDefinition background, IEnumerable<string> skillProficiencies)
+        {
+            if (hero == null)
+            {
+                return;
+            }
+
+            var classStats = GameDataCache.Current == null || GameDataCache.Current.ClassLevels == null
+                ? null
+                : GameDataCache.Current.ClassLevels.FirstOrDefault(item => IsClass(item.Class, hero.Class));
+            hero.SkillProficiencies = skillProficiencies == null
+                ? DndCharacterRules.GetStartingSkillProficiencies(classStats, background)
+                : skillProficiencies
+                    .Where(skill => !string.IsNullOrWhiteSpace(skill))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+        }
+
+        private static BackgroundDefinition GetBackgroundDefinition(string backgroundId)
+        {
+            return DndCharacterRules.FindBackground(
+                GameDataCache.Current == null ? null : GameDataCache.Current.Backgrounds,
+                backgroundId);
         }
 
         private static void ApplyStartingClassStats(Hero hero)

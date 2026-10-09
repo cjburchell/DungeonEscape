@@ -1,4 +1,5 @@
 using Redpoint.DungeonEscape.Rules;
+using Redpoint.DungeonEscape.Data;
 using Redpoint.DungeonEscape.State;
 using Xunit;
 
@@ -39,6 +40,35 @@ namespace DungeonEscape.Core.Test.Rules
             Assert.Equal(17, hero.Intelligence);
             Assert.Equal(12, hero.Wisdom);
             Assert.Equal(10, hero.Charisma);
+        }
+
+        [Fact]
+        public void BackgroundsAddDefaultSkillProficiencies()
+        {
+            var classStats = new ClassStats
+            {
+                SkillProficiencies = new System.Collections.Generic.List<string> { "Athletics", "Perception" }
+            };
+
+            var background = DndCharacterRules.FindBackground(DndCharacterRules.GetDefaultBackgrounds(), "Criminal");
+            var skills = DndCharacterRules.GetStartingSkillProficiencies(classStats, background);
+
+            Assert.Contains("Athletics", skills);
+            Assert.Contains("Deception", skills);
+            Assert.Contains("Stealth", skills);
+            Assert.Equal(skills.Count, new System.Collections.Generic.HashSet<string>(skills, System.StringComparer.OrdinalIgnoreCase).Count);
+        }
+
+        [Fact]
+        public void BackgroundsAddAbilityBonuses()
+        {
+            var hero = new Hero { Strength = 10, Dexterity = 10, Constitution = 10, Intelligence = 10, Wisdom = 10, Charisma = 10 };
+            var background = DndCharacterRules.FindBackground(DndCharacterRules.GetDefaultBackgrounds(), "Sage");
+
+            DndCharacterRules.ApplyBackgroundAbilityBonuses(hero, background);
+
+            Assert.Equal(12, hero.Intelligence);
+            Assert.Equal(11, hero.Wisdom);
         }
     }
 }

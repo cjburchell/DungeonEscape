@@ -180,6 +180,7 @@ recruit/leave choices; selecting a topic provides a follow-up chance to recruit.
 separate runs.
 - Expected: the selected NPC joins exactly once, disappears from the map, and is
 active or waiting according to the current party-size limit.
+- Expected: recruits keep their map-defined D&D metadata after joining: dungeon Wizard is Elf/Sage, shrine Cleric is Human/Acolyte, and Isis Fighter is Human/Soldier, with their configured ability bonuses reflected in status/derived stats.
 - Open the Quest menu during `Lost_Sea_Shell` and `Find_Ship`.
 - Expected: quest descriptions and current-stage text read clearly and match the current objective.
 
@@ -601,14 +602,18 @@ active or waiting according to the current party-size limit.
 
 - Return to the title menu from the in-game menu.
 - Select New Quest.
-- Expected: New Quest screen appears over `menu2.png` with vertically centered compact Name/Gender/Class/Image controls, portrait, and stat panel inside a black panel with a white border.
+- Expected: New Quest screen appears over `menu2.png` with page-one Name/Gender/Race/Class/Background/Image controls, portrait, stat panel, and pinned Next/Back buttons inside a black panel with a white border.
+- Resize the game window shorter or increase UI scale until the full form body cannot fit.
+- Expected: the form body scrolls if needed, while Start and Back remain visible at the bottom of the dialog.
 - Enter a player name or press Random.
 - Expected: Random fills the name field with a generated name for the selected gender.
 - Open the Gender dropdown and choose a gender.
+- Open the Race dropdown and choose a species.
 - Open the Class dropdown and choose a class.
+- Open the Background dropdown and choose a background.
 - Expected: dropdown choices overlay the screen without shifting the rest of the UI.
 - Expected: long dropdowns show a scrollbar when not all choices fit.
-- Use keyboard or gamepad up/down and interact on Name, Generate Name, Gender, Class, Image, Re-roll, Start, and Back.
+- Use keyboard or gamepad up/down and interact on Name, Generate Name, Gender, Race, Class, Background, Image, Next, Start, and Back.
 - Expected: each Create Quest control can be selected and activated without using the mouse.
 - Change Image with left/right or Interact.
 - Expected: the bordered image picker changes the centered portrait with left/right arrows while the selected class, gender, and starter stats remain driven by their own controls.
@@ -618,21 +623,31 @@ active or waiting according to the current party-size limit.
 - Change Name, Gender, and Image repeatedly.
 - Expected: the displayed stats do not re-roll from those changes.
 - Press down from Generate Name.
-- Expected: selection moves to Re-roll.
+- Expected: selection moves back into the form controls instead of skipping to an off-screen action.
 - Press left from Generate Name.
 - Expected: selection moves to Name.
 - Press left/right on Start or Back.
-- Expected: selection moves horizontally between Start and Back.
-- Press up/down from Start or Back.
+- Expected: selection moves horizontally between Next/Start and Back.
+- Press up/down from Next/Start or Back.
 - Expected: selection follows the same visual column instead of moving through every control linearly.
 - With a dropdown open, use keyboard or gamepad up/down and interact.
 - Expected: dropdown choices can be selected without using the mouse.
 - Expected: the image picker preview updates for the selected image and keeps the sprite aspect ratio.
-- Press Re-roll.
-- Expected: the displayed starter stats change without changing the selected name, gender, or class.
-- Expected: the stats panel has a `Stats` title, no portrait image inside the stats area, and the `Re-Roll` button at the bottom.
-- Select Start.
-- Expected: a new game starts with the chosen player name/class/gender/image and the title menu closes.
+- Expected: the stats panel has a `Stats` title, no portrait image inside the stats area, and no legacy stat re-roll control.
+- Select Next.
+- Expected: the second page shows editable ability scores with a points-remaining value, assignable `+2` and `+1` ability bonuses, plus D&D skill proficiency checkboxes.
+- Increase and decrease ability scores.
+- Expected: scores stay within the allowed range, points remaining updates, and derived stats such as HP/AC/attack update in the preview.
+- Change the `+2` and `+1` ability bonuses.
+- Expected: the bonuses cannot target the same ability, the displayed ability score totals update, and the final review/start character uses the adjusted totals.
+- Toggle skill proficiencies.
+- Expected: selected proficiencies are preserved when moving to review and starting the game.
+- Select Next.
+- Expected: the third page shows a read-only character review with portrait, name, gender, race, class, background, HP, AC, proficiency, attack/damage/initiative, ability scores, spell slots, and selected proficiencies.
+- Press Back from the review page.
+- Expected: the flow returns to the ability/proficiency page with choices preserved.
+- Select Start from the review page.
+- Expected: a new game starts with the chosen player name/class/gender/race/background/image, ability scores, and proficiencies, and the title menu closes.
 - Save and reload.
 - Expected: the chosen player image is restored in the party status portrait, lead map sprite, and follower visuals where applicable.
 
@@ -1017,7 +1032,9 @@ active or waiting according to the current party-size limit.
 ### [ ] D&D-Style Character Creation Fields
 
 - Start New Quest from the title menu.
-- Expected: character creation shows Gender, Species, Role, and Image selectors.
+- Expected: the first page shows Gender, Species, Class, Background, and an Appearance panel with the portrait selector; it does not show the stat preview on the right.
+- Open the Class dropdown and click the first class row.
+- Expected: the first row is selectable with the mouse and is not blocked by the Background selector.
 - Cycle Species with keyboard/gamepad and the dropdown.
 - Expected: Species changes between Human, Elf, Dwarf, and Halfling, and the preview ability-score rows update.
 - Cycle Class.
@@ -1090,7 +1107,7 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 - Launch the tool; a desktop window titled "Dungeon Escape - Game Editor" opens.
 - Open `DungeonEscape.Unity/Assets/DungeonEscape/Data` from the **File** menu.
 
-- Expected: tabs appear for Monsters, Spells, Skills, Items, Quests, Dialogs, Class, Names, and Maps.
+- Expected: tabs appear for Monsters, Spells, Skills, Items, Quests, Dialogs, Class, Backgrounds, Names, and Maps.
 - Expected: the validation panel shows the current issue count and can be collapsed/expanded.
 - Select the Monsters tab and choose a monster.
 - Expected: the right form shows its properties and a large image preview.
@@ -1098,14 +1115,14 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 - Expected: the preview and the list thumbnail update to the selected tileset image.
 - Edit Name, stats, Rarity, Biomes, and add/remove Spells/Skills/Items via the dropdowns.
 - Expected: the project name shows a "• unsaved" indicator after any change.
-- Visit several other tabs and make a reversible edit, such as quest text, dialog choice metadata, class default image, item metadata, or map gameplay metadata.
+- Visit several other tabs and make a reversible edit, such as quest text, dialog choice metadata, class default image, background ability bonuses/proficiencies, item metadata, or map gameplay metadata.
 - Expected: each edit marks the project unsaved and updates validation when references or required fields change.
 - Click Save Project.
 - Expected: the indicator clears and changed JSON/TMX/map-monster files on disk are updated; reopening the Data folder shows the changes, and saved JSON still matches the game format.
 
 ### [ ] Add, Duplicate, And Remove Array-Backed Data
 
-- With a Data folder open, use Monsters, Spells, Skills, Items, Quests, Dialogs, or Class.
+- With a Data folder open, use Monsters, Spells, Skills, Items, Quests, Dialogs, Class, or Backgrounds.
 - Click Add.
 - Expected: a new default entry for the active tab is added and selected.
 - Select an entry and click Duplicate.
@@ -1132,6 +1149,8 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 - Expected: the object selector has an internal scrollbar and does not grow beyond the editor window.
 - Select NPC, chest/hidden item, door, warp, and spawn objects.
 - Expected: each object class shows only its supported gameplay fields; layout/display fields stay read-only or hidden because Tiled owns them.
+- Select an `NpcPartyMember` object.
+- Expected: recruit-specific fields are available for Class, Gender, Species, Background, `+2 Ability`, `+1 Ability`, Level, and optional comma-separated Skill Proficiencies; invalid species/background/ability/skill values appear in validation.
 - Change a warp `WarpMap`.
 - Expected: the dependent `SpawnId` options update from the selected target map's spawn objects, with an empty spawn shown as the target map's default spawn.
 - Open the Song dropdown.

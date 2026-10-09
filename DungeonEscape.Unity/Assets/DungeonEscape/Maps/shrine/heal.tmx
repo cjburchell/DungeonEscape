@@ -365,6 +365,10 @@
   <object id="4" name="#Random#" class="NpcPartyMember" gid="1905" x="704" y="352" width="32" height="48">
    <properties>
     <property name="Class" value="Cleric"/>
+    <property name="Species" value="Human"/>
+    <property name="Background" value="Acolyte"/>
+    <property name="AbilityBonus2" value="Wisdom"/>
+    <property name="AbilityBonus1" value="Constitution"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Gender" value="Male"/>
     <property name="Level" type="int" value="2"/>

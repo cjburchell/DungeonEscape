@@ -28,5 +28,10 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             return JsonConvert.DeserializeObject<T>(asset.text);
         }
+
+        public static T LoadFromText<T>(string text)
+        {
+            return JsonConvert.DeserializeObject<T>(text);
+        }
     }
 }

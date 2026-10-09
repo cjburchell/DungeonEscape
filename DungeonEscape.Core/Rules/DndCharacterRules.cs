@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Redpoint.DungeonEscape.Data;
 using Redpoint.DungeonEscape.State;
 
@@ -19,9 +20,36 @@ namespace Redpoint.DungeonEscape.Rules
             Class.Sorcerer
         };
 
+        private static readonly string[] SkillNames =
+        {
+            "Acrobatics",
+            "Animal Handling",
+            "Arcana",
+            "Athletics",
+            "Deception",
+            "History",
+            "Insight",
+            "Intimidation",
+            "Investigation",
+            "Medicine",
+            "Nature",
+            "Perception",
+            "Performance",
+            "Persuasion",
+            "Religion",
+            "Sleight of Hand",
+            "Stealth",
+            "Survival"
+        };
+
         public static Class[] GetPlayableClasses()
         {
             return (Class[])PlayableClasses.Clone();
+        }
+
+        public static string[] GetSkillNames()
+        {
+            return (string[])SkillNames.Clone();
         }
 
         public static string GetClassLabel(Class heroClass)
@@ -32,6 +60,79 @@ namespace Redpoint.DungeonEscape.Rules
         public static string GetRoleClassLabel(Class heroClass)
         {
             return GetClassLabel(heroClass);
+        }
+
+        public static List<BackgroundDefinition> GetDefaultBackgrounds()
+        {
+            return new List<BackgroundDefinition>
+            {
+                new BackgroundDefinition { Id = "Acolyte", Name = "Acolyte", Wisdom = 2, Charisma = 1, SkillProficiencies = new List<string> { "Insight", "Religion" } },
+                new BackgroundDefinition { Id = "Artisan", Name = "Artisan", Intelligence = 1, Charisma = 2, SkillProficiencies = new List<string> { "Investigation", "Persuasion" } },
+                new BackgroundDefinition { Id = "Criminal", Name = "Criminal", Dexterity = 2, Intelligence = 1, SkillProficiencies = new List<string> { "Deception", "Stealth" } },
+                new BackgroundDefinition { Id = "Entertainer", Name = "Entertainer", Dexterity = 1, Charisma = 2, SkillProficiencies = new List<string> { "Acrobatics", "Performance" } },
+                new BackgroundDefinition { Id = "Guard", Name = "Guard", Strength = 2, Wisdom = 1, SkillProficiencies = new List<string> { "Athletics", "Perception" } },
+                new BackgroundDefinition { Id = "Guide", Name = "Guide", Dexterity = 1, Wisdom = 2, SkillProficiencies = new List<string> { "Nature", "Survival" } },
+                new BackgroundDefinition { Id = "Noble", Name = "Noble", Intelligence = 1, Charisma = 2, SkillProficiencies = new List<string> { "History", "Persuasion" } },
+                new BackgroundDefinition { Id = "Sage", Name = "Sage", Intelligence = 2, Wisdom = 1, SkillProficiencies = new List<string> { "Arcana", "History" } },
+                new BackgroundDefinition { Id = "Sailor", Name = "Sailor", Strength = 1, Dexterity = 2, SkillProficiencies = new List<string> { "Athletics", "Perception" } },
+                new BackgroundDefinition { Id = "Soldier", Name = "Soldier", Strength = 2, Constitution = 1, SkillProficiencies = new List<string> { "Athletics", "Intimidation" } }
+            };
+        }
+
+        public static BackgroundDefinition FindBackground(IEnumerable<BackgroundDefinition> backgrounds, string backgroundId)
+        {
+            var backgroundList = backgrounds == null ? GetDefaultBackgrounds() : backgrounds.Where(item => item != null).ToList();
+            if (backgroundList.Count == 0)
+            {
+                backgroundList = GetDefaultBackgrounds();
+            }
+
+            return backgroundList.FirstOrDefault(item =>
+                       string.Equals(item.Id, backgroundId, System.StringComparison.OrdinalIgnoreCase) ||
+                       string.Equals(item.Name, backgroundId, System.StringComparison.OrdinalIgnoreCase)) ??
+                   backgroundList.FirstOrDefault() ??
+                   GetDefaultBackgrounds().First();
+        }
+
+        public static string GetBackgroundLabel(BackgroundDefinition background)
+        {
+            if (background == null)
+            {
+                return string.Empty;
+            }
+
+            return string.IsNullOrWhiteSpace(background.Name) ? background.Id ?? string.Empty : background.Name;
+        }
+
+        public static void ApplyBackgroundAbilityBonuses(Hero hero, BackgroundDefinition background)
+        {
+            if (hero == null || background == null)
+            {
+                return;
+            }
+
+            hero.Strength += background.Strength;
+            hero.Dexterity += background.Dexterity;
+            hero.Constitution += background.Constitution;
+            hero.Intelligence += background.Intelligence;
+            hero.Wisdom += background.Wisdom;
+            hero.Charisma += background.Charisma;
+        }
+
+        public static List<string> GetStartingSkillProficiencies(ClassStats classStats, BackgroundDefinition background)
+        {
+            var skills = classStats == null || classStats.SkillProficiencies == null
+                ? new List<string>()
+                : classStats.SkillProficiencies.ToList();
+            if (background != null && background.SkillProficiencies != null)
+            {
+                skills.AddRange(background.SkillProficiencies);
+            }
+
+            return skills
+                .Where(skill => !string.IsNullOrWhiteSpace(skill))
+                .Distinct(System.StringComparer.OrdinalIgnoreCase)
+                .ToList();
         }
 
         public static List<Item> GetStartingEquipment(Class heroClass)

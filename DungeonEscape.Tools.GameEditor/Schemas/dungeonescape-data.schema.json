@@ -253,6 +253,23 @@
         "SkillProficiencies": { "type": "array", "items": { "$ref": "#/$defs/dndSkillName" } }
       }
     },
+    "backgroundDefinition": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["Id", "Name"],
+      "properties": {
+        "Id": { "type": "string", "minLength": 1 },
+        "Name": { "type": "string", "minLength": 1 },
+        "Description": { "type": "string" },
+        "Strength": { "type": "integer" },
+        "Dexterity": { "type": "integer" },
+        "Constitution": { "type": "integer" },
+        "Intelligence": { "type": "integer" },
+        "Wisdom": { "type": "integer" },
+        "Charisma": { "type": "integer" },
+        "SkillProficiencies": { "type": "array", "items": { "$ref": "#/$defs/dndSkillName" } }
+      }
+    },
     "names": {
       "type": "object",
       "additionalProperties": true,

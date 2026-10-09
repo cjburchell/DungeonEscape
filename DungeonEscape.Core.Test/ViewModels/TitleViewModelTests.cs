@@ -30,9 +30,12 @@ namespace DungeonEscape.Core.Test.ViewModels
             Assert.Equal(TitleViewModel.CreateGenerateNameIndex, viewModel.GetCreateNavigationIndex(1, 0));
             Assert.Equal(TitleViewModel.CreateGenderIndex, viewModel.GetCreateNavigationIndex(0, 1));
 
+            viewModel.SetSelectedIndex(TitleViewModel.CreateGenerateNameIndex);
+            Assert.Equal(TitleViewModel.CreateGenderIndex, viewModel.GetCreateNavigationIndex(0, 1));
+
             viewModel.SetSelectedIndex(TitleViewModel.CreateBackIndex);
             Assert.Equal(TitleViewModel.CreateStartIndex, viewModel.GetCreateNavigationIndex(-1, 0));
-            Assert.Equal(TitleViewModel.CreateRerollIndex, viewModel.GetCreateNavigationIndex(0, -1));
+            Assert.Equal(TitleViewModel.CreateImageIndex, viewModel.GetCreateNavigationIndex(0, -1));
         }
 
         [Fact]

@@ -44,7 +44,12 @@ else
                 <div class="field-grid" style="margin-top:.75rem">
                     @PropertySelect("Class", "Class", DataSources.Classes, true)
                     @PropertySelect("Gender", "Gender", GenderOptions, true)
+                    @PropertySelect("Species", "Species", SpeciesOptions, true)
+                    @PropertySelect("Background", "Background", DataSources.Backgrounds, true)
+                    @PropertySelect("+2 Ability", "AbilityBonus2", AbilityOptions, true)
+                    @PropertySelect("+1 Ability", "AbilityBonus1", AbilityOptions, true)
                     @PropertyNumber("Level", "Level")
+                    @PropertyField("Skill Proficiencies", "SkillProficiencies")
                 </div>
             }
         }
@@ -109,6 +114,8 @@ else
     private static readonly IReadOnlyList<string> DirectionOptions = Enum.GetValues<Direction>().Select(value => value.ToString()).ToList();
 
     private static readonly IReadOnlyList<string> GenderOptions = Enum.GetValues<Gender>().Select(value => value.ToString()).ToList();
+    private static readonly IReadOnlyList<string> SpeciesOptions = Enum.GetValues<Species>().Select(value => value.ToString()).ToList();
+    private static readonly IReadOnlyList<string> AbilityOptions = new[] { "Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma" };
 
     private IReadOnlyList<string> MapOptions => MapReferenceOptions.GetMapOptions(Maps);
 
@@ -248,4 +255,5 @@ else
         <label>@Label</label>
         <input type="checkbox" checked="@GetBoolProperty(PropertyName)" @onchange="e => SetBoolProperty(PropertyName, e.Value is true)" />
     </div>;
+
 }

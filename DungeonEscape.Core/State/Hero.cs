@@ -19,6 +19,8 @@ namespace Redpoint.DungeonEscape.State
         [JsonConverter(typeof(StringEnumConverter))]
         public Species Species { get; set; }
 
+        public string Background { get; set; }
+
         public ulong NextLevel { get; set; }
         public bool IsActive { get; set; }
         public int Order { get; set; }

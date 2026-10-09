@@ -2,6 +2,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Redpoint.DungeonEscape.Data;
+using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 
 namespace DungeonEscape.Tools.GameEditor.Services;
@@ -28,6 +29,7 @@ public sealed class DataFolderService
     private const string DialogsFileName = "dialog.json";
     private const string NamesFileName = "names.json";
     private const string ClassLevelsFileName = "classlevels.json";
+    private const string BackgroundsFileName = "backgrounds.json";
 
     private static readonly JsonSerializerSettings SerializerSettings = new()
     {
@@ -66,6 +68,7 @@ public sealed class DataFolderService
     public List<Quest> Quests { get; private set; } = new();
     public List<Dialog> Dialogs { get; private set; } = new();
     public List<ClassStats> ClassLevels { get; private set; } = new();
+    public List<BackgroundDefinition> Backgrounds { get; private set; } = new();
     public Names Names { get; private set; } = new() { Male = new List<string>(), Female = new List<string>() };
     public List<MapDocument> Maps { get; private set; } = new();
 
@@ -97,6 +100,12 @@ public sealed class DataFolderService
         Quests = LoadList<Quest>(Path.Combine(folderPath, QuestsFileName));
         Dialogs = LoadList<Dialog>(Path.Combine(folderPath, DialogsFileName));
         ClassLevels = LoadList<ClassStats>(Path.Combine(folderPath, ClassLevelsFileName));
+        Backgrounds = LoadList<BackgroundDefinition>(Path.Combine(folderPath, BackgroundsFileName));
+        if (Backgrounds.Count == 0)
+        {
+            Backgrounds = DndCharacterRules.GetDefaultBackgrounds();
+        }
+
         Names = LoadObject(Path.Combine(folderPath, NamesFileName), new Names());
         Names.Male ??= new List<string>();
         Names.Female ??= new List<string>();
@@ -144,6 +153,7 @@ public sealed class DataFolderService
         SaveList(Path.Combine(FolderPath, QuestsFileName), Quests);
         SaveList(Path.Combine(FolderPath, DialogsFileName), Dialogs);
         SaveList(Path.Combine(FolderPath, ClassLevelsFileName), ClassLevels);
+        SaveList(Path.Combine(FolderPath, BackgroundsFileName), Backgrounds);
         SaveObject(Path.Combine(FolderPath, NamesFileName), Names);
         maps.SaveMaps(Maps, assetContext.MapDataDirectory);
 

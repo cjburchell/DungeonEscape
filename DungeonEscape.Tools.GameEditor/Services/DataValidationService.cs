@@ -67,6 +67,8 @@ public sealed class DataValidationService
         var dialogIds = NameSet(data.Dialogs.Select(dialog => dialog.Id));
         var monsterNames = NameSet(data.Monsters.Select(monster => monster.Name));
         var classValues = NameSet(data.ClassLevels.Select(classStats => classStats.Class));
+        var backgroundValues = NameSet(data.Backgrounds.Select(background => background.Id)
+            .Concat(data.Backgrounds.Select(background => background.Name)));
         var mapIds = NameSet(data.Maps.Select(map => map.Id).Concat(data.Maps.Select(map => "maps/" + map.Id)));
 
         ValidateRequiredNames(issues, "Monster", data.Monsters.Select((item, index) => (index, Value: (string?)item.Name)));
@@ -76,6 +78,8 @@ public sealed class DataValidationService
         ValidateRequiredNames(issues, "Quest", data.Quests.Select((item, index) => (index, Value: (string?)item.Id)));
         ValidateRequiredNames(issues, "Dialog", data.Dialogs.Select((item, index) => (index, Value: (string?)item.Id)));
         ValidateRequiredNames(issues, "Class level", data.ClassLevels.Select((item, index) => (index, Value: (string?)item.Class)));
+        ValidateRequiredNames(issues, "Background", data.Backgrounds.Select((item, index) => (index, Value: (string?)item.Id)));
+        ValidateRequiredNames(issues, "Background", data.Backgrounds.Select((item, index) => (index, Value: (string?)item.Name)));
 
         ValidateDuplicates(issues, "Monster name", data.Monsters.Select(monster => monster.Name));
         ValidateDuplicates(issues, "Spell name", data.Spells.Select(spell => spell.Name));
@@ -85,6 +89,8 @@ public sealed class DataValidationService
         ValidateDuplicates(issues, "Quest id", data.Quests.Select(quest => quest.Id));
         ValidateDuplicates(issues, "Dialog id", data.Dialogs.Select(dialog => dialog.Id));
         ValidateDuplicates(issues, "Class level class", data.ClassLevels.Select(classStats => classStats.Class));
+        ValidateDuplicates(issues, "Background id", data.Backgrounds.Select(background => background.Id));
+        ValidateDuplicates(issues, "Background name", data.Backgrounds.Select(background => background.Name));
 
         ValidateMonsters(issues, itemRefs);
         ValidateSpells(issues, skillNames, classValues);
@@ -92,7 +98,8 @@ public sealed class DataValidationService
         ValidateQuests(issues, itemRefs);
         ValidateDialogs(issues, questIds, itemRefs, monsterNames);
         ValidateClassLevels(issues);
-        ValidateMaps(issues, itemRefs, dialogIds, monsterNames, mapIds, classValues);
+        ValidateBackgrounds(issues);
+        ValidateMaps(issues, itemRefs, dialogIds, monsterNames, mapIds, classValues, backgroundValues);
         ValidateAssetFiles(issues);
 
         return issues
@@ -215,6 +222,34 @@ public sealed class DataValidationService
                 {
                     Error(issues, location, $"Unknown D&D skill proficiency '{skillProficiency}'.");
                 }
+            }
+        }
+    }
+
+    private void ValidateBackgrounds(List<DataValidationIssue> issues)
+    {
+        for (var i = 0; i < data.Backgrounds.Count; i++)
+        {
+            var background = data.Backgrounds[i];
+            var location = Label("Background", string.IsNullOrEmpty(background.Name) ? background.Id : background.Name, i);
+            ValidateDuplicates(issues, location + " skill proficiency", background.SkillProficiencies);
+            foreach (var skillProficiency in background.SkillProficiencies ?? new List<string>())
+            {
+                if (!DndStatRules.IsDndSkillName(skillProficiency))
+                {
+                    Error(issues, location, $"Unknown D&D skill proficiency '{skillProficiency}'.");
+                }
+            }
+
+            var bonusTotal = background.Strength +
+                             background.Dexterity +
+                             background.Constitution +
+                             background.Intelligence +
+                             background.Wisdom +
+                             background.Charisma;
+            if (bonusTotal <= 0)
+            {
+                Warning(issues, location, "Background has no ability score bonuses.");
             }
         }
     }
@@ -346,7 +381,8 @@ public sealed class DataValidationService
         HashSet<string> dialogIds,
         HashSet<string> monsterNames,
         HashSet<string> mapIds,
-        HashSet<string> classValues)
+        HashSet<string> classValues,
+        HashSet<string> backgroundValues)
     {
         foreach (var map in data.Maps)
         {
@@ -363,7 +399,7 @@ public sealed class DataValidationService
 
             foreach (var mapObject in map.Objects)
             {
-                ValidateMapObject(issues, mapObject, itemRefs, dialogIds, mapIds, classValues);
+                ValidateMapObject(issues, mapObject, itemRefs, dialogIds, mapIds, classValues, backgroundValues);
             }
         }
     }
@@ -385,7 +421,8 @@ public sealed class DataValidationService
         HashSet<string> itemRefs,
         HashSet<string> dialogIds,
         HashSet<string> mapIds,
-        HashSet<string> classValues)
+        HashSet<string> classValues,
+        HashSet<string> backgroundValues)
     {
         var location = $"Map '{mapObject.MapId}' object #{mapObject.Id} '{mapObject.DisplayName}'";
         ValidateReference(issues, location, "dialog", GetProperty(mapObject, "Dialog"), dialogIds);
@@ -409,6 +446,17 @@ public sealed class DataValidationService
         if (string.Equals(mapObject.Class, "NpcPartyMember", StringComparison.OrdinalIgnoreCase))
         {
             ValidateReference(issues, location, "class", GetProperty(mapObject, "Class"), classValues);
+            ValidateReference(issues, location, "background", GetProperty(mapObject, "Background"), backgroundValues);
+            ValidateEnumValue<Species>(issues, location, "species", GetProperty(mapObject, "Species"));
+            ValidateAbilityName(issues, location, "+2 ability", GetProperty(mapObject, "AbilityBonus2"));
+            ValidateAbilityName(issues, location, "+1 ability", GetProperty(mapObject, "AbilityBonus1"));
+            foreach (var skill in SplitList(GetProperty(mapObject, "SkillProficiencies")))
+            {
+                if (!DndStatRules.IsDndSkillName(skill))
+                {
+                    Error(issues, location, $"Unknown D&D skill proficiency '{skill}'.");
+                }
+            }
         }
     }
 
@@ -570,6 +618,53 @@ public sealed class DataValidationService
                 Error(issues, location, $"Class '{itemClass}' is not defined in classlevels.json.");
             }
         }
+    }
+
+    private static void ValidateEnumValue<TEnum>(
+        List<DataValidationIssue> issues,
+        string location,
+        string label,
+        string? value)
+        where TEnum : struct
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return;
+        }
+
+        if (!Enum.TryParse<TEnum>(value, true, out _))
+        {
+            Error(issues, location, $"Unknown {label} value '{value}'.");
+        }
+    }
+
+    private static void ValidateAbilityName(
+        List<DataValidationIssue> issues,
+        string location,
+        string label,
+        string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return;
+        }
+
+        var normalized = value.Trim();
+        var valid = new[] { "Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma", "STR", "DEX", "CON", "INT", "WIS", "CHA" };
+        if (!valid.Contains(normalized, StringComparer.OrdinalIgnoreCase))
+        {
+            Error(issues, location, $"Unknown {label} value '{value}'.");
+        }
+    }
+
+    private static IEnumerable<string> SplitList(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? Array.Empty<string>()
+            : value
+                .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(item => item.Trim())
+                .Where(item => !string.IsNullOrWhiteSpace(item));
     }
 
     private static void ValidateRequiredNames(

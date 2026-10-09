@@ -19,6 +19,7 @@ Use the per-file schemas for editor validation or future CI checks:
 | `quests.json` | `quests.schema.json` |
 | `dialog.json` | `dialog.schema.json` |
 | `classlevels.json` | `classlevels.schema.json` |
+| `backgrounds.json` | `backgrounds.schema.json` |
 | `names.json` | `names.schema.json` |
 | `Data/maps/**/*_monsters.json` | `map-monsters.schema.json` |
 

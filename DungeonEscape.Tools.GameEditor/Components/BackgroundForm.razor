@@ -1,0 +1,63 @@
+@*
+    Editor for backgrounds.json entries used by character creation.
+*@
+
+@if (Background == null)
+{
+    <div class="empty-state">Select a background from the list, or add a new one.</div>
+}
+else
+{
+    <div class="form-header">
+        <div class="field-grid" style="flex:1">
+            <div class="field">
+                <label>Id</label>
+                <input value="@Background.Id" @onchange="e => Set(() => Background.Id = e.Value?.ToString() ?? string.Empty)" />
+            </div>
+            <div class="field">
+                <label>Name</label>
+                <input value="@Background.Name" @onchange="e => Set(() => Background.Name = e.Value?.ToString() ?? string.Empty)" />
+            </div>
+        </div>
+    </div>
+
+    <div class="field">
+        <label>Description</label>
+        <textarea rows="3" value="@Background.Description" @onchange="e => Set(() => Background.Description = e.Value?.ToString() ?? string.Empty)"></textarea>
+    </div>
+
+    <fieldset>
+        <legend>Ability Bonuses</legend>
+        <div class="field-grid">
+            <NumberField Label="Strength" Value="Background.Strength" ValueChanged="v => Set(() => Background.Strength = v)" />
+            <NumberField Label="Dexterity" Value="Background.Dexterity" ValueChanged="v => Set(() => Background.Dexterity = v)" />
+            <NumberField Label="Constitution" Value="Background.Constitution" ValueChanged="v => Set(() => Background.Constitution = v)" />
+            <NumberField Label="Intelligence" Value="Background.Intelligence" ValueChanged="v => Set(() => Background.Intelligence = v)" />
+            <NumberField Label="Wisdom" Value="Background.Wisdom" ValueChanged="v => Set(() => Background.Wisdom = v)" />
+            <NumberField Label="Charisma" Value="Background.Charisma" ValueChanged="v => Set(() => Background.Charisma = v)" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Skill Proficiencies</legend>
+        <StringListEditor Items="EnsureSkillProficiencies()" Options="DndSkills" OnChanged="RaiseChanged" />
+    </fieldset>
+}
+
+@code {
+    [Parameter] public BackgroundDefinition? Background { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private static readonly IReadOnlyList<string> DndSkills = DndStatRules.GetDndSkillNames();
+
+    private List<string> EnsureSkillProficiencies() =>
+        Background == null ? new List<string>() : (Background.SkillProficiencies ??= new List<string>());
+
+    private async Task Set(Action mutate)
+    {
+        mutate();
+        await RaiseChanged();
+    }
+
+    private async Task RaiseChanged() => await OnChanged.InvokeAsync();
+}

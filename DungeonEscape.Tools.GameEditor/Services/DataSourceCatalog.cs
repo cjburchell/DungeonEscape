@@ -27,6 +27,7 @@ public sealed class DataSourceCatalog
     public IReadOnlyList<string> Dialogs { get; private set; } = Array.Empty<string>();
     public IReadOnlyList<string> Monsters { get; private set; } = Array.Empty<string>();
     public IReadOnlyList<string> Classes { get; private set; } = Array.Empty<string>();
+    public IReadOnlyList<string> Backgrounds { get; private set; } = Array.Empty<string>();
 
     public void Reload()
     {
@@ -52,6 +53,9 @@ public sealed class DataSourceCatalog
                 .Select(value => value.ToString())
                 .ToList();
         }
+
+        Backgrounds = Names(data.Backgrounds.Select(background => background.Id)
+            .Concat(data.Backgrounds.Select(background => background.Name)));
     }
 
     private static IReadOnlyList<string> Names(IEnumerable<string?> source)

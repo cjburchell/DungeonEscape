@@ -1,4 +1,5 @@
 ﻿using Redpoint.DungeonEscape.Data;
+using Redpoint.DungeonEscape.Rules;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,6 +44,9 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         [SerializeField]
         private TextAsset classLevelsJson;
+
+        [SerializeField]
+        private TextAsset backgroundsJson;
 
         [SerializeField]
         private TextAsset namesJson;
@@ -92,6 +96,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 Quests = LoadJson<List<Quest>>(questsJson, "quests"),
                 Dialogs = LoadJson<List<Dialog>>(dialogJson, "dialog"),
                 ClassLevels = LoadJson<List<ClassStats>>(classLevelsJson, "class levels"),
+                Backgrounds = LoadJson<List<BackgroundDefinition>>(backgroundsJson, "backgrounds", "Assets/DungeonEscape/Data/backgrounds.json") ?? DndCharacterRules.GetDefaultBackgrounds(),
                 Names = LoadJson<Names>(namesJson, "names"),
                 TestMap = LoadTiledMap(testMapTmx, testMapAssetPath, "test map")
             };
@@ -155,8 +160,30 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private static T LoadJson<T>(TextAsset asset, string label)
         {
+            return LoadJson<T>(asset, label, null);
+        }
+
+        private static T LoadJson<T>(TextAsset asset, string label, string assetPath)
+        {
             if (asset == null)
             {
+                if (!string.IsNullOrEmpty(assetPath))
+                {
+                    var fullPath = UnityAssetPath.ToRuntimePath(assetPath);
+                    if (File.Exists(fullPath))
+                    {
+                        try
+                        {
+                            return UnityJsonLoader.LoadFromText<T>(File.ReadAllText(fullPath));
+                        }
+                        catch (Exception exception)
+                        {
+                            Debug.LogError("Failed to deserialize " + label + " JSON from " + assetPath + ": " + exception.Message);
+                            return default(T);
+                        }
+                    }
+                }
+
                 Debug.LogError("Missing " + label + " JSON TextAsset.");
                 return default(T);
             }

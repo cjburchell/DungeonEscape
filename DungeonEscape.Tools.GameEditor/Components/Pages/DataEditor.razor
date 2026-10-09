@@ -197,6 +197,19 @@ else
                             </div>
                         }
                         break;
+                    case EditorTab.Backgrounds:
+                        @foreach (var background in Filter(Data.Backgrounds, b => b.Name))
+                        {
+                            var current = background;
+                            <div class="monster-item @(ReferenceEquals(current, selectedBackground) ? "selected" : string.Empty)"
+                                 @onclick="() => selectedBackground = current">
+                                <div class="meta">
+                                    <span class="name">@Display(current.Name)</span>
+                                    <span class="sub">@current.Id &middot; @(current.SkillProficiencies?.Count ?? 0) proficiencies</span>
+                                </div>
+                            </div>
+                        }
+                        break;
                     case EditorTab.Names:
                         <div class="empty-state">Names are edited as a single document.</div>
                         break;
@@ -242,6 +255,9 @@ else
                 case EditorTab.Classes:
                     <ClassStatsForm ClassStats="selectedClassStats" OnChanged="OnDataChanged" />
                     break;
+                case EditorTab.Backgrounds:
+                    <BackgroundForm Background="selectedBackground" OnChanged="OnDataChanged" />
+                    break;
                 case EditorTab.Names:
                     <NamesForm Names="Data.Names" OnChanged="OnDataChanged" />
                     break;
@@ -265,7 +281,7 @@ else
 }
 
 @code {
-    private enum EditorTab { Monsters, Spells, Skills, Items, Quests, Dialogs, Classes, Names, Maps, QuestGraph, EncounterSimulator }
+    private enum EditorTab { Monsters, Spells, Skills, Items, Quests, Dialogs, Classes, Backgrounds, Names, Maps, QuestGraph, EncounterSimulator }
 
     private EditorTab activeTab = EditorTab.Monsters;
     private string searchText = string.Empty;
@@ -281,6 +297,7 @@ else
     private Quest? selectedQuest;
     private Dialog? selectedDialog;
     private ClassStats? selectedClassStats;
+    private BackgroundDefinition? selectedBackground;
     private MapDocument? selectedMap;
 
     protected override void OnInitialized()
@@ -406,6 +423,7 @@ else
         selectedQuest = Data.Quests.FirstOrDefault();
         selectedDialog = Data.Dialogs.FirstOrDefault();
         selectedClassStats = Data.ClassLevels.FirstOrDefault();
+        selectedBackground = Data.Backgrounds.FirstOrDefault();
         selectedMap = Data.Maps.FirstOrDefault();
     }
 
@@ -418,6 +436,7 @@ else
     private static string TabLabel(EditorTab tab) => tab switch
     {
         EditorTab.Classes => "Class",
+        EditorTab.Backgrounds => "Backgrounds",
         EditorTab.QuestGraph => "Quest Graph",
         EditorTab.EncounterSimulator => "Encounter Simulator",
         _ => tab.ToString()
@@ -432,6 +451,7 @@ else
         EditorTab.Quests => Data.Quests.Count,
         EditorTab.Dialogs => Data.Dialogs.Count,
         EditorTab.Classes => Data.ClassLevels.Count,
+        EditorTab.Backgrounds => Data.Backgrounds.Count,
         EditorTab.Names => (Data.Names.Male?.Count ?? 0) + (Data.Names.Female?.Count ?? 0),
         EditorTab.Maps => Data.Maps.Count,
         EditorTab.QuestGraph => Data.Quests.Count + Data.Dialogs.Count,
@@ -453,6 +473,7 @@ else
         EditorTab.Quests => selectedQuest,
         EditorTab.Dialogs => selectedDialog,
         EditorTab.Classes => selectedClassStats,
+        EditorTab.Backgrounds => selectedBackground,
         EditorTab.Names => Data.Names,
         EditorTab.Maps => selectedMap,
         EditorTab.QuestGraph => null,
@@ -575,6 +596,15 @@ else
                 };
                 Data.ClassLevels.Add(selectedClassStats);
                 break;
+            case EditorTab.Backgrounds:
+                selectedBackground = new BackgroundDefinition
+                {
+                    Id = "NewBackground",
+                    Name = "New Background",
+                    SkillProficiencies = new List<string>()
+                };
+                Data.Backgrounds.Add(selectedBackground);
+                break;
         }
 
         Data.MarkDirty();
@@ -608,6 +638,12 @@ else
             case EditorTab.Classes when selectedClassStats != null:
                 selectedClassStats = Clone(selectedClassStats, Data.ClassLevels, c => c.Class, (_, _) => { });
                 selectedClassStats.Class = NextAvailableClass(selectedClassStats.Class);
+                break;
+            case EditorTab.Backgrounds when selectedBackground != null:
+                selectedBackground = Clone(selectedBackground, Data.Backgrounds, b => b.Name, (b, n) => b.Name = n);
+                selectedBackground.Id = UniqueId(
+                    string.IsNullOrWhiteSpace(selectedBackground.Id) ? "BackgroundCopy" : selectedBackground.Id + "Copy",
+                    Data.Backgrounds.Where(background => !ReferenceEquals(background, selectedBackground)).Select(background => background.Id));
                 break;
         }
 
@@ -689,6 +725,7 @@ else
             EditorTab.Quests => selectedQuest?.Name,
             EditorTab.Dialogs => selectedDialog?.Id,
             EditorTab.Classes => selectedClassStats?.Class,
+            EditorTab.Backgrounds => selectedBackground?.Name,
             EditorTab.Maps => selectedMap?.Id,
             _ => null
         };
@@ -733,6 +770,10 @@ else
             case EditorTab.Classes when selectedClassStats != null:
                 Data.ClassLevels.Remove(selectedClassStats);
                 selectedClassStats = Data.ClassLevels.FirstOrDefault();
+                break;
+            case EditorTab.Backgrounds when selectedBackground != null:
+                Data.Backgrounds.Remove(selectedBackground);
+                selectedBackground = Data.Backgrounds.FirstOrDefault();
                 break;
         }
 

@@ -405,6 +405,10 @@
   <object id="3" name="#Random#" class="NpcPartyMember" gid="1242" x="896" y="160" width="32" height="48">
    <properties>
     <property name="Class" value="Wizard"/>
+    <property name="Species" value="Elf"/>
+    <property name="Background" value="Sage"/>
+    <property name="AbilityBonus2" value="Intelligence"/>
+    <property name="AbilityBonus1" value="Dexterity"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Gender" value="Female"/>
     <property name="Level" type="int" value="3"/>

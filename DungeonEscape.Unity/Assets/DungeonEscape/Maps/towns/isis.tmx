@@ -396,6 +396,10 @@
     <object id="4" name="#Random#" class="NpcPartyMember" gid="3122" x="384" y="384" width="32" height="48">
       <properties>
         <property name="Class" value="Fighter" />
+        <property name="Species" value="Human" />
+        <property name="Background" value="Soldier" />
+        <property name="AbilityBonus2" value="Strength" />
+        <property name="AbilityBonus1" value="Constitution" />
         <property name="Collideable" type="bool" value="true" />
         <property name="Gender" value="Male" />
         <property name="Level" type="int" value="2" />

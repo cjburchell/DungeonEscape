@@ -83,6 +83,31 @@ namespace DungeonEscape.Core.Test.Rules
         }
 
         [Fact]
+        public void CreateRandomItemFallsBackToEligibleStaticEquipmentBeforeGold()
+        {
+            var sword = new Item
+            {
+                Name = "Longsword",
+                Type = ItemType.Weapon,
+                MinLevel = 1,
+                Cost = 15,
+                Rarity = Rarity.Common
+            };
+
+            var item = RandomItemRules.CreateRandomItem(
+                1,
+                1,
+                null,
+                new[] { sword },
+                null,
+                () => 0.9d,
+                max => 0,
+                () => "id");
+
+            Assert.Same(sword, item);
+        }
+
+        [Fact]
         public void DndItemRulesClassifiesMagicAndEquipmentByDndCategories()
         {
             var weapon = new Item
@@ -127,10 +152,15 @@ namespace DungeonEscape.Core.Test.Rules
             Assert.Contains(gear, item => item.Name == "Chain Mail" && item.Type == ItemType.Armor && item.Slots.Contains(Slot.Chest));
             Assert.Contains(gear, item => item.Name == "Longsword" && item.Type == ItemType.Weapon && item.Slots.Contains(Slot.PrimaryHand));
             Assert.Contains(gear, item => item.Name == "Shield" && item.Type == ItemType.Armor && item.Slots.Contains(Slot.OffHand));
+            Assert.Contains(gear, item => item.Name == "Chain Mail" && item.ImageId == 280 && item.Weight == 55);
+            Assert.Contains(gear, item => item.Name == "Longsword" && item.ImageId == 1 && item.Weight == 3);
+            Assert.Contains(gear, item => item.Name == "Shield" && item.ImageId == 176 && item.Weight == 6);
 
             var wizardGear = DndCharacterRules.GetStartingEquipment(Class.Wizard);
             Assert.Contains(wizardGear, item => item.Name == "Robe" && item.Type == ItemType.Armor && item.Slots.Contains(Slot.Chest));
             Assert.Contains(wizardGear, item => item.Name == "Dagger" && item.Type == ItemType.Weapon && item.Slots.Contains(Slot.PrimaryHand));
+            Assert.Contains(wizardGear, item => item.Name == "Robe" && item.ImageId == 303 && item.Weight == 4);
+            Assert.Contains(wizardGear, item => item.Name == "Dagger" && item.ImageId == 37 && item.Weight == 1);
         }
 
         [Fact]

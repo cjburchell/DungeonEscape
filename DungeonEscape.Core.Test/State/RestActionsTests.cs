@@ -62,6 +62,29 @@ namespace DungeonEscape.Core.Test.State
         }
 
         [Fact]
+        public void PartyLongRestCanMakeCampWithoutGoldCost()
+        {
+            var party = new Party { Gold = 10 };
+            var hero = new Hero
+            {
+                Name = "Alder",
+                Class = Class.Paladin,
+                MaxHealth = 20,
+                Health = 6,
+                IsActive = true,
+                UsedSpellSlots = new List<int> { 1 }
+            };
+            party.Members.Add(hero);
+
+            var message = party.LongRest(0);
+
+            Assert.Contains("makes camp", message, System.StringComparison.OrdinalIgnoreCase);
+            Assert.Equal(10, party.Gold);
+            Assert.Equal(hero.MaxHealth, hero.Health);
+            Assert.All(hero.UsedSpellSlots, slot => Assert.Equal(0, slot));
+        }
+
+        [Fact]
         public void PartyLongRestFailsWhenPartyCannotAffordInn()
         {
             var party = new Party { Gold = 10 };

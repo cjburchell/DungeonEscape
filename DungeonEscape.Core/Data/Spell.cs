@@ -20,6 +20,9 @@ namespace Redpoint.DungeonEscape.Data
         public bool IsAttackSpell { get { return Skill != null && Skill.IsAttackSkill; } }
 
         [JsonIgnore]
+        public bool IsCantrip { get { return SpellLevel <= 0; } }
+
+        [JsonIgnore]
         public bool IsBonusAction
         {
             get
@@ -140,7 +143,7 @@ namespace Redpoint.DungeonEscape.Data
         public string Cast(IEnumerable<IFighter> targets, IEnumerable<BaseState> targetObjects, IFighter caster, IGame game, int round = 0)
         {
             var heroCaster = caster as Hero;
-            if (heroCaster != null && !heroCaster.HasAvailableSpellSlot(SpellLevel))
+            if (heroCaster != null && !IsCantrip && !heroCaster.HasAvailableSpellSlot(SpellLevel))
             {
                 return caster.Name + ": I do not have a spell slot for " + Name + ".";
             }
@@ -155,7 +158,7 @@ namespace Redpoint.DungeonEscape.Data
                 DndStatRules.StartConcentration(heroCaster, Name);
             }
 
-            if (heroCaster != null)
+            if (heroCaster != null && !IsCantrip)
             {
                 heroCaster.UseSpellSlot(SpellLevel);
             }

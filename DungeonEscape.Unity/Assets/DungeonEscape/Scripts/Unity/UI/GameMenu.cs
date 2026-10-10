@@ -499,6 +499,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void DrawMenuItemsList(Hero hero)
         {
             var items = hero == null || hero.Items == null ? new List<ItemInstance>() : hero.Items.ToList();
+            DrawCarrySummary(hero);
             DrawPagedItemList(hero, items);
         }
 
@@ -652,6 +653,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             DrawSpriteIconNoFrame(UiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null, 32f * GetPixelScale());
             GUILayout.Label(item.NameWithStats, GetItemRowLabelStyle(item), GUILayout.Height(rowHeight));
             GUILayout.FlexibleSpace();
+            GUILayout.Label(FormatItemWeight(item), smallStyle, GUILayout.Width(72f * GetPixelScale()), GUILayout.Height(rowHeight));
             if (item.IsEquipped)
             {
                 GUILayout.Label("E", GetEquippedMarkerStyle(selected), GUILayout.Width(18f * GetPixelScale()), GUILayout.Height(rowHeight));
@@ -670,6 +672,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
             Sprite sprite;
             DrawSpriteIconNoFrame(equipped != null && UiAssetResolver.TryGetItemSprite(equipped, out sprite) ? sprite : null, 32f * GetPixelScale());
             GUILayout.Label(slot + ": " + (equipped == null ? "Empty" : equipped.Name), GetEquipmentSlotLabelStyle(equipped, selected), GUILayout.Height(rowHeight));
+            if (equipped != null)
+            {
+                GUILayout.FlexibleSpace();
+                GUILayout.Label(FormatItemWeight(equipped), smallStyle, GUILayout.Width(72f * GetPixelScale()), GUILayout.Height(rowHeight));
+            }
+
             GUILayout.EndHorizontal();
             HandleDetailRowMouseClick(index, () => SelectEquipmentSlot(hero));
         }
@@ -707,6 +715,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             DrawSpriteIconNoFrame(UiAssetResolver.TryGetItemSprite(item, out sprite) ? sprite : null, 32f * GetPixelScale());
             GUILayout.Label(item.NameWithStats, GetRarityStyle(item, GetMenuListLabelStyle(selected)), GUILayout.Height(rowHeight));
             GUILayout.FlexibleSpace();
+            GUILayout.Label(FormatItemWeight(item), smallStyle, GUILayout.Width(72f * GetPixelScale()), GUILayout.Height(rowHeight));
             if (item.IsEquipped)
             {
                 GUILayout.Label("E", GetEquippedMarkerStyle(selected), GUILayout.Width(18f * GetPixelScale()), GUILayout.Height(rowHeight));
@@ -776,7 +785,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     GUILayout.Label("Prepared", GetMenuListLabelStyle(selected), GUILayout.Width(92f * GetPixelScale()), GUILayout.Height(rowHeight));
                 }
 
-                GUILayout.Label("L" + spell.SpellLevel, GetMenuListLabelStyle(selected), GUILayout.Width(58f * GetPixelScale()), GUILayout.Height(rowHeight));
+                GUILayout.Label(spell.IsCantrip ? "At will" : "L" + spell.SpellLevel, GetMenuListLabelStyle(selected), GUILayout.Width(74f * GetPixelScale()), GUILayout.Height(rowHeight));
                 GUILayout.EndHorizontal();
                 var rowIndex = i;
                 HandleDetailRowMouseClick(rowIndex, () =>
@@ -812,12 +821,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.BeginVertical();
             GUILayout.Label(spell.Name, labelStyle);
             GUILayout.Label(spell.Type + "  " + spell.Targets, smallStyle);
-            GUILayout.Label("Level " + spell.SpellLevel + " " + (string.IsNullOrWhiteSpace(spell.School) ? "Spell" : spell.School), smallStyle);
+            GUILayout.Label((spell.IsCantrip ? "Cantrip" : "Level " + spell.SpellLevel) + " " + (string.IsNullOrWhiteSpace(spell.School) ? "Spell" : spell.School), smallStyle);
             if (hero != null)
             {
                 GUILayout.Label(
-                    (hero.IsSpellPrepared(spell) ? "Prepared" : "Not prepared") +
-                    "  " + GetPreparedSpellCount(hero) + "/" + hero.GetPreparedSpellLimit(),
+                    (spell.IsCantrip ? "At will" : hero.IsSpellPrepared(spell) ? "Prepared" : "Not prepared") +
+                    "  Prepared " + GetPreparedSpellCount(hero) + "/" + hero.GetPreparedSpellLimit(),
                     smallStyle);
             }
 
@@ -916,6 +925,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             GUILayout.Space(3f * GetPixelScale());
             DrawProgressValue("XP", hero.Xp, hero.NextLevel, hero.Xp + " / " + hero.NextLevel + " (" + GetXpToNextLevel(hero) + " to next)");
+            if (DndLevelProgressionRules.CanLevelUp(hero.Level, hero.Xp))
+            {
+                GUILayout.Label("Ready to level up", smallStyle);
+            }
+
+            DrawCarrySummary(hero);
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
@@ -1366,14 +1381,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private static List<Spell> GetKnownSpells(Hero hero)
         {
-            if (hero == null || !HeroHasSpellSlots(hero) || GameDataCache.Current == null || GameDataCache.Current.Spells == null)
+            if (hero == null || GameDataCache.Current == null || GameDataCache.Current.Spells == null)
             {
                 return new List<Spell>();
             }
 
             hero.RefreshPreparedSpells(GameDataCache.Current.Spells);
             return hero.GetKnownSpells(GameDataCache.Current.Spells)
-                    .Where(spell => spell != null && spell.IsNonEncounterSpell)
+                    .Where(spell => spell != null)
                     .ToList();
         }
 
@@ -1483,10 +1498,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private static bool HasKnownSpells(Hero hero)
         {
             return hero != null &&
-                    HeroHasSpellSlots(hero) &&
                     GameDataCache.Current != null &&
                     GameDataCache.Current.Spells != null &&
-                    hero.GetKnownSpells(GameDataCache.Current.Spells).Any(spell => spell != null && spell.IsNonEncounterSpell);
+                    hero.GetKnownSpells(GameDataCache.Current.Spells).Any(spell => spell != null);
         }
 
         private static bool CanUseMapSkills(Hero hero)
@@ -1566,6 +1580,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.BeginVertical();
             GUILayout.Label(item.Name, GetRarityStyle(item, labelStyle));
             GUILayout.Label(GetItemDetailSubtitle(item), smallStyle);
+            GUILayout.Label("Weight: " + FormatItemWeight(item), smallStyle);
             if (!string.IsNullOrEmpty(item.Item.StatString))
             {
                 GUILayout.Label("Stats: " + item.Item.StatString, smallStyle);
@@ -1649,6 +1664,29 @@ namespace Redpoint.DungeonEscape.Unity.UI
             return item.IsEquipped ? subtitle + "  Equipped" : subtitle;
         }
 
+        private void DrawCarrySummary(Hero hero)
+        {
+            if (hero == null)
+            {
+                return;
+            }
+
+            var carried = DndStatRules.GetCarriedWeight(hero);
+            var capacity = DndStatRules.GetCarryingCapacity(hero);
+            var text = "Carry: " + carried + " / " + capacity + " lb";
+            if (DndStatRules.IsEncumbered(hero))
+            {
+                text += "  Encumbered (-2)";
+            }
+
+            GUILayout.Label(text, smallStyle);
+        }
+
+        private static string FormatItemWeight(ItemInstance item)
+        {
+            return item == null || item.Item == null ? "0 lb" : Math.Max(0, item.Item.Weight) + " lb";
+        }
+
         private bool HasTransferTarget(Hero source)
         {
             var party = GetParty();
@@ -1666,7 +1704,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             var targets = viewModel.GetTransferItemTargets(party, source);
             if (targets.Count == 0)
             {
-                ShowInventoryMessage("No party member has room for " + item.Name + ".");
+                ShowInventoryMessage("No other party member can carry " + item.Name + ".");
                 return;
             }
 
@@ -1862,6 +1900,65 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             ShowPartyMessage(gameState.ShortRest());
+        }
+
+        private void MakeCamp()
+        {
+            if (gameState == null)
+            {
+                ShowPartyMessage("There is no party to rest.");
+                return;
+            }
+
+            ShowPartyMessage(gameState.MakeCamp());
+        }
+
+        private void ShowLevelUpPicker()
+        {
+            var members = GetLevelUpMembers();
+            if (members.Count == 0)
+            {
+                ShowPartyMessage("No party member is ready to level up.");
+                return;
+            }
+
+            var labels = members
+                .Select(hero => hero.Name + "  Level " + hero.Level + " -> " + (hero.Level + 1))
+                .ToList();
+            labels.Add("Cancel");
+            ShowMenuModal("Level Up", "Choose a character to level up.", labels, selectedIndex =>
+            {
+                if (selectedIndex < 0 || selectedIndex >= members.Count)
+                {
+                    return;
+                }
+
+                ShowPartyMessage(gameState == null
+                    ? "There is no party to level up."
+                    : gameState.LevelUpHero(members[selectedIndex]));
+            });
+        }
+
+        private bool CanMakeCamp()
+        {
+            return gameState != null &&
+                   gameState.Party != null &&
+                   gameState.Party.CurrentMapIsOverWorld;
+        }
+
+        private bool AnyMemberCanLevelUp()
+        {
+            return GetLevelUpMembers().Count > 0;
+        }
+
+        private List<Hero> GetLevelUpMembers()
+        {
+            var party = GetParty();
+            return party == null
+                ? new List<Hero>()
+                : party.ActiveMembers
+                    .Where(hero => hero != null && DndLevelProgressionRules.CanLevelUp(hero.Level, hero.Xp))
+                    .ToList();
         }
 
         private void ApplyInventoryChange(Func<bool> action)

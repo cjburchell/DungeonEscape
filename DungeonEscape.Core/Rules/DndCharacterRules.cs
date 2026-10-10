@@ -367,12 +367,14 @@ namespace Redpoint.DungeonEscape.Rules
         {
             return new Item
             {
+                ImageId = GetStartingItemImageId(name),
                 Name = name,
                 Type = ItemType.Armor,
                 Category = ItemCategory.Armor,
                 Slots = new List<Slot> { slot },
                 Classes = new List<string> { heroClass.ToString() },
                 Rarity = Rarity.Common,
+                Weight = GetStartingItemWeight(name),
                 Stats = new List<StatValue>
                 {
                     new StatValue { Type = StatType.Defence, Value = defenceBonus }
@@ -391,12 +393,14 @@ namespace Redpoint.DungeonEscape.Rules
         {
             return new Item
             {
+                ImageId = GetStartingItemImageId(name),
                 Name = name,
                 Type = ItemType.Weapon,
                 Category = ItemCategory.Weapon,
                 Slots = new List<Slot> { slot },
                 Classes = new List<string> { heroClass.ToString() },
                 Rarity = Rarity.Common,
+                Weight = GetStartingItemWeight(name),
                 DamageDice = damageDice,
                 DamageDie = damageDie,
                 DamageBonus = damageBonus,
@@ -405,6 +409,68 @@ namespace Redpoint.DungeonEscape.Rules
                     new StatValue { Type = StatType.Attack, Value = attackBonus }
                 }
             };
+        }
+
+        private static int GetStartingItemImageId(string name)
+        {
+            switch (name)
+            {
+                case "Chain Mail":
+                    return 280;
+                case "Dagger":
+                    return 37;
+                case "Leather Armor":
+                    return 278;
+                case "Light Crossbow":
+                    return 162;
+                case "Longsword":
+                    return 1;
+                case "Mace":
+                    return 50;
+                case "Quarterstaff":
+                    return 88;
+                case "Rapier":
+                    return 3;
+                case "Robe":
+                    return 303;
+                case "Scale Mail":
+                    return 289;
+                case "Shield":
+                    return 176;
+                default:
+                    return 0;
+            }
+        }
+
+        private static int GetStartingItemWeight(string name)
+        {
+            switch (name)
+            {
+                case "Chain Mail":
+                    return 55;
+                case "Dagger":
+                    return 1;
+                case "Leather Armor":
+                    return 10;
+                case "Light Crossbow":
+                    return 6;
+                case "Longsword":
+                    return 3;
+                case "Mace":
+                    return 4;
+                case "Quarterstaff":
+                    return 4;
+                case "Rapier":
+                    return 2;
+                case "Robe":
+                    return 4;
+                case "Scale Mail":
+                    return 22;
+                case "Shield":
+                    return 6;
+                default:
+                    return 0;
+            }
         }
 
         private static void SetScores(

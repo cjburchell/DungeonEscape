@@ -398,6 +398,46 @@ active or waiting according to the current party-size limit.
 - Inspect the item detail panel.
 - Expected: internal slot/class metadata is not shown in the right panel.
 
+### [ ] Weight-Based Inventory And Encumbrance
+
+- Start a new game with a high-Strength and a low-Strength character, or load a save with several weighted items.
+- Open the in-game menu and inspect Status, Items, and Equipment.
+- Expected: each hero shows carried/max weight, item rows show each item's weight, and item detail shows the selected item weight.
+- Buy and sell items in a regular store.
+- Expected: buy/sell rows show item weights, the recipient picker shows each hero's carried/max weight, and purchases are not blocked by item count.
+- Transfer enough heavy items to push one hero over carrying capacity.
+- Expected: transfer is allowed, the hero is marked encumbered in the carry summary, and derived attack/damage/initiative/check values reflect the encumbrance penalty.
+- Create a new character and inspect starting equipment icons.
+- Expected: starter armor, shields, and weapons show distinct equipment icons instead of all using the default first tile.
+
+### [ ] D&D Store, Chest, Spell, And Camp Follow-Up
+
+- Open a random regular store.
+- Expected: Buy rows show named items with nonzero costs/weights rather than repeated `0 gold` placeholders.
+- Open several random chests.
+- Expected: chests can produce real catalog items as well as gold.
+- Win several random combats.
+- Expected: victory rewards still split XP among living party members, award gold, and can occasionally award item treasure.
+- Create or load a spellcaster with combat spells, such as a Wizard.
+- Expected: the Spells menu is visible, lists known combat and utility spells, and allows prepare/unprepare actions where the character has preparation capacity.
+- Enter combat with a caster that knows a cantrip.
+- Expected: cantrips such as Fire Bolt, Sacred Flame, Eldritch Blast, or Vicious Mockery are available without spending spell slots.
+- Open the first in-game menu while on the overworld.
+- Expected: `Short Rest` and `Make Camp` appear directly in the first action list, and `Make Camp` performs a no-cost long rest.
+- Open the first in-game menu inside a town/dungeon.
+- Expected: `Short Rest` still appears directly in the first action list, while `Make Camp` is hidden outside overworld travel.
+
+### [ ] Manual Level-Up Flow
+
+- Gain enough XP from combat, encounter avoidance, or a quest to reach the next D&D level threshold.
+- Expected: the reward message says the character is ready to level up instead of immediately applying the level.
+- Inspect the party status window.
+- Expected: eligible active party members show an `UP` indicator beside their level.
+- Open the first in-game menu.
+- Expected: `Level Up` appears only while at least one active party member can level.
+- Choose `Level Up` and select an eligible party member.
+- Expected: one level is applied, level-up text appears, derived HP/proficiency/spell slots update, and `Level Up` remains only if someone still has enough XP for another level.
+
 ### [ ] Combined Party And Inventory Menu
 
 - Open the in-game menu.
@@ -469,7 +509,7 @@ active or waiting according to the current party-size limit.
 - Expected: only that member's sellable items are shown, and each row has an item icon.
 - Expected: the sell price is 75% of item cost, rounded down with a minimum of 1 gold.
 - Sell an equipped item.
-- Expected: the item is unequipped, removed from the hero inventory, gold is added, and the item can appear in the store stock if the store has room.
+- Expected: the item is unequipped, removed from the hero inventory, gold is added, and the item can appear in the store stock afterward.
 - Visit a store with `WillBuyItems=false`, if one exists.
 - Expected: the Sell tab is disabled.
 - While the store window is open, complete a buy or sell confirmation.

@@ -77,8 +77,9 @@ namespace Redpoint.DungeonEscape.State
         public bool IsSpellPrepared(Spell spell)
         {
             return spell != null &&
+                   (spell.IsCantrip ||
                    PreparedSpells != null &&
-                   PreparedSpells.Any(id => IsSpellId(id, spell));
+                   PreparedSpells.Any(id => IsSpellId(id, spell)));
         }
 
         public bool CanPrepareSpell(Spell spell, IEnumerable<Spell> availableSpells)
@@ -91,6 +92,7 @@ namespace Redpoint.DungeonEscape.State
             var knownSpells = GetKnownSpellList(availableSpells);
             EnsurePreparedSpells(knownSpells);
             return knownSpells.Contains(spell) &&
+                   !spell.IsCantrip &&
                    !IsSpellPrepared(spell) &&
                    PreparedSpells.Count < GetPreparedSpellLimit();
         }
@@ -142,6 +144,11 @@ namespace Redpoint.DungeonEscape.State
 
         public bool HasAvailableSpellSlot(int spellLevel)
         {
+            if (spellLevel <= 0)
+            {
+                return true;
+            }
+
             RefreshSpellSlots();
             spellLevel = Math.Max(1, Math.Min(DndSpellcastingRules.MaxSpellLevel, spellLevel));
             for (var i = spellLevel - 1; i < SpellSlots.Count; i++)
@@ -157,6 +164,11 @@ namespace Redpoint.DungeonEscape.State
 
         public bool UseSpellSlot(int spellLevel)
         {
+            if (spellLevel <= 0)
+            {
+                return true;
+            }
+
             RefreshSpellSlots();
             spellLevel = Math.Max(1, Math.Min(DndSpellcastingRules.MaxSpellLevel, spellLevel));
             for (var i = spellLevel - 1; i < SpellSlots.Count; i++)
@@ -405,6 +417,11 @@ namespace Redpoint.DungeonEscape.State
 
         private bool CanEverCastSpellLevel(int spellLevel)
         {
+            if (spellLevel <= 0)
+            {
+                return true;
+            }
+
             var slots = DndSpellcastingRules.GetMaxSpellSlots(Class, Level);
             spellLevel = Math.Max(1, Math.Min(DndSpellcastingRules.MaxSpellLevel, spellLevel));
             return slots.Length >= spellLevel && slots[spellLevel - 1] > 0;

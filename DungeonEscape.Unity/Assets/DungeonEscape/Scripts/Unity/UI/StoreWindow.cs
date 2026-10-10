@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.ViewModels;
 using UnityEngine;
@@ -234,6 +235,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 uiTheme);
             GUILayout.Label(item.Name, GetCenteredRarityStyle(item), GUILayout.Height(rowHeight));
             GUILayout.FlexibleSpace();
+            GUILayout.Label(FormatItemWeight(item), GetRightAlignedStyle(smallStyle), GUILayout.Width(72f * GetPixelScale()), GUILayout.Height(rowHeight));
             GUILayout.Label(item.Cost + "g", GetRightAlignedStyle(labelStyle), GUILayout.Width(92f * GetPixelScale()), GUILayout.Height(rowHeight));
             GUILayout.EndHorizontal();
             HandleBuyRowMouse(GUILayoutUtility.GetLastRect(), item, index);
@@ -302,6 +304,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 uiTheme);
             GUILayout.Label(item.Name + (item.IsEquipped ? "  Equipped" : ""), GetCenteredRarityStyle(item.Item), GUILayout.Height(rowHeight));
             GUILayout.FlexibleSpace();
+            GUILayout.Label(FormatItemWeight(item), GetRightAlignedStyle(smallStyle), GUILayout.Width(72f * GetPixelScale()), GUILayout.Height(rowHeight));
             GUILayout.Label(GetSalePrice(item) + "g", GetRightAlignedStyle(labelStyle), GUILayout.Width(92f * GetPixelScale()), GUILayout.Height(rowHeight));
             GUILayout.EndHorizontal();
             HandleSellRowMouse(GUILayoutUtility.GetLastRect(), hero, item, index);
@@ -310,7 +313,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private void ShowRecipientPicker(Item item)
         {
             var recipients = GetBuyRecipients();
-            var labels = recipients.Select(hero => hero.Name + " (" + hero.Items.Count + "/" + Party.MaxItems + ")").ToList();
+            var labels = recipients
+                .Select(hero => hero.Name + " (" + DndStatRules.GetCarriedWeight(hero) + "/" + DndStatRules.GetCarryingCapacity(hero) + " lb)")
+                .ToList();
             labels.Add("Cancel");
             var choiceHeroes = recipients.Cast<Hero>().Concat(new Hero[] { null }).ToList();
             ShowModal("Buy " + item.Name, "Who should carry this item?", labels, choiceHeroes, index =>
@@ -366,6 +371,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private int GetSalePrice(ItemInstance item)
         {
             return viewModel.GetSalePrice(item);
+        }
+
+        private static string FormatItemWeight(Item item)
+        {
+            return item == null ? "0 lb" : Math.Max(0, item.Weight) + " lb";
+        }
+
+        private static string FormatItemWeight(ItemInstance item)
+        {
+            return item == null || item.Item == null ? "0 lb" : FormatItemWeight(item.Item);
         }
 
         private void ShowModal(string title, string message, IEnumerable<string> choices, Action<int> selected)

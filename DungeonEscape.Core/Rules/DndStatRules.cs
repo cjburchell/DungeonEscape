@@ -9,6 +9,8 @@ namespace Redpoint.DungeonEscape.Rules
     public static class DndStatRules
     {
         private const int DefaultDamageDie = 6;
+        private const int CarryingCapacityMultiplier = 15;
+        private const int EncumbrancePenalty = -2;
         private static readonly string[] DndSkillNames =
         {
             "Acrobatics",
@@ -54,7 +56,8 @@ namespace Redpoint.DungeonEscape.Rules
             }
 
             var abilityModifier = GetAbilityModifier(GetAbilityScoreValue(fighter, abilityScore));
-            return proficient ? abilityModifier + GetEffectiveProficiencyBonus(fighter) : abilityModifier;
+            var modifier = proficient ? abilityModifier + GetEffectiveProficiencyBonus(fighter) : abilityModifier;
+            return modifier + GetEncumbrancePenalty(fighter);
         }
 
         public static int GetSkillCheckModifier(IFighter fighter, string skillName, bool proficient)
@@ -66,7 +69,8 @@ namespace Redpoint.DungeonEscape.Rules
 
             var ability = GetSkillAbility(skillName);
             var modifier = GetAbilityModifier(GetAbilityScoreValue(fighter, ability));
-            return proficient ? modifier + GetEffectiveProficiencyBonus(fighter) : modifier;
+            var total = proficient ? modifier + GetEffectiveProficiencyBonus(fighter) : modifier;
+            return total + GetEncumbrancePenalty(fighter);
         }
 
         public static IReadOnlyList<string> GetDndSkillNames()
@@ -277,7 +281,7 @@ namespace Redpoint.DungeonEscape.Rules
                 return fighter.AttackBonus;
             }
 
-            return GetEffectiveProficiencyBonus(fighter) + GetWeaponAbilityModifier(fighter) + GetWeaponAttackBonus(weapon);
+            return GetEffectiveProficiencyBonus(fighter) + GetWeaponAbilityModifier(fighter) + GetWeaponAttackBonus(weapon) + GetEncumbrancePenalty(fighter);
         }
 
         public static int GetDamageBonus(IFighter fighter)
@@ -299,7 +303,7 @@ namespace Redpoint.DungeonEscape.Rules
 
             if (fighter is Hero)
             {
-                return GetWeaponAbilityModifier(fighter) + GetWeaponDamageBonus(weapon);
+                return GetWeaponAbilityModifier(fighter) + GetWeaponDamageBonus(weapon) + GetEncumbrancePenalty(fighter);
             }
 
             return GetWeaponAbilityModifier(fighter) + fighter.DamageBonus;
@@ -342,7 +346,24 @@ namespace Redpoint.DungeonEscape.Rules
 
         public static int GetInitiativeBonus(IFighter fighter)
         {
-            return GetAbilityModifier(GetDexterity(fighter));
+            return GetAbilityModifier(GetDexterity(fighter)) + GetEncumbrancePenalty(fighter);
+        }
+
+        public static int GetCarryingCapacity(Hero hero)
+        {
+            return hero == null ? 0 : Math.Max(0, GetStrength(hero) * CarryingCapacityMultiplier);
+        }
+
+        public static int GetCarriedWeight(Hero hero)
+        {
+            return hero == null || hero.Items == null
+                ? 0
+                : hero.Items.Where(item => item != null && item.Item != null).Sum(item => Math.Max(0, item.Item.Weight));
+        }
+
+        public static bool IsEncumbered(Hero hero)
+        {
+            return hero != null && GetCarriedWeight(hero) > GetCarryingCapacity(hero);
         }
 
         public static int GetHeroHitPointsForLevel(Hero hero, ClassStats classStats, int level)
@@ -441,6 +462,12 @@ namespace Redpoint.DungeonEscape.Rules
         private static int GetEffectiveProficiencyBonus(IFighter fighter)
         {
             return fighter.ProficiencyBonus > 0 ? fighter.ProficiencyBonus : GetProficiencyBonus(fighter);
+        }
+
+        private static int GetEncumbrancePenalty(IFighter fighter)
+        {
+            var hero = fighter as Hero;
+            return IsEncumbered(hero) ? EncumbrancePenalty : 0;
         }
 
         private static int GetHeroArmorClass(Hero hero)

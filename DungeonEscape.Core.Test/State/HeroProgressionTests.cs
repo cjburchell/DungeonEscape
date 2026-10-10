@@ -111,6 +111,28 @@ namespace DungeonEscape.Core.Test.State
             Assert.DoesNotContain(heal, hero.GetSpells(spells));
         }
 
+        [Fact]
+        public void CantripsAreKnownAndCastableWithoutPreparationOrSlots()
+        {
+            var hero = CreateHero();
+            hero.Level = 1;
+            hero.SpellSlots = new List<int>();
+            hero.UsedSpellSlots = new List<int>();
+            var cantrip = new Spell
+            {
+                Name = "Fire Bolt",
+                SpellLevel = 0,
+                MinLevel = 1,
+                Classes = new List<string> { "Paladin" }
+            };
+
+            Assert.Contains(cantrip, hero.GetKnownSpells(new[] { cantrip }));
+            Assert.True(hero.IsSpellPrepared(cantrip));
+            Assert.False(hero.CanPrepareSpell(cantrip, new[] { cantrip }));
+            Assert.True(hero.HasAvailableSpellSlot(cantrip.SpellLevel));
+            Assert.True(hero.UseSpellSlot(cantrip.SpellLevel));
+        }
+
         private static Hero CreateHero()
         {
             return new Hero

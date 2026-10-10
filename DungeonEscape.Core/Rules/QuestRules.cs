@@ -138,40 +138,26 @@ namespace Redpoint.DungeonEscape.Rules
                 hero.Xp += xpReward;
             }
 
-            var classLevelList = classLevels as IList<ClassStats> ?? classLevels?.ToList();
-            var spellList = spells as IList<Spell> ?? spells?.ToList();
             message.AppendLine("The party got " + xp + " XP.");
             foreach (var hero in activeMembers)
             {
-                AppendLevelUpMessages(message, hero, classLevelList, spellList);
+                AppendLevelUpReadyMessage(message, hero);
             }
         }
 
-        private static void AppendLevelUpMessages(
+        private static void AppendLevelUpReadyMessage(
             StringBuilder message,
-            Hero hero,
-            IEnumerable<ClassStats> classLevels,
-            IEnumerable<Spell> spells)
+            Hero hero)
         {
-            if (hero == null || classLevels == null)
+            if (hero == null)
             {
                 return;
             }
 
-            var classLevelList = classLevels as IList<ClassStats> ?? classLevels.ToList();
-            var spellList = spells as IList<Spell> ?? spells?.ToList();
-            while (true)
+            hero.NextLevel = DndLevelProgressionRules.GetNextLevelXp(hero.Level);
+            if (DndLevelProgressionRules.CanLevelUp(hero.Level, hero.Xp))
             {
-                string levelUpMessage;
-                if (!hero.CheckLevelUp(classLevelList, spellList, out levelUpMessage))
-                {
-                    break;
-                }
-
-                if (!string.IsNullOrWhiteSpace(levelUpMessage))
-                {
-                    message.AppendLine(levelUpMessage.TrimEnd());
-                }
+                message.AppendLine(hero.Name + " is ready to level up.");
             }
         }
     }

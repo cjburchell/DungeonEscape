@@ -996,7 +996,7 @@ namespace Redpoint.DungeonEscape.Unity.Map
                 return;
             }
 
-            var labels = inventory.Select(item => item.NameWithStats + "  " + item.Cost + "g").ToList();
+            var labels = inventory.Select(item => item.NameWithStats + "  " + Math.Max(0, item.Weight) + " lb  " + item.Cost + "g").ToList();
             labels.Add("Back");
             messageBox.Show(
                 GetObjectDisplayName(mapObject),
@@ -1030,7 +1030,7 @@ namespace Redpoint.DungeonEscape.Unity.Map
             }
 
             var labels = entries
-                .Select(entry => entry.Hero.Name + ": " + entry.Item.NameWithStats + "  " + Math.Max(1, entry.Item.Gold * 3 / 4) + "g")
+                .Select(entry => entry.Hero.Name + ": " + entry.Item.NameWithStats + "  " + Math.Max(0, entry.Item.Item.Weight) + " lb  " + Math.Max(1, entry.Item.Gold * 3 / 4) + "g")
                 .ToList();
             labels.Add("Back");
             messageBox.Show(

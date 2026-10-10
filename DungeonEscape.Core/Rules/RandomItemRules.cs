@@ -25,6 +25,9 @@ namespace Redpoint.DungeonEscape.Rules
                 .Where(item => item != null &&
                                item.IsMagicItem &&
                                !item.IsKey &&
+                               item.Type != ItemType.Gold &&
+                               item.Type != ItemType.Quest &&
+                               item.Type != ItemType.Unknown &&
                                item.MinLevel <= maxLevel)
                 .ToList();
 
@@ -43,6 +46,24 @@ namespace Redpoint.DungeonEscape.Rules
             if (Chance(0.50d, nextDouble) && staticConsumables.Count > 0)
             {
                 return staticConsumables[Next(nextInt, staticConsumables.Count)];
+            }
+
+            var staticEquipment = (customItems ?? new List<Item>())
+                .Where(item => item != null &&
+                               !item.IsMagicItem &&
+                               !item.IsKey &&
+                               item.Type != ItemType.Gold &&
+                               item.Type != ItemType.Quest &&
+                               item.Type != ItemType.Unknown &&
+                               item.MinLevel <= maxLevel &&
+                               item.MinLevel >= minLevel)
+                .OrderBy(item => item.MinLevel)
+                .ThenBy(item => item.Cost)
+                .ToList();
+
+            if (staticEquipment.Count > 0)
+            {
+                return staticEquipment[Next(nextInt, staticEquipment.Count)];
             }
 
             return CreateGold(0);

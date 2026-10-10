@@ -30,11 +30,11 @@ namespace DungeonEscape.Core.Test.Rules
         }
 
         [Fact]
-        public void GetBuyRecipientsReturnsAliveMembersWithRoom()
+        public void GetBuyRecipientsReturnsAliveMembersRegardlessOfItemCount()
         {
             var party = new Party();
             var aliveWithRoom = CreateHero("Able", 1, 0);
-            var aliveFull = CreateHero("Full", 1, Party.MaxItems);
+            var aliveFull = CreateHero("Many Items", 1, 30);
             var deadWithRoom = CreateHero("Dead", 0, 0);
             deadWithRoom.Health = 0;
             party.Members.Add(aliveWithRoom);
@@ -43,7 +43,7 @@ namespace DungeonEscape.Core.Test.Rules
 
             var recipients = StoreRules.GetBuyRecipients(party);
 
-            Assert.Equal(new[] { aliveWithRoom }, recipients);
+            Assert.Equal(new[] { aliveWithRoom, aliveFull }, recipients);
         }
 
         [Fact]

@@ -1,5 +1,54 @@
 [
   {
+    "Skill": "Fire Bolt",
+    "ImageId": 57,
+    "SpellLevel": 0,
+    "School": "Evocation",
+    "DndSpell": "Fire Bolt",
+    "MinLevel": 1,
+    "Classes": [
+      "Sorcerer",
+      "Wizard"
+    ],
+    "Name": "Fire Bolt"
+  },
+  {
+    "Skill": "Sacred Flame",
+    "ImageId": 54,
+    "SpellLevel": 0,
+    "School": "Evocation",
+    "DndSpell": "Sacred Flame",
+    "MinLevel": 1,
+    "Classes": [
+      "Cleric"
+    ],
+    "Name": "Sacred Flame"
+  },
+  {
+    "Skill": "Eldritch Blast",
+    "ImageId": 58,
+    "SpellLevel": 0,
+    "School": "Evocation",
+    "DndSpell": "Eldritch Blast",
+    "MinLevel": 1,
+    "Classes": [
+      "Warlock"
+    ],
+    "Name": "Eldritch Blast"
+  },
+  {
+    "Skill": "Vicious Mockery",
+    "ImageId": 62,
+    "SpellLevel": 0,
+    "School": "Enchantment",
+    "DndSpell": "Vicious Mockery",
+    "MinLevel": 1,
+    "Classes": [
+      "Bard"
+    ],
+    "Name": "Vicious Mockery"
+  },
+  {
     "Skill": "Cure Wounds",
     "ImageId": 54,
     "SpellLevel": 1,

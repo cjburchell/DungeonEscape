@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 using UnityEngine;
 
@@ -134,7 +135,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
             GUILayout.Label(GetShortName(member.Name), style, GUILayout.Width(statusWidth), GUILayout.Height(GetLineHeight(scale)));
             DrawProgressRow("HP", member.Health, member.MaxHealth, style, statusWidth, scale);
             GUILayout.Label(GetSlotStatus(member), style, GUILayout.Width(statusWidth), GUILayout.Height(GetLineHeight(scale)));
-            DrawLevelLabel(GetClassPrefix(member.Class) + ":", member.Level.ToString(), style, statusWidth, scale);
+            var levelText = member.Level.ToString();
+            if (DndLevelProgressionRules.CanLevelUp(member.Level, member.Xp))
+            {
+                levelText += " UP";
+            }
+
+            DrawLevelLabel(GetClassPrefix(member.Class) + ":", levelText, style, statusWidth, scale);
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();

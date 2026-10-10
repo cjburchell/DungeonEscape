@@ -56,6 +56,15 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     case "Party":
                         Menu.OpenMenuScreen(MenuScreen.Party);
                         break;
+                    case "Level Up":
+                        Menu.ShowLevelUpPicker();
+                        break;
+                    case "Short Rest":
+                        Menu.ShortRest();
+                        break;
+                    case "Make Camp":
+                        Menu.MakeCamp();
+                        break;
                     case "Misc.":
                         Menu.OpenMenuScreen(MenuScreen.Misc);
                         break;
@@ -67,22 +76,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return Menu.viewModel.GetMainActions(
                     Menu.AnyMemberHasUsableMapSpells(),
                     Menu.AnyMemberHasUsableMapAbilities(),
-                    Menu.CanManagePartyMembers());
+                    Menu.CanManagePartyMembers(),
+                    Menu.CanMakeCamp(),
+                    Menu.AnyMemberCanLevelUp());
             }
         }
 
         private sealed class MiscActionMenuScreen : MenuScreenController
         {
-            private static readonly List<string> Actions = new List<string>
-            {
-                "Short Rest",
-                "Save",
-                "Load",
-                "Settings",
-                "Exit to Main",
-                "Quit"
-            };
-
             public MiscActionMenuScreen(GameMenu menu)
                 : base(menu)
             {
@@ -100,32 +101,41 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             public override void ActivateSelectedRow()
             {
-                switch (Menu.selectedRowIndex)
+                var actions = GetActions();
+                if (Menu.selectedRowIndex < 0 || Menu.selectedRowIndex >= actions.Count)
                 {
-                    case 0:
-                        Menu.ShortRest();
-                        break;
-                    case 1:
+                    return;
+                }
+
+                switch (actions[Menu.selectedRowIndex])
+                {
+                    case "Save":
                         Menu.OpenMenuScreen(MenuScreen.Save);
-                        break;
-                    case 2:
+                        return;
+                    case "Load":
                         Menu.OpenMenuScreen(MenuScreen.Load);
-                        break;
-                    case 3:
+                        return;
+                    case "Settings":
                         Menu.OpenMenuScreen(MenuScreen.Settings);
-                        break;
-                    case 4:
+                        return;
+                    case "Exit to Main":
                         Menu.ConfirmReturnToMainMenu();
-                        break;
-                    case 5:
+                        return;
+                    case "Quit":
                         Menu.ConfirmQuitGame();
-                        break;
+                        return;
                 }
             }
 
             public IList<string> GetActions()
             {
-                return Actions;
+                var actions = new List<string>();
+                actions.Add("Save");
+                actions.Add("Load");
+                actions.Add("Settings");
+                actions.Add("Exit to Main");
+                actions.Add("Quit");
+                return actions;
             }
         }
     }

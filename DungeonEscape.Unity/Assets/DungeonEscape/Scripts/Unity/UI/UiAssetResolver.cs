@@ -1,6 +1,7 @@
 ﻿using Redpoint.DungeonEscape.Data;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Redpoint.DungeonEscape.State;
 using UnityEngine;
 
@@ -50,13 +51,14 @@ namespace Redpoint.DungeonEscape.Unity.UI
         public static bool TryGetItemSprite(Item item, out Sprite sprite)
         {
             sprite = null;
-            if (item == null || item.ImageId < 0)
+            var imageId = ResolveItemImageId(item);
+            if (imageId < 0)
             {
                 return false;
             }
 
             EnsureItemSpriteSets();
-            return itemSpriteSets != null && TilesetSprites.TryGetSprite(item.ImageId, itemSpriteSets, out sprite);
+            return itemSpriteSets != null && TilesetSprites.TryGetSprite(imageId, itemSpriteSets, out sprite);
         }
 
         public static bool TryGetSpellSprite(Spell spell, out Sprite sprite)
@@ -158,6 +160,28 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 new[] { tileset },
                 document.TileWidth,
                 document.TileHeight);
+        }
+
+        private static int ResolveItemImageId(Item item)
+        {
+            if (item == null)
+            {
+                return -1;
+            }
+
+            if (item.ImageId > 0 || string.IsNullOrWhiteSpace(item.Name) || GameDataCache.Current == null)
+            {
+                return item.ImageId;
+            }
+
+            var catalogItem = GameDataCache.Current.CustomItems == null
+                ? null
+                : GameDataCache.Current.CustomItems.FirstOrDefault(candidate =>
+                    candidate != null &&
+                    candidate.ImageId > 0 &&
+                    string.Equals(candidate.Name, item.Name, System.StringComparison.OrdinalIgnoreCase));
+
+            return catalogItem == null ? item.ImageId : catalogItem.ImageId;
         }
 
         private static void EnsureSpellSpriteSets()

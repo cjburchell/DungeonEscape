@@ -168,12 +168,12 @@ namespace DungeonEscape.Core.Test.ViewModels
             var viewModel = new GameMenuViewModel();
 
             Assert.Equal(
-                new[] { "Items", "Equipment", "Status", "Quests", "Misc." },
-                viewModel.GetMainActions(false, false, false));
+                new[] { "Items", "Equipment", "Status", "Quests", "Short Rest", "Misc." },
+                viewModel.GetMainActions(false, false, false, false, false));
 
             Assert.Equal(
-                new[] { "Items", "Spells", "Equipment", "Abilities", "Status", "Quests", "Party", "Misc." },
-                viewModel.GetMainActions(true, true, true));
+                new[] { "Items", "Spells", "Equipment", "Abilities", "Status", "Quests", "Party", "Level Up", "Short Rest", "Make Camp", "Misc." },
+                viewModel.GetMainActions(true, true, true, true, true));
         }
 
         [Fact]
@@ -305,23 +305,23 @@ namespace DungeonEscape.Core.Test.ViewModels
         }
 
         [Fact]
-        public void TransferTargetsExcludeSourceAndFullInventories()
+        public void TransferTargetsExcludeOnlySource()
         {
             var viewModel = new GameMenuViewModel();
             var source = CreateHero("Source", true, 0);
             var target = CreateHero("Target", true, 1);
-            var full = CreateHero("Full", true, 2);
-            for (var i = 0; i < Party.MaxItems; i++)
+            var manyItems = CreateHero("Many Items", true, 2);
+            for (var i = 0; i < 30; i++)
             {
-                full.Items.Add(CreateItemInstance("Item" + i, ItemType.OneUse, Slot.PrimaryHand));
+                manyItems.Items.Add(CreateItemInstance("Item" + i, ItemType.OneUse, Slot.PrimaryHand));
             }
 
             var party = new Party();
             party.Members.Add(source);
             party.Members.Add(target);
-            party.Members.Add(full);
+            party.Members.Add(manyItems);
 
-            Assert.Equal(new[] { "Target" }, viewModel.GetTransferItemTargets(party, source).Select(hero => hero.Name).ToArray());
+            Assert.Equal(new[] { "Target", "Many Items" }, viewModel.GetTransferItemTargets(party, source).Select(hero => hero.Name).ToArray());
         }
 
         [Fact]

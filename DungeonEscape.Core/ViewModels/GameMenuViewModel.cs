@@ -235,7 +235,7 @@ namespace Redpoint.DungeonEscape.ViewModels
             return candidates;
         }
 
-        public List<string> GetMainActions(bool hasMapSpells, bool hasMapAbilities, bool canManageParty)
+        public List<string> GetMainActions(bool hasMapSpells, bool hasMapAbilities, bool canManageParty, bool canMakeCamp, bool hasLevelUp)
         {
             var actions = new List<string> { "Items" };
             if (hasMapSpells)
@@ -254,6 +254,17 @@ namespace Redpoint.DungeonEscape.ViewModels
             if (canManageParty)
             {
                 actions.Add("Party");
+            }
+
+            if (hasLevelUp)
+            {
+                actions.Add("Level Up");
+            }
+
+            actions.Add("Short Rest");
+            if (canMakeCamp)
+            {
+                actions.Add("Make Camp");
             }
 
             actions.Add("Misc.");
@@ -406,7 +417,7 @@ namespace Redpoint.DungeonEscape.ViewModels
             }
 
             return GetInventoryMembers(party)
-                .Where(member => !ReferenceEquals(member, source) && member.Items.Count < Party.MaxItems)
+                .Where(member => !ReferenceEquals(member, source))
                 .ToList();
         }
 

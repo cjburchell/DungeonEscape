@@ -1,5 +1,58 @@
 [
     {
+        "Name":  "Fire Bolt",
+        "Targets":  "Single",
+        "Type":  "Damage",
+        "StatConst":  2,
+        "StatTimes":  1,
+        "StatRandom":  8,
+        "DurationTimes":  1,
+        "DurationType":  "Distance",
+        "StatType":  "HP",
+        "EffectName":  "Fire Bolt",
+        "IsPositive":  true
+    },
+    {
+        "Name":  "Sacred Flame",
+        "Targets":  "Single",
+        "Type":  "Damage",
+        "IsPiercing":  true,
+        "StatConst":  2,
+        "StatTimes":  1,
+        "StatRandom":  8,
+        "DurationTimes":  1,
+        "DurationType":  "Distance",
+        "StatType":  "HP",
+        "EffectName":  "Sacred Flame",
+        "IsPositive":  true
+    },
+    {
+        "Name":  "Eldritch Blast",
+        "Targets":  "Single",
+        "Type":  "Damage",
+        "StatConst":  2,
+        "StatTimes":  1,
+        "StatRandom":  10,
+        "DurationTimes":  1,
+        "DurationType":  "Distance",
+        "StatType":  "HP",
+        "EffectName":  "Eldritch Blast",
+        "IsPositive":  true
+    },
+    {
+        "Name":  "Vicious Mockery",
+        "Targets":  "Single",
+        "Type":  "Damage",
+        "StatConst":  1,
+        "StatTimes":  1,
+        "StatRandom":  6,
+        "DurationTimes":  1,
+        "DurationType":  "Distance",
+        "StatType":  "HP",
+        "EffectName":  "Vicious Mockery",
+        "IsPositive":  true
+    },
+    {
         "Name":  "Sleep",
         "Targets":  "Single",
         "Type":  "RemoveCondition",

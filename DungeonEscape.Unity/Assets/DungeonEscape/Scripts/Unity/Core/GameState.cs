@@ -397,7 +397,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 .Where(item => item != null)
                 .ToList();
 
-            if (Dice.RollD20() > 18)
+            if (Dice.RollD20() >= 17)
             {
                 foundItems.Add(CreateChestItem(GetAverageActivePartyLevel(), defeatedMonsters.Max(monster => monster.Rarity)));
             }
@@ -407,7 +407,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             foreach (var member in aliveMembers)
             {
                 member.Xp += (ulong)xp;
-                AppendLevelUpMessages(message, member);
+                AppendLevelUpReadyMessage(message, member);
             }
 
             MarkDirty();
@@ -441,7 +441,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 foreach (var member in aliveMembers)
                 {
                     member.Xp += (ulong)xp;
-                    AppendLevelUpMessages(message, member);
+                    AppendLevelUpReadyMessage(message, member);
                 }
 
                 MarkDirty();
@@ -661,37 +661,46 @@ namespace Redpoint.DungeonEscape.Unity.Core
             return message;
         }
 
-        private void AppendLevelUpMessages(StringBuilder message, Hero hero)
+        private void AppendLevelUpReadyMessage(StringBuilder message, Hero hero)
         {
             if (hero == null)
             {
                 return;
             }
 
-            var classLevels = GameDataCache.Current == null ? null : GameDataCache.Current.ClassLevels;
-            if (classLevels == null)
+            hero.NextLevel = DndLevelProgressionRules.GetNextLevelXp(hero.Level);
+            if (DndLevelProgressionRules.CanLevelUp(hero.Level, hero.Xp))
             {
-                return;
+                message.AppendLine(hero.Name + " is ready to level up.");
+            }
+        }
+
+        public string LevelUpHero(Hero hero)
+        {
+            EnsureInitialized();
+            if (hero == null ||
+                Party == null ||
+                !Party.Members.Contains(hero) ||
+                GameDataCache.Current == null ||
+                GameDataCache.Current.ClassLevels == null)
+            {
+                return "That character cannot level up.";
             }
 
-            while (true)
+            string levelUpMessage;
+            if (!hero.CheckLevelUp(
+                    GameDataCache.Current.ClassLevels,
+                    GameDataCache.Current.Spells,
+                    out levelUpMessage))
             {
-                string levelUpMessage;
-                if (!hero.CheckLevelUp(
-                        classLevels,
-                        GameDataCache.Current == null ? null : GameDataCache.Current.Spells,
-                        out levelUpMessage))
-                {
-                    return;
-                }
-
-                MarkDirty();
-                Sounds.PlaySoundEffect("level-up");
-                if (!string.IsNullOrEmpty(levelUpMessage))
-                {
-                    message.Append(levelUpMessage);
-                }
+                return hero.Name + " is not ready to level up.";
             }
+
+            MarkDirty();
+            Sounds.PlaySoundEffect("level-up");
+            return string.IsNullOrWhiteSpace(levelUpMessage)
+                ? hero.Name + " has advanced to level " + hero.Level + "."
+                : levelUpMessage.TrimEnd();
         }
 
         private void AppendCombatItems(StringBuilder message, IEnumerable<Item> foundItems)
@@ -1347,8 +1356,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 ReferenceEquals(source, target) ||
                 !Party.Members.Contains(source) ||
                 !Party.Members.Contains(target) ||
-                !source.Items.Contains(item) ||
-                target.Items.Count >= Party.MaxItems)
+                !source.Items.Contains(item))
             {
                 return false;
             }
@@ -1835,9 +1843,13 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         public Item CreateChestItem(int level, Rarity? rarity = null)
         {
-            if (Chance(0.25f))
+            if (Chance(0.65f))
             {
-                return CreateRandomItem(level, 1, rarity);
+                var item = CreateRandomItem(level, 1, rarity);
+                if (item != null && item.Type != ItemType.Gold)
+                {
+                    return item;
+                }
             }
 
             return CreateGold(Dice.Roll(5, Math.Max(1, level) * 3, 1));
@@ -1922,6 +1934,28 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             var result = Party.LongRest(cost);
             if (result.Contains("rested", StringComparison.OrdinalIgnoreCase))
+            {
+                MarkDirty();
+            }
+
+            return result;
+        }
+
+        public string MakeCamp()
+        {
+            EnsureInitialized();
+            if (Party == null)
+            {
+                return "There is no party to rest.";
+            }
+
+            if (!Party.CurrentMapIsOverWorld)
+            {
+                return "You can only make camp while traveling the overworld.";
+            }
+
+            var result = Party.LongRest(0);
+            if (result.Contains("restored", StringComparison.OrdinalIgnoreCase))
             {
                 MarkDirty();
             }
@@ -2080,7 +2114,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             EnsureInitialized();
             var recipient = Party == null
                 ? null
-                : Party.AliveMembers.FirstOrDefault(partyMember => partyMember.Items.Count < Party.MaxItems);
+                : Party.AliveMembers.OrderBy(DndStatRules.GetCarriedWeight).FirstOrDefault();
             return BuyStoreItem(mapObject, item, recipient, out _);
         }
 

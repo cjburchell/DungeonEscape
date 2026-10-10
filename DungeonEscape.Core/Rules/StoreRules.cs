@@ -63,7 +63,7 @@ namespace Redpoint.DungeonEscape.Rules
         {
             return party == null
                 ? new List<Hero>()
-                : party.AliveMembers.Where(hero => hero.Items.Count < Party.MaxItems).ToList();
+                : party.AliveMembers.ToList();
         }
 
         public static IEnumerable<ItemInstance> GetSellableItems(Hero hero)
@@ -162,7 +162,7 @@ namespace Redpoint.DungeonEscape.Rules
                     item.Type != ItemType.Quest &&
                     item.Type != ItemType.Unknown &&
                     item.Rarity == Rarity.Common &&
-                    item.MinLevel <= 0)
+                    item.MinLevel <= 1)
                 .OrderBy(item => item.Cost)
                 .ThenBy(item => item.Name)
                 .Take(2);
@@ -210,9 +210,9 @@ namespace Redpoint.DungeonEscape.Rules
                 return "That item is not available.";
             }
 
-            if (recipient == null || party == null || !party.Members.Contains(recipient) || recipient.Items.Count >= Party.MaxItems)
+            if (recipient == null || party == null || !party.Members.Contains(recipient))
             {
-                return "No one has room to carry that.";
+                return "No one can carry that.";
             }
 
             if (party.Gold < item.Cost)

@@ -134,6 +134,46 @@ namespace DungeonEscape.Core.Test.Rules
         }
 
         [Fact]
+        public void CarryingCapacityUsesStrengthAndItemWeight()
+        {
+            var hero = new Hero
+            {
+                Strength = 10
+            };
+            hero.Items.Add(CreateWeightedItem("Rope", 10));
+            hero.Items.Add(CreateWeightedItem("Rations", 5));
+
+            Assert.Equal(150, DndStatRules.GetCarryingCapacity(hero));
+            Assert.Equal(15, DndStatRules.GetCarriedWeight(hero));
+            Assert.False(DndStatRules.IsEncumbered(hero));
+        }
+
+        [Fact]
+        public void EncumbranceAppliesPenaltyToAttacksInitiativeSavingThrowsAndSkillChecks()
+        {
+            var hero = new Hero
+            {
+                Class = Class.Fighter,
+                Level = 1,
+                Strength = 1,
+                Dexterity = 14,
+                Constitution = 14
+            };
+            var weapon = CreateWeapon("Club", 1, 4, 0);
+            hero.Items.Add(weapon);
+            hero.Items.Add(CreateWeightedItem("Stone", 16));
+            hero.Equip(weapon);
+
+            Assert.True(DndStatRules.IsEncumbered(hero));
+            Assert.Equal(15, DndStatRules.GetCarryingCapacity(hero));
+            Assert.Equal(2, DndStatRules.GetAttackBonus(hero));
+            Assert.Equal(0, DndStatRules.GetDamageBonus(hero));
+            Assert.Equal(0, DndStatRules.GetInitiativeBonus(hero));
+            Assert.Equal(-5, DndStatRules.GetSavingThrowModifier(hero, DndStatRules.AbilityScore.Strength, true));
+            Assert.Equal(-5, DndStatRules.GetSkillCheckModifier(hero, "Athletics", true));
+        }
+
+        [Fact]
         public void SavingThrowAndSkillCheckResolutionUseDndFormulaAndDifficultyClass()
         {
             var hero = new Hero
@@ -298,6 +338,16 @@ namespace DungeonEscape.Core.Test.Rules
                 DamageDice = damageDice,
                 DamageDie = damageDie,
                 DamageBonus = damageBonus
+            });
+        }
+
+        private static ItemInstance CreateWeightedItem(string name, int weight)
+        {
+            return new ItemInstance(new Item
+            {
+                Name = name,
+                Type = ItemType.OneUse,
+                Weight = weight
             });
         }
     }

@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using Newtonsoft.Json;
+using Redpoint.DungeonEscape.Rules;
 
 namespace Redpoint.DungeonEscape.State
 {
     public class Party
     {
-        public const int MaxItems = 30;
-
         public WorldPosition OverWorldPosition { get; set; }
         public WorldPosition? SavedPoint { get; set; }
         public string SavedMapId { get; set; }
@@ -102,18 +101,15 @@ namespace Redpoint.DungeonEscape.State
 
         public Hero AddItem(ItemInstance item)
         {
-            var selectedMember = AliveMembers.FirstOrDefault(partyMember => partyMember.Items.Count < MaxItems);
-            if (selectedMember == null)
-            {
-                if (item.Type != ItemType.Quest)
-                {
-                    return null;
-                }
+            var selectedMember = AliveMembers
+                .OrderBy(DndStatRules.GetCarriedWeight)
+                .FirstOrDefault();
 
-                selectedMember = AliveMembers.First();
+            if (selectedMember != null)
+            {
+                selectedMember.Items.Add(item);
             }
 
-            selectedMember.Items.Add(item);
             return selectedMember;
         }
 
@@ -188,7 +184,9 @@ namespace Redpoint.DungeonEscape.State
                 member.RestoreSpellSlots();
             }
 
-            return "Your party has rested at the inn and is fully restored.";
+            return cost == 0
+                ? "Your party makes camp and is fully restored."
+                : "Your party has rested at the inn and is fully restored.";
         }
 
         public string OpenDoor(ObjectState door, IGame game)

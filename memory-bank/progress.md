@@ -2,6 +2,14 @@
 
 ## Done
 
+- AI-004B / GitHub #31: authorized the existing bounded read-only `read_script` MCP tool for Unity
+  Engineer and Reviewer through the AgentOrchestrator's generic role and safe-metadata gateway. Manager,
+  unsupported roles, unadvertised tools, and writable/destructive/open-world descriptors remain denied.
+  Specialists can locate approved source with `search_code` and inspect bounded ranges with
+  `read_script`; requests/results are passed through without interpretation, indexing, caching, or
+  persistence. No MCP implementation, gameplay, Unity Asset, LLM, RAG, QA, write, or Git-agent behavior
+  changed.
+
 - AI-004 / GitHub #14: added strictly read-only `read_script` to the standalone MCP server. It reads
   one normalized repository-relative UTF-8 file under the same roots/extensions as `search_code`, with
   a 1 MiB file limit, 200-line request limit, and 64 KiB response limit. Search and read now share a

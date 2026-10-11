@@ -11,15 +11,17 @@ real LLM or autonomous reasoning backend is implemented.
 ## Safety boundary
 
 - Manager has no tools.
-- Unity Engineer and Reviewer may call `get_project_info` and bounded read-only `search_code`.
+- Unity Engineer and Reviewer may call `get_project_info`, bounded read-only `search_code`, and bounded
+  read-only `read_script`.
 - The gateway also requires the MCP descriptor to be read-only, non-destructive, and closed-world.
 - No arbitrary file reading, write-capable, shell, Git, QA, or RAG capability is provided.
 - Trace events contain lifecycle metadata and summaries, not chain-of-thought, credentials,
   environment variables, or arbitrary source contents.
 
 The existing MCP server is started as a separate stdio process and is not modified by this project.
-The orchestrator passes specialist searches through without interpreting, indexing, caching, or
-persisting results. The deterministic demonstration continues to use explicit static context.
+The orchestrator passes specialist searches and source-range reads through without interpreting,
+indexing, caching, or persisting results. The deterministic demonstration continues to use explicit
+static context.
 
 ## Build and test
 

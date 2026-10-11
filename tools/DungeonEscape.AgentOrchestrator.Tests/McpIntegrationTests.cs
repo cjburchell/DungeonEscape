@@ -6,7 +6,7 @@ namespace DungeonEscape.AgentOrchestrator.Tests;
 public sealed class McpIntegrationTests
 {
     [Fact]
-    public async Task ExistingMcpServerAdvertisesThreeToolsButGatewayAllowsOnlyApprovedSpecialistTools()
+    public async Task ExistingMcpServerAdvertisesThreeToolsAndGatewayAllowsSafeSpecialistReads()
     {
         var testProject = FindAncestor(AppContext.BaseDirectory, "DungeonEscape.AgentOrchestrator.Tests");
         var toolsDirectory = testProject.Parent!;
@@ -58,10 +58,23 @@ public sealed class McpIntegrationTests
             JsonSerializer.SerializeToElement(new { query = "ProjectInfoService" }), timeout.Token);
         Assert.False(managerSearch.Succeeded);
 
-        var deniedRead = await gateway.CallAsync(AgentRole.UnityEngineer, "read_script",
-            JsonSerializer.SerializeToElement(new { path = "tools/DungeonEscape.Mcp/Program.cs" }),
+        var readArguments = JsonSerializer.SerializeToElement(new
+        {
+            path = "tools/DungeonEscape.Mcp/Services/ProjectInfoService.cs", startLine = 1, lineCount = 30
+        });
+        var engineerRead = await gateway.CallAsync(AgentRole.UnityEngineer, "read_script", readArguments,
             timeout.Token);
-        Assert.False(deniedRead.Succeeded);
+        Assert.True(engineerRead.Succeeded);
+        Assert.Contains("ProjectInfoService", engineerRead.Content);
+
+        var reviewerRead = await gateway.CallAsync(AgentRole.Reviewer, "read_script", readArguments,
+            timeout.Token);
+        Assert.True(reviewerRead.Succeeded);
+        Assert.Contains("ProjectInfoService", reviewerRead.Content);
+
+        var managerRead = await gateway.CallAsync(AgentRole.Manager, "read_script", readArguments,
+            timeout.Token);
+        Assert.False(managerRead.Succeeded);
 
         var rejected = await gateway.CallAsync(AgentRole.Reviewer, "read_file",
             JsonSerializer.SerializeToElement(new { path = "anything" }), timeout.Token);

@@ -23,11 +23,11 @@ public sealed class RoleBasedToolGateway(IReadOnlyToolClient client, IWorkflowTr
         new Dictionary<AgentRole, IReadOnlySet<string>>
         {
             [AgentRole.Manager] = new HashSet<string>(),
-            [AgentRole.UnityEngineer] = new HashSet<string> { "get_project_info", "search_code" },
-            [AgentRole.Reviewer] = new HashSet<string> { "get_project_info", "search_code" }
+            [AgentRole.UnityEngineer] = new HashSet<string> { "get_project_info", "search_code", "read_script" },
+            [AgentRole.Reviewer] = new HashSet<string> { "get_project_info", "search_code", "read_script" }
         };
 
-    public IReadOnlyList<string> AllowedTools => ["get_project_info", "search_code"];
+    public IReadOnlyList<string> AllowedTools => ["get_project_info", "search_code", "read_script"];
 
     public async Task<ToolCallResult> CallAsync(AgentRole role, string name, JsonElement arguments,
         CancellationToken cancellationToken)

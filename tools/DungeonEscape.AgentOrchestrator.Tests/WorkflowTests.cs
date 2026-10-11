@@ -182,6 +182,76 @@ public sealed class WorkflowTests
         Assert.Empty(client.Calls);
     }
 
+    [Theory]
+    [InlineData(AgentRole.UnityEngineer)]
+    [InlineData(AgentRole.Reviewer)]
+    public async Task SpecialistsCanInvokeSafelyAnnotatedReadScript(AgentRole role)
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("read_script", EmptyJson(), true, false, false));
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync(role, "read_script",
+            JsonSerializer.SerializeToElement(new { path = "DungeonEscape.Core/State/Hero.cs" }), default);
+
+        Assert.True(result.Succeeded);
+        Assert.Equal(["read_script"], client.Calls);
+        Assert.Contains(trace.Events, e => e.EventType == "ToolCallStarted" && e.Role == role);
+        Assert.Contains(trace.Events, e => e.EventType == "ToolCallCompleted" && e.Role == role);
+    }
+
+    [Theory]
+    [InlineData(AgentRole.Manager)]
+    [InlineData((AgentRole)int.MaxValue)]
+    public async Task ManagerAndUnsupportedRolesCannotInvokeReadScript(AgentRole role)
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("read_script", EmptyJson(), true, false, false));
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync(role, "read_script", EmptyJson(), default);
+
+        Assert.False(result.Succeeded);
+        Assert.Single(trace.Events, e => e.EventType == "ToolCallRejected" && e.Role == role);
+        Assert.Empty(client.Calls);
+    }
+
+    [Fact]
+    public async Task UnadvertisedReadScriptIsRejected()
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("get_project_info", EmptyJson(), true, false, false));
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync(AgentRole.UnityEngineer, "read_script", EmptyJson(), default);
+
+        Assert.False(result.Succeeded);
+        Assert.Single(trace.Events, e => e.EventType == "ToolCallRejected");
+        Assert.Empty(client.Calls);
+    }
+
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(true, true, false)]
+    [InlineData(true, false, true)]
+    public async Task ReadScriptRequiresReadOnlyNonDestructiveClosedWorldMetadata(
+        bool readOnly, bool destructive, bool openWorld)
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("read_script", EmptyJson(), readOnly, destructive, openWorld));
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync(AgentRole.Reviewer, "read_script", EmptyJson(), default);
+
+        Assert.False(result.Succeeded);
+        Assert.Single(trace.Events, e => e.EventType == "ToolCallRejected");
+        Assert.Empty(client.Calls);
+    }
+
     [Fact]
     public async Task TraceEventsAreCorrelatedAndCoverAgentAndWorkflowTransitions()
     {

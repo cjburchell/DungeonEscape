@@ -26,6 +26,7 @@ project context. Durable shared context belongs in the tracked memory-bank files
 | `.ai/architecture.md` | Concise current component/dependency map with source evidence and unknowns |
 | `.ai/coding-rules.md` | Conventions observed in project files and representative source |
 | `.ai/agent-rules.md` | Inspection, change scope, validation and handoff procedure |
+| `.ai/agents/` | Durable role definitions for the deterministic multi-agent workflow |
 | `.ai/decisions/` | Future explicit decision records; see its README |
 | `.ai/skills/` | Future repository-specific workflows; see its README |
 | `memory-bank/` | Tracked durable project context: architecture/history, progress, bugs, backlog and manual validation; optional ignored `activeContext.md` may hold local session context |

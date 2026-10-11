@@ -2,6 +2,12 @@
 
 ## Done
 
+- PR #9 / AI-002 review follow-up: added trusted startup-only `--repository-root <absolute path>`, canonicalization, shared DungeonEscape identity/reparse validation, and clear startup failure (stderr, exit 2) without fallback for invalid configuration. Tool schema remains parameterless and exactly one read-only tool is exposed. MCP build passed with zero warnings/errors; all 41 tests passed, including configured/fallback stdio handshakes, selected-root verification, invalid startup, and link/path boundary checks. Launcher/client setup remains manual; no gameplay/Assets changes or automatic commit/merge.
+
+- AI-001 / GitHub #7: established `.ai/` context routing, source-backed architecture, observed coding conventions, safe agent workflow, and documented `decisions/` and `skills/` placeholders. Existing root context and memory-bank ownership remain in place; unknown CI authority, fresh manual validation, and Toolkit-preview disposition are explicit. Documentation-only scope; PR delivery remains pending the session's no-automatic-commit instruction.
+
+- AI-002 / GitHub #8: added standalone .NET 10 MCP tooling under `tools/DungeonEscape.Mcp`, independent of Unity, exposing only parameterless read-only `get_project_info` via the official C# SDK and stdio. Build passed with zero warnings/errors; all 15 tests passed, including real stdio handshake, single-tool verification, invocation, and repository boundary coverage. Client UI setup remains manual; see the server README and `.ai/architecture.md`.
+
 - Created Unity project structure and imported Unity-compatible assets.
 - Created `DungeonEscape.Core` shared project.
 - Migrated major portable state/domain models into shared core.

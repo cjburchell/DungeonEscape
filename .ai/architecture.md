@@ -98,8 +98,8 @@ shell, network or write tools are exposed; logs use stderr. The
 The AI-010 orchestrator is a separate consumer of that MCP boundary. Its application state machine
 enforces Manager → Unity Engineer → Reviewer transitions, permits one Engineer revision after
 `REQUEST_CHANGES`, and requires human handling after a second request. Manager has no tools; the two
-specialists are allowlisted for `get_project_info`, bounded `search_code`, and bounded `read_script`.
-The newly advertised `list_scenes` remains denied pending separate role-policy work,
+specialists are allowlisted for `get_project_info`, bounded `search_code`, bounded `read_script`, and
+bounded `list_scenes`,
 and the gateway rejects tools not advertised as read-only, non-destructive, and closed-world. Manager
 and unsupported roles remain denied. Search and source-range requests/results are passed through
 without interpretation, indexing, caching, or persistence.

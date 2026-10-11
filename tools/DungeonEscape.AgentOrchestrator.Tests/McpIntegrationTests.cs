@@ -6,7 +6,7 @@ namespace DungeonEscape.AgentOrchestrator.Tests;
 public sealed class McpIntegrationTests
 {
     [Fact]
-    public async Task ExistingMcpServerAdvertisesFourToolsWhileSceneDiscoveryRemainsUnauthorized()
+    public async Task ExistingMcpServerAdvertisesFourToolsAndSpecialistsCanDiscoverScenes()
     {
         var testProject = FindAncestor(AppContext.BaseDirectory, "DungeonEscape.AgentOrchestrator.Tests");
         var toolsDirectory = testProject.Parent!;
@@ -79,9 +79,18 @@ public sealed class McpIntegrationTests
             timeout.Token);
         Assert.False(managerRead.Succeeded);
 
-        var deniedScenes = await gateway.CallAsync(AgentRole.UnityEngineer, "list_scenes",
+        var engineerScenes = await gateway.CallAsync(AgentRole.UnityEngineer, "list_scenes",
             JsonSerializer.SerializeToElement(new { }), timeout.Token);
-        Assert.False(deniedScenes.Succeeded);
+        Assert.True(engineerScenes.Succeeded);
+        Assert.Contains("DungeonEscape.Unity/Assets/DungeonEscape/Scenes/Boot.unity", engineerScenes.Content);
+
+        var reviewerScenes = await gateway.CallAsync(AgentRole.Reviewer, "list_scenes",
+            JsonSerializer.SerializeToElement(new { }), timeout.Token);
+        Assert.True(reviewerScenes.Succeeded);
+
+        var managerScenes = await gateway.CallAsync(AgentRole.Manager, "list_scenes",
+            JsonSerializer.SerializeToElement(new { }), timeout.Token);
+        Assert.False(managerScenes.Succeeded);
 
         var rejected = await gateway.CallAsync(AgentRole.Reviewer, "read_file",
             JsonSerializer.SerializeToElement(new { path = "anything" }), timeout.Token);

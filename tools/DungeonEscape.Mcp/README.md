@@ -7,6 +7,7 @@ Targets .NET 10 and uses the [official C# MCP SDK](https://github.com/modelconte
 ## Structure
 
 - `Program.cs`: minimal host, stderr logging, stdio transport, explicit tool registration.
+- `Services/RepositoryStartupOptions.cs`: strict parsing of trusted launcher configuration.
 - `Tools/ProjectInfoTools.cs`: MCP presentation and read-only annotations.
 - `Services/ProjectInfoService.cs`: repository discovery and bounded metadata reads, independent of MCP.
 - `../DungeonEscape.Mcp.Tests/`: xUnit discovery, metadata, boundary and real stdio tests.
@@ -25,7 +26,9 @@ dotnet test tools/DungeonEscape.Mcp.Tests/DungeonEscape.Mcp.Tests.csproj
 
 The test run includes a real subprocess handshake (`initialize`, `notifications/initialized`),
 `tools/list` verification of exactly one parameterless read-only tool, `tools/call`, and unknown-tool rejection.
-It runs the server from an unrelated working directory to verify discovery is independent of cwd.
+It runs both executable-discovery and configured-root modes from an unrelated working directory,
+verifies that a configured fixture overrides executable discovery, and checks invalid configuration
+exits before transport starts with an error on stderr and no stdout.
 Other tests use isolated temporary fixtures and do not modify the Unity project.
 The Windows boundary test creates and removes a temporary junction; other platforms use a symlink.
 
@@ -37,8 +40,29 @@ Build first, then launch the DLL from its build output inside this checkout:
 dotnet tools/DungeonEscape.Mcp/bin/Debug/net10.0/DungeonEscape.Mcp.dll
 ```
 
-For an MCP client, configure the executable as `dotnet` and pass the **absolute path** to that DLL
-as its only argument. No API key or HTTP endpoint is required. The process waits for MCP messages;
+The trusted launcher may explicitly select a checkout, including when the server is deployed elsewhere:
+
+```powershell
+dotnet tools/DungeonEscape.Mcp/bin/Debug/net10.0/DungeonEscape.Mcp.dll --repository-root "E:\dev\cburchell\apps\DungeonEscape"
+```
+
+For an MCP client, configure the executable as `dotnet` and pass the **absolute path** to that DLL,
+optionally followed by separate `--repository-root` and absolute checkout path arguments. Quote paths
+with spaces in a shell; in a client's argument array each path is a single value without shell quotes.
+The path above is an example; use your actual checkout location.
+
+`--repository-root` is process startup configuration only, never an MCP tool argument. It must be
+a fully qualified local path to a directory containing the existing identity markers:
+`DungeonEscape.sln` (file), `DungeonEscape.Core` and `DungeonEscape.Unity` (directories).
+The server canonicalizes dot segments/trailing separators with .NET path APIs, then checks the root,
+markers and their ancestors for symlinks/junctions/reparse points. Windows UNC/device paths are unsupported.
+Invalid roots, relative paths, missing values, duplicate options or unknown options produce a clear
+stderr startup error and exit code `2` before the MCP host starts. No fallback is attempted for an
+invalid configured root. If a configured root later becomes unavailable, metadata becomes unavailable;
+the server does not switch checkouts. Environment variables do not select a root.
+
+When the option is omitted, the existing executable-location discovery is used.
+No API key or HTTP endpoint is required. The process waits for MCP messages;
 it is not an interactive command prompt. Standard input/output carry newline-delimited JSON-RPC;
 host logs go to stderr. Avoid launching through `dotnet run` in a client because build output can
 interfere with protocol traffic. Close stdin to shut down the server.
@@ -54,15 +78,16 @@ interfere with protocol traffic. Close stdin to shut down the server.
 - `defaultBranch`: a simple symbolic branch from `.git/refs/remotes/origin/HEAD`.
 
 Unavailable values are the explicit string `not available`. No default branch is inferred from
-the current branch or from conventional names such as `main`. Missing repository identity makes
-all fields unavailable. Serialization may use the record's PascalCase property names in text content.
+the current branch or from conventional names such as `main`. Missing repository identity during
+fallback discovery makes all fields unavailable; an invalid explicitly configured root instead fails
+startup. Serialization may use the record's PascalCase property names in text content.
 
 ## Security boundaries and limitations
 
-- Discovery starts at the executable's directory, finds its `tools/DungeonEscape.Mcp` ancestor,
-  and verifies adjacent `DungeonEscape.sln`, `DungeonEscape.Core`, and `DungeonEscape.Unity` markers.
-  It stops at that candidate and never falls back to other repositories. Caller arguments,
-  environment configuration, and working directory do not select the repository.
+- The trusted launcher can select a validated root once at startup. Without that option, discovery
+  starts at the executable's directory, finds its `tools/DungeonEscape.Mcp` ancestor and verifies the
+  same identity markers. Neither mode scans for other repositories. MCP callers and working directory
+  cannot select/change the root; generic host/environment configuration is disabled.
 - Only the three fixed metadata files above are read, each bounded to 4,096 characters.
   Callers cannot supply paths, commands, URLs or write requests. No shell, Git subprocess,
   network access, file-reading tool, resources, prompts or HTTP transport is registered.
@@ -73,7 +98,8 @@ all fields unavailable. Serialization may use the record's PascalCase property n
 - The checkout and local process environment are trusted. Marker files establish layout, not
   cryptographic repository identity. This is not an OS sandbox against a malicious local user
   changing files or links concurrently between checks and reads.
-- Moving/publishing the executable outside `tools/DungeonEscape.Mcp` makes discovery unavailable.
+- Moving/publishing the executable outside `tools/DungeonEscape.Mcp` requires `--repository-root`;
+  otherwise discovery is unavailable.
   Linked checkout paths are intentionally unsupported. Repository root exposes a local absolute
   path to the client as required by the issue.
 - NuGet restore needs network access during development; tool execution does not.

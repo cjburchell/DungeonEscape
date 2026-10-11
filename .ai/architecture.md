@@ -74,10 +74,13 @@ TMX metadata editing services, and JSON schemas. See its [README](../DungeonEsca
 and [Schemas](../DungeonEscape.Tools.GameEditor/Schemas/README.md). It is a development tool, not Unity UI.
 
 MCP `Program.cs` explicitly registers only `ProjectInfoTools`; parameterless read-only
-`get_project_info` delegates to `ProjectInfoService`. Discovery is anchored to the executable's
-checkout location and reads fixed Unity/Git metadata paths. Missing, linked, malformed or unsupported
-metadata returns `not available`. No arbitrary filesystem, shell, network or write tools are exposed;
-logs use stderr. The [MCP README](../tools/DungeonEscape.Mcp/README.md) records precise limitations.
+`get_project_info` delegates to `ProjectInfoService`. The trusted launcher may select an absolute
+checkout with startup-only `--repository-root`; canonicalization, identity markers and reparse checks
+are required, and invalid configuration fails startup without fallback. When omitted, discovery is
+anchored to the executable's checkout location. Only fixed Unity/Git metadata paths are read; missing,
+linked, malformed or unsupported metadata returns `not available`. No arbitrary filesystem, shell,
+network or write tools are exposed; logs use stderr. The [MCP README](../tools/DungeonEscape.Mcp/README.md)
+records precise limitations.
 
 ## Validation and delivery
 

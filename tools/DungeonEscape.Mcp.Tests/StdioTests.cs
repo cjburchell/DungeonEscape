@@ -6,8 +6,10 @@ namespace DungeonEscape.Mcp.Tests;
 
 public sealed class StdioTests
 {
-    [Fact]
-    public async Task HandshakeListsExactlyOneParameterlessReadOnlyToolAndCallsIt()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task HandshakeListsExactlyOneParameterlessReadOnlyToolAndCallsIt(bool configured)
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
         while (directory is not null && directory.Name != "DungeonEscape.Mcp.Tests") directory = directory.Parent;
@@ -21,6 +23,19 @@ public sealed class StdioTests
             WorkingDirectory = Path.GetTempPath()
         };
         start.ArgumentList.Add(dll);
+        var expectedRoot = directory.Parent.Parent!.FullName;
+        string? fixture = null;
+        if (configured)
+        {
+            fixture = Path.Combine(Path.GetTempPath(), "DungeonEscape MCP stdio", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(Path.Combine(fixture, "DungeonEscape.Core"));
+            var settings = Directory.CreateDirectory(Path.Combine(fixture, "DungeonEscape.Unity", "ProjectSettings"));
+            File.WriteAllText(Path.Combine(fixture, "DungeonEscape.sln"), "");
+            File.WriteAllText(Path.Combine(settings.FullName, "ProjectVersion.txt"), "m_EditorVersion: 6000.4.4f1\n");
+            start.ArgumentList.Add("--repository-root");
+            start.ArgumentList.Add(fixture);
+            expectedRoot = fixture;
+        }
         using var process = Process.Start(start)!;
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         var stderr = process.StandardError.ReadToEndAsync(timeout.Token);
@@ -45,6 +60,9 @@ public sealed class StdioTests
             Assert.False(called.TryGetProperty("isError", out var error) && error.GetBoolean());
             Assert.Contains("DungeonEscape", called.GetRawText());
             Assert.Contains("6000.4.4f1", called.GetRawText());
+            using var metadata = JsonDocument.Parse(called.GetProperty("content")[0].GetProperty("text").GetString()!);
+            Assert.Equal(expectedRoot, metadata.RootElement.EnumerateObject()
+                .Single(property => property.Name.Equals("RepositoryRoot", StringComparison.OrdinalIgnoreCase)).Value.GetString());
             await Send(new { jsonrpc = "2.0", id = 4, method = "tools/call", @params = new { name = "read_file", arguments = new { path = "outside" } } });
             var rejected = await Receive(4);
             Assert.True(rejected.TryGetProperty("error", out _) || rejected.GetProperty("result").GetProperty("isError").GetBoolean());
@@ -53,7 +71,11 @@ public sealed class StdioTests
         {
             process.StandardInput.Close();
             try { await process.WaitForExitAsync(timeout.Token); }
-            finally { if (!process.HasExited) process.Kill(true); }
+            finally
+            {
+                if (!process.HasExited) process.Kill(true);
+                if (fixture is not null) Directory.Delete(fixture, true);
+            }
         }
         Assert.Equal(0, process.ExitCode);
         await stderr;
@@ -76,5 +98,42 @@ public sealed class StdioTests
                     return message.Clone();
             }
         }
+    }
+
+    [Theory]
+    [InlineData("--repository-root")]
+    [InlineData("--repository-root", "relative/path")]
+    [InlineData("--unknown")]
+    [InlineData("--repository-root", "<missing>")]
+    [InlineData("--repository-root", "<parent-escape>")]
+    public async Task InvalidConfigurationFailsBeforeTransportWithoutFallback(params string[] args)
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null && directory.Name != "DungeonEscape.Mcp.Tests") directory = directory.Parent;
+        Assert.NotNull(directory);
+        var configuration = new DirectoryInfo(AppContext.BaseDirectory).Parent!.Name;
+        var start = new ProcessStartInfo("dotnet")
+        {
+            UseShellExecute = false, CreateNoWindow = true,
+            RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true,
+            WorkingDirectory = Path.GetTempPath()
+        };
+        start.ArgumentList.Add(Path.Combine(directory.Parent!.FullName, "DungeonEscape.Mcp", "bin", configuration, "net10.0", "DungeonEscape.Mcp.dll"));
+        foreach (var argument in args)
+            start.ArgumentList.Add(argument switch
+            {
+                "<missing>" => Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N")),
+                "<parent-escape>" => Path.Combine(directory.Parent.Parent!.FullName, "DungeonEscape.Core", "..", ".."),
+                _ => argument
+            });
+        using var process = Process.Start(start)!;
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        var stdout = process.StandardOutput.ReadToEndAsync(timeout.Token);
+        var stderr = process.StandardError.ReadToEndAsync(timeout.Token);
+        try { await process.WaitForExitAsync(timeout.Token); }
+        finally { if (!process.HasExited) process.Kill(true); }
+        Assert.Equal(2, process.ExitCode);
+        Assert.Empty(await stdout);
+        Assert.Contains("MCP startup configuration error:", await stderr);
     }
 }

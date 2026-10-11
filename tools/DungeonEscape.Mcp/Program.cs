@@ -26,9 +26,11 @@ builder.Logging.AddConsole(options => options.LogToStandardErrorThreshold = LogL
 builder.Services.AddSingleton(projectInfo);
 builder.Services.AddSingleton<SearchCodeService>();
 builder.Services.AddSingleton<ReadScriptService>();
+builder.Services.AddSingleton<ListScenesService>();
 builder.Services.AddMcpServer().WithStdioServerTransport()
     .WithTools<ProjectInfoTools>()
     .WithTools<SearchCodeTools>()
-    .WithTools<ReadScriptTools>();
+    .WithTools<ReadScriptTools>()
+    .WithTools<ListScenesTools>();
 await builder.Build().RunAsync();
 return 0;

@@ -5,7 +5,9 @@ This file does not authorize publishing, credential access or expanded tool capa
 
 ## Before edits
 
-1. Read the root instructions, memory-bank index/current context and relevant task records.
+1. Read the root instructions, the tracked [memory-bank index](../memory-bank/README.md), and the
+   tracked task-relevant records it identifies. An ignored `memory-bank/activeContext.md` may be read
+   as optional local session context when present, but it is not required for startup or durable context.
    Read [AI_CONTEXT.md](../AI_CONTEXT.md) and use this workspace's focused summaries as needed.
 2. Inspect working-tree status and preserve existing changes. Distinguish the current task's delta
    from pre-existing work; do not revert or absorb unrelated changes into the task.

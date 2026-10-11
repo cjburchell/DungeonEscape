@@ -50,10 +50,10 @@ Examples: [Item](../DungeonEscape.Core/Data/Item.cs),
 [HealerViewModel](../DungeonEscape.Core/ViewModels/HealerViewModel.cs).
 The boundary is incremental: significant orchestration and gameplay coordination remain Unity-side.
 
-The active UI direction is IMGUI according to the memory bank, and current `GameMenu`/`TitleMenu`
+The active UI direction is IMGUI according to the tracked memory bank, and current `GameMenu`/`TitleMenu`
 have `OnGUI` paths. Toolkit view and optional title preview code also remain; do not describe them as
 removed or as a completed Toolkit migration. See [TitleMenu.cs](../DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/UI/TitleMenu.cs)
-and [activeContext.md](../memory-bank/activeContext.md).
+and [UI_TOOLKIT_MIGRATION.md](../memory-bank/UI_TOOLKIT_MIGRATION.md).
 
 ## Content, persistence and tooling
 

@@ -6,12 +6,16 @@ This workspace is documentation, not an agent runtime or an automatic permission
 ## Read order
 
 1. Read [AGENTS.md](../AGENTS.md) for repository instructions and validation commands.
-2. Read [memory-bank/README.md](../memory-bank/README.md),
-   [activeContext.md](../memory-bank/activeContext.md), and the task-relevant memory-bank files.
+2. Read the tracked [memory-bank index](../memory-bank/README.md), then the tracked
+   task-relevant files it identifies. This is the complete memory-bank startup path for a fresh checkout.
 3. Use [architecture.md](architecture.md) for a source-backed map of the current code,
    [coding-rules.md](coding-rules.md) for existing conventions, and
    [agent-rules.md](agent-rules.md) for safe work and handoff.
 4. Inspect the actual source and configuration involved in the task before making changes.
+
+`memory-bank/activeContext.md` is an optional, ignored local session overlay. Read it when it is
+present and useful, but never require it, assume it exists, or use it as the sole source of durable
+project context. Durable shared context belongs in the tracked memory-bank files listed by the index.
 
 ## Context ownership
 
@@ -24,9 +28,9 @@ This workspace is documentation, not an agent runtime or an automatic permission
 | `.ai/agent-rules.md` | Inspection, change scope, validation and handoff procedure |
 | `.ai/decisions/` | Future explicit decision records; see its README |
 | `.ai/skills/` | Future repository-specific workflows; see its README |
-| `memory-bank/` | Persistent current focus, detailed architecture/history, progress, bugs, backlog and manual validation |
+| `memory-bank/` | Tracked durable project context: architecture/history, progress, bugs, backlog and manual validation; optional ignored `activeContext.md` may hold local session context |
 
-Keep the memory bank as the durable project context required by `AGENTS.md`. Do not copy its
+Keep tracked memory-bank files as the durable shared project context. Do not copy their
 entire contents into `.ai` or maintain competing progress/backlog lists. Update the relevant
 memory-bank records after meaningful changes; update `.ai` when its component map or conventions change.
 Root instructions and explicit task constraints take precedence over these descriptive summaries.

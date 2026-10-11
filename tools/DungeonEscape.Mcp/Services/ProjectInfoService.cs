@@ -29,7 +29,7 @@ public sealed class ProjectInfoService
             RegexOptions.CultureInvariant);
         // Only ordinary .git directories with loose symbolic HEAD metadata are supported.
         var git = Path.Combine(root, ".git");
-        var simpleGit = Directory.Exists(git) && IsOrdinaryPath(git)
+        var simpleGit = Directory.Exists(git) && RepositoryPathSecurity.IsOrdinaryPath(git)
             && !File.Exists(Path.Combine(git, "commondir"));
         return new("DungeonEscape", match.Success ? match.Groups[1].Value : Unavailable, root,
             simpleGit ? ReadBranch(ReadMetadata(root, ".git/HEAD"), "ref: refs/heads/") : Unavailable,
@@ -44,7 +44,7 @@ public sealed class ProjectInfoService
         try
         {
             var directory = new DirectoryInfo(Path.GetFullPath(applicationDirectory));
-            if (!directory.Exists || !IsOrdinaryPath(directory.FullName)) return null;
+            if (!directory.Exists || !RepositoryPathSecurity.IsOrdinaryPath(directory.FullName)) return null;
             // Stop at the server's own project directory. Never search arbitrary parent repos.
             for (; directory is not null; directory = directory.Parent)
             {
@@ -81,13 +81,13 @@ public sealed class ProjectInfoService
 
     private static bool HasRepositoryIdentity(string root)
     {
-        return Directory.Exists(root) && IsOrdinaryPath(root)
+        return Directory.Exists(root) && RepositoryPathSecurity.IsOrdinaryPath(root)
             && File.Exists(Path.Combine(root, "DungeonEscape.sln"))
             && Directory.Exists(Path.Combine(root, "DungeonEscape.Core"))
             && Directory.Exists(Path.Combine(root, "DungeonEscape.Unity"))
-            && IsOrdinaryPath(Path.Combine(root, "DungeonEscape.sln"))
-            && IsOrdinaryPath(Path.Combine(root, "DungeonEscape.Core"))
-            && IsOrdinaryPath(Path.Combine(root, "DungeonEscape.Unity"));
+            && RepositoryPathSecurity.IsOrdinaryPath(Path.Combine(root, "DungeonEscape.sln"))
+            && RepositoryPathSecurity.IsOrdinaryPath(Path.Combine(root, "DungeonEscape.Core"))
+            && RepositoryPathSecurity.IsOrdinaryPath(Path.Combine(root, "DungeonEscape.Unity"));
     }
 
     private static string? ReadMetadata(string root, string relativePath)
@@ -96,9 +96,9 @@ public sealed class ProjectInfoService
         {
             var path = Path.GetFullPath(Path.Combine(root, relativePath));
             var prefix = Path.EndsInDirectorySeparator(root) ? root : root + Path.DirectorySeparatorChar;
-            var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+            var comparison = RepositoryPathSecurity.Comparison;
             if (!path.StartsWith(prefix, comparison)
-                || !File.Exists(path) || !IsOrdinaryPath(path)) return null;
+                || !File.Exists(path) || !RepositoryPathSecurity.IsOrdinaryPath(path)) return null;
             // Bound reads even if metadata is malformed or changes while being read.
             using var reader = new StreamReader(path);
             var buffer = new char[4097];
@@ -118,18 +118,4 @@ public sealed class ProjectInfoService
             RegexOptions.CultureInvariant) ? branch : Unavailable;
     }
 
-    private static bool IsOrdinaryPath(string path)
-    {
-        try
-        {
-            for (FileSystemInfo? entry = Directory.Exists(path) ? new DirectoryInfo(path) : new FileInfo(path);
-                 entry is not null;
-                 entry = entry is DirectoryInfo directory ? directory.Parent : ((FileInfo)entry).Directory)
-            {
-                if ((entry.Attributes & FileAttributes.ReparsePoint) != 0) return false;
-            }
-            return true;
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { return false; }
-    }
 }

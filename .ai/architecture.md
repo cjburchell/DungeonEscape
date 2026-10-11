@@ -75,14 +75,17 @@ GameEditor uses singleton services registered in `Program.cs`, Razor components,
 TMX metadata editing services, and JSON schemas. See its [README](../DungeonEscape.Tools.GameEditor/README.md)
 and [Schemas](../DungeonEscape.Tools.GameEditor/Schemas/README.md). It is a development tool, not Unity UI.
 
-MCP `Program.cs` explicitly registers only `ProjectInfoTools`; parameterless read-only
-`get_project_info` delegates to `ProjectInfoService`. The trusted launcher may select an absolute
+MCP `Program.cs` explicitly registers `ProjectInfoTools` and `SearchCodeTools`. Parameterless read-only
+`get_project_info` delegates to `ProjectInfoService`; bounded read-only `search_code` delegates to the
+MCP-independent `SearchCodeService`. The trusted launcher may select an absolute
 checkout with startup-only `--repository-root`; canonicalization, identity markers and reparse checks
 are required, and invalid configuration fails startup without fallback. When omitted, discovery is
 anchored to the executable's checkout location. Only fixed Unity/Git metadata paths are read; missing,
-linked, malformed or unsupported metadata returns `not available`. No arbitrary filesystem, shell,
-network or write tools are exposed; logs use stderr. The [MCP README](../tools/DungeonEscape.Mcp/README.md)
-records precise limitations.
+linked, malformed or unsupported metadata returns `not available`. Search is literal, UTF-8-only,
+resource-bounded, limited to six hard-coded source/documentation roots, and returns only relative paths
+with bounded line snippets. Shared containment/reparse checks fail closed. No arbitrary `read_file`,
+shell, network or write tools are exposed; logs use stderr. The
+[MCP README](../tools/DungeonEscape.Mcp/README.md) records exact roots, extensions and limits.
 
 The AI-010 orchestrator is a separate consumer of that MCP boundary. Its application state machine
 enforces Manager → Unity Engineer → Reviewer transitions, permits one Engineer revision after

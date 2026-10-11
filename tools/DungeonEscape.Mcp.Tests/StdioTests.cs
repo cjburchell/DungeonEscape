@@ -9,7 +9,7 @@ public sealed class StdioTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task HandshakeListsExactlyOneParameterlessReadOnlyToolAndCallsIt(bool configured)
+    public async Task HandshakeListsExactlyTwoReadOnlyToolsAndCallsThem(bool configured)
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
         while (directory is not null && directory.Name != "DungeonEscape.Mcp.Tests") directory = directory.Parent;
@@ -32,6 +32,7 @@ public sealed class StdioTests
             var settings = Directory.CreateDirectory(Path.Combine(fixture, "DungeonEscape.Unity", "ProjectSettings"));
             File.WriteAllText(Path.Combine(fixture, "DungeonEscape.sln"), "");
             File.WriteAllText(Path.Combine(settings.FullName, "ProjectVersion.txt"), "m_EditorVersion: 6000.4.4f1\n");
+            File.WriteAllText(Path.Combine(fixture, "DungeonEscape.Core", "Fixture.cs"), "class FixtureSymbol { }\n");
             start.ArgumentList.Add("--repository-root");
             start.ArgumentList.Add(fixture);
             expectedRoot = fixture;
@@ -50,11 +51,17 @@ public sealed class StdioTests
             await Send(new { jsonrpc = "2.0", method = "notifications/initialized" });
             await Send(new { jsonrpc = "2.0", id = 2, method = "tools/list", @params = new { } });
             var listed = await Receive(2);
-            var tool = Assert.Single(listed.GetProperty("result").GetProperty("tools").EnumerateArray());
-            Assert.Equal("get_project_info", tool.GetProperty("name").GetString());
-            var schema = tool.GetProperty("inputSchema");
-            Assert.Empty(schema.GetProperty("properties").EnumerateObject());
-            Assert.True(tool.GetProperty("annotations").GetProperty("readOnlyHint").GetBoolean());
+            var tools = listed.GetProperty("result").GetProperty("tools").EnumerateArray().ToArray();
+            Assert.Equal(2, tools.Length);
+            var projectTool = tools.Single(tool => tool.GetProperty("name").GetString() == "get_project_info");
+            Assert.Empty(projectTool.GetProperty("inputSchema").GetProperty("properties").EnumerateObject());
+            AssertStrictlyReadOnly(projectTool);
+            var searchTool = tools.Single(tool => tool.GetProperty("name").GetString() == "search_code");
+            var searchSchema = searchTool.GetProperty("inputSchema");
+            Assert.Equal(["maxResults", "path", "query"], searchSchema.GetProperty("properties")
+                .EnumerateObject().Select(property => property.Name).OrderBy(name => name));
+            Assert.Equal("query", Assert.Single(searchSchema.GetProperty("required").EnumerateArray()).GetString());
+            AssertStrictlyReadOnly(searchTool);
             await Send(new { jsonrpc = "2.0", id = 3, method = "tools/call", @params = new { name = "get_project_info", arguments = new { } } });
             var called = (await Receive(3)).GetProperty("result");
             Assert.False(called.TryGetProperty("isError", out var error) && error.GetBoolean());
@@ -63,8 +70,28 @@ public sealed class StdioTests
             using var metadata = JsonDocument.Parse(called.GetProperty("content")[0].GetProperty("text").GetString()!);
             Assert.Equal(expectedRoot, metadata.RootElement.EnumerateObject()
                 .Single(property => property.Name.Equals("RepositoryRoot", StringComparison.OrdinalIgnoreCase)).Value.GetString());
-            await Send(new { jsonrpc = "2.0", id = 4, method = "tools/call", @params = new { name = "read_file", arguments = new { path = "outside" } } });
-            var rejected = await Receive(4);
+            var query = configured ? "FixtureSymbol" : "ProjectInfoService";
+            var path = configured ? "DungeonEscape.Core" : "tools/DungeonEscape.Mcp";
+            await Send(new { jsonrpc = "2.0", id = 4, method = "tools/call", @params = new
+            {
+                name = "search_code", arguments = new { query, path, maxResults = 5 }
+            }});
+            var searched = (await Receive(4)).GetProperty("result");
+            Assert.False(searched.TryGetProperty("isError", out var searchError) && searchError.GetBoolean());
+            Assert.Contains(query, searched.GetRawText());
+
+            await Send(new { jsonrpc = "2.0", id = 5, method = "tools/call", @params = new
+            {
+                name = "search_code", arguments = new { query = "x", path = "../outside" }
+            }});
+            Assert.True((await Receive(5)).GetProperty("result").GetProperty("isError").GetBoolean());
+            await Send(new { jsonrpc = "2.0", id = 6, method = "tools/call", @params = new
+            {
+                name = "search_code", arguments = new { query = "x", path = "README.md" }
+            }});
+            Assert.True((await Receive(6)).GetProperty("result").GetProperty("isError").GetBoolean());
+            await Send(new { jsonrpc = "2.0", id = 7, method = "tools/call", @params = new { name = "read_file", arguments = new { path = "outside" } } });
+            var rejected = await Receive(7);
             Assert.True(rejected.TryGetProperty("error", out _) || rejected.GetProperty("result").GetProperty("isError").GetBoolean());
         }
         finally
@@ -97,6 +124,15 @@ public sealed class StdioTests
                 if (message.TryGetProperty("id", out var responseId) && responseId.GetInt32() == id)
                     return message.Clone();
             }
+        }
+
+        static void AssertStrictlyReadOnly(JsonElement tool)
+        {
+            var annotations = tool.GetProperty("annotations");
+            Assert.True(annotations.GetProperty("readOnlyHint").GetBoolean());
+            Assert.True(annotations.GetProperty("idempotentHint").GetBoolean());
+            Assert.False(annotations.GetProperty("destructiveHint").GetBoolean());
+            Assert.False(annotations.GetProperty("openWorldHint").GetBoolean());
         }
     }
 

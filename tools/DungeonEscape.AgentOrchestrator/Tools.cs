@@ -32,7 +32,8 @@ public sealed class RoleBasedToolGateway(IReadOnlyToolClient client, IWorkflowTr
     public async Task<ToolCallResult> CallAsync(AgentRole role, string name, JsonElement arguments,
         CancellationToken cancellationToken)
     {
-        var allowed = Policy[role].Contains(name);
+        var roleSupported = Policy.TryGetValue(role, out var allowedTools);
+        var allowed = roleSupported && allowedTools!.Contains(name);
         var definitions = allowed ? await client.ListToolsAsync(cancellationToken) : [];
         var definition = definitions.SingleOrDefault(tool => tool.Name == name);
         if (!allowed || definition is null || !definition.ReadOnly || definition.Destructive || definition.OpenWorld)
@@ -56,10 +57,15 @@ public sealed class McpStdioToolClient : IReadOnlyToolClient
 {
     private readonly Process process;
     private readonly CancellationTokenSource lifetime = new();
+    private readonly Task stderrDrain;
     private int nextId;
     private IReadOnlyList<McpToolDefinition>? tools;
 
-    private McpStdioToolClient(Process process) => this.process = process;
+    private McpStdioToolClient(Process process)
+    {
+        this.process = process;
+        stderrDrain = DrainStandardErrorAsync(process.StandardError, lifetime.Token);
+    }
 
     public static async Task<McpStdioToolClient> StartAsync(string serverDll, string repositoryRoot,
         CancellationToken cancellationToken)
@@ -78,14 +84,22 @@ public sealed class McpStdioToolClient : IReadOnlyToolClient
         start.ArgumentList.Add(repositoryRoot);
         var client = new McpStdioToolClient(Process.Start(start)
             ?? throw new InvalidOperationException("Could not start the MCP server."));
-        await client.SendAsync("initialize", new
+        try
         {
-            protocolVersion = "2025-06-18",
-            capabilities = new { },
-            clientInfo = new { name = "DungeonEscape.AgentOrchestrator", version = "1.0" }
-        }, cancellationToken);
-        await client.SendNotificationAsync("notifications/initialized", new { }, cancellationToken);
-        return client;
+            await client.SendAsync("initialize", new
+            {
+                protocolVersion = "2025-06-18",
+                capabilities = new { },
+                clientInfo = new { name = "DungeonEscape.AgentOrchestrator", version = "1.0" }
+            }, cancellationToken);
+            await client.SendNotificationAsync("notifications/initialized", new { }, cancellationToken);
+            return client;
+        }
+        catch
+        {
+            await client.DisposeAsync();
+            throw;
+        }
     }
 
     public async Task<IReadOnlyList<McpToolDefinition>> ListToolsAsync(CancellationToken cancellationToken)
@@ -140,15 +154,38 @@ public sealed class McpStdioToolClient : IReadOnlyToolClient
         await process.StandardInput.FlushAsync(cancellationToken);
     }
 
+    private static async Task DrainStandardErrorAsync(StreamReader standardError,
+        CancellationToken cancellationToken)
+    {
+        // Drain and discard diagnostics continuously. Never retain arbitrary child-process output.
+        var buffer = new char[4096];
+        try
+        {
+            while (await standardError.ReadAsync(buffer.AsMemory(), cancellationToken) > 0) { }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
+        catch (IOException) { }
+        catch (ObjectDisposedException) { }
+    }
+
     public async ValueTask DisposeAsync()
     {
-        lifetime.Cancel();
         process.StandardInput.Close();
         if (!process.HasExited)
         {
             using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
             try { await process.WaitForExitAsync(timeout.Token); }
-            catch (OperationCanceledException) { process.Kill(true); }
+            catch (OperationCanceledException)
+            {
+                process.Kill(true);
+                await process.WaitForExitAsync();
+            }
+        }
+        try { await stderrDrain.WaitAsync(TimeSpan.FromSeconds(5)); }
+        catch (TimeoutException)
+        {
+            lifetime.Cancel();
+            await stderrDrain;
         }
         process.Dispose();
         lifetime.Dispose();

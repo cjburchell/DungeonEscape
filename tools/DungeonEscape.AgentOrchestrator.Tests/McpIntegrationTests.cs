@@ -38,6 +38,34 @@ public sealed class McpIntegrationTests
         Assert.Contains(trace.Events, e => e.EventType == "ToolCallRejected");
     }
 
+    [Fact]
+    public async Task SustainedMcpStderrDoesNotBlockListCallOrShutdown()
+    {
+        var (dll, root) = ServerPaths();
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+        var client = await McpStdioToolClient.StartAsync(dll, root, timeout.Token);
+
+        var definitions = await client.ListToolsAsync(timeout.Token);
+        Assert.Single(definitions);
+        for (var index = 0; index < 750; index++)
+        {
+            var result = await client.CallAsync("get_project_info",
+                JsonSerializer.SerializeToElement(new { }), timeout.Token);
+            Assert.True(result.Succeeded);
+        }
+
+        await client.DisposeAsync().AsTask().WaitAsync(timeout.Token);
+    }
+
+    private static (string Dll, string Root) ServerPaths()
+    {
+        var testProject = FindAncestor(AppContext.BaseDirectory, "DungeonEscape.AgentOrchestrator.Tests");
+        var toolsDirectory = testProject.Parent!;
+        var configuration = new DirectoryInfo(AppContext.BaseDirectory).Parent!.Name;
+        return (Path.Combine(toolsDirectory.FullName, "DungeonEscape.Mcp", "bin", configuration,
+            "net10.0", "DungeonEscape.Mcp.dll"), toolsDirectory.Parent!.FullName);
+    }
+
     private static DirectoryInfo FindAncestor(string start, string name)
     {
         for (var directory = new DirectoryInfo(start); directory is not null; directory = directory.Parent)

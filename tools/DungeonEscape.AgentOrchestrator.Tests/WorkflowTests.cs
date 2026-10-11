@@ -112,6 +112,23 @@ public sealed class WorkflowTests
     }
 
     [Fact]
+    public async Task UnsupportedAgentRoleIsDeniedAndTracedWithoutConsultingClient()
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("get_project_info", EmptyJson(), true, false, false));
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync((AgentRole)int.MaxValue, "get_project_info",
+            EmptyJson(), default);
+
+        Assert.False(result.Succeeded);
+        var rejected = Assert.Single(trace.Events, e => e.EventType == "ToolCallRejected");
+        Assert.Equal((AgentRole)int.MaxValue, rejected.Role);
+        Assert.Empty(client.Calls);
+    }
+
+    [Fact]
     public async Task TraceEventsAreCorrelatedAndCoverAgentAndWorkflowTransitions()
     {
         var run = CreateRun(ReviewVerdict.Approve);

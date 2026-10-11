@@ -13,7 +13,7 @@ Independently evaluate the Engineer proposal against the original requirements a
 
 ## Capabilities and prohibitions
 
-- Allowed MCP tool: read-only `get_project_info`.
+- Allowed MCP tools: read-only `get_project_info` and bounded read-only `search_code`.
 - Must not inherit hidden Engineer reasoning, implement changes, dispatch agents, modify files, operate
   Git, or request write-capable/destructive/open-world tools.
 

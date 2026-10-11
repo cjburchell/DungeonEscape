@@ -116,15 +116,69 @@ public sealed class WorkflowTests
     {
         var trace = new InMemoryWorkflowTraceSink();
         var client = new FakeToolClient(
-            new McpToolDefinition("get_project_info", EmptyJson(), true, false, false));
+            new McpToolDefinition("search_code", EmptyJson(), true, false, false));
         var gateway = new RoleBasedToolGateway(client, trace, Id);
 
-        var result = await gateway.CallAsync((AgentRole)int.MaxValue, "get_project_info",
+        var result = await gateway.CallAsync((AgentRole)int.MaxValue, "search_code",
             EmptyJson(), default);
 
         Assert.False(result.Succeeded);
         var rejected = Assert.Single(trace.Events, e => e.EventType == "ToolCallRejected");
         Assert.Equal((AgentRole)int.MaxValue, rejected.Role);
+        Assert.Empty(client.Calls);
+    }
+
+    [Theory]
+    [InlineData(AgentRole.UnityEngineer)]
+    [InlineData(AgentRole.Reviewer)]
+    public async Task SpecialistsCanInvokeSafelyAnnotatedSearchCode(AgentRole role)
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("search_code", EmptyJson(), true, false, false));
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync(role, "search_code",
+            JsonSerializer.SerializeToElement(new { query = "Inventory" }), default);
+
+        Assert.True(result.Succeeded);
+        Assert.Equal(["search_code"], client.Calls);
+        Assert.Contains(trace.Events, e => e.EventType == "ToolCallStarted" && e.Role == role);
+        Assert.Contains(trace.Events, e => e.EventType == "ToolCallCompleted" && e.Role == role);
+    }
+
+    [Fact]
+    public async Task ManagerCannotInvokeSearchCode()
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("search_code", EmptyJson(), true, false, false));
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync(AgentRole.Manager, "search_code", EmptyJson(), default);
+
+        Assert.False(result.Succeeded);
+        Assert.Single(trace.Events, e => e.EventType == "ToolCallRejected");
+        Assert.Empty(client.Calls);
+    }
+
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(true, true, false)]
+    [InlineData(true, false, true)]
+    public async Task SearchCodeRequiresReadOnlyNonDestructiveClosedWorldMetadata(
+        bool readOnly, bool destructive, bool openWorld)
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("search_code", EmptyJson(), readOnly, destructive, openWorld));
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync(AgentRole.UnityEngineer, "search_code",
+            EmptyJson(), default);
+
+        Assert.False(result.Succeeded);
+        Assert.Single(trace.Events, e => e.EventType == "ToolCallRejected");
         Assert.Empty(client.Calls);
     }
 

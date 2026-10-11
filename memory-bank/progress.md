@@ -2,6 +2,12 @@
 
 ## Done
 
+- AI-003B / GitHub #13: authorized the existing bounded read-only `search_code` MCP tool for the Unity
+  Engineer and Reviewer through the AgentOrchestrator's generic role and safe-metadata gateway. Manager
+  and unsupported roles remain denied; writable, destructive, open-world, unadvertised, and otherwise
+  non-read-only tools fail closed. The orchestrator only passes requests/results through and adds no MCP
+  behavior, indexing, caching, persistence, write access, gameplay, QA, RAG, or autonomous reasoning.
+
 - AI-003 / GitHub #12: added strictly read-only `search_code` to the standalone MCP server. It performs
   bounded literal `OrdinalIgnoreCase` UTF-8 search over six hard-coded source/documentation roots,
   canonicalizes caller subtrees, rejects traversal/out-of-scope/linked roots, skips generated,

@@ -90,8 +90,10 @@ shell, network or write tools are exposed; logs use stderr. The
 The AI-010 orchestrator is a separate consumer of that MCP boundary. Its application state machine
 enforces Manager → Unity Engineer → Reviewer transitions, permits one Engineer revision after
 `REQUEST_CHANGES`, and requires human handling after a second request. Manager has no tools; the two
-specialists are allowlisted only for `get_project_info`, and the gateway rejects tools not advertised
-as read-only, non-destructive, and closed-world. Typed trace events record dispatches, tool activity,
+specialists are allowlisted for `get_project_info` and bounded `search_code`, and the gateway rejects
+tools not advertised as read-only, non-destructive, and closed-world. Manager and unsupported roles
+remain denied. Search requests/results are passed through without indexing, caching, or persistence.
+Typed trace events record dispatches, tool activity,
 transitions, retries, and outcomes without recording reasoning transcripts or arbitrary source content.
 `ScriptedAgentExecutor` is deterministic test/demonstration infrastructure, not an LLM implementation.
 See the durable [agent role definitions](agents/README.md).

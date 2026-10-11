@@ -56,17 +56,9 @@ public sealed class SearchCodeService(ProjectInfoService projectInfo)
         var matches = new List<SearchCodeMatch>();
         var truncated = candidates.Truncated;
         long totalBytes = 0;
-        var filesExamined = 0;
 
         foreach (var file in candidates.Paths)
         {
-            if (filesExamined >= MaximumFiles)
-            {
-                truncated = true;
-                break;
-            }
-            filesExamined++;
-
             try
             {
                 if (!RepositoryPathSecurity.IsOrdinaryPath(file)) continue;
@@ -175,21 +167,33 @@ public sealed class SearchCodeService(ProjectInfoService projectInfo)
         {
             if (File.Exists(target))
             {
-                if (IsSearchableFile(target)) paths.Add(target);
+                if (IsSearchableFile(target) && !TryAdd(target)) break;
                 continue;
             }
-            CollectDirectory(target);
+            if (!CollectDirectory(target)) break;
         }
         paths.Sort((left, right) => string.Compare(Relative(repositoryRoot, left),
             Relative(repositoryRoot, right), StringComparison.Ordinal));
         return (paths, truncated);
 
-        void CollectDirectory(string directory)
+        bool TryAdd(string file)
+        {
+            if (paths.Count >= MaximumFiles)
+            {
+                truncated = true;
+                return false;
+            }
+            paths.Add(file);
+            return true;
+        }
+
+        bool CollectDirectory(string directory)
         {
             try
             {
-                foreach (var entry in Directory.EnumerateFileSystemEntries(directory)
-                             .OrderBy(value => value, StringComparer.Ordinal))
+                // Enumeration stops as soon as one searchable file exceeds the retained-candidate budget.
+                // Sorting happens only over that bounded set before any file content is scanned.
+                foreach (var entry in Directory.EnumerateFileSystemEntries(directory))
                 {
                     FileAttributes attributes;
                     try { attributes = File.GetAttributes(entry); }
@@ -197,12 +201,14 @@ public sealed class SearchCodeService(ProjectInfoService projectInfo)
                     if ((attributes & FileAttributes.ReparsePoint) != 0) continue;
                     if ((attributes & FileAttributes.Directory) != 0)
                     {
-                        if (!ExcludedDirectories.Contains(Path.GetFileName(entry))) CollectDirectory(entry);
+                        if (!ExcludedDirectories.Contains(Path.GetFileName(entry)) && !CollectDirectory(entry))
+                            return false;
                     }
-                    else if (IsSearchableFile(entry)) paths.Add(entry);
+                    else if (IsSearchableFile(entry) && !TryAdd(entry)) return false;
                 }
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { truncated = true; }
+            return !truncated;
         }
     }
 

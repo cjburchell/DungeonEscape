@@ -105,13 +105,14 @@ public sealed class SearchCodeServiceTests : IDisposable
     }
 
     [Fact]
-    public void FileCountLimitStopsSearchAndMarksResultTruncated()
+    public void FileCountLimitBoundsDiscoveryStopsBeforeLaterDirectoryAndMarksTruncated()
     {
-        for (var index = 0; index <= SearchCodeService.MaximumFiles; index++)
-            Write($"DungeonEscape.Core/{index:D4}.cs", "");
-        Write("DungeonEscape.Core/zzzz.cs", "Needle");
+        for (var index = 0; index < SearchCodeService.MaximumFiles; index++)
+            Write($"DungeonEscape.Core/00-budget/{index:D4}.cs", "");
+        Write("DungeonEscape.Core/00-budget/zzzz-over-budget.cs", "AfterBudget");
+        Write("DungeonEscape.Core/zz-after/ShouldNotBeTraversed.cs", "AfterBudget");
 
-        var result = Service.Search("Needle");
+        var result = Service.Search("AfterBudget");
 
         Assert.Empty(result.Matches);
         Assert.True(result.Truncated);
@@ -193,8 +194,10 @@ public sealed class SearchCodeServiceTests : IDisposable
         Write("DungeonEscape.Core/A.cs", "Needle");
         Write("DungeonEscape.Core/M.cs", "Needle");
 
-        Assert.Equal(["DungeonEscape.Core/A.cs", "DungeonEscape.Core/M.cs", "DungeonEscape.Core/Z.cs"],
-            Service.Search("Needle").Matches.Select(match => match.Path));
+        var first = Service.Search("Needle").Matches.Select(match => match.Path).ToArray();
+        var second = Service.Search("Needle").Matches.Select(match => match.Path).ToArray();
+        Assert.Equal(["DungeonEscape.Core/A.cs", "DungeonEscape.Core/M.cs", "DungeonEscape.Core/Z.cs"], first);
+        Assert.Equal(first, second);
     }
 
     private void Write(string relativePath, string content) =>

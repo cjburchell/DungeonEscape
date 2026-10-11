@@ -108,8 +108,10 @@ UTF-8 files with approved source/document extensions (`.cs`, `.csproj`, `.sln`, 
 `.razor`, `.json`, `.md`, `.txt`, `.xml`, `.yml`, `.yaml`, `.ps1`, `.sh`, `.asmdef`, `.uxml`, `.uss`).
 NUL-containing, invalid UTF-8, unsupported, linked and reparse-point files are skipped.
 
-Per call, individual files are limited to 1 MiB, total examined bytes to 25 MiB, examined files to
-5,000, returned results to 50, and snippets to 240 characters. Relative paths are canonicalized and
+Per call, individual files are limited to 1 MiB, total examined bytes to 25 MiB, discovered/retained
+candidate files to 5,000, returned results to 50, and snippets to 240 characters. Candidate traversal
+stops as soon as an additional searchable file exceeds that budget, sets `truncated`, and sorts only
+the bounded retained set by repository-relative path before scanning. Relative paths are canonicalized and
 must remain within both the selected checkout and an approved root. Absolute paths, `..`, excluded
 directories, out-of-scope paths and linked search roots are rejected.
 

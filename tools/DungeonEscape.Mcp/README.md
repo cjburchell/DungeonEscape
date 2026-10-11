@@ -110,8 +110,9 @@ NUL-containing, invalid UTF-8, unsupported, linked and reparse-point files are s
 
 Per call, individual files are limited to 1 MiB, total examined bytes to 25 MiB, discovered/retained
 candidate files to 5,000, returned results to 50, and snippets to 240 characters. Candidate traversal
-stops as soon as an additional searchable file exceeds that budget, sets `truncated`, and sorts only
-the bounded retained set by repository-relative path before scanning. Relative paths are canonicalized and
+sorts each visited directory by normalized repository-relative path, stops immediately when the 5,000th
+searchable candidate exhausts the global budget, sets `truncated`, and does not visit later entries or
+directories. Only the bounded retained set is stored and scanned. Relative paths are canonicalized and
 must remain within both the selected checkout and an approved root. Absolute paths, `..`, excluded
 directories, out-of-scope paths and linked search roots are rejected.
 

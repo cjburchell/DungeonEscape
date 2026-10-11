@@ -33,6 +33,10 @@ public sealed class StdioTests
             File.WriteAllText(Path.Combine(fixture, "DungeonEscape.sln"), "");
             File.WriteAllText(Path.Combine(settings.FullName, "ProjectVersion.txt"), "m_EditorVersion: 6000.4.4f1\n");
             File.WriteAllText(Path.Combine(fixture, "DungeonEscape.Core", "Fixture.cs"), "class FixtureSymbol { }\n");
+            File.WriteAllText(Path.Combine(fixture, "DungeonEscape.Core", "Unicode.cs"),
+                string.Concat(Enumerable.Repeat(char.ConvertFromUtf32(0x1F9ED), 180)) +
+                "UnicodeNeedle" +
+                string.Concat(Enumerable.Repeat(char.ConvertFromUtf32(0x1F9ED), 180)));
             start.ArgumentList.Add("--repository-root");
             start.ArgumentList.Add(fixture);
             expectedRoot = fixture;
@@ -80,18 +84,33 @@ public sealed class StdioTests
             Assert.False(searched.TryGetProperty("isError", out var searchError) && searchError.GetBoolean());
             Assert.Contains(query, searched.GetRawText());
 
-            await Send(new { jsonrpc = "2.0", id = 5, method = "tools/call", @params = new
+            if (configured)
+            {
+                await Send(new { jsonrpc = "2.0", id = 5, method = "tools/call", @params = new
+                {
+                    name = "search_code", arguments = new { query = "UnicodeNeedle", path = "DungeonEscape.Core" }
+                }});
+                var unicodeSearch = (await Receive(5)).GetProperty("result");
+                Assert.False(unicodeSearch.TryGetProperty("isError", out var unicodeError) && unicodeError.GetBoolean());
+                using var unicodeResult = JsonDocument.Parse(
+                    unicodeSearch.GetProperty("content")[0].GetProperty("text").GetString()!);
+                var snippet = unicodeResult.RootElement.GetProperty("matches")[0].GetProperty("snippet").GetString()!;
+                Assert.Contains("UnicodeNeedle", snippet);
+                Assert.True(snippet.Length <= 240);
+            }
+
+            await Send(new { jsonrpc = "2.0", id = 6, method = "tools/call", @params = new
             {
                 name = "search_code", arguments = new { query = "x", path = "../outside" }
             }});
-            Assert.True((await Receive(5)).GetProperty("result").GetProperty("isError").GetBoolean());
-            await Send(new { jsonrpc = "2.0", id = 6, method = "tools/call", @params = new
+            Assert.True((await Receive(6)).GetProperty("result").GetProperty("isError").GetBoolean());
+            await Send(new { jsonrpc = "2.0", id = 7, method = "tools/call", @params = new
             {
                 name = "search_code", arguments = new { query = "x", path = "README.md" }
             }});
-            Assert.True((await Receive(6)).GetProperty("result").GetProperty("isError").GetBoolean());
-            await Send(new { jsonrpc = "2.0", id = 7, method = "tools/call", @params = new { name = "read_file", arguments = new { path = "outside" } } });
-            var rejected = await Receive(7);
+            Assert.True((await Receive(7)).GetProperty("result").GetProperty("isError").GetBoolean());
+            await Send(new { jsonrpc = "2.0", id = 8, method = "tools/call", @params = new { name = "read_file", arguments = new { path = "outside" } } });
+            var rejected = await Receive(8);
             Assert.True(rejected.TryGetProperty("error", out _) || rejected.GetProperty("result").GetProperty("isError").GetBoolean());
         }
         finally

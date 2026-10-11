@@ -178,12 +178,12 @@ public sealed class SearchCodeService(ProjectInfoService projectInfo)
 
         bool TryAdd(string file)
         {
-            if (paths.Count >= MaximumFiles)
+            paths.Add(file);
+            if (paths.Count == MaximumFiles)
             {
                 truncated = true;
                 return false;
             }
-            paths.Add(file);
             return true;
         }
 
@@ -191,9 +191,11 @@ public sealed class SearchCodeService(ProjectInfoService projectInfo)
         {
             try
             {
-                // Enumeration stops as soon as one searchable file exceeds the retained-candidate budget.
-                // Sorting happens only over that bounded set before any file content is scanned.
-                foreach (var entry in Directory.EnumerateFileSystemEntries(directory))
+                // Buffer only one directory's entries so traversal order is stable without ever
+                // collecting an unbounded repository-wide candidate list.
+                var entries = Directory.EnumerateFileSystemEntries(directory)
+                    .OrderBy(entry => Relative(repositoryRoot, entry), StringComparer.Ordinal);
+                foreach (var entry in entries)
                 {
                     FileAttributes attributes;
                     try { attributes = File.GetAttributes(entry); }
@@ -222,13 +224,25 @@ public sealed class SearchCodeService(ProjectInfoService projectInfo)
         var clean = new string(line.Select(character => character == '\t' ? ' '
             : char.IsControl(character) ? ' ' : character).ToArray());
         if (clean.Length <= MaximumSnippetLength) return clean;
-        var start = Math.Max(0, matchIndex - (MaximumSnippetLength - queryLength) / 2);
-        if (start + MaximumSnippetLength > clean.Length) start = clean.Length - MaximumSnippetLength;
-        var length = MaximumSnippetLength;
+
+        var contentLength = MaximumSnippetLength - 2;
+        var start = Math.Clamp(matchIndex - (contentLength - queryLength) / 2,
+            0, clean.Length - contentLength);
         var prefix = start > 0;
-        var suffix = start + length < clean.Length;
-        if (prefix) { start += 1; length -= 1; }
-        if (suffix) length -= 1;
-        return (prefix ? "…" : "") + clean.Substring(start, length) + (suffix ? "…" : "");
+        var suffix = start + contentLength < clean.Length;
+        contentLength = MaximumSnippetLength - (prefix ? 1 : 0) - (suffix ? 1 : 0);
+        start = Math.Clamp(matchIndex - (contentLength - queryLength) / 2,
+            0, clean.Length - contentLength);
+
+        // Never start on the low half or end after the high half of a surrogate pair.
+        if (start > 0 && char.IsLowSurrogate(clean[start]) && char.IsHighSurrogate(clean[start - 1]))
+            start++;
+        var end = Math.Min(clean.Length, start + contentLength);
+        if (end < clean.Length && char.IsHighSurrogate(clean[end - 1]) && char.IsLowSurrogate(clean[end]))
+            end--;
+
+        prefix = start > 0;
+        suffix = end < clean.Length;
+        return (prefix ? "\u2026" : "") + clean[start..end] + (suffix ? "\u2026" : "");
     }
 }

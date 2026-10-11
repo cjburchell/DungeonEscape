@@ -105,17 +105,25 @@ public sealed class SearchCodeServiceTests : IDisposable
     }
 
     [Fact]
-    public void FileCountLimitBoundsDiscoveryStopsBeforeLaterDirectoryAndMarksTruncated()
+    public void FileCountLimitSelectsStableSortedPrefixAndStopsBeforeLaterDirectory()
     {
+        Write("DungeonEscape.Core/zz-after/ShouldNotBeTraversed.cs", "BoundedPrefix");
         for (var index = 0; index < SearchCodeService.MaximumFiles; index++)
-            Write($"DungeonEscape.Core/00-budget/{index:D4}.cs", "");
-        Write("DungeonEscape.Core/00-budget/zzzz-over-budget.cs", "AfterBudget");
-        Write("DungeonEscape.Core/zz-after/ShouldNotBeTraversed.cs", "AfterBudget");
+            Write($"DungeonEscape.Core/00-budget/{index:D4}.cs",
+                index is 0 or SearchCodeService.MaximumFiles - 1 ? "BoundedPrefix" : "");
 
-        var result = Service.Search("AfterBudget");
+        var first = Service.Search("BoundedPrefix");
+        var second = Service.Search("BoundedPrefix");
 
-        Assert.Empty(result.Matches);
-        Assert.True(result.Truncated);
+        var expected = new[]
+        {
+            "DungeonEscape.Core/00-budget/0000.cs",
+            $"DungeonEscape.Core/00-budget/{SearchCodeService.MaximumFiles - 1:D4}.cs"
+        };
+        Assert.Equal(expected, first.Matches.Select(match => match.Path));
+        Assert.Equal(expected, second.Matches.Select(match => match.Path));
+        Assert.True(first.Truncated);
+        Assert.True(second.Truncated);
     }
 
     [Fact]
@@ -198,6 +206,34 @@ public sealed class SearchCodeServiceTests : IDisposable
         var second = Service.Search("Needle").Matches.Select(match => match.Path).ToArray();
         Assert.Equal(["DungeonEscape.Core/A.cs", "DungeonEscape.Core/M.cs", "DungeonEscape.Core/Z.cs"], first);
         Assert.Equal(first, second);
+    }
+
+    [Fact]
+    public void SnippetClippingDoesNotSplitSupplementaryUnicodeAtEitherBoundary()
+    {
+        var emoji = char.ConvertFromUtf32(0x1F9ED);
+        Write("DungeonEscape.Core/Unicode.cs",
+            string.Concat(Enumerable.Repeat(emoji, 180)) + "UnicodeNeedle" +
+            string.Concat(Enumerable.Repeat(emoji, 180)));
+
+        var snippet = Assert.Single(Service.Search("UnicodeNeedle").Matches).Snippet;
+
+        Assert.True(snippet.Length <= SearchCodeService.MaximumSnippetLength);
+        Assert.StartsWith("\u2026", snippet);
+        Assert.EndsWith("\u2026", snippet);
+        Assert.Contains("UnicodeNeedle", snippet);
+        AssertWellFormedUtf16(snippet);
+    }
+
+    private static void AssertWellFormedUtf16(string value)
+    {
+        for (var index = 0; index < value.Length; index++)
+        {
+            Assert.False(char.IsLowSurrogate(value[index]));
+            if (!char.IsHighSurrogate(value[index])) continue;
+            Assert.True(index + 1 < value.Length && char.IsLowSurrogate(value[index + 1]));
+            index++;
+        }
     }
 
     private void Write(string relativePath, string content) =>

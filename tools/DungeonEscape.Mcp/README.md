@@ -34,7 +34,7 @@ dotnet test tools/DungeonEscape.Mcp.Tests/DungeonEscape.Mcp.Tests.csproj
 ```
 
 The test run includes a real subprocess handshake (`initialize`, `notifications/initialized`),
-`tools/list` verification of exactly four strictly read-only tools, real metadata/search/read/scene calls,
+`tools/list` verification of exactly five strictly read-only tools, real metadata/search/read/scene/log calls,
 rejected traversal/out-of-scope requests, and unknown-tool rejection.
 It runs both executable-discovery and configured-root modes from an unrelated working directory,
 verifies that a configured fixture overrides executable discovery, and checks invalid configuration
@@ -119,6 +119,37 @@ traversal stops and `truncated` is set when a scene budget is exhausted. The Ass
 files/directories must pass the shared canonical containment and reparse-point checks. Linked content is
 skipped, and scene contents are never opened.
 
+`get_unity_console` accepts optional `maxEntries` (default `50`, range `1`–`100`) and optional
+`minimumSeverity` (`info`, `warning`, `error`, or `exception`). It selects only the newest ordinary file
+from this fixed project-scoped allowlist:
+
+- `TestResults/editmode-log.txt`
+- `TestResults/playmode-log.txt`
+- `TestResults/unity-build-windows-log.txt`
+- `DungeonEscape.Unity/Logs/local-unity-validate.log`
+- `DungeonEscape.Unity/Logs/ci-unity-validate.log`
+- `DungeonEscape.Unity/Logs/ci-unity-build-windows.log`
+
+These are the deterministic outputs of the repository's Windows PowerShell and Linux CI Unity scripts.
+Using only checkout-local files avoids the shared Windows/Linux Unity Editor and Player logs, which may
+contain unrelated projects, user-profile details, or machine-wide activity. Callers cannot provide a
+path, filename, glob, or search root; no directory is crawled. If none of these files exists, the result
+has status `unavailable`. The source is reported as a logical type, never an absolute path.
+
+Log inspection rejects a source over 10 MiB, tail-reads at most 256 KiB, returns at most 100 entries,
+clips each entry to 2,000 characters, and returns at most 64 KiB of entry text. Reaching a tail, entry,
+per-entry, or total-text limit sets `truncated`. NUL-containing and invalid UTF-8 sources report
+`malformed`; unreadable sources report `unavailable`; oversized sources report `oversized`.
+
+The intentionally small parser classifies common warning/error/exception text and treats other messages
+as info. It attaches indented stack lines, `at` lines, UnityEngine lines, separators, and `(Filename:)`
+lines to the preceding entry. A timestamp is returned only for an ISO-like prefix with an explicit `Z`
+or UTC offset; otherwise it is `null`. Before output, obvious bearer tokens, authorization/API-key/
+access-token/password/secret assignments are redacted. The configured repository prefix becomes
+`<REPOSITORY>` and other Windows/Unix absolute paths become `<ABSOLUTE_PATH>`. Redaction is focused and
+best-effort, so callers must still treat diagnostics as potentially sensitive. The tool does not read
+the live Console, parse arbitrary logs, launch Unity, clear/write logs, or expose environment variables.
+
 Approved roots are hard-coded:
 
 - `DungeonEscape.Core/`
@@ -149,8 +180,8 @@ directories, out-of-scope paths and linked search roots are rejected.
   starts at the executable's directory, finds its `tools/DungeonEscape.Mcp` ancestor and verifies the
   same identity markers. Neither mode scans for other repositories. MCP callers and working directory
   cannot select/change the root; generic host/environment configuration is disabled.
-- Fixed metadata reads remain bounded to 4,096 characters. `search_code`, `read_script`, and
-  `list_scenes` add only the
+- Fixed metadata reads remain bounded to 4,096 characters. `search_code`, `read_script`, `list_scenes`,
+  and `get_unity_console` add only the
   bounded, allowlisted operations described above; `read_script` cannot access files outside the shared
   approved roots/extensions and is not arbitrary `read_file` access. Callers cannot
   supply commands, URLs or write requests. No shell, Git subprocess, network access, resources,
@@ -169,6 +200,6 @@ directories, out-of-scope paths and linked search roots are rejected.
 - NuGet restore needs network access during development; tool execution does not.
 
 Manual verification remaining: configure this DLL in the intended MCP client and confirm its
-tool UI displays `get_project_info`, `search_code`, `read_script`, and `list_scenes` with their strictly
-read-only annotations.
+tool UI displays `get_project_info`, `search_code`, `read_script`, `list_scenes`, and
+`get_unity_console` with their strictly read-only annotations.
 The protocol itself is covered by the automated test.

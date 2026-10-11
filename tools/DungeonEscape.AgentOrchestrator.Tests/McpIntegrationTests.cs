@@ -6,7 +6,7 @@ namespace DungeonEscape.AgentOrchestrator.Tests;
 public sealed class McpIntegrationTests
 {
     [Fact]
-    public async Task ExistingMcpServerAdvertisesFourToolsAndSpecialistsCanDiscoverScenes()
+    public async Task ExistingMcpServerAdvertisesFiveToolsWhileUnityConsoleRemainsUnauthorized()
     {
         var testProject = FindAncestor(AppContext.BaseDirectory, "DungeonEscape.AgentOrchestrator.Tests");
         var toolsDirectory = testProject.Parent!;
@@ -19,7 +19,7 @@ public sealed class McpIntegrationTests
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         await using var client = await McpStdioToolClient.StartAsync(dll, root, timeout.Token);
         var definitions = await client.ListToolsAsync(timeout.Token);
-        Assert.Equal(4, definitions.Count);
+        Assert.Equal(5, definitions.Count);
         var projectTool = definitions.Single(tool => tool.Name == "get_project_info");
         AssertStrictlyReadOnly(projectTool);
         Assert.Empty(projectTool.InputSchema.GetProperty("properties").EnumerateObject());
@@ -38,6 +38,10 @@ public sealed class McpIntegrationTests
         var scenesTool = definitions.Single(tool => tool.Name == "list_scenes");
         AssertStrictlyReadOnly(scenesTool);
         Assert.Empty(scenesTool.InputSchema.GetProperty("properties").EnumerateObject());
+        var consoleTool = definitions.Single(tool => tool.Name == "get_unity_console");
+        AssertStrictlyReadOnly(consoleTool);
+        Assert.Equal(["maxEntries", "minimumSeverity"], consoleTool.InputSchema.GetProperty("properties")
+            .EnumerateObject().Select(property => property.Name).OrderBy(name => name));
 
         var trace = new InMemoryWorkflowTraceSink();
         var gateway = new RoleBasedToolGateway(client, trace, "integration");
@@ -92,6 +96,14 @@ public sealed class McpIntegrationTests
             JsonSerializer.SerializeToElement(new { }), timeout.Token);
         Assert.False(managerScenes.Succeeded);
 
+        var deniedConsole = await gateway.CallAsync(AgentRole.UnityEngineer, "get_unity_console",
+            JsonSerializer.SerializeToElement(new { }), timeout.Token);
+        Assert.False(deniedConsole.Succeeded);
+
+        var managerConsole = await gateway.CallAsync(AgentRole.Manager, "get_unity_console",
+            JsonSerializer.SerializeToElement(new { }), timeout.Token);
+        Assert.False(managerConsole.Succeeded);
+
         var rejected = await gateway.CallAsync(AgentRole.Reviewer, "read_file",
             JsonSerializer.SerializeToElement(new { path = "anything" }), timeout.Token);
         Assert.False(rejected.Succeeded);
@@ -106,7 +118,7 @@ public sealed class McpIntegrationTests
         var client = await McpStdioToolClient.StartAsync(dll, root, timeout.Token);
 
         var definitions = await client.ListToolsAsync(timeout.Token);
-        Assert.Equal(4, definitions.Count);
+        Assert.Equal(5, definitions.Count);
         for (var index = 0; index < 750; index++)
         {
             var result = await client.CallAsync("get_project_info",

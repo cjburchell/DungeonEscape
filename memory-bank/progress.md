@@ -2,6 +2,17 @@
 
 ## Done
 
+- AI-006 / GitHub #16: added strictly read-only `get_unity_console` to the standalone MCP server. It
+  selects the newest ordinary file from a fixed allowlist of checkout-local Unity validation/test/build
+  logs produced by the repository's Windows and Linux scripts; callers cannot provide paths and global
+  Editor/Player logs are deliberately excluded. Sources over 10 MiB are rejected, reads are limited to
+  a 256 KiB tail, and entry count/per-entry/total text are bounded. Common severity and multiline stack
+  context are parsed, explicit-offset timestamps are optional, and obvious credentials plus absolute
+  machine paths are redacted before output. Missing, malformed, invalid UTF-8, binary, oversized,
+  unreadable, and linked sources fail safely. The orchestrator recognizes the five-tool server but
+  continues to deny this tool; no agent authorization, Unity launch, gameplay, Asset, write, shell,
+  network, RAG, or LLM behavior changed.
+
 - AI-005B / GitHub #34: authorized the existing bounded read-only `list_scenes` MCP tool for Unity
   Engineer and Reviewer through the AgentOrchestrator's generic role and safe-metadata gateway. Manager,
   unsupported roles, unadvertised tools, and writable/destructive/open-world descriptors remain denied.

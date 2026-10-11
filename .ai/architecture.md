@@ -1,7 +1,7 @@
 # Current architecture
 
-Source/configuration inspected on 2026-10-10. This describes the local checkout, including the
-pre-existing uncommitted AI-002 tooling. It is not a claim that all components are merged or validated today.
+Source/configuration initially inspected on 2026-10-10 and updated for AI-010 on 2026-10-11.
+It describes the local checkout and is not a claim that all components are validated today.
 
 ## Components and dependencies
 
@@ -11,11 +11,13 @@ pre-existing uncommitted AI-002 tooling. It is not a claim that all components a
 | `DungeonEscape.Core/` | Portable data/state, gameplay rules and view models; `netstandard2.0`, C# 7.3, Newtonsoft.Json; no Unity project reference | [Core project](../DungeonEscape.Core/DungeonEscape.Core.csproj) |
 | `DungeonEscape.Core.Test/` | `net10.0` xUnit regression tests referencing Core | [test project](../DungeonEscape.Core.Test/DungeonEscape.Core.Test.csproj) |
 | `DungeonEscape.Tools.GameEditor/` | Standalone `net8.0` Photino/Blazor desktop data editor referencing Core; nullable enabled, newer-runtime roll-forward allowed | [editor project](../DungeonEscape.Tools.GameEditor/DungeonEscape.Tools.GameEditor.csproj), [Program.cs](../DungeonEscape.Tools.GameEditor/Program.cs) |
-| `tools/DungeonEscape.Mcp/` | Standalone `net10.0` stdio MCP metadata server with no Core/Unity reference; local AI-002 work | [MCP project](../tools/DungeonEscape.Mcp/DungeonEscape.Mcp.csproj), [README](../tools/DungeonEscape.Mcp/README.md) |
+| `tools/DungeonEscape.Mcp/` | Standalone `net10.0` stdio MCP metadata server with no Core/Unity reference | [MCP project](../tools/DungeonEscape.Mcp/DungeonEscape.Mcp.csproj), [README](../tools/DungeonEscape.Mcp/README.md) |
 | `tools/DungeonEscape.Mcp.Tests/` | Separate `net10.0` xUnit metadata/boundary and stdio protocol tests | [MCP test project](../tools/DungeonEscape.Mcp.Tests/DungeonEscape.Mcp.Tests.csproj) |
+| `tools/DungeonEscape.AgentOrchestrator/` | Standalone `net10.0` deterministic Manager/Engineer/Reviewer state machine; no Unity reference or real LLM backend | [orchestrator README](../tools/DungeonEscape.AgentOrchestrator/README.md) |
+| `tools/DungeonEscape.AgentOrchestrator.Tests/` | Separate `net10.0` xUnit workflow, permission, trace, failure and real MCP integration tests | [orchestrator test project](../tools/DungeonEscape.AgentOrchestrator.Tests/DungeonEscape.AgentOrchestrator.Tests.csproj) |
 
 [DungeonEscape.sln](../DungeonEscape.sln) contains Core, Core.Test and GameEditor. Unity is opened
-as its own project; MCP projects are built separately. Core's `CopyCoreToUnity` post-build target
+as its own project; MCP and agent-orchestration projects are built separately. Core's `CopyCoreToUnity` post-build target
 copies its DLL/PDB to `DungeonEscape.Unity/Assets/DungeonEscape/Plugins`. Building Core can therefore
 write generated Unity plugin files even when only a .NET command was requested.
 
@@ -81,6 +83,15 @@ anchored to the executable's checkout location. Only fixed Unity/Git metadata pa
 linked, malformed or unsupported metadata returns `not available`. No arbitrary filesystem, shell,
 network or write tools are exposed; logs use stderr. The [MCP README](../tools/DungeonEscape.Mcp/README.md)
 records precise limitations.
+
+The AI-010 orchestrator is a separate consumer of that MCP boundary. Its application state machine
+enforces Manager → Unity Engineer → Reviewer transitions, permits one Engineer revision after
+`REQUEST_CHANGES`, and requires human handling after a second request. Manager has no tools; the two
+specialists are allowlisted only for `get_project_info`, and the gateway rejects tools not advertised
+as read-only, non-destructive, and closed-world. Typed trace events record dispatches, tool activity,
+transitions, retries, and outcomes without recording reasoning transcripts or arbitrary source content.
+`ScriptedAgentExecutor` is deterministic test/demonstration infrastructure, not an LLM implementation.
+See the durable [agent role definitions](agents/README.md).
 
 ## Validation and delivery
 

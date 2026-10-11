@@ -2,6 +2,15 @@
 
 ## Done
 
+- AI-010 / GitHub #10: added a standalone .NET 10 deterministic Manager → Unity Engineer → Reviewer
+  orchestration prototype under `tools/DungeonEscape.AgentOrchestrator`, with typed hand-offs,
+  application-enforced transitions, one bounded `REQUEST_CHANGES` retry, role-based access to the
+  existing read-only `get_project_info` MCP tool, structured lifecycle/tool tracing, and fail-closed
+  malformed-output/executor handling. Added durable `.ai/agents` role definitions, focused xUnit
+  coverage, a real existing-MCP subprocess integration test, and a static-context locked-chest
+  demonstration. This is scripted orchestration infrastructure, not autonomous LLM reasoning; it
+  adds no gameplay, MCP behavior, write tool, QA, RAG, or Git automation.
+
 - PR #9 / AI-002 review follow-up: added trusted startup-only `--repository-root <absolute path>`, canonicalization, shared DungeonEscape identity/reparse validation, and clear startup failure (stderr, exit 2) without fallback for invalid configuration. Tool schema remains parameterless and exactly one read-only tool is exposed. MCP build passed with zero warnings/errors; all 41 tests passed, including configured/fallback stdio handshakes, selected-root verification, invalid startup, and link/path boundary checks. Launcher/client setup remains manual; no gameplay/Assets changes or automatic commit/merge.
 
 - AI-001 / GitHub #7: established `.ai/` context routing, source-backed architecture, observed coding conventions, safe agent workflow, and documented `decisions/` and `skills/` placeholders. Existing root context and memory-bank ownership remain in place; unknown CI authority, fresh manual validation, and Toolkit-preview disposition are explicit. Documentation-only scope; PR delivery remains pending the session's no-automatic-commit instruction.

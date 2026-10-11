@@ -2,6 +2,14 @@
 
 ## Done
 
+- AI-004 / GitHub #14: added strictly read-only `read_script` to the standalone MCP server. It reads
+  one normalized repository-relative UTF-8 file under the same roots/extensions as `search_code`, with
+  a 1 MiB file limit, 200-line request limit, and 64 KiB response limit. Search and read now share a
+  focused repository-content policy for roots, exclusions, extensions, normalization, containment,
+  existence, and reparse rejection. Binary, malformed UTF-8, oversized, linked, missing, directory,
+  excluded, traversal, absolute, and out-of-scope paths fail closed. No AgentOrchestrator authorization,
+  gameplay, Unity Asset, write, shell, Git, network, RAG, or LLM behavior was added.
+
 - AI-003B / GitHub #13: authorized the existing bounded read-only `search_code` MCP tool for the Unity
   Engineer and Reviewer through the AgentOrchestrator's generic role and safe-metadata gateway. Manager
   and unsupported roles remain denied; writable, destructive, open-world, unadvertised, and otherwise

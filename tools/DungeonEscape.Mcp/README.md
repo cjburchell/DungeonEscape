@@ -1,7 +1,7 @@
 # DungeonEscape MCP server
 
-Standalone, read-only repository metadata and bounded source-search server for AI-002 / GitHub issue #8
-and AI-003 / GitHub issue #12.
+Standalone, read-only repository metadata, bounded source-search, and bounded single-file source reader
+for AI-002 / GitHub issue #8, AI-003 / issue #12, and AI-004 / issue #14.
 Targets .NET 10 and uses the [official C# MCP SDK](https://github.com/modelcontextprotocol/csharp-sdk)
 (`ModelContextProtocol` 2.2.0). It has no Unity or gameplay project references.
 
@@ -13,6 +13,9 @@ Targets .NET 10 and uses the [official C# MCP SDK](https://github.com/modelconte
 - `Services/ProjectInfoService.cs`: repository discovery and bounded metadata reads, independent of MCP.
 - `Tools/SearchCodeTools.cs`: MCP contract and strictly read-only annotations for literal search.
 - `Services/SearchCodeService.cs`: bounded UTF-8 search, independent of MCP.
+- `Tools/ReadScriptTools.cs`: MCP contract and strictly read-only annotations for bounded file ranges.
+- `Services/ReadScriptService.cs`: bounded UTF-8 line-range reads, independent of MCP.
+- `Services/RepositoryContentPolicy.cs`: shared approved roots, exclusions, extensions, and path resolution.
 - `Services/RepositoryPathSecurity.cs`: shared containment and reparse-point checks.
 - `../DungeonEscape.Mcp.Tests/`: xUnit discovery, metadata, boundary and real stdio tests.
 
@@ -29,7 +32,7 @@ dotnet test tools/DungeonEscape.Mcp.Tests/DungeonEscape.Mcp.Tests.csproj
 ```
 
 The test run includes a real subprocess handshake (`initialize`, `notifications/initialized`),
-`tools/list` verification of exactly two strictly read-only tools, real metadata/search calls,
+`tools/list` verification of exactly three strictly read-only tools, real metadata/search/read calls,
 rejected traversal/out-of-scope requests, and unknown-tool rejection.
 It runs both executable-discovery and configured-root modes from an unrelated working directory,
 verifies that a configured fixture overrides executable discovery, and checks invalid configuration
@@ -93,6 +96,12 @@ It performs literal `OrdinalIgnoreCase` matching only; no regex, shell, external
 Results contain only repository-relative paths, one-based line numbers and snippets bounded to 240
 characters. `truncated` is set when a result or resource limit prevents a complete search.
 
+`read_script` accepts a required repository-relative file `path`, optional 1-based `startLine`
+(default `1`), and optional `lineCount` (default `100`, maximum `200`). Its typed result reports the
+requested and effective ranges, returned and total line counts, truncation, normalized relative path,
+and content. Files are limited to 1 MiB and returned content to 64 KiB of UTF-8 per call. A requested
+range past EOF returns a deterministic empty result. Text line endings are normalized to `\n`.
+
 Approved roots are hard-coded:
 
 - `DungeonEscape.Core/`
@@ -103,10 +112,11 @@ Approved roots are hard-coded:
 - `memory-bank/`
 
 Generated/sensitive directory segments `.git`, `Library`, `Temp`, `Obj`, `obj`, `bin`, `Build`,
-`Builds`, `Logs`, `UserSettings`, `TestResults` and `artifacts` are excluded. Search accepts only
+`Builds`, `Logs`, `UserSettings`, `TestResults` and `artifacts` are excluded. Search and read accept only
 UTF-8 files with approved source/document extensions (`.cs`, `.csproj`, `.sln`, `.props`, `.targets`,
 `.razor`, `.json`, `.md`, `.txt`, `.xml`, `.yml`, `.yaml`, `.ps1`, `.sh`, `.asmdef`, `.uxml`, `.uss`).
-NUL-containing, invalid UTF-8, unsupported, linked and reparse-point files are skipped.
+NUL-containing, invalid UTF-8, unsupported, linked and reparse-point files are skipped by search and
+rejected by the single-file reader. Missing files and directory paths are also rejected by the reader.
 
 Per call, individual files are limited to 1 MiB, total examined bytes to 25 MiB, discovered/retained
 candidate files to 5,000, returned results to 50, and snippets to 240 characters. Candidate traversal
@@ -122,8 +132,9 @@ directories, out-of-scope paths and linked search roots are rejected.
   starts at the executable's directory, finds its `tools/DungeonEscape.Mcp` ancestor and verifies the
   same identity markers. Neither mode scans for other repositories. MCP callers and working directory
   cannot select/change the root; generic host/environment configuration is disabled.
-- Fixed metadata reads remain bounded to 4,096 characters. `search_code` adds only the bounded,
-  allowlisted literal search described above; it is not arbitrary `read_file` access. Callers cannot
+- Fixed metadata reads remain bounded to 4,096 characters. `search_code` and `read_script` add only the
+  bounded, allowlisted operations described above; `read_script` cannot access files outside the shared
+  approved roots/extensions and is not arbitrary `read_file` access. Callers cannot
   supply commands, URLs or write requests. No shell, Git subprocess, network access, resources,
   prompts or HTTP transport is registered.
 - Symlinks/junctions/reparse points in discovery and metadata paths are rejected. Detached or
@@ -140,5 +151,5 @@ directories, out-of-scope paths and linked search roots are rejected.
 - NuGet restore needs network access during development; tool execution does not.
 
 Manual verification remaining: configure this DLL in the intended MCP client and confirm its
-tool UI displays `get_project_info` and `search_code` with their strictly read-only annotations.
+tool UI displays `get_project_info`, `search_code`, and `read_script` with their strictly read-only annotations.
 The protocol itself is covered by the automated test.

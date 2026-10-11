@@ -75,15 +75,19 @@ GameEditor uses singleton services registered in `Program.cs`, Razor components,
 TMX metadata editing services, and JSON schemas. See its [README](../DungeonEscape.Tools.GameEditor/README.md)
 and [Schemas](../DungeonEscape.Tools.GameEditor/Schemas/README.md). It is a development tool, not Unity UI.
 
-MCP `Program.cs` explicitly registers `ProjectInfoTools` and `SearchCodeTools`. Parameterless read-only
-`get_project_info` delegates to `ProjectInfoService`; bounded read-only `search_code` delegates to the
-MCP-independent `SearchCodeService`. The trusted launcher may select an absolute
+MCP `Program.cs` explicitly registers `ProjectInfoTools`, `SearchCodeTools`, and `ReadScriptTools`.
+Parameterless read-only `get_project_info` delegates to `ProjectInfoService`; bounded read-only
+`search_code` and `read_script` delegate to MCP-independent services. Search and single-file reads share
+one approved-root, exclusion, extension, normalization, containment, and reparse-point policy.
+`read_script` is limited to one approved UTF-8 file of at most 1 MiB, at most 200 requested lines, and
+64 KiB returned text. The trusted launcher may select an absolute
 checkout with startup-only `--repository-root`; canonicalization, identity markers and reparse checks
 are required, and invalid configuration fails startup without fallback. When omitted, discovery is
 anchored to the executable's checkout location. Only fixed Unity/Git metadata paths are read; missing,
 linked, malformed or unsupported metadata returns `not available`. Search is literal, UTF-8-only,
 resource-bounded, limited to six hard-coded source/documentation roots, and returns only relative paths
-with bounded line snippets. Shared containment/reparse checks fail closed. No arbitrary `read_file`,
+with bounded line snippets. `read_script` returns a bounded line range and relative path only. Shared
+containment/reparse checks fail closed. No arbitrary `read_file`,
 shell, network or write tools are exposed; logs use stderr. The
 [MCP README](../tools/DungeonEscape.Mcp/README.md) records exact roots, extensions and limits.
 

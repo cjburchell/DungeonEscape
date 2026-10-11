@@ -2,6 +2,15 @@
 
 ## Done
 
+- AI-005 / GitHub #15: added strictly read-only `list_scenes` to the standalone MCP server. It performs
+  bounded, deterministic `.unity` discovery under `DungeonEscape.Unity/Assets` without reading scene
+  contents and narrowly parses bounded `EditorBuildSettings.asset` data for nullable membership and
+  enabled status. Results expose only repository-relative paths; canonical containment and reparse
+  checks are shared with existing tools. Missing, malformed, invalid UTF-8, binary, oversized, linked,
+  duplicate, disabled, and missing-reference cases are handled explicitly. The orchestrator sees the
+  fourth tool but continues to deny it; no role authorization, gameplay, Unity Asset, write, shell,
+  Unity-launch, YAML-parser, RAG, or LLM behavior changed.
+
 - AI-004B / GitHub #31: authorized the existing bounded read-only `read_script` MCP tool for Unity
   Engineer and Reviewer through the AgentOrchestrator's generic role and safe-metadata gateway. Manager,
   unsupported roles, unadvertised tools, and writable/destructive/open-world descriptors remain denied.

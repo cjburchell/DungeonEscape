@@ -9,7 +9,7 @@ public sealed class StdioTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task HandshakeListsExactlyThreeReadOnlyToolsAndCallsThem(bool configured)
+    public async Task HandshakeListsExactlyFourReadOnlyToolsAndCallsThem(bool configured)
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
         while (directory is not null && directory.Name != "DungeonEscape.Mcp.Tests") directory = directory.Parent;
@@ -30,8 +30,12 @@ public sealed class StdioTests
             fixture = Path.Combine(Path.GetTempPath(), "DungeonEscape MCP stdio", Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(Path.Combine(fixture, "DungeonEscape.Core"));
             var settings = Directory.CreateDirectory(Path.Combine(fixture, "DungeonEscape.Unity", "ProjectSettings"));
+            var scenes = Directory.CreateDirectory(Path.Combine(fixture, "DungeonEscape.Unity", "Assets", "Scenes"));
             File.WriteAllText(Path.Combine(fixture, "DungeonEscape.sln"), "");
             File.WriteAllText(Path.Combine(settings.FullName, "ProjectVersion.txt"), "m_EditorVersion: 6000.4.4f1\n");
+            File.WriteAllText(Path.Combine(settings.FullName, "EditorBuildSettings.asset"),
+                "EditorBuildSettings:\n  m_Scenes:\n  - enabled: 1\n    path: Assets/Scenes/Fixture.unity\n");
+            File.WriteAllText(Path.Combine(scenes.FullName, "Fixture.unity"), "scene content is not read");
             File.WriteAllText(Path.Combine(fixture, "DungeonEscape.Core", "Fixture.cs"), "class FixtureSymbol { }\n");
             File.WriteAllText(Path.Combine(fixture, "DungeonEscape.Core", "Readable.cs"),
                 "line one\nknown read line\nline three\n");
@@ -58,7 +62,7 @@ public sealed class StdioTests
             await Send(new { jsonrpc = "2.0", id = 2, method = "tools/list", @params = new { } });
             var listed = await Receive(2);
             var tools = listed.GetProperty("result").GetProperty("tools").EnumerateArray().ToArray();
-            Assert.Equal(3, tools.Length);
+            Assert.Equal(4, tools.Length);
             var projectTool = tools.Single(tool => tool.GetProperty("name").GetString() == "get_project_info");
             Assert.Empty(projectTool.GetProperty("inputSchema").GetProperty("properties").EnumerateObject());
             AssertStrictlyReadOnly(projectTool);
@@ -74,6 +78,9 @@ public sealed class StdioTests
                 .EnumerateObject().Select(property => property.Name).OrderBy(name => name));
             Assert.Equal("path", Assert.Single(readSchema.GetProperty("required").EnumerateArray()).GetString());
             AssertStrictlyReadOnly(readTool);
+            var scenesTool = tools.Single(tool => tool.GetProperty("name").GetString() == "list_scenes");
+            Assert.Empty(scenesTool.GetProperty("inputSchema").GetProperty("properties").EnumerateObject());
+            AssertStrictlyReadOnly(scenesTool);
             await Send(new { jsonrpc = "2.0", id = 3, method = "tools/call", @params = new { name = "get_project_info", arguments = new { } } });
             var called = (await Receive(3)).GetProperty("result");
             Assert.False(called.TryGetProperty("isError", out var error) && error.GetBoolean());
@@ -104,6 +111,18 @@ public sealed class StdioTests
             using var readResult = JsonDocument.Parse(read.GetProperty("content")[0].GetProperty("text").GetString()!);
             Assert.Equal(readPath, readResult.RootElement.GetProperty("path").GetString());
             Assert.InRange(readResult.RootElement.GetProperty("linesReturned").GetInt32(), 1, 3);
+
+            await Send(new { jsonrpc = "2.0", id = 11, method = "tools/call", @params = new
+            {
+                name = "list_scenes", arguments = new { }
+            }});
+            var listedScenes = (await Receive(11)).GetProperty("result");
+            Assert.False(listedScenes.TryGetProperty("isError", out var scenesError) && scenesError.GetBoolean());
+            using var sceneResult = JsonDocument.Parse(
+                listedScenes.GetProperty("content")[0].GetProperty("text").GetString()!);
+            var scenePath = sceneResult.RootElement.GetProperty("scenes")[0].GetProperty("path").GetString();
+            Assert.StartsWith("DungeonEscape.Unity/Assets/", scenePath);
+            Assert.EndsWith(".unity", scenePath);
 
             if (configured)
             {

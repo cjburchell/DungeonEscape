@@ -75,7 +75,8 @@ GameEditor uses singleton services registered in `Program.cs`, Razor components,
 TMX metadata editing services, and JSON schemas. See its [README](../DungeonEscape.Tools.GameEditor/README.md)
 and [Schemas](../DungeonEscape.Tools.GameEditor/Schemas/README.md). It is a development tool, not Unity UI.
 
-MCP `Program.cs` explicitly registers `ProjectInfoTools`, `SearchCodeTools`, and `ReadScriptTools`.
+MCP `Program.cs` explicitly registers `ProjectInfoTools`, `SearchCodeTools`, `ReadScriptTools`, and
+`ListScenesTools`.
 Parameterless read-only `get_project_info` delegates to `ProjectInfoService`; bounded read-only
 `search_code` and `read_script` delegate to MCP-independent services. Search and single-file reads share
 one approved-root, exclusion, extension, normalization, containment, and reparse-point policy.
@@ -86,7 +87,10 @@ are required, and invalid configuration fails startup without fallback. When omi
 anchored to the executable's checkout location. Only fixed Unity/Git metadata paths are read; missing,
 linked, malformed or unsupported metadata returns `not available`. Search is literal, UTF-8-only,
 resource-bounded, limited to six hard-coded source/documentation roots, and returns only relative paths
-with bounded line snippets. `read_script` returns a bounded line range and relative path only. Shared
+with bounded line snippets. `read_script` returns a bounded line range and relative path only.
+`list_scenes` performs bounded deterministic `.unity` discovery only below the ordinary Unity Assets
+root and narrowly parses bounded Editor build settings for nullable membership/enabled metadata; it
+does not read scene contents. Shared
 containment/reparse checks fail closed. No arbitrary `read_file`,
 shell, network or write tools are exposed; logs use stderr. The
 [MCP README](../tools/DungeonEscape.Mcp/README.md) records exact roots, extensions and limits.
@@ -94,7 +98,8 @@ shell, network or write tools are exposed; logs use stderr. The
 The AI-010 orchestrator is a separate consumer of that MCP boundary. Its application state machine
 enforces Manager → Unity Engineer → Reviewer transitions, permits one Engineer revision after
 `REQUEST_CHANGES`, and requires human handling after a second request. Manager has no tools; the two
-specialists are allowlisted for `get_project_info`, bounded `search_code`, and bounded `read_script`,
+specialists are allowlisted for `get_project_info`, bounded `search_code`, and bounded `read_script`.
+The newly advertised `list_scenes` remains denied pending separate role-policy work,
 and the gateway rejects tools not advertised as read-only, non-destructive, and closed-world. Manager
 and unsupported roles remain denied. Search and source-range requests/results are passed through
 without interpretation, indexing, caching, or persistence.

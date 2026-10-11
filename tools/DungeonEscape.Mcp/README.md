@@ -1,7 +1,7 @@
 # DungeonEscape MCP server
 
-Standalone, read-only repository metadata, bounded source-search, and bounded single-file source reader
-for AI-002 / GitHub issue #8, AI-003 / issue #12, and AI-004 / issue #14.
+Standalone read-only repository metadata, bounded source inspection, and Unity scene discovery server
+for AI-002 / GitHub issue #8 through AI-005 / issue #15.
 Targets .NET 10 and uses the [official C# MCP SDK](https://github.com/modelcontextprotocol/csharp-sdk)
 (`ModelContextProtocol` 2.2.0). It has no Unity or gameplay project references.
 
@@ -15,6 +15,8 @@ Targets .NET 10 and uses the [official C# MCP SDK](https://github.com/modelconte
 - `Services/SearchCodeService.cs`: bounded UTF-8 search, independent of MCP.
 - `Tools/ReadScriptTools.cs`: MCP contract and strictly read-only annotations for bounded file ranges.
 - `Services/ReadScriptService.cs`: bounded UTF-8 line-range reads, independent of MCP.
+- `Tools/ListScenesTools.cs`: MCP contract and strictly read-only annotations for scene discovery.
+- `Services/ListScenesService.cs`: bounded scene/build-settings discovery, independent of MCP.
 - `Services/RepositoryContentPolicy.cs`: shared approved roots, exclusions, extensions, and path resolution.
 - `Services/RepositoryPathSecurity.cs`: shared containment and reparse-point checks.
 - `../DungeonEscape.Mcp.Tests/`: xUnit discovery, metadata, boundary and real stdio tests.
@@ -32,7 +34,7 @@ dotnet test tools/DungeonEscape.Mcp.Tests/DungeonEscape.Mcp.Tests.csproj
 ```
 
 The test run includes a real subprocess handshake (`initialize`, `notifications/initialized`),
-`tools/list` verification of exactly three strictly read-only tools, real metadata/search/read calls,
+`tools/list` verification of exactly four strictly read-only tools, real metadata/search/read/scene calls,
 rejected traversal/out-of-scope requests, and unknown-tool rejection.
 It runs both executable-discovery and configured-root modes from an unrelated working directory,
 verifies that a configured fixture overrides executable discovery, and checks invalid configuration
@@ -102,6 +104,21 @@ requested and effective ranges, returned and total line counts, truncation, norm
 and content. Files are limited to 1 MiB and returned content to 64 KiB of UTF-8 per call. A requested
 range past EOF returns a deterministic empty result. Text line endings are normalized to `\n`.
 
+`list_scenes` takes no parameters. It deterministically discovers ordinary `.unity` files below
+`DungeonEscape.Unity/Assets`, without reading scene contents, and returns repository-relative paths.
+It reports nullable build-settings membership/enabled metadata from the narrowly parsed
+`DungeonEscape.Unity/ProjectSettings/EditorBuildSettings.asset`. The result status is `available`,
+`missing`, `malformed`, or `oversized`; membership and enabled values are explicitly `null` when the
+settings are unavailable. A discovered scene absent from valid settings has `inBuildSettings: false`
+and `enabled: null`. Duplicate settings entries are collapsed and enabled wins if any duplicate is
+enabled. Settings entries for missing scenes do not fabricate scene results.
+
+Scene discovery examines and returns at most 500 scene files and reads at most 256 KiB of
+build settings. Per-directory entries are ordered by normalized repository-relative ordinal path;
+traversal stops and `truncated` is set when a scene budget is exhausted. The Assets root and all visited
+files/directories must pass the shared canonical containment and reparse-point checks. Linked content is
+skipped, and scene contents are never opened.
+
 Approved roots are hard-coded:
 
 - `DungeonEscape.Core/`
@@ -132,7 +149,8 @@ directories, out-of-scope paths and linked search roots are rejected.
   starts at the executable's directory, finds its `tools/DungeonEscape.Mcp` ancestor and verifies the
   same identity markers. Neither mode scans for other repositories. MCP callers and working directory
   cannot select/change the root; generic host/environment configuration is disabled.
-- Fixed metadata reads remain bounded to 4,096 characters. `search_code` and `read_script` add only the
+- Fixed metadata reads remain bounded to 4,096 characters. `search_code`, `read_script`, and
+  `list_scenes` add only the
   bounded, allowlisted operations described above; `read_script` cannot access files outside the shared
   approved roots/extensions and is not arbitrary `read_file` access. Callers cannot
   supply commands, URLs or write requests. No shell, Git subprocess, network access, resources,
@@ -151,5 +169,6 @@ directories, out-of-scope paths and linked search roots are rejected.
 - NuGet restore needs network access during development; tool execution does not.
 
 Manual verification remaining: configure this DLL in the intended MCP client and confirm its
-tool UI displays `get_project_info`, `search_code`, and `read_script` with their strictly read-only annotations.
+tool UI displays `get_project_info`, `search_code`, `read_script`, and `list_scenes` with their strictly
+read-only annotations.
 The protocol itself is covered by the automated test.

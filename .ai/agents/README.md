@@ -6,11 +6,11 @@ the human-reviewable policy that the code enforces.
 
 The current implementation is deterministic and scripted. It proves role separation, typed
 hand-offs, bounded transitions, tool permissions, tracing, and failure handling. It does not perform
-autonomous LLM reasoning, inspect arbitrary source through MCP, modify files, or operate Git.
+autonomous LLM reasoning, read arbitrary files through MCP, modify files, or operate Git.
 
 - [Manager](manager.md)
 - [Unity Engineer](unity-engineer.md)
 - [Reviewer](reviewer.md)
 
-Only `get_project_info` from the existing read-only MCP server is available to specialists. Supplied
-task context must identify any source facts needed for a scripted run; MCP metadata is not source access.
+The specialists may use `get_project_info` and bounded read-only `search_code` from the existing MCP
+server. The gateway passes results through without interpreting, indexing, caching, or persisting them.

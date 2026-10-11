@@ -6,7 +6,7 @@ namespace DungeonEscape.AgentOrchestrator.Tests;
 public sealed class McpIntegrationTests
 {
     [Fact]
-    public async Task ExistingMcpServerAdvertisesBothToolsButGatewayKeepsSearchDenied()
+    public async Task ExistingMcpServerAdvertisesBothToolsAndGatewayAllowsSafeSpecialistSearch()
     {
         var testProject = FindAncestor(AppContext.BaseDirectory, "DungeonEscape.AgentOrchestrator.Tests");
         var toolsDirectory = testProject.Parent!;
@@ -37,9 +37,20 @@ public sealed class McpIntegrationTests
         Assert.True(result.Succeeded);
         Assert.Contains("DungeonEscape", result.Content);
 
-        var deniedSearch = await gateway.CallAsync(AgentRole.UnityEngineer, "search_code",
+        var engineerSearch = await gateway.CallAsync(AgentRole.UnityEngineer, "search_code",
             JsonSerializer.SerializeToElement(new { query = "ProjectInfoService" }), timeout.Token);
-        Assert.False(deniedSearch.Succeeded);
+        Assert.True(engineerSearch.Succeeded);
+        Assert.Contains("ProjectInfoService", engineerSearch.Content);
+
+        var reviewerSearch = await gateway.CallAsync(AgentRole.Reviewer, "search_code",
+            JsonSerializer.SerializeToElement(new { query = "ProjectInfoService", maxResults = 1 }),
+            timeout.Token);
+        Assert.True(reviewerSearch.Succeeded);
+        Assert.Contains("ProjectInfoService", reviewerSearch.Content);
+
+        var managerSearch = await gateway.CallAsync(AgentRole.Manager, "search_code",
+            JsonSerializer.SerializeToElement(new { query = "ProjectInfoService" }), timeout.Token);
+        Assert.False(managerSearch.Succeeded);
 
         var rejected = await gateway.CallAsync(AgentRole.Reviewer, "read_file",
             JsonSerializer.SerializeToElement(new { path = "anything" }), timeout.Token);

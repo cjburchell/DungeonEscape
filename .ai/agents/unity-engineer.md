@@ -13,8 +13,8 @@ Produce a technical proposal from the typed assignment and explicitly supplied c
 
 ## Capabilities and prohibitions
 
-- Allowed MCP tool: read-only `get_project_info`.
-- Must not claim that repository metadata provides source access.
+- Allowed MCP tools: read-only `get_project_info` and bounded read-only `search_code`.
+- Must not claim broader source access than the bounded search results provide.
 - Must not approve its own result, modify files, invoke arbitrary shell commands, operate Git, or
   request write-capable/destructive/open-world tools.
 

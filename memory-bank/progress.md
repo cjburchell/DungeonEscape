@@ -2,6 +2,15 @@
 
 ## Done
 
+- AI-003 / GitHub #12: added strictly read-only `search_code` to the standalone MCP server. It performs
+  bounded literal `OrdinalIgnoreCase` UTF-8 search over six hard-coded source/documentation roots,
+  canonicalizes caller subtrees, rejects traversal/out-of-scope/linked roots, skips generated,
+  unsupported, binary, invalid-UTF-8 and linked descendants, and returns only relative paths,
+  one-based lines and bounded snippets. Per-file, aggregate byte/file, result and snippet limits prevent
+  unbounded reads. Shared repository path-security helpers keep discovery and search consistent. MCP now
+  exposes exactly `get_project_info` and `search_code`; no orchestrator, gameplay, Assets, solution,
+  shell, write, arbitrary file-read, RAG or semantic-search behavior was added.
+
 - AI-010 / GitHub #10: added a standalone .NET 10 deterministic Manager → Unity Engineer → Reviewer
   orchestration prototype under `tools/DungeonEscape.AgentOrchestrator`, with typed hand-offs,
   application-enforced transitions, one bounded `REQUEST_CHANGES` retry, role-based access to the

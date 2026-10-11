@@ -1,6 +1,7 @@
 # DungeonEscape MCP server
 
-Standalone, read-only repository metadata server for AI-002 / GitHub issue #8.
+Standalone, read-only repository metadata and bounded source-search server for AI-002 / GitHub issue #8
+and AI-003 / GitHub issue #12.
 Targets .NET 10 and uses the [official C# MCP SDK](https://github.com/modelcontextprotocol/csharp-sdk)
 (`ModelContextProtocol` 2.2.0). It has no Unity or gameplay project references.
 
@@ -10,6 +11,9 @@ Targets .NET 10 and uses the [official C# MCP SDK](https://github.com/modelconte
 - `Services/RepositoryStartupOptions.cs`: strict parsing of trusted launcher configuration.
 - `Tools/ProjectInfoTools.cs`: MCP presentation and read-only annotations.
 - `Services/ProjectInfoService.cs`: repository discovery and bounded metadata reads, independent of MCP.
+- `Tools/SearchCodeTools.cs`: MCP contract and strictly read-only annotations for literal search.
+- `Services/SearchCodeService.cs`: bounded UTF-8 search, independent of MCP.
+- `Services/RepositoryPathSecurity.cs`: shared containment and reparse-point checks.
 - `../DungeonEscape.Mcp.Tests/`: xUnit discovery, metadata, boundary and real stdio tests.
 
 These projects intentionally remain outside the gameplay solution. Build and test them directly;
@@ -25,7 +29,8 @@ dotnet test tools/DungeonEscape.Mcp.Tests/DungeonEscape.Mcp.Tests.csproj
 ```
 
 The test run includes a real subprocess handshake (`initialize`, `notifications/initialized`),
-`tools/list` verification of exactly one parameterless read-only tool, `tools/call`, and unknown-tool rejection.
+`tools/list` verification of exactly two strictly read-only tools, real metadata/search calls,
+rejected traversal/out-of-scope requests, and unknown-tool rejection.
 It runs both executable-discovery and configured-root modes from an unrelated working directory,
 verifies that a configured fixture overrides executable discovery, and checks invalid configuration
 exits before transport starts with an error on stderr and no stdout.
@@ -67,7 +72,7 @@ it is not an interactive command prompt. Standard input/output carry newline-del
 host logs go to stderr. Avoid launching through `dotnet run` in a client because build output can
 interfere with protocol traffic. Close stdin to shut down the server.
 
-## Available tool
+## Available tools
 
 `get_project_info` takes no parameters and returns:
 
@@ -82,15 +87,45 @@ the current branch or from conventional names such as `main`. Missing repository
 fallback discovery makes all fields unavailable; an invalid explicitly configured root instead fails
 startup. Serialization may use the record's PascalCase property names in text content.
 
+`search_code` accepts required `query`, optional repository-relative `path`, and optional `maxResults`.
+It performs literal `OrdinalIgnoreCase` matching only; no regex, shell, external process or index is used.
+`query` is limited to 128 non-control characters. `maxResults` defaults to 20 and must be from 1 to 50.
+Results contain only repository-relative paths, one-based line numbers and snippets bounded to 240
+characters. `truncated` is set when a result or resource limit prevents a complete search.
+
+Approved roots are hard-coded:
+
+- `DungeonEscape.Core/`
+- `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/`
+- `DungeonEscape.Tools.GameEditor/`
+- `tools/`
+- `.ai/`
+- `memory-bank/`
+
+Generated/sensitive directory segments `.git`, `Library`, `Temp`, `Obj`, `obj`, `bin`, `Build`,
+`Builds`, `Logs`, `UserSettings`, `TestResults` and `artifacts` are excluded. Search accepts only
+UTF-8 files with approved source/document extensions (`.cs`, `.csproj`, `.sln`, `.props`, `.targets`,
+`.razor`, `.json`, `.md`, `.txt`, `.xml`, `.yml`, `.yaml`, `.ps1`, `.sh`, `.asmdef`, `.uxml`, `.uss`).
+NUL-containing, invalid UTF-8, unsupported, linked and reparse-point files are skipped.
+
+Per call, individual files are limited to 1 MiB, total examined bytes to 25 MiB, discovered/retained
+candidate files to 5,000, returned results to 50, and snippets to 240 characters. Candidate traversal
+sorts each visited directory by normalized repository-relative path, stops immediately when the 5,000th
+searchable candidate exhausts the global budget, sets `truncated`, and does not visit later entries or
+directories. Only the bounded retained set is stored and scanned. Relative paths are canonicalized and
+must remain within both the selected checkout and an approved root. Absolute paths, `..`, excluded
+directories, out-of-scope paths and linked search roots are rejected.
+
 ## Security boundaries and limitations
 
 - The trusted launcher can select a validated root once at startup. Without that option, discovery
   starts at the executable's directory, finds its `tools/DungeonEscape.Mcp` ancestor and verifies the
   same identity markers. Neither mode scans for other repositories. MCP callers and working directory
   cannot select/change the root; generic host/environment configuration is disabled.
-- Only the three fixed metadata files above are read, each bounded to 4,096 characters.
-  Callers cannot supply paths, commands, URLs or write requests. No shell, Git subprocess,
-  network access, file-reading tool, resources, prompts or HTTP transport is registered.
+- Fixed metadata reads remain bounded to 4,096 characters. `search_code` adds only the bounded,
+  allowlisted literal search described above; it is not arbitrary `read_file` access. Callers cannot
+  supply commands, URLs or write requests. No shell, Git subprocess, network access, resources,
+  prompts or HTTP transport is registered.
 - Symlinks/junctions/reparse points in discovery and metadata paths are rejected. Detached or
   malformed HEAD, `.git` files (including worktrees/submodules), shared Git directories,
   packed remote HEAD metadata and complex branch names are unavailable. Git is not invoked,
@@ -105,4 +140,5 @@ startup. Serialization may use the record's PascalCase property names in text co
 - NuGet restore needs network access during development; tool execution does not.
 
 Manual verification remaining: configure this DLL in the intended MCP client and confirm its
-tool UI displays `get_project_info` and returned metadata. The protocol itself is covered by the automated test.
+tool UI displays `get_project_info` and `search_code` with their strictly read-only annotations.
+The protocol itself is covered by the automated test.

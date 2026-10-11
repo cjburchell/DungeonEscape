@@ -6,7 +6,7 @@ namespace DungeonEscape.AgentOrchestrator.Tests;
 public sealed class McpIntegrationTests
 {
     [Fact]
-    public async Task ExistingMcpServerProvidesOnlyAllowedReadOnlyMetadataTool()
+    public async Task ExistingMcpServerAdvertisesBothToolsButGatewayKeepsSearchDenied()
     {
         var testProject = FindAncestor(AppContext.BaseDirectory, "DungeonEscape.AgentOrchestrator.Tests");
         var toolsDirectory = testProject.Parent!;
@@ -19,11 +19,16 @@ public sealed class McpIntegrationTests
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         await using var client = await McpStdioToolClient.StartAsync(dll, root, timeout.Token);
         var definitions = await client.ListToolsAsync(timeout.Token);
-        var tool = Assert.Single(definitions);
-        Assert.Equal("get_project_info", tool.Name);
-        Assert.True(tool.ReadOnly);
-        Assert.False(tool.Destructive);
-        Assert.False(tool.OpenWorld);
+        Assert.Equal(2, definitions.Count);
+        var projectTool = definitions.Single(tool => tool.Name == "get_project_info");
+        AssertStrictlyReadOnly(projectTool);
+        Assert.Empty(projectTool.InputSchema.GetProperty("properties").EnumerateObject());
+        var searchTool = definitions.Single(tool => tool.Name == "search_code");
+        AssertStrictlyReadOnly(searchTool);
+        Assert.Equal(["maxResults", "path", "query"], searchTool.InputSchema.GetProperty("properties")
+            .EnumerateObject().Select(property => property.Name).OrderBy(name => name));
+        Assert.Equal("query", Assert.Single(searchTool.InputSchema.GetProperty("required")
+            .EnumerateArray()).GetString());
 
         var trace = new InMemoryWorkflowTraceSink();
         var gateway = new RoleBasedToolGateway(client, trace, "integration");
@@ -31,6 +36,10 @@ public sealed class McpIntegrationTests
             JsonSerializer.SerializeToElement(new { }), timeout.Token);
         Assert.True(result.Succeeded);
         Assert.Contains("DungeonEscape", result.Content);
+
+        var deniedSearch = await gateway.CallAsync(AgentRole.UnityEngineer, "search_code",
+            JsonSerializer.SerializeToElement(new { query = "ProjectInfoService" }), timeout.Token);
+        Assert.False(deniedSearch.Succeeded);
 
         var rejected = await gateway.CallAsync(AgentRole.Reviewer, "read_file",
             JsonSerializer.SerializeToElement(new { path = "anything" }), timeout.Token);
@@ -46,7 +55,7 @@ public sealed class McpIntegrationTests
         var client = await McpStdioToolClient.StartAsync(dll, root, timeout.Token);
 
         var definitions = await client.ListToolsAsync(timeout.Token);
-        Assert.Single(definitions);
+        Assert.Equal(2, definitions.Count);
         for (var index = 0; index < 750; index++)
         {
             var result = await client.CallAsync("get_project_info",
@@ -55,6 +64,13 @@ public sealed class McpIntegrationTests
         }
 
         await client.DisposeAsync().AsTask().WaitAsync(timeout.Token);
+    }
+
+    private static void AssertStrictlyReadOnly(McpToolDefinition tool)
+    {
+        Assert.True(tool.ReadOnly);
+        Assert.False(tool.Destructive);
+        Assert.False(tool.OpenWorld);
     }
 
     private static (string Dll, string Root) ServerPaths()

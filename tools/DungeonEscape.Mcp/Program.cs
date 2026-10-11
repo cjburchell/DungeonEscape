@@ -25,8 +25,10 @@ var builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings
 builder.Logging.AddConsole(options => options.LogToStandardErrorThreshold = LogLevel.Trace);
 builder.Services.AddSingleton(projectInfo);
 builder.Services.AddSingleton<SearchCodeService>();
+builder.Services.AddSingleton<ReadScriptService>();
 builder.Services.AddMcpServer().WithStdioServerTransport()
     .WithTools<ProjectInfoTools>()
-    .WithTools<SearchCodeTools>();
+    .WithTools<SearchCodeTools>()
+    .WithTools<ReadScriptTools>();
 await builder.Build().RunAsync();
 return 0;

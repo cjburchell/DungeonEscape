@@ -9,7 +9,7 @@ public sealed class StdioTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task HandshakeListsExactlyTwoReadOnlyToolsAndCallsThem(bool configured)
+    public async Task HandshakeListsExactlyThreeReadOnlyToolsAndCallsThem(bool configured)
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
         while (directory is not null && directory.Name != "DungeonEscape.Mcp.Tests") directory = directory.Parent;
@@ -33,6 +33,8 @@ public sealed class StdioTests
             File.WriteAllText(Path.Combine(fixture, "DungeonEscape.sln"), "");
             File.WriteAllText(Path.Combine(settings.FullName, "ProjectVersion.txt"), "m_EditorVersion: 6000.4.4f1\n");
             File.WriteAllText(Path.Combine(fixture, "DungeonEscape.Core", "Fixture.cs"), "class FixtureSymbol { }\n");
+            File.WriteAllText(Path.Combine(fixture, "DungeonEscape.Core", "Readable.cs"),
+                "line one\nknown read line\nline three\n");
             File.WriteAllText(Path.Combine(fixture, "DungeonEscape.Core", "Unicode.cs"),
                 string.Concat(Enumerable.Repeat(char.ConvertFromUtf32(0x1F9ED), 180)) +
                 "UnicodeNeedle" +
@@ -56,7 +58,7 @@ public sealed class StdioTests
             await Send(new { jsonrpc = "2.0", id = 2, method = "tools/list", @params = new { } });
             var listed = await Receive(2);
             var tools = listed.GetProperty("result").GetProperty("tools").EnumerateArray().ToArray();
-            Assert.Equal(2, tools.Length);
+            Assert.Equal(3, tools.Length);
             var projectTool = tools.Single(tool => tool.GetProperty("name").GetString() == "get_project_info");
             Assert.Empty(projectTool.GetProperty("inputSchema").GetProperty("properties").EnumerateObject());
             AssertStrictlyReadOnly(projectTool);
@@ -66,6 +68,12 @@ public sealed class StdioTests
                 .EnumerateObject().Select(property => property.Name).OrderBy(name => name));
             Assert.Equal("query", Assert.Single(searchSchema.GetProperty("required").EnumerateArray()).GetString());
             AssertStrictlyReadOnly(searchTool);
+            var readTool = tools.Single(tool => tool.GetProperty("name").GetString() == "read_script");
+            var readSchema = readTool.GetProperty("inputSchema");
+            Assert.Equal(["lineCount", "path", "startLine"], readSchema.GetProperty("properties")
+                .EnumerateObject().Select(property => property.Name).OrderBy(name => name));
+            Assert.Equal("path", Assert.Single(readSchema.GetProperty("required").EnumerateArray()).GetString());
+            AssertStrictlyReadOnly(readTool);
             await Send(new { jsonrpc = "2.0", id = 3, method = "tools/call", @params = new { name = "get_project_info", arguments = new { } } });
             var called = (await Receive(3)).GetProperty("result");
             Assert.False(called.TryGetProperty("isError", out var error) && error.GetBoolean());
@@ -83,6 +91,19 @@ public sealed class StdioTests
             var searched = (await Receive(4)).GetProperty("result");
             Assert.False(searched.TryGetProperty("isError", out var searchError) && searchError.GetBoolean());
             Assert.Contains(query, searched.GetRawText());
+
+            var readPath = configured
+                ? "DungeonEscape.Core/Readable.cs"
+                : "tools/DungeonEscape.Mcp/Services/ProjectInfoService.cs";
+            await Send(new { jsonrpc = "2.0", id = 9, method = "tools/call", @params = new
+            {
+                name = "read_script", arguments = new { path = readPath, startLine = 1, lineCount = 3 }
+            }});
+            var read = (await Receive(9)).GetProperty("result");
+            Assert.False(read.TryGetProperty("isError", out var readError) && readError.GetBoolean());
+            using var readResult = JsonDocument.Parse(read.GetProperty("content")[0].GetProperty("text").GetString()!);
+            Assert.Equal(readPath, readResult.RootElement.GetProperty("path").GetString());
+            Assert.InRange(readResult.RootElement.GetProperty("linesReturned").GetInt32(), 1, 3);
 
             if (configured)
             {
@@ -109,6 +130,11 @@ public sealed class StdioTests
                 name = "search_code", arguments = new { query = "x", path = "README.md" }
             }});
             Assert.True((await Receive(7)).GetProperty("result").GetProperty("isError").GetBoolean());
+            await Send(new { jsonrpc = "2.0", id = 10, method = "tools/call", @params = new
+            {
+                name = "read_script", arguments = new { path = "../outside.cs" }
+            }});
+            Assert.True((await Receive(10)).GetProperty("result").GetProperty("isError").GetBoolean());
             await Send(new { jsonrpc = "2.0", id = 8, method = "tools/call", @params = new { name = "read_file", arguments = new { path = "outside" } } });
             var rejected = await Receive(8);
             Assert.True(rejected.TryGetProperty("error", out _) || rejected.GetProperty("result").GetProperty("isError").GetBoolean());

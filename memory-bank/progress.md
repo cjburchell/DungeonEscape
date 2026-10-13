@@ -2,6 +2,19 @@
 
 ## Done
 
+- AI-011 / GitHub #20: added real OpenAI Responses API execution for Unity Engineer and Reviewer behind
+  the existing `IAgentExecutor` and a small provider-neutral client seam. The deterministic Manager still
+  owns ordering, transitions, and the one-revision limit. Specialist tool schemas are derived from the
+  gateway-filtered live MCP descriptors; all calls return through the existing fail-closed gateway, the
+  same six read-only tools remain authorized, and `run_tests` remains denied. Strict structured outputs,
+  finite timeout/tool budgets, cancellation, refusal/provider/malformed-output handling, and safe usage/
+  operational tracing were added without recording keys, prompts, transcripts, reasoning, or tool content.
+  Scripted tests remain offline; the real-provider test is opt-in when key and model are configured. A
+  manual live run with `gpt-5.4-mini` completed Manager -> Engineer -> Reviewer -> approval: the Engineer
+  used all eight allowed calls and finalized when the reported budget reached zero, while the Reviewer
+  independently used four approved calls. Both returned valid typed results. No
+  QA, RAG, write, gameplay, Unity Asset, test-running specialist, or autonomous Git capability was added.
+
 - AI-009 / GitHub #19: centralized the MCP server's seven-tool capability inventory in a typed,
   fail-closed catalog covering names, safety annotations, side-effect classifications, and concise
   descriptions. Real stdio tests now require exact catalog/registration parity, and duplicate,

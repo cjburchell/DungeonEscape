@@ -54,4 +54,48 @@ public sealed record WorkflowTraceEvent(string WorkflowId, string? RunId, string
 }
 
 public sealed record McpToolDefinition(string Name, JsonElement InputSchema, bool ReadOnly,
-    bool Destructive, bool OpenWorld);
+    bool Destructive, bool OpenWorld, string Description = "");
+
+public sealed record LlmExecutionOptions(string Model, TimeSpan Timeout, int MaximumToolCalls)
+{
+    public static LlmExecutionOptions Create(string model, int timeoutSeconds = 120,
+        int maximumToolCalls = 8)
+    {
+        if (string.IsNullOrWhiteSpace(model) || model.Length > 128 || model.Any(char.IsControl))
+            throw new ArgumentException("A valid model identifier is required.", nameof(model));
+        if (timeoutSeconds is < 1 or > 300) throw new ArgumentOutOfRangeException(nameof(timeoutSeconds));
+        if (maximumToolCalls is < 1 or > 20) throw new ArgumentOutOfRangeException(nameof(maximumToolCalls));
+        return new(model, TimeSpan.FromSeconds(timeoutSeconds), maximumToolCalls);
+    }
+}
+
+public sealed record LlmToolDefinition(string Name, string Description, JsonElement InputSchema);
+public sealed record LlmToolCall(string CallId, string Name, string ArgumentsJson);
+public sealed record LlmToolOutput(string CallId, string Content);
+public sealed record LlmUsage(int InputTokens, int OutputTokens, int TotalTokens);
+public sealed record LlmResponse(string? ResponseId, string? OutputText,
+    IReadOnlyList<LlmToolCall> ToolCalls, bool Refused = false, LlmUsage? Usage = null);
+
+public sealed record LlmConversationRequest(AgentRole Role, string Model, string Instructions,
+    string Input, IReadOnlyList<LlmToolDefinition> Tools, string OutputSchemaName,
+    JsonElement OutputSchema);
+
+public interface ILlmConversation : IAsyncDisposable
+{
+    Task<LlmResponse> RespondAsync(IReadOnlyList<LlmToolOutput> toolOutputs,
+        CancellationToken cancellationToken);
+}
+
+public interface ILlmClient
+{
+    string ProviderName { get; }
+    ILlmConversation StartConversation(LlmConversationRequest request);
+}
+
+public enum LlmProviderErrorKind { Authentication, RateLimit, Network, Server, InvalidResponse, Unknown }
+
+public sealed class LlmProviderException(LlmProviderErrorKind kind, string safeMessage,
+    Exception? innerException = null) : Exception(safeMessage, innerException)
+{
+    public LlmProviderErrorKind Kind { get; } = kind;
+}

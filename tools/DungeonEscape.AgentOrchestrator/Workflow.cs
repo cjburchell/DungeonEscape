@@ -51,8 +51,11 @@ public sealed class OrchestrationWorkflow(string workflowId, IAgentExecutor exec
             if (engineerResult.Role != AgentRole.UnityEngineer)
                 return await Fail("Engineer executor attempted to act as or self-approve through another role.",
                     attempt, attempt - 1, proposal, review);
+            if (engineerResult.Error is not null)
+                return await Fail("Unity Engineer execution failed: " + engineerResult.Error,
+                    attempt, attempt - 1, proposal, review);
             proposal = engineerResult.Output;
-            if (engineerResult.Error is not null || !Valid(proposal, workflowId, attempt))
+            if (!Valid(proposal, workflowId, attempt))
                 return await Fail("Unity Engineer returned malformed output.", attempt, attempt - 1,
                     proposal, review);
             var validProposal = proposal!;
@@ -84,8 +87,11 @@ public sealed class OrchestrationWorkflow(string workflowId, IAgentExecutor exec
             if (reviewerResult.Role != AgentRole.Reviewer)
                 return await Fail("Reviewer executor returned an unauthorized role.", attempt, attempt,
                     proposal, review);
+            if (reviewerResult.Error is not null)
+                return await Fail("Reviewer execution failed: " + reviewerResult.Error,
+                    attempt, attempt, proposal, review);
             review = reviewerResult.Output;
-            if (reviewerResult.Error is not null || !Valid(review, workflowId, attempt))
+            if (!Valid(review, workflowId, attempt))
                 return await Fail("Reviewer returned malformed output.", attempt, attempt, proposal, review);
             var validReview = review!;
 

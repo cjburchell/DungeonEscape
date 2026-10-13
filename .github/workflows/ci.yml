@@ -23,6 +23,8 @@ env:
   RESHARPER_EXCLUDE: ${{ vars.RESHARPER_EXCLUDE || '' }}
   RESHARPER_THRESHOLD: ${{ vars.RESHARPER_THRESHOLD || '0' }}
   RESHARPER_TOOL_VERSION: ${{ vars.RESHARPER_TOOL_VERSION || '2026.1.0.1' }}
+  # Disabled by default while GitHub issue #37 tracks the recurring exit-code 1 failure.
+  RESHARPER_SCAN_ENABLED: ${{ vars.RESHARPER_SCAN_ENABLED || 'false' }}
   DOTNET_SDK_IMAGE: mcr.microsoft.com/dotnet/sdk:10.0
   UNITY_PROJECT_PATH: DungeonEscape.Unity
   UNITY_CI_IMAGE: unityci/editor:ubuntu-6000.4.4f1-base-3.2.2
@@ -403,7 +405,7 @@ jobs:
     needs:
       - dotnet-build
       - unity-validate
-    if: ${{ always() && needs.dotnet-build.result == 'success' && (needs.unity-validate.result == 'success' || needs.unity-validate.result == 'skipped') }}
+    if: ${{ vars.RESHARPER_SCAN_ENABLED == 'true' && always() && needs.dotnet-build.result == 'success' && (needs.unity-validate.result == 'success' || needs.unity-validate.result == 'skipped') }}
     container:
       image: mcr.microsoft.com/dotnet/sdk:10.0
     steps:

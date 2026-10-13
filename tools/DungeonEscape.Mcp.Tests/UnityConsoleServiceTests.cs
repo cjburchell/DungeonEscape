@@ -124,12 +124,18 @@ public sealed class UnityConsoleServiceTests : IDisposable
         var repoFile = Path.Combine(root, "DungeonEscape.Unity", "Assets", "Game.cs");
         Log($"""
             Error connecting: Bearer abc.def-123 diagnostic continues
+            Authorization: Basic dXNlcjpwYXNz
+            Authorization=Digest username="private", response="digest-secret"
             api_key=super-secret request failed
             access_token: token-value retry possible
             password = "do-not-return" useful suffix
             Repository file {repoFile}:42
             User file C:\Users\Someone\private.txt
             Linux file /home/someone/private.txt
+            Quoted Windows "C:\Users\Jane Doe\private file.txt" useful quoted suffix
+            Quoted Linux '/home/Jane Doe/private file.txt' useful Linux suffix
+            Spaced Windows C:\Users\Jane Doe\another file.log useful Windows suffix
+            Spaced Linux /home/Jane Doe/another file.log useful unquoted suffix
             """);
 
         var result = Service.Get();
@@ -138,13 +144,22 @@ public sealed class UnityConsoleServiceTests : IDisposable
         Assert.DoesNotContain("super-secret", output);
         Assert.DoesNotContain("token-value", output);
         Assert.DoesNotContain("do-not-return", output);
+        Assert.DoesNotContain("dXNlcjpwYXNz", output);
+        Assert.DoesNotContain("digest-secret", output);
         Assert.DoesNotContain("C:\\Users", output);
         Assert.DoesNotContain("/home/someone", output);
+        Assert.DoesNotContain("Jane Doe", output);
+        Assert.DoesNotContain("private file.txt", output);
+        Assert.DoesNotContain("another file.log", output);
         Assert.DoesNotContain(root, output, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("[REDACTED]", output);
         Assert.Contains("diagnostic continues", output);
         Assert.Contains("request failed", output);
         Assert.Contains("useful suffix", output);
+        Assert.Contains("useful quoted suffix", output);
+        Assert.Contains("useful Linux suffix", output);
+        Assert.Contains("useful Windows suffix", output);
+        Assert.Contains("useful unquoted suffix", output);
         Assert.Contains("<REPOSITORY>", output);
     }
 

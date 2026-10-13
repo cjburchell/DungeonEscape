@@ -38,7 +38,19 @@ public sealed class UnityConsoleService(ProjectInfoService projectInfo)
     private static readonly Regex Secret = new(
         """(?i)\b(api[-_ ]?key|access[-_ ]?token|refresh[-_ ]?token|client[-_ ]?secret|secret[-_ ]?key|token|password|passwd|secret|authorization)\b\s*[:=]\s*(?:"[^"]*"|'[^']*'|\S+)""",
         RegexOptions.CultureInvariant);
+    private static readonly Regex Authorization = new(@"(?i)\bauthorization\b\s*[:=]\s*[^\r\n]*",
+        RegexOptions.CultureInvariant);
     private static readonly Regex Bearer = new(@"(?i)\bbearer\s+[A-Za-z0-9._~+/=-]+",
+        RegexOptions.CultureInvariant);
+    private static readonly Regex DoubleQuotedAbsolutePath = new(
+        "\"(?:[A-Za-z]:[\\\\/]|/)[^\"\\r\\n]*\"", RegexOptions.CultureInvariant);
+    private static readonly Regex SingleQuotedAbsolutePath = new(
+        """'(?:[A-Za-z]:[\\/]|/)[^'\r\n]*'""", RegexOptions.CultureInvariant);
+    private static readonly Regex WindowsFilePathWithSpaces = new(
+        """(?<![A-Za-z0-9])[A-Za-z]:[\\/][^"\r\n<>|]*?\.[A-Za-z0-9]{1,10}(?=:\d+|\(\d|[\s,;)]|$)""",
+        RegexOptions.CultureInvariant);
+    private static readonly Regex UnixFilePathWithSpaces = new(
+        """(?<![A-Za-z0-9.>])/(?:[^"\r\n<>|]*/)*[^/"\r\n<>|]*?\.[A-Za-z0-9]{1,10}(?=:\d+|\(\d|[\s,;)]|$)""",
         RegexOptions.CultureInvariant);
     private static readonly Regex WindowsPath = new("""(?<![A-Za-z0-9])[A-Za-z]:[\\/][^\s"'<>|]+""",
         RegexOptions.CultureInvariant);
@@ -203,8 +215,13 @@ public sealed class UnityConsoleService(ProjectInfoService projectInfo)
     private static string Redact(string value, string repositoryRoot)
     {
         var redacted = value.Replace(repositoryRoot, "<REPOSITORY>", RepositoryPathSecurity.Comparison);
+        redacted = Authorization.Replace(redacted, "Authorization=[REDACTED]");
         redacted = Bearer.Replace(redacted, "Bearer [REDACTED]");
         redacted = Secret.Replace(redacted, match => match.Groups[1].Value + "=[REDACTED]");
+        redacted = DoubleQuotedAbsolutePath.Replace(redacted, "\"<ABSOLUTE_PATH>\"");
+        redacted = SingleQuotedAbsolutePath.Replace(redacted, "'<ABSOLUTE_PATH>'");
+        redacted = WindowsFilePathWithSpaces.Replace(redacted, "<ABSOLUTE_PATH>");
+        redacted = UnixFilePathWithSpaces.Replace(redacted, "<ABSOLUTE_PATH>");
         redacted = WindowsPath.Replace(redacted, "<ABSOLUTE_PATH>");
         return UnixPath.Replace(redacted, "<ABSOLUTE_PATH>");
     }

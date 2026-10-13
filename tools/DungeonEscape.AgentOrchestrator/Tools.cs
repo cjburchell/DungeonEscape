@@ -12,6 +12,7 @@ public interface IReadOnlyToolClient : IAsyncDisposable
 public interface IAgentToolGateway
 {
     IReadOnlyList<string> AllowedTools { get; }
+    IReadOnlyList<string> AllowedToolsFor(AgentRole role);
     Task<IReadOnlyList<McpToolDefinition>> ListAllowedToolsAsync(AgentRole role,
         CancellationToken cancellationToken);
     Task<ToolCallResult> CallAsync(AgentRole role, string name, JsonElement arguments,
@@ -21,42 +22,50 @@ public interface IAgentToolGateway
 public sealed class RoleBasedToolGateway(IReadOnlyToolClient client, IWorkflowTraceSink trace,
     string workflowId) : IAgentToolGateway
 {
-    private static readonly IReadOnlyDictionary<AgentRole, IReadOnlySet<string>> Policy =
-        new Dictionary<AgentRole, IReadOnlySet<string>>
+    private sealed record CapabilityPolicy(string Name, bool ReadOnly, bool Destructive,
+        bool OpenWorld, bool Idempotent);
+
+    private static readonly CapabilityPolicy[] InspectionPolicy =
+        new[] { "get_project_info", "search_code", "read_script", "list_scenes", "get_unity_console", "get_git_diff" }
+        .Select(name => new CapabilityPolicy(name, true, false, false, true)).ToArray();
+    private static readonly CapabilityPolicy RunTestsPolicy =
+        new("run_tests", false, false, false, false);
+    private static readonly IReadOnlyDictionary<AgentRole, IReadOnlyList<CapabilityPolicy>> Policy =
+        new Dictionary<AgentRole, IReadOnlyList<CapabilityPolicy>>
         {
-            [AgentRole.Manager] = new HashSet<string>(),
-            [AgentRole.UnityEngineer] = new HashSet<string>
-                { "get_project_info", "search_code", "read_script", "list_scenes", "get_unity_console",
-                    "get_git_diff" },
-            [AgentRole.Reviewer] = new HashSet<string>
-                { "get_project_info", "search_code", "read_script", "list_scenes", "get_unity_console",
-                    "get_git_diff" }
+            [AgentRole.Manager] = [],
+            [AgentRole.UnityEngineer] = InspectionPolicy,
+            [AgentRole.Reviewer] = InspectionPolicy,
+            [AgentRole.QA] = [.. InspectionPolicy, RunTestsPolicy]
         };
 
     public IReadOnlyList<string> AllowedTools =>
         ["get_project_info", "search_code", "read_script", "list_scenes", "get_unity_console", "get_git_diff"];
+
+    public IReadOnlyList<string> AllowedToolsFor(AgentRole role) => Policy.TryGetValue(role, out var policy)
+        ? policy.Select(item => item.Name).ToArray() : [];
 
     public async Task<IReadOnlyList<McpToolDefinition>> ListAllowedToolsAsync(AgentRole role,
         CancellationToken cancellationToken)
     {
         if (!Policy.TryGetValue(role, out var allowedTools)) return [];
         var definitions = await client.ListToolsAsync(cancellationToken);
-        return definitions.Where(tool => allowedTools.Contains(tool.Name) && tool.ReadOnly
-            && !tool.Destructive && !tool.OpenWorld).ToArray();
+        return definitions.Where(tool => allowedTools.Any(expected => Matches(expected, tool))).ToArray();
     }
 
     public async Task<ToolCallResult> CallAsync(AgentRole role, string name, JsonElement arguments,
         CancellationToken cancellationToken)
     {
         var roleSupported = Policy.TryGetValue(role, out var allowedTools);
-        var allowed = roleSupported && allowedTools!.Contains(name);
+        var expected = roleSupported ? allowedTools!.SingleOrDefault(item => item.Name == name) : null;
+        var allowed = expected is not null;
         var definitions = allowed ? await client.ListToolsAsync(cancellationToken) : [];
         var definition = definitions.SingleOrDefault(tool => tool.Name == name);
-        if (!allowed || definition is null || !definition.ReadOnly || definition.Destructive || definition.OpenWorld)
+        if (!allowed || definition is null || !Matches(expected!, definition))
         {
             await trace.EmitAsync(WorkflowTraceEvent.Create(workflowId, "ToolCallRejected",
-                $"{name}: not allowlisted or not strictly read-only", role), cancellationToken);
-            return new(false, "", "Tool is not authorized for this role or is not strictly read-only.");
+                $"{name}: not allowlisted or advertised metadata does not match policy", role), cancellationToken);
+            return new(false, "", "Tool is not authorized for this role or its safety metadata is unexpected.");
         }
 
         await trace.EmitAsync(WorkflowTraceEvent.Create(workflowId, "ToolCallStarted", name, role),
@@ -66,6 +75,11 @@ public sealed class RoleBasedToolGateway(IReadOnlyToolClient client, IWorkflowTr
             $"{name}: {(result.Succeeded ? "succeeded" : "failed")}", role), cancellationToken);
         return result;
     }
+
+    private static bool Matches(CapabilityPolicy expected, McpToolDefinition actual) =>
+        expected.Name == actual.Name && expected.ReadOnly == actual.ReadOnly
+        && expected.Destructive == actual.Destructive && expected.OpenWorld == actual.OpenWorld
+        && expected.Idempotent == actual.Idempotent;
 }
 
 /// <summary>Small stdio client for the existing server's list/call surface.</summary>
@@ -130,7 +144,8 @@ public sealed class McpStdioToolClient : IReadOnlyToolClient
                 annotations.GetProperty("readOnlyHint").GetBoolean(),
                 annotations.GetProperty("destructiveHint").GetBoolean(),
                 annotations.GetProperty("openWorldHint").GetBoolean(),
-                tool.TryGetProperty("description", out var description) ? description.GetString() ?? "" : "");
+                tool.TryGetProperty("description", out var description) ? description.GetString() ?? "" : "",
+                annotations.GetProperty("idempotentHint").GetBoolean());
         }).ToArray();
         return tools;
     }

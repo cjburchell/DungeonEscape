@@ -2,10 +2,11 @@ using System.Text.Json;
 
 namespace DungeonEscape.AgentOrchestrator;
 
-public enum AgentRole { Manager, UnityEngineer, Reviewer }
+public enum AgentRole { Manager, UnityEngineer, Reviewer, QA }
 public enum ReviewVerdict { Approve, RequestChanges, Inconclusive }
+public enum QaOutcome { Pass, Fail, Inconclusive }
 public enum WorkflowStatus { Completed, Incomplete, NeedsHumanDecision, Failed }
-public enum WorkflowStage { Created, Engineer, Reviewer, Completed }
+public enum WorkflowStage { Created, Engineer, Reviewer, QA, Completed }
 
 public sealed record WorkflowRequest(string Task, IReadOnlyList<string> AcceptanceCriteria,
     IReadOnlyList<string> Constraints, IReadOnlyList<string> SuppliedContext);
@@ -28,6 +29,19 @@ public sealed record ReviewerToManager(string WorkflowId, int Attempt, ReviewVer
     IReadOnlyList<string> Findings, IReadOnlyList<string> RequiredChanges,
     IReadOnlyList<string> ResidualRisks);
 
+public sealed record QaAssignment(string WorkflowId, int Attempt, string Task,
+    IReadOnlyList<string> AcceptanceCriteria, IReadOnlyList<string> Constraints,
+    EngineerToReviewer EngineerResult, ReviewerToManager ReviewerResult,
+    IReadOnlyList<string> AllowedTools);
+
+public sealed record QaTestEvidence(string Suite, string Status, int? ExitCode,
+    long DurationMilliseconds, IReadOnlyList<string> FailedTests, bool Truncated, string Summary);
+
+public sealed record QaToManager(string WorkflowId, int Attempt, QaOutcome Outcome,
+    IReadOnlyList<string> TestSuitesRun, IReadOnlyList<QaTestEvidence> TestResults,
+    IReadOnlyList<string> ValidationFindings, IReadOnlyList<string> SkippedChecks,
+    IReadOnlyList<string> ResidualRisks, IReadOnlyList<ToolUse> ToolUses);
+
 public sealed record ToolUse(string Name, bool Succeeded);
 
 public sealed record AgentExecutionResult<T>(AgentRole Role, T? Output, string? Error)
@@ -37,7 +51,8 @@ public sealed record AgentExecutionResult<T>(AgentRole Role, T? Output, string? 
 }
 
 public sealed record WorkflowResult(string WorkflowId, WorkflowStatus Status, int EngineerAttempts,
-    int ReviewerAttempts, EngineerToReviewer? Proposal, ReviewerToManager? Review, string Summary);
+    int ReviewerAttempts, int QaAttempts, EngineerToReviewer? Proposal, ReviewerToManager? Review,
+    QaToManager? QA, string Summary);
 
 public sealed record ToolDescriptor(string Name, bool ReadOnly, bool Destructive, bool OpenWorld);
 public sealed record ToolCallResult(bool Succeeded, string Content, string? Error = null);
@@ -54,7 +69,7 @@ public sealed record WorkflowTraceEvent(string WorkflowId, string? RunId, string
 }
 
 public sealed record McpToolDefinition(string Name, JsonElement InputSchema, bool ReadOnly,
-    bool Destructive, bool OpenWorld, string Description = "");
+    bool Destructive, bool OpenWorld, string Description = "", bool Idempotent = true);
 
 public sealed record LlmExecutionOptions(string Model, TimeSpan Timeout, int MaximumToolCalls)
 {

@@ -21,18 +21,21 @@ public sealed class OpenAiLiveIntegrationTests
         var trace = new InMemoryWorkflowTraceSink();
         var gateway = new RoleBasedToolGateway(mcp, trace, "live-openai");
         var executor = new LlmAgentExecutor(new OpenAiLlmClient(apiKey),
-            LlmExecutionOptions.Create(model, 120, 8));
+            LlmExecutionOptions.Create(model, 300, 8));
         var workflow = new OrchestrationWorkflow("live-openai", executor, gateway, trace);
         var result = await workflow.RunAsync(new(
             "Review the current MCP architecture and identify which files would likely need modification to add a new read-only project metadata tool.",
             ["Use repository evidence", "Return a concrete proposal"],
-            ["Read-only", "Do not modify files", "Do not run tests"], []), timeout.Token);
+            ["Do not modify files", "Only QA may run bounded approved tests"], []), timeout.Token);
 
         Assert.NotEqual(WorkflowStatus.Failed, result.Status);
         Assert.NotNull(result.Proposal);
         Assert.NotNull(result.Review);
+        Assert.NotNull(result.QA);
         Assert.Contains(trace.Events, item => item.EventType == "ToolCallStarted"
             && item.Role == AgentRole.UnityEngineer);
+        Assert.Contains(trace.Events, item => item.EventType == "ToolCallStarted"
+            && item.Role == AgentRole.QA && item.Detail == "run_tests");
         Assert.DoesNotContain(trace.Events, item => item.Detail.Contains(apiKey, StringComparison.Ordinal));
     }
 

@@ -66,14 +66,17 @@ var gateway = new RoleBasedToolGateway(mcp, trace, workflowId);
 
 var request = new WorkflowRequest(task,
     ["Provide an evidence-based, concrete technical analysis"],
-    ["Read-only analysis", "Do not modify project files", "Do not run tests"],
+    ["Do not modify project files", "Only QA may run bounded approved tests"],
     provider == "scripted"
         ? ["Inventory rules live in Core; Unity GameState coordinates interactions and persistence."]
         : []);
 var result = await new OrchestrationWorkflow(workflowId, executor, gateway, trace).RunAsync(request);
-Console.WriteLine($"RESULT status={result.Status} engineerAttempts={result.EngineerAttempts} reviewerAttempts={result.ReviewerAttempts}");
+Console.WriteLine($"RESULT status={result.Status} engineerAttempts={result.EngineerAttempts} " +
+    $"reviewerAttempts={result.ReviewerAttempts} qaAttempts={result.QaAttempts}");
 if (result.Proposal is not null) Console.WriteLine("PROPOSAL " + result.Proposal.ProposedSolution);
 if (result.Review is not null) Console.WriteLine("REVIEW " + result.Review.Verdict);
+if (result.QA is not null)
+    Console.WriteLine($"QA {result.QA.Outcome} suites={string.Join(',', result.QA.TestSuitesRun)}");
 return result.Status == WorkflowStatus.Completed ? 0 : 1;
 
 static IAgentExecutor Scripted() => new ScriptedAgentExecutor(
@@ -93,7 +96,23 @@ static IAgentExecutor Scripted() => new ScriptedAgentExecutor(
     (assignment, _, _) => Task.FromResult(AgentExecutionResult<ReviewerToManager>.Success(
         AgentRole.Reviewer, new(assignment.WorkflowId, assignment.Attempt, ReviewVerdict.Approve,
             ["Proposal respects the supplied boundary and identifies validation."], [],
-            ["Verify exact source locations before implementation."]))));
+            ["Verify exact source locations before implementation."]))),
+    async (assignment, context, cancellationToken) =>
+    {
+        var tests = await context.Tools.CallAsync(AgentRole.QA, "run_tests",
+            JsonSerializer.SerializeToElement(new { suite = "orchestrator", timeoutSeconds = 120 }),
+            cancellationToken);
+        return AgentExecutionResult<QaToManager>.Success(AgentRole.QA,
+            new(assignment.WorkflowId, assignment.Attempt,
+                tests.Succeeded ? QaOutcome.Pass : QaOutcome.Fail,
+                ["orchestrator"], [new("orchestrator", tests.Succeeded ? "passed" : "failed",
+                    tests.Succeeded ? 0 : 1, 0, [], false,
+                    "Existing orchestrator baseline was executed through bounded run_tests.")],
+                ["This validates the current baseline, not the unimplemented proposal."],
+                ["Post-implementation validation remains required."],
+                ["The proposal has not been implemented in this read-only workflow."],
+                [new("run_tests", tests.Succeeded)]));
+    });
 
 static string? Value(string[] values, string name)
 {

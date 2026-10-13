@@ -16,7 +16,7 @@ public sealed class McpIntegrationTests
             "net10.0", "DungeonEscape.Mcp.dll");
         Assert.True(File.Exists(dll), $"Expected MCP server at {dll}");
 
-        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(180));
         await using var client = await McpStdioToolClient.StartAsync(dll, root, timeout.Token);
         var definitions = await client.ListToolsAsync(timeout.Token);
         Assert.Equal(7, definitions.Count);
@@ -154,6 +154,13 @@ public sealed class McpIntegrationTests
                 e => e.EventType == "ToolCallRejected" && e.Role == role
                     && e.Detail.StartsWith("run_tests:", StringComparison.Ordinal));
         }
+
+        var qaTests = await gateway.CallAsync(AgentRole.QA, "run_tests",
+            JsonSerializer.SerializeToElement(new { suite = "core", timeoutSeconds = 120 }), timeout.Token);
+        Assert.True(qaTests.Succeeded);
+        Assert.Contains("\"Suite\":\"core\"", qaTests.Content, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(trace.Events,
+            e => e.Detail.Contains(qaTests.Content, StringComparison.Ordinal));
 
         var rejected = await gateway.CallAsync(AgentRole.Reviewer, "read_file",
             JsonSerializer.SerializeToElement(new { path = "anything" }), timeout.Token);

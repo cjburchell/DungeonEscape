@@ -13,7 +13,7 @@ It describes the local checkout and is not a claim that all components are valid
 | `DungeonEscape.Tools.GameEditor/` | Standalone `net8.0` Photino/Blazor desktop data editor referencing Core; nullable enabled, newer-runtime roll-forward allowed | [editor project](../DungeonEscape.Tools.GameEditor/DungeonEscape.Tools.GameEditor.csproj), [Program.cs](../DungeonEscape.Tools.GameEditor/Program.cs) |
 | `tools/DungeonEscape.Mcp/` | Standalone `net10.0` stdio MCP metadata server with no Core/Unity reference | [MCP project](../tools/DungeonEscape.Mcp/DungeonEscape.Mcp.csproj), [README](../tools/DungeonEscape.Mcp/README.md) |
 | `tools/DungeonEscape.Mcp.Tests/` | Separate `net10.0` xUnit metadata/boundary and stdio protocol tests | [MCP test project](../tools/DungeonEscape.Mcp.Tests/DungeonEscape.Mcp.Tests.csproj) |
-| `tools/DungeonEscape.AgentOrchestrator/` | Standalone `net10.0` deterministic Manager/Engineer/Reviewer state machine; no Unity reference or real LLM backend | [orchestrator README](../tools/DungeonEscape.AgentOrchestrator/README.md) |
+| `tools/DungeonEscape.AgentOrchestrator/` | Standalone `net10.0` deterministic Manager/Engineer/Reviewer/QA state machine with scripted and bounded OpenAI-backed specialist executors; no Unity reference | [orchestrator README](../tools/DungeonEscape.AgentOrchestrator/README.md) |
 | `tools/DungeonEscape.AgentOrchestrator.Tests/` | Separate `net10.0` xUnit workflow, permission, trace, failure and real MCP integration tests | [orchestrator test project](../tools/DungeonEscape.AgentOrchestrator.Tests/DungeonEscape.AgentOrchestrator.Tests.csproj) |
 
 [DungeonEscape.sln](../DungeonEscape.sln) contains Core, Core.Test and GameEditor. Unity is opened
@@ -120,9 +120,11 @@ restore behavior, or filter. Output and timeout are bounded, pipes drain concurr
 cancellation kills the process tree. Unity suites are excluded from this initial surface. Metadata is
 intentionally non-read-only and non-idempotent because test/build artifacts and timestamps may change.
 
-The AI-010 orchestrator is a separate consumer of that MCP boundary. Its application state machine
-enforces Manager → Unity Engineer → Reviewer transitions, permits one Engineer revision after
-`REQUEST_CHANGES`, and requires human handling after a second request. Manager has no tools; the two
+The orchestrator is a separate consumer of that MCP boundary. Its application state machine enforces
+Manager -> Unity Engineer -> Reviewer -> QA transitions, permits one Engineer revision after Reviewer
+`REQUEST_CHANGES`, and requires human handling after a second request. Reviewer approval is the only
+route to QA; QA `PASS` completes, while QA `FAIL` or `INCONCLUSIVE` requires human handling without an
+automatic repair loop. Manager has no tools; Engineer and Reviewer are allowlisted for
 specialists are allowlisted for `get_project_info`, bounded `search_code`, bounded `read_script`, and
 bounded `list_scenes`, bounded redacted `get_unity_console`, and bounded `get_git_diff`,
 and the gateway rejects tools not advertised as read-only, non-destructive, and closed-world. Manager
@@ -132,16 +134,18 @@ Unity-console requests/results are likewise passed through without interpretatio
 raw console content is never copied into workflow trace metadata.
 Git-diff requests/results are passed through without interpretation or persistence, and raw patch
 content is never copied into workflow trace metadata. Manager and unsupported roles remain denied.
-The MCP server advertises `run_tests`, but all current roles deny it because the generic specialist
-gateway only accepts strictly read-only tools. AI-012 owns future QA-agent authorization.
+The MCP server advertises `run_tests`; QA alone may call it. The gateway requires its exact expected
+non-read-only, non-destructive, non-idempotent, closed-world posture. All inspection capabilities retain
+their exact read-only, non-destructive, idempotent, closed-world requirements, so QA authorization does
+not relax the generic fail-closed boundary for other tools or roles.
 Typed trace events record dispatches, tool activity,
 transitions, retries, and outcomes without recording reasoning transcripts or arbitrary source content.
 `ScriptedAgentExecutor` remains deterministic test/demonstration infrastructure. AI-011 adds the small
 provider-neutral `ILlmClient`/`ILlmConversation` seam, bounded `LlmAgentExecutor`, and official OpenAI
-.NET SDK Responses adapter for real Engineer/Reviewer execution. The Manager, transition order, single
+.NET SDK Responses adapter for real Engineer/Reviewer/QA execution. The Manager, transition order, single
 revision limit, typed hand-offs, and tool gateway remain application-controlled. Model tool definitions
 come from gateway-filtered MCP descriptors; calls return through that same gateway, and `run_tests` is
-never offered. Strict JSON schemas map final responses to existing contracts. Per-specialist timeout and
+offered only to QA. Strict JSON schemas map final responses to existing contracts. Per-specialist timeout and
 tool budgets are finite, cancellation propagates, and traces retain only safe provider/model/usage/
 tool-name/status metadata rather than prompts, transcripts, hidden reasoning, or tool contents.
 See the durable [agent role definitions](agents/README.md).

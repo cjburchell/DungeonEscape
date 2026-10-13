@@ -8,8 +8,10 @@ Own the deterministic task lifecycle and return a bounded result to the human op
 
 - Convert the request, acceptance criteria, constraints, and supplied context into a typed Engineer assignment.
 - Dispatch the Engineer result to the independent Reviewer.
-- Complete on `APPROVE`, return an incomplete result on `INCONCLUSIVE`, and permit exactly one
-  Engineer retry on `REQUEST_CHANGES`.
+- Dispatch QA after Reviewer `APPROVE`; complete only after QA `PASS`.
+- Return an incomplete result on Reviewer `INCONCLUSIVE`, and permit exactly one Engineer retry on
+  Reviewer `REQUEST_CHANGES`.
+- Require a human decision for QA `FAIL` or `INCONCLUSIVE`; QA never initiates an Engineer retry.
 - Require a human decision after a second `REQUEST_CHANGES`.
 - Report failures without inventing a successful result.
 

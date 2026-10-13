@@ -98,9 +98,7 @@ public sealed class OrchestrationWorkflow(string workflowId, IAgentExecutor exec
             switch (validReview.Verdict)
             {
                 case ReviewVerdict.Approve:
-                    await TransitionAsync(stage, WorkflowStage.Completed, "Reviewer approved the proposal.");
-                    return await Complete(WorkflowStatus.Completed, attempt, attempt, validProposal, validReview,
-                        "Proposal approved by the independent Reviewer.");
+                    return await RunQa(request, attempt, validProposal, validReview, stage, cancellationToken);
                 case ReviewVerdict.Inconclusive:
                     await TransitionAsync(stage, WorkflowStage.Completed,
                         "Review was inconclusive; returning to human.");
@@ -127,6 +125,62 @@ public sealed class OrchestrationWorkflow(string workflowId, IAgentExecutor exec
             MaximumReviewerAttempts, proposal, review);
     }
 
+    private async Task<WorkflowResult> RunQa(WorkflowRequest request, int attempt,
+        EngineerToReviewer proposal, ReviewerToManager review, WorkflowStage stage,
+        CancellationToken cancellationToken)
+    {
+        await TransitionAsync(stage, WorkflowStage.QA, "Reviewer approved; independent QA validation dispatched.");
+        var assignment = new QaAssignment(workflowId, attempt, request.Task, request.AcceptanceCriteria,
+            request.Constraints, proposal, review, tools.AllowedToolsFor(AgentRole.QA));
+        var runId = Guid.NewGuid().ToString("N");
+        await Emit("AgentDispatched", "QA received requirements and typed Engineer/Reviewer results.",
+            AgentRole.QA, attempt, runId);
+        AgentExecutionResult<QaToManager> qaResult;
+        try
+        {
+            qaResult = await executor.ExecuteQaAsync(assignment,
+                new(workflowId, attempt, tools, trace), cancellationToken);
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            await Emit("AgentCompleted", "QA execution failed.", AgentRole.QA, attempt, runId);
+            return await Fail("QA execution failed: " + exception.GetType().Name,
+                attempt, attempt, proposal, review, null, 1);
+        }
+        await Emit("AgentCompleted", qaResult.Error ?? "QA completed.", qaResult.Role, attempt, runId);
+        if (qaResult.Role != AgentRole.QA)
+            return await Fail("QA executor returned an unauthorized role.", attempt, attempt,
+                proposal, review, qaResult.Output, 1);
+        if (qaResult.Error is not null)
+            return await Fail("QA execution failed: " + qaResult.Error, attempt, attempt,
+                proposal, review, qaResult.Output, 1);
+        var qa = qaResult.Output;
+        if (!Valid(qa, workflowId, attempt))
+            return await Fail("QA returned malformed output.", attempt, attempt, proposal, review, qa, 1);
+        var validQa = qa!;
+        await Emit("QaOutcome", validQa.Outcome.ToString(), AgentRole.QA, attempt);
+        switch (validQa.Outcome)
+        {
+            case QaOutcome.Pass:
+                await TransitionAsync(WorkflowStage.QA, WorkflowStage.Completed,
+                    "QA passed available baseline validation.");
+                return await Complete(WorkflowStatus.Completed, attempt, attempt, proposal, review,
+                    "Reviewer approved and QA passed available baseline validation.", 1, validQa);
+            case QaOutcome.Fail:
+            case QaOutcome.Inconclusive:
+                await Emit("HumanDecisionRequired",
+                    $"QA returned {validQa.Outcome}; no automatic repair loop is allowed.",
+                    AgentRole.Manager, attempt);
+                await TransitionAsync(WorkflowStage.QA, WorkflowStage.Completed,
+                    "QA requires human evaluation.");
+                return await Complete(WorkflowStatus.NeedsHumanDecision, attempt, attempt, proposal, review,
+                    $"QA returned {validQa.Outcome}; human evaluation is required.", 1, validQa);
+            default:
+                return await Fail("QA returned an unsupported outcome.", attempt, attempt,
+                    proposal, review, validQa, 1);
+        }
+    }
+
     private async ValueTask TransitionAsync(WorkflowStage current, WorkflowStage next, string reason)
     {
         var allowed = (current, next) switch
@@ -135,6 +189,8 @@ public sealed class OrchestrationWorkflow(string workflowId, IAgentExecutor exec
             (WorkflowStage.Engineer, WorkflowStage.Reviewer) => true,
             (WorkflowStage.Reviewer, WorkflowStage.Engineer) => true,
             (WorkflowStage.Reviewer, WorkflowStage.Completed) => true,
+            (WorkflowStage.Reviewer, WorkflowStage.QA) => true,
+            (WorkflowStage.QA, WorkflowStage.Completed) => true,
             _ => false
         };
         if (!allowed) throw new InvalidOperationException($"Invalid workflow transition: {current} -> {next}.");
@@ -143,17 +199,20 @@ public sealed class OrchestrationWorkflow(string workflowId, IAgentExecutor exec
     }
 
     private async Task<WorkflowResult> Complete(WorkflowStatus status, int engineers, int reviewers,
-        EngineerToReviewer proposal, ReviewerToManager review, string summary)
+        EngineerToReviewer proposal, ReviewerToManager review, string summary, int qaAttempts = 0,
+        QaToManager? qa = null)
     {
         await Emit("WorkflowCompleted", $"{status}: {summary}");
-        return new(workflowId, status, engineers, reviewers, proposal, review, summary);
+        return new(workflowId, status, engineers, reviewers, qaAttempts, proposal, review, qa, summary);
     }
 
     private async Task<WorkflowResult> Fail(string summary, int engineers, int reviewers,
-        EngineerToReviewer? proposal, ReviewerToManager? review)
+        EngineerToReviewer? proposal, ReviewerToManager? review, QaToManager? qa = null,
+        int qaAttempts = 0)
     {
         await Emit("WorkflowCompleted", $"Failed: {summary}");
-        return new(workflowId, WorkflowStatus.Failed, engineers, reviewers, proposal, review, summary);
+        return new(workflowId, WorkflowStatus.Failed, engineers, reviewers, qaAttempts,
+            proposal, review, qa, summary);
     }
 
     private ValueTask Emit(string type, string detail, AgentRole? role = null, int? attempt = null,
@@ -168,4 +227,8 @@ public sealed class OrchestrationWorkflow(string workflowId, IAgentExecutor exec
     private static bool Valid(ReviewerToManager? value, string id, int attempt) =>
         value is not null && value.WorkflowId == id && value.Attempt == attempt
         && (value.Verdict != ReviewVerdict.RequestChanges || value.RequiredChanges.Count > 0);
+
+    private static bool Valid(QaToManager? value, string id, int attempt) =>
+        value is not null && value.WorkflowId == id && value.Attempt == attempt
+        && QaResultValidator.IsValid(value);
 }

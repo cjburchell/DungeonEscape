@@ -160,7 +160,12 @@ public sealed class LlmAgentExecutorTests
 
         var result = await run.Executor.ExecuteEngineerAsync(EngineerAssignment(), run.Context, default);
 
-        Assert.Equal("Provider request failed safely.", result.Error);
+        Assert.Equal(kind switch
+        {
+            LlmProviderErrorKind.Authentication => "Provider authentication failed.",
+            LlmProviderErrorKind.RateLimit => "Provider rate limit was reached.",
+            _ => "Provider network request failed."
+        }, result.Error);
         Assert.DoesNotContain(run.Trace.Events, e => e.Detail.Contains("secret credential"));
         Assert.Contains(run.Trace.Events, e => e.Detail.Contains($"status={status}"));
     }

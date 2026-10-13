@@ -74,6 +74,22 @@ public sealed class WorkflowTests
     }
 
     [Fact]
+    public async Task ExplicitExecutorFailureIsNotMisreportedAsMalformedOutput()
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var executor = new ScriptedAgentExecutor(
+            (_, _, _) => Task.FromResult(AgentExecutionResult<EngineerToReviewer>.Failure(
+                AgentRole.UnityEngineer, "Provider rate limit was reached.")),
+            (_, _, _) => throw new Xunit.Sdk.XunitException("Reviewer must not run."));
+
+        var result = await Workflow(executor, trace).RunAsync(Request());
+
+        Assert.Equal(WorkflowStatus.Failed, result.Status);
+        Assert.Contains("rate limit", result.Summary, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("malformed", result.Summary, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task EngineerCannotSelfApproveOrReturnAnotherRole()
     {
         var trace = new InMemoryWorkflowTraceSink();

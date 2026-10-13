@@ -116,7 +116,7 @@ public sealed class LlmAgentExecutor(ILlmClient client, LlmExecutionOptions opti
         catch (LlmProviderException exception)
         {
             return await Failure<T>(context, role, $"provider_{exception.Kind.ToString().ToLowerInvariant()}",
-                stopwatch, toolCallCount, "Provider request failed safely.", cancellationToken);
+                stopwatch, toolCallCount, ProviderFailureMessage(exception.Kind), cancellationToken);
         }
         catch (OperationCanceledException) { throw; }
         catch (Exception)
@@ -163,6 +163,16 @@ public sealed class LlmAgentExecutor(ILlmClient client, LlmExecutionOptions opti
         && Enum.IsDefined(value.Verdict) && value.Findings is not null && value.RequiredChanges is not null
         && value.ResidualRisks is not null
         && (value.Verdict != ReviewVerdict.RequestChanges || value.RequiredChanges.Count > 0);
+
+    private static string ProviderFailureMessage(LlmProviderErrorKind kind) => kind switch
+    {
+        LlmProviderErrorKind.Authentication => "Provider authentication failed.",
+        LlmProviderErrorKind.RateLimit => "Provider rate limit was reached.",
+        LlmProviderErrorKind.Network => "Provider network request failed.",
+        LlmProviderErrorKind.Server => "Provider service failed.",
+        LlmProviderErrorKind.InvalidResponse => "Provider returned an invalid response.",
+        _ => "Provider request failed safely."
+    };
 
     private const string EngineerSchema = """
         {"type":"object","properties":{"workflowId":{"type":"string"},"attempt":{"type":"integer"},"interpretation":{"type":"string"},"proposedSolution":{"type":"string"},"components":{"type":"array","items":{"type":"string"}},"assumptions":{"type":"array","items":{"type":"string"}},"proposedValidation":{"type":"array","items":{"type":"string"}},"knownRisks":{"type":"array","items":{"type":"string"}},"toolUses":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"succeeded":{"type":"boolean"}},"required":["name","succeeded"],"additionalProperties":false}}},"required":["workflowId","attempt","interpretation","proposedSolution","components","assumptions","proposedValidation","knownRisks","toolUses"],"additionalProperties":false}

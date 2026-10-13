@@ -14,7 +14,7 @@ Produce a technical proposal from the typed assignment and explicitly supplied c
 ## Capabilities and prohibitions
 
 - Allowed MCP tools: read-only `get_project_info`, bounded read-only `search_code`, bounded read-only
-  `read_script`, and bounded read-only `list_scenes`.
+  `read_script`, bounded read-only `list_scenes`, and bounded redacted read-only `get_unity_console`.
 - Must not claim broader source access than the bounded search results provide.
 - Must not approve its own result, modify files, invoke arbitrary shell commands, operate Git, or
   request write-capable/destructive/open-world tools.

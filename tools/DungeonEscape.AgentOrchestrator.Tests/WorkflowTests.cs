@@ -321,6 +321,83 @@ public sealed class WorkflowTests
         Assert.Empty(client.Calls);
     }
 
+    [Theory]
+    [InlineData(AgentRole.UnityEngineer)]
+    [InlineData(AgentRole.Reviewer)]
+    public async Task SpecialistsCanInvokeSafelyAnnotatedUnityConsoleWithoutTracingContent(AgentRole role)
+    {
+        const string sensitiveContent = "token=secret-value C:\\Users\\person\\Editor.log";
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("get_unity_console", EmptyJson(), true, false, false))
+        {
+            Content = sensitiveContent
+        };
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync(role, "get_unity_console",
+            JsonSerializer.SerializeToElement(new { maxEntries = 10, minimumSeverity = "warning" }), default);
+
+        Assert.True(result.Succeeded);
+        Assert.Equal(sensitiveContent, result.Content);
+        Assert.Equal(["get_unity_console"], client.Calls);
+        Assert.Contains(trace.Events, e => e.EventType == "ToolCallStarted" && e.Role == role);
+        Assert.Contains(trace.Events, e => e.EventType == "ToolCallCompleted" && e.Role == role);
+        Assert.DoesNotContain(trace.Events, e => e.Detail.Contains("secret-value", StringComparison.Ordinal));
+        Assert.DoesNotContain(trace.Events, e => e.Detail.Contains("C:\\Users", StringComparison.Ordinal));
+    }
+
+    [Theory]
+    [InlineData(AgentRole.Manager)]
+    [InlineData((AgentRole)int.MaxValue)]
+    public async Task ManagerAndUnsupportedRolesCannotInvokeUnityConsole(AgentRole role)
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("get_unity_console", EmptyJson(), true, false, false));
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync(role, "get_unity_console", EmptyJson(), default);
+
+        Assert.False(result.Succeeded);
+        Assert.Single(trace.Events, e => e.EventType == "ToolCallRejected" && e.Role == role);
+        Assert.Empty(client.Calls);
+    }
+
+    [Fact]
+    public async Task UnadvertisedUnityConsoleIsRejected()
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("get_project_info", EmptyJson(), true, false, false));
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync(AgentRole.UnityEngineer, "get_unity_console", EmptyJson(), default);
+
+        Assert.False(result.Succeeded);
+        Assert.Single(trace.Events, e => e.EventType == "ToolCallRejected");
+        Assert.Empty(client.Calls);
+    }
+
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(true, true, false)]
+    [InlineData(true, false, true)]
+    public async Task UnityConsoleRequiresReadOnlyNonDestructiveClosedWorldMetadata(
+        bool readOnly, bool destructive, bool openWorld)
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("get_unity_console", EmptyJson(), readOnly, destructive, openWorld));
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync(AgentRole.Reviewer, "get_unity_console", EmptyJson(), default);
+
+        Assert.False(result.Succeeded);
+        Assert.Single(trace.Events, e => e.EventType == "ToolCallRejected");
+        Assert.Empty(client.Calls);
+    }
+
     [Fact]
     public async Task TraceEventsAreCorrelatedAndCoverAgentAndWorkflowTransitions()
     {
@@ -380,13 +457,14 @@ public sealed class WorkflowTests
     private sealed class FakeToolClient(params McpToolDefinition[] tools) : IReadOnlyToolClient
     {
         public List<string> Calls { get; } = [];
+        public string Content { get; init; } = "{}";
         public Task<IReadOnlyList<McpToolDefinition>> ListToolsAsync(CancellationToken cancellationToken) =>
             Task.FromResult<IReadOnlyList<McpToolDefinition>>(tools);
         public Task<ToolCallResult> CallAsync(string name, JsonElement arguments,
             CancellationToken cancellationToken)
         {
             Calls.Add(name);
-            return Task.FromResult(new ToolCallResult(true, "{}"));
+            return Task.FromResult(new ToolCallResult(true, Content));
         }
         public ValueTask DisposeAsync() => ValueTask.CompletedTask;
     }

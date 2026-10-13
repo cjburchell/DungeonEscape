@@ -104,12 +104,12 @@ The AI-010 orchestrator is a separate consumer of that MCP boundary. Its applica
 enforces Manager → Unity Engineer → Reviewer transitions, permits one Engineer revision after
 `REQUEST_CHANGES`, and requires human handling after a second request. Manager has no tools; the two
 specialists are allowlisted for `get_project_info`, bounded `search_code`, bounded `read_script`, and
-bounded `list_scenes`,
+bounded `list_scenes`, and bounded redacted `get_unity_console`,
 and the gateway rejects tools not advertised as read-only, non-destructive, and closed-world. Manager
 and unsupported roles remain denied. Search and source-range requests/results are passed through
 without interpretation, indexing, caching, or persistence.
-The MCP server advertises `get_unity_console`, but the orchestrator continues to deny it pending a
-separate role-policy change.
+Unity-console requests/results are likewise passed through without interpretation or persistence, and
+raw console content is never copied into workflow trace metadata.
 Typed trace events record dispatches, tool activity,
 transitions, retries, and outcomes without recording reasoning transcripts or arbitrary source content.
 `ScriptedAgentExecutor` is deterministic test/demonstration infrastructure, not an LLM implementation.

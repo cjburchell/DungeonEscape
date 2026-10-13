@@ -12,7 +12,9 @@ public static class RepositoryPathSecurity
         var canonicalParent = Path.TrimEndingDirectorySeparator(Path.GetFullPath(parent));
         var canonicalCandidate = Path.TrimEndingDirectorySeparator(Path.GetFullPath(candidate));
         if (canonicalCandidate.Equals(canonicalParent, Comparison)) return true;
-        var prefix = canonicalParent + Path.DirectorySeparatorChar;
+        var prefix = Path.EndsInDirectorySeparator(canonicalParent)
+            ? canonicalParent
+            : canonicalParent + Path.DirectorySeparatorChar;
         return canonicalCandidate.StartsWith(prefix, Comparison);
     }
 

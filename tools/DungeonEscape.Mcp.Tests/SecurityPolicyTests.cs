@@ -74,6 +74,14 @@ public sealed class SecurityPolicyTests : IDisposable
             RepositoryPathSecurity.Comparison);
     }
 
+    [Fact]
+    public void FilesystemRootContainsItsDescendants()
+    {
+        var filesystemRoot = Assert.IsType<string>(Path.GetPathRoot(root));
+
+        Assert.True(RepositoryPathSecurity.IsContained(filesystemRoot, root));
+    }
+
     [Theory]
     [InlineData("DungeonEscape.Core/bin/generated.cs")]
     [InlineData("DungeonEscape.Core/obj/generated.cs")]

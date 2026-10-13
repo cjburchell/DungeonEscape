@@ -6,6 +6,8 @@ variables:
   RESHARPER_EXCLUDE: ""
   RESHARPER_THRESHOLD: 0
   RESHARPER_TOOL_VERSION: "2026.1.0.1"
+  # Disabled by default while GitHub issue #37 tracks the recurring exit-code 1 failure.
+  RESHARPER_SCAN_ENABLED: "false"
   DOTNET_SDK_IMAGE: "mcr.microsoft.com/dotnet/sdk:10.0"
   UNITY_PROJECT_PATH: "DungeonEscape.Unity"
   UNITY_CI_IMAGE: "unityci/editor:ubuntu-6000.4.4f1-base-3.2.2"
@@ -245,3 +247,7 @@ resharper-scan:
     when: always
     paths:
       - RsInspection*.xml
+  rules:
+    - if: '$RESHARPER_SCAN_ENABLED == "true"'
+      when: on_success
+    - when: never

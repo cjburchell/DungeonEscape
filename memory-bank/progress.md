@@ -2,6 +2,11 @@
 
 ## Done
 
+- CI stabilization: temporarily disabled the repeatedly failing `resharper-scan` job by default in
+  both GitHub Actions and GitLab CI. The rest of the build/test/package pipeline remains enabled, and
+  ReSharper can still be exercised explicitly with `RESHARPER_SCAN_ENABLED=true`. GitHub issue #37
+  tracks root-cause investigation, threshold/exit-code policy, and restoring the job by default.
+
 - AI-006 / GitHub #16: added strictly read-only `get_unity_console` to the standalone MCP server. It
   selects the newest ordinary file from a fixed allowlist of checkout-local Unity validation/test/build
   logs produced by the repository's Windows and Linux scripts; callers cannot provide paths and global

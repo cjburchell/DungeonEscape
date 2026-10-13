@@ -10,6 +10,8 @@
   inspection tools, and unsupported roles fail closed. QA `PASS` completes; `FAIL`/`INCONCLUSIVE` require
   a human decision with no autonomous repair loop. Scripted and OpenAI-backed execution, safe tracing,
   focused workflow/security tests, the real MCP integration, and durable role documentation were updated.
+  QA `PASS` is additionally rejected unless suite/result sets match one-to-one and every result has the
+  exact `passed` status, exit code `0`, no failed tests, and a reported successful `run_tests` invocation.
   No MCP behavior, gameplay, Unity Asset, RAG, write, arbitrary command, or autonomous Git capability changed.
 
 - AI-011 / GitHub #20: added real OpenAI Responses API execution for Unity Engineer and Reviewer behind

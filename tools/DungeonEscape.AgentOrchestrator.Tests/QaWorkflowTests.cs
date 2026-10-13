@@ -133,6 +133,29 @@ public sealed class QaWorkflowTests
         Assert.Contains("malformed", result.Summary, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public async Task QaPassWithFailedEvidenceCannotCompleteWorkflow()
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var executor = new ScriptedAgentExecutor(
+            (assignment, _, _) => Task.FromResult(AgentExecutionResult<EngineerToReviewer>.Success(
+                AgentRole.UnityEngineer, Engineer(assignment.WorkflowId, assignment.Attempt))),
+            (assignment, _, _) => Task.FromResult(AgentExecutionResult<ReviewerToManager>.Success(
+                AgentRole.Reviewer, Review(assignment.WorkflowId, assignment.Attempt, ReviewVerdict.Approve))),
+            (assignment, _, _) => Task.FromResult(AgentExecutionResult<QaToManager>.Success(
+                AgentRole.QA, QA(assignment.WorkflowId, assignment.Attempt, QaOutcome.Pass) with
+                {
+                    TestResults = [new("core", "failed", 1, 20, ["BrokenTest"], false,
+                        "Current baseline failed.")]
+                })));
+
+        var result = await new OrchestrationWorkflow(Id, executor, Gateway().Gateway, trace).RunAsync(Request());
+
+        Assert.Equal(WorkflowStatus.Failed, result.Status);
+        Assert.NotEqual(WorkflowStatus.Completed, result.Status);
+        Assert.Contains("malformed", result.Summary, StringComparison.OrdinalIgnoreCase);
+    }
+
     private static (OrchestrationWorkflow Workflow, InMemoryWorkflowTraceSink Trace) Workflow(
         QaOutcome outcome, Action<QaAssignment>? capture = null)
     {

@@ -185,17 +185,7 @@ public sealed class LlmAgentExecutor(ILlmClient client, LlmExecutionOptions opti
         && value.ResidualRisks is not null
         && (value.Verdict != ReviewVerdict.RequestChanges || value.RequiredChanges.Count > 0);
 
-    private static bool ValidateQA(QaToManager value) =>
-        !string.IsNullOrWhiteSpace(value.WorkflowId) && value.Attempt > 0 && Enum.IsDefined(value.Outcome)
-        && value.TestSuitesRun is not null && value.TestResults is not null
-        && value.ValidationFindings is not null && value.SkippedChecks is not null
-        && value.ResidualRisks is not null && value.ToolUses is not null
-        && value.TestResults.All(item => !string.IsNullOrWhiteSpace(item.Suite)
-            && !string.IsNullOrWhiteSpace(item.Status) && item.FailedTests is not null
-            && !string.IsNullOrWhiteSpace(item.Summary))
-        && (value.Outcome != QaOutcome.Pass || (value.TestSuitesRun.Count > 0
-            && value.TestResults.Count > 0
-            && value.ToolUses.Any(item => item.Name == "run_tests" && item.Succeeded)));
+    private static bool ValidateQA(QaToManager value) => QaResultValidator.IsValid(value);
 
     private static string ProviderFailureMessage(LlmProviderErrorKind kind) => kind switch
     {

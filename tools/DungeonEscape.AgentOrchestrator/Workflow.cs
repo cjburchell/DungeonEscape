@@ -230,11 +230,5 @@ public sealed class OrchestrationWorkflow(string workflowId, IAgentExecutor exec
 
     private static bool Valid(QaToManager? value, string id, int attempt) =>
         value is not null && value.WorkflowId == id && value.Attempt == attempt
-        && Enum.IsDefined(value.Outcome) && value.TestSuitesRun is not null
-        && value.TestResults is not null && value.ValidationFindings is not null
-        && value.SkippedChecks is not null && value.ResidualRisks is not null
-        && value.ToolUses is not null
-        && (value.Outcome != QaOutcome.Pass || (value.TestSuitesRun.Count > 0
-            && value.TestResults.Count > 0
-            && value.ToolUses.Any(item => item.Name == "run_tests" && item.Succeeded)));
+        && QaResultValidator.IsValid(value);
 }

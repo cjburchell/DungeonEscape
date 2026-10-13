@@ -118,6 +118,51 @@ public sealed class LlmAgentExecutorTests
     }
 
     [Fact]
+    public async Task QaPassWithMultipleConsistentPassingSuitesIsAccepted()
+    {
+        var expected = QA(QaOutcome.Pass) with
+        {
+            TestSuitesRun = ["core", "mcp"],
+            TestResults =
+            [
+                Evidence("core"),
+                Evidence("mcp")
+            ]
+        };
+        var run = CreateRun(new LlmResponse("resp", Json(expected), []));
+
+        var result = await run.Executor.ExecuteQaAsync(QaAssignment(), run.Context, default);
+
+        Assert.Null(result.Error);
+        Assert.Equal(2, result.Output?.TestResults.Count);
+    }
+
+    [Theory]
+    [MemberData(nameof(InvalidPassEvidence))]
+    public async Task QaPassWithFailedOrInconsistentEvidenceFailsClosed(QaToManager invalidPass)
+    {
+        var run = CreateRun(new LlmResponse("resp", Json(invalidPass), []));
+
+        var result = await run.Executor.ExecuteQaAsync(QaAssignment(), run.Context, default);
+
+        Assert.Contains("structured output", result.Error, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Theory]
+    [InlineData(QaOutcome.Fail)]
+    [InlineData(QaOutcome.Inconclusive)]
+    public async Task NonPassQaOutcomesDoNotRequirePassingEvidence(QaOutcome outcome)
+    {
+        var expected = QA(outcome);
+        var run = CreateRun(new LlmResponse("resp", Json(expected), []));
+
+        var result = await run.Executor.ExecuteQaAsync(QaAssignment(), run.Context, default);
+
+        Assert.Null(result.Error);
+        Assert.Equal(outcome, result.Output?.Outcome);
+    }
+
+    [Fact]
     public async Task QaRefusalFailsSafely()
     {
         var run = CreateRun(new LlmResponse("resp", "private refusal", [], Refused: true));
@@ -356,6 +401,24 @@ public sealed class LlmAgentExecutorTests
             outcome == QaOutcome.Pass ? 0 : 1, 25, [], false, "Current baseline result.")],
         ["Current baseline validated."], ["Proposed change is not implemented."],
         ["Run post-implementation acceptance tests."], [new("run_tests", true)]);
+    private static QaTestEvidence Evidence(string suite) =>
+        new(suite, "passed", 0, 25, [], false, "Current baseline result.");
+
+    public static IEnumerable<object[]> InvalidPassEvidence()
+    {
+        var valid = QA(QaOutcome.Pass);
+        yield return [valid with { TestResults = [Evidence("orchestrator") with { Status = "failed" }] }];
+        yield return [valid with { TestResults = [Evidence("orchestrator") with { ExitCode = 1 }] }];
+        yield return [valid with { TestResults = [Evidence("orchestrator") with { ExitCode = null }] }];
+        yield return [valid with { TestResults = [Evidence("orchestrator") with { FailedTests = ["BrokenTest"] }] }];
+        yield return [valid with { TestSuitesRun = ["orchestrator", "core"] }];
+        yield return [valid with { TestResults = [Evidence("core")] }];
+        yield return [valid with { ToolUses = [new("run_tests", false)] }];
+        yield return [valid with { TestResults = [] }];
+        yield return [valid with { TestSuitesRun = [] }];
+        yield return [valid with { TestSuitesRun = ["orchestrator", "orchestrator"] }];
+        yield return [valid with { TestResults = [Evidence("orchestrator"), Evidence("orchestrator")] }];
+    }
     private static string Json<T>(T value) => JsonSerializer.Serialize(value, JsonOptions);
 
     private static readonly string[] SpecialistTools =

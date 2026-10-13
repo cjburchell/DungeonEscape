@@ -28,11 +28,13 @@ builder.Services.AddSingleton<SearchCodeService>();
 builder.Services.AddSingleton<ReadScriptService>();
 builder.Services.AddSingleton<ListScenesService>();
 builder.Services.AddSingleton<UnityConsoleService>();
+builder.Services.AddSingleton<GitDiffService>();
 builder.Services.AddMcpServer().WithStdioServerTransport()
     .WithTools<ProjectInfoTools>()
     .WithTools<SearchCodeTools>()
     .WithTools<ReadScriptTools>()
     .WithTools<ListScenesTools>()
-    .WithTools<UnityConsoleTools>();
+    .WithTools<UnityConsoleTools>()
+    .WithTools<GitDiffTools>();
 await builder.Build().RunAsync();
 return 0;

@@ -9,7 +9,7 @@ public sealed class StdioTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task HandshakeListsExactlyFiveReadOnlyToolsAndCallsThem(bool configured)
+    public async Task HandshakeListsExactlySixReadOnlyToolsAndCallsThem(bool configured)
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
         while (directory is not null && directory.Name != "DungeonEscape.Mcp.Tests") directory = directory.Parent;
@@ -46,6 +46,15 @@ public sealed class StdioTests
                 string.Concat(Enumerable.Repeat(char.ConvertFromUtf32(0x1F9ED), 180)) +
                 "UnicodeNeedle" +
                 string.Concat(Enumerable.Repeat(char.ConvertFromUtf32(0x1F9ED), 180)));
+            RunGit(fixture, "init");
+            RunGit(fixture, "config", "user.name", "DungeonEscape Tests");
+            RunGit(fixture, "config", "user.email", "tests@example.invalid");
+            RunGit(fixture, "add", ".");
+            RunGit(fixture, "commit", "-m", "fixture");
+            File.AppendAllText(Path.Combine(fixture, "DungeonEscape.Core", "Readable.cs"), "unstaged line\n");
+            File.WriteAllText(Path.Combine(fixture, "DungeonEscape.Core", "Staged.cs"), "staged content\n");
+            RunGit(fixture, "add", "DungeonEscape.Core/Staged.cs");
+            File.WriteAllText(Path.Combine(fixture, "DungeonEscape.Core", "Untracked.cs"), "untracked content\n");
             start.ArgumentList.Add("--repository-root");
             start.ArgumentList.Add(fixture);
             expectedRoot = fixture;
@@ -65,7 +74,7 @@ public sealed class StdioTests
             await Send(new { jsonrpc = "2.0", id = 2, method = "tools/list", @params = new { } });
             var listed = await Receive(2);
             var tools = listed.GetProperty("result").GetProperty("tools").EnumerateArray().ToArray();
-            Assert.Equal(5, tools.Length);
+            Assert.Equal(6, tools.Length);
             var projectTool = tools.Single(tool => tool.GetProperty("name").GetString() == "get_project_info");
             Assert.Empty(projectTool.GetProperty("inputSchema").GetProperty("properties").EnumerateObject());
             AssertStrictlyReadOnly(projectTool);
@@ -91,6 +100,14 @@ public sealed class StdioTests
             Assert.False(consoleSchema.TryGetProperty("required", out var consoleRequired)
                 && consoleRequired.GetArrayLength() > 0);
             AssertStrictlyReadOnly(consoleTool);
+            var gitDiffTool = tools.Single(tool => tool.GetProperty("name").GetString() == "get_git_diff");
+            var gitDiffSchema = gitDiffTool.GetProperty("inputSchema");
+            Assert.Equal(["includeStaged", "includeUnstaged", "includeUntrackedMetadata", "maxFiles",
+                "maxPatchCharacters"], gitDiffSchema.GetProperty("properties").EnumerateObject()
+                .Select(property => property.Name).OrderBy(name => name));
+            Assert.False(gitDiffSchema.TryGetProperty("required", out var gitDiffRequired)
+                && gitDiffRequired.GetArrayLength() > 0);
+            AssertStrictlyReadOnly(gitDiffTool);
             await Send(new { jsonrpc = "2.0", id = 3, method = "tools/call", @params = new { name = "get_project_info", arguments = new { } } });
             var called = (await Receive(3)).GetProperty("result");
             Assert.False(called.TryGetProperty("isError", out var error) && error.GetBoolean());
@@ -164,6 +181,22 @@ public sealed class StdioTests
                 var snippet = unicodeResult.RootElement.GetProperty("matches")[0].GetProperty("snippet").GetString()!;
                 Assert.Contains("UnicodeNeedle", snippet);
                 Assert.True(snippet.Length <= 240);
+
+                await Send(new { jsonrpc = "2.0", id = 13, method = "tools/call", @params = new
+                {
+                    name = "get_git_diff", arguments = new { maxFiles = 10, maxPatchCharacters = 4096 }
+                }});
+                var gitDiff = (await Receive(13)).GetProperty("result");
+                Assert.False(gitDiff.TryGetProperty("isError", out var gitDiffError)
+                    && gitDiffError.GetBoolean());
+                using var gitDiffResult = JsonDocument.Parse(
+                    gitDiff.GetProperty("content")[0].GetProperty("text").GetString()!);
+                Assert.Equal("available", gitDiffResult.RootElement.GetProperty("status").GetString());
+                var gitDiffText = gitDiffResult.RootElement.GetRawText();
+                Assert.Contains("DungeonEscape.Core/Readable.cs", gitDiffText);
+                Assert.Contains("DungeonEscape.Core/Staged.cs", gitDiffText);
+                Assert.Contains("DungeonEscape.Core/Untracked.cs", gitDiffText);
+                Assert.DoesNotContain(fixture!.Replace('\\', '/'), gitDiffText, StringComparison.OrdinalIgnoreCase);
             }
 
             await Send(new { jsonrpc = "2.0", id = 6, method = "tools/call", @params = new
@@ -192,7 +225,12 @@ public sealed class StdioTests
             finally
             {
                 if (!process.HasExited) process.Kill(true);
-                if (fixture is not null) Directory.Delete(fixture, true);
+                if (fixture is not null)
+                {
+                    foreach (var path in Directory.EnumerateFiles(fixture, "*", SearchOption.AllDirectories))
+                        File.SetAttributes(path, FileAttributes.Normal);
+                    Directory.Delete(fixture, true);
+                }
             }
         }
         Assert.Equal(0, process.ExitCode);
@@ -224,6 +262,23 @@ public sealed class StdioTests
             Assert.True(annotations.GetProperty("idempotentHint").GetBoolean());
             Assert.False(annotations.GetProperty("destructiveHint").GetBoolean());
             Assert.False(annotations.GetProperty("openWorldHint").GetBoolean());
+        }
+
+        static void RunGit(string workingDirectory, params string[] arguments)
+        {
+            var git = new ProcessStartInfo("git")
+            {
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WorkingDirectory = workingDirectory
+            };
+            foreach (var argument in arguments) git.ArgumentList.Add(argument);
+            using var process = Process.Start(git)!;
+            var stdout = process.StandardOutput.ReadToEnd();
+            var stderr = process.StandardError.ReadToEnd();
+            process.WaitForExit();
+            Assert.True(process.ExitCode == 0, $"git failed: {stdout} {stderr}");
         }
     }
 

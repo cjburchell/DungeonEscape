@@ -76,7 +76,7 @@ TMX metadata editing services, and JSON schemas. See its [README](../DungeonEsca
 and [Schemas](../DungeonEscape.Tools.GameEditor/Schemas/README.md). It is a development tool, not Unity UI.
 
 MCP `Program.cs` explicitly registers `ProjectInfoTools`, `SearchCodeTools`, `ReadScriptTools`,
-`ListScenesTools`, and `UnityConsoleTools`.
+`ListScenesTools`, `UnityConsoleTools`, and `GitDiffTools`.
 Parameterless read-only `get_project_info` delegates to `ProjectInfoService`; bounded read-only
 `search_code` and `read_script` delegate to MCP-independent services. Search and single-file reads share
 one approved-root, exclusion, extension, normalization, containment, and reparse-point policy.
@@ -99,6 +99,11 @@ created by the repository's Windows/Linux Unity scripts. It rejects files over 1
 most 256 KiB, bounds entries/text, redacts obvious credentials and absolute machine paths, and reports
 only a logical source type. Shared global Unity Editor/Player logs are deliberately unsupported to avoid
 unrelated project and user-machine data. The tool never accepts a path or launches Unity.
+`get_git_diff` exposes a bounded structured view of local staged/unstaged tracked changes plus
+metadata-only untracked paths. It uses only fixed, no-shell porcelain-status and diff command shapes,
+with internally discovered repository-relative paths, process/output/patch/file limits, no remotes,
+and no Git mutation capability. Binary contents are omitted. The MCP caller cannot supply a path,
+revision, branch, command, arguments, repository, or remote.
 
 The AI-010 orchestrator is a separate consumer of that MCP boundary. Its application state machine
 enforces Manager → Unity Engineer → Reviewer transitions, permits one Engineer revision after
@@ -110,6 +115,8 @@ and unsupported roles remain denied. Search and source-range requests/results ar
 without interpretation, indexing, caching, or persistence.
 Unity-console requests/results are likewise passed through without interpretation or persistence, and
 raw console content is never copied into workflow trace metadata.
+The MCP server advertises `get_git_diff`, but every orchestrator role continues to deny it pending
+AI-007B; denied calls use the existing structured rejection trace without patch content.
 Typed trace events record dispatches, tool activity,
 transitions, retries, and outcomes without recording reasoning transcripts or arbitrary source content.
 `ScriptedAgentExecutor` is deterministic test/demonstration infrastructure, not an LLM implementation.

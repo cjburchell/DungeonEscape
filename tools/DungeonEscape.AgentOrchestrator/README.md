@@ -20,6 +20,8 @@ executor failure handling. `ScriptedAgentExecutor` remains deterministic test/de
 - Model tool requests always flow through `IAgentToolGateway`; the model never connects to MCP directly.
 - Each specialist execution defaults to eight tool calls and 120 seconds, with hard maxima of 20 calls
   and 300 seconds. Cancellation propagates through provider and MCP calls.
+- Role instructions state the exact call budget, and each JSON tool-result envelope reports the remaining
+  calls so the model can finalize instead of attempting an unauthorized extra call.
 - No arbitrary file read, write, shell, Git mutation, generic process, QA, or RAG capability is provided.
 - Traces contain safe operational metadata, not chain-of-thought, keys, environment variables, prompts,
   transcripts, or arbitrary source/tool contents.

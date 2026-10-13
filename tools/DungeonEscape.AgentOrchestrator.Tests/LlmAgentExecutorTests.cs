@@ -27,7 +27,8 @@ public sealed class LlmAgentExecutorTests
         Assert.Equal(expected.Components, result.Output.Components);
         var request = Assert.Single(run.Llm.Requests);
         Assert.Equal(AgentRole.UnityEngineer, request.Role);
-        Assert.Equal(AgentPrompts.UnityEngineer, request.Instructions);
+        Assert.StartsWith(AgentPrompts.UnityEngineer, request.Instructions, StringComparison.Ordinal);
+        Assert.Contains("at most 8 tool calls", request.Instructions, StringComparison.Ordinal);
         Assert.Equal(SpecialistTools, request.Tools.Select(tool => tool.Name).OrderBy(name => name));
         Assert.DoesNotContain(request.Tools, tool => tool.Name == "run_tests");
         Assert.Contains(run.Trace.Events, e => e.EventType == "LlmResponseReceived"
@@ -48,7 +49,7 @@ public sealed class LlmAgentExecutorTests
         Assert.Equal(expected.Findings, result.Output.Findings);
         var request = Assert.Single(run.Llm.Requests);
         Assert.Equal(AgentRole.Reviewer, request.Role);
-        Assert.Equal(AgentPrompts.Reviewer, request.Instructions);
+        Assert.StartsWith(AgentPrompts.Reviewer, request.Instructions, StringComparison.Ordinal);
         Assert.DoesNotContain("hidden reasoning", request.Input, StringComparison.OrdinalIgnoreCase);
     }
 
@@ -65,7 +66,10 @@ public sealed class LlmAgentExecutorTests
 
         Assert.Null(result.Error);
         Assert.Equal(["search_code"], run.Tools.Calls);
-        Assert.Equal(sensitive, run.Llm.Outputs.Single().Single().Content);
+        using var envelope = JsonDocument.Parse(run.Llm.Outputs.Single().Single().Content);
+        Assert.True(envelope.RootElement.GetProperty("succeeded").GetBoolean());
+        Assert.Equal(sensitive, envelope.RootElement.GetProperty("content").GetString());
+        Assert.Equal(7, envelope.RootElement.GetProperty("remainingToolCalls").GetInt32());
         Assert.DoesNotContain(run.Trace.Events, e => e.Detail.Contains(sensitive, StringComparison.Ordinal));
     }
 
@@ -96,6 +100,23 @@ public sealed class LlmAgentExecutorTests
         Assert.Contains("budget", result.Error, StringComparison.OrdinalIgnoreCase);
         Assert.Empty(run.Tools.Calls);
         Assert.Contains(run.Trace.Events, e => e.EventType == "LlmToolBudgetExhausted");
+    }
+
+    [Fact]
+    public async Task FinalAllowedToolCallExplicitlyDirectsModelToFinalize()
+    {
+        var run = CreateRun([
+            new("resp-1", null, [new("call-1", "get_project_info", "{}")]),
+            new("resp-2", Json(Engineer()), [])]);
+        run.Executor = new(run.Llm, LlmExecutionOptions.Create("test-model", 5, 1));
+
+        var result = await run.Executor.ExecuteEngineerAsync(EngineerAssignment(), run.Context, default);
+
+        Assert.Null(result.Error);
+        using var envelope = JsonDocument.Parse(run.Llm.Outputs.Single().Single().Content);
+        Assert.Equal(0, envelope.RootElement.GetProperty("remainingToolCalls").GetInt32());
+        Assert.Contains("final structured result now",
+            envelope.RootElement.GetProperty("instruction").GetString(), StringComparison.Ordinal);
     }
 
     [Fact]

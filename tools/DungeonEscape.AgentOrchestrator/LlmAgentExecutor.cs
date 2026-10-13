@@ -40,7 +40,14 @@ public sealed class LlmAgentExecutor(ILlmClient client, LlmExecutionOptions opti
             var tools = advertised.Select(tool => new LlmToolDefinition(tool.Name, tool.Description,
                 tool.InputSchema)).ToArray();
             using var schema = JsonDocument.Parse(schemaJson);
-            var request = new LlmConversationRequest(role, options.Model, AgentPrompts.For(role),
+            var instructions = AgentPrompts.For(role) + $"""
+
+                You have at most {options.MaximumToolCalls} tool calls for this execution. Conserve them,
+                use paths exactly as returned by tools, and finalize with the required structured result
+                when the tool-result envelope reports zero remaining calls. Tool results are JSON envelopes
+                containing succeeded, content/error, remainingToolCalls, and instruction fields.
+                """;
+            var request = new LlmConversationRequest(role, options.Model, instructions,
                 JsonSerializer.Serialize(assignment, JsonOptions), tools, schemaName,
                 schema.RootElement.Clone());
             await using var conversation = client.StartConversation(request);
@@ -82,8 +89,17 @@ public sealed class LlmAgentExecutor(ILlmClient client, LlmExecutionOptions opti
                         {
                             toolResult = new(false, "", "Tool arguments were invalid JSON.");
                         }
-                        next.Add(new(call.CallId, toolResult.Succeeded ? toolResult.Content
-                            : JsonSerializer.Serialize(new { error = toolResult.Error ?? "Tool call rejected." })));
+                        var remaining = options.MaximumToolCalls - toolCallCount;
+                        next.Add(new(call.CallId, JsonSerializer.Serialize(new
+                        {
+                            succeeded = toolResult.Succeeded,
+                            content = toolResult.Succeeded ? toolResult.Content : null,
+                            error = toolResult.Succeeded ? null : toolResult.Error ?? "Tool call rejected.",
+                            remainingToolCalls = remaining,
+                            instruction = remaining == 0
+                                ? "No tool calls remain. Return the final structured result now."
+                                : "Conserve the remaining tool budget and finalize once sufficient evidence is available."
+                        })));
                     }
                     outputs = next;
                     continue;

@@ -10,23 +10,34 @@ public sealed class SecurityPolicyTests : IDisposable
         Guid.NewGuid().ToString("N"));
 
     [Fact]
-    public void CapabilityCatalogContainsExactlySevenUniqueCompleteDefinitions()
+    public void CapabilityCatalogContainsExactlyNineUniqueCompleteDefinitions()
     {
-        Assert.Equal(7, McpCapabilityCatalog.All.Count);
-        Assert.Equal(7, McpCapabilityCatalog.All.Select(definition => definition.Name)
+        Assert.Equal(9, McpCapabilityCatalog.All.Count);
+        Assert.Equal(9, McpCapabilityCatalog.All.Select(definition => definition.Name)
             .Distinct(StringComparer.Ordinal).Count());
         Assert.All(McpCapabilityCatalog.All, definition =>
         {
             Assert.False(string.IsNullOrWhiteSpace(definition.Name));
             Assert.False(string.IsNullOrWhiteSpace(definition.Description));
         });
-        Assert.Equal(6, McpCapabilityCatalog.All.Count(definition => definition.ReadOnly));
+        Assert.Equal(7, McpCapabilityCatalog.All.Count(definition => definition.ReadOnly));
         var tests = McpCapabilityCatalog.GetRequired(McpCapabilityNames.RunTests);
         Assert.False(tests.ReadOnly);
         Assert.False(tests.Destructive);
         Assert.False(tests.Idempotent);
         Assert.False(tests.OpenWorld);
         Assert.Equal(McpSideEffectClassification.LocalTestArtifacts, tests.SideEffects);
+        var prepare = McpCapabilityCatalog.GetRequired(McpCapabilityNames.PrepareWrite);
+        Assert.True(prepare.ReadOnly);
+        Assert.False(prepare.Destructive);
+        Assert.True(prepare.Idempotent);
+        Assert.False(prepare.OpenWorld);
+        var apply = McpCapabilityCatalog.GetRequired(McpCapabilityNames.ApplyWrite);
+        Assert.False(apply.ReadOnly);
+        Assert.True(apply.Destructive);
+        Assert.False(apply.Idempotent);
+        Assert.False(apply.OpenWorld);
+        Assert.Equal(McpSideEffectClassification.ApprovedRepositoryWrite, apply.SideEffects);
     }
 
     [Fact]

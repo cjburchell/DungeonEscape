@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
+using DungeonEscape.WriteApproval;
 
 namespace DungeonEscape.AgentOrchestrator;
 
@@ -90,16 +91,23 @@ public sealed class McpStdioToolClient : IReadOnlyToolClient
     private readonly Task stderrDrain;
     private int nextId;
     private IReadOnlyList<McpToolDefinition>? tools;
+    public IWriteApprovalIssuer WriteApprovalIssuer { get; }
 
-    private McpStdioToolClient(Process process)
+    private McpStdioToolClient(Process process, IWriteApprovalIssuer writeApprovalIssuer)
     {
         this.process = process;
+        WriteApprovalIssuer = writeApprovalIssuer;
         stderrDrain = DrainStandardErrorAsync(process.StandardError, lifetime.Token);
     }
 
     public static async Task<McpStdioToolClient> StartAsync(string serverDll, string repositoryRoot,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken) =>
+        await StartAsync(serverDll, repositoryRoot, WriteApprovalKey.Generate(), cancellationToken);
+
+    public static async Task<McpStdioToolClient> StartAsync(string serverDll, string repositoryRoot,
+        WriteApprovalKey approvalKey, CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(approvalKey);
         var start = new ProcessStartInfo("dotnet")
         {
             UseShellExecute = false,
@@ -112,8 +120,10 @@ public sealed class McpStdioToolClient : IReadOnlyToolClient
         start.ArgumentList.Add(serverDll);
         start.ArgumentList.Add("--repository-root");
         start.ArgumentList.Add(repositoryRoot);
+        start.Environment[WriteApprovalKey.EnvironmentVariableName] = approvalKey.EncodeForChildEnvironment();
         var client = new McpStdioToolClient(Process.Start(start)
-            ?? throw new InvalidOperationException("Could not start the MCP server."));
+            ?? throw new InvalidOperationException("Could not start the MCP server."),
+            new HmacWriteApprovalIssuer(approvalKey));
         try
         {
             await client.SendAsync("initialize", new

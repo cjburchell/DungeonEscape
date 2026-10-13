@@ -2,6 +2,18 @@
 
 ## Done
 
+- AI-020 / GitHub #23: added MCP `prepare_write` and `apply_write` as a two-phase controlled replacement
+  primitive for existing approved UTF-8 repository text files. Preparation is non-mutating and binds a
+  bounded unified preview to canonical path plus original/proposed SHA-256 hashes. Apply revalidates the
+  unchanged file/proposal and requires an exact-scope, ten-minute HMAC-SHA-256 approval token. A tiny shared
+  issuer/verifier component lets the trusted AgentOrchestrator generate a per-MCP-child 32-byte key, pass it
+  only through that child's environment, and retain signing authority without exposing it as an MCP tool or
+  to a model. MCP verifies signatures in constant time and atomically consumes signed nonces, then uses a flushed
+  same-directory temporary file and verifies the resulting hash. Source/proposal size is 1 MiB and preview
+  size is 128 KiB. The catalog now contains nine tools; all existing AgentOrchestrator roles remain denied
+  both write capabilities pending AI-021. No gameplay, Unity Asset, Git mutation, shell, or generic write
+  capability was added.
+
 - AI-012 / GitHub #21: added a typed QA specialist after Reviewer approval in the deterministic
   AgentOrchestrator. QA receives the original requirements plus typed Engineer and Reviewer hand-offs,
   reports `PASS`, `FAIL`, or `INCONCLUSIVE` with structured bounded test evidence, and is the only role

@@ -3,7 +3,8 @@ namespace DungeonEscape.Mcp.Security;
 public enum McpSideEffectClassification
 {
     None,
-    LocalTestArtifacts
+    LocalTestArtifacts,
+    ApprovedRepositoryWrite
 }
 
 public sealed record McpCapabilityDefinition(string Name, bool ReadOnly, bool Destructive,
@@ -18,9 +19,11 @@ public static class McpCapabilityNames
     public const string GetUnityConsole = "get_unity_console";
     public const string GetGitDiff = "get_git_diff";
     public const string RunTests = "run_tests";
+    public const string PrepareWrite = "prepare_write";
+    public const string ApplyWrite = "apply_write";
 }
 
-/// <summary>Authoritative fail-closed inventory of the MCP server's seven capabilities.</summary>
+/// <summary>Authoritative fail-closed inventory of the MCP server's nine capabilities.</summary>
 public static class McpCapabilityCatalog
 {
     private static readonly McpCapabilityDefinition[] Definitions =
@@ -33,7 +36,12 @@ public static class McpCapabilityCatalog
         ReadOnly(McpCapabilityNames.GetGitDiff, "Bounded local working-tree and index inspection."),
         new(McpCapabilityNames.RunTests, false, false, false, false,
             McpSideEffectClassification.LocalTestArtifacts,
-            "Runs one fixed test suite and may regenerate local build/test artifacts.")
+            "Runs one fixed test suite and may regenerate local build/test artifacts."),
+        ReadOnly(McpCapabilityNames.PrepareWrite,
+            "Previews one exact bounded replacement without modifying the repository."),
+        new(McpCapabilityNames.ApplyWrite, false, true, false, false,
+            McpSideEffectClassification.ApprovedRepositoryWrite,
+            "Applies one exact prepared replacement with trusted single-use approval.")
     ];
 
     private static readonly IReadOnlyDictionary<string, McpCapabilityDefinition> ByName =

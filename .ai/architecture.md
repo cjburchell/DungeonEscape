@@ -76,8 +76,8 @@ TMX metadata editing services, and JSON schemas. See its [README](../DungeonEsca
 and [Schemas](../DungeonEscape.Tools.GameEditor/Schemas/README.md). It is a development tool, not Unity UI.
 
 MCP `Program.cs` explicitly registers `ProjectInfoTools`, `SearchCodeTools`, `ReadScriptTools`,
-`ListScenesTools`, `UnityConsoleTools`, `GitDiffTools`, and `RunTestsTools`.
-`McpCapabilityCatalog` is the authoritative typed inventory of those seven names, safety annotations,
+`ListScenesTools`, `UnityConsoleTools`, `GitDiffTools`, `RunTestsTools`, and `ControlledWriteTools`.
+`McpCapabilityCatalog` is the authoritative typed inventory of those nine names, safety annotations,
 side-effect classifications, and concise descriptions. Registration remains explicit through SDK
 attributes, while real stdio tests require the live tool set and annotations to match the catalog
 exactly. Unknown lookups and duplicate or incomplete catalog definitions fail closed.
@@ -100,8 +100,8 @@ with bounded line snippets. `read_script` returns a bounded line range and relat
 `list_scenes` performs bounded deterministic `.unity` discovery only below the ordinary Unity Assets
 root and narrowly parses bounded Editor build settings for nullable membership/enabled metadata; it
 does not read scene contents. Shared
-containment/reparse checks fail closed. No arbitrary `read_file`,
-shell, network or write tools are exposed; logs use stderr. The
+containment/reparse checks fail closed. No arbitrary `read_file`, shell, network, or generic write
+tool is exposed; logs use stderr. The
 [MCP README](../tools/DungeonEscape.Mcp/README.md) records exact roots, extensions and limits.
 `get_unity_console` reads only the newest ordinary log from a fixed allowlist of checkout-local outputs
 created by the repository's Windows/Linux Unity scripts. It rejects files over 10 MiB, tail-reads at
@@ -119,13 +119,25 @@ The caller cannot select an executable, arguments, project/path, working directo
 restore behavior, or filter. Output and timeout are bounded, pipes drain concurrently, and timeout or
 cancellation kills the process tree. Unity suites are excluded from this initial surface. Metadata is
 intentionally non-read-only and non-idempotent because test/build artifacts and timestamps may change.
+`prepare_write` and `apply_write` provide the first controlled repository mutation primitive. Preparation
+accepts an existing approved UTF-8 text file, expected SHA-256, and bounded complete replacement; it
+returns a content-derived proposal ID and a 128 KiB-bounded unified preview without writing. Apply
+requires matching proposal metadata plus a ten-minute HMAC-SHA-256 token over a deterministic exact-scope
+payload. `tools/DungeonEscape.WriteApproval` is the narrow shared issuer/verifier contract. The trusted
+AgentOrchestrator generates a random 32-byte key per MCP launch, injects it only into the child environment,
+and retains the issuer; MCP removes the bootstrap variable after parsing so its subprocesses do not inherit
+it. The model never receives key material or an approval capability. MCP verifies the
+signature in constant time and atomically claims the signed nonce for replay protection. Path policy,
+source hash, proposal hash, and approval are revalidated before same-directory temporary-file replacement
+and resulting-hash verification. Proposals and consumed nonces are memory-only and bounded. No current agent role is
+authorized for either capability; AI-021 owns human approval workflow integration.
 
 The orchestrator is a separate consumer of that MCP boundary. Its application state machine enforces
 Manager -> Unity Engineer -> Reviewer -> QA transitions, permits one Engineer revision after Reviewer
 `REQUEST_CHANGES`, and requires human handling after a second request. Reviewer approval is the only
 route to QA; QA `PASS` completes, while QA `FAIL` or `INCONCLUSIVE` requires human handling without an
 automatic repair loop. Manager has no tools; Engineer and Reviewer are allowlisted for
-specialists are allowlisted for `get_project_info`, bounded `search_code`, bounded `read_script`, and
+`get_project_info`, bounded `search_code`, bounded `read_script`, and
 bounded `list_scenes`, bounded redacted `get_unity_console`, and bounded `get_git_diff`,
 and the gateway rejects tools not advertised as read-only, non-destructive, and closed-world. Manager
 and unsupported roles remain denied. Search and source-range requests/results are passed through

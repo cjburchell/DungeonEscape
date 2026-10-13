@@ -2,6 +2,17 @@
 
 ## Done
 
+- AI-008 / GitHub #18: added bounded `run_tests` to the standalone MCP server with a closed enum for
+  `core`, `mcp`, and `orchestrator`. Each suite maps to a fixed direct `dotnet test` project invocation
+  with `--no-restore`; callers cannot supply executables, arguments, paths, projects, working
+  directories, environment variables, filters, scripts, or restore/package behavior. Execution uses
+  no shell, bounds timeout/stdout/stderr, drains pipes concurrently, and kills the process tree on
+  timeout/cancellation. Metadata is accurately non-read-only, non-destructive, non-idempotent, and
+  closed-world because ordinary test artifacts/timestamps may change. The server exposes seven tools,
+  while Manager, Unity Engineer, and Reviewer remain denied pending AI-012. Unity suites are excluded
+  due to editor/license/environment prerequisites. No gameplay, Unity Asset, Git, package install,
+  QA-agent, LLM, RAG, or autonomous-fix behavior was added.
+
 - AI-007B / GitHub #42: authorized the existing bounded read-only `get_git_diff` MCP tool for Unity
   Engineer and Reviewer while Manager remains tool-free. The generic gateway still requires the tool
   to be advertised, read-only, non-destructive, and closed-world; unsupported roles and unsafe or

@@ -76,7 +76,7 @@ TMX metadata editing services, and JSON schemas. See its [README](../DungeonEsca
 and [Schemas](../DungeonEscape.Tools.GameEditor/Schemas/README.md). It is a development tool, not Unity UI.
 
 MCP `Program.cs` explicitly registers `ProjectInfoTools`, `SearchCodeTools`, `ReadScriptTools`,
-`ListScenesTools`, `UnityConsoleTools`, and `GitDiffTools`.
+`ListScenesTools`, `UnityConsoleTools`, `GitDiffTools`, and `RunTestsTools`.
 Parameterless read-only `get_project_info` delegates to `ProjectInfoService`; bounded read-only
 `search_code` and `read_script` delegate to MCP-independent services. Search and single-file reads share
 one approved-root, exclusion, extension, normalization, containment, and reparse-point policy.
@@ -104,6 +104,12 @@ metadata-only untracked paths. It uses only fixed, no-shell porcelain-status and
 with internally discovered repository-relative paths, process/output/patch/file limits, no remotes,
 and no Git mutation capability. Binary contents are omitted. The MCP caller cannot supply a path,
 revision, branch, command, arguments, repository, or remote.
+`run_tests` is a separate bounded execution capability, not a general process tool. Its required enum
+maps only `core`, `mcp`, and `orchestrator` to fixed direct `dotnet test` commands with `--no-restore`.
+The caller cannot select an executable, arguments, project/path, working directory, environment,
+restore behavior, or filter. Output and timeout are bounded, pipes drain concurrently, and timeout or
+cancellation kills the process tree. Unity suites are excluded from this initial surface. Metadata is
+intentionally non-read-only and non-idempotent because test/build artifacts and timestamps may change.
 
 The AI-010 orchestrator is a separate consumer of that MCP boundary. Its application state machine
 enforces Manager → Unity Engineer → Reviewer transitions, permits one Engineer revision after
@@ -117,6 +123,8 @@ Unity-console requests/results are likewise passed through without interpretatio
 raw console content is never copied into workflow trace metadata.
 Git-diff requests/results are passed through without interpretation or persistence, and raw patch
 content is never copied into workflow trace metadata. Manager and unsupported roles remain denied.
+The MCP server advertises `run_tests`, but all current roles deny it because the generic specialist
+gateway only accepts strictly read-only tools. AI-012 owns future QA-agent authorization.
 Typed trace events record dispatches, tool activity,
 transitions, retries, and outcomes without recording reasoning transcripts or arbitrary source content.
 `ScriptedAgentExecutor` is deterministic test/demonstration infrastructure, not an LLM implementation.

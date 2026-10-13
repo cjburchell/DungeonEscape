@@ -15,6 +15,8 @@ real LLM or autonomous reasoning backend is implemented.
   read-only `read_script`, bounded read-only `list_scenes`, and bounded redacted read-only
   `get_unity_console`, plus bounded read-only `get_git_diff`.
 - The gateway also requires the MCP descriptor to be read-only, non-destructive, and closed-world.
+- The MCP server's bounded `run_tests` capability is intentionally non-read-only and remains denied
+  for Manager, Unity Engineer, and Reviewer pending the separate QA-agent work.
 - No arbitrary file reading, write-capable, shell, Git mutation/generic command, QA, or RAG capability is provided.
 - Trace events contain lifecycle metadata and summaries, not chain-of-thought, credentials,
   environment variables, or arbitrary source contents.

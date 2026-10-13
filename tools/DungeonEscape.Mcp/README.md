@@ -1,7 +1,7 @@
 # DungeonEscape MCP server
 
-Standalone read-only repository metadata, bounded source inspection, Unity diagnostics, and local Git
-change inspection server for AI-002 / GitHub issue #8 through AI-007 / issue #17.
+Standalone bounded repository inspection, Unity diagnostics, local Git change inspection, and approved
+test execution server for AI-002 / GitHub issue #8 through AI-008 / issue #18.
 Targets .NET 10 and uses the [official C# MCP SDK](https://github.com/modelcontextprotocol/csharp-sdk)
 (`ModelContextProtocol` 2.2.0). It has no Unity or gameplay project references.
 
@@ -19,6 +19,8 @@ Targets .NET 10 and uses the [official C# MCP SDK](https://github.com/modelconte
 - `Services/ListScenesService.cs`: bounded scene/build-settings discovery, independent of MCP.
 - `Tools/GitDiffTools.cs`: narrow MCP contract and strictly read-only annotations for local changes.
 - `Services/GitDiffService.cs`: fixed-command, bounded local Git status/diff inspection.
+- `Tools/RunTestsTools.cs`: narrow MCP enum/timeout contract with non-read-only execution metadata.
+- `Services/RunTestsService.cs`: fixed suite catalog and bounded no-shell test process execution.
 - `Services/RepositoryContentPolicy.cs`: shared approved roots, exclusions, extensions, and path resolution.
 - `Services/RepositoryPathSecurity.cs`: shared containment and reparse-point checks.
 - `../DungeonEscape.Mcp.Tests/`: xUnit discovery, metadata, boundary and real stdio tests.
@@ -36,7 +38,8 @@ dotnet test tools/DungeonEscape.Mcp.Tests/DungeonEscape.Mcp.Tests.csproj
 ```
 
 The test run includes a real subprocess handshake (`initialize`, `notifications/initialized`),
-`tools/list` verification of exactly six strictly read-only tools, real metadata/search/read/scene/log/diff calls,
+`tools/list` verification of six strictly read-only tools plus bounded `run_tests`, real
+metadata/search/read/scene/log/diff/test calls,
 rejected traversal/out-of-scope requests, and unknown-tool rejection.
 It runs both executable-discovery and configured-root modes from an unrelated working directory,
 verifies that a configured fixture overrides executable discovery, and checks invalid configuration
@@ -181,6 +184,33 @@ clipped entries set `patchTruncated`. Process-start failure, timeout, malformed/
 or a missing Git working tree returns a safe `unavailable` result. Patch text reflects bounded local
 repository content and may itself contain secrets; it is not copied to orchestrator traces.
 
+`run_tests` accepts required enum `suite` (`core`, `mcp`, or `orchestrator`) and optional
+`timeoutSeconds` (default `120`, range `10`–`300`). The fixed mappings are:
+
+- `core`: `dotnet test DungeonEscape.Core.Test/DungeonEscape.Core.Test.csproj --no-restore --logger console;verbosity=minimal`
+- `mcp`: `dotnet test tools/DungeonEscape.Mcp.Tests/DungeonEscape.Mcp.Tests.csproj --no-restore --logger console;verbosity=minimal`
+- `orchestrator`: `dotnet test tools/DungeonEscape.AgentOrchestrator.Tests/DungeonEscape.AgentOrchestrator.Tests.csproj --no-restore --logger console;verbosity=minimal`
+
+The executable, project, arguments, repository working directory, and small fixed .NET environment
+settings are selected entirely in code. `ProcessStartInfo` runs `dotnet` directly with no shell and
+closed stdin. Callers cannot provide commands, arguments, paths/projects, working directories,
+environment variables, restore/install flags, filters, or scripts. `--no-restore` prevents package
+restore; required assets must already exist. These suites do not intentionally use network services.
+
+Stdout retains at most 128 KiB, stderr at most 64 KiB, and both pipes continue draining concurrently
+to avoid deadlock. Timeout or cancellation kills the entire process tree. Results use the exit code as
+authoritative and distinguish `passed`, `failed`, `timed-out`, `cancelled`, `unavailable`, and
+`process-error`; console parsing does not guess failed test names, so `failedTests` is currently empty.
+Running a suite may regenerate its normal `bin`/`obj` or test-host artifacts but does not intentionally
+change source, gameplay, configuration, Git, or packages. Unity Edit/Play Mode are excluded because
+their existing launchers depend on editor installation/licensing and environment-selected executables.
+As with any `dotnet test` operation, the selected checkout's project/MSBuild files are trusted inputs
+and may define build targets; this tool does not sandbox malicious repository content.
+
+Because ordinary test artifacts/timestamps are side effects, MCP metadata deliberately declares
+`ReadOnly=false`, `Destructive=false`, `Idempotent=false`, and `OpenWorld=false`. All current
+AgentOrchestrator roles deny this tool; later QA-agent policy belongs to AI-012.
+
 Approved roots are hard-coded:
 
 - `DungeonEscape.Core/`
@@ -217,6 +247,8 @@ directories, out-of-scope paths and linked search roots are rejected.
   approved roots/extensions and is not arbitrary `read_file` access. Callers cannot
   supply commands, URLs or write requests. No shell, generic Git command surface, network access, resources,
   prompts or HTTP transport is registered.
+- `run_tests` is the sole bounded process-execution exception. It maps a closed enum to three fixed
+  local `dotnet test --no-restore` definitions and cannot launch caller-selected commands or arguments.
 - Symlinks/junctions/reparse points in discovery and metadata paths are rejected. Detached or
   malformed HEAD, `.git` files (including worktrees/submodules), shared Git directories,
   packed remote HEAD metadata and complex branch names are unavailable. `get_git_diff` is the sole
@@ -232,6 +264,6 @@ directories, out-of-scope paths and linked search roots are rejected.
 - NuGet restore needs network access during development; tool execution does not.
 
 Manual verification remaining: configure this DLL in the intended MCP client and confirm its
-tool UI displays `get_project_info`, `search_code`, `read_script`, `list_scenes`,
-`get_unity_console`, and `get_git_diff` with their strictly read-only annotations.
+tool UI displays the six inspection tools with strictly read-only annotations and `run_tests` with
+its intentional non-read-only, non-destructive, non-idempotent, closed-world annotations.
 The protocol itself is covered by the automated test.

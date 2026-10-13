@@ -6,7 +6,7 @@ namespace DungeonEscape.AgentOrchestrator.Tests;
 public sealed class McpIntegrationTests
 {
     [Fact]
-    public async Task ExistingMcpServerAdvertisesSixToolsWhileGitDiffRemainsUnauthorized()
+    public async Task ExistingMcpServerAdvertisesSevenToolsWhileRunTestsRemainsUnauthorized()
     {
         var testProject = FindAncestor(AppContext.BaseDirectory, "DungeonEscape.AgentOrchestrator.Tests");
         var toolsDirectory = testProject.Parent!;
@@ -19,7 +19,7 @@ public sealed class McpIntegrationTests
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         await using var client = await McpStdioToolClient.StartAsync(dll, root, timeout.Token);
         var definitions = await client.ListToolsAsync(timeout.Token);
-        Assert.Equal(6, definitions.Count);
+        Assert.Equal(7, definitions.Count);
         var projectTool = definitions.Single(tool => tool.Name == "get_project_info");
         AssertStrictlyReadOnly(projectTool);
         Assert.Empty(projectTool.InputSchema.GetProperty("properties").EnumerateObject());
@@ -46,6 +46,12 @@ public sealed class McpIntegrationTests
         AssertStrictlyReadOnly(gitDiffTool);
         Assert.Equal(["includeStaged", "includeUnstaged", "includeUntrackedMetadata", "maxFiles",
             "maxPatchCharacters"], gitDiffTool.InputSchema.GetProperty("properties")
+            .EnumerateObject().Select(property => property.Name).OrderBy(name => name));
+        var runTestsTool = definitions.Single(tool => tool.Name == "run_tests");
+        Assert.False(runTestsTool.ReadOnly);
+        Assert.False(runTestsTool.Destructive);
+        Assert.False(runTestsTool.OpenWorld);
+        Assert.Equal(["suite", "timeoutSeconds"], runTestsTool.InputSchema.GetProperty("properties")
             .EnumerateObject().Select(property => property.Name).OrderBy(name => name));
 
         var trace = new InMemoryWorkflowTraceSink();
@@ -139,6 +145,16 @@ public sealed class McpIntegrationTests
         Assert.DoesNotContain(trace.Events,
             e => e.Detail.Contains(reviewerGitDiff.Content, StringComparison.Ordinal));
 
+        foreach (var role in new[] { AgentRole.UnityEngineer, AgentRole.Reviewer, AgentRole.Manager })
+        {
+            var deniedTests = await gateway.CallAsync(role, "run_tests",
+                JsonSerializer.SerializeToElement(new { suite = "core" }), timeout.Token);
+            Assert.False(deniedTests.Succeeded);
+            Assert.Contains(trace.Events,
+                e => e.EventType == "ToolCallRejected" && e.Role == role
+                    && e.Detail.StartsWith("run_tests:", StringComparison.Ordinal));
+        }
+
         var rejected = await gateway.CallAsync(AgentRole.Reviewer, "read_file",
             JsonSerializer.SerializeToElement(new { path = "anything" }), timeout.Token);
         Assert.False(rejected.Succeeded);
@@ -153,7 +169,7 @@ public sealed class McpIntegrationTests
         var client = await McpStdioToolClient.StartAsync(dll, root, timeout.Token);
 
         var definitions = await client.ListToolsAsync(timeout.Token);
-        Assert.Equal(6, definitions.Count);
+        Assert.Equal(7, definitions.Count);
         for (var index = 0; index < 750; index++)
         {
             var result = await client.CallAsync("get_project_info",

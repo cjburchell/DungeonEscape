@@ -29,12 +29,15 @@ builder.Services.AddSingleton<ReadScriptService>();
 builder.Services.AddSingleton<ListScenesService>();
 builder.Services.AddSingleton<UnityConsoleService>();
 builder.Services.AddSingleton<GitDiffService>();
+builder.Services.AddSingleton<IApprovedTestSuiteExecutor, ApprovedTestSuiteExecutor>();
+builder.Services.AddSingleton<RunTestsService>();
 builder.Services.AddMcpServer().WithStdioServerTransport()
     .WithTools<ProjectInfoTools>()
     .WithTools<SearchCodeTools>()
     .WithTools<ReadScriptTools>()
     .WithTools<ListScenesTools>()
     .WithTools<UnityConsoleTools>()
-    .WithTools<GitDiffTools>();
+    .WithTools<GitDiffTools>()
+    .WithTools<RunTestsTools>();
 await builder.Build().RunAsync();
 return 0;

@@ -9,7 +9,7 @@ public sealed class StdioTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task HandshakeListsExactlySixReadOnlyToolsAndCallsThem(bool configured)
+    public async Task HandshakeListsExactlySevenBoundedToolsAndCallsThem(bool configured)
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
         while (directory is not null && directory.Name != "DungeonEscape.Mcp.Tests") directory = directory.Parent;
@@ -74,7 +74,7 @@ public sealed class StdioTests
             await Send(new { jsonrpc = "2.0", id = 2, method = "tools/list", @params = new { } });
             var listed = await Receive(2);
             var tools = listed.GetProperty("result").GetProperty("tools").EnumerateArray().ToArray();
-            Assert.Equal(6, tools.Length);
+            Assert.Equal(7, tools.Length);
             var projectTool = tools.Single(tool => tool.GetProperty("name").GetString() == "get_project_info");
             Assert.Empty(projectTool.GetProperty("inputSchema").GetProperty("properties").EnumerateObject());
             AssertStrictlyReadOnly(projectTool);
@@ -108,6 +108,16 @@ public sealed class StdioTests
             Assert.False(gitDiffSchema.TryGetProperty("required", out var gitDiffRequired)
                 && gitDiffRequired.GetArrayLength() > 0);
             AssertStrictlyReadOnly(gitDiffTool);
+            var runTestsTool = tools.Single(tool => tool.GetProperty("name").GetString() == "run_tests");
+            var runTestsSchema = runTestsTool.GetProperty("inputSchema");
+            Assert.Equal(["suite", "timeoutSeconds"], runTestsSchema.GetProperty("properties")
+                .EnumerateObject().Select(property => property.Name).OrderBy(name => name));
+            Assert.Equal("suite", Assert.Single(runTestsSchema.GetProperty("required")
+                .EnumerateArray()).GetString());
+            Assert.Equal(["core", "mcp", "orchestrator"], runTestsSchema.GetProperty("properties")
+                .GetProperty("suite").GetProperty("enum").EnumerateArray()
+                .Select(value => value.GetString()).OrderBy(value => value));
+            AssertBoundedExecution(runTestsTool);
             await Send(new { jsonrpc = "2.0", id = 3, method = "tools/call", @params = new { name = "get_project_info", arguments = new { } } });
             var called = (await Receive(3)).GetProperty("result");
             Assert.False(called.TryGetProperty("isError", out var error) && error.GetBoolean());
@@ -199,6 +209,26 @@ public sealed class StdioTests
                 Assert.DoesNotContain(fixture!.Replace('\\', '/'), gitDiffText, StringComparison.OrdinalIgnoreCase);
             }
 
+            if (!configured)
+            {
+                await Send(new { jsonrpc = "2.0", id = 14, method = "tools/call", @params = new
+                {
+                    name = "run_tests", arguments = new { suite = "core", timeoutSeconds = 120 }
+                }});
+                var testCall = (await Receive(14)).GetProperty("result");
+                Assert.False(testCall.TryGetProperty("isError", out var testError) && testError.GetBoolean());
+                using var testResult = JsonDocument.Parse(
+                    testCall.GetProperty("content")[0].GetProperty("text").GetString()!);
+                Assert.Equal("passed", testResult.RootElement.GetProperty("outcome").GetString());
+                Assert.Equal(0, testResult.RootElement.GetProperty("exitCode").GetInt32());
+
+                await Send(new { jsonrpc = "2.0", id = 15, method = "tools/call", @params = new
+                {
+                    name = "run_tests", arguments = new { suite = "core; whoami" }
+                }});
+                Assert.True((await Receive(15)).GetProperty("result").GetProperty("isError").GetBoolean());
+            }
+
             await Send(new { jsonrpc = "2.0", id = 6, method = "tools/call", @params = new
             {
                 name = "search_code", arguments = new { query = "x", path = "../outside" }
@@ -260,6 +290,15 @@ public sealed class StdioTests
             var annotations = tool.GetProperty("annotations");
             Assert.True(annotations.GetProperty("readOnlyHint").GetBoolean());
             Assert.True(annotations.GetProperty("idempotentHint").GetBoolean());
+            Assert.False(annotations.GetProperty("destructiveHint").GetBoolean());
+            Assert.False(annotations.GetProperty("openWorldHint").GetBoolean());
+        }
+
+        static void AssertBoundedExecution(JsonElement tool)
+        {
+            var annotations = tool.GetProperty("annotations");
+            Assert.False(annotations.GetProperty("readOnlyHint").GetBoolean());
+            Assert.False(annotations.GetProperty("idempotentHint").GetBoolean());
             Assert.False(annotations.GetProperty("destructiveHint").GetBoolean());
             Assert.False(annotations.GetProperty("openWorldHint").GetBoolean());
         }

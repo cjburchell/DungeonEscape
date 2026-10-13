@@ -75,8 +75,8 @@ GameEditor uses singleton services registered in `Program.cs`, Razor components,
 TMX metadata editing services, and JSON schemas. See its [README](../DungeonEscape.Tools.GameEditor/README.md)
 and [Schemas](../DungeonEscape.Tools.GameEditor/Schemas/README.md). It is a development tool, not Unity UI.
 
-MCP `Program.cs` explicitly registers `ProjectInfoTools`, `SearchCodeTools`, `ReadScriptTools`, and
-`ListScenesTools`.
+MCP `Program.cs` explicitly registers `ProjectInfoTools`, `SearchCodeTools`, `ReadScriptTools`,
+`ListScenesTools`, and `UnityConsoleTools`.
 Parameterless read-only `get_project_info` delegates to `ProjectInfoService`; bounded read-only
 `search_code` and `read_script` delegate to MCP-independent services. Search and single-file reads share
 one approved-root, exclusion, extension, normalization, containment, and reparse-point policy.
@@ -94,6 +94,11 @@ does not read scene contents. Shared
 containment/reparse checks fail closed. No arbitrary `read_file`,
 shell, network or write tools are exposed; logs use stderr. The
 [MCP README](../tools/DungeonEscape.Mcp/README.md) records exact roots, extensions and limits.
+`get_unity_console` reads only the newest ordinary log from a fixed allowlist of checkout-local outputs
+created by the repository's Windows/Linux Unity scripts. It rejects files over 10 MiB, tail-reads at
+most 256 KiB, bounds entries/text, redacts obvious credentials and absolute machine paths, and reports
+only a logical source type. Shared global Unity Editor/Player logs are deliberately unsupported to avoid
+unrelated project and user-machine data. The tool never accepts a path or launches Unity.
 
 The AI-010 orchestrator is a separate consumer of that MCP boundary. Its application state machine
 enforces Manager → Unity Engineer → Reviewer transitions, permits one Engineer revision after
@@ -103,6 +108,8 @@ bounded `list_scenes`,
 and the gateway rejects tools not advertised as read-only, non-destructive, and closed-world. Manager
 and unsupported roles remain denied. Search and source-range requests/results are passed through
 without interpretation, indexing, caching, or persistence.
+The MCP server advertises `get_unity_console`, but the orchestrator continues to deny it pending a
+separate role-policy change.
 Typed trace events record dispatches, tool activity,
 transitions, retries, and outcomes without recording reasoning transcripts or arbitrary source content.
 `ScriptedAgentExecutor` is deterministic test/demonstration infrastructure, not an LLM implementation.

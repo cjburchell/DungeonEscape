@@ -27,10 +27,12 @@ builder.Services.AddSingleton(projectInfo);
 builder.Services.AddSingleton<SearchCodeService>();
 builder.Services.AddSingleton<ReadScriptService>();
 builder.Services.AddSingleton<ListScenesService>();
+builder.Services.AddSingleton<UnityConsoleService>();
 builder.Services.AddMcpServer().WithStdioServerTransport()
     .WithTools<ProjectInfoTools>()
     .WithTools<SearchCodeTools>()
     .WithTools<ReadScriptTools>()
-    .WithTools<ListScenesTools>();
+    .WithTools<ListScenesTools>()
+    .WithTools<UnityConsoleTools>();
 await builder.Build().RunAsync();
 return 0;

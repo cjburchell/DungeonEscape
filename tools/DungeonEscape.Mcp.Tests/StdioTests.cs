@@ -9,7 +9,7 @@ public sealed class StdioTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task HandshakeListsExactlyFourReadOnlyToolsAndCallsThem(bool configured)
+    public async Task HandshakeListsExactlyFiveReadOnlyToolsAndCallsThem(bool configured)
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
         while (directory is not null && directory.Name != "DungeonEscape.Mcp.Tests") directory = directory.Parent;
@@ -36,6 +36,9 @@ public sealed class StdioTests
             File.WriteAllText(Path.Combine(settings.FullName, "EditorBuildSettings.asset"),
                 "EditorBuildSettings:\n  m_Scenes:\n  - enabled: 1\n    path: Assets/Scenes/Fixture.unity\n");
             File.WriteAllText(Path.Combine(scenes.FullName, "Fixture.unity"), "scene content is not read");
+            var results = Directory.CreateDirectory(Path.Combine(fixture, "TestResults"));
+            File.WriteAllText(Path.Combine(results.FullName, "playmode-log.txt"),
+                "Error: controlled fixture Authorization: Bearer secret-token useful context\n");
             File.WriteAllText(Path.Combine(fixture, "DungeonEscape.Core", "Fixture.cs"), "class FixtureSymbol { }\n");
             File.WriteAllText(Path.Combine(fixture, "DungeonEscape.Core", "Readable.cs"),
                 "line one\nknown read line\nline three\n");
@@ -62,7 +65,7 @@ public sealed class StdioTests
             await Send(new { jsonrpc = "2.0", id = 2, method = "tools/list", @params = new { } });
             var listed = await Receive(2);
             var tools = listed.GetProperty("result").GetProperty("tools").EnumerateArray().ToArray();
-            Assert.Equal(4, tools.Length);
+            Assert.Equal(5, tools.Length);
             var projectTool = tools.Single(tool => tool.GetProperty("name").GetString() == "get_project_info");
             Assert.Empty(projectTool.GetProperty("inputSchema").GetProperty("properties").EnumerateObject());
             AssertStrictlyReadOnly(projectTool);
@@ -81,6 +84,13 @@ public sealed class StdioTests
             var scenesTool = tools.Single(tool => tool.GetProperty("name").GetString() == "list_scenes");
             Assert.Empty(scenesTool.GetProperty("inputSchema").GetProperty("properties").EnumerateObject());
             AssertStrictlyReadOnly(scenesTool);
+            var consoleTool = tools.Single(tool => tool.GetProperty("name").GetString() == "get_unity_console");
+            var consoleSchema = consoleTool.GetProperty("inputSchema");
+            Assert.Equal(["maxEntries", "minimumSeverity"], consoleSchema.GetProperty("properties")
+                .EnumerateObject().Select(property => property.Name).OrderBy(name => name));
+            Assert.False(consoleSchema.TryGetProperty("required", out var consoleRequired)
+                && consoleRequired.GetArrayLength() > 0);
+            AssertStrictlyReadOnly(consoleTool);
             await Send(new { jsonrpc = "2.0", id = 3, method = "tools/call", @params = new { name = "get_project_info", arguments = new { } } });
             var called = (await Receive(3)).GetProperty("result");
             Assert.False(called.TryGetProperty("isError", out var error) && error.GetBoolean());
@@ -123,6 +133,23 @@ public sealed class StdioTests
             var scenePath = sceneResult.RootElement.GetProperty("scenes")[0].GetProperty("path").GetString();
             Assert.StartsWith("DungeonEscape.Unity/Assets/", scenePath);
             Assert.EndsWith(".unity", scenePath);
+
+            await Send(new { jsonrpc = "2.0", id = 12, method = "tools/call", @params = new
+            {
+                name = "get_unity_console", arguments = new { maxEntries = 5, minimumSeverity = "info" }
+            }});
+            var console = (await Receive(12)).GetProperty("result");
+            Assert.False(console.TryGetProperty("isError", out var consoleError) && consoleError.GetBoolean());
+            using var consoleResult = JsonDocument.Parse(
+                console.GetProperty("content")[0].GetProperty("text").GetString()!);
+            Assert.True(consoleResult.RootElement.TryGetProperty("status", out _));
+            if (configured)
+            {
+                var consoleText = consoleResult.RootElement.GetRawText();
+                Assert.Contains("controlled fixture", consoleText);
+                Assert.Contains("[REDACTED]", consoleText);
+                Assert.DoesNotContain("secret-token", consoleText);
+            }
 
             if (configured)
             {

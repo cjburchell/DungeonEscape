@@ -1,7 +1,7 @@
 # DungeonEscape MCP server
 
-Standalone read-only repository metadata, bounded source inspection, and Unity scene discovery server
-for AI-002 / GitHub issue #8 through AI-005 / issue #15.
+Standalone read-only repository metadata, bounded source inspection, Unity diagnostics, and local Git
+change inspection server for AI-002 / GitHub issue #8 through AI-007 / issue #17.
 Targets .NET 10 and uses the [official C# MCP SDK](https://github.com/modelcontextprotocol/csharp-sdk)
 (`ModelContextProtocol` 2.2.0). It has no Unity or gameplay project references.
 
@@ -17,6 +17,8 @@ Targets .NET 10 and uses the [official C# MCP SDK](https://github.com/modelconte
 - `Services/ReadScriptService.cs`: bounded UTF-8 line-range reads, independent of MCP.
 - `Tools/ListScenesTools.cs`: MCP contract and strictly read-only annotations for scene discovery.
 - `Services/ListScenesService.cs`: bounded scene/build-settings discovery, independent of MCP.
+- `Tools/GitDiffTools.cs`: narrow MCP contract and strictly read-only annotations for local changes.
+- `Services/GitDiffService.cs`: fixed-command, bounded local Git status/diff inspection.
 - `Services/RepositoryContentPolicy.cs`: shared approved roots, exclusions, extensions, and path resolution.
 - `Services/RepositoryPathSecurity.cs`: shared containment and reparse-point checks.
 - `../DungeonEscape.Mcp.Tests/`: xUnit discovery, metadata, boundary and real stdio tests.
@@ -34,7 +36,7 @@ dotnet test tools/DungeonEscape.Mcp.Tests/DungeonEscape.Mcp.Tests.csproj
 ```
 
 The test run includes a real subprocess handshake (`initialize`, `notifications/initialized`),
-`tools/list` verification of exactly five strictly read-only tools, real metadata/search/read/scene/log calls,
+`tools/list` verification of exactly six strictly read-only tools, real metadata/search/read/scene/log/diff calls,
 rejected traversal/out-of-scope requests, and unknown-tool rejection.
 It runs both executable-discovery and configured-root modes from an unrelated working directory,
 verifies that a configured fixture overrides executable discovery, and checks invalid configuration
@@ -150,6 +152,35 @@ access-token/password/secret assignments are redacted. The configured repository
 best-effort, so callers must still treat diagnostics as potentially sensitive. The tool does not read
 the live Console, parse arbitrary logs, launch Unity, clear/write logs, or expose environment variables.
 
+`get_git_diff` accepts optional `includeStaged`, `includeUnstaged`, and `includeUntrackedMetadata`
+(all default `true`), `maxFiles` (default/maximum `200`), and `maxPatchCharacters`
+(default/maximum `262144`). It returns repository-relative structured entries for added, modified,
+deleted, renamed, copied, type-changed, and unmerged tracked paths. A path with both index and working
+tree changes has both `staged` and `unstaged` set and labeled patch sections. Untracked paths are
+metadata-only and ignored paths are omitted. Renames include the previous repository-relative path.
+Binary changes set `binary` and never return binary patch content.
+
+Git access uses only these fixed, local read-only command shapes, launched directly without a shell:
+
+- `git -c core.fsmonitor=false -c core.untrackedCache=false -c submodule.recurse=false status --porcelain=v1 -z --untracked-files=all --ignored=no --ignore-submodules=all`
+- the same fixed `-c` prefix followed by `diff --no-ext-diff --no-textconv --no-color --ignore-submodules=all -- <internally discovered path>`
+- the same fixed `-c` prefix followed by `diff --cached --no-ext-diff --no-textconv --no-color --ignore-submodules=all -- <internally discovered path>`
+
+Paths passed to the two diff forms come only from NUL-delimited status output and must canonicalize
+inside the trusted repository. MCP callers cannot provide paths, pathspecs, commands, arguments,
+branches, revisions, repositories, remotes, or environment values. Pager and prompts are disabled,
+optional Git locks are disabled, and no remote/network or mutating Git operation is used.
+Repository-configured filesystem monitors, untracked caches, and submodule recursion are disabled so
+status/diff cannot delegate discovery to configured helper processes or nested repositories.
+
+Each process has a 15-second timeout. Stdout is capped at 1 MiB and terminates that process when the
+cap is reached; stderr is drained while retaining no more than 16 KiB and is never returned. Patch text
+is capped at 32 KiB per file and 256 KiB total. File and total-patch limits may be lowered by the caller
+within their fixed maxima. Any reached status/output/file/patch limit sets `truncated`; individual
+clipped entries set `patchTruncated`. Process-start failure, timeout, malformed/invalid UTF-8 status,
+or a missing Git working tree returns a safe `unavailable` result. Patch text reflects bounded local
+repository content and may itself contain secrets; it is not copied to orchestrator traces.
+
 Approved roots are hard-coded:
 
 - `DungeonEscape.Core/`
@@ -181,15 +212,16 @@ directories, out-of-scope paths and linked search roots are rejected.
   same identity markers. Neither mode scans for other repositories. MCP callers and working directory
   cannot select/change the root; generic host/environment configuration is disabled.
 - Fixed metadata reads remain bounded to 4,096 characters. `search_code`, `read_script`, `list_scenes`,
-  and `get_unity_console` add only the
+  `get_unity_console`, and `get_git_diff` add only the
   bounded, allowlisted operations described above; `read_script` cannot access files outside the shared
   approved roots/extensions and is not arbitrary `read_file` access. Callers cannot
-  supply commands, URLs or write requests. No shell, Git subprocess, network access, resources,
+  supply commands, URLs or write requests. No shell, generic Git command surface, network access, resources,
   prompts or HTTP transport is registered.
 - Symlinks/junctions/reparse points in discovery and metadata paths are rejected. Detached or
   malformed HEAD, `.git` files (including worktrees/submodules), shared Git directories,
-  packed remote HEAD metadata and complex branch names are unavailable. Git is not invoked,
-  and remote references are never fetched. A local origin HEAD may be stale.
+  packed remote HEAD metadata and complex branch names are unavailable. `get_git_diff` is the sole
+  fixed-command Git subprocess surface; it neither reads nor updates remotes. Remote references are
+  never fetched, and a local origin HEAD may be stale.
 - The checkout and local process environment are trusted. Marker files establish layout, not
   cryptographic repository identity. This is not an OS sandbox against a malicious local user
   changing files or links concurrently between checks and reads.
@@ -200,6 +232,6 @@ directories, out-of-scope paths and linked search roots are rejected.
 - NuGet restore needs network access during development; tool execution does not.
 
 Manual verification remaining: configure this DLL in the intended MCP client and confirm its
-tool UI displays `get_project_info`, `search_code`, `read_script`, `list_scenes`, and
-`get_unity_console` with their strictly read-only annotations.
+tool UI displays `get_project_info`, `search_code`, `read_script`, `list_scenes`,
+`get_unity_console`, and `get_git_diff` with their strictly read-only annotations.
 The protocol itself is covered by the automated test.

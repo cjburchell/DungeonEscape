@@ -2,6 +2,15 @@
 
 ## Done
 
+- AI-007 / GitHub #17: added strictly read-only `get_git_diff` to the standalone MCP server. It uses
+  fixed, no-shell, local-only porcelain status plus staged/unstaged diff commands; callers cannot
+  provide paths, revisions, commands, arguments, repositories, or remotes. Results distinguish
+  staged/unstaged state, report renames/deletes and metadata-only untracked paths, omit ignored and
+  binary contents, expose only repository-relative paths, and enforce file/process/stderr/per-file/
+  total-patch/time limits with explicit truncation. The server exposes six tools; AgentOrchestrator
+  sees the descriptor but continues to deny it for every role pending AI-007B. No Git mutation,
+  remote/network access, gameplay, Unity Asset, RAG, QA, or LLM behavior was added.
+
 - AI-006B / GitHub #39: authorized the existing bounded, redacted, read-only `get_unity_console` MCP
   tool for Unity Engineer and Reviewer while Manager remains tool-free. The generic gateway still
   requires advertised, read-only, non-destructive, closed-world metadata; unsupported roles fail

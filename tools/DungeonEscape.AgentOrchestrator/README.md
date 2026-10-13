@@ -19,6 +19,9 @@ executor failure handling. `ScriptedAgentExecutor` remains deterministic test/de
 - QA alone may call `run_tests`, and only when its advertised metadata exactly matches the expected
   non-read-only, non-destructive, non-idempotent, closed-world posture. No generic safety relaxation occurs.
 - Model tool requests always flow through `IAgentToolGateway`; the model never connects to MCP directly.
+- The launcher creates a per-child write-approval key and passes it only in the MCP child environment.
+  It retains an `IWriteApprovalIssuer` for future trusted human workflow code; no current role receives
+  the key, issuer, `prepare_write`, or `apply_write`.
 - Each specialist execution defaults to eight tool calls and 120 seconds, with hard maxima of 20 calls
   and 300 seconds. Cancellation propagates through provider and MCP calls.
 - Role instructions state the exact call budget, and each JSON tool-result envelope reports the remaining

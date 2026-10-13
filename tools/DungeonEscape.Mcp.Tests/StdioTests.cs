@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 using DungeonEscape.Mcp.Security;
+using DungeonEscape.WriteApproval;
 using Xunit;
 
 namespace DungeonEscape.Mcp.Tests;
@@ -8,9 +9,11 @@ namespace DungeonEscape.Mcp.Tests;
 public sealed class StdioTests
 {
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task HandshakeListsExactlyNineBoundedToolsAndCallsThem(bool configured)
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task HandshakeListsExactlyNineBoundedToolsAndCallsThem(bool configured,
+        bool approvalConfigured)
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
         while (directory is not null && directory.Name != "DungeonEscape.Mcp.Tests") directory = directory.Parent;
@@ -24,6 +27,14 @@ public sealed class StdioTests
             WorkingDirectory = Path.GetTempPath()
         };
         start.ArgumentList.Add(dll);
+        start.Environment.Remove(WriteApprovalKey.EnvironmentVariableName);
+        HmacWriteApprovalIssuer? approvalIssuer = null;
+        if (approvalConfigured)
+        {
+            var approvalKey = WriteApprovalKey.Generate();
+            start.Environment[WriteApprovalKey.EnvironmentVariableName] = approvalKey.EncodeForChildEnvironment();
+            approvalIssuer = new(approvalKey);
+        }
         var expectedRoot = directory.Parent.Parent!.FullName;
         string? fixture = null;
         if (configured)
@@ -229,20 +240,64 @@ public sealed class StdioTests
                 Assert.Equal(writableContent, File.ReadAllText(Path.Combine(fixture!, writablePath.Replace('/',
                     Path.DirectorySeparatorChar))));
 
+                var proposalId = preparedResult.RootElement.GetProperty("proposalId").GetString()!;
+                var originalSha256 = preparedResult.RootElement.GetProperty("originalSha256").GetString()!;
+                var proposedSha256 = preparedResult.RootElement.GetProperty("proposedSha256").GetString()!;
+                var proposedLength = preparedResult.RootElement.GetProperty("proposedLength").GetInt32();
+                var proposedContent = writableContent + "prepared only\n";
+                var approvalToken = approvalIssuer?.Issue(new WriteApprovalScope(proposalId, writablePath,
+                    originalSha256, proposedSha256, proposedLength)).Token ?? "model-cannot-forge-approval";
                 await Send(new { jsonrpc = "2.0", id = 17, method = "tools/call", @params = new
                 {
                     name = "apply_write", arguments = new
                     {
-                        proposalId = preparedResult.RootElement.GetProperty("proposalId").GetString(),
+                        proposalId,
                         path = writablePath,
-                        originalSha256 = preparedResult.RootElement.GetProperty("originalSha256").GetString(),
-                        proposedSha256 = preparedResult.RootElement.GetProperty("proposedSha256").GetString(),
-                        approvalToken = "model-cannot-forge-approval"
+                        originalSha256,
+                        proposedSha256,
+                        approvalToken
                     }
                 }});
-                Assert.True((await Receive(17)).GetProperty("result").GetProperty("isError").GetBoolean());
-                Assert.Equal(writableContent, File.ReadAllText(Path.Combine(fixture!, writablePath.Replace('/',
-                    Path.DirectorySeparatorChar))));
+                var applied = (await Receive(17)).GetProperty("result");
+                var writableFullPath = Path.Combine(fixture!, writablePath.Replace('/',
+                    Path.DirectorySeparatorChar));
+                if (approvalConfigured)
+                {
+                    Assert.False(applied.TryGetProperty("isError", out var applyError) && applyError.GetBoolean());
+                    using var applyResult = JsonDocument.Parse(applied.GetProperty("content")[0]
+                        .GetProperty("text").GetString()!);
+                    Assert.Equal(proposedSha256,
+                        applyResult.RootElement.GetProperty("resultingSha256").GetString());
+                    Assert.Equal(proposedContent, File.ReadAllText(writableFullPath));
+
+                    // Restore the exact original version and re-prepare the deterministic proposal so the
+                    // second apply reaches the MCP replay registry with the same signed approval ID.
+                    File.WriteAllText(writableFullPath, writableContent, new System.Text.UTF8Encoding(false));
+                    await Send(new { jsonrpc = "2.0", id = 18, method = "tools/call", @params = new
+                    {
+                        name = "prepare_write", arguments = new
+                        {
+                            path = writablePath, proposedText = proposedContent,
+                            expectedCurrentSha256 = writableHash
+                        }
+                    }});
+                    Assert.False((await Receive(18)).GetProperty("result").TryGetProperty("isError", out var retryError)
+                        && retryError.GetBoolean());
+                    await Send(new { jsonrpc = "2.0", id = 19, method = "tools/call", @params = new
+                    {
+                        name = "apply_write", arguments = new
+                        {
+                            proposalId, path = writablePath, originalSha256, proposedSha256, approvalToken
+                        }
+                    }});
+                    Assert.True((await Receive(19)).GetProperty("result").GetProperty("isError").GetBoolean());
+                    Assert.Equal(writableContent, File.ReadAllText(writableFullPath));
+                }
+                else
+                {
+                    Assert.True(applied.GetProperty("isError").GetBoolean());
+                    Assert.Equal(writableContent, File.ReadAllText(writableFullPath));
+                }
 
                 await Send(new { jsonrpc = "2.0", id = 5, method = "tools/call", @params = new
                 {
@@ -429,5 +484,35 @@ public sealed class StdioTests
         Assert.Equal(2, process.ExitCode);
         Assert.Empty(await stdout);
         Assert.Contains("MCP startup configuration error:", await stderr);
+    }
+
+    [Fact]
+    public async Task InvalidApprovalBootstrapKeyFailsWithoutEchoingKey()
+    {
+        const string invalidKey = "invalid-secret-value";
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null && directory.Name != "DungeonEscape.Mcp.Tests") directory = directory.Parent;
+        Assert.NotNull(directory);
+        var configuration = new DirectoryInfo(AppContext.BaseDirectory).Parent!.Name;
+        var start = new ProcessStartInfo("dotnet")
+        {
+            UseShellExecute = false, CreateNoWindow = true,
+            RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true
+        };
+        start.ArgumentList.Add(Path.Combine(directory.Parent!.FullName, "DungeonEscape.Mcp", "bin",
+            configuration, "net10.0", "DungeonEscape.Mcp.dll"));
+        start.Environment[WriteApprovalKey.EnvironmentVariableName] = invalidKey;
+        using var process = Process.Start(start)!;
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        var stdout = process.StandardOutput.ReadToEndAsync(timeout.Token);
+        var stderr = process.StandardError.ReadToEndAsync(timeout.Token);
+        try { await process.WaitForExitAsync(timeout.Token); }
+        finally { if (!process.HasExited) process.Kill(true); }
+
+        Assert.Equal(2, process.ExitCode);
+        Assert.Empty(await stdout);
+        var diagnostic = await stderr;
+        Assert.Contains("write approval key is invalid", diagnostic);
+        Assert.DoesNotContain(invalidKey, diagnostic);
     }
 }

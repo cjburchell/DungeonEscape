@@ -122,10 +122,14 @@ intentionally non-read-only and non-idempotent because test/build artifacts and 
 `prepare_write` and `apply_write` provide the first controlled repository mutation primitive. Preparation
 accepts an existing approved UTF-8 text file, expected SHA-256, and bounded complete replacement; it
 returns a content-derived proposal ID and a 128 KiB-bounded unified preview without writing. Apply
-requires matching proposal metadata plus a cryptographically random, exact-scope, ten-minute,
-single-use approval from an in-process trusted authority that is not exposed through MCP. Path policy,
+requires matching proposal metadata plus a ten-minute HMAC-SHA-256 token over a deterministic exact-scope
+payload. `tools/DungeonEscape.WriteApproval` is the narrow shared issuer/verifier contract. The trusted
+AgentOrchestrator generates a random 32-byte key per MCP launch, injects it only into the child environment,
+and retains the issuer; MCP removes the bootstrap variable after parsing so its subprocesses do not inherit
+it. The model never receives key material or an approval capability. MCP verifies the
+signature in constant time and atomically claims the signed nonce for replay protection. Path policy,
 source hash, proposal hash, and approval are revalidated before same-directory temporary-file replacement
-and resulting-hash verification. Proposals are memory-only and bounded. No current agent role is
+and resulting-hash verification. Proposals and consumed nonces are memory-only and bounded. No current agent role is
 authorized for either capability; AI-021 owns human approval workflow integration.
 
 The orchestrator is a separate consumer of that MCP boundary. Its application state machine enforces

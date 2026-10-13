@@ -231,18 +231,30 @@ The result includes canonical relative path, original/proposed SHA-256 and byte 
 truncated preview is marked and approval still binds to the complete stored proposal. Preparation stores
 at most 100 short-lived in-memory proposals and is idempotent for the same path/version/content identity.
 
-`apply_write` accepts only the returned proposal identity/path/hashes and an opaque approval token. The
-token is issued by the trusted in-process `IWriteApprovalAuthority`, which is deliberately not an MCP
-tool. It is cryptographically random, expires after 10 minutes, binds to the exact proposal/path/hashes,
-and is single-use. The service revalidates path policy, file existence, current hash, proposal content,
-and approval immediately before execution. It writes a non-caller-controlled temporary file in the same
-directory, flushes it, rechecks the source version, atomically moves it over the target, verifies the
-resulting hash, consumes approval only on success, and cleans temporary files on failure. Metadata is
+`apply_write` accepts only the returned proposal identity/path/hashes and an authenticated approval token.
+The shared `tools/DungeonEscape.WriteApproval` component signs an exact canonical, line-delimited approval
+payload with HMAC-SHA-256 and encodes it as `base64url(payload).base64url(signature)`. The payload contains
+only version, random approval ID, proposal ID, canonical path, both hashes, proposed length, issued-at,
+and expiry. The issuer recomputes the content-derived proposal identity before signing. Approval
+issuance is deliberately not an MCP tool. Tokens expire after 10 minutes and signatures use constant-time
+comparison. The service revalidates path policy, file existence, current hash, proposal content, token
+signature/scope/time, and replay state immediately before execution. It writes a non-caller-controlled
+temporary file in the same directory, flushes it, rechecks the source version, atomically moves it over the
+target, verifies the resulting hash, and cleans temporary files on failure. Approval IDs are atomically
+claimed before mutation, so concurrent replay cannot double-write; a failure after mutation begins
+conservatively requires a fresh human approval. Metadata is
 `ReadOnly=false`, `Destructive=true`, `Idempotent=false`, and `OpenWorld=false`.
 
-There is no `approve_write` tool. Raw MCP clients can prepare a preview but cannot independently issue a
-valid approval. No current model-backed AgentOrchestrator role is authorized for either write tool;
-AI-021 owns human interaction and workflow integration.
+The trusted AgentOrchestrator launcher generates a random 32-byte key per MCP child, injects it only into
+that child's `DUNGEONESCAPE_WRITE_APPROVAL_KEY` environment, and retains the matching trusted issuer for
+future AI-021 use. MCP removes the bootstrap variable immediately after parsing so Git/test subprocesses
+cannot inherit it. The value is never placed in model context, MCP arguments, traces, or logs. Standalone
+MCP startup without a key keeps all tools available, including `prepare_write`, but `apply_write` returns
+`approval-unavailable`. A present malformed key fails startup without printing it.
+
+There is no `approve_write` tool. Raw MCP clients cannot independently issue a valid approval. No current
+model-backed AgentOrchestrator role is authorized for either write tool; AI-021 owns the human decision
+that will permit trusted application code to sign an exact returned proposal.
 
 Approved roots are hard-coded:
 

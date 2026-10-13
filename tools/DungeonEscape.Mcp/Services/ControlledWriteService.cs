@@ -1,13 +1,12 @@
 using System.Security.Cryptography;
 using System.Text;
+using DungeonEscape.WriteApproval;
 
 namespace DungeonEscape.Mcp.Services;
 
 public sealed record PrepareWriteResult(string Status, string ProposalId, string Path,
     string OriginalSha256, string ProposedSha256, int OriginalLength, int ProposedLength,
     bool ContentChanged, string Preview, bool PreviewTruncated, IReadOnlyList<string> Warnings);
-
-public sealed record WriteApproval(string ApprovalId, string Token, DateTimeOffset ExpiresAtUtc);
 
 public sealed record ApplyWriteResult(string Status, string Path, string PreviousSha256,
     string ResultingSha256, int CharactersWritten, string ProposalId, string ApprovalId,
@@ -18,89 +17,34 @@ public sealed class ControlledWriteException(string code, string message) : Inva
     public string Code { get; } = code;
 }
 
-public interface IWriteApprovalAuthority
-{
-    WriteApproval Issue(PrepareWriteResult proposal);
-}
+public sealed record WriteApprovalVerifierConfiguration(HmacWriteApprovalVerifier? Verifier);
 
-internal interface ISystemClock { DateTimeOffset UtcNow { get; } }
-internal sealed class SystemClock : ISystemClock { public DateTimeOffset UtcNow => DateTimeOffset.UtcNow; }
 internal interface IFileReplacement { void Replace(string temporaryPath, string targetPath); }
 internal sealed class AtomicFileReplacement : IFileReplacement
 {
     public void Replace(string temporaryPath, string targetPath) => File.Move(temporaryPath, targetPath, true);
 }
 
-public sealed class WriteApprovalAuthority : IWriteApprovalAuthority
+public sealed class ApprovalReplayRegistry(TimeProvider timeProvider)
 {
-    private const int MaximumApprovals = 1000;
-    private enum ApprovalState { Available, Claimed, Consumed }
-    private sealed record Entry(string ApprovalId, string ProposalId, string Path, string OriginalSha256,
-        string ProposedSha256, DateTimeOffset ExpiresAtUtc, ApprovalState State);
-    private readonly Dictionary<string, Entry> entries = new(StringComparer.Ordinal);
+    private const int MaximumConsumedApprovals = 1000;
+    private readonly Dictionary<string, DateTimeOffset> consumed = new(StringComparer.Ordinal);
     private readonly Lock gate = new();
-    private readonly ISystemClock clock;
 
-    public WriteApprovalAuthority() : this(new SystemClock()) { }
-    internal WriteApprovalAuthority(ISystemClock clock) => this.clock = clock;
-
-    public WriteApproval Issue(PrepareWriteResult proposal)
+    public void Claim(string approvalId, DateTimeOffset expiresAtUtc)
     {
-        ArgumentNullException.ThrowIfNull(proposal);
-        var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
-        var approvalId = Convert.ToHexString(RandomNumberGenerator.GetBytes(16)).ToLowerInvariant();
-        var expires = clock.UtcNow.AddMinutes(10);
         lock (gate)
         {
-            foreach (var expired in entries.Where(item => item.Value.ExpiresAtUtc <= clock.UtcNow
-                         || item.Value.State == ApprovalState.Consumed).Select(item => item.Key).ToArray())
-                entries.Remove(expired);
-            if (entries.Count >= MaximumApprovals)
-                throw new ControlledWriteException("approval-capacity", "Approval capacity is exhausted.");
-            entries[token] = new(approvalId, proposal.ProposalId, proposal.Path,
-                proposal.OriginalSha256, proposal.ProposedSha256, expires, ApprovalState.Available);
-        }
-        return new(approvalId, token, expires);
-    }
-
-    internal ApprovalLease Claim(string token, PrepareWriteResult proposal)
-    {
-        if (string.IsNullOrWhiteSpace(token))
-            throw new ControlledWriteException("missing-approval", "A trusted approval token is required.");
-        lock (gate)
-        {
-            if (!entries.TryGetValue(token, out var entry))
-                throw new ControlledWriteException("invalid-approval", "The approval token is invalid.");
-            if (entry.State == ApprovalState.Consumed)
+            foreach (var expired in consumed.Where(item => item.Value <= timeProvider.GetUtcNow())
+                         .Select(item => item.Key).ToArray()) consumed.Remove(expired);
+            if (consumed.ContainsKey(approvalId))
                 throw new ControlledWriteException("reused-approval", "The approval token was already consumed.");
-            if (entry.State == ApprovalState.Claimed)
-                throw new ControlledWriteException("invalid-approval", "The approval token is already in use.");
-            if (entry.ExpiresAtUtc <= clock.UtcNow)
-                throw new ControlledWriteException("expired-approval", "The approval token has expired.");
-            if (entry.ProposalId != proposal.ProposalId || entry.Path != proposal.Path
-                || entry.OriginalSha256 != proposal.OriginalSha256
-                || entry.ProposedSha256 != proposal.ProposedSha256)
-                throw new ControlledWriteException("approval-mismatch",
-                    "The approval token does not authorize this exact proposal.");
-            entries[token] = entry with { State = ApprovalState.Claimed };
-            return new(this, token, entry.ApprovalId);
+            if (consumed.Count >= MaximumConsumedApprovals)
+                throw new ControlledWriteException("approval-capacity", "Approval replay capacity is exhausted.");
+            // Claiming permanently consumes the nonce before mutation. This prevents concurrent reuse and
+            // deliberately requires fresh human approval after any failure during the mutation phase.
+            consumed.Add(approvalId, expiresAtUtc);
         }
-    }
-
-    private void Finish(string token, bool consume)
-    {
-        lock (gate)
-            if (entries.TryGetValue(token, out var entry) && entry.State == ApprovalState.Claimed)
-                entries[token] = entry with { State = consume ? ApprovalState.Consumed : ApprovalState.Available };
-    }
-
-    internal sealed class ApprovalLease(WriteApprovalAuthority owner, string token, string approvalId)
-        : IDisposable
-    {
-        private bool completed;
-        public string ApprovalId { get; } = approvalId;
-        public void Complete() { owner.Finish(token, true); completed = true; }
-        public void Dispose() { if (!completed) owner.Finish(token, false); }
     }
 }
 
@@ -119,19 +63,23 @@ public sealed class ControlledWriteService
     private readonly Dictionary<string, StoredProposal> proposals = new(StringComparer.Ordinal);
     private readonly Lock gate = new();
     private readonly ProjectInfoService projectInfo;
-    private readonly WriteApprovalAuthority approvals;
-    private readonly ISystemClock clock;
+    private readonly HmacWriteApprovalVerifier? approvalVerifier;
+    private readonly ApprovalReplayRegistry replayRegistry;
+    private readonly TimeProvider timeProvider;
     private readonly IFileReplacement replacement;
 
-    public ControlledWriteService(ProjectInfoService projectInfo, WriteApprovalAuthority approvals)
-        : this(projectInfo, approvals, new SystemClock(), new AtomicFileReplacement()) { }
+    public ControlledWriteService(ProjectInfoService projectInfo, WriteApprovalVerifierConfiguration configuration,
+        TimeProvider timeProvider, ApprovalReplayRegistry replayRegistry)
+        : this(projectInfo, configuration.Verifier, timeProvider, replayRegistry, new AtomicFileReplacement()) { }
 
-    internal ControlledWriteService(ProjectInfoService projectInfo, WriteApprovalAuthority approvals,
-        ISystemClock clock, IFileReplacement replacement)
+    internal ControlledWriteService(ProjectInfoService projectInfo,
+        HmacWriteApprovalVerifier? approvalVerifier, TimeProvider timeProvider,
+        ApprovalReplayRegistry replayRegistry, IFileReplacement replacement)
     {
         this.projectInfo = projectInfo;
-        this.approvals = approvals;
-        this.clock = clock;
+        this.approvalVerifier = approvalVerifier;
+        this.timeProvider = timeProvider;
+        this.replayRegistry = replayRegistry;
         this.replacement = replacement;
     }
 
@@ -153,7 +101,8 @@ public sealed class ControlledWriteService
             throw new ControlledWriteException("stale-original", "Expected current SHA-256 does not match the file.");
 
         var proposedHash = Hash(proposedBytes);
-        var proposalId = ProposalId(target.RelativePath, originalHash, proposedHash, proposedBytes.Length);
+        var proposalId = WriteProposalIdentity.Create(target.RelativePath, originalHash, proposedHash,
+            proposedBytes.Length);
         var preview = BuildPreview(target.RelativePath, originalText, proposedText);
         var warnings = preview.Truncated ? new[] { "Preview is truncated; approval still binds to the full content." }
             : Array.Empty<string>();
@@ -171,7 +120,7 @@ public sealed class ControlledWriteService
             }
             // Proposals outlive their 10-minute approvals so expiry is reported distinctly and a
             // human can request a new approval without rebuilding the preview immediately.
-            proposals[proposalId] = new(result, proposedText, clock.UtcNow.AddMinutes(30));
+            proposals[proposalId] = new(result, proposedText, timeProvider.GetUtcNow().AddMinutes(30));
         }
         return result;
     }
@@ -201,10 +150,24 @@ public sealed class ControlledWriteService
         if (Hash(proposedBytes) != stored.Public.ProposedSha256)
             throw new ControlledWriteException("proposal-mismatch", "Stored proposed content failed verification.");
 
-        using var approval = approvals.Claim(approvalToken, stored.Public);
+        if (approvalVerifier is null)
+            throw new ControlledWriteException("approval-unavailable",
+                "Trusted write approval verification is not configured.");
+        var scope = new WriteApprovalScope(stored.Public.ProposalId, stored.Public.Path,
+            stored.Public.OriginalSha256, stored.Public.ProposedSha256, stored.Public.ProposedLength);
+        var verification = approvalVerifier.Verify(approvalToken, scope);
+        if (!verification.Succeeded)
+            throw new ControlledWriteException(verification.ErrorCode, verification.ErrorCode switch
+            {
+                "missing-approval" => "A trusted approval token is required.",
+                "expired-approval" => "The approval token has expired.",
+                "approval-mismatch" => "The approval token does not authorize this exact proposal.",
+                _ => "The approval token is invalid."
+            });
+        var approval = verification.Approval!;
+        replayRegistry.Claim(approval.ApprovalId, approval.ExpiresAtUtc);
         if (!stored.Public.ContentChanged)
         {
-            approval.Complete();
             lock (gate) proposals.Remove(proposalId);
             return new("unchanged", target.RelativePath, currentHash, currentHash, 0,
                 proposalId, approval.ApprovalId, []);
@@ -226,7 +189,6 @@ public sealed class ControlledWriteService
             var resultingHash = Hash(ReadBounded(target.FullPath));
             if (resultingHash != stored.Public.ProposedSha256)
                 throw new ControlledWriteException("verification-failed", "Written content failed verification.");
-            approval.Complete();
             lock (gate) proposals.Remove(proposalId);
             return new("applied", target.RelativePath, currentHash, resultingHash,
                 stored.ProposedContent.Length, proposalId, approval.ApprovalId, []);
@@ -292,12 +254,6 @@ public sealed class ControlledWriteService
     private static bool IsSha256(string value) => value is { Length: 64 }
         && value.All(character => char.IsAsciiHexDigit(character));
 
-    private static string ProposalId(string path, string originalHash, string proposedHash, int proposedLength)
-    {
-        var identity = $"DungeonEscape-write-v1\n{path}\n{originalHash}\n{proposedHash}\n{proposedLength}";
-        return "sha256:" + Hash(StrictUtf8.GetBytes(identity));
-    }
-
     private static (string Text, bool Truncated) BuildPreview(string path, string original, string proposed)
     {
         var oldLines = original.Replace("\r\n", "\n").Split('\n');
@@ -330,7 +286,7 @@ public sealed class ControlledWriteService
 
     private void RemoveExpiredProposals()
     {
-        foreach (var id in proposals.Where(item => item.Value.ExpiresAtUtc <= clock.UtcNow)
+        foreach (var id in proposals.Where(item => item.Value.ExpiresAtUtc <= timeProvider.GetUtcNow())
                      .Select(item => item.Key).ToArray()) proposals.Remove(id);
     }
 }

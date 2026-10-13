@@ -9,7 +9,10 @@
   same six read-only tools remain authorized, and `run_tests` remains denied. Strict structured outputs,
   finite timeout/tool budgets, cancellation, refusal/provider/malformed-output handling, and safe usage/
   operational tracing were added without recording keys, prompts, transcripts, reasoning, or tool content.
-  Scripted tests remain offline; the real-provider test is opt-in when key and model are configured. No
+  Scripted tests remain offline; the real-provider test is opt-in when key and model are configured. A
+  manual live run with `gpt-5.4-mini` completed Manager -> Engineer -> Reviewer -> approval: the Engineer
+  used all eight allowed calls and finalized when the reported budget reached zero, while the Reviewer
+  independently used four approved calls. Both returned valid typed results. No
   QA, RAG, write, gameplay, Unity Asset, test-running specialist, or autonomous Git capability was added.
 
 - AI-009 / GitHub #19: centralized the MCP server's seven-tool capability inventory in a typed,

@@ -136,7 +136,14 @@ The MCP server advertises `run_tests`, but all current roles deny it because the
 gateway only accepts strictly read-only tools. AI-012 owns future QA-agent authorization.
 Typed trace events record dispatches, tool activity,
 transitions, retries, and outcomes without recording reasoning transcripts or arbitrary source content.
-`ScriptedAgentExecutor` is deterministic test/demonstration infrastructure, not an LLM implementation.
+`ScriptedAgentExecutor` remains deterministic test/demonstration infrastructure. AI-011 adds the small
+provider-neutral `ILlmClient`/`ILlmConversation` seam, bounded `LlmAgentExecutor`, and official OpenAI
+.NET SDK Responses adapter for real Engineer/Reviewer execution. The Manager, transition order, single
+revision limit, typed hand-offs, and tool gateway remain application-controlled. Model tool definitions
+come from gateway-filtered MCP descriptors; calls return through that same gateway, and `run_tests` is
+never offered. Strict JSON schemas map final responses to existing contracts. Per-specialist timeout and
+tool budgets are finite, cancellation propagates, and traces retain only safe provider/model/usage/
+tool-name/status metadata rather than prompts, transcripts, hidden reasoning, or tool contents.
 See the durable [agent role definitions](agents/README.md).
 
 ## Validation and delivery

@@ -2,7 +2,8 @@
 
 ## Purpose
 
-Produce a technical proposal from the typed assignment and explicitly supplied context.
+Produce a technical proposal from the typed assignment and explicitly supplied context. The production
+executor may use an OpenAI Responses model, but that does not expand this role's authority.
 
 ## Responsibilities
 
@@ -17,6 +18,8 @@ Produce a technical proposal from the typed assignment and explicitly supplied c
   `read_script`, bounded read-only `list_scenes`, bounded redacted read-only `get_unity_console`, and
   bounded read-only `get_git_diff`.
 - Must not claim broader source access than the bounded search results provide.
+- Model-requested calls are executed only through the application gateway and count toward the bounded
+  per-execution tool-call budget.
 - Must not approve its own result, modify files, invoke arbitrary shell commands, mutate Git, or
   request write-capable/destructive/open-world tools.
 

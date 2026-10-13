@@ -1,12 +1,13 @@
 # Agent roles
 
-Durable role definitions for the AI-010 read-only orchestration prototype. The executable state
+Durable role definitions for the read-only orchestration workflow. The executable state
 machine and typed contracts live in `tools/DungeonEscape.AgentOrchestrator`; these files describe
 the human-reviewable policy that the code enforces.
 
-The current implementation is deterministic and scripted. It proves role separation, typed
-hand-offs, bounded transitions, tool permissions, tracing, and failure handling. It does not perform
-autonomous LLM reasoning, read arbitrary files through MCP, modify files, or operate Git.
+The Manager and state machine are deterministic. Specialists can use either the scripted executor or
+the bounded OpenAI-backed executor added by AI-011. Role separation, typed hand-offs, transitions,
+tool permissions, tracing, retry limits, and failure handling remain application-controlled. Model
+execution does not permit arbitrary file access, repository modification, test execution, or Git mutation.
 
 - [Manager](manager.md)
 - [Unity Engineer](unity-engineer.md)
@@ -18,3 +19,4 @@ to discover Unity scene paths and build-settings status. They may also use bound
 `get_unity_console` for the fixed project-scoped Unity script logs. The gateway passes results through
 without interpreting, indexing, caching, or persisting them. Specialists may also use bounded read-only
 `get_git_diff` for structured local changes; this adds no Git mutation or generic command access.
+Every model-requested call passes through the same gateway, and `run_tests` is not offered to specialists.

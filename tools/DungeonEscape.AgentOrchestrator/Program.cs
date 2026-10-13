@@ -1,66 +1,112 @@
 using System.Text.Json;
 using DungeonEscape.AgentOrchestrator;
 
-if (!args.Contains("--demo", StringComparer.Ordinal))
+var provider = Value(args, "--provider") ?? (args.Contains("--demo", StringComparer.Ordinal) ? "scripted" : null);
+if (provider is null)
 {
-    Console.WriteLine("DungeonEscape deterministic agent orchestrator. Run with --demo [--repository-root PATH].");
+    Console.WriteLine("DungeonEscape agent orchestrator. Use --demo or --provider openai --task \"<task>\".");
     return 0;
 }
+if (provider is not ("scripted" or "openai"))
+{
+    Console.Error.WriteLine("Provider must be 'scripted' or 'openai'.");
+    return 2;
+}
 
-var rootIndex = Array.IndexOf(args, "--repository-root");
-var repositoryRoot = rootIndex >= 0 && rootIndex + 1 < args.Length
-    ? Path.GetFullPath(args[rootIndex + 1])
+IAgentExecutor executor;
+if (provider == "openai")
+{
+    var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+    var model = Environment.GetEnvironmentVariable("DUNGEONESCAPE_OPENAI_MODEL");
+    if (string.IsNullOrWhiteSpace(apiKey) || string.IsNullOrWhiteSpace(model))
+    {
+        Console.Error.WriteLine("OpenAI mode requires OPENAI_API_KEY and DUNGEONESCAPE_OPENAI_MODEL.");
+        return 2;
+    }
+    if (!TryEnvironmentInt("DUNGEONESCAPE_LLM_TIMEOUT_SECONDS", 120, out var timeoutSeconds)
+        || !TryEnvironmentInt("DUNGEONESCAPE_LLM_MAX_TOOL_CALLS", 8, out var maximumToolCalls))
+    {
+        Console.Error.WriteLine("LLM timeout/tool-call configuration must be valid integers.");
+        return 2;
+    }
+    try
+    {
+        executor = new LlmAgentExecutor(new OpenAiLlmClient(apiKey),
+            LlmExecutionOptions.Create(model, timeoutSeconds, maximumToolCalls));
+    }
+    catch (ArgumentException exception)
+    {
+        Console.Error.WriteLine("Invalid LLM configuration: " + exception.Message);
+        return 2;
+    }
+}
+else
+{
+    executor = Scripted();
+}
+
+var repositoryRoot = Value(args, "--repository-root") is { } configuredRoot
+    ? Path.GetFullPath(configuredRoot)
     : FindRepositoryRoot(AppContext.BaseDirectory);
 var serverDll = Path.Combine(repositoryRoot, "tools", "DungeonEscape.Mcp", "bin", "Debug", "net10.0",
     "DungeonEscape.Mcp.dll");
 if (!File.Exists(serverDll))
 {
-    Console.Error.WriteLine("Build tools/DungeonEscape.Mcp before running the demonstration.");
+    Console.Error.WriteLine("Build tools/DungeonEscape.Mcp before running the orchestrator.");
     return 2;
 }
 
-using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-await using var mcp = await McpStdioToolClient.StartAsync(serverDll, repositoryRoot, timeout.Token);
-var workflowId = "demo-locked-chest";
+var task = Value(args, "--task") ??
+    "Inspect the inventory and interaction architecture and propose how a locked chest requiring a key should be implemented.";
+var workflowId = "local-" + Guid.NewGuid().ToString("N");
 var trace = new ConsoleWorkflowTraceSink();
+using var startupTimeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+await using var mcp = await McpStdioToolClient.StartAsync(serverDll, repositoryRoot, startupTimeout.Token);
 var gateway = new RoleBasedToolGateway(mcp, trace, workflowId);
-var executor = new ScriptedAgentExecutor(
+
+var request = new WorkflowRequest(task,
+    ["Provide an evidence-based, concrete technical analysis"],
+    ["Read-only analysis", "Do not modify project files", "Do not run tests"],
+    provider == "scripted"
+        ? ["Inventory rules live in Core; Unity GameState coordinates interactions and persistence."]
+        : []);
+var result = await new OrchestrationWorkflow(workflowId, executor, gateway, trace).RunAsync(request);
+Console.WriteLine($"RESULT status={result.Status} engineerAttempts={result.EngineerAttempts} reviewerAttempts={result.ReviewerAttempts}");
+if (result.Proposal is not null) Console.WriteLine("PROPOSAL " + result.Proposal.ProposedSolution);
+if (result.Review is not null) Console.WriteLine("REVIEW " + result.Review.Verdict);
+return result.Status == WorkflowStatus.Completed ? 0 : 1;
+
+static IAgentExecutor Scripted() => new ScriptedAgentExecutor(
     async (assignment, context, cancellationToken) =>
     {
         var metadata = await context.Tools.CallAsync(AgentRole.UnityEngineer, "get_project_info",
             JsonSerializer.SerializeToElement(new { }), cancellationToken);
         return AgentExecutionResult<EngineerToReviewer>.Success(AgentRole.UnityEngineer,
-            new(assignment.WorkflowId, assignment.Attempt,
-                "Use the explicitly supplied inventory and interaction context; MCP supplies metadata only.",
-                "Add a key requirement to the existing interaction decision path, check inventory before opening, " +
-                "and preserve the current opened-object persistence path after successful unlock.",
+            new(assignment.WorkflowId, assignment.Attempt, "Analyze the supplied architecture context.",
+                "Add a key requirement to the existing interaction path and preserve opened-object persistence.",
                 ["Inventory rules", "Unity interaction path", "chest persistence"],
-                ["The supplied context accurately describes the relevant source boundaries."],
-                ["Core unit tests for key matching", "Unity interaction test for locked/unlocked outcomes"],
-                ["Exact source locations require a separately authorized source-inspection capability."],
+                ["The supplied context describes the relevant boundaries."],
+                ["Core key-matching tests", "Unity locked/unlocked interaction test"],
+                ["Exact source locations require bounded source inspection."],
                 [new("get_project_info", metadata.Succeeded)]));
     },
-    (assignment, _, _) => Task.FromResult(
-        AgentExecutionResult<ReviewerToManager>.Success(AgentRole.Reviewer,
-            new(assignment.WorkflowId, assignment.Attempt, ReviewVerdict.Approve,
-                ["Proposal uses supplied context, preserves the read-only boundary, and identifies validation."],
-                [], ["Source locations remain to be verified before implementation."]))));
+    (assignment, _, _) => Task.FromResult(AgentExecutionResult<ReviewerToManager>.Success(
+        AgentRole.Reviewer, new(assignment.WorkflowId, assignment.Attempt, ReviewVerdict.Approve,
+            ["Proposal respects the supplied boundary and identifies validation."], [],
+            ["Verify exact source locations before implementation."]))));
 
-var request = new WorkflowRequest(
-    "Inspect the inventory and interaction architecture and propose how a locked chest requiring a key should be implemented.",
-    ["Use existing inventory and interaction boundaries", "Do not modify project files"],
-    ["Read-only analysis", "Do not infer source access from get_project_info"],
-    [
-        "Inventory ownership and portable rules live in DungeonEscape.Core.",
-        "Unity GameState coordinates map interactions and opened-object persistence.",
-        "Current MCP exposes repository metadata only and cannot inspect source files."
-    ]);
-var result = await new OrchestrationWorkflow(workflowId, executor, gateway, trace)
-    .RunAsync(request, timeout.Token);
-Console.WriteLine($"RESULT status={result.Status} engineerAttempts={result.EngineerAttempts} " +
-    $"reviewerAttempts={result.ReviewerAttempts}");
-Console.WriteLine("RECOMMENDATION " + result.Proposal?.ProposedSolution);
-return result.Status == WorkflowStatus.Completed ? 0 : 1;
+static string? Value(string[] values, string name)
+{
+    var index = Array.IndexOf(values, name);
+    return index >= 0 && index + 1 < values.Length ? values[index + 1] : null;
+}
+
+static bool TryEnvironmentInt(string name, int fallback, out int value)
+{
+    var raw = Environment.GetEnvironmentVariable(name);
+    if (string.IsNullOrWhiteSpace(raw)) { value = fallback; return true; }
+    return int.TryParse(raw, out value);
+}
 
 static string FindRepositoryRoot(string start)
 {

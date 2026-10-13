@@ -12,6 +12,8 @@ public interface IReadOnlyToolClient : IAsyncDisposable
 public interface IAgentToolGateway
 {
     IReadOnlyList<string> AllowedTools { get; }
+    Task<IReadOnlyList<McpToolDefinition>> ListAllowedToolsAsync(AgentRole role,
+        CancellationToken cancellationToken);
     Task<ToolCallResult> CallAsync(AgentRole role, string name, JsonElement arguments,
         CancellationToken cancellationToken);
 }
@@ -33,6 +35,15 @@ public sealed class RoleBasedToolGateway(IReadOnlyToolClient client, IWorkflowTr
 
     public IReadOnlyList<string> AllowedTools =>
         ["get_project_info", "search_code", "read_script", "list_scenes", "get_unity_console", "get_git_diff"];
+
+    public async Task<IReadOnlyList<McpToolDefinition>> ListAllowedToolsAsync(AgentRole role,
+        CancellationToken cancellationToken)
+    {
+        if (!Policy.TryGetValue(role, out var allowedTools)) return [];
+        var definitions = await client.ListToolsAsync(cancellationToken);
+        return definitions.Where(tool => allowedTools.Contains(tool.Name) && tool.ReadOnly
+            && !tool.Destructive && !tool.OpenWorld).ToArray();
+    }
 
     public async Task<ToolCallResult> CallAsync(AgentRole role, string name, JsonElement arguments,
         CancellationToken cancellationToken)
@@ -118,7 +129,8 @@ public sealed class McpStdioToolClient : IReadOnlyToolClient
                 tool.GetProperty("inputSchema").Clone(),
                 annotations.GetProperty("readOnlyHint").GetBoolean(),
                 annotations.GetProperty("destructiveHint").GetBoolean(),
-                annotations.GetProperty("openWorldHint").GetBoolean());
+                annotations.GetProperty("openWorldHint").GetBoolean(),
+                tool.TryGetProperty("description", out var description) ? description.GetString() ?? "" : "");
         }).ToArray();
         return tools;
     }

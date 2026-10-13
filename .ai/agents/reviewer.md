@@ -2,7 +2,8 @@
 
 ## Purpose
 
-Independently evaluate the Engineer proposal against the original requirements and constraints.
+Independently evaluate the Engineer proposal against the original requirements and constraints. The
+production executor may use an OpenAI Responses model, but the deterministic Manager owns transitions.
 
 ## Responsibilities
 
@@ -18,6 +19,8 @@ Independently evaluate the Engineer proposal against the original requirements a
   bounded read-only `get_git_diff`.
 - Must not inherit hidden Engineer reasoning, implement changes, dispatch agents, modify files, mutate
   Git, or request write-capable/destructive/open-world tools.
+- Receives only the original requirements, typed Engineer result, permitted context, and bounded results
+  from tool calls routed through the application gateway.
 
 ## Hand-offs
 

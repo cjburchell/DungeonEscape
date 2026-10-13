@@ -53,6 +53,120 @@ public sealed class LlmAgentExecutorTests
         Assert.DoesNotContain("hidden reasoning", request.Input, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Theory]
+    [InlineData(QaOutcome.Pass)]
+    [InlineData(QaOutcome.Fail)]
+    [InlineData(QaOutcome.Inconclusive)]
+    public async Task QaMapsEveryStructuredOutcomeAndGetsRunTests(QaOutcome outcome)
+    {
+        var expected = QA(outcome);
+        var run = CreateRun(new LlmResponse("resp-qa", Json(expected), []));
+
+        var result = await run.Executor.ExecuteQaAsync(QaAssignment(), run.Context, default);
+
+        Assert.Null(result.Error);
+        Assert.Equal(outcome, result.Output?.Outcome);
+        var request = Assert.Single(run.Llm.Requests);
+        Assert.Equal(AgentRole.QA, request.Role);
+        Assert.StartsWith(AgentPrompts.QA, request.Instructions, StringComparison.Ordinal);
+        Assert.Contains("current repository baseline", request.Instructions,
+            StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(SpecialistTools.Append("run_tests").OrderBy(name => name),
+            request.Tools.Select(tool => tool.Name).OrderBy(name => name));
+    }
+
+    [Fact]
+    public async Task QaRunTestsContentIsReturnedButNeverTraced()
+    {
+        const string testOutput = "private-test-output";
+        var run = CreateRun([
+            new("resp-1", null, [new("call-1", "run_tests", "{\"suite\":\"orchestrator\"}")]),
+            new("resp-2", Json(QA(QaOutcome.Pass)), [])], testOutput);
+
+        var result = await run.Executor.ExecuteQaAsync(QaAssignment(), run.Context, default);
+
+        Assert.Null(result.Error);
+        Assert.Equal(["run_tests"], run.Tools.Calls);
+        Assert.Contains(testOutput, run.Llm.Outputs.Single().Single().Content, StringComparison.Ordinal);
+        Assert.DoesNotContain(run.Trace.Events,
+            item => item.Detail.Contains(testOutput, StringComparison.Ordinal));
+    }
+
+    [Theory]
+    [InlineData("not-json")]
+    [InlineData("{\"workflowId\":\"wf\"}")]
+    [InlineData("{\"workflowId\":\"wf\",\"attempt\":1,\"outcome\":\"Unknown\",\"testSuitesRun\":[],\"testResults\":[],\"validationFindings\":[],\"skippedChecks\":[],\"residualRisks\":[],\"toolUses\":[]}")]
+    public async Task MalformedMissingOrUnknownQaOutputFailsClosed(string output)
+    {
+        var run = CreateRun(new LlmResponse("resp", output, []));
+
+        var result = await run.Executor.ExecuteQaAsync(QaAssignment(), run.Context, default);
+
+        Assert.Contains("structured output", result.Error, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task QaPassWithoutSuccessfulTestEvidenceFailsClosed()
+    {
+        var unsupportedPass = QA(QaOutcome.Pass) with
+            { TestSuitesRun = [], TestResults = [], ToolUses = [] };
+        var run = CreateRun(new LlmResponse("resp", Json(unsupportedPass), []));
+
+        var result = await run.Executor.ExecuteQaAsync(QaAssignment(), run.Context, default);
+
+        Assert.Contains("structured output", result.Error, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task QaRefusalFailsSafely()
+    {
+        var run = CreateRun(new LlmResponse("resp", "private refusal", [], Refused: true));
+
+        var result = await run.Executor.ExecuteQaAsync(QaAssignment(), run.Context, default);
+
+        Assert.Contains("refused", result.Error, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(run.Trace.Events, item => item.Detail.Contains("private refusal"));
+    }
+
+    [Fact]
+    public async Task QaProviderFailureFailsSafely()
+    {
+        var run = CreateRun(new LlmResponse("unused", null, []));
+        run.Llm.Error = new(LlmProviderErrorKind.Network, "private provider detail");
+
+        var result = await run.Executor.ExecuteQaAsync(QaAssignment(), run.Context, default);
+
+        Assert.Equal("Provider network request failed.", result.Error);
+        Assert.DoesNotContain(run.Trace.Events,
+            item => item.Detail.Contains("private provider detail", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task QaTimeoutFailsSafely()
+    {
+        var run = CreateRun(new LlmResponse("unused", null, []));
+        run.Llm.DelayForever = true;
+        run.Executor = new(run.Llm, LlmExecutionOptions.Create("test-model", 1, 8));
+
+        var result = await run.Executor.ExecuteQaAsync(QaAssignment(), run.Context, default);
+
+        Assert.Contains("timed out", result.Error, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task QaToolBudgetExhaustionFailsSafely()
+    {
+        var run = CreateRun(new LlmResponse("resp", null,
+            [new("one", "run_tests", "{\"suite\":\"core\"}"),
+             new("two", "run_tests", "{\"suite\":\"mcp\"}")]));
+        run.Executor = new(run.Llm, LlmExecutionOptions.Create("test-model", 5, 1));
+
+        var result = await run.Executor.ExecuteQaAsync(QaAssignment(), run.Context, default);
+
+        Assert.Contains("budget", result.Error, StringComparison.OrdinalIgnoreCase);
+        Assert.Empty(run.Tools.Calls);
+    }
+
     [Fact]
     public async Task ToolRequestRoutesThroughGatewayAndContentIsNotTraced()
     {
@@ -231,10 +345,17 @@ public sealed class LlmAgentExecutorTests
         ["Read-only"], [], SpecialistTools, []);
     private static ReviewAssignment ReviewAssignment() => new("wf", 1, "Analyze", ["Accurate"],
         ["Read-only"], Engineer(), SpecialistTools);
+    private static QaAssignment QaAssignment() => new("wf", 1, "Analyze", ["Accurate"],
+        ["Read-only"], Engineer(), Review(), SpecialistTools.Append("run_tests").ToArray());
     private static EngineerToReviewer Engineer() => new("wf", 1, "Interpretation", "Proposal",
         ["Component"], [], ["Tests"], [], []);
     private static ReviewerToManager Review() => new("wf", 1, ReviewVerdict.Approve,
         ["Looks sound"], [], []);
+    private static QaToManager QA(QaOutcome outcome) => new("wf", 1, outcome, ["orchestrator"],
+        [new("orchestrator", outcome == QaOutcome.Pass ? "passed" : "failed",
+            outcome == QaOutcome.Pass ? 0 : 1, 25, [], false, "Current baseline result.")],
+        ["Current baseline validated."], ["Proposed change is not implemented."],
+        ["Run post-implementation acceptance tests."], [new("run_tests", true)]);
     private static string Json<T>(T value) => JsonSerializer.Serialize(value, JsonOptions);
 
     private static readonly string[] SpecialistTools =
@@ -284,7 +405,7 @@ public sealed class LlmAgentExecutorTests
                     JsonSerializer.SerializeToElement(new { type = "object", properties = new { } }),
                     true, false, false, name + " description"))
                 .Append(new("run_tests", JsonSerializer.SerializeToElement(new { type = "object" }),
-                    false, false, false, "tests")).ToArray());
+                    false, false, false, "tests", false)).ToArray());
         public Task<ToolCallResult> CallAsync(string name, JsonElement arguments,
             CancellationToken cancellationToken)
         {

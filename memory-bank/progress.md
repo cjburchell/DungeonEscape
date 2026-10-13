@@ -2,6 +2,16 @@
 
 ## Done
 
+- AI-012 / GitHub #21: added a typed QA specialist after Reviewer approval in the deterministic
+  AgentOrchestrator. QA receives the original requirements plus typed Engineer and Reviewer hand-offs,
+  reports `PASS`, `FAIL`, or `INCONCLUSIVE` with structured bounded test evidence, and is the only role
+  authorized for the existing `run_tests` capability. The gateway requires the exact expected metadata
+  posture for every named capability; Manager remains tool-free, Engineer/Reviewer retain only six
+  inspection tools, and unsupported roles fail closed. QA `PASS` completes; `FAIL`/`INCONCLUSIVE` require
+  a human decision with no autonomous repair loop. Scripted and OpenAI-backed execution, safe tracing,
+  focused workflow/security tests, the real MCP integration, and durable role documentation were updated.
+  No MCP behavior, gameplay, Unity Asset, RAG, write, arbitrary command, or autonomous Git capability changed.
+
 - AI-011 / GitHub #20: added real OpenAI Responses API execution for Unity Engineer and Reviewer behind
   the existing `IAgentExecutor` and a small provider-neutral client seam. The deterministic Manager still
   owns ordering, transitions, and the one-revision limit. Specialist tool schemas are derived from the

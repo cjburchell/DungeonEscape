@@ -502,8 +502,8 @@ public sealed class WorkflowTests
         Assert.All(run.Trace.Events, e => Assert.Equal(Id, e.WorkflowId));
         Assert.Contains(run.Trace.Events, e => e.EventType == "WorkflowStarted");
         Assert.Contains(run.Trace.Events, e => e.EventType == "WorkflowCompleted");
-        Assert.Equal(2, run.Trace.Events.Count(e => e.EventType == "AgentDispatched"));
-        Assert.Equal(2, run.Trace.Events.Count(e => e.EventType == "AgentCompleted"));
+        Assert.Equal(3, run.Trace.Events.Count(e => e.EventType == "AgentDispatched"));
+        Assert.Equal(3, run.Trace.Events.Count(e => e.EventType == "AgentCompleted"));
         Assert.All(run.Trace.Events.Where(e => e.EventType.StartsWith("Agent")),
             e => Assert.False(string.IsNullOrWhiteSpace(e.RunId)));
         Assert.Contains(run.Trace.Events, e => e.EventType == "Transition");
@@ -522,6 +522,13 @@ public sealed class WorkflowTests
         new(assignment.WorkflowId, assignment.Attempt, verdict, ["Finding"],
             verdict == ReviewVerdict.RequestChanges ? ["Clarify validation"] : [], []);
 
+    private static QaToManager QA(QaAssignment assignment, QaOutcome outcome = QaOutcome.Pass) =>
+        new(assignment.WorkflowId, assignment.Attempt, outcome, ["orchestrator"],
+            [new("orchestrator", outcome == QaOutcome.Pass ? "passed" : "failed",
+                outcome == QaOutcome.Pass ? 0 : 1, 10, [], false, "Current baseline result.")],
+            ["Baseline only; proposal is unimplemented."], ["Post-implementation validation."],
+            ["Proposal behavior is not yet testable."], [new("run_tests", true)]);
+
     private static (OrchestrationWorkflow Workflow, InMemoryWorkflowTraceSink Trace,
         List<ManagerToEngineer> EngineerAssignments) CreateRun(params ReviewVerdict[] verdicts)
     {
@@ -536,7 +543,9 @@ public sealed class WorkflowTests
                     AgentRole.UnityEngineer, Engineer(assignment)));
             },
             (assignment, _, _) => Task.FromResult(AgentExecutionResult<ReviewerToManager>.Success(
-                AgentRole.Reviewer, Review(assignment, verdicts[reviewIndex++]))));
+                AgentRole.Reviewer, Review(assignment, verdicts[reviewIndex++]))),
+            (assignment, _, _) => Task.FromResult(AgentExecutionResult<QaToManager>.Success(
+                AgentRole.QA, QA(assignment))));
         return (Workflow(executor, trace), trace, assignments);
     }
 

@@ -24,6 +24,11 @@ public sealed class LlmAgentExecutor(ILlmClient client, LlmExecutionOptions opti
         ExecuteAsync<ReviewerToManager>(AgentRole.Reviewer, assignment, context, ReviewerSchema, "reviewer_result",
             ValidateReviewer, cancellationToken);
 
+    public Task<AgentExecutionResult<QaToManager>> ExecuteQaAsync(
+        QaAssignment assignment, AgentExecutionContext context, CancellationToken cancellationToken) =>
+        ExecuteAsync<QaToManager>(AgentRole.QA, assignment, context, QaSchema, "qa_result",
+            ValidateQA, cancellationToken);
+
     private async Task<AgentExecutionResult<T>> ExecuteAsync<T>(AgentRole role, object assignment,
         AgentExecutionContext context, string schemaJson, string schemaName, Func<T, bool> validate,
         CancellationToken cancellationToken)
@@ -180,6 +185,18 @@ public sealed class LlmAgentExecutor(ILlmClient client, LlmExecutionOptions opti
         && value.ResidualRisks is not null
         && (value.Verdict != ReviewVerdict.RequestChanges || value.RequiredChanges.Count > 0);
 
+    private static bool ValidateQA(QaToManager value) =>
+        !string.IsNullOrWhiteSpace(value.WorkflowId) && value.Attempt > 0 && Enum.IsDefined(value.Outcome)
+        && value.TestSuitesRun is not null && value.TestResults is not null
+        && value.ValidationFindings is not null && value.SkippedChecks is not null
+        && value.ResidualRisks is not null && value.ToolUses is not null
+        && value.TestResults.All(item => !string.IsNullOrWhiteSpace(item.Suite)
+            && !string.IsNullOrWhiteSpace(item.Status) && item.FailedTests is not null
+            && !string.IsNullOrWhiteSpace(item.Summary))
+        && (value.Outcome != QaOutcome.Pass || (value.TestSuitesRun.Count > 0
+            && value.TestResults.Count > 0
+            && value.ToolUses.Any(item => item.Name == "run_tests" && item.Succeeded)));
+
     private static string ProviderFailureMessage(LlmProviderErrorKind kind) => kind switch
     {
         LlmProviderErrorKind.Authentication => "Provider authentication failed.",
@@ -196,5 +213,9 @@ public sealed class LlmAgentExecutor(ILlmClient client, LlmExecutionOptions opti
 
     private const string ReviewerSchema = """
         {"type":"object","properties":{"workflowId":{"type":"string"},"attempt":{"type":"integer"},"verdict":{"type":"string","enum":["Approve","RequestChanges","Inconclusive"]},"findings":{"type":"array","items":{"type":"string"}},"requiredChanges":{"type":"array","items":{"type":"string"}},"residualRisks":{"type":"array","items":{"type":"string"}}},"required":["workflowId","attempt","verdict","findings","requiredChanges","residualRisks"],"additionalProperties":false}
+        """;
+
+    private const string QaSchema = """
+        {"type":"object","properties":{"workflowId":{"type":"string"},"attempt":{"type":"integer"},"outcome":{"type":"string","enum":["Pass","Fail","Inconclusive"]},"testSuitesRun":{"type":"array","items":{"type":"string"}},"testResults":{"type":"array","items":{"type":"object","properties":{"suite":{"type":"string"},"status":{"type":"string"},"exitCode":{"type":["integer","null"]},"durationMilliseconds":{"type":"integer"},"failedTests":{"type":"array","items":{"type":"string"}},"truncated":{"type":"boolean"},"summary":{"type":"string"}},"required":["suite","status","exitCode","durationMilliseconds","failedTests","truncated","summary"],"additionalProperties":false}},"validationFindings":{"type":"array","items":{"type":"string"}},"skippedChecks":{"type":"array","items":{"type":"string"}},"residualRisks":{"type":"array","items":{"type":"string"}},"toolUses":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"succeeded":{"type":"boolean"}},"required":["name","succeeded"],"additionalProperties":false}}},"required":["workflowId","attempt","outcome","testSuitesRun","testResults","validationFindings","skippedChecks","residualRisks","toolUses"],"additionalProperties":false}
         """;
 }

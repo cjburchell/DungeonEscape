@@ -14,5 +14,6 @@ autonomous LLM reasoning, read arbitrary files through MCP, modify files, or ope
 
 The specialists may use `get_project_info`, bounded read-only `search_code` to locate source,
 bounded read-only `read_script` to inspect approved source ranges, and bounded read-only `list_scenes`
-to discover Unity scene paths and build-settings status. The gateway passes results through
+to discover Unity scene paths and build-settings status. They may also use bounded, redacted, read-only
+`get_unity_console` for the fixed project-scoped Unity script logs. The gateway passes results through
 without interpreting, indexing, caching, or persisting them; this is not arbitrary filesystem access.

@@ -6,7 +6,7 @@ namespace DungeonEscape.AgentOrchestrator.Tests;
 public sealed class McpIntegrationTests
 {
     [Fact]
-    public async Task ExistingMcpServerAdvertisesFiveToolsWhileUnityConsoleRemainsUnauthorized()
+    public async Task ExistingMcpServerAdvertisesFiveToolsAndAuthorizesUnityConsoleForSpecialists()
     {
         var testProject = FindAncestor(AppContext.BaseDirectory, "DungeonEscape.AgentOrchestrator.Tests");
         var toolsDirectory = testProject.Parent!;
@@ -96,13 +96,24 @@ public sealed class McpIntegrationTests
             JsonSerializer.SerializeToElement(new { }), timeout.Token);
         Assert.False(managerScenes.Succeeded);
 
-        var deniedConsole = await gateway.CallAsync(AgentRole.UnityEngineer, "get_unity_console",
-            JsonSerializer.SerializeToElement(new { }), timeout.Token);
-        Assert.False(deniedConsole.Succeeded);
+        var consoleArguments = JsonSerializer.SerializeToElement(new
+            { maxEntries = 5, minimumSeverity = "warning" });
+        var engineerConsole = await gateway.CallAsync(AgentRole.UnityEngineer, "get_unity_console",
+            consoleArguments, timeout.Token);
+        Assert.True(engineerConsole.Succeeded);
+
+        var reviewerConsole = await gateway.CallAsync(AgentRole.Reviewer, "get_unity_console",
+            consoleArguments, timeout.Token);
+        Assert.True(reviewerConsole.Succeeded);
 
         var managerConsole = await gateway.CallAsync(AgentRole.Manager, "get_unity_console",
             JsonSerializer.SerializeToElement(new { }), timeout.Token);
         Assert.False(managerConsole.Succeeded);
+
+        Assert.DoesNotContain(trace.Events,
+            e => e.Detail.Contains(engineerConsole.Content, StringComparison.Ordinal));
+        Assert.DoesNotContain(trace.Events,
+            e => e.Detail.Contains(reviewerConsole.Content, StringComparison.Ordinal));
 
         var rejected = await gateway.CallAsync(AgentRole.Reviewer, "read_file",
             JsonSerializer.SerializeToElement(new { path = "anything" }), timeout.Token);

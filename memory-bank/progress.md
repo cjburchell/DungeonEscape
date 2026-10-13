@@ -2,6 +2,11 @@
 
 ## Done
 
+- AI-006B / GitHub #39: authorized the existing bounded, redacted, read-only `get_unity_console` MCP
+  tool for Unity Engineer and Reviewer while Manager remains tool-free. The generic gateway still
+  requires advertised, read-only, non-destructive, closed-world metadata; unsupported roles fail
+  closed, and console result content is passed through without being copied into workflow traces.
+
 - CI stabilization: temporarily disabled the repeatedly failing `resharper-scan` job by default in
   both GitHub Actions and GitLab CI. The rest of the build/test/package pipeline remains enabled, and
   ReSharper can still be exercised explicitly with `RESHARPER_SCAN_ENABLED=true`. GitHub issue #37

@@ -95,9 +95,7 @@ public sealed class ProjectInfoService
         try
         {
             var path = Path.GetFullPath(Path.Combine(root, relativePath));
-            var prefix = Path.EndsInDirectorySeparator(root) ? root : root + Path.DirectorySeparatorChar;
-            var comparison = RepositoryPathSecurity.Comparison;
-            if (!path.StartsWith(prefix, comparison)
+            if (!RepositoryPathSecurity.IsContained(root, path)
                 || !File.Exists(path) || !RepositoryPathSecurity.IsOrdinaryPath(path)) return null;
             // Bound reads even if metadata is malformed or changes while being read.
             using var reader = new StreamReader(path);

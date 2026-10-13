@@ -23,10 +23,17 @@ Targets .NET 10 and uses the [official C# MCP SDK](https://github.com/modelconte
 - `Services/RunTestsService.cs`: fixed suite catalog and bounded no-shell test process execution.
 - `Services/RepositoryContentPolicy.cs`: shared approved roots, exclusions, extensions, and path resolution.
 - `Services/RepositoryPathSecurity.cs`: shared containment and reparse-point checks.
+- `Security/McpCapabilityCatalog.cs`: authoritative typed seven-tool metadata and side-effect inventory.
 - `../DungeonEscape.Mcp.Tests/`: xUnit discovery, metadata, boundary and real stdio tests.
 
 These projects intentionally remain outside the gameplay solution. Build and test them directly;
 no Unity editor, Unity assemblies or changes to game build scripts are needed.
+
+The static capability catalog is the authoritative inventory for tool names, safety annotations, and
+side-effect classifications. Tool attributes retain the SDK's clear compile-time registration model;
+real stdio tests require the registered set and every annotation to match the catalog exactly. Unknown
+catalog lookups fail closed, and duplicate/incomplete catalog definitions are rejected. Adding or
+removing a tool therefore requires an explicit catalog and registration/test update.
 
 ## Build and test
 
@@ -237,6 +244,11 @@ directories, out-of-scope paths and linked search roots are rejected.
 
 ## Security boundaries and limitations
 
+- Repository containment, operating-system-sensitive path comparison, canonical repository-relative
+  resolution, slash-normalized reporting, and ancestor reparse-point checks are shared security
+  primitives. The approved source roots, generated-directory exclusions, and text-extension allowlist
+  remain the narrower source/document content policy. Scene, Unity-log, Git, and test-execution rules
+  stay capability-specific rather than being broadened into one policy.
 - The trusted launcher can select a validated root once at startup. Without that option, discovery
   starts at the executable's directory, finds its `tools/DungeonEscape.Mcp` ancestor and verifies the
   same identity markers. Neither mode scans for other repositories. MCP callers and working directory

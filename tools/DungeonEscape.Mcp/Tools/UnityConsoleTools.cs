@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using DungeonEscape.Mcp.Services;
+using DungeonEscape.Mcp.Security;
 using ModelContextProtocol.Server;
 
 namespace DungeonEscape.Mcp.Tools;
@@ -7,7 +8,7 @@ namespace DungeonEscape.Mcp.Tools;
 [McpServerToolType]
 public sealed class UnityConsoleTools(UnityConsoleService service)
 {
-    [McpServerTool(Name = "get_unity_console", ReadOnly = true, Destructive = false,
+    [McpServerTool(Name = McpCapabilityNames.GetUnityConsole, ReadOnly = true, Destructive = false,
         Idempotent = true, OpenWorld = false)]
     [Description("Returns a bounded, redacted tail of the newest fixed project-scoped Unity script log.")]
     public UnityConsoleResult GetUnityConsole(

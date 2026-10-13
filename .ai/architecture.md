@@ -77,9 +77,18 @@ and [Schemas](../DungeonEscape.Tools.GameEditor/Schemas/README.md). It is a deve
 
 MCP `Program.cs` explicitly registers `ProjectInfoTools`, `SearchCodeTools`, `ReadScriptTools`,
 `ListScenesTools`, `UnityConsoleTools`, `GitDiffTools`, and `RunTestsTools`.
+`McpCapabilityCatalog` is the authoritative typed inventory of those seven names, safety annotations,
+side-effect classifications, and concise descriptions. Registration remains explicit through SDK
+attributes, while real stdio tests require the live tool set and annotations to match the catalog
+exactly. Unknown lookups and duplicate or incomplete catalog definitions fail closed.
 Parameterless read-only `get_project_info` delegates to `ProjectInfoService`; bounded read-only
 `search_code` and `read_script` delegate to MCP-independent services. Search and single-file reads share
 one approved-root, exclusion, extension, normalization, containment, and reparse-point policy.
+Canonical repository-relative resolution, containment, OS-sensitive path comparison, normalized
+relative-path formatting, and reparse checks are shared primitives. Approved roots/extensions and
+generated-directory exclusions remain a narrower source-content policy; scene, log, Git, and test
+rules remain capability-specific. Limits with different meanings, such as content bytes, process
+output characters, and diagnostic stderr, deliberately remain owned by their capabilities.
 `read_script` is limited to one approved UTF-8 file of at most 1 MiB, at most 200 requested lines, and
 64 KiB returned text. The trusted launcher may select an absolute
 checkout with startup-only `--repository-root`; canonicalization, identity markers and reparse checks

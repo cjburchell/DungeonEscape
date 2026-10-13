@@ -16,6 +16,30 @@ public static class RepositoryPathSecurity
         return canonicalCandidate.StartsWith(prefix, Comparison);
     }
 
+    public static bool TryResolveContainedRelativePath(string repositoryRoot, string relativePath,
+        out string fullPath)
+    {
+        fullPath = "";
+        if (string.IsNullOrEmpty(relativePath) || Path.IsPathRooted(relativePath)
+            || Path.IsPathFullyQualified(relativePath)) return false;
+        try
+        {
+            var segments = relativePath.Replace('\\', '/').Split('/', StringSplitOptions.RemoveEmptyEntries);
+            if (segments.Any(segment => segment == "..")) return false;
+            fullPath = Path.GetFullPath(Path.Combine(repositoryRoot,
+                relativePath.Replace('/', Path.DirectorySeparatorChar)));
+            return IsContained(repositoryRoot, fullPath);
+        }
+        catch (Exception ex) when (ex is ArgumentException or NotSupportedException or IOException)
+        {
+            fullPath = "";
+            return false;
+        }
+    }
+
+    public static string Relative(string repositoryRoot, string path) =>
+        Path.GetRelativePath(repositoryRoot, path).Replace('\\', '/');
+
     public static bool IsOrdinaryPath(string path)
     {
         try

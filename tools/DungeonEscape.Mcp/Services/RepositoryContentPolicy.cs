@@ -66,7 +66,7 @@ public static class RepositoryContentPolicy
     }
 
     public static string Relative(string repositoryRoot, string path) =>
-        Path.GetRelativePath(repositoryRoot, path).Replace('\\', '/');
+        RepositoryPathSecurity.Relative(repositoryRoot, path);
 
     private static string[] GetApprovedRoots(string repositoryRoot) => ApprovedRoots.Select(root =>
         Path.GetFullPath(Path.Combine(repositoryRoot, root.Replace('/', Path.DirectorySeparatorChar)))).ToArray();
@@ -74,9 +74,8 @@ public static class RepositoryContentPolicy
     private static string ResolveExistingApprovedPath(string repositoryRoot, IReadOnlyList<string> approved,
         string normalizedPath)
     {
-        var candidate = Path.GetFullPath(Path.Combine(repositoryRoot,
-            normalizedPath.Replace('/', Path.DirectorySeparatorChar)));
-        if (!RepositoryPathSecurity.IsContained(repositoryRoot, candidate))
+        if (!RepositoryPathSecurity.TryResolveContainedRelativePath(repositoryRoot, normalizedPath,
+                out var candidate))
             throw new ArgumentException("path escapes the repository root.", nameof(normalizedPath));
         if (!approved.Any(root => RepositoryPathSecurity.IsContained(root, candidate)))
             throw new ArgumentException("path is outside the approved content roots.", nameof(normalizedPath));

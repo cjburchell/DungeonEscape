@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using DungeonEscape.Mcp.Services;
+using DungeonEscape.Mcp.Security;
 using ModelContextProtocol.Server;
 
 namespace DungeonEscape.Mcp.Tools;
@@ -7,7 +8,7 @@ namespace DungeonEscape.Mcp.Tools;
 [McpServerToolType]
 public sealed class SearchCodeTools(SearchCodeService service)
 {
-    [McpServerTool(Name = "search_code", ReadOnly = true, Destructive = false,
+    [McpServerTool(Name = McpCapabilityNames.SearchCode, ReadOnly = true, Destructive = false,
         Idempotent = true, OpenWorld = false)]
     [Description("Searches approved DungeonEscape source and documentation roots for bounded literal text matches.")]
     public SearchCodeResult SearchCode(

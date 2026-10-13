@@ -266,13 +266,7 @@ public sealed class GitDiffService
 
     private static bool IsSafeRelativePath(string root, string path)
     {
-        if (string.IsNullOrEmpty(path) || Path.IsPathRooted(path) || Path.IsPathFullyQualified(path)) return false;
-        try
-        {
-            var full = Path.GetFullPath(Path.Combine(root, path));
-            return RepositoryPathSecurity.IsContained(root, full);
-        }
-        catch (Exception ex) when (ex is ArgumentException or NotSupportedException or IOException) { return false; }
+        return RepositoryPathSecurity.TryResolveContainedRelativePath(root, path, out _);
     }
 
     private static string Kind(char x, char y)

@@ -2,6 +2,14 @@
 
 ## Done
 
+- AI-009 / GitHub #19: centralized the MCP server's seven-tool capability inventory in a typed,
+  fail-closed catalog covering names, safety annotations, side-effect classifications, and concise
+  descriptions. Real stdio tests now require exact catalog/registration parity, and duplicate,
+  incomplete, missing, or unknown definitions fail closed. Shared repository path security now owns
+  canonical relative-path resolution and formatting while source-content roots/extensions/exclusions
+  and capability-specific limits remain appropriately scoped. No tool, schema, external behavior,
+  agent permission, root, exclusion, or resource limit changed.
+
 - AI-008 / GitHub #18: added bounded `run_tests` to the standalone MCP server with a closed enum for
   `core`, `mcp`, and `orchestrator`. Each suite maps to a fixed direct `dotnet test` project invocation
   with `--no-restore`; callers cannot supply executables, arguments, paths, projects, working

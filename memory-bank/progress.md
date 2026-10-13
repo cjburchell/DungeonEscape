@@ -2,6 +2,13 @@
 
 ## Done
 
+- AI-007B / GitHub #42: authorized the existing bounded read-only `get_git_diff` MCP tool for Unity
+  Engineer and Reviewer while Manager remains tool-free. The generic gateway still requires the tool
+  to be advertised, read-only, non-destructive, and closed-world; unsupported roles and unsafe or
+  unadvertised descriptors fail closed. Diff/patch results pass through without interpretation,
+  caching, persistence, or trace-content capture. No MCP behavior, Git mutation, gameplay, Unity
+  Asset, LLM, RAG, or QA behavior changed.
+
 - AI-007 / GitHub #17: added strictly read-only `get_git_diff` to the standalone MCP server. It uses
   fixed, no-shell, local-only porcelain status plus staged/unstaged diff commands; callers cannot
   provide paths, revisions, commands, arguments, repositories, or remotes. Results distinguish

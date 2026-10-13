@@ -115,20 +115,29 @@ public sealed class McpIntegrationTests
             JsonSerializer.SerializeToElement(new { }), timeout.Token);
         Assert.False(managerConsole.Succeeded);
 
-        foreach (var role in new[] { AgentRole.UnityEngineer, AgentRole.Reviewer, AgentRole.Manager })
-        {
-            var deniedGitDiff = await gateway.CallAsync(role, "get_git_diff",
-                JsonSerializer.SerializeToElement(new { }), timeout.Token);
-            Assert.False(deniedGitDiff.Succeeded);
-            Assert.Contains(trace.Events,
-                e => e.EventType == "ToolCallRejected" && e.Role == role
-                    && e.Detail.StartsWith("get_git_diff:", StringComparison.Ordinal));
-        }
+        var gitDiffArguments = JsonSerializer.SerializeToElement(new
+            { maxFiles = 10, maxPatchCharacters = 4096 });
+        var engineerGitDiff = await gateway.CallAsync(AgentRole.UnityEngineer, "get_git_diff",
+            gitDiffArguments, timeout.Token);
+        Assert.True(engineerGitDiff.Succeeded);
+        var reviewerGitDiff = await gateway.CallAsync(AgentRole.Reviewer, "get_git_diff",
+            gitDiffArguments, timeout.Token);
+        Assert.True(reviewerGitDiff.Succeeded);
+        var managerGitDiff = await gateway.CallAsync(AgentRole.Manager, "get_git_diff",
+            gitDiffArguments, timeout.Token);
+        Assert.False(managerGitDiff.Succeeded);
+        Assert.Contains(trace.Events,
+            e => e.EventType == "ToolCallRejected" && e.Role == AgentRole.Manager
+                && e.Detail.StartsWith("get_git_diff:", StringComparison.Ordinal));
 
         Assert.DoesNotContain(trace.Events,
             e => e.Detail.Contains(engineerConsole.Content, StringComparison.Ordinal));
         Assert.DoesNotContain(trace.Events,
             e => e.Detail.Contains(reviewerConsole.Content, StringComparison.Ordinal));
+        Assert.DoesNotContain(trace.Events,
+            e => e.Detail.Contains(engineerGitDiff.Content, StringComparison.Ordinal));
+        Assert.DoesNotContain(trace.Events,
+            e => e.Detail.Contains(reviewerGitDiff.Content, StringComparison.Ordinal));
 
         var rejected = await gateway.CallAsync(AgentRole.Reviewer, "read_file",
             JsonSerializer.SerializeToElement(new { path = "anything" }), timeout.Token);

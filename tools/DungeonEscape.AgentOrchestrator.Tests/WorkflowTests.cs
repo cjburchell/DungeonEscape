@@ -398,6 +398,85 @@ public sealed class WorkflowTests
         Assert.Empty(client.Calls);
     }
 
+    [Theory]
+    [InlineData(AgentRole.UnityEngineer)]
+    [InlineData(AgentRole.Reviewer)]
+    public async Task SpecialistsCanInvokeSafelyAnnotatedGitDiffWithoutTracingPatchContent(AgentRole role)
+    {
+        const string sensitivePatch = "diff --git a/file b/file\n+token=secret-diff-value";
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("get_git_diff", EmptyJson(), true, false, false))
+        {
+            Content = sensitivePatch
+        };
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync(role, "get_git_diff",
+            JsonSerializer.SerializeToElement(new { maxFiles = 10, maxPatchCharacters = 4096 }), default);
+
+        Assert.True(result.Succeeded);
+        Assert.Equal(sensitivePatch, result.Content);
+        Assert.Equal(["get_git_diff"], client.Calls);
+        Assert.Contains(trace.Events, e => e.EventType == "ToolCallStarted" && e.Role == role);
+        Assert.Contains(trace.Events, e => e.EventType == "ToolCallCompleted" && e.Role == role);
+        Assert.DoesNotContain(trace.Events,
+            e => e.Detail.Contains("secret-diff-value", StringComparison.Ordinal));
+        Assert.DoesNotContain(trace.Events,
+            e => e.Detail.Contains("diff --git", StringComparison.Ordinal));
+    }
+
+    [Theory]
+    [InlineData(AgentRole.Manager)]
+    [InlineData((AgentRole)int.MaxValue)]
+    public async Task ManagerAndUnsupportedRolesCannotInvokeGitDiff(AgentRole role)
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("get_git_diff", EmptyJson(), true, false, false));
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync(role, "get_git_diff", EmptyJson(), default);
+
+        Assert.False(result.Succeeded);
+        Assert.Single(trace.Events, e => e.EventType == "ToolCallRejected" && e.Role == role);
+        Assert.Empty(client.Calls);
+    }
+
+    [Fact]
+    public async Task UnadvertisedGitDiffIsRejected()
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("get_project_info", EmptyJson(), true, false, false));
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync(AgentRole.UnityEngineer, "get_git_diff", EmptyJson(), default);
+
+        Assert.False(result.Succeeded);
+        Assert.Single(trace.Events, e => e.EventType == "ToolCallRejected");
+        Assert.Empty(client.Calls);
+    }
+
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(true, true, false)]
+    [InlineData(true, false, true)]
+    public async Task GitDiffRequiresReadOnlyNonDestructiveClosedWorldMetadata(
+        bool readOnly, bool destructive, bool openWorld)
+    {
+        var trace = new InMemoryWorkflowTraceSink();
+        var client = new FakeToolClient(
+            new McpToolDefinition("get_git_diff", EmptyJson(), readOnly, destructive, openWorld));
+        var gateway = new RoleBasedToolGateway(client, trace, Id);
+
+        var result = await gateway.CallAsync(AgentRole.Reviewer, "get_git_diff", EmptyJson(), default);
+
+        Assert.False(result.Succeeded);
+        Assert.Single(trace.Events, e => e.EventType == "ToolCallRejected");
+        Assert.Empty(client.Calls);
+    }
+
     [Fact]
     public async Task TraceEventsAreCorrelatedAndCoverAgentAndWorkflowTransitions()
     {

@@ -13,16 +13,17 @@ real LLM or autonomous reasoning backend is implemented.
 - Manager has no tools.
 - Unity Engineer and Reviewer may call `get_project_info`, bounded read-only `search_code`, bounded
   read-only `read_script`, bounded read-only `list_scenes`, and bounded redacted read-only
-  `get_unity_console`.
+  `get_unity_console`, plus bounded read-only `get_git_diff`.
 - The gateway also requires the MCP descriptor to be read-only, non-destructive, and closed-world.
-- No arbitrary file reading, write-capable, shell, Git, QA, or RAG capability is provided.
+- No arbitrary file reading, write-capable, shell, Git mutation/generic command, QA, or RAG capability is provided.
 - Trace events contain lifecycle metadata and summaries, not chain-of-thought, credentials,
   environment variables, or arbitrary source contents.
 
 The existing MCP server is started as a separate stdio process and is not modified by this project.
 The orchestrator passes specialist metadata, searches, source-range reads, scene-discovery results,
-and redacted Unity-console results through without interpreting, indexing, caching, persisting, or
-copying result content into traces. The deterministic demonstration continues to use explicit static context.
+redacted Unity-console results, and bounded Git-diff results through without interpreting, indexing,
+caching, persisting, or copying result content into traces. The deterministic demonstration continues
+to use explicit static context.
 
 ## Build and test
 

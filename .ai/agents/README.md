@@ -16,4 +16,5 @@ The specialists may use `get_project_info`, bounded read-only `search_code` to l
 bounded read-only `read_script` to inspect approved source ranges, and bounded read-only `list_scenes`
 to discover Unity scene paths and build-settings status. They may also use bounded, redacted, read-only
 `get_unity_console` for the fixed project-scoped Unity script logs. The gateway passes results through
-without interpreting, indexing, caching, or persisting them; this is not arbitrary filesystem access.
+without interpreting, indexing, caching, or persisting them. Specialists may also use bounded read-only
+`get_git_diff` for structured local changes; this adds no Git mutation or generic command access.

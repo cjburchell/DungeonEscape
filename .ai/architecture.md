@@ -109,14 +109,14 @@ The AI-010 orchestrator is a separate consumer of that MCP boundary. Its applica
 enforces Manager → Unity Engineer → Reviewer transitions, permits one Engineer revision after
 `REQUEST_CHANGES`, and requires human handling after a second request. Manager has no tools; the two
 specialists are allowlisted for `get_project_info`, bounded `search_code`, bounded `read_script`, and
-bounded `list_scenes`, and bounded redacted `get_unity_console`,
+bounded `list_scenes`, bounded redacted `get_unity_console`, and bounded `get_git_diff`,
 and the gateway rejects tools not advertised as read-only, non-destructive, and closed-world. Manager
 and unsupported roles remain denied. Search and source-range requests/results are passed through
 without interpretation, indexing, caching, or persistence.
 Unity-console requests/results are likewise passed through without interpretation or persistence, and
 raw console content is never copied into workflow trace metadata.
-The MCP server advertises `get_git_diff`, but every orchestrator role continues to deny it pending
-AI-007B; denied calls use the existing structured rejection trace without patch content.
+Git-diff requests/results are passed through without interpretation or persistence, and raw patch
+content is never copied into workflow trace metadata. Manager and unsupported roles remain denied.
 Typed trace events record dispatches, tool activity,
 transitions, retries, and outcomes without recording reasoning transcripts or arbitrary source content.
 `ScriptedAgentExecutor` is deterministic test/demonstration infrastructure, not an LLM implementation.

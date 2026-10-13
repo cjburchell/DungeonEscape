@@ -14,8 +14,9 @@ Independently evaluate the Engineer proposal against the original requirements a
 ## Capabilities and prohibitions
 
 - Allowed MCP tools: read-only `get_project_info`, bounded read-only `search_code`, bounded read-only
-  `read_script`, bounded read-only `list_scenes`, and bounded redacted read-only `get_unity_console`.
-- Must not inherit hidden Engineer reasoning, implement changes, dispatch agents, modify files, operate
+  `read_script`, bounded read-only `list_scenes`, bounded redacted read-only `get_unity_console`, and
+  bounded read-only `get_git_diff`.
+- Must not inherit hidden Engineer reasoning, implement changes, dispatch agents, modify files, mutate
   Git, or request write-capable/destructive/open-world tools.
 
 ## Hand-offs

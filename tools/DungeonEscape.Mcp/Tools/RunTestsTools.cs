@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using DungeonEscape.Mcp.Services;
+using DungeonEscape.Mcp.Security;
 using ModelContextProtocol.Server;
 
 namespace DungeonEscape.Mcp.Tools;
@@ -7,7 +8,7 @@ namespace DungeonEscape.Mcp.Tools;
 [McpServerToolType]
 public sealed class RunTestsTools(RunTestsService service)
 {
-    [McpServerTool(Name = "run_tests", ReadOnly = false, Destructive = false,
+    [McpServerTool(Name = McpCapabilityNames.RunTests, ReadOnly = false, Destructive = false,
         Idempotent = false, OpenWorld = false)]
     [Description("Runs one fixed approved DungeonEscape test suite with bounded output and timeout.")]
     public Task<RunTestsResult> RunTests(

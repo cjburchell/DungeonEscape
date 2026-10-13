@@ -177,7 +177,7 @@ public sealed class ListScenesService(ProjectInfoService projectInfo)
     }
 
     private static string Relative(string repositoryRoot, string path) =>
-        Path.GetRelativePath(repositoryRoot, path).Replace('\\', '/');
+        RepositoryPathSecurity.Relative(repositoryRoot, path);
 
     private sealed record DiscoveryResult(IReadOnlyList<string> Paths, bool Truncated);
     private sealed record BuildSettingsResult(string Status, Dictionary<string, bool>? Entries);

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
+using DungeonEscape.Mcp.Security;
 using Xunit;
 
 namespace DungeonEscape.Mcp.Tests;
@@ -75,6 +76,18 @@ public sealed class StdioTests
             var listed = await Receive(2);
             var tools = listed.GetProperty("result").GetProperty("tools").EnumerateArray().ToArray();
             Assert.Equal(7, tools.Length);
+            Assert.Equal(McpCapabilityCatalog.All.Select(definition => definition.Name).OrderBy(name => name),
+                tools.Select(tool => tool.GetProperty("name").GetString()).OrderBy(name => name));
+            foreach (var definition in McpCapabilityCatalog.All)
+            {
+                var registered = Assert.Single(tools,
+                    tool => tool.GetProperty("name").GetString() == definition.Name);
+                var annotations = registered.GetProperty("annotations");
+                Assert.Equal(definition.ReadOnly, annotations.GetProperty("readOnlyHint").GetBoolean());
+                Assert.Equal(definition.Destructive, annotations.GetProperty("destructiveHint").GetBoolean());
+                Assert.Equal(definition.Idempotent, annotations.GetProperty("idempotentHint").GetBoolean());
+                Assert.Equal(definition.OpenWorld, annotations.GetProperty("openWorldHint").GetBoolean());
+            }
             var projectTool = tools.Single(tool => tool.GetProperty("name").GetString() == "get_project_info");
             Assert.Empty(projectTool.GetProperty("inputSchema").GetProperty("properties").EnumerateObject());
             AssertStrictlyReadOnly(projectTool);

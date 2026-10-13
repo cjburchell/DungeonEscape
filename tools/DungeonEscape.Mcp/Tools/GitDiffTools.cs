@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using DungeonEscape.Mcp.Services;
+using DungeonEscape.Mcp.Security;
 using ModelContextProtocol.Server;
 
 namespace DungeonEscape.Mcp.Tools;
@@ -7,7 +8,7 @@ namespace DungeonEscape.Mcp.Tools;
 [McpServerToolType]
 public sealed class GitDiffTools(GitDiffService service)
 {
-    [McpServerTool(Name = "get_git_diff", ReadOnly = true, Destructive = false,
+    [McpServerTool(Name = McpCapabilityNames.GetGitDiff, ReadOnly = true, Destructive = false,
         Idempotent = true, OpenWorld = false)]
     [Description("Returns a bounded structured view of local Git changes using fixed read-only commands.")]
     public Task<GitDiffResult> GetGitDiff(

@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using DungeonEscape.Mcp.Services;
+using DungeonEscape.Mcp.Security;
 using ModelContextProtocol.Server;
 
 namespace DungeonEscape.Mcp.Tools;
@@ -7,7 +8,7 @@ namespace DungeonEscape.Mcp.Tools;
 [McpServerToolType]
 public sealed class ReadScriptTools(ReadScriptService service)
 {
-    [McpServerTool(Name = "read_script", ReadOnly = true, Destructive = false,
+    [McpServerTool(Name = McpCapabilityNames.ReadScript, ReadOnly = true, Destructive = false,
         Idempotent = true, OpenWorld = false)]
     [Description("Reads a bounded line range from one approved DungeonEscape source or documentation file.")]
     public ReadScriptResult ReadScript(

@@ -1,7 +1,7 @@
 # DungeonEscape MCP server
 
-Standalone bounded repository inspection, Unity diagnostics, local Git change inspection, and approved
-test execution server for AI-002 / GitHub issue #8 through AI-008 / issue #18.
+Standalone bounded repository inspection, Unity diagnostics, local Git change inspection, approved
+test execution, and human-approved exact file replacement server.
 Targets .NET 10 and uses the [official C# MCP SDK](https://github.com/modelcontextprotocol/csharp-sdk)
 (`ModelContextProtocol` 2.2.0). It has no Unity or gameplay project references.
 
@@ -21,9 +21,11 @@ Targets .NET 10 and uses the [official C# MCP SDK](https://github.com/modelconte
 - `Services/GitDiffService.cs`: fixed-command, bounded local Git status/diff inspection.
 - `Tools/RunTestsTools.cs`: narrow MCP enum/timeout contract with non-read-only execution metadata.
 - `Services/RunTestsService.cs`: fixed suite catalog and bounded no-shell test process execution.
+- `Tools/ControlledWriteTools.cs`: explicit prepare/apply MCP contracts and accurate write annotations.
+- `Services/ControlledWriteService.cs`: bounded preview, optimistic concurrency, approval, and atomic replacement.
 - `Services/RepositoryContentPolicy.cs`: shared approved roots, exclusions, extensions, and path resolution.
 - `Services/RepositoryPathSecurity.cs`: shared containment and reparse-point checks.
-- `Security/McpCapabilityCatalog.cs`: authoritative typed seven-tool metadata and side-effect inventory.
+- `Security/McpCapabilityCatalog.cs`: authoritative typed nine-tool metadata and side-effect inventory.
 - `../DungeonEscape.Mcp.Tests/`: xUnit discovery, metadata, boundary and real stdio tests.
 
 These projects intentionally remain outside the gameplay solution. Build and test them directly;
@@ -45,8 +47,8 @@ dotnet test tools/DungeonEscape.Mcp.Tests/DungeonEscape.Mcp.Tests.csproj
 ```
 
 The test run includes a real subprocess handshake (`initialize`, `notifications/initialized`),
-`tools/list` verification of six strictly read-only tools plus bounded `run_tests`, real
-metadata/search/read/scene/log/diff/test calls,
+`tools/list` verification of nine tools, real metadata/search/read/scene/log/diff/test/prepare calls,
+denied apply without trusted approval,
 rejected traversal/out-of-scope requests, and unknown-tool rejection.
 It runs both executable-discovery and configured-root modes from an unrelated working directory,
 verifies that a configured fixture overrides executable discovery, and checks invalid configuration
@@ -216,7 +218,31 @@ and may define build targets; this tool does not sandbox malicious repository co
 
 Because ordinary test artifacts/timestamps are side effects, MCP metadata deliberately declares
 `ReadOnly=false`, `Destructive=false`, `Idempotent=false`, and `OpenWorld=false`. All current
-AgentOrchestrator roles deny this tool; later QA-agent policy belongs to AI-012.
+AgentOrchestrator roles except QA deny this tool.
+
+`prepare_write` accepts an existing approved repository-relative `path`, complete proposed replacement
+text, and the expected SHA-256 of the current UTF-8 bytes. It performs no repository mutation. Existing
+and proposed files are each limited to 1 MiB; NUL, invalid UTF-8, linked/reparse, generated, missing,
+out-of-root, and unsupported targets fail closed. Writes use the shared approved roots but a smaller
+extension allowlist: `.cs`, `.json`, `.md`, `.txt`, `.xml`, `.yml`, and `.yaml`.
+
+The result includes canonical relative path, original/proposed SHA-256 and byte lengths, a deterministic
+`sha256:` proposal identity, change status, and a line-based unified preview bounded to 128 KiB. A
+truncated preview is marked and approval still binds to the complete stored proposal. Preparation stores
+at most 100 short-lived in-memory proposals and is idempotent for the same path/version/content identity.
+
+`apply_write` accepts only the returned proposal identity/path/hashes and an opaque approval token. The
+token is issued by the trusted in-process `IWriteApprovalAuthority`, which is deliberately not an MCP
+tool. It is cryptographically random, expires after 10 minutes, binds to the exact proposal/path/hashes,
+and is single-use. The service revalidates path policy, file existence, current hash, proposal content,
+and approval immediately before execution. It writes a non-caller-controlled temporary file in the same
+directory, flushes it, rechecks the source version, atomically moves it over the target, verifies the
+resulting hash, consumes approval only on success, and cleans temporary files on failure. Metadata is
+`ReadOnly=false`, `Destructive=true`, `Idempotent=false`, and `OpenWorld=false`.
+
+There is no `approve_write` tool. Raw MCP clients can prepare a preview but cannot independently issue a
+valid approval. No current model-backed AgentOrchestrator role is authorized for either write tool;
+AI-021 owns human interaction and workflow integration.
 
 Approved roots are hard-coded:
 
@@ -257,7 +283,8 @@ directories, out-of-scope paths and linked search roots are rejected.
   `get_unity_console`, and `get_git_diff` add only the
   bounded, allowlisted operations described above; `read_script` cannot access files outside the shared
   approved roots/extensions and is not arbitrary `read_file` access. Callers cannot
-  supply commands, URLs or write requests. No shell, generic Git command surface, network access, resources,
+  supply commands or URLs. The only write surface is the exact prepare/approved-apply flow described
+  above. No shell, generic Git command surface, network access, resources,
   prompts or HTTP transport is registered.
 - `run_tests` is the sole bounded process-execution exception. It maps a closed enum to three fixed
   local `dotnet test --no-restore` definitions and cannot launch caller-selected commands or arguments.
@@ -276,6 +303,5 @@ directories, out-of-scope paths and linked search roots are rejected.
 - NuGet restore needs network access during development; tool execution does not.
 
 Manual verification remaining: configure this DLL in the intended MCP client and confirm its
-tool UI displays the six inspection tools with strictly read-only annotations and `run_tests` with
-its intentional non-read-only, non-destructive, non-idempotent, closed-world annotations.
+tool UI displays nine tools with the documented annotations, including destructive `apply_write`.
 The protocol itself is covered by the automated test.

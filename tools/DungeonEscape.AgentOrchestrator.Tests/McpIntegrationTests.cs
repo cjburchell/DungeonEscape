@@ -6,7 +6,7 @@ namespace DungeonEscape.AgentOrchestrator.Tests;
 public sealed class McpIntegrationTests
 {
     [Fact]
-    public async Task ExistingMcpServerAdvertisesSevenToolsWhileRunTestsRemainsUnauthorized()
+    public async Task ExistingMcpServerAdvertisesNineToolsWhileWritesRemainUnauthorized()
     {
         var testProject = FindAncestor(AppContext.BaseDirectory, "DungeonEscape.AgentOrchestrator.Tests");
         var toolsDirectory = testProject.Parent!;
@@ -19,7 +19,7 @@ public sealed class McpIntegrationTests
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(180));
         await using var client = await McpStdioToolClient.StartAsync(dll, root, timeout.Token);
         var definitions = await client.ListToolsAsync(timeout.Token);
-        Assert.Equal(7, definitions.Count);
+        Assert.Equal(9, definitions.Count);
         var projectTool = definitions.Single(tool => tool.Name == "get_project_info");
         AssertStrictlyReadOnly(projectTool);
         Assert.Empty(projectTool.InputSchema.GetProperty("properties").EnumerateObject());
@@ -53,9 +53,24 @@ public sealed class McpIntegrationTests
         Assert.False(runTestsTool.OpenWorld);
         Assert.Equal(["suite", "timeoutSeconds"], runTestsTool.InputSchema.GetProperty("properties")
             .EnumerateObject().Select(property => property.Name).OrderBy(name => name));
+        var prepareWrite = definitions.Single(tool => tool.Name == "prepare_write");
+        Assert.True(prepareWrite.ReadOnly);
+        Assert.False(prepareWrite.Destructive);
+        Assert.False(prepareWrite.OpenWorld);
+        var applyWrite = definitions.Single(tool => tool.Name == "apply_write");
+        Assert.False(applyWrite.ReadOnly);
+        Assert.True(applyWrite.Destructive);
+        Assert.False(applyWrite.OpenWorld);
 
         var trace = new InMemoryWorkflowTraceSink();
         var gateway = new RoleBasedToolGateway(client, trace, "integration");
+        foreach (var role in new[] { AgentRole.Manager, AgentRole.UnityEngineer, AgentRole.Reviewer, AgentRole.QA })
+        {
+            Assert.False((await gateway.CallAsync(role, "prepare_write",
+                JsonSerializer.SerializeToElement(new { }), timeout.Token)).Succeeded);
+            Assert.False((await gateway.CallAsync(role, "apply_write",
+                JsonSerializer.SerializeToElement(new { }), timeout.Token)).Succeeded);
+        }
         var result = await gateway.CallAsync(AgentRole.UnityEngineer, "get_project_info",
             JsonSerializer.SerializeToElement(new { }), timeout.Token);
         Assert.True(result.Succeeded);
@@ -176,7 +191,7 @@ public sealed class McpIntegrationTests
         var client = await McpStdioToolClient.StartAsync(dll, root, timeout.Token);
 
         var definitions = await client.ListToolsAsync(timeout.Token);
-        Assert.Equal(7, definitions.Count);
+        Assert.Equal(9, definitions.Count);
         for (var index = 0; index < 750; index++)
         {
             var result = await client.CallAsync("get_project_info",

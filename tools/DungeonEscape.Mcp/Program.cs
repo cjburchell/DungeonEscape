@@ -31,6 +31,10 @@ builder.Services.AddSingleton<UnityConsoleService>();
 builder.Services.AddSingleton<GitDiffService>();
 builder.Services.AddSingleton<IApprovedTestSuiteExecutor, ApprovedTestSuiteExecutor>();
 builder.Services.AddSingleton<RunTestsService>();
+builder.Services.AddSingleton<WriteApprovalAuthority>();
+builder.Services.AddSingleton<IWriteApprovalAuthority>(services =>
+    services.GetRequiredService<WriteApprovalAuthority>());
+builder.Services.AddSingleton<ControlledWriteService>();
 builder.Services.AddMcpServer().WithStdioServerTransport()
     .WithTools<ProjectInfoTools>()
     .WithTools<SearchCodeTools>()
@@ -38,6 +42,7 @@ builder.Services.AddMcpServer().WithStdioServerTransport()
     .WithTools<ListScenesTools>()
     .WithTools<UnityConsoleTools>()
     .WithTools<GitDiffTools>()
-    .WithTools<RunTestsTools>();
+    .WithTools<RunTestsTools>()
+    .WithTools<ControlledWriteTools>();
 await builder.Build().RunAsync();
 return 0;

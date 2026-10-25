@@ -32,7 +32,7 @@ public sealed class DataSourceCatalog
     public void Reload()
     {
         Spells = Names(data.Spells.Select(s => s.Name));
-        Skills = Names(data.Skills.Select(s => s.Name));
+        Skills = Names(data.Skills.Select(s => s.Id));
         Items = Names(data.Items.Select(i => i.Name)
             .Concat(data.Items.Select(i => i.Id)));
         Items = Items.Prepend(RandomItemId).ToList();
@@ -56,6 +56,12 @@ public sealed class DataSourceCatalog
 
         Backgrounds = Names(data.Backgrounds.Select(background => background.Id)
             .Concat(data.Backgrounds.Select(background => background.Name)));
+    }
+
+    public string SkillLabel(string id)
+    {
+        var skill = data.Skills.FirstOrDefault(value => value.Id == id);
+        return skill == null ? id : $"{skill.Name} ({id})";
     }
 
     private static IReadOnlyList<string> Names(IEnumerable<string?> source)

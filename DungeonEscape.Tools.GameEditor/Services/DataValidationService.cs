@@ -47,7 +47,7 @@ public sealed class DataValidationService
         }
 
         var issues = new List<DataValidationIssue>();
-        var skillNames = NameSet(data.Skills.Select(skill => skill.Name));
+        var skillIds = new HashSet<string>(data.Skills.Where(skill => !string.IsNullOrWhiteSpace(skill.Id)).Select(skill => skill.Id), StringComparer.Ordinal);
         var spellNames = NameSet(data.Spells.Select(spell => spell.Name));
         var itemRefs = NameSet(data.Items.Select(item => item.Name)
             .Concat(data.Items.Select(item => item.Id))
@@ -63,6 +63,7 @@ public sealed class DataValidationService
         ValidateRequiredNames(issues, "Monster ID", data.Monsters.Select((item, index) => (index, Value: (string?)item.Id)));
         ValidateRequiredNames(issues, "Monster", data.Monsters.Select((item, index) => (index, Value: (string?)item.Name)));
         ValidateRequiredNames(issues, "Spell", data.Spells.Select((item, index) => (index, Value: (string?)item.Name)));
+        ValidateRequiredNames(issues, "Skill ID", data.Skills.Select((item, index) => (index, Value: (string?)item.Id)));
         ValidateRequiredNames(issues, "Skill", data.Skills.Select((item, index) => (index, Value: (string?)item.Name)));
         ValidateRequiredNames(issues, "Item", data.Items.Select((item, index) => (index, Value: (string?)item.Name)));
         ValidateRequiredNames(issues, "Quest", data.Quests.Select((item, index) => (index, Value: (string?)item.Id)));
@@ -74,7 +75,14 @@ public sealed class DataValidationService
 
         ValidateDuplicates(issues, "Monster ID", data.Monsters.Select(monster => monster.Id));
         ValidateDuplicates(issues, "Spell name", data.Spells.Select(spell => spell.Name));
-        ValidateDuplicates(issues, "Skill name", data.Skills.Select(skill => skill.Name));
+        foreach (var skill in data.Skills)
+        {
+            if (!System.Text.RegularExpressions.Regex.IsMatch(skill.Id ?? string.Empty, @"^skill/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$"))
+            {
+                Error(issues, skill.Name, "Skill ID must use skill/<scope>/<key> with lowercase letters, digits, and hyphens.");
+            }
+        }
+        ValidateDuplicates(issues, "Skill ID", data.Skills.Select(skill => skill.Id));
         ValidateDuplicates(issues, "Item name", data.Items.Select(item => item.Name));
         ValidateDuplicates(issues, "Item id", data.Items.Select(item => item.Id));
         ValidateDuplicates(issues, "Quest id", data.Quests.Select(quest => quest.Id));
@@ -86,8 +94,8 @@ public sealed class DataValidationService
         ValidateDuplicates(issues, "Background name", data.Backgrounds.Select(background => background.Name));
 
         ValidateMonsters(issues, itemRefs);
-        ValidateSpells(issues, skillNames, classValues);
-        ValidateItems(issues, skillNames, questIds, classValues);
+        ValidateSpells(issues, skillIds, classValues);
+        ValidateItems(issues, skillIds, questIds, classValues);
         ValidateQuests(issues, itemRefs);
         ValidateDialogs(issues, questIds, itemRefs, monsterIds);
         ValidateClassLevels(issues);
@@ -130,7 +138,7 @@ public sealed class DataValidationService
         }
     }
 
-    private void ValidateSpells(List<DataValidationIssue> issues, HashSet<string> skillNames, HashSet<string> classValues)
+    private void ValidateSpells(List<DataValidationIssue> issues, HashSet<string> skillIds, HashSet<string> classValues)
     {
         for (var i = 0; i < data.Spells.Count; i++)
         {
@@ -141,12 +149,12 @@ public sealed class DataValidationService
                 Warning(issues, location, $"Image #{spell.ImageId} was not found in items.tsx.");
             }
 
-            ValidateReference(issues, location, "skill", spell.SkillId, skillNames);
+            ValidateReference(issues, location, "skill", spell.SkillId, skillIds);
             ValidateClasses(issues, location, spell.Classes, classValues);
         }
     }
 
-    private void ValidateItems(List<DataValidationIssue> issues, HashSet<string> skillNames, HashSet<string> questIds, HashSet<string> classValues)
+    private void ValidateItems(List<DataValidationIssue> issues, HashSet<string> skillIds, HashSet<string> questIds, HashSet<string> classValues)
     {
         for (var i = 0; i < data.Items.Count; i++)
         {
@@ -157,7 +165,7 @@ public sealed class DataValidationService
                 Warning(issues, location, $"Image #{item.ImageId} was not found in items2.tsx.");
             }
 
-            ValidateReference(issues, location, "skill", item.SkillId, skillNames);
+            ValidateReference(issues, location, "skill", item.SkillId, skillIds);
             ValidateReference(issues, location, "quest", item.QuestId, questIds);
             ValidateClasses(issues, location, item.Classes, classValues);
         }

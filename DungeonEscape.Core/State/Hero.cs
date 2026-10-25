@@ -203,12 +203,12 @@ namespace Redpoint.DungeonEscape.State
             var skillIds = Skills == null ? new List<string>() : Skills.ToList();
             if (Class == Class.Rogue && HasSkillProficiency("Sleight of Hand"))
             {
-                skillIds.Add("Sleight of Hand");
+                skillIds.Add("skill/base/sleight-of-hand");
             }
 
             return skillIds
                 .Distinct(StringComparer.OrdinalIgnoreCase)
-                .Select(id => availableSkills.FirstOrDefault(item => string.Equals(item.Name, id, StringComparison.OrdinalIgnoreCase)))
+                .Select(id => availableSkills.FirstOrDefault(item => string.Equals(item.Id, id, StringComparison.Ordinal)))
                 .Where(skill => skill != null)
                 .ToList();
         }

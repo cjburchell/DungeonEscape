@@ -43,7 +43,7 @@ namespace DungeonEscape.Core.Test.ViewModels
         {
             var viewModel = new CombatViewModel();
             var hero = new Hero { Name = "Able" };
-            var skills = new List<Skill> { new Skill { Name = "Focus" } };
+            var skills = new List<Skill> { new Skill { Id = "skill/test/focus", Name = "Focus" } };
 
             var rows = viewModel.GetActionRows(hero, true, skills, true);
 
@@ -99,8 +99,8 @@ namespace DungeonEscape.Core.Test.ViewModels
         public void AvailableEncounterSpellsRespectHeroStateLevelClassSlotsAndPreparation()
         {
             var viewModel = new CombatViewModel();
-            var encounterSkill = new Skill { Name = "HealSkill", Type = SkillType.Heal };
-            var fieldSkill = new Skill { Name = "OutsideSkill", Type = SkillType.Outside };
+            var encounterSkill = new Skill { Id = "skill/test/healskill", Name = "HealSkill", Type = SkillType.Heal };
+            var fieldSkill = new Skill { Id = "skill/test/outsideskill", Name = "OutsideSkill", Type = SkillType.Outside };
             var spells = new List<Spell>
             {
                 CreateSpell("Heal", encounterSkill, 1, 1, Class.Paladin),
@@ -127,10 +127,10 @@ namespace DungeonEscape.Core.Test.ViewModels
         public void AvailableEncounterSkillsRespectHeroStateAndEncounterType()
         {
             var viewModel = new CombatViewModel();
-            var heal = new Skill { Name = "Heal", Type = SkillType.Heal };
-            var outside = new Skill { Name = "Outside", Type = SkillType.Outside };
-            var damage = new Skill { Name = "Damage", Type = SkillType.Damage };
-            var hero = new Hero { Health = 10, Skills = new List<string> { "Heal", "Outside", "Missing", "Damage" } };
+            var heal = new Skill { Id = "skill/test/heal", Name = "Heal", Type = SkillType.Heal };
+            var outside = new Skill { Id = "skill/test/outside", Name = "Outside", Type = SkillType.Outside };
+            var damage = new Skill { Id = "skill/test/damage", Name = "Damage", Type = SkillType.Damage };
+            var hero = new Hero { Health = 10, Skills = new List<string> { heal.Id, outside.Id, "skill/test/missing", damage.Id } };
 
             var available = viewModel.GetAvailableEncounterSkills(hero, new[] { heal, outside, damage });
 
@@ -143,8 +143,8 @@ namespace DungeonEscape.Core.Test.ViewModels
         public void AvailableEncounterItemsRespectSkillAndCharges()
         {
             var viewModel = new CombatViewModel();
-            var encounterSkill = new Skill { Name = "BombSkill", Type = SkillType.Damage };
-            var fieldSkill = new Skill { Name = "KeySkill", Type = SkillType.Open };
+            var encounterSkill = new Skill { Id = "skill/test/bombskill", Name = "BombSkill", Type = SkillType.Damage };
+            var fieldSkill = new Skill { Id = "skill/test/keyskill", Name = "KeySkill", Type = SkillType.Open };
             var usable = new ItemInstance(new Item { Name = "Bomb", Skill = encounterSkill, Charges = 2 });
             var noCharges = new ItemInstance(new Item { Name = "Empty Wand", Skill = encounterSkill, Charges = 1 }) { Charges = 0 };
             var fieldOnly = new ItemInstance(new Item { Name = "Key", Skill = fieldSkill, Charges = 1 });
@@ -188,7 +188,7 @@ namespace DungeonEscape.Core.Test.ViewModels
                 SpellLevel = spellLevel,
                 MinLevel = minLevel,
                 Classes = new List<string> { heroClass.ToString() },
-                SkillId = skill.Name
+                SkillId = skill.Id
             };
             spell.Setup(new[] { skill });
             return spell;

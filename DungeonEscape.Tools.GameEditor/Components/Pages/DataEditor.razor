@@ -565,7 +565,7 @@ else
                 Data.Spells.Add(selectedSpell);
                 break;
             case EditorTab.Skills:
-                selectedSkill = new Skill { Name = "New Skill" };
+                selectedSkill = new Skill { Id = "skill/base/" + Guid.NewGuid().ToString("N"), Name = "New Skill" };
                 Data.Skills.Add(selectedSkill);
                 break;
             case EditorTab.Items:
@@ -648,6 +648,7 @@ else
                 break;
             case EditorTab.Skills when selectedSkill != null:
                 selectedSkill = Clone(selectedSkill, Data.Skills, s => s.Name, (s, n) => s.Name = n);
+                selectedSkill.Id = "skill/base/" + Guid.NewGuid().ToString("N");
                 break;
             case EditorTab.Items when selectedItem != null:
                 selectedItem = Clone(selectedItem, Data.Items, i => i.Name, (i, n) => i.Name = n);

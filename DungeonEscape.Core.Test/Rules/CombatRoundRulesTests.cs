@@ -248,8 +248,8 @@ namespace DungeonEscape.Core.Test.Rules
 
         private static Spell CreateSpell(string name, SkillType type)
         {
-            var skill = new Skill { Name = name, Type = type, Targets = Target.Single, MaxTargets = 1 };
-            var spell = new Spell { Name = name, SkillId = name };
+            var skill = new Skill { Id = "skill/test/" + name.ToLowerInvariant().Replace(" ", "-"), Name = name, Type = type, Targets = Target.Single, MaxTargets = 1 };
+            var spell = new Spell { Name = name, SkillId = skill.Id };
             spell.Setup(new[] { skill });
             return spell;
         }

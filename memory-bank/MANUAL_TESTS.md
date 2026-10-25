@@ -1247,3 +1247,10 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 - [ ] Create a monster, edit its display name, save/reopen, and verify its generated ID remains unchanged and read-only.
 - [ ] Enter a dungeon with a migrated encounter table and verify normal monster encounters/combat. Overworld encounters should remain unchanged.
 - [ ] Open an unmigrated external encounter file and confirm validation reports missing references; replace legacy names with the corresponding catalog MonsterId values before using it.
+
+## Stable Skill References (2026-10-24)
+
+- [ ] Rename an effect skill, save/reopen the editor, and confirm spell/item effect selectors retain the ID while displaying the new name.
+- [ ] Duplicate a skill and confirm its read-only ID differs; identical display names remain selectable separately.
+- [ ] Start a fresh 1.1 game and verify spell casting, key/open items, and Rogue Sleight of Hand actions retain behavior and icons.
+- [ ] Confirm a 1.0 save is treated as unsupported by the existing archive policy, rather than loaded with missing skill references. No save migration is intended.

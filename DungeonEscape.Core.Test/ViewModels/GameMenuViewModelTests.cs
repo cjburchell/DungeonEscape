@@ -530,14 +530,14 @@ namespace DungeonEscape.Core.Test.ViewModels
                 Target = target,
                 Slots = new List<Slot> { Slot.PrimaryHand },
                 Classes = new List<string> { "Paladin" },
-                Skill = new Skill { Name = name, Type = skillType }
+                Skill = new Skill { Id = "skill/test/" + name.ToLowerInvariant().Replace(" ", "-"), Name = name, Type = skillType }
             });
         }
 
         private static Spell CreateSpell(string name, SkillType skillType, Target target)
         {
-            var skill = new Skill { Name = name + "Skill", Type = skillType, Targets = target };
-            var spell = new Spell { Name = name, SkillId = skill.Name };
+            var skill = new Skill { Id = "skill/test/" + name.ToLowerInvariant().Replace(" ", "-"), Name = name + "Skill", Type = skillType, Targets = target };
+            var spell = new Spell { Name = name, SkillId = skill.Id };
             spell.Setup(new[] { skill });
             return spell;
         }

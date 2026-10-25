@@ -17,7 +17,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 {
     public sealed class GameState : MonoBehaviour, IGame
     {
-        private const string SaveFileVersion = "1.0";
+        private const string SaveFileVersion = "1.1";
         private const float DefaultAutoSaveIntervalSeconds = 5f;
         private static readonly System.Random Random = new System.Random();
 
@@ -2363,7 +2363,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                    item.MinLevel == keyLevel &&
                    (item.Item.IsKey ||
                     item.Item.Skill != null && item.Item.Skill.Type == SkillType.Open ||
-                    string.Equals(item.Item.SkillId, "Knock", StringComparison.OrdinalIgnoreCase));
+                    string.Equals(item.Item.SkillId, "skill/base/knock", StringComparison.Ordinal));
         }
 
         private static bool IsItemMatch(ItemInstance item, string itemId)

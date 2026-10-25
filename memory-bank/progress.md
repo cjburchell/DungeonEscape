@@ -2,6 +2,8 @@
 
 ## Done
 
+- Campaign skill references: added stable IDs to 28 skills and converted authored spell/item effects, hero actions, editor selectors/validation, and runtime UI lookups. Save version 1.1 intentionally replaces compatibility work per user direction.
+
 - Campaign foundation: stable monster IDs, 13 migrated map encounter tables, ID-based editor references/validation, completed one-time data conversion, and rename/duplicate-name regression tests. See CAMPAIGNS.md for remaining phases.
 
 - CI stabilization: temporarily disabled the repeatedly failing `resharper-scan` job by default in

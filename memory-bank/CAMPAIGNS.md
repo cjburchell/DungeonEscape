@@ -112,3 +112,13 @@ These are proposed work packages, not completed features. Stable IDs should land
 - Remaining phase 1: consistent IDs for spells/skills and item references, name-based gameplay special cases, map IDs/object placement identity, explicit legacy-save mapping, and reusable validation/resolver infrastructure. Campaign manifests, selection, NPC catalogs, and save isolation are not implemented yet.
 
 - Follow-up: replaced initial numeric IDs with slugs based on current monster names, updating all encounter references. IDs remain permanent after this one-time conversion; subsequent display-name edits do not regenerate them.
+
+## Skill Reference IDs (2026-10-24)
+
+- Monster foundation was committed and pushed to origin/main as `9463052`.
+- Converted all 28 skill definitions to permanent `skill/base/<current-name-slug>` IDs and all authored spell/item effect references to those IDs. Runtime Setup and hero action lookup resolve IDs only; Rogue Sleight of Hand grants, lock checks, and skill icon lookup use IDs.
+- Editor skill forms show read-only IDs, add/duplicate assign fresh IDs, effect selectors display names plus IDs, and validation/schema checks require valid unique IDs. Duplicate display names are allowed for skills.
+- Added regression coverage for identical names, rename-safe item/spell/hero resolution, stale link clearing, and every checked-in spell/item effect reference.
+- User explicitly declined save compatibility work. No migration scripts or runtime save migration were retained; save format is now 1.1 and the existing unsupported-version archive policy applies to 1.0 saves.
+- Validation: solution build passed with zero warnings/errors; Core 221/221; Unity Edit Mode 16/16; Unity Play Mode 10/10.
+- Spell definition/preparation IDs and item definition references remain the next portions of phase 1, followed by map/NPC identity and campaign loading.

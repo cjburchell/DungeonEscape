@@ -1,5 +1,6 @@
 [
     {
+        "Id": "skill/base/fire-bolt",
         "Name":  "Fire Bolt",
         "Targets":  "Single",
         "Type":  "Damage",
@@ -13,6 +14,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/sacred-flame",
         "Name":  "Sacred Flame",
         "Targets":  "Single",
         "Type":  "Damage",
@@ -27,6 +29,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/eldritch-blast",
         "Name":  "Eldritch Blast",
         "Targets":  "Single",
         "Type":  "Damage",
@@ -40,6 +43,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/vicious-mockery",
         "Name":  "Vicious Mockery",
         "Targets":  "Single",
         "Type":  "Damage",
@@ -53,6 +57,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/sleep",
         "Name":  "Sleep",
         "Targets":  "Single",
         "Type":  "RemoveCondition",
@@ -67,6 +72,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/silence",
         "Name":  "Silence",
         "Targets":  "Group",
         "Type":  "RemoveCondition",
@@ -80,6 +86,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/protection-from-evil-and-good",
         "Name":  "Protection from Evil and Good",
         "Targets":  "Single",
         "Type":  "Disengage",
@@ -90,6 +97,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/sleight-of-hand",
         "Name":  "Sleight of Hand",
         "Targets":  "Single",
         "Type":  "Steal",
@@ -101,6 +109,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/knock",
         "Name":  "Knock",
         "Targets":  "Object",
         "Type":  "Open",
@@ -111,6 +120,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/burning-hands",
         "Name":  "Burning Hands",
         "Targets":  "Single",
         "Type":  "Damage",
@@ -124,6 +134,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/fireball",
         "Name":  "Fireball",
         "Targets":  "Group",
         "Type":  "Damage",
@@ -137,6 +148,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/lightning-bolt",
         "Name":  "Lightning Bolt",
         "Targets":  "Single",
         "Type":  "Damage",
@@ -151,6 +163,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/chain-lightning",
         "Name":  "Chain Lightning",
         "Targets":  "Group",
         "Type":  "Damage",
@@ -165,6 +178,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/cure-wounds",
         "Name":  "Cure Wounds",
         "Targets":  "Single",
         "Type":  "Heal",
@@ -178,6 +192,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/word-of-recall",
         "Name":  "Word of Recall",
         "Targets":  "Group",
         "Type":  "Outside",
@@ -189,6 +204,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/teleportation-circle",
         "Name":  "Teleportation Circle",
         "Targets":  "Group",
         "Type":  "Return",
@@ -200,6 +216,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/revivify",
         "Name":  "Revivify",
         "Targets":  "Single",
         "Type":  "Revive",
@@ -212,6 +229,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/raise-dead",
         "Name":  "Raise Dead",
         "Targets":  "Single",
         "Type":  "Revive",
@@ -223,6 +241,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/mass-healing-word",
         "Name":  "Mass Healing Word",
         "Targets":  "Single",
         "Type":  "Heal",
@@ -234,6 +253,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/mass-cure-wounds",
         "Name":  "Mass Cure Wounds",
         "Targets":  "Group",
         "Type":  "Heal",
@@ -247,6 +267,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/mass-heal",
         "Name":  "Mass Heal",
         "Targets":  "Group",
         "Type":  "Heal",
@@ -258,6 +279,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/lesser-restoration",
         "Name":  "Lesser Restoration",
         "Targets":  "Single",
         "Type":  "RemoveCondition",
@@ -269,6 +291,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/haste",
         "Name":  "Haste",
         "Targets":  "Group",
         "Type":  "AbilityModifier",
@@ -284,6 +307,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/shield-of-faith",
         "Name":  "Shield of Faith",
         "Targets":  "Single",
         "Type":  "AbilityModifier",
@@ -299,6 +323,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/aid",
         "Name":  "Aid",
         "Targets":  "Group",
         "Type":  "AbilityModifier",
@@ -314,6 +339,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/bestow-curse",
         "Name":  "Bestow Curse",
         "Targets":  "Single",
         "Type":  "Decrease",
@@ -329,6 +355,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/slow",
         "Name":  "Slow",
         "Targets":  "Group",
         "Type":  "Decrease",
@@ -344,6 +371,7 @@
         "IsPositive":  true
     },
     {
+        "Id": "skill/base/confusion",
         "Name":  "Confusion",
         "Targets":  "Single",
         "Type":  "RemoveCondition",

@@ -33,7 +33,7 @@ else
                 }
                 @foreach (var skill in DataSources.Skills)
                 {
-                    <option value="@skill">@skill</option>
+                    <option value="@skill">@DataSources.SkillLabel(skill)</option>
                 }
             </select>
         </div>

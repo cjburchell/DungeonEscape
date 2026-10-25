@@ -106,7 +106,7 @@ namespace Redpoint.DungeonEscape.Data
 
         public void Setup(IEnumerable<Skill> skills)
         {
-            Skill = skills == null ? null : skills.FirstOrDefault(i => i.Name == SkillId);
+            Skill = skills == null ? null : skills.FirstOrDefault(i => !string.IsNullOrEmpty(SkillId) && i.Id == SkillId);
         }
 
         public int GetAttribute(StatType statType)

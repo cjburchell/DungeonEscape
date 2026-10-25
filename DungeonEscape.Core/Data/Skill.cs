@@ -41,6 +41,7 @@ namespace Redpoint.DungeonEscape.Data
             SkillType.Steal
         };
 
+        public string Id { get; set; }
         public string Name { get; set; }
         [JsonConverter(typeof(StringEnumConverter))] public Target Targets { get; set; }
         public int MaxTargets { get; set; }

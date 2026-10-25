@@ -1,6 +1,6 @@
 [
   {
-    "Skill": "Fire Bolt",
+    "Skill": "skill/base/fire-bolt",
     "ImageId": 57,
     "SpellLevel": 0,
     "School": "Evocation",
@@ -13,7 +13,7 @@
     "Name": "Fire Bolt"
   },
   {
-    "Skill": "Sacred Flame",
+    "Skill": "skill/base/sacred-flame",
     "ImageId": 54,
     "SpellLevel": 0,
     "School": "Evocation",
@@ -25,7 +25,7 @@
     "Name": "Sacred Flame"
   },
   {
-    "Skill": "Eldritch Blast",
+    "Skill": "skill/base/eldritch-blast",
     "ImageId": 58,
     "SpellLevel": 0,
     "School": "Evocation",
@@ -37,7 +37,7 @@
     "Name": "Eldritch Blast"
   },
   {
-    "Skill": "Vicious Mockery",
+    "Skill": "skill/base/vicious-mockery",
     "ImageId": 62,
     "SpellLevel": 0,
     "School": "Enchantment",
@@ -49,7 +49,7 @@
     "Name": "Vicious Mockery"
   },
   {
-    "Skill": "Cure Wounds",
+    "Skill": "skill/base/cure-wounds",
     "ImageId": 54,
     "SpellLevel": 1,
     "School": "Abjuration",
@@ -63,7 +63,7 @@
     "Name": "Cure Wounds"
   },
   {
-    "Skill": "Word of Recall",
+    "Skill": "skill/base/word-of-recall",
     "ImageId": 344,
     "SpellLevel": 6,
     "School": "Conjuration",
@@ -75,7 +75,7 @@
     "Name": "Word of Recall"
   },
   {
-    "Skill": "Burning Hands",
+    "Skill": "skill/base/burning-hands",
     "ImageId": 1,
     "SpellLevel": 1,
     "School": "Evocation",
@@ -88,7 +88,7 @@
     "Name": "Burning Hands"
   },
   {
-    "Skill": "Lightning Bolt",
+    "Skill": "skill/base/lightning-bolt",
     "ImageId": 8,
     "SpellLevel": 3,
     "School": "Evocation",
@@ -101,7 +101,7 @@
     "Name": "Lightning Bolt"
   },
   {
-    "Skill": "Fireball",
+    "Skill": "skill/base/fireball",
     "ImageId": 57,
     "SpellLevel": 3,
     "School": "Evocation",
@@ -114,7 +114,7 @@
     "Name": "Fireball"
   },
   {
-    "Skill": "Chain Lightning",
+    "Skill": "skill/base/chain-lightning",
     "ImageId": 50,
     "SpellLevel": 6,
     "School": "Evocation",
@@ -127,7 +127,7 @@
     "Name": "Chain Lightning"
   },
   {
-    "Skill": "Teleportation Circle",
+    "Skill": "skill/base/teleportation-circle",
     "ImageId": 220,
     "SpellLevel": 5,
     "School": "Conjuration",
@@ -141,7 +141,7 @@
     "Name": "Teleportation Circle"
   },
   {
-    "Skill": "Revivify",
+    "Skill": "skill/base/revivify",
     "ImageId": 53,
     "SpellLevel": 3,
     "School": "Necromancy",
@@ -154,7 +154,7 @@
     "Name": "Revivify"
   },
   {
-    "Skill": "Raise Dead",
+    "Skill": "skill/base/raise-dead",
     "ImageId": 53,
     "SpellLevel": 5,
     "School": "Necromancy",
@@ -168,7 +168,7 @@
     "Name": "Raise Dead"
   },
   {
-    "Skill": "Mass Healing Word",
+    "Skill": "skill/base/mass-healing-word",
     "ImageId": 54,
     "SpellLevel": 3,
     "School": "Abjuration",
@@ -180,7 +180,7 @@
     "Name": "Mass Healing Word"
   },
   {
-    "Skill": "Mass Cure Wounds",
+    "Skill": "skill/base/mass-cure-wounds",
     "ImageId": 54,
     "SpellLevel": 5,
     "School": "Abjuration",
@@ -193,7 +193,7 @@
     "Name": "Mass Cure Wounds"
   },
   {
-    "Skill": "Mass Heal",
+    "Skill": "skill/base/mass-heal",
     "ImageId": 54,
     "SpellLevel": 9,
     "School": "Abjuration",
@@ -205,7 +205,7 @@
     "Name": "Mass Heal"
   },
   {
-    "Skill": "Lesser Restoration",
+    "Skill": "skill/base/lesser-restoration",
     "ImageId": 54,
     "SpellLevel": 2,
     "School": "Abjuration",
@@ -219,7 +219,7 @@
     "Name": "Lesser Restoration"
   },
   {
-    "Skill": "Haste",
+    "Skill": "skill/base/haste",
     "ImageId": 60,
     "SpellLevel": 3,
     "School": "Transmutation",
@@ -232,7 +232,7 @@
     "Name": "Haste"
   },
   {
-    "Skill": "Shield of Faith",
+    "Skill": "skill/base/shield-of-faith",
     "ImageId": 56,
     "SpellLevel": 1,
     "School": "Abjuration",
@@ -245,7 +245,7 @@
     "Name": "Shield of Faith"
   },
   {
-    "Skill": "Aid",
+    "Skill": "skill/base/aid",
     "ImageId": 56,
     "SpellLevel": 2,
     "School": "Abjuration",
@@ -258,7 +258,7 @@
     "Name": "Aid"
   },
   {
-    "Skill": "Bestow Curse",
+    "Skill": "skill/base/bestow-curse",
     "ImageId": 58,
     "SpellLevel": 3,
     "School": "Necromancy",
@@ -272,7 +272,7 @@
     "Name": "Bestow Curse"
   },
   {
-    "Skill": "Sleep",
+    "Skill": "skill/base/sleep",
     "ImageId": 56,
     "SpellLevel": 1,
     "School": "Enchantment",
@@ -286,7 +286,7 @@
     "Name": "Sleep"
   },
   {
-    "Skill": "Silence",
+    "Skill": "skill/base/silence",
     "ImageId": 5,
     "SpellLevel": 2,
     "School": "Illusion",
@@ -299,7 +299,7 @@
     "Name": "Silence"
   },
   {
-    "Skill": "Slow",
+    "Skill": "skill/base/slow",
     "ImageId": 61,
     "SpellLevel": 3,
     "School": "Transmutation",
@@ -313,7 +313,7 @@
     "Name": "Slow"
   },
   {
-    "Skill": "Confusion",
+    "Skill": "skill/base/confusion",
     "ImageId": 62,
     "SpellLevel": 4,
     "School": "Enchantment",
@@ -327,7 +327,7 @@
     "Name": "Confusion"
   },
   {
-    "Skill": "Protection from Evil and Good",
+    "Skill": "skill/base/protection-from-evil-and-good",
     "ImageId": 220,
     "SpellLevel": 1,
     "School": "Abjuration",

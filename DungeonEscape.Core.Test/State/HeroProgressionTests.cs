@@ -61,7 +61,7 @@ namespace DungeonEscape.Core.Test.State
 
             hero.CheckLevelUp(CreateClassLevels(), CreateSpells(), out _);
 
-            Assert.Equal(new[] { "Knock" }, hero.Skills);
+            Assert.Equal(new[] { "skill/base/knock" }, hero.Skills);
             Assert.Equal(new[] { "Knock" }, hero.GetSkills(CreateSkills()).Select(skill => skill.Name).ToArray());
             Assert.Equal(new[] { "Cure Wounds" }, hero.GetSpells(CreateSpells()).Select(spell => spell.Name).ToArray());
         }
@@ -70,7 +70,7 @@ namespace DungeonEscape.Core.Test.State
         public void SetupCopiesDndSkillProficienciesWithoutGrantingLegacyClassSkills()
         {
             var hero = CreateHero();
-            hero.Skills = new List<string> { "Knock" };
+            hero.Skills = new List<string> { "skill/base/knock" };
 
             hero.Setup(new TestGame(CreateClassLevels()), generateItems: false);
 
@@ -151,7 +151,7 @@ namespace DungeonEscape.Core.Test.State
                 MaxMagic = 4,
                 Magic = 4,
                 Agility = 2,
-                Skills = new List<string> { "Knock" },
+                Skills = new List<string> { "skill/base/knock" },
                 Items = new List<ItemInstance>()
             };
         }
@@ -173,9 +173,9 @@ namespace DungeonEscape.Core.Test.State
         {
             return new List<Skill>
             {
-                new Skill { Name = "Knock" },
-                new Skill { Name = "Teleportation Circle" },
-                new Skill { Name = "Sleight of Hand" }
+                new Skill { Id = "skill/base/knock", Name = "Knock" },
+                new Skill { Id = "skill/base/teleportation-circle", Name = "Teleportation Circle" },
+                new Skill { Id = "skill/base/sleight-of-hand", Name = "Sleight of Hand" }
             };
         }
 

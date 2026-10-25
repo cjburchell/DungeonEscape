@@ -895,7 +895,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             var spell = GameDataCache.Current.Spells.FirstOrDefault(item =>
-                item != null && string.Equals(item.SkillId, skill.Name, StringComparison.OrdinalIgnoreCase));
+                item != null && string.Equals(item.SkillId, skill.Id, StringComparison.Ordinal));
             Sprite sprite;
             return UiAssetResolver.TryGetSpellSprite(spell, out sprite) ? sprite : null;
         }

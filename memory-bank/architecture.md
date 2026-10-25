@@ -135,3 +135,11 @@ Authored monster, skill, item, spell, quest, dialog, background, and map definit
 `Data/maps.json` is the map registry: each entry contains `Id`, `Name`, `AssetPath`, and optional `EncounterAssetPath`. Shared `MapCatalog` validates unique IDs/files and resolves IDs independently of filenames. Unity Loader and Game Editor use the registry. TMX WarpMap and saved map locations store canonical map IDs. Physical TMX/TSX paths remain unchanged, preserving relative tileset links; the build processor copies the Data folder including maps.json into StreamingAssets.
 
 The save format is 1.2 after this conversion. Per user instruction, prior-save migration is intentionally omitted; unsupported versions use the existing archive policy.
+
+## Campaign Runtime Context
+
+`Data/campaigns.json` lists manifest asset paths and the default campaign ID. The original manifest is `Data/campaigns/original/campaign.json` with ID `campaign/original/main`. It owns explicit narrative/item/map file paths, start map/spawn/coordinates, designated overworld, and its overworld encounter roster. Shared reusable definitions remain in existing files under the `base` namespace. Physical assets have not been relocated.
+
+Core `CampaignCatalog`, `CampaignContentLoader`, `CampaignContentResolver`, and `CampaignContentContext` validate ownership, ID uniqueness, references, files, starting location, maps, and encounters. Resolution clones definitions before linking effects. Unity `CampaignRuntime` builds the configured default context; Bootstrap publishes its data, Loader uses its map catalog, and runtime overworld checks use manifest metadata. Game Editor Save exports each indexed campaign's scoped item definitions to its declared item file.
+
+Only default-campaign startup is wired currently. Selection, persisted campaign identity, per-campaign quick/autosave ownership, live switching, and full campaign editor workflows are the next phases. Source Boot scene references are still present; the campaign content loader supersedes their narrative selection after base loading.

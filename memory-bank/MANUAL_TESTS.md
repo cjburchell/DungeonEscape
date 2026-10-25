@@ -1265,3 +1265,13 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 - [ ] Edit map encounter rows in Game Editor, save, and confirm they write the catalog's EncounterAssetPath rather than a path derived from the map ID.
 - [ ] Verify packaged Windows content includes Data/maps.json and resolves map/encounter assets.
 - [ ] Confirm unsupported 1.1 saves use the existing archive policy. No old-save migration is intended.
+
+## Campaign Manifest And Context (2026-10-24)
+
+- [ ] Start a new original game and confirm the manifest's `StartMapId` and named `StartSpawnId` take effect; if no named spawn is configured, confirm manifest coordinates are retained.
+- [ ] Confirm the original seashell/ship quests, NPC dialogs, quest items, keys, map warps, Outside/Return/Wings, and overworld transition behavior match the previous adventure.
+- [ ] Add a base monster outside the campaign's OverworldMonsterIds roster and confirm it does not appear in overworld encounters.
+- [ ] Edit an original campaign item in Game Editor, save/reopen, and confirm both the normal catalog and manifest item file reflect the change and runtime sees it.
+- [ ] Verify invalid manifest scope/start/spawn, missing files, wrong-campaign map references, and unresolved encounter monsters produce load failures without publishing a partial context.
+- [ ] Package a Windows build and verify the campaign index/manifests, maps, narrative, items, and encounters load from StreamingAssets.
+- [ ] Campaign selection and cross-campaign save/continue checks remain future work; this implementation starts the configured default campaign only.

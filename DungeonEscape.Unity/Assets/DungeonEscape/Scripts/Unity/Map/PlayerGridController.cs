@@ -212,7 +212,8 @@ namespace Redpoint.DungeonEscape.Unity.Map
             }
 
             WorldPosition spawnPosition;
-            if (mapView.TryGetFirstSpawnPosition(out spawnPosition))
+            if (!string.IsNullOrEmpty(CampaignRuntime.Campaign.StartSpawnId) &&
+                mapView.TryGetSpawnPosition(CampaignRuntime.Campaign.StartSpawnId, out spawnPosition))
             {
                 gameState.SetCurrentPosition(spawnPosition);
             }
@@ -542,7 +543,7 @@ namespace Redpoint.DungeonEscape.Unity.Map
             {
                 MapId = mapId,
                 SpawnId = warp.SpawnId,
-                UseSavedOverWorldPosition = mapId == "map/original/overworld" && string.IsNullOrEmpty(warp.SpawnId)
+                UseSavedOverWorldPosition = mapId == CampaignRuntime.Campaign.OverworldMapId && string.IsNullOrEmpty(warp.SpawnId)
             };
         }
 

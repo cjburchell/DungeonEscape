@@ -107,7 +107,10 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 TestMap = LoadTiledMap(testMapTmx, testMapAssetPath, "test map")
             };
 
-            Data.Link();
+            var context = CampaignRuntime.Initialize(Data);
+            Data = context.Data;
+            var startMapPath = context.Maps.Get(context.Campaign.StartMapId).AssetPath;
+            Data.TestMap = LoadTiledMap(null, startMapPath, "campaign start map");
             GameDataCache.Load(Data);
             var gameState = GameState.GetOrCreate();
             EnsureGameMenu();
@@ -121,7 +124,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 }
             }
 
-            ValidateTilesets(Data.TestMap, testMapAssetPath);
+            ValidateTilesets(Data.TestMap, startMapPath);
         }
 
         private IEnumerator Start()
@@ -153,6 +156,15 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 {
                     loadedItems.AddRange(items);
                 }
+            }
+
+            // Older boot scenes do not serialize every current item catalog field.
+            // Read the canonical files as well so base definitions are always complete.
+            foreach (var name in new[] { "customitems", "magicitems", "nonmagicitems", "weaponitems", "armoritems" })
+            {
+                var json = CampaignRuntime.ReadAsset("Assets/DungeonEscape/Data/" + name + ".json");
+                if (json == null) throw new InvalidOperationException("Missing shared item catalog: " + name);
+                loadedItems.AddRange(Newtonsoft.Json.JsonConvert.DeserializeObject<List<Item>>(json));
             }
 
             return loadedItems

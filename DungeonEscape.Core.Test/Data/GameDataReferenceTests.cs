@@ -14,6 +14,37 @@ namespace DungeonEscape.Core.Test.Data;
 public class GameDataReferenceTests
 {
     [Fact]
+    public void OriginalCampaignLoadsAndValidatesAllItsMapsAndContent()
+    {
+        var repo = FindRepositoryRoot();
+        var folder = Path.Combine(repo, "DungeonEscape.Unity", "Assets", "DungeonEscape", "Data");
+        var index = ReadJson<CampaignIndex>(Path.Combine(folder, "campaigns.json"));
+        string ReadAsset(string assetPath)
+        {
+            var path = Path.Combine(repo, "DungeonEscape.Unity", assetPath);
+            return File.Exists(path) ? File.ReadAllText(path) : null;
+        }
+        var catalog = new CampaignCatalog(index.Manifests.Select(path => JsonConvert.DeserializeObject<CampaignDefinition>(ReadAsset(path))), index.DefaultCampaignId);
+        var source = new DungeonEscapeDataSet
+        {
+            CustomItems = new[] { "customitems", "magicitems", "weaponitems", "armoritems", "nonmagicitems" }
+                .SelectMany(name => ReadJson<List<Item>>(Path.Combine(folder, name + ".json"))).GroupBy(item => item.Id).Select(group => group.First()).ToList(),
+            Monsters = ReadJson<List<Monster>>(Path.Combine(folder, "allmonsters.json")),
+            Skills = ReadJson<List<Skill>>(Path.Combine(folder, "skills.json")),
+            Spells = ReadJson<List<Spell>>(Path.Combine(folder, "spells.json")),
+            Backgrounds = ReadJson<List<BackgroundDefinition>>(Path.Combine(folder, "backgrounds.json"))
+        };
+        var context = CampaignContentLoader.Load(catalog.Default, CampaignContentResolver.ExtractBase(source), ReadAsset);
+        Assert.Equal("campaign/original/main", context.Campaign.Id);
+        Assert.Equal(23, context.Maps.Maps.Count);
+        Assert.Equal(3, context.Data.Quests.Count);
+        Assert.Equal(24, context.Data.Dialogs.Count);
+        Assert.Equal(48, context.OverworldMonsters.Count);
+        Assert.Contains(context.Data.CustomItems, item => item.Id == "item/base/iron-key");
+        Assert.Contains(context.Data.CustomItems, item => item.Id == "item/original/deed-to-the-ship");
+    }
+
+    [Fact]
     public void AuthoredContentGraphUsesCanonicalIdsAndExistingMaps()
     {
         var assetRoot = Path.Combine(FindRepositoryRoot(), "DungeonEscape.Unity", "Assets", "DungeonEscape");

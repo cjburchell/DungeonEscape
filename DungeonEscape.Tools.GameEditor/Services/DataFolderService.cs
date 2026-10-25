@@ -164,10 +164,32 @@ public sealed class DataFolderService
         SaveList(Path.Combine(FolderPath, SpeciesFileName), Species);
         SaveList(Path.Combine(FolderPath, BackgroundsFileName), Backgrounds);
         SaveObject(Path.Combine(FolderPath, NamesFileName), Names);
+        SaveCampaignItems();
         maps.SaveMaps(Maps, assetContext.MapDataDirectory);
 
         IsDirty = false;
         NotifyChanged();
+    }
+
+    private void SaveCampaignItems()
+    {
+        var indexPath = Path.Combine(FolderPath!, "campaigns.json");
+        if (!File.Exists(indexPath)) return;
+        var index = JsonConvert.DeserializeObject<CampaignIndex>(File.ReadAllText(indexPath))
+            ?? throw new InvalidDataException("Invalid campaign index.");
+        var definitions = index.Manifests.Select(path =>
+        {
+            if (!CampaignCatalog.IsDataAssetPath(path)) throw new InvalidDataException("Invalid campaign manifest path.");
+            var relative = path["Assets/DungeonEscape/Data/".Length..];
+            return JsonConvert.DeserializeObject<CampaignDefinition>(File.ReadAllText(Path.Combine(FolderPath!, relative)))!;
+        }).ToList();
+        var catalog = new CampaignCatalog(definitions, index.DefaultCampaignId);
+        foreach (var campaign in catalog.Campaigns)
+        {
+            var prefix = "item/" + CampaignCatalog.GetScope(campaign) + "/";
+            var relative = campaign.ItemsAssetPath["Assets/DungeonEscape/Data/".Length..];
+            SaveList(Path.Combine(FolderPath!, relative), Items.Where(item => item.Id != null && item.Id.StartsWith(prefix, StringComparison.Ordinal)).ToList());
+        }
     }
 
     /// <summary>Flag the project as having unsaved changes and notify listeners.</summary>

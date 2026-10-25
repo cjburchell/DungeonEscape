@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Dungeon Escape campaign manifest",
+  "type": "object",
+  "required": ["SchemaVersion", "Id", "Name", "ContentVersion", "StartMapId", "OverworldMapId", "MapsAssetPath", "ItemsAssetPath", "QuestsAssetPath", "DialogsAssetPath", "OverworldMonsterIds"],
+  "properties": {
+    "SchemaVersion": { "const": 1 },
+    "Id": { "type": "string", "pattern": "^campaign/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "Name": { "type": "string", "minLength": 1 },
+    "Description": { "type": "string" },
+    "ContentVersion": { "type": "string", "minLength": 1 },
+    "StartMapId": { "$ref": "#/$defs/mapId" },
+    "OverworldMapId": { "$ref": "#/$defs/mapId" },
+    "StartSpawnId": { "type": ["string", "null"] },
+    "StartColumn": { "type": "integer", "minimum": 0 },
+    "StartRow": { "type": "integer", "minimum": 0 },
+    "MapsAssetPath": { "$ref": "#/$defs/dataAsset" },
+    "ItemsAssetPath": { "$ref": "#/$defs/dataAsset" },
+    "MonstersAssetPath": { "$ref": "#/$defs/dataAsset" },
+    "QuestsAssetPath": { "$ref": "#/$defs/dataAsset" },
+    "DialogsAssetPath": { "$ref": "#/$defs/dataAsset" },
+    "OverworldMonsterIds": {
+      "type": "array", "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^monster/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$" }
+    }
+  },
+  "$defs": {
+    "mapId": { "type": "string", "pattern": "^map/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "dataAsset": { "type": "string", "pattern": "^Assets/DungeonEscape/Data/.+\\.json$" }
+  }
+}

@@ -21,10 +21,16 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
         {
             if (catalog == null)
             {
-                var path = UnityAssetPath.ToRuntimePath("Assets/DungeonEscape/Data/maps.json");
+                var path = UnityAssetPath.ToRuntimePath(CampaignRuntime.Campaign.MapsAssetPath);
                 catalog = new MapCatalog(Newtonsoft.Json.JsonConvert.DeserializeObject<List<MapDefinition>>(File.ReadAllText(path)));
             }
             return catalog.Get(idOrPath);
+        }
+
+        public static void UseCatalog(MapCatalog value)
+        {
+            catalog = value ?? throw new ArgumentNullException(nameof(value));
+            ClearCache();
         }
 
         public static LoadedMap Load(string mapAssetPath)

@@ -1,0 +1,7 @@
+{
+  "SchemaVersion": 1,
+  "DefaultCampaignId": "campaign/original/main",
+  "Manifests": [
+    "Assets/DungeonEscape/Data/campaigns/original/campaign.json"
+  ]
+}

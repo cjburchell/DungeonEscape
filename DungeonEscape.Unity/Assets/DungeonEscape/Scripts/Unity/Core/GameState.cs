@@ -21,15 +21,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
         private const float DefaultAutoSaveIntervalSeconds = 5f;
         private static readonly System.Random Random = new System.Random();
 
-        [SerializeField]
-        private string defaultMapId = "map/original/overworld";
-
-        [SerializeField]
-        private int defaultColumn = 30;
-
-        [SerializeField]
-        private int defaultRow = 25;
-
         public GameSave CurrentSave { get; private set; }
         public GameFile GameFile { get; private set; }
         public bool ShouldApplyInitialSpawn { get; private set; }
@@ -105,7 +96,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
         {
             EnsureInitialized();
             Party.CurrentMapId = Loader.NormalizeMapId(mapId);
-            Party.CurrentMapIsOverWorld = Party.CurrentMapId == "map/original/overworld";
+            Party.CurrentMapIsOverWorld = Party.CurrentMapId == CampaignRuntime.Campaign.OverworldMapId;
             MarkDirty();
         }
 
@@ -113,7 +104,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
         {
             EnsureInitialized();
 
-            var normalizedMapId = Loader.NormalizeMapId(string.IsNullOrEmpty(mapId) ? "map/original/overworld" : mapId);
+            var normalizedMapId = Loader.NormalizeMapId(string.IsNullOrEmpty(mapId) ? CampaignRuntime.Campaign.OverworldMapId : mapId);
             SetCurrentMap(normalizedMapId);
 
             var mapView = FindAnyObjectByType<View>();
@@ -154,7 +145,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             {
                 MapId = mapId,
                 SpawnId = warp.SpawnId,
-                UseSavedOverWorldPosition = mapId == "map/original/overworld" && string.IsNullOrEmpty(warp.SpawnId)
+                UseSavedOverWorldPosition = mapId == CampaignRuntime.Campaign.OverworldMapId && string.IsNullOrEmpty(warp.SpawnId)
             };
         }
 
@@ -199,7 +190,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             EnsureInitialized();
             var normalizedMapId = Loader.NormalizeMapId(mapId);
             if (string.IsNullOrEmpty(normalizedMapId) ||
-                string.Equals(normalizedMapId, "map/original/overworld", StringComparison.OrdinalIgnoreCase))
+                string.Equals(normalizedMapId, CampaignRuntime.Campaign.OverworldMapId, StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
@@ -1663,7 +1654,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 RecordVisitedLocation(sourceMapId, Party.CurrentPosition.Value);
             }
 
-            SetMap("map/original/overworld", null, Party.OverWorldPosition);
+            SetMap(CampaignRuntime.Campaign.OverworldMapId, null, Party.OverWorldPosition);
             NotifySaveLoaded();
             SaveAfterMapTransitionIfNeeded(sourceMapId, Party.CurrentMapId);
             return caster.Name + " casts " + spell.Name + ".";
@@ -1731,7 +1722,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 RecordVisitedLocation(sourceMapId, Party.CurrentPosition.Value);
             }
 
-            SetMap("map/original/overworld", null, Party.OverWorldPosition);
+            SetMap(CampaignRuntime.Campaign.OverworldMapId, null, Party.OverWorldPosition);
             ConsumeUsedItem(source, item);
             MarkDirty();
             NotifySaveLoaded();
@@ -2911,10 +2902,10 @@ namespace Redpoint.DungeonEscape.Unity.Core
             var party = new Party
             {
                 PlayerName = playerName,
-                CurrentMapId = Loader.NormalizeMapId(defaultMapId),
-                CurrentPosition = new WorldPosition(defaultColumn, defaultRow)
+                CurrentMapId = Loader.NormalizeMapId(CampaignRuntime.Campaign.StartMapId),
+                CurrentPosition = new WorldPosition(CampaignRuntime.Campaign.StartColumn, CampaignRuntime.Campaign.StartRow)
             };
-            party.CurrentMapIsOverWorld = party.CurrentMapId == "map/original/overworld";
+            party.CurrentMapIsOverWorld = party.CurrentMapId == CampaignRuntime.Campaign.OverworldMapId;
             party.OverWorldPosition = party.CurrentPosition.Value;
             party.Members.Add(CreateHero(party.PlayerName, playerClass, gender, species, background, 1, true, spriteFrameIndex, abilityScores, skillProficiencies));
 
@@ -3427,8 +3418,8 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return false;
             }
 
-            return string.Equals(source, "map/original/overworld", StringComparison.OrdinalIgnoreCase) ||
-                   string.Equals(target, "map/original/overworld", StringComparison.OrdinalIgnoreCase);
+            return string.Equals(source, CampaignRuntime.Campaign.OverworldMapId, StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(target, CampaignRuntime.Campaign.OverworldMapId, StringComparison.OrdinalIgnoreCase);
         }
 
         private static GameFile LoadGameFile()
@@ -3542,9 +3533,9 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return new List<RandomMonster>();
             }
 
-            if (string.Equals(mapId, "map/original/overworld", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(mapId, CampaignRuntime.Campaign.OverworldMapId, StringComparison.OrdinalIgnoreCase))
             {
-                return EncounterRules.CreateOverworldRandomMonsters(data.Monsters);
+                return EncounterRules.CreateOverworldRandomMonsters(CampaignRuntime.Current == null ? data.Monsters : CampaignRuntime.Current.OverworldMonsters);
             }
 
             var assetPath = Loader.GetMapDefinition(mapId).EncounterAssetPath;

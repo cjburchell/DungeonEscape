@@ -92,6 +92,14 @@ namespace Redpoint.DungeonEscape.Unity.Core
             }
 
             startupComplete = true;
+            if (CampaignRuntime.Catalog.Campaigns.Count == 0)
+            {
+                Data = new DungeonEscapeDataSet();
+                CampaignRuntime.Initialize(Data);
+                GameState.GetOrCreate();
+                EnsureTitleMenu();
+                return;
+            }
             Data = new DungeonEscapeDataSet
             {
                 CustomItems = LoadCustomItems(questItemsJson, magicItemsJson, nonMagicItemsJson, weaponItemsJson, armorItemsJson),
@@ -120,7 +128,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             {
                 if (gameState.HasQuickSave())
                 {
-                    gameState.LoadQuick();
+                    gameState.LoadQuick(true);
                 }
             }
 

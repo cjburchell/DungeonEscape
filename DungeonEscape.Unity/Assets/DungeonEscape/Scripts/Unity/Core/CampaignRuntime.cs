@@ -12,6 +12,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
     public static class CampaignRuntime
     {
         private static CampaignCatalog catalog;
+        private static DungeonEscapeDataSet sharedData;
         public static CampaignContentContext Current { get; private set; }
         public static CampaignDefinition Campaign => Current == null ? Catalog.Default : Current.Campaign;
 
@@ -35,11 +36,39 @@ namespace Redpoint.DungeonEscape.Unity.Core
         public static CampaignContentContext Initialize(DungeonEscapeDataSet source)
         {
             var shared = CampaignContentResolver.ExtractBase(source);
-            var candidate = CampaignContentLoader.Load(Catalog.Default, shared, ReadAsset);
-            // Publish only after every definition, map, and reference has validated.
-            Loader.UseCatalog(candidate.Maps);
-            Current = candidate;
+            if (Catalog.Campaigns.Count == 0)
+            {
+                sharedData = shared;
+                Current = null;
+                Loader.UseCatalog(new MapCatalog(new MapDefinition[0]));
+                GameDataCache.Load(shared);
+                return null;
+            }
+            var candidate = LoadCandidate(Catalog.Default, shared);
+            sharedData = shared;
+            Activate(candidate);
             return candidate;
+        }
+
+        public static CampaignContentContext Prepare(string campaignId)
+        {
+            if (sharedData == null) throw new InvalidOperationException("Game content has not initialized yet.");
+            return LoadCandidate(Catalog.Get(campaignId), sharedData);
+        }
+
+        private static CampaignContentContext LoadCandidate(CampaignDefinition campaign, DungeonEscapeDataSet shared)
+        {
+            var candidate = CampaignContentLoader.Load(campaign, shared, ReadAsset);
+            candidate.Data.TestMap = TiledMapInfo.Parse(ReadRequired(candidate.Maps.Get(campaign.StartMapId).AssetPath));
+            return candidate;
+        }
+
+        public static void Activate(CampaignContentContext candidate)
+        {
+            if (candidate == null) throw new ArgumentNullException(nameof(candidate));
+            Loader.UseCatalog(candidate.Maps);
+            GameDataCache.Load(candidate.Data);
+            Current = candidate;
         }
 
         public static string ReadAsset(string assetPath)

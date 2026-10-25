@@ -223,6 +223,7 @@ namespace Redpoint.DungeonEscape.Unity.Map
 
         private void Update()
         {
+            if (CampaignRuntime.Catalog.Campaigns.Count == 0) return;
             if (GameMenu.IsOpen)
             {
                 return;

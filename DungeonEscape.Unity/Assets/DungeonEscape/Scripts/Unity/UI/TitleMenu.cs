@@ -45,6 +45,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private static bool useToolkitPreview;
 
         private readonly TitleViewModel viewModel = new TitleViewModel();
+        private CampaignContentContext pendingCampaign;
+        private string titleError;
+        private Vector2 campaignScroll;
         [SerializeField] private bool showToolkitPreview;
         private GameState gameState;
         private UiSettings uiSettings;
@@ -121,6 +124,10 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 {
                     case TitleMode.Load:
                         viewModel.ShowLoadMenu();
+                        break;
+                    case TitleMode.Campaign:
+                        viewModel.ShowCampaignMenu();
+                        campaignScroll = Vector2.zero;
                         break;
                     case TitleMode.Create:
                         viewModel.ShowCreateMenu();
@@ -273,10 +280,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             if (InputManager.GetCommandDown(InputCommand.Cancel))
             {
-                if (mode == TitleMode.Load || mode == TitleMode.Create)
+                if (mode == TitleMode.Load || mode == TitleMode.Create || mode == TitleMode.Campaign)
                 {
                     UiControls.PlayConfirmSound();
-                    ShowMainMenu();
+                    if (mode == TitleMode.Create) ActivateCreateBackAction();
+                    else ShowMainMenu();
                 }
             }
             else if (GetConfirmDown())
@@ -309,6 +317,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
             try
             {
                 var scale = GetPixelScale();
+                DrawTitleError(scale);
+                if (mode == TitleMode.Campaign)
+                {
+                    HideToolkitPreview();
+                    DrawCampaignMenuStandalone(scale);
+                    return;
+                }
                 if (mode == TitleMode.Main)
                 {
                     DrawMainMenuStandalone(scale);
@@ -461,6 +476,40 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
                 GUI.enabled = previousEnabled;
             }
+        }
+
+        private void DrawTitleError(float scale)
+        {
+            if (string.IsNullOrEmpty(titleError)) return;
+            GUI.Label(new Rect(24f * scale, Screen.height - 78f * scale, Screen.width - 48f * scale, 66f * scale),
+                titleError, new GUIStyle(labelStyle) { alignment = TextAnchor.MiddleCenter, wordWrap = true });
+        }
+
+        private void DrawCampaignMenuStandalone(float scale)
+        {
+            var width = Mathf.Min(620f * scale, Screen.width - 48f * scale);
+            var height = Mathf.Min(430f * scale, Screen.height - 160f * scale);
+            var panel = new Rect((Screen.width - width) / 2f, Mathf.Max(20f * scale, (Screen.height - height) / 2f), width, height);
+            GUI.Box(panel, GUIContent.none, panelStyle);
+            GUILayout.BeginArea(new Rect(panel.x + 18f * scale, panel.y + 14f * scale, panel.width - 36f * scale, panel.height - 28f * scale));
+            GUILayout.Label("Choose Campaign", titleStyle);
+            if (viewModel.Campaigns.Count == 0)
+                GUILayout.Label("No campaigns are installed. Install a campaign to start a new quest.", labelStyle);
+            campaignScroll = GUILayout.BeginScrollView(campaignScroll, GUILayout.ExpandHeight(true));
+            for (var i = 0; i < viewModel.Campaigns.Count; i++)
+            {
+                var campaign = viewModel.Campaigns[i];
+                if (UiControls.Button(campaign.Name + "\n" + campaign.Description, selectedIndex == i, uiTheme,
+                        GUILayout.Height(72f * scale)) && !waitingForConfirmRelease)
+                {
+                    selectedIndex = i;
+                    ChooseCampaign(i);
+                }
+            }
+            GUILayout.EndScrollView();
+            if (UiControls.Button("Back", selectedIndex == viewModel.Campaigns.Count, uiTheme, GUILayout.Height(34f * scale)) && !waitingForConfirmRelease)
+                ShowMainMenu();
+            GUILayout.EndArea();
         }
 
         private void DrawLoadMenuStandalone(float scale)
@@ -1622,7 +1671,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (createStep == 0)
             {
-                ShowMainMenu();
+                pendingCampaign = null;
+                if (viewModel.Campaigns.Count > 1) mode = TitleMode.Campaign;
+                else ShowMainMenu();
+                WaitForConfirmRelease();
+                ResetNavigationRepeat();
             }
             else if (createStep == 1)
             {
@@ -1936,6 +1989,21 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void HandleNavigation()
         {
+            if (mode == TitleMode.Campaign)
+            {
+                var move = GetMenuMoveY();
+                SetSelectedIndex(viewModel.GetCampaignNavigationIndex(move));
+                if (move != 0 && selectedIndex < viewModel.Campaigns.Count)
+                {
+                    var scale = GetPixelScale();
+                    var rowHeight = 76f * scale;
+                    var viewportHeight = Mathf.Max(rowHeight, Mathf.Min(430f * scale, Screen.height - 160f * scale) - 110f * scale);
+                    var rowY = selectedIndex * rowHeight;
+                    if (rowY < campaignScroll.y) campaignScroll.y = rowY;
+                    else if (rowY + rowHeight > campaignScroll.y + viewportHeight) campaignScroll.y = rowY + rowHeight - viewportHeight;
+                }
+                return;
+            }
             if (mode == TitleMode.Load)
             {
                 HandleLoadNavigation();
@@ -2045,6 +2113,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ActivateSelected()
         {
+            if (mode == TitleMode.Campaign)
+            {
+                if (selectedIndex >= viewModel.Campaigns.Count) ShowMainMenu();
+                else ChooseCampaign(selectedIndex);
+                return;
+            }
             if (mode == TitleMode.Load)
             {
                 var slots = gameState == null ? new List<GameSave>() : gameState.GetManualSaveSlots().ToList();
@@ -2356,14 +2430,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ContinueGame()
         {
-            if (gameState != null && gameState.LoadQuick())
-            {
-                Close();
-            }
+            if (gameState != null && gameState.LoadQuick(true)) Close();
+            else titleError = gameState == null ? "Game data is unavailable." : gameState.LastLoadError;
         }
 
         private void ShowLoadMenu()
         {
+            titleError = null;
             mode = TitleMode.Load;
             selectedIndex = 0;
             WaitForConfirmRelease();
@@ -2372,19 +2445,49 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ShowCreateMenu()
         {
-            mode = TitleMode.Create;
-            selectedIndex = 0;
-            createStep = 0;
-            EnsureCreatePlayerName();
-            ApplyDefaultImageForCreateClass();
-            ResetCreateBuildChoices();
-            RerollCreatePreviewHero();
+            titleError = null;
+            pendingCampaign = null;
+            campaignScroll = Vector2.zero;
+            viewModel.BeginNewQuest(CampaignRuntime.Catalog.Campaigns);
+            if (viewModel.Mode == TitleMode.Create) PrepareCreateCampaign(viewModel.SelectedCampaignId);
+            WaitForConfirmRelease();
+            ResetNavigationRepeat();
+        }
+
+        private void ChooseCampaign(int index)
+        {
+            viewModel.SelectCampaign(index);
+            PrepareCreateCampaign(viewModel.SelectedCampaignId);
+        }
+
+        private void PrepareCreateCampaign(string campaignId)
+        {
+            try
+            {
+                pendingCampaign = CampaignRuntime.Prepare(campaignId);
+                titleError = null;
+                mode = TitleMode.Create;
+                selectedIndex = 0;
+                createStep = 0;
+                EnsureCreatePlayerName();
+                ApplyDefaultImageForCreateClass();
+                ResetCreateBuildChoices();
+                RerollCreatePreviewHero();
+            }
+            catch (Exception exception)
+            {
+                pendingCampaign = null;
+                mode = TitleMode.Campaign;
+                titleError = "Could not open this campaign: " + exception.Message;
+            }
             WaitForConfirmRelease();
             ResetNavigationRepeat();
         }
 
         private void ShowMainMenu()
         {
+            pendingCampaign = null;
+            titleError = null;
             mode = TitleMode.Main;
             selectedIndex = 0;
             WaitForConfirmRelease();
@@ -2393,29 +2496,27 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void StartCreatedGame()
         {
-            if (gameState != null)
+            if (gameState == null || pendingCampaign == null) return;
+            try
             {
                 EnsureCreateBuildChoices();
                 gameState.RestartNewGame(
-                    createPlayerName,
-                    createPlayerClass,
-                    createPlayerGender,
-                    createPlayerSpecies,
-                    createPlayerBackground,
-                    GetCreatePlayerSpriteFrameIndex(),
-                    GetCreateFinalAbilityScores(),
-                    createSkillProficiencies);
+                    createPlayerName, createPlayerClass, createPlayerGender, createPlayerSpecies,
+                    createPlayerBackground, GetCreatePlayerSpriteFrameIndex(), GetCreateFinalAbilityScores(),
+                    createSkillProficiencies, pendingCampaign);
+                pendingCampaign = null;
+                Close();
             }
-
-            Close();
+            catch (Exception exception)
+            {
+                titleError = "Could not start this campaign: " + exception.Message;
+            }
         }
 
         private void TryLoadSlot(int slotIndex)
         {
-            if (gameState != null && gameState.LoadManual(slotIndex))
-            {
-                Close();
-            }
+            if (gameState != null && gameState.LoadManual(slotIndex)) Close();
+            else titleError = gameState == null ? "Game data is unavailable." : gameState.LastLoadError;
         }
 
         private void DeleteSlot(int slotIndex)

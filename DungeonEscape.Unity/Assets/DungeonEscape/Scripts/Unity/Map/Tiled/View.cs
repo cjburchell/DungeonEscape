@@ -74,7 +74,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             transform.position = Vector3.zero;
             ClearRenderedChildren();
             rendererPool = new SpriteRendererPool(transform);
-            RenderPreview();
+            if (CampaignRuntime.Catalog.Campaigns.Count > 0) RenderPreview();
         }
 
         private void LateUpdate()
@@ -274,7 +274,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
 
         public string CurrentMapId
         {
-            get { return currentMap == null ? Loader.NormalizeMapId(mapAssetPath) : Loader.NormalizeMapId(currentMap.AssetPath); }
+            get { return CampaignRuntime.Catalog.Campaigns.Count == 0 ? null : currentMap == null ? Loader.NormalizeMapId(mapAssetPath) : Loader.NormalizeMapId(currentMap.AssetPath); }
         }
 
         public void UpdateNpcTile(NpcController npc, int oldColumn, int oldRow, int newColumn, int newRow)

@@ -4,6 +4,7 @@ namespace Redpoint.DungeonEscape.ViewModels
     {
         Main,
         Load,
-        Create
+        Create,
+        Campaign
     }
 }

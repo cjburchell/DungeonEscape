@@ -1275,3 +1275,14 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 - [ ] Verify invalid manifest scope/start/spawn, missing files, wrong-campaign map references, and unresolved encounter monsters produce load failures without publishing a partial context.
 - [ ] Package a Windows build and verify the campaign index/manifests, maps, narrative, items, and encounters load from StreamingAssets.
 - [ ] Campaign selection and cross-campaign save/continue checks remain future work; this implementation starts the configured default campaign only.
+
+## Campaign Selection And Save Isolation (2026-10-24)
+
+- [ ] With one installed campaign, New Quest enters character creation directly. With two valid authored campaigns, verify names/descriptions, mouse and keyboard/gamepad selection, scrolling, and Back/Cancel from creation to the chooser.
+- [ ] With an empty manifest index, verify the title still opens and New Quest explains that no campaigns are installed. Continue/load of an orphan save should report missing campaign data without changing the session.
+- [ ] Start campaign A, return to title, choose B, then cancel creation. Confirm A's party, map state, active context, and saves remain intact.
+- [ ] Start and quick-save A and B. Continue should load the most recent quick save and its campaign; in-game quick load should restore only the current campaign. Saving A again must preserve B's quick save.
+- [ ] Save both campaigns manually and verify campaign labels, loading the required content before maps/quests/dialogs, and retained map object/inventory/quest state. Confirm playing after load does not mutate the original manual slot until explicitly overwritten.
+- [ ] Remove a saved campaign from the index or change its ContentVersion. Failed loading should display a reason and preserve the currently active context/save and saved file.
+- [ ] Confirm 1.2 saves use the existing archive policy and a new 1.3 game starts without migration.
+- [ ] Perform an authored second-campaign playthrough and packaged Windows validation. Automated chooser coverage currently uses temporary in-memory campaign metadata; a second shipped adventure is not included yet.

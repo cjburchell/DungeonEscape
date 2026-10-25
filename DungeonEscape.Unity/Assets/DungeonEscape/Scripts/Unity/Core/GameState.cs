@@ -17,11 +17,12 @@ namespace Redpoint.DungeonEscape.Unity.Core
 {
     public sealed class GameState : MonoBehaviour, IGame
     {
-        private const string SaveFileVersion = "1.2";
+        private const string SaveFileVersion = "1.3";
         private const float DefaultAutoSaveIntervalSeconds = 5f;
         private static readonly System.Random Random = new System.Random();
 
         public GameSave CurrentSave { get; private set; }
+        public string LastLoadError { get; private set; }
         public GameFile GameFile { get; private set; }
         public bool ShouldApplyInitialSpawn { get; private set; }
         public static bool AutoSaveBlocked { get; set; }
@@ -58,6 +59,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private void Update()
         {
+            if (CurrentSave == null || TitleMenu.IsOpen || SplashScreen.IsVisible) return;
             if (TitleMenu.IsOpen)
             {
                 return;
@@ -83,13 +85,10 @@ namespace Redpoint.DungeonEscape.Unity.Core
             }
 
             GameFile = LoadGameFile();
-            CurrentSave = GetQuickSave(GameFile);
-            if (!IsUsableSave(CurrentSave))
-            {
-                CurrentSave = CreateDefaultSave();
-                ShouldApplyInitialSpawn = true;
-                UpsertQuickSave(CurrentSave);
-            }
+            if (CampaignRuntime.Catalog.Campaigns.Count == 0) return;
+            // Title-screen preview is transient; Continue restores its campaign explicitly.
+            CurrentSave = CreateDefaultSave();
+            ShouldApplyInitialSpawn = true;
         }
 
         public void SetCurrentMap(string mapId)
@@ -2708,16 +2707,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return false;
             }
 
-            CurrentSave = save;
-            ShouldApplyInitialSpawn = false;
-            saveDirty = false;
-            autoSaveCountdown = 0f;
-            if (SaveLoaded != null)
-            {
-                SaveLoaded(CurrentSave);
-            }
-
-            return true;
+            return TryRestoreSave(save);
         }
 
         public bool DeleteManual(int slotIndex)
@@ -2763,26 +2753,50 @@ namespace Redpoint.DungeonEscape.Unity.Core
             autoSaveCountdown = 0f;
         }
 
-        public bool LoadQuick()
+        public bool LoadQuick(bool mostRecentCampaign = false)
         {
             GameFile = LoadGameFile();
-            var quickSave = GetQuickSave(GameFile);
+            var quickSave = CampaignSaveRules.GetQuickSave(GameFile, mostRecentCampaign ? null : CampaignRuntime.Campaign.Id);
             if (!IsUsableSave(quickSave))
             {
-                Debug.LogWarning("No quick save found.");
+                LastLoadError = "There is no quick save for this campaign.";
                 return false;
             }
 
-            CurrentSave = quickSave;
+            return TryRestoreSave(quickSave);
+        }
+
+        private bool TryRestoreSave(GameSave save)
+        {
+            CampaignContentContext candidate;
+            GameSave restored;
+            try
+            {
+                candidate = CampaignRuntime.Prepare(save.CampaignId);
+                CampaignSaveRules.Validate(save, candidate);
+                restored = CloneGameSave(save);
+                restored.CampaignName = candidate.Campaign.Name;
+            }
+            catch (Exception exception)
+            {
+                LastLoadError = "Could not load " + (save.CampaignName ?? save.CampaignId ?? "this campaign") + ": " + exception.Message;
+                return false;
+            }
+            ActivateCampaign(candidate);
+            CurrentSave = restored;
             ShouldApplyInitialSpawn = false;
             saveDirty = false;
             autoSaveCountdown = 0f;
-            if (SaveLoaded != null)
-            {
-                SaveLoaded(CurrentSave);
-            }
-
+            LastLoadError = null;
+            NotifySaveLoaded();
             return true;
+        }
+
+        private void ActivateCampaign(CampaignContentContext candidate)
+        {
+            CampaignRuntime.Activate(candidate);
+            randomMonsterCache.Clear();
+            nameGenerator = null;
         }
 
         public bool HasQuickSave()
@@ -2823,9 +2837,12 @@ namespace Redpoint.DungeonEscape.Unity.Core
             string background,
             int? spriteFrameIndex,
             int[] abilityScores,
-            IEnumerable<string> skillProficiencies)
+            IEnumerable<string> skillProficiencies,
+            CampaignContentContext campaign = null)
         {
+            var candidate = campaign ?? CampaignRuntime.Prepare(CampaignRuntime.Campaign.Id);
             GameFile = LoadGameFile();
+            ActivateCampaign(candidate);
             CurrentSave = CreateDefaultSave(playerName, playerClass, gender, species, background, spriteFrameIndex, abilityScores, skillProficiencies);
             CurrentSave.IsQuick = false;
             ShouldApplyInitialSpawn = true;
@@ -2911,6 +2928,9 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             return new GameSave
             {
+                CampaignId = CampaignRuntime.Campaign.Id,
+                CampaignName = CampaignRuntime.Campaign.Name,
+                CampaignContentVersion = CampaignRuntime.Campaign.ContentVersion,
                 Party = party,
                 IsQuick = true,
                 Time = DateTime.Now
@@ -3188,17 +3208,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 GameFile = new GameFile { Version = SaveFileVersion };
             }
 
-            var existing = GetQuickSave(GameFile);
-            if (existing != null && !ReferenceEquals(existing, save))
-            {
-                GameFile.Saves.Remove(existing);
-            }
-
-            save.IsQuick = true;
-            if (!GameFile.Saves.Contains(save))
-            {
-                GameFile.Saves.Add(save);
-            }
+            CampaignSaveRules.UpsertQuickSave(GameFile, save);
         }
 
         private void SaveGameFile()
@@ -3582,7 +3592,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private static GameSave GetQuickSave(GameFile file)
         {
-            return file == null ? null : file.Saves.FirstOrDefault(save => save.IsQuick);
+            return CampaignSaveRules.GetQuickSave(file);
         }
 
         private static GameSave CloneGameSave(GameSave save)

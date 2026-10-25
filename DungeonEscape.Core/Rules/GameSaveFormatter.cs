@@ -20,7 +20,8 @@ namespace Redpoint.DungeonEscape.Rules
 
             var time = save.Time.HasValue ? save.Time.Value.ToString("g") : "Unknown time";
             var level = save.Level.HasValue ? "Level " + save.Level.Value : "No level";
-            return time + "    " + level;
+            var campaign = string.IsNullOrEmpty(save.CampaignName) ? save.CampaignId : save.CampaignName;
+            return time + "    " + level + (string.IsNullOrEmpty(campaign) ? "" : "    " + campaign);
         }
 
         public static string FormatLocationName(string mapId)

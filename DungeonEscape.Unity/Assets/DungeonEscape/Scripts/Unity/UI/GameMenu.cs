@@ -2024,7 +2024,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     }
                     else
                     {
-                        ShowSaveMessage("Could not load quest.");
+                        ShowSaveMessage(gameState == null ? "Could not load quest." : gameState.LastLoadError);
                     }
                 }
             });

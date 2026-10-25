@@ -5,9 +5,9 @@
   "required": ["SchemaVersion", "DefaultCampaignId", "Manifests"],
   "properties": {
     "SchemaVersion": { "const": 1 },
-    "DefaultCampaignId": { "type": "string", "pattern": "^campaign/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "DefaultCampaignId": { "type": ["string", "null"], "pattern": "^campaign/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$" },
     "Manifests": {
-      "type": "array", "minItems": 1, "uniqueItems": true,
+      "type": "array", "minItems": 0, "uniqueItems": true,
       "items": { "type": "string", "pattern": "^Assets/DungeonEscape/Data/.+\\.json$" }
     }
   }

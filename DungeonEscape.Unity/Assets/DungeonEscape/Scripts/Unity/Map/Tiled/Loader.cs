@@ -24,7 +24,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                 var path = UnityAssetPath.ToRuntimePath(CampaignRuntime.Campaign.MapsAssetPath);
                 catalog = new MapCatalog(Newtonsoft.Json.JsonConvert.DeserializeObject<List<MapDefinition>>(File.ReadAllText(path)));
             }
-            return catalog.Get(idOrPath);
+            return catalog.Get(string.IsNullOrEmpty(idOrPath) ? CampaignRuntime.Campaign.OverworldMapId : idOrPath);
         }
 
         public static void UseCatalog(MapCatalog value)

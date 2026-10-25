@@ -7,6 +7,9 @@
 
     public class GameSave
     {
+        public string CampaignId { get; set; }
+        public string CampaignName { get; set; }
+        public string CampaignContentVersion { get; set; }
         [JsonIgnore]
         public string Name
         {

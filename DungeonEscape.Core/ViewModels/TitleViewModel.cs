@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
+using Redpoint.DungeonEscape.Data;
+using System.Linq;
 
 namespace Redpoint.DungeonEscape.ViewModels
 {
@@ -28,6 +30,36 @@ namespace Redpoint.DungeonEscape.ViewModels
         public int CreatePlayerSpriteIndex { get; private set; }
         public TitleCreateDropdown ActiveCreateDropdown { get; private set; }
         public int SelectedDropdownIndex { get; private set; }
+        public IReadOnlyList<CampaignDefinition> Campaigns { get; private set; } = new List<CampaignDefinition>();
+        public string SelectedCampaignId { get; private set; }
+
+        public void BeginNewQuest(IEnumerable<CampaignDefinition> campaigns)
+        {
+            Campaigns = (campaigns ?? Enumerable.Empty<CampaignDefinition>()).ToList();
+            SelectedCampaignId = null;
+            if (Campaigns.Count == 1)
+            {
+                SelectCampaign(0);
+            }
+            else ShowCampaignMenu();
+        }
+
+        public void ShowCampaignMenu()
+        {
+            SelectedCampaignId = null;
+            Mode = TitleMode.Campaign;
+            SelectedIndex = 0;
+            ActiveCreateDropdown = TitleCreateDropdown.None;
+        }
+
+        public void SelectCampaign(int index)
+        {
+            if (index < 0 || index >= Campaigns.Count) throw new ArgumentOutOfRangeException(nameof(index));
+            SelectedCampaignId = Campaigns[index].Id;
+            ShowCreateMenu();
+        }
+
+        public int GetCampaignNavigationIndex(int moveY) => Clamp(SelectedIndex + moveY, 0, Campaigns.Count);
 
         public TitleViewModel()
         {
@@ -36,6 +68,7 @@ namespace Redpoint.DungeonEscape.ViewModels
 
         public void Reset()
         {
+            SelectedCampaignId = null;
             Mode = TitleMode.Main;
             SelectedIndex = 0;
             CreatePlayerName = "Player";
@@ -50,6 +83,7 @@ namespace Redpoint.DungeonEscape.ViewModels
 
         public void ShowMainMenu()
         {
+            SelectedCampaignId = null;
             Mode = TitleMode.Main;
             SelectedIndex = 0;
             ActiveCreateDropdown = TitleCreateDropdown.None;
@@ -134,6 +168,7 @@ namespace Redpoint.DungeonEscape.ViewModels
 
         public int GetOptionCount(bool hasQuickSave, int manualSaveCount)
         {
+            if (Mode == TitleMode.Campaign) return Campaigns.Count + 1;
             if (Mode == TitleMode.Load)
             {
                 return manualSaveCount * 2 + 1;

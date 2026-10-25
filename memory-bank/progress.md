@@ -2,6 +2,8 @@
 
 ## Done
 
+- Campaign selection/persistence: added one/multiple/no-campaign New Quest flow, candidate preparation without activating during creation, campaign-tagged 1.3 saves, per-campaign quick/autosaves, most-recent Continue, and validation before restoring a cloned snapshot. Campaign editor authoring and a complete authored second campaign remain next.
+
 - Campaign runtime foundation: installed manifest index/original campaign, validated shared-base plus campaign content contexts, manifest-owned start/overworld/encounter metadata, and synchronized campaign item exports from Game Editor. Core 241/241, Edit Mode 17/17, Play Mode 10/10; selection and campaign-aware saves remain next.
 
 - Content ID standardization: items, spells, quests, dialogs, backgrounds, and maps now use namespaced permanent IDs. Added an explicit map catalog shared by Unity and the Game Editor, updated JSON/TMX and gameplay/editor references, and bumped saves to 1.2 without migration per user direction. See CAMPAIGNS.md.

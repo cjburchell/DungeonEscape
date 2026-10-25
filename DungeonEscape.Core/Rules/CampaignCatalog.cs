@@ -21,7 +21,7 @@ namespace Redpoint.DungeonEscape.Rules
                     throw new ArgumentException("Duplicate campaign ID or scope: " + campaign.Id);
                 campaigns.Add(campaign.Id, campaign);
             }
-            Default = Get(defaultId);
+            Default = campaigns.Count == 0 ? null : Get(defaultId);
         }
 
         public CampaignDefinition Get(string id)

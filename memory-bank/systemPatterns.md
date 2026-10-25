@@ -91,3 +91,7 @@ Add manual test steps to `memory-bank/MANUAL_TESTS.md` when behavior changes.
 ## Permanent Content IDs
 
 Use `<kind>/<scope>/<key>` (for example `item/base/longsword`, `quest/original/the-lost-seashell`, `map/original/overworld`). Existing definitions use readable current-name slugs assigned once; subsequent renames preserve identity. Use `ContentId.Create` for fresh authored IDs and `ContentId.IsValid` for validation. References store IDs with ordinal comparison, while UI shows display names. Never use a content ID as a filesystem path: resolve maps through MapCatalog and Data/maps.json. Do not convert instance GUIDs, Tiled object numbers, spawn markers, enum rules, or image indices into definition IDs.
+
+## Campaign Changes And Saves
+
+Prepare a candidate context before changing active content. Activate only when starting the selected game or after CampaignSaveRules has validated the saved campaign/version/references. Clone loaded snapshots so runtime state cannot mutate saved manual slots. Quick saves are keyed by CampaignId even though campaigns share one physical save file; Continue uses latest across campaigns, while in-game quick load is scoped to the active campaign. Preview/cancel/error paths must preserve the active session and never insert a transient preview into saved slots.

@@ -142,4 +142,10 @@ The save format is 1.2 after this conversion. Per user instruction, prior-save m
 
 Core `CampaignCatalog`, `CampaignContentLoader`, `CampaignContentResolver`, and `CampaignContentContext` validate ownership, ID uniqueness, references, files, starting location, maps, and encounters. Resolution clones definitions before linking effects. Unity `CampaignRuntime` builds the configured default context; Bootstrap publishes its data, Loader uses its map catalog, and runtime overworld checks use manifest metadata. Game Editor Save exports each indexed campaign's scoped item definitions to its declared item file.
 
-Only default-campaign startup is wired currently. Selection, persisted campaign identity, per-campaign quick/autosave ownership, live switching, and full campaign editor workflows are the next phases. Source Boot scene references are still present; the campaign content loader supersedes their narrative selection after base loading.
+Startup uses the configured default campaign for a transient title preview. New Quest prepares the chosen campaign without activating it; Start and validated Load activate the context and clear map/encounter/name caches. Source Boot scene references are still present; the campaign content loader supersedes their narrative selection after base loading. Campaign editor workflows and reusable NPC/placement identity remain future work.
+
+## Campaign-Aware Save Flow
+
+Save format 1.3 adds CampaignId, CampaignName, and CampaignContentVersion to GameSave. CampaignSaveRules chooses the latest quick save globally for Continue, filters by active campaign for in-game quick load, and replaces quick entries only within the same campaign. Manual saves remain a shared list labeled with campaign names. Prior versions use the existing unsupported-version archive policy; there is no migration.
+
+Loading prepares the installed campaign context, validates exact content version and saved map/content references, and clones the snapshot before committing it. Validation failures leave the current context/save intact. CampaignRuntime.Activate publishes GameDataCache and Loader state; GameState clears encounter/name caches and invokes SaveLoaded to rebuild the rendered view and party trail. Character creation cancellation never activates its candidate. The title preview is not a persisted quick save.

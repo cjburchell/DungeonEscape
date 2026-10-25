@@ -148,7 +148,7 @@
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="SpawnId" value="spawn2"/>
-    <property name="WarpMap" value="maps/overworld"/>
+    <property name="WarpMap" value="map/original/overworld"/>
    </properties>
   </object>
   <object id="2" name="Stairs up to 17" class="Warp" gid="2147484723" x="1120" y="256" width="32" height="32">
@@ -156,7 +156,7 @@
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="SpawnId" value="spawn1"/>
-    <property name="WarpMap" value="maps/tunnel/area1"/>
+    <property name="WarpMap" value="map/original/tunnel-area1"/>
    </properties>
   </object>
   <object id="3" name="Chest" class="Chest" gid="1072" x="768" y="928" width="32" height="32">

@@ -1254,3 +1254,14 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 - [ ] Duplicate a skill and confirm its read-only ID differs; identical display names remain selectable separately.
 - [ ] Start a fresh 1.1 game and verify spell casting, key/open items, and Rogue Sleight of Hand actions retain behavior and icons.
 - [ ] Confirm a 1.0 save is treated as unsupported by the existing archive policy, rather than loaded with missing skill references. No save migration is intended.
+
+## Consistent Content IDs And Map Registry (2026-10-24)
+
+- [ ] Create a fresh 1.2 game; verify starting equipment, background proficiencies, prepared spells, and spell/item icons.
+- [ ] Rename an item/spell/quest/background in Game Editor; save/reopen and confirm references and prepared spells retain their IDs. Add/duplicate definitions and verify fresh namespaced IDs.
+- [ ] Follow the seashell and ship quest dialogs, collect/give the quest items, and confirm ship access uses the deed's definition ID.
+- [ ] Travel through town/dungeon warps and return to overworld; verify Outside, Return/Wings, overworld return position, map object persistence, and encounter tables.
+- [ ] Rename a map display name or move a TMX file and update only its entry paths in Data/maps.json (preserve relative tileset links when moving files); verify existing WarpMap references still resolve the unchanged map ID.
+- [ ] Edit map encounter rows in Game Editor, save, and confirm they write the catalog's EncounterAssetPath rather than a path derived from the map ID.
+- [ ] Verify packaged Windows content includes Data/maps.json and resolves map/encounter assets.
+- [ ] Confirm unsupported 1.1 saves use the existing archive policy. No old-save migration is intended.

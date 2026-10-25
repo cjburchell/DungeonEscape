@@ -245,7 +245,7 @@
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="WarpMap" value="maps/overworld"/>
+    <property name="WarpMap" value="map/original/overworld"/>
    </properties>
   </object>
   <object id="2" name="Key Chest" class="Chest" gid="1773" x="288" y="352" width="32" height="32">
@@ -260,13 +260,13 @@
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="WarpMap" value="maps/overworld"/>
+    <property name="WarpMap" value="map/original/overworld"/>
    </properties>
   </object>
   <object id="4" name="Key Chest" class="Chest" gid="1773" x="352" y="352" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="ItemId" value="Iron Key"/>
+    <property name="ItemId" value="item/base/iron-key"/>
     <property name="Locked" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
    </properties>
@@ -274,7 +274,7 @@
   <object id="5" name="Key Chest" class="Chest" gid="1773" x="288" y="384" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="ItemId" value="Iron Key"/>
+    <property name="ItemId" value="item/base/iron-key"/>
     <property name="Locked" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
    </properties>
@@ -282,7 +282,7 @@
   <object id="6" name="Key Chest" class="Chest" gid="1773" x="352" y="384" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="ItemId" value="Iron Key"/>
+    <property name="ItemId" value="item/base/iron-key"/>
     <property name="Locked" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
    </properties>
@@ -291,14 +291,14 @@
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="WarpMap" value="maps/overworld"/>
+    <property name="WarpMap" value="map/original/overworld"/>
    </properties>
   </object>
   <object id="8" name="Exit 0" class="Warp" x="1152" y="608" width="32" height="96">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="WarpMap" value="maps/overworld"/>
+    <property name="WarpMap" value="map/original/overworld"/>
    </properties>
   </object>
   <object id="9" name="Door" class="Door" gid="1880" x="320" y="768" width="32" height="64">
@@ -312,7 +312,7 @@
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="WarpMap" value="maps/overworld"/>
+    <property name="WarpMap" value="map/original/overworld"/>
    </properties>
   </object>
  </objectgroup>
@@ -354,56 +354,56 @@
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Dialog" value="Walled_Tower_Old_Man_Dialog"/>
+    <property name="Dialog" value="dialog/original/walled-tower-old-man-dialog"/>
    </properties>
   </object>
   <object id="16" name="Gard" class="Npc" gid="18" x="736" y="192" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Dialog" value="Walled_Guard_Dialog"/>
+    <property name="Dialog" value="dialog/original/walled-guard-dialog"/>
    </properties>
   </object>
   <object id="17" name="Gard" class="Npc" gid="18" x="544" y="192" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Dialog" value="Walled_Guard_Dialog"/>
+    <property name="Dialog" value="dialog/original/walled-guard-dialog"/>
    </properties>
   </object>
   <object id="18" name="Gard" class="Npc" gid="18" x="224" y="192" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Dialog" value="Walled_Guard_Dialog"/>
+    <property name="Dialog" value="dialog/original/walled-guard-dialog"/>
    </properties>
   </object>
   <object id="19" name="Gard" class="Npc" gid="18" x="224" y="1088" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Dialog" value="Walled_Guard_Dialog"/>
+    <property name="Dialog" value="dialog/original/walled-guard-dialog"/>
    </properties>
   </object>
   <object id="20" name="Gard" class="Npc" gid="18" x="1088" y="1088" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Dialog" value="Walled_Guard_Dialog"/>
+    <property name="Dialog" value="dialog/original/walled-guard-dialog"/>
    </properties>
   </object>
   <object id="21" name="Gard" class="Npc" gid="18" x="1088" y="192" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Dialog" value="Walled_Guard_Dialog"/>
+    <property name="Dialog" value="dialog/original/walled-guard-dialog"/>
    </properties>
   </object>
   <object id="22" name="Old Man" class="Npc" gid="86" x="512" y="896" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Dialog" value="Walled_Neighbor_Old_Man_Dialog"/>
+    <property name="Dialog" value="dialog/original/walled-neighbor-old-man-dialog"/>
    </properties>
   </object>
  </objectgroup>

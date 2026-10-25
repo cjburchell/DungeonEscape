@@ -17,7 +17,7 @@ namespace Redpoint.DungeonEscape.State
         [JsonIgnore]
         public bool HasShip
         {
-            get { return Members.Any(i => i.Items.Any(j => j.Name == "Deed to the ship")); }
+            get { return Members.Any(i => i.Items.Any(j => j.Item != null && j.Item.Id == "item/original/deed-to-the-ship")); }
         }
 
         public string PlayerName { get; set; }
@@ -95,8 +95,7 @@ namespace Redpoint.DungeonEscape.State
             return instance != null &&
                    instance.Item != null &&
                    !string.IsNullOrEmpty(itemId) &&
-                   (string.Equals(instance.Item.Id, itemId, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(instance.Item.Name, itemId, StringComparison.OrdinalIgnoreCase));
+                   string.Equals(instance.Item.Id, itemId, StringComparison.Ordinal);
         }
 
         public Hero AddItem(ItemInstance item)

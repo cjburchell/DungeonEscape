@@ -17,12 +17,12 @@ namespace Redpoint.DungeonEscape.Unity.Core
 {
     public sealed class GameState : MonoBehaviour, IGame
     {
-        private const string SaveFileVersion = "1.1";
+        private const string SaveFileVersion = "1.2";
         private const float DefaultAutoSaveIntervalSeconds = 5f;
         private static readonly System.Random Random = new System.Random();
 
         [SerializeField]
-        private string defaultMapId = "overworld";
+        private string defaultMapId = "map/original/overworld";
 
         [SerializeField]
         private int defaultColumn = 30;
@@ -105,7 +105,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
         {
             EnsureInitialized();
             Party.CurrentMapId = Loader.NormalizeMapId(mapId);
-            Party.CurrentMapIsOverWorld = Party.CurrentMapId == "overworld";
+            Party.CurrentMapIsOverWorld = Party.CurrentMapId == "map/original/overworld";
             MarkDirty();
         }
 
@@ -113,7 +113,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
         {
             EnsureInitialized();
 
-            var normalizedMapId = Loader.NormalizeMapId(string.IsNullOrEmpty(mapId) ? "overworld" : mapId);
+            var normalizedMapId = Loader.NormalizeMapId(string.IsNullOrEmpty(mapId) ? "map/original/overworld" : mapId);
             SetCurrentMap(normalizedMapId);
 
             var mapView = FindAnyObjectByType<View>();
@@ -154,7 +154,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             {
                 MapId = mapId,
                 SpawnId = warp.SpawnId,
-                UseSavedOverWorldPosition = mapId == "overworld" && string.IsNullOrEmpty(warp.SpawnId)
+                UseSavedOverWorldPosition = mapId == "map/original/overworld" && string.IsNullOrEmpty(warp.SpawnId)
             };
         }
 
@@ -199,7 +199,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             EnsureInitialized();
             var normalizedMapId = Loader.NormalizeMapId(mapId);
             if (string.IsNullOrEmpty(normalizedMapId) ||
-                string.Equals(normalizedMapId, "overworld", StringComparison.OrdinalIgnoreCase))
+                string.Equals(normalizedMapId, "map/original/overworld", StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
@@ -1183,7 +1183,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             var gender = GetEnumProperty(mapObject, "Gender", Gender.Male);
             var memberClass = GetEnumProperty(mapObject, "Class", Class.Fighter);
             var species = GetEnumProperty(mapObject, "Species", Species.Human);
-            var background = GetStringProperty(mapObject, "Background", "Acolyte");
+            var background = GetStringProperty(mapObject, "Background", "background/base/acolyte");
             var abilityBonus2 = GetStringProperty(mapObject, "AbilityBonus2", null);
             var abilityBonus1 = GetStringProperty(mapObject, "AbilityBonus1", null);
             var abilityScores = GetRecruitAbilityScores(memberClass, species, background, abilityBonus2, abilityBonus1);
@@ -1663,7 +1663,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 RecordVisitedLocation(sourceMapId, Party.CurrentPosition.Value);
             }
 
-            SetMap("overworld", null, Party.OverWorldPosition);
+            SetMap("map/original/overworld", null, Party.OverWorldPosition);
             NotifySaveLoaded();
             SaveAfterMapTransitionIfNeeded(sourceMapId, Party.CurrentMapId);
             return caster.Name + " casts " + spell.Name + ".";
@@ -1731,7 +1731,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 RecordVisitedLocation(sourceMapId, Party.CurrentPosition.Value);
             }
 
-            SetMap("overworld", null, Party.OverWorldPosition);
+            SetMap("map/original/overworld", null, Party.OverWorldPosition);
             ConsumeUsedItem(source, item);
             MarkDirty();
             NotifySaveLoaded();
@@ -2371,8 +2371,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             return item != null &&
                    item.Item != null &&
                    !string.IsNullOrEmpty(itemId) &&
-                   (string.Equals(item.Item.Id, itemId, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(item.Item.Name, itemId, StringComparison.OrdinalIgnoreCase));
+                   string.Equals(item.Item.Id, itemId, StringComparison.Ordinal);
         }
 
         private static bool CanOpenWithKey(TiledObjectInfo mapObject)
@@ -2807,22 +2806,22 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         public void RestartNewGame()
         {
-            RestartNewGame("Player", Class.Paladin, Gender.Male, Species.Human, "Acolyte", null, null, null);
+            RestartNewGame("Player", Class.Paladin, Gender.Male, Species.Human, "background/base/acolyte", null, null, null);
         }
 
         public void RestartNewGame(string playerName, Class playerClass, Gender gender)
         {
-            RestartNewGame(playerName, playerClass, gender, Species.Human, "Acolyte", null, null, null);
+            RestartNewGame(playerName, playerClass, gender, Species.Human, "background/base/acolyte", null, null, null);
         }
 
         public void RestartNewGame(string playerName, Class playerClass, Gender gender, int? spriteFrameIndex)
         {
-            RestartNewGame(playerName, playerClass, gender, Species.Human, "Acolyte", spriteFrameIndex, null, null);
+            RestartNewGame(playerName, playerClass, gender, Species.Human, "background/base/acolyte", spriteFrameIndex, null, null);
         }
 
         public void RestartNewGame(string playerName, Class playerClass, Gender gender, Species species, int? spriteFrameIndex)
         {
-            RestartNewGame(playerName, playerClass, gender, species, "Acolyte", spriteFrameIndex, null, null);
+            RestartNewGame(playerName, playerClass, gender, species, "background/base/acolyte", spriteFrameIndex, null, null);
         }
 
         public void RestartNewGame(
@@ -2858,7 +2857,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         public Hero CreatePlayerPreviewHero(string playerName, Class playerClass, Gender gender, Species species, int? spriteFrameIndex)
         {
-            return CreatePlayerPreviewHero(playerName, playerClass, gender, species, "Acolyte", spriteFrameIndex, null, null);
+            return CreatePlayerPreviewHero(playerName, playerClass, gender, species, "background/base/acolyte", spriteFrameIndex, null, null);
         }
 
         public Hero CreatePlayerPreviewHero(
@@ -2881,17 +2880,17 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private GameSave CreateDefaultSave()
         {
-            return CreateDefaultSave("Player", Class.Paladin, Gender.Male, Species.Human, "Acolyte", null, null, null);
+            return CreateDefaultSave("Player", Class.Paladin, Gender.Male, Species.Human, "background/base/acolyte", null, null, null);
         }
 
         private GameSave CreateDefaultSave(string playerName, Class playerClass, Gender gender, int? spriteFrameIndex)
         {
-            return CreateDefaultSave(playerName, playerClass, gender, Species.Human, "Acolyte", spriteFrameIndex, null, null);
+            return CreateDefaultSave(playerName, playerClass, gender, Species.Human, "background/base/acolyte", spriteFrameIndex, null, null);
         }
 
         private GameSave CreateDefaultSave(string playerName, Class playerClass, Gender gender, Species species, int? spriteFrameIndex)
         {
-            return CreateDefaultSave(playerName, playerClass, gender, species, "Acolyte", spriteFrameIndex, null, null);
+            return CreateDefaultSave(playerName, playerClass, gender, species, "background/base/acolyte", spriteFrameIndex, null, null);
         }
 
         private GameSave CreateDefaultSave(
@@ -2915,7 +2914,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 CurrentMapId = Loader.NormalizeMapId(defaultMapId),
                 CurrentPosition = new WorldPosition(defaultColumn, defaultRow)
             };
-            party.CurrentMapIsOverWorld = party.CurrentMapId == "overworld";
+            party.CurrentMapIsOverWorld = party.CurrentMapId == "map/original/overworld";
             party.OverWorldPosition = party.CurrentPosition.Value;
             party.Members.Add(CreateHero(party.PlayerName, playerClass, gender, species, background, 1, true, spriteFrameIndex, abilityScores, skillProficiencies));
 
@@ -2929,12 +2928,12 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private Hero CreateHero(string heroName, Class heroClass, Gender gender, int level, bool generateItems, int? spriteFrameIndex)
         {
-            return CreateHero(heroName, heroClass, gender, Species.Human, "Acolyte", level, generateItems, spriteFrameIndex, null, null);
+            return CreateHero(heroName, heroClass, gender, Species.Human, "background/base/acolyte", level, generateItems, spriteFrameIndex, null, null);
         }
 
         private Hero CreateHero(string heroName, Class heroClass, Gender gender, Species species, int level, bool generateItems, int? spriteFrameIndex)
         {
-            return CreateHero(heroName, heroClass, gender, species, "Acolyte", level, generateItems, spriteFrameIndex, null, null);
+            return CreateHero(heroName, heroClass, gender, species, "background/base/acolyte", level, generateItems, spriteFrameIndex, null, null);
         }
 
         private Hero CreateHero(
@@ -2955,7 +2954,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 Class = heroClass,
                 Gender = gender,
                 Species = species,
-                Background = string.IsNullOrWhiteSpace(background) ? "Acolyte" : background,
+                Background = string.IsNullOrWhiteSpace(background) ? "background/base/acolyte" : background,
                 SpriteFrameIndex = spriteFrameIndex,
                 IsActive = true,
                 Order = 0,
@@ -3016,7 +3015,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             {
                 Class = heroClass,
                 Species = species,
-                Background = string.IsNullOrWhiteSpace(background) ? "Acolyte" : background
+                Background = string.IsNullOrWhiteSpace(background) ? "background/base/acolyte" : background
             };
             DndCharacterRules.ApplyStartingAbilityScores(hero, GameDataCache.Current == null ? null : GameDataCache.Current.Species);
             ApplyRecruitAbilityBonus(hero, abilityBonus2, 2);
@@ -3428,8 +3427,8 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return false;
             }
 
-            return string.Equals(source, "overworld", StringComparison.OrdinalIgnoreCase) ||
-                   string.Equals(target, "overworld", StringComparison.OrdinalIgnoreCase);
+            return string.Equals(source, "map/original/overworld", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(target, "map/original/overworld", StringComparison.OrdinalIgnoreCase);
         }
 
         private static GameFile LoadGameFile()
@@ -3543,12 +3542,13 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 return new List<RandomMonster>();
             }
 
-            if (string.Equals(mapId, "overworld", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(mapId, "map/original/overworld", StringComparison.OrdinalIgnoreCase))
             {
                 return EncounterRules.CreateOverworldRandomMonsters(data.Monsters);
             }
 
-            var assetPath = "Assets/DungeonEscape/Data/maps/" + mapId + "_monsters.json";
+            var assetPath = Loader.GetMapDefinition(mapId).EncounterAssetPath;
+            if (string.IsNullOrEmpty(assetPath)) return new List<RandomMonster>();
             var fullPath = UnityAssetPath.ToRuntimePath(assetPath);
             if (!File.Exists(fullPath))
             {

@@ -1,9 +1,9 @@
 [
   {
-    "Id": "Find_Ship_Start_Dialog",
+    "Id": "dialog/original/find-ship-start-dialog",
     "Dialogs": [
       {
-        "Quest": "Find_Ship",
+        "Quest": "quest/original/secure-a-ship",
         "StartQuest": true,
         "Text": "If you mean to reach the forest continent, you will need a ship.\nSeek Lesym in Isis. He knows the coast better than anyone here.",
         "Choices": [
@@ -24,10 +24,10 @@
     ]
   },
   {
-    "Id": "Find_Ship_Man_In_Isis",
+    "Id": "dialog/original/find-ship-man-in-isis",
     "Dialogs": [
       {
-        "Quest": "Find_Ship",
+        "Quest": "quest/original/secure-a-ship",
         "QuestStage": [
           1
         ],
@@ -61,10 +61,10 @@
     ]
   },
   {
-    "Id": "Find_Ship_Old_Man",
+    "Id": "dialog/original/find-ship-old-man",
     "Dialogs": [
       {
-        "Quest": "Find_Ship",
+        "Quest": "quest/original/secure-a-ship",
         "QuestStage": [
           2
         ],
@@ -91,7 +91,7 @@
         ]
       },
       {
-        "Quest": "Find_Ship",
+        "Quest": "quest/original/secure-a-ship",
         "QuestStage": [
           3,
           4
@@ -109,7 +109,7 @@
                     "TakeItem",
                     "OpenDoor"
                   ],
-                  "ItemId": "Old Man's Key",
+                  "ItemId": "item/original/old-man-s-key",
                   "NextQuestStage": 5,
                   "ObjectId": 29
                 }
@@ -132,10 +132,10 @@
     ]
   },
   {
-    "Id": "Boy_Looking_For_Shell",
+    "Id": "dialog/original/boy-looking-for-shell",
     "Dialogs": [
       {
-        "Quest": "Lost_Sea_Shell",
+        "Quest": "quest/original/the-lost-seashell",
         "StartQuest": true,
         "Text": "I lost my favorite seashell near the shrine.\nPlease, will you help me find it?",
         "Choices": [
@@ -144,7 +144,7 @@
             "Dialog": {
               "Text": "Thank you! I will wait right here.\nIt has a pale spiral and shines like moonlight."
             },
-            "Quest": "Lost_Sea_Shell",
+            "Quest": "quest/original/the-lost-seashell",
             "NextQuestStage": 1
           },
           {
@@ -156,7 +156,7 @@
         ]
       },
       {
-        "Quest": "Lost_Sea_Shell",
+        "Quest": "quest/original/the-lost-seashell",
         "QuestStage": [
           1
         ],
@@ -167,7 +167,7 @@
             "Actions": [
               "TakeItem"
             ],
-            "ItemId": "Boy's Sea Shell",
+            "ItemId": "item/original/boy-s-sea-shell",
             "NextQuestStage": 2
           },
           {
@@ -179,7 +179,7 @@
         ]
       },
       {
-        "Quest": "Lost_Sea_Shell",
+        "Quest": "quest/original/the-lost-seashell",
         "QuestStage": [
           2
         ],
@@ -188,7 +188,7 @@
     ]
   },
   {
-    "Id": "Pyramid_Guard_Dialog",
+    "Id": "dialog/original/pyramid-guard-dialog",
     "Dialogs": [
       {
         "Text": "Keep your voice low. Horned Devil stirs beneath these stones. What do you need to know?",
@@ -216,7 +216,7 @@
     ]
   },
   {
-    "Id": "Shrine_Eanswild_Dialog",
+    "Id": "dialog/original/shrine-eanswild-dialog",
     "Dialogs": [
       {
         "Text": "Horned Devil must be defeated before darkness spreads beyond the shrine. Have you come seeking counsel?",
@@ -244,7 +244,7 @@
     ]
   },
   {
-    "Id": "Healing_Shrine_Guard_Dialog",
+    "Id": "dialog/original/healing-shrine-guard-dialog",
     "Dialogs": [
       {
         "Text": "Welcome to the Shrine of Healing. The doors remain open to every wounded traveler.",
@@ -272,7 +272,7 @@
     ]
   },
   {
-    "Id": "Healing_Shrine_Lady_Dialog",
+    "Id": "dialog/original/healing-shrine-lady-dialog",
     "Dialogs": [
       {
         "Text": "The spring water is cool today. Even a moment beside it can steady the nerves.",
@@ -300,7 +300,7 @@
     ]
   },
   {
-    "Id": "Healing_Shrine_Cat_Dialog",
+    "Id": "dialog/original/healing-shrine-cat-dialog",
     "Dialogs": [
       {
         "Text": "The shrine cat watches you with grave suspicion.",
@@ -328,7 +328,7 @@
     ]
   },
   {
-    "Id": "Coast_Guard_Dialog",
+    "Id": "dialog/original/coast-guard-dialog",
     "Dialogs": [
       {
         "Text": "Welcome to Coast. Watch the tide, and keep your coin purse close.",
@@ -356,7 +356,7 @@
     ]
   },
   {
-    "Id": "Forest_Lady_Dialog",
+    "Id": "dialog/original/forest-lady-dialog",
     "Dialogs": [
       {
         "Text": "Beyond the trees, the desert hides old answers. Bring water, and trust no mirage.",
@@ -384,7 +384,7 @@
     ]
   },
   {
-    "Id": "Forest_Guard_Dialog",
+    "Id": "dialog/original/forest-guard-dialog",
     "Dialogs": [
       {
         "Text": "Welcome to Forest Palace. What brings you beneath our trees?",
@@ -412,7 +412,7 @@
     ]
   },
   {
-    "Id": "Isis_Guard_Dialog",
+    "Id": "dialog/original/isis-guard-dialog",
     "Dialogs": [
       {
         "Text": "Welcome to Isis, crossroads of sand, river, and rumor. What news are you seeking?",
@@ -440,7 +440,7 @@
     ]
   },
   {
-    "Id": "Isis_Vlefu_Dialog",
+    "Id": "dialog/original/isis-vlefu-dialog",
     "Dialogs": [
       {
         "Text": "Dragons are patient creatures. Never mistake distance for safety.",
@@ -468,7 +468,7 @@
     ]
   },
   {
-    "Id": "Isis_Aestald_Dialog",
+    "Id": "dialog/original/isis-aestald-dialog",
     "Dialogs": [
       {
         "Text": "The sea is dangerous, especially for those who think calm water means a safe journey.",
@@ -496,7 +496,7 @@
     ]
   },
   {
-    "Id": "Isis_Gyles_Dialog",
+    "Id": "dialog/original/isis-gyles-dialog",
     "Dialogs": [
       {
         "Text": "If a battle turns against you, run. Pride buys more graves than glory.",
@@ -524,7 +524,7 @@
     ]
   },
   {
-    "Id": "Oasis_Traveler_Dialog",
+    "Id": "dialog/original/oasis-traveler-dialog",
     "Dialogs": [
       {
         "Text": "To defeat Horned Devil, strike quickly and give him no rest.",
@@ -552,7 +552,7 @@
     ]
   },
   {
-    "Id": "Oasis_Guard_Dialog",
+    "Id": "dialog/original/oasis-guard-dialog",
     "Dialogs": [
       {
         "Text": "Welcome to Oasis. Fill your waterskin before the dunes swallow the road.",
@@ -580,7 +580,7 @@
     ]
   },
   {
-    "Id": "Walled_Tower_Old_Man_Dialog",
+    "Id": "dialog/original/walled-tower-old-man-dialog",
     "Dialogs": [
       {
         "Text": "A key waits in the northern tower, though reaching it is no simple errand.",
@@ -608,7 +608,7 @@
     ]
   },
   {
-    "Id": "Walled_Guard_Dialog",
+    "Id": "dialog/original/walled-guard-dialog",
     "Dialogs": [
       {
         "Text": "The wall is quiet for now. Do you need directions or a warning?",
@@ -636,7 +636,7 @@
     ]
   },
   {
-    "Id": "Walled_Neighbor_Old_Man_Dialog",
+    "Id": "dialog/original/walled-neighbor-old-man-dialog",
     "Dialogs": [
       {
         "Text": "The man next door has locked himself inside again.",
@@ -664,7 +664,7 @@
     ]
   },
   {
-    "Id": "Dungeon_Lost_Recruit_Dialog",
+    "Id": "dialog/original/dungeon-lost-recruit-dialog",
     "Dialogs": [
       {
         "Text": "At last, someone alive. I lost my way in these tunnels, but I can still hold a weapon. Will you hear me out?",
@@ -726,7 +726,7 @@
     ]
   },
   {
-    "Id": "Healing_Shrine_Recruit_Dialog",
+    "Id": "dialog/original/healing-shrine-recruit-dialog",
     "Dialogs": [
       {
         "Text": "You look like you could use a steady hand on the road. I am rested, supplied, and looking for a worthy cause.",
@@ -788,7 +788,7 @@
     ]
   },
   {
-    "Id": "Isis_Recruit_Dialog",
+    "Id": "dialog/original/isis-recruit-dialog",
     "Dialogs": [
       {
         "Text": "I know the streets of Isis and the roads beyond them. If you need another blade, we may be useful to each other.",

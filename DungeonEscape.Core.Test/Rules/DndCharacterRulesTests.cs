@@ -50,7 +50,7 @@ namespace DungeonEscape.Core.Test.Rules
                 SkillProficiencies = new System.Collections.Generic.List<string> { "Athletics", "Perception" }
             };
 
-            var background = DndCharacterRules.FindBackground(DndCharacterRules.GetDefaultBackgrounds(), "Criminal");
+            var background = DndCharacterRules.FindBackground(DndCharacterRules.GetDefaultBackgrounds(), "background/base/criminal");
             var skills = DndCharacterRules.GetStartingSkillProficiencies(classStats, background);
 
             Assert.Contains("Athletics", skills);
@@ -63,7 +63,7 @@ namespace DungeonEscape.Core.Test.Rules
         public void BackgroundsAddAbilityBonuses()
         {
             var hero = new Hero { Strength = 10, Dexterity = 10, Constitution = 10, Intelligence = 10, Wisdom = 10, Charisma = 10 };
-            var background = DndCharacterRules.FindBackground(DndCharacterRules.GetDefaultBackgrounds(), "Sage");
+            var background = DndCharacterRules.FindBackground(DndCharacterRules.GetDefaultBackgrounds(), "background/base/sage");
 
             DndCharacterRules.ApplyBackgroundAbilityBonuses(hero, background);
 

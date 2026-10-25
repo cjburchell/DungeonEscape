@@ -48,17 +48,20 @@ public sealed class DataValidationService
 
         var issues = new List<DataValidationIssue>();
         var skillIds = new HashSet<string>(data.Skills.Where(skill => !string.IsNullOrWhiteSpace(skill.Id)).Select(skill => skill.Id), StringComparer.Ordinal);
-        var spellNames = NameSet(data.Spells.Select(spell => spell.Name));
-        var itemRefs = NameSet(data.Items.Select(item => item.Name)
-            .Concat(data.Items.Select(item => item.Id))
-            .Append(DataSourceCatalog.RandomItemId));
+        var itemRefs = new HashSet<string>(data.Items.Select(item => item.Id).Append(DataSourceCatalog.RandomItemId), StringComparer.Ordinal);
         var questIds = NameSet(data.Quests.Select(quest => quest.Id));
         var dialogIds = NameSet(data.Dialogs.Select(dialog => dialog.Id));
         var monsterIds = new HashSet<string>(data.Monsters.Where(monster => !string.IsNullOrWhiteSpace(monster.Id)).Select(monster => monster.Id), StringComparer.Ordinal);
         var classValues = NameSet(data.ClassLevels.Select(classStats => classStats.Class));
-        var backgroundValues = NameSet(data.Backgrounds.Select(background => background.Id)
-            .Concat(data.Backgrounds.Select(background => background.Name)));
-        var mapIds = NameSet(data.Maps.Select(map => map.Id).Concat(data.Maps.Select(map => "maps/" + map.Id)));
+        var backgroundValues = new HashSet<string>(data.Backgrounds.Select(background => background.Id), StringComparer.Ordinal);
+        var mapIds = new HashSet<string>(data.Maps.Select(map => map.Id), StringComparer.Ordinal);
+
+        ValidateContentIds(issues, "item", data.Items.Select(item => item.Id));
+        ValidateContentIds(issues, "spell", data.Spells.Select(item => item.Id));
+        ValidateContentIds(issues, "quest", data.Quests.Select(item => item.Id));
+        ValidateContentIds(issues, "dialog", data.Dialogs.Select(item => item.Id));
+        ValidateContentIds(issues, "background", data.Backgrounds.Select(item => item.Id));
+        ValidateContentIds(issues, "map", data.Maps.Select(item => item.Id));
 
         ValidateRequiredNames(issues, "Monster ID", data.Monsters.Select((item, index) => (index, Value: (string?)item.Id)));
         ValidateRequiredNames(issues, "Monster", data.Monsters.Select((item, index) => (index, Value: (string?)item.Name)));
@@ -74,7 +77,7 @@ public sealed class DataValidationService
         ValidateRequiredNames(issues, "Background", data.Backgrounds.Select((item, index) => (index, Value: (string?)item.Name)));
 
         ValidateDuplicates(issues, "Monster ID", data.Monsters.Select(monster => monster.Id));
-        ValidateDuplicates(issues, "Spell name", data.Spells.Select(spell => spell.Name));
+        ValidateDuplicates(issues, "Spell ID", data.Spells.Select(spell => spell.Id));
         foreach (var skill in data.Skills)
         {
             if (!System.Text.RegularExpressions.Regex.IsMatch(skill.Id ?? string.Empty, @"^skill/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$"))
@@ -83,7 +86,7 @@ public sealed class DataValidationService
             }
         }
         ValidateDuplicates(issues, "Skill ID", data.Skills.Select(skill => skill.Id));
-        ValidateDuplicates(issues, "Item name", data.Items.Select(item => item.Name));
+
         ValidateDuplicates(issues, "Item id", data.Items.Select(item => item.Id));
         ValidateDuplicates(issues, "Quest id", data.Quests.Select(quest => quest.Id));
         ValidateDuplicates(issues, "Dialog id", data.Dialogs.Select(dialog => dialog.Id));
@@ -91,7 +94,7 @@ public sealed class DataValidationService
         ValidateDuplicates(issues, "Species", data.Species.Select(species => species.Species.ToString()));
         ValidateDuplicates(issues, "Species name", data.Species.Select(species => species.Name));
         ValidateDuplicates(issues, "Background id", data.Backgrounds.Select(background => background.Id));
-        ValidateDuplicates(issues, "Background name", data.Backgrounds.Select(background => background.Name));
+
 
         ValidateMonsters(issues, itemRefs);
         ValidateSpells(issues, skillIds, classValues);
@@ -575,6 +578,14 @@ public sealed class DataValidationService
         {
             var layerName = string.IsNullOrWhiteSpace(group.Layer) ? "unnamed object layer" : $"object layer '{group.Layer}'";
             Warning(issues, location, $"Object id {group.Id} is used by {group.Count} objects in {layerName}.");
+        }
+    }
+
+    private static void ValidateContentIds(List<DataValidationIssue> issues, string kind, IEnumerable<string?> ids)
+    {
+        foreach (var id in ids)
+        {
+            if (!ContentId.IsValid(id, kind)) Error(issues, kind, $"Invalid ID: {id}. Expected {kind}/<scope>/<key>.");
         }
     }
 

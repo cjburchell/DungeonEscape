@@ -126,8 +126,9 @@
     "spell": {
       "type": "object",
       "additionalProperties": true,
-      "required": ["Name"],
+      "required": ["Id", "Name"],
       "properties": {
+        "Id": { "type": "string", "pattern": "^spell/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$" },
         "Name": { "type": "string", "minLength": 1 },
         "Skill": { "type": "string" },
         "ImageId": { "type": "integer", "minimum": 0 },
@@ -156,9 +157,9 @@
     "item": {
       "type": "object",
       "additionalProperties": true,
-      "required": ["Name"],
+      "required": ["Id", "Name"],
       "properties": {
-        "Id": { "type": "string" },
+        "Id": { "type": "string", "pattern": "^item/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$" },
         "Name": { "type": "string", "minLength": 1 },
         "ImageId": { "type": "integer", "minimum": 0 },
         "QuestId": { "type": "string" },
@@ -188,7 +189,7 @@
       "additionalProperties": true,
       "required": ["Id"],
       "properties": {
-        "Id": { "type": "string", "minLength": 1 },
+        "Id": { "type": "string", "pattern": "^quest/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$" },
         "Name": { "type": "string" },
         "Description": { "type": "string" },
         "MinimumLevel": { "type": "integer", "minimum": 0 },
@@ -240,7 +241,7 @@
       "additionalProperties": true,
       "required": ["Id"],
       "properties": {
-        "Id": { "type": "string", "minLength": 1 },
+        "Id": { "type": "string", "pattern": "^dialog/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$" },
         "Dialogs": { "type": "array", "items": { "$ref": "#/$defs/dialogHead" } }
       }
     },
@@ -280,7 +281,7 @@
       "additionalProperties": true,
       "required": ["Id", "Name"],
       "properties": {
-        "Id": { "type": "string", "minLength": 1 },
+        "Id": { "type": "string", "pattern": "^background/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$" },
         "Name": { "type": "string", "minLength": 1 },
         "Description": { "type": "string" },
         "Strength": { "type": "integer" },

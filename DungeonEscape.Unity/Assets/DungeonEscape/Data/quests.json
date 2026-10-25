@@ -1,6 +1,6 @@
 [
   {
-    "Id": "Lost_Sea_Shell",
+    "Id": "quest/original/the-lost-seashell",
     "Name": "The Lost Seashell",
     "Description": "Adric, a worried boy at the shrine, lost his favorite seashell somewhere nearby.",
     "Xp": 10,
@@ -23,7 +23,7 @@
     ]
   },
   {
-    "Id": "Lost_Dog",
+    "Id": "quest/original/lost-dog",
     "Name": "Lost Dog",
     "Xp": 100,
     "Stages": [
@@ -43,7 +43,7 @@
     ]
   },
   {
-    "Id": "Find_Ship",
+    "Id": "quest/original/secure-a-ship",
     "Name": "Secure a Ship",
     "Description": "The forest continent lies across dangerous water. Find someone who can help you sail there.",
     "Xp": 100,

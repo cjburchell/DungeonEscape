@@ -101,7 +101,7 @@ namespace DungeonEscape.Core.Test.State
             var heal = spells.First(spell => spell.Name == "Cure Wounds");
             var lightning = spells.First(spell => spell.Name == "Lightning Bolt");
 
-            hero.PreparedSpells = new List<string> { "Cure Wounds" };
+            hero.PreparedSpells = new List<string> { heal.Id };
 
             Assert.True(hero.IsSpellPrepared(heal));
             Assert.False(hero.IsSpellPrepared(lightning));
@@ -120,7 +120,7 @@ namespace DungeonEscape.Core.Test.State
             hero.UsedSpellSlots = new List<int>();
             var cantrip = new Spell
             {
-                Name = "Fire Bolt",
+                Id = "spell/test/fire-bolt", Name = "Fire Bolt",
                 SpellLevel = 0,
                 MinLevel = 1,
                 Classes = new List<string> { "Paladin" }
@@ -185,19 +185,19 @@ namespace DungeonEscape.Core.Test.State
             {
                 new Spell
                 {
-                    Name = "Cure Wounds",
+                    Id = "spell/test/cure-wounds", Name = "Cure Wounds",
                     MinLevel = 2,
                     Classes = new List<string> { "Paladin" }
                 },
                 new Spell
                 {
-                    Name = "Lightning Bolt",
+                    Id = "spell/test/lightning-bolt", Name = "Lightning Bolt",
                     MinLevel = 3,
                     Classes = new List<string> { "Paladin" }
                 },
                 new Spell
                 {
-                    Name = "Shield of Faith",
+                    Id = "spell/test/shield-of-faith", Name = "Shield of Faith",
                     MinLevel = 2,
                     Classes = new List<string> { "Wizard" }
                 }

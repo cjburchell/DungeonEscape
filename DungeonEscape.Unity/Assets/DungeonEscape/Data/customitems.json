@@ -1,7 +1,7 @@
 [
   {
     "ImageId": 866,
-    "QuestId": "Lost_Sea_Shell",
+    "QuestId": "quest/original/the-lost-seashell",
     "StartQuest": true,
     "ForStage": [
       1
@@ -10,11 +10,12 @@
     "Type": "Quest",
     "Category": "Unknown",
     "Name": "Boy's Sea Shell",
-    "Rarity": "Common"
+    "Rarity": "Common",
+    "Id": "item/original/boy-s-sea-shell"
   },
   {
     "ImageId": 951,
-    "QuestId": "Find_Ship",
+    "QuestId": "quest/original/secure-a-ship",
     "ForStage": [
       5
     ],
@@ -22,7 +23,8 @@
     "Type": "Quest",
     "Category": "Unknown",
     "Name": "Deed to the ship",
-    "Rarity": "Common"
+    "Rarity": "Common",
+    "Id": "item/original/deed-to-the-ship"
   },
   {
     "ImageId": 909,
@@ -31,11 +33,12 @@
     "Category": "Unknown",
     "Name": "Iron Key",
     "Rarity": "Common",
-    "MinLevel": 1
+    "MinLevel": 1,
+    "Id": "item/base/iron-key"
   },
   {
     "ImageId": 899,
-    "QuestId": "Find_Ship",
+    "QuestId": "quest/original/secure-a-ship",
     "ForStage": [
       3
     ],
@@ -43,6 +46,7 @@
     "Type": "Quest",
     "Category": "Unknown",
     "Name": "Old Man's Key",
-    "Rarity": "Common"
+    "Rarity": "Common",
+    "Id": "item/original/old-man-s-key"
   }
 ]

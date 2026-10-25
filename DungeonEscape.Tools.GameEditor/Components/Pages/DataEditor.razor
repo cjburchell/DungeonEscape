@@ -561,7 +561,7 @@ else
                 Data.Monsters.Add(selectedMonster);
                 break;
             case EditorTab.Spells:
-                selectedSpell = new Spell { Name = "New Spell", Classes = new List<string>() };
+                selectedSpell = new Spell { Id = ContentId.Create("spell", "base"), Name = "New Spell", Classes = new List<string>() };
                 Data.Spells.Add(selectedSpell);
                 break;
             case EditorTab.Skills:
@@ -569,13 +569,13 @@ else
                 Data.Skills.Add(selectedSkill);
                 break;
             case EditorTab.Items:
-                selectedItem = new Item { Name = "New Item" };
+                selectedItem = new Item { Id = ContentId.Create("item", "original"), Name = "New Item" };
                 Data.Items.Add(selectedItem);
                 break;
             case EditorTab.Quests:
                 selectedQuest = new Quest
                 {
-                    Id = "new-quest",
+                    Id = ContentId.Create("quest", "original"),
                     Name = "New Quest",
                     Description = string.Empty,
                     Items = new List<string>(),
@@ -586,7 +586,7 @@ else
             case EditorTab.Dialogs:
                 selectedDialog = new Dialog
                 {
-                    Id = "new-dialog",
+                    Id = ContentId.Create("dialog", "original"),
                     Dialogs = new List<DialogHead>
                     {
                         new()
@@ -624,7 +624,7 @@ else
             case EditorTab.Backgrounds:
                 selectedBackground = new BackgroundDefinition
                 {
-                    Id = "NewBackground",
+                    Id = ContentId.Create("background", "base"),
                     Name = "New Background",
                     SkillProficiencies = new List<string>()
                 };
@@ -645,6 +645,7 @@ else
                 break;
             case EditorTab.Spells when selectedSpell != null:
                 selectedSpell = Clone(selectedSpell, Data.Spells, s => s.Name, (s, n) => s.Name = n);
+                selectedSpell.Id = ContentId.Create("spell", "base");
                 break;
             case EditorTab.Skills when selectedSkill != null:
                 selectedSkill = Clone(selectedSkill, Data.Skills, s => s.Name, (s, n) => s.Name = n);
@@ -652,15 +653,15 @@ else
                 break;
             case EditorTab.Items when selectedItem != null:
                 selectedItem = Clone(selectedItem, Data.Items, i => i.Name, (i, n) => i.Name = n);
+                selectedItem.Id = ContentId.Create("item", "original");
                 break;
             case EditorTab.Quests when selectedQuest != null:
                 selectedQuest = Clone(selectedQuest, Data.Quests, q => q.Name, (q, n) => q.Name = n);
-                selectedQuest.Id = UniqueId(
-                    string.IsNullOrWhiteSpace(selectedQuest.Id) ? "quest-copy" : selectedQuest.Id + "-copy",
-                    Data.Quests.Where(quest => !ReferenceEquals(quest, selectedQuest)).Select(quest => quest.Id));
+                selectedQuest.Id = ContentId.Create("quest", "original");
                 break;
             case EditorTab.Dialogs when selectedDialog != null:
-                selectedDialog = Clone(selectedDialog, Data.Dialogs, d => d.Id, (d, n) => d.Id = UniqueId(n, Data.Dialogs.Select(existing => existing.Id)));
+                selectedDialog = Clone(selectedDialog, Data.Dialogs, d => d.Id, (_, _) => { });
+                selectedDialog.Id = ContentId.Create("dialog", "original");
                 break;
             case EditorTab.Classes when selectedClassStats != null:
                 selectedClassStats = Clone(selectedClassStats, Data.ClassLevels, c => c.Class, (_, _) => { });
@@ -672,9 +673,7 @@ else
                 break;
             case EditorTab.Backgrounds when selectedBackground != null:
                 selectedBackground = Clone(selectedBackground, Data.Backgrounds, b => b.Name, (b, n) => b.Name = n);
-                selectedBackground.Id = UniqueId(
-                    string.IsNullOrWhiteSpace(selectedBackground.Id) ? "BackgroundCopy" : selectedBackground.Id + "Copy",
-                    Data.Backgrounds.Where(background => !ReferenceEquals(background, selectedBackground)).Select(background => background.Id));
+                selectedBackground.Id = ContentId.Create("background", "base");
                 break;
         }
 

@@ -31,10 +31,9 @@ public sealed class DataSourceCatalog
 
     public void Reload()
     {
-        Spells = Names(data.Spells.Select(s => s.Name));
+        Spells = Names(data.Spells.Select(s => s.Id));
         Skills = Names(data.Skills.Select(s => s.Id));
-        Items = Names(data.Items.Select(i => i.Name)
-            .Concat(data.Items.Select(i => i.Id)));
+        Items = Names(data.Items.Select(i => i.Id));
         Items = Items.Prepend(RandomItemId).ToList();
         Quests = Names(data.Quests.Select(q => q.Id));
         Dialogs = Names(data.Dialogs.Select(d => d.Id));
@@ -54,8 +53,7 @@ public sealed class DataSourceCatalog
                 .ToList();
         }
 
-        Backgrounds = Names(data.Backgrounds.Select(background => background.Id)
-            .Concat(data.Backgrounds.Select(background => background.Name)));
+        Backgrounds = Names(data.Backgrounds.Select(background => background.Id));
     }
 
     public string SkillLabel(string id)

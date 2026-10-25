@@ -80,7 +80,7 @@ namespace DungeonEscape.Core.Test.ViewModels
         public void SpellAndItemRowsBuildDisplayLabels()
         {
             var viewModel = new CombatViewModel();
-            var spell = new Spell { Name = "Heal", SpellLevel = 1 };
+            var spell = new Spell { Id = "spell/test/heal", Name = "Heal", SpellLevel = 1 };
             var item = new ItemInstance(new Item { Name = "Potion", Type = ItemType.OneUse, Slots = new List<Slot>() });
 
             Assert.Equal("Heal  L1", Assert.Single(viewModel.GetSpellRows(new[] { spell })).Label);
@@ -90,9 +90,9 @@ namespace DungeonEscape.Core.Test.ViewModels
         [Fact]
         public void KnownDndBonusActionSpellsAreMarkedAsBonusActions()
         {
-            Assert.True(new Spell { Name = "Shield of Faith", DndSpell = "Shield of Faith" }.IsBonusAction);
-            Assert.True(new Spell { Name = "Mass Healing Word", DndSpell = "Mass Healing Word" }.IsBonusAction);
-            Assert.False(new Spell { Name = "Cure Wounds", DndSpell = "Cure Wounds" }.IsBonusAction);
+            Assert.True(new Spell { Id = "spell/test/shield-of-faith", Name = "Shield of Faith", DndSpell = "Shield of Faith" }.IsBonusAction);
+            Assert.True(new Spell { Id = "spell/test/mass-healing-word", Name = "Mass Healing Word", DndSpell = "Mass Healing Word" }.IsBonusAction);
+            Assert.False(new Spell { Id = "spell/test/cure-wounds", Name = "Cure Wounds", DndSpell = "Cure Wounds" }.IsBonusAction);
         }
 
         [Fact]
@@ -184,7 +184,7 @@ namespace DungeonEscape.Core.Test.ViewModels
         {
             var spell = new Spell
             {
-                Name = name,
+                Id = "spell/test/" + name.ToLowerInvariant().Replace(" ", "-"), Name = name,
                 SpellLevel = spellLevel,
                 MinLevel = minLevel,
                 Classes = new List<string> { heroClass.ToString() },

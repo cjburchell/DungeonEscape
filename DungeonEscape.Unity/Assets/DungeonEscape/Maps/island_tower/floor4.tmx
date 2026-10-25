@@ -214,7 +214,7 @@
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="SpawnId" value="spawn1"/>
-    <property name="WarpMap" value="maps/island_tower/floor5"/>
+    <property name="WarpMap" value="map/original/island-tower-floor5"/>
    </properties>
   </object>
   <object id="4" name="Chest" class="Chest" gid="592" x="448" y="256" width="32" height="32">
@@ -254,7 +254,7 @@
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="SpawnId" value="spawn2"/>
-    <property name="WarpMap" value="maps/island_tower/floor3"/>
+    <property name="WarpMap" value="map/original/island-tower-floor3"/>
    </properties>
   </object>
  </objectgroup>

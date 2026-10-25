@@ -10,7 +10,8 @@
       "Sorcerer",
       "Wizard"
     ],
-    "Name": "Fire Bolt"
+    "Name": "Fire Bolt",
+    "Id": "spell/base/fire-bolt"
   },
   {
     "Skill": "skill/base/sacred-flame",
@@ -22,7 +23,8 @@
     "Classes": [
       "Cleric"
     ],
-    "Name": "Sacred Flame"
+    "Name": "Sacred Flame",
+    "Id": "spell/base/sacred-flame"
   },
   {
     "Skill": "skill/base/eldritch-blast",
@@ -34,7 +36,8 @@
     "Classes": [
       "Warlock"
     ],
-    "Name": "Eldritch Blast"
+    "Name": "Eldritch Blast",
+    "Id": "spell/base/eldritch-blast"
   },
   {
     "Skill": "skill/base/vicious-mockery",
@@ -46,7 +49,8 @@
     "Classes": [
       "Bard"
     ],
-    "Name": "Vicious Mockery"
+    "Name": "Vicious Mockery",
+    "Id": "spell/base/vicious-mockery"
   },
   {
     "Skill": "skill/base/cure-wounds",
@@ -60,7 +64,8 @@
       "Cleric",
       "Paladin"
     ],
-    "Name": "Cure Wounds"
+    "Name": "Cure Wounds",
+    "Id": "spell/base/cure-wounds"
   },
   {
     "Skill": "skill/base/word-of-recall",
@@ -72,7 +77,8 @@
     "Classes": [
       "Cleric"
     ],
-    "Name": "Word of Recall"
+    "Name": "Word of Recall",
+    "Id": "spell/base/word-of-recall"
   },
   {
     "Skill": "skill/base/burning-hands",
@@ -85,7 +91,8 @@
       "Sorcerer",
       "Wizard"
     ],
-    "Name": "Burning Hands"
+    "Name": "Burning Hands",
+    "Id": "spell/base/burning-hands"
   },
   {
     "Skill": "skill/base/lightning-bolt",
@@ -98,7 +105,8 @@
       "Sorcerer",
       "Wizard"
     ],
-    "Name": "Lightning Bolt"
+    "Name": "Lightning Bolt",
+    "Id": "spell/base/lightning-bolt"
   },
   {
     "Skill": "skill/base/fireball",
@@ -111,7 +119,8 @@
       "Sorcerer",
       "Wizard"
     ],
-    "Name": "Fireball"
+    "Name": "Fireball",
+    "Id": "spell/base/fireball"
   },
   {
     "Skill": "skill/base/chain-lightning",
@@ -124,7 +133,8 @@
       "Sorcerer",
       "Wizard"
     ],
-    "Name": "Chain Lightning"
+    "Name": "Chain Lightning",
+    "Id": "spell/base/chain-lightning"
   },
   {
     "Skill": "skill/base/teleportation-circle",
@@ -138,7 +148,8 @@
       "Sorcerer",
       "Wizard"
     ],
-    "Name": "Teleportation Circle"
+    "Name": "Teleportation Circle",
+    "Id": "spell/base/teleportation-circle"
   },
   {
     "Skill": "skill/base/revivify",
@@ -151,7 +162,8 @@
       "Cleric",
       "Paladin"
     ],
-    "Name": "Revivify"
+    "Name": "Revivify",
+    "Id": "spell/base/revivify"
   },
   {
     "Skill": "skill/base/raise-dead",
@@ -165,7 +177,8 @@
       "Cleric",
       "Paladin"
     ],
-    "Name": "Raise Dead"
+    "Name": "Raise Dead",
+    "Id": "spell/base/raise-dead"
   },
   {
     "Skill": "skill/base/mass-healing-word",
@@ -177,7 +190,8 @@
     "Classes": [
       "Cleric"
     ],
-    "Name": "Mass Healing Word"
+    "Name": "Mass Healing Word",
+    "Id": "spell/base/mass-healing-word"
   },
   {
     "Skill": "skill/base/mass-cure-wounds",
@@ -190,7 +204,8 @@
       "Bard",
       "Cleric"
     ],
-    "Name": "Mass Cure Wounds"
+    "Name": "Mass Cure Wounds",
+    "Id": "spell/base/mass-cure-wounds"
   },
   {
     "Skill": "skill/base/mass-heal",
@@ -202,7 +217,8 @@
     "Classes": [
       "Cleric"
     ],
-    "Name": "Mass Heal"
+    "Name": "Mass Heal",
+    "Id": "spell/base/mass-heal"
   },
   {
     "Skill": "skill/base/lesser-restoration",
@@ -216,7 +232,8 @@
       "Cleric",
       "Paladin"
     ],
-    "Name": "Lesser Restoration"
+    "Name": "Lesser Restoration",
+    "Id": "spell/base/lesser-restoration"
   },
   {
     "Skill": "skill/base/haste",
@@ -229,7 +246,8 @@
       "Sorcerer",
       "Wizard"
     ],
-    "Name": "Haste"
+    "Name": "Haste",
+    "Id": "spell/base/haste"
   },
   {
     "Skill": "skill/base/shield-of-faith",
@@ -242,7 +260,8 @@
       "Cleric",
       "Paladin"
     ],
-    "Name": "Shield of Faith"
+    "Name": "Shield of Faith",
+    "Id": "spell/base/shield-of-faith"
   },
   {
     "Skill": "skill/base/aid",
@@ -255,7 +274,8 @@
       "Cleric",
       "Paladin"
     ],
-    "Name": "Aid"
+    "Name": "Aid",
+    "Id": "spell/base/aid"
   },
   {
     "Skill": "skill/base/bestow-curse",
@@ -269,7 +289,8 @@
       "Cleric",
       "Wizard"
     ],
-    "Name": "Bestow Curse"
+    "Name": "Bestow Curse",
+    "Id": "spell/base/bestow-curse"
   },
   {
     "Skill": "skill/base/sleep",
@@ -283,7 +304,8 @@
       "Sorcerer",
       "Wizard"
     ],
-    "Name": "Sleep"
+    "Name": "Sleep",
+    "Id": "spell/base/sleep"
   },
   {
     "Skill": "skill/base/silence",
@@ -296,7 +318,8 @@
       "Bard",
       "Cleric"
     ],
-    "Name": "Silence"
+    "Name": "Silence",
+    "Id": "spell/base/silence"
   },
   {
     "Skill": "skill/base/slow",
@@ -310,7 +333,8 @@
       "Sorcerer",
       "Wizard"
     ],
-    "Name": "Slow"
+    "Name": "Slow",
+    "Id": "spell/base/slow"
   },
   {
     "Skill": "skill/base/confusion",
@@ -324,7 +348,8 @@
       "Sorcerer",
       "Wizard"
     ],
-    "Name": "Confusion"
+    "Name": "Confusion",
+    "Id": "spell/base/confusion"
   },
   {
     "Skill": "skill/base/protection-from-evil-and-good",
@@ -339,6 +364,7 @@
       "Warlock",
       "Wizard"
     ],
-    "Name": "Protection from Evil and Good"
+    "Name": "Protection from Evil and Good",
+    "Id": "spell/base/protection-from-evil-and-good"
   }
 ]

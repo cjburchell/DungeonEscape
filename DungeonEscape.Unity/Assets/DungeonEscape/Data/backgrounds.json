@@ -1,6 +1,6 @@
 [
   {
-    "Id": "Acolyte",
+    "Id": "background/base/acolyte",
     "Name": "Acolyte",
     "Description": "Temple-raised servant of faith with practiced insight and religious knowledge.",
     "Wisdom": 2,
@@ -11,7 +11,7 @@
     ]
   },
   {
-    "Id": "Artisan",
+    "Id": "background/base/artisan",
     "Name": "Artisan",
     "Description": "Skilled maker and guild-trained negotiator with an eye for detail.",
     "Intelligence": 1,
@@ -22,7 +22,7 @@
     ]
   },
   {
-    "Id": "Criminal",
+    "Id": "background/base/criminal",
     "Name": "Criminal",
     "Description": "A survivor of back alleys and hidden deals, quick with lies and quiet steps.",
     "Dexterity": 2,
@@ -33,7 +33,7 @@
     ]
   },
   {
-    "Id": "Entertainer",
+    "Id": "background/base/entertainer",
     "Name": "Entertainer",
     "Description": "A performer trained to move gracefully and hold a room's attention.",
     "Dexterity": 1,
@@ -44,7 +44,7 @@
     ]
   },
   {
-    "Id": "Guard",
+    "Id": "background/base/guard",
     "Name": "Guard",
     "Description": "A watch veteran hardened by patrols, drills, and reading danger early.",
     "Strength": 2,
@@ -55,7 +55,7 @@
     ]
   },
   {
-    "Id": "Guide",
+    "Id": "background/base/guide",
     "Name": "Guide",
     "Description": "A pathfinder comfortable in wild places and long journeys.",
     "Dexterity": 1,
@@ -66,7 +66,7 @@
     ]
   },
   {
-    "Id": "Noble",
+    "Id": "background/base/noble",
     "Name": "Noble",
     "Description": "Born to influence, trained in history, etiquette, and persuasive speech.",
     "Intelligence": 1,
@@ -77,7 +77,7 @@
     ]
   },
   {
-    "Id": "Sage",
+    "Id": "background/base/sage",
     "Name": "Sage",
     "Description": "A dedicated scholar of lore, magic, and recorded history.",
     "Intelligence": 2,
@@ -88,7 +88,7 @@
     ]
   },
   {
-    "Id": "Sailor",
+    "Id": "background/base/sailor",
     "Name": "Sailor",
     "Description": "A ship-tested traveler with balance, stamina, and sharp senses.",
     "Strength": 1,
@@ -99,7 +99,7 @@
     ]
   },
   {
-    "Id": "Soldier",
+    "Id": "background/base/soldier",
     "Name": "Soldier",
     "Description": "A drilled fighter used to discipline, hard marches, and battlefield pressure.",
     "Strength": 2,

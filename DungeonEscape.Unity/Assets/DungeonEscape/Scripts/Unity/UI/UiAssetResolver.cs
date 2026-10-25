@@ -169,7 +169,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 return -1;
             }
 
-            if (item.ImageId > 0 || string.IsNullOrWhiteSpace(item.Name) || GameDataCache.Current == null)
+            if (item.ImageId > 0 || string.IsNullOrWhiteSpace(item.Id) || GameDataCache.Current == null)
             {
                 return item.ImageId;
             }
@@ -179,7 +179,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 : GameDataCache.Current.CustomItems.FirstOrDefault(candidate =>
                     candidate != null &&
                     candidate.ImageId > 0 &&
-                    string.Equals(candidate.Name, item.Name, System.StringComparison.OrdinalIgnoreCase));
+                    string.Equals(candidate.Id, item.Id, System.StringComparison.Ordinal));
 
             return catalogItem == null ? item.ImageId : catalogItem.ImageId;
         }

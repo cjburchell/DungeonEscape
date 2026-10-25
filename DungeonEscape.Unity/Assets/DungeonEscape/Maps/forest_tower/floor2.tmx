@@ -192,7 +192,7 @@
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="SpawnId" value="spawn1"/>
-    <property name="WarpMap" value="maps/forest_tower/floor3"/>
+    <property name="WarpMap" value="map/original/forest-tower-floor3"/>
    </properties>
   </object>
   <object id="2" name="Stairs down to 25" class="Warp" gid="619" x="384" y="256" width="32" height="32">
@@ -200,7 +200,7 @@
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="SpawnId" value="spawn1"/>
-    <property name="WarpMap" value="maps/forest_tower/floor1"/>
+    <property name="WarpMap" value="map/original/forest-tower-floor1"/>
    </properties>
   </object>
   <object id="3" name="Stairs up to 41" class="Warp" gid="595" x="736" y="256" width="32" height="32">
@@ -208,7 +208,7 @@
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="SpawnId" value="spawn2"/>
-    <property name="WarpMap" value="maps/forest_tower/floor3"/>
+    <property name="WarpMap" value="map/original/forest-tower-floor3"/>
    </properties>
   </object>
   <object id="4" name="Stairs down to 25" class="Warp" gid="619" x="672" y="416" width="32" height="32">
@@ -216,7 +216,7 @@
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="SpawnId" value="spawn2"/>
-    <property name="WarpMap" value="maps/forest_tower/floor1"/>
+    <property name="WarpMap" value="map/original/forest-tower-floor1"/>
    </properties>
   </object>
   <object id="5" name="Stairs down to 25" class="Warp" gid="619" x="352" y="512" width="32" height="32">
@@ -224,7 +224,7 @@
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="SpawnId" value="spawn3"/>
-    <property name="WarpMap" value="maps/forest_tower/floor1"/>
+    <property name="WarpMap" value="map/original/forest-tower-floor1"/>
    </properties>
   </object>
   <object id="6" name="Stairs up to 41" class="Warp" gid="2147484243" x="448" y="544" width="32" height="32">
@@ -232,7 +232,7 @@
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="SpawnId" value="spawn3"/>
-    <property name="WarpMap" value="maps/forest_tower/floor3"/>
+    <property name="WarpMap" value="map/original/forest-tower-floor3"/>
    </properties>
   </object>
  </objectgroup>

@@ -247,7 +247,7 @@
       <properties>
         <property name="Collideable" type="bool" value="false" />
         <property name="SpawnId" type="string" value="spawn1" />
-        <property name="WarpMap" type="string" value="maps/pyramid/main" />
+        <property name="WarpMap" type="string" value="map/original/pyramid-main" />
         <property name="MoveRadius" type="int" value="0" />
       </properties>
     </object>

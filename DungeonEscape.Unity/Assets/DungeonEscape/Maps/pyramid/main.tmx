@@ -154,28 +154,28 @@
       <properties>
         <property name="Collideable" type="bool" value="false" />
         <property name="SpawnId" type="string" value="spawn1" />
-        <property name="WarpMap" type="string" value="maps/pyramid/basement" />
+        <property name="WarpMap" type="string" value="map/original/pyramid-basement" />
         <property name="MoveRadius" type="int" value="0" />
       </properties>
     </object>
     <object id="77" name="Exit 0" class="Warp" x="544" y="1120" width="32" height="128">
       <properties>
         <property name="Collideable" type="bool" value="false" />
-        <property name="WarpMap" type="string" value="maps/overworld" />
+        <property name="WarpMap" type="string" value="map/original/overworld" />
         <property name="MoveRadius" type="int" value="0" />
       </properties>
     </object>
     <object id="79" name="Exit 0" class="Warp" x="544" y="1248" width="256" height="32">
       <properties>
         <property name="Collideable" type="bool" value="false" />
-        <property name="WarpMap" type="string" value="maps/overworld" />
+        <property name="WarpMap" type="string" value="map/original/overworld" />
         <property name="MoveRadius" type="int" value="0" />
       </properties>
     </object>
     <object id="80" name="Exit 0" class="Warp" x="768" y="1120" width="32" height="128">
       <properties>
         <property name="Collideable" type="bool" value="false" />
-        <property name="WarpMap" type="string" value="maps/overworld" />
+        <property name="WarpMap" type="string" value="map/original/overworld" />
         <property name="MoveRadius" type="int" value="0" />
       </properties>
     </object>
@@ -187,14 +187,14 @@
     <object id="94" name="Gard" class="Npc" gid="18" x="576" y="1152" width="32" height="48">
       <properties>
         <property name="Collideable" type="bool" value="true" />
-        <property name="Dialog" value="Pyramid_Guard_Dialog" />
+        <property name="Dialog" value="dialog/original/pyramid-guard-dialog" />
         <property name="MoveRadius" type="int" value="0" />
       </properties>
     </object>
     <object id="95" name="Gard" class="Npc" gid="18" x="736" y="1152" width="32" height="48">
       <properties>
         <property name="Collideable" type="bool" value="true" />
-        <property name="Dialog" value="Pyramid_Guard_Dialog" />
+        <property name="Dialog" value="dialog/original/pyramid-guard-dialog" />
         <property name="MoveRadius" type="int" value="0" />
       </properties>
     </object>

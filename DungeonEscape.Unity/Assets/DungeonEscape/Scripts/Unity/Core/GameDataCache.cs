@@ -108,8 +108,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
             item = dataSet.CustomItems == null
                 ? null
                 : dataSet.CustomItems.FirstOrDefault(value =>
-                    string.Equals(value.Id, itemId, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(value.Name, itemId, StringComparison.OrdinalIgnoreCase));
+                    string.Equals(value.Id, itemId, StringComparison.Ordinal));
 
             return item != null;
         }

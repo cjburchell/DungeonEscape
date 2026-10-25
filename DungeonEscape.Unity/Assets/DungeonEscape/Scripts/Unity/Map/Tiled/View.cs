@@ -872,12 +872,12 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             return gameState != null &&
                    gameState.Party != null &&
                    gameState.Party.HasShip &&
-                   string.Equals(Loader.NormalizeMapId(mapId), "overworld", StringComparison.OrdinalIgnoreCase);
+                   string.Equals(Loader.NormalizeMapId(mapId), "map/original/overworld", StringComparison.OrdinalIgnoreCase);
         }
 
         private bool IsCurrentMapOverworld()
         {
-            return string.Equals(CurrentMapId, "overworld", StringComparison.OrdinalIgnoreCase);
+            return string.Equals(CurrentMapId, "map/original/overworld", StringComparison.OrdinalIgnoreCase);
         }
 
         private int GetLayerGidAt(XElement layer, int column, int row)

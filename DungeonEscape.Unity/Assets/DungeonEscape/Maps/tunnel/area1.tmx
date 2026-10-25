@@ -319,7 +319,7 @@
         <property name="Collideable" type="bool" value="false" />
         <property name="MoveRadius" type="int" value="0" />
         <property name="SpawnId" value="spawn1" />
-        <property name="WarpMap" value="maps/tunnel/area2" />
+        <property name="WarpMap" value="map/original/tunnel-area2" />
       </properties>
     </object>
     <object id="2" name="Chest" class="Chest" gid="1552" x="480" y="288" width="32" height="32">
@@ -454,7 +454,7 @@
         <property name="Collideable" type="bool" value="false" />
         <property name="MoveRadius" type="int" value="0" />
         <property name="SpawnId" value="spawn1" />
-        <property name="WarpMap" value="overworld" />
+        <property name="WarpMap" value="map/original/overworld" />
       </properties>
     </object>
   </objectgroup>

@@ -542,7 +542,7 @@ namespace Redpoint.DungeonEscape.Unity.Map
             {
                 MapId = mapId,
                 SpawnId = warp.SpawnId,
-                UseSavedOverWorldPosition = mapId == "overworld" && string.IsNullOrEmpty(warp.SpawnId)
+                UseSavedOverWorldPosition = mapId == "map/original/overworld" && string.IsNullOrEmpty(warp.SpawnId)
             };
         }
 

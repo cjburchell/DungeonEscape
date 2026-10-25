@@ -87,3 +87,7 @@ Before closing a task, run where practical:
 
 Add manual test steps to `memory-bank/MANUAL_TESTS.md` when behavior changes.
 
+
+## Permanent Content IDs
+
+Use `<kind>/<scope>/<key>` (for example `item/base/longsword`, `quest/original/the-lost-seashell`, `map/original/overworld`). Existing definitions use readable current-name slugs assigned once; subsequent renames preserve identity. Use `ContentId.Create` for fresh authored IDs and `ContentId.IsValid` for validation. References store IDs with ordinal comparison, while UI shows display names. Never use a content ID as a filesystem path: resolve maps through MapCatalog and Data/maps.json. Do not convert instance GUIDs, Tiled object numbers, spawn markers, enum rules, or image indices into definition IDs.

@@ -9,6 +9,7 @@ namespace Redpoint.DungeonEscape.Unity.Tests.EditMode
     public sealed class ProjectSmokeEditModeTests
     {
         [TestCase("allmonsters.json")]
+        [TestCase("maps.json")]
         [TestCase("class.json")]
         [TestCase("customitems.json")]
         [TestCase("default_settings.json")]

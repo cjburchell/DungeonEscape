@@ -363,7 +363,7 @@
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="WarpMap" value="maps/overworld"/>
+    <property name="WarpMap" value="map/original/overworld"/>
    </properties>
   </object>
   <object id="22" name="Chest" class="Chest" gid="1453" x="608" y="1024" width="32" height="32">
@@ -406,14 +406,14 @@
    <properties>
     <property name="Class" value="Wizard"/>
     <property name="Species" value="Elf"/>
-    <property name="Background" value="Sage"/>
+    <property name="Background" value="background/base/sage"/>
     <property name="AbilityBonus2" value="Intelligence"/>
     <property name="AbilityBonus1" value="Dexterity"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Gender" value="Female"/>
     <property name="Level" type="int" value="3"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Dialog" value="Dungeon_Lost_Recruit_Dialog"/>
+    <property name="Dialog" value="dialog/original/dungeon-lost-recruit-dialog"/>
    </properties>
   </object>
  </objectgroup>

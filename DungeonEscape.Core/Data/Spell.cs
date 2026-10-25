@@ -32,7 +32,7 @@ namespace Redpoint.DungeonEscape.Data
                     return true;
                 }
 
-                var spellName = string.IsNullOrWhiteSpace(DndSpell) ? Name : DndSpell;
+                var spellName = DndSpell;
                 return IsDndBonusActionSpell(spellName);
             }
         }
@@ -42,7 +42,7 @@ namespace Redpoint.DungeonEscape.Data
         {
             get
             {
-                var spellName = string.IsNullOrWhiteSpace(DndSpell) ? Name : DndSpell;
+                var spellName = DndSpell;
                 if (string.IsNullOrWhiteSpace(spellName))
                 {
                     return false;
@@ -111,6 +111,7 @@ namespace Redpoint.DungeonEscape.Data
 
         public List<string> Classes { get; set; }
 
+        public string Id { get; set; }
         public string Name { get; set; }
 
         public Spell()

@@ -15,6 +15,18 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
         private static readonly Dictionary<string, LoadedMap> LoadedMaps = new Dictionary<string, LoadedMap>();
         private static readonly Dictionary<string, TiledTilesetDocumentInfo> TilesetDocuments = new Dictionary<string, TiledTilesetDocumentInfo>();
 
+        private static MapCatalog catalog;
+
+        public static MapDefinition GetMapDefinition(string idOrPath)
+        {
+            if (catalog == null)
+            {
+                var path = UnityAssetPath.ToRuntimePath("Assets/DungeonEscape/Data/maps.json");
+                catalog = new MapCatalog(Newtonsoft.Json.JsonConvert.DeserializeObject<List<MapDefinition>>(File.ReadAllText(path)));
+            }
+            return catalog.Get(idOrPath);
+        }
+
         public static LoadedMap Load(string mapAssetPath)
         {
             mapAssetPath = NormalizeMapAssetPath(mapAssetPath);
@@ -83,12 +95,12 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
 
         public static string NormalizeMapAssetPath(string mapIdOrAssetPath)
         {
-            return TiledMapPaths.NormalizeMapAssetPath(mapIdOrAssetPath);
+            return GetMapDefinition(mapIdOrAssetPath).AssetPath;
         }
 
         public static string NormalizeMapId(string mapIdOrAssetPath)
         {
-            return TiledMapPaths.NormalizeMapId(mapIdOrAssetPath);
+            return GetMapDefinition(mapIdOrAssetPath).Id;
         }
 
         private static void ValidateTilesets(TiledMapInfo map)

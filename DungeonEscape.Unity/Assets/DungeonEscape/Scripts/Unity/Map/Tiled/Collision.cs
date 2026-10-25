@@ -125,7 +125,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
 
         private static bool IsOverworldMap(string mapId)
         {
-            return string.Equals(Loader.NormalizeMapId(mapId), "overworld", StringComparison.OrdinalIgnoreCase);
+            return string.Equals(Loader.NormalizeMapId(mapId), "map/original/overworld", StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool IsNpcObject(TiledObjectInfo mapObject)

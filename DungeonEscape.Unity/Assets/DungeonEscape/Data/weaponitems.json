@@ -17,7 +17,8 @@
     "Classes": [
       "Paladin",
       "Fighter"
-    ]
+    ],
+    "Id": "item/base/battleaxe"
   },
   {
     "ImageId": 138,
@@ -38,7 +39,8 @@
       "Paladin",
       "Fighter",
       "Monk"
-    ]
+    ],
+    "Id": "item/base/club"
   },
   {
     "ImageId": 37,
@@ -63,7 +65,8 @@
       "Bard",
       "Paladin",
       "Fighter"
-    ]
+    ],
+    "Id": "item/base/dagger"
   },
   {
     "ImageId": 69,
@@ -84,7 +87,8 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/flail"
   },
   {
     "ImageId": 145,
@@ -119,7 +123,8 @@
       "Fighter",
       "Bard",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/flame-tongue"
   },
   {
     "ImageId": 139,
@@ -140,7 +145,8 @@
       "Cleric",
       "Paladin",
       "Fighter"
-    ]
+    ],
+    "Id": "item/base/greatclub"
   },
   {
     "ImageId": 127,
@@ -162,7 +168,8 @@
       "Fighter",
       "Rogue",
       "Bard"
-    ]
+    ],
+    "Id": "item/base/handaxe"
   },
   {
     "ImageId": 168,
@@ -183,7 +190,8 @@
       "Fighter",
       "Paladin",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/heavy-crossbow"
   },
   {
     "ImageId": 21,
@@ -206,7 +214,8 @@
       "Rogue",
       "Bard",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/javelin"
   },
   {
     "ImageId": 162,
@@ -229,7 +238,8 @@
       "Monk",
       "Fighter",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/light-crossbow"
   },
   {
     "ImageId": 144,
@@ -251,7 +261,8 @@
       "Fighter",
       "Cleric",
       "Bard"
-    ]
+    ],
+    "Id": "item/base/light-hammer"
   },
   {
     "ImageId": 165,
@@ -272,7 +283,8 @@
       "Paladin",
       "Fighter",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/longbow"
   },
   {
     "ImageId": 1,
@@ -294,7 +306,8 @@
       "Fighter",
       "Bard",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/longsword"
   },
   {
     "ImageId": 2,
@@ -323,7 +336,8 @@
       "Fighter",
       "Bard",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/longsword-1"
   },
   {
     "ImageId": 50,
@@ -344,7 +358,8 @@
       "Cleric",
       "Paladin",
       "Fighter"
-    ]
+    ],
+    "Id": "item/base/mace"
   },
   {
     "ImageId": 51,
@@ -377,7 +392,8 @@
       "Cleric",
       "Paladin",
       "Fighter"
-    ]
+    ],
+    "Id": "item/base/mace-of-disruption"
   },
   {
     "ImageId": 57,
@@ -398,7 +414,8 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/morningstar"
   },
   {
     "ImageId": 161,
@@ -416,7 +433,8 @@
       "Rogue",
       "Fighter",
       "Bard"
-    ]
+    ],
+    "Id": "item/base/net"
   },
   {
     "ImageId": 88,
@@ -440,7 +458,8 @@
       "Cleric",
       "Monk",
       "Bard"
-    ]
+    ],
+    "Id": "item/base/quarterstaff"
   },
   {
     "ImageId": 3,
@@ -462,7 +481,8 @@
       "Fighter",
       "Bard",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/rapier"
   },
   {
     "ImageId": 4,
@@ -491,7 +511,8 @@
       "Fighter",
       "Bard",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/rapier-1"
   },
   {
     "ImageId": 8,
@@ -513,7 +534,8 @@
       "Fighter",
       "Bard",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/scimitar"
   },
   {
     "ImageId": 162,
@@ -537,7 +559,8 @@
       "Cleric",
       "Monk",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/shortbow"
   },
   {
     "ImageId": 164,
@@ -568,7 +591,8 @@
       "Cleric",
       "Monk",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/shortbow-1"
   },
   {
     "ImageId": 5,
@@ -590,7 +614,8 @@
       "Fighter",
       "Rogue",
       "Bard"
-    ]
+    ],
+    "Id": "item/base/shortsword"
   },
   {
     "ImageId": 151,
@@ -612,7 +637,8 @@
       "Warlock",
       "Bard",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/sling"
   },
   {
     "ImageId": 26,
@@ -635,7 +661,8 @@
       "Rogue",
       "Bard",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/spear"
   },
   {
     "ImageId": 907,
@@ -656,7 +683,8 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/war-pick"
   },
   {
     "ImageId": 150,
@@ -677,6 +705,7 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/warhammer"
   }
 ]

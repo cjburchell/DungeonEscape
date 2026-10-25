@@ -223,7 +223,7 @@
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="SpawnId" value="spawn4"/>
-    <property name="WarpMap" value="maps/forest_tower/floor3"/>
+    <property name="WarpMap" value="map/original/forest-tower-floor3"/>
    </properties>
   </object>
   <object id="10" name="Open Chest" class="Chest" gid="616" x="256" y="384" width="32" height="32">

@@ -302,7 +302,7 @@
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="WarpMap" value="maps/overworld"/>
+    <property name="WarpMap" value="map/original/overworld"/>
    </properties>
   </object>
   <object id="24" name="Chest" class="Chest" gid="3221" x="352" y="704" width="32" height="32">
@@ -324,7 +324,7 @@
   <object id="26" name="Key Chest" class="Chest" gid="3221" x="384" y="736" width="32" height="32">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
-    <property name="ItemId" value="Iron Key"/>
+    <property name="ItemId" value="item/base/iron-key"/>
     <property name="Locked" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
    </properties>
@@ -348,7 +348,7 @@
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="SpawnId" value="spawn1"/>
-    <property name="WarpMap" value="maps/island_tower/floor2"/>
+    <property name="WarpMap" value="map/original/island-tower-floor2"/>
    </properties>
   </object>
  </objectgroup>

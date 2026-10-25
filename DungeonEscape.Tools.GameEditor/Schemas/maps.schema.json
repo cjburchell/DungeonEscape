@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dungeonescape.local/schemas/maps.schema.json",
+  "title": "Dungeon Escape map catalog",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["Id", "Name", "AssetPath"],
+    "properties": {
+      "Id": { "type": "string", "pattern": "^map/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$" },
+      "Name": { "type": "string", "minLength": 1 },
+      "AssetPath": { "type": "string", "pattern": "^Assets/DungeonEscape/Maps/.+\\.tmx$" },
+      "EncounterAssetPath": { "type": "string", "pattern": "^Assets/DungeonEscape/Data/maps/.+\\.json$" }
+    }
+  }
+}

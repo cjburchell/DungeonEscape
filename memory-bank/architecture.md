@@ -127,3 +127,11 @@ Top-level CI variables include:
 Unity license can be supplied through GitLab variables using a license file/content variable or serial/email/password activation.
 
 Windows Unity builds are stored as downloadable artifacts when enabled.
+
+## Content Identity And Map Registry
+
+Authored monster, skill, item, spell, quest, dialog, background, and map definitions use immutable lowercase `<kind>/<scope>/<key>` IDs. `base` holds reusable definitions; `original` scopes the existing adventure. Display names do not participate in reference lookup. Class/species enums, tile/image indices, Unity GUIDs, spawn IDs, and mutable item/placement identities are separate contracts.
+
+`Data/maps.json` is the map registry: each entry contains `Id`, `Name`, `AssetPath`, and optional `EncounterAssetPath`. Shared `MapCatalog` validates unique IDs/files and resolves IDs independently of filenames. Unity Loader and Game Editor use the registry. TMX WarpMap and saved map locations store canonical map IDs. Physical TMX/TSX paths remain unchanged, preserving relative tileset links; the build processor copies the Data folder including maps.json into StreamingAssets.
+
+The save format is 1.2 after this conversion. Per user instruction, prior-save migration is intentionally omitted; unsupported versions use the existing archive policy.

@@ -183,10 +183,8 @@ public sealed class DataFolderService
         return itemLists
             .SelectMany(list => list ?? new List<Item>())
             .Where(item => item != null)
-            .GroupBy(item => string.IsNullOrWhiteSpace(item.Id)
-                ? $"{item.Name}|{item.Type}|{item.MinLevel}"
-                : item.Id)
-            .Select(group => group.First())
+            .GroupBy(item => item.Id, StringComparer.Ordinal)
+                .SelectMany(group => string.IsNullOrWhiteSpace(group.Key) ? group : group.Take(1))
             .OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
             .ToList();
     }

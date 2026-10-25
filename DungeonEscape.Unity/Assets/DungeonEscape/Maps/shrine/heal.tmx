@@ -299,14 +299,14 @@
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
     <property name="SpawnId" value="spawn1"/>
-    <property name="WarpMap" value="maps/towns/isis"/>
+    <property name="WarpMap" value="map/original/towns-isis"/>
    </properties>
   </object>
   <object id="21" name="Exit 0" class="Warp" x="480" y="960" width="172.667" height="32">
    <properties>
     <property name="Collideable" type="bool" value="false"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="WarpMap" value="maps/overworld"/>
+    <property name="WarpMap" value="map/original/overworld"/>
    </properties>
   </object>
  </objectgroup>
@@ -324,56 +324,56 @@
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="Dialog" value="Healing_Shrine_Guard_Dialog"/>
+    <property name="Dialog" value="dialog/original/healing-shrine-guard-dialog"/>
    </properties>
   </object>
   <object id="25" name="Gard" class="Npc" gid="146" x="608" y="896" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="0"/>
-    <property name="Dialog" value="Healing_Shrine_Guard_Dialog"/>
+    <property name="Dialog" value="dialog/original/healing-shrine-guard-dialog"/>
    </properties>
   </object>
   <object id="26" name="Lady" class="Npc" gid="120" x="352" y="544" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Dialog" value="Healing_Shrine_Lady_Dialog"/>
+    <property name="Dialog" value="dialog/original/healing-shrine-lady-dialog"/>
    </properties>
   </object>
   <object id="27" name="Lady" class="Npc" gid="120" x="704" y="544" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Dialog" value="Healing_Shrine_Lady_Dialog"/>
+    <property name="Dialog" value="dialog/original/healing-shrine-lady-dialog"/>
    </properties>
   </object>
   <object id="28" name="Cat" class="Npc" gid="214" x="640" y="704" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Dialog" value="Healing_Shrine_Cat_Dialog"/>
+    <property name="Dialog" value="dialog/original/healing-shrine-cat-dialog"/>
    </properties>
   </object>
   <object id="29" name="Cat" class="Npc" gid="214" x="448" y="704" width="32" height="48">
    <properties>
     <property name="Collideable" type="bool" value="true"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Dialog" value="Healing_Shrine_Cat_Dialog"/>
+    <property name="Dialog" value="dialog/original/healing-shrine-cat-dialog"/>
    </properties>
   </object>
   <object id="4" name="#Random#" class="NpcPartyMember" gid="1905" x="704" y="352" width="32" height="48">
    <properties>
     <property name="Class" value="Cleric"/>
     <property name="Species" value="Human"/>
-    <property name="Background" value="Acolyte"/>
+    <property name="Background" value="background/base/acolyte"/>
     <property name="AbilityBonus2" value="Wisdom"/>
     <property name="AbilityBonus1" value="Constitution"/>
     <property name="Collideable" type="bool" value="true"/>
     <property name="Gender" value="Male"/>
     <property name="Level" type="int" value="2"/>
     <property name="MoveRadius" type="int" value="3"/>
-    <property name="Dialog" value="Healing_Shrine_Recruit_Dialog"/>
+    <property name="Dialog" value="dialog/original/healing-shrine-recruit-dialog"/>
    </properties>
   </object>
  </objectgroup>

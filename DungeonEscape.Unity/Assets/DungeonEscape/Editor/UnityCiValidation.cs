@@ -16,6 +16,7 @@ namespace Redpoint.DungeonEscape.UnityEditor
             var failed = false;
             failed |= !ValidateAsset(BootScenePath);
             failed |= !ValidateAsset("Assets/DungeonEscape/Data/quests.json");
+            failed |= !ValidateAsset("Assets/DungeonEscape/Data/maps.json");
             failed |= !ValidateAsset("Assets/DungeonEscape/Data/dialog.json");
             failed |= !ValidateAsset("Assets/DungeonEscape/Maps/overworld.tmx");
             failed |= !ValidateAsset("Assets/DungeonEscape/Images/sprites/hero.png");

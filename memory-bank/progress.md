@@ -2,6 +2,8 @@
 
 ## Done
 
+- Content ID standardization: items, spells, quests, dialogs, backgrounds, and maps now use namespaced permanent IDs. Added an explicit map catalog shared by Unity and the Game Editor, updated JSON/TMX and gameplay/editor references, and bumped saves to 1.2 without migration per user direction. See CAMPAIGNS.md.
+
 - Campaign skill references: added stable IDs to 28 skills and converted authored spell/item effects, hero actions, editor selectors/validation, and runtime UI lookups. Save version 1.1 intentionally replaces compatibility work per user direction.
 
 - Campaign foundation: stable monster IDs, 13 migrated map encounter tables, ID-based editor references/validation, completed one-time data conversion, and rename/duplicate-name regression tests. See CAMPAIGNS.md for remaining phases.

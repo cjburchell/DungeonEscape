@@ -3,12 +3,15 @@ using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Redpoint.DungeonEscape.Data;
+using Redpoint.DungeonEscape.Rules;
 
 namespace DungeonEscape.Tools.GameEditor.Services;
 
 public sealed class MapDocument
 {
     public string Id { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string? EncounterAssetPath { get; set; }
     public string FilePath { get; set; } = string.Empty;
     public string Class { get; set; } = string.Empty;
     public Dictionary<string, string> Properties { get; set; } = new(StringComparer.OrdinalIgnoreCase);
@@ -16,7 +19,7 @@ public sealed class MapDocument
     public List<RandomMonster> RandomMonsters { get; set; } = new();
     public bool RandomMonstersFileExists { get; set; }
     public bool IsDirty { get; set; }
-    public bool IsOverworld => string.Equals(Id, "overworld", StringComparison.OrdinalIgnoreCase);
+    public bool IsOverworld => string.Equals(Id, ContentId.OriginalOverworld, StringComparison.Ordinal);
 
     internal XDocument? Xml { get; set; }
 }
@@ -59,10 +62,12 @@ public sealed class MapDocumentService
             return new List<MapDocument>();
         }
 
+        var catalogPath = Path.Combine(Directory.GetParent(mapsDirectory)!.FullName, "Data", "maps.json");
+        var catalog = new MapCatalog(JsonConvert.DeserializeObject<List<MapDefinition>>(File.ReadAllText(catalogPath)));
         return Directory
             .EnumerateFiles(mapsDirectory, "*.tmx", SearchOption.AllDirectories)
-            .OrderBy(path => GetMapId(mapsDirectory, path), StringComparer.OrdinalIgnoreCase)
-            .Select(path => LoadMap(mapsDirectory, path, mapDataDirectory))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .Select(path => LoadMap(path, mapDataDirectory, catalog.Get("Assets/DungeonEscape/Maps/" + Path.GetRelativePath(mapsDirectory, path).Replace('\\', '/'))))
             .ToList();
     }
 
@@ -81,14 +86,16 @@ public sealed class MapDocumentService
         }
     }
 
-    private static MapDocument LoadMap(string mapsDirectory, string path, string? mapDataDirectory)
+    private static MapDocument LoadMap(string path, string? mapDataDirectory, MapDefinition definition)
     {
         var xml = XDocument.Load(path, LoadOptions.PreserveWhitespace);
         var root = xml.Root ?? new XElement("map");
-        var id = GetMapId(mapsDirectory, path);
+        var id = definition.Id;
         var map = new MapDocument
         {
             Id = id,
+            Name = definition.Name,
+            EncounterAssetPath = definition.EncounterAssetPath,
             FilePath = path,
             Class = NormalizeMapClass(GetString(root, "class")),
             Properties = ReadProperties(root),
@@ -168,6 +175,10 @@ public sealed class MapDocumentService
             return;
         }
 
+        if (string.IsNullOrEmpty(map.EncounterAssetPath) && map.RandomMonsters.Count > 0)
+        {
+            throw new InvalidOperationException("Add EncounterAssetPath to the map catalog before adding encounters to " + map.Id);
+        }
         var path = GetRandomMonstersPath(map, mapDataDirectory);
         if (path == null)
         {
@@ -184,17 +195,9 @@ public sealed class MapDocumentService
 
     private static string? GetRandomMonstersPath(MapDocument map, string? mapDataDirectory)
     {
-        return string.IsNullOrEmpty(mapDataDirectory)
+        return string.IsNullOrEmpty(mapDataDirectory) || string.IsNullOrEmpty(map.EncounterAssetPath)
             ? null
-            : Path.Combine(mapDataDirectory, map.Id.Replace('/', Path.DirectorySeparatorChar) + "_monsters.json");
-    }
-
-    private static string GetMapId(string mapsDirectory, string path)
-    {
-        var relative = Path.GetRelativePath(mapsDirectory, path).Replace('\\', '/');
-        return relative.EndsWith(".tmx", StringComparison.OrdinalIgnoreCase)
-            ? relative[..^4]
-            : relative;
+            : Path.Combine(mapDataDirectory, map.EncounterAssetPath["Assets/DungeonEscape/Data/maps/".Length..].Replace('/', Path.DirectorySeparatorChar));
     }
 
     private static Dictionary<string, string> ReadProperties(XElement element)

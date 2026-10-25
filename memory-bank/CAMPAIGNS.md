@@ -79,7 +79,7 @@ Persist save schema version, campaign ID, and campaign content version. Load the
 
 Build and validate a replacement context before switching it into the runtime. On new game/load, clear campaign-dependent map, encounter, shop, dialog, and asset caches; canceling campaign selection must not mutate an existing game. Manual saves can remain in a shared list with campaign labels, but quick/autosaves should be partitioned by campaign to prevent one adventure replacing another's progress.
 
-Old saves need an explicit decision during implementation. Recommended: migrate the currently supported save format to the original campaign using a checked-in legacy-reference table and a backup; preserve the existing archive/reject policy for unsupported older formats. Never infer an ambiguous old name from whichever campaign happens to be active. If an ID cannot be resolved, report the problem and retain the original save. Content version is diagnostic metadata until a concrete compatibility/migration policy is implemented.
+User direction: do not implement old-save migration for the content ID conversion. Save version bumps use the existing unsupported-version archive policy. Do not retain one-time conversion scripts or name-based runtime fallback. Content version remains diagnostic metadata until campaign compatibility policy is implemented.
 
 ## Implementation Sequence
 
@@ -109,7 +109,7 @@ These are proposed work packages, not completed features. Stable IDs should land
 - Completed the one-time conversion of all 50 monsters and 13 map encounter tables. Removed the temporary migration script and legacy lookup table after conversion; only the migrated data is retained. Runtime does not fall back to monster names.
 - Added regression tests for rename-safe resolution, identical display names, and clearing stale resolved references.
 - Validation: solution build passed with zero warnings/errors, Core 218/218, Unity Edit Mode 16/16. Unity Play Mode 10/10 after updating a stale combat target-selection test to the current fight entry point. All 51 checked-in map encounter references resolve; migration rerun reports zero changes.
-- Remaining phase 1: consistent IDs for spells/skills and item references, name-based gameplay special cases, map IDs/object placement identity, explicit legacy-save mapping, and reusable validation/resolver infrastructure. Campaign manifests, selection, NPC catalogs, and save isolation are not implemented yet.
+- Historical remaining phase 1 after the monster pass: spell/item/narrative/map identity and shared validation. See the later progress entries below for completed follow-up work. Object placement identity and reusable NPC definitions still need work. Campaign manifests, selection, NPC catalogs, and save isolation are not implemented yet.
 
 - Follow-up: replaced initial numeric IDs with slugs based on current monster names, updating all encounter references. IDs remain permanent after this one-time conversion; subsequent display-name edits do not regenerate them.
 
@@ -122,3 +122,15 @@ These are proposed work packages, not completed features. Stable IDs should land
 - User explicitly declined save compatibility work. No migration scripts or runtime save migration were retained; save format is now 1.1 and the existing unsupported-version archive policy applies to 1.0 saves.
 - Validation: solution build passed with zero warnings/errors; Core 221/221; Unity Edit Mode 16/16; Unity Play Mode 10/10.
 - Spell definition/preparation IDs and item definition references remain the next portions of phase 1, followed by map/NPC identity and campaign loading.
+
+## Consistent Content IDs (2026-10-24)
+
+- Standardized 58 unique item definitions, 26 spells, 3 quests, 24 dialogs, 10 backgrounds, and 23 maps using `<kind>/<scope>/<key>`, alongside the existing monster/skill IDs. Reusable definitions use `base`; maps, narrative, and quest items use `original`.
+- Converted authored JSON/TMX references together. Spell preparation, monster spell references, item rewards/consumption, ship ownership, item icons, background selection/defaults, and starting equipment use explicit definition IDs. D&D spell behavior metadata stays separate from display names.
+- Added shared `ContentId` validation/creation and `MapDefinition`/`MapCatalog`. `Data/maps.json` explicitly maps each stable map ID to a display name, TMX asset path, and encounter asset path. Runtime and Game Editor resolve that registry; moving/renaming files requires updating paths there without changing IDs or warp references. Filesystem-path inputs remain supported internally for Bootstrap/map previews.
+- Editor definition IDs are read-only; add/duplicate creates fresh namespaced IDs. Item/skill selectors display names plus IDs. Validation and JSON schemas enforce the format. Item catalogs merge by definition ID, preserving the existing overlapping catalog arrangement.
+- Map files, spawn IDs, Tiled object numbers, item instance GUIDs, Unity GUIDs, sprite/tile IDs, class/species enums, and D&D skill proficiency labels retain their distinct purposes. Reusable NPC definitions and stable map-placement identity are future campaign work.
+- Save version is now 1.2. Old versions follow the existing archive policy; no save migration code or one-time migration tools are retained, per user direction.
+- Added content graph validation for every authored JSON/TMX reference, map registration/file coverage, map rename/path/duplicate checks, and item/prepared-spell rename/identical-name regression coverage.
+- Validation: solution build zero warnings/errors; Core 234/234; Unity Edit Mode 17/17; Unity Play Mode 10/10 after updating the expected overworld ID in the title-flow test. Packaged Windows verification and the listed manual authoring/gameplay checks remain unperformed.
+- Next campaign step: add campaign manifest/context and split the original adventure from base definitions. Map/NPC placement identity remains a separate follow-up.

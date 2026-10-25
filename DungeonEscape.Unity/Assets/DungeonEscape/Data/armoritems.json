@@ -39,7 +39,8 @@
       "Bard",
       "Rogue",
       "Sorcerer"
-    ]
+    ],
+    "Id": "item/base/amulet-of-health"
   },
   {
     "ImageId": 175,
@@ -65,7 +66,8 @@
       "Cleric",
       "Rogue",
       "Bard"
-    ]
+    ],
+    "Id": "item/base/buckler"
   },
   {
     "ImageId": 235,
@@ -91,7 +93,8 @@
       "Warlock",
       "Bard",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/cap"
   },
   {
     "ImageId": 280,
@@ -115,7 +118,8 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/chain-mail"
   },
   {
     "ImageId": 284,
@@ -145,7 +149,8 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/chain-mail-1"
   },
   {
     "ImageId": 298,
@@ -169,7 +174,8 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/chain-shirt"
   },
   {
     "ImageId": 192,
@@ -199,7 +205,8 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/defender-shield"
   },
   {
     "ImageId": 283,
@@ -222,7 +229,8 @@
     "Classes": [
       "Paladin",
       "Fighter"
-    ]
+    ],
+    "Id": "item/base/half-plate"
   },
   {
     "ImageId": 213,
@@ -248,7 +256,8 @@
       "Cleric",
       "Warlock",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/helm"
   },
   {
     "ImageId": 279,
@@ -273,7 +282,8 @@
       "Fighter",
       "Rogue",
       "Monk"
-    ]
+    ],
+    "Id": "item/base/hide-armor"
   },
   {
     "ImageId": 278,
@@ -298,7 +308,8 @@
       "Rogue",
       "Bard",
       "Paladin"
-    ]
+    ],
+    "Id": "item/base/leather-armor"
   },
   {
     "ImageId": 304,
@@ -330,7 +341,8 @@
       "Rogue",
       "Bard",
       "Paladin"
-    ]
+    ],
+    "Id": "item/base/leather-armor-1"
   },
   {
     "ImageId": 303,
@@ -355,7 +367,8 @@
       "Sorcerer",
       "Bard",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/padded-armor"
   },
   {
     "ImageId": 281,
@@ -379,7 +392,8 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/ring-mail"
   },
   {
     "ImageId": 719,
@@ -425,7 +439,8 @@
       "Bard",
       "Rogue",
       "Sorcerer"
-    ]
+    ],
+    "Id": "item/base/ring-of-protection"
   },
   {
     "ImageId": 289,
@@ -449,7 +464,8 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/scale-mail"
   },
   {
     "ImageId": 290,
@@ -479,7 +495,8 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/scale-mail-1"
   },
   {
     "ImageId": 176,
@@ -507,7 +524,8 @@
       "Monk",
       "Bard",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/shield"
   },
   {
     "ImageId": 181,
@@ -537,7 +555,8 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/shield-1"
   },
   {
     "ImageId": 298,
@@ -560,7 +579,8 @@
     "Classes": [
       "Paladin",
       "Fighter"
-    ]
+    ],
+    "Id": "item/base/splint-armor"
   },
   {
     "ImageId": 285,
@@ -585,6 +605,7 @@
       "Rogue",
       "Bard",
       "Paladin"
-    ]
+    ],
+    "Id": "item/base/studded-leather"
   }
 ]

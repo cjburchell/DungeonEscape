@@ -39,7 +39,8 @@
       "Bard",
       "Rogue",
       "Sorcerer"
-    ]
+    ],
+    "Id": "item/base/amulet-of-health"
   },
   {
     "ImageId": 284,
@@ -69,7 +70,8 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/chain-mail-1"
   },
   {
     "ImageId": 192,
@@ -99,7 +101,8 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/defender-shield"
   },
   {
     "ImageId": 145,
@@ -134,7 +137,8 @@
       "Fighter",
       "Bard",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/flame-tongue"
   },
   {
     "ImageId": 304,
@@ -166,7 +170,8 @@
       "Rogue",
       "Bard",
       "Paladin"
-    ]
+    ],
+    "Id": "item/base/leather-armor-1"
   },
   {
     "ImageId": 2,
@@ -195,7 +200,8 @@
       "Fighter",
       "Bard",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/longsword-1"
   },
   {
     "ImageId": 51,
@@ -228,7 +234,8 @@
       "Cleric",
       "Paladin",
       "Fighter"
-    ]
+    ],
+    "Id": "item/base/mace-of-disruption"
   },
   {
     "ImageId": 917,
@@ -240,7 +247,8 @@
     "IsMagicItem": true,
     "Weight": 1,
     "Cost": 250,
-    "MinLevel": 5
+    "MinLevel": 5,
+    "Id": "item/base/potion-of-greater-healing"
   },
   {
     "ImageId": 923,
@@ -252,7 +260,8 @@
     "IsMagicItem": true,
     "Weight": 1,
     "Cost": 50,
-    "MinLevel": 1
+    "MinLevel": 1,
+    "Id": "item/base/potion-of-healing"
   },
   {
     "ImageId": 912,
@@ -264,7 +273,8 @@
     "IsMagicItem": true,
     "Weight": 1,
     "Cost": 250,
-    "MinLevel": 3
+    "MinLevel": 3,
+    "Id": "item/base/potion-of-heroism"
   },
   {
     "ImageId": 4,
@@ -293,7 +303,8 @@
       "Fighter",
       "Bard",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/rapier-1"
   },
   {
     "ImageId": 719,
@@ -339,7 +350,8 @@
       "Bard",
       "Rogue",
       "Sorcerer"
-    ]
+    ],
+    "Id": "item/base/ring-of-protection"
   },
   {
     "ImageId": 785,
@@ -352,7 +364,8 @@
     "Weight": 2,
     "Cost": 44000,
     "MinLevel": 15,
-    "Charges": 10
+    "Charges": 10,
+    "Id": "item/base/rod-of-healing"
   },
   {
     "ImageId": 290,
@@ -382,7 +395,8 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/scale-mail-1"
   },
   {
     "ImageId": 181,
@@ -412,7 +426,8 @@
       "Paladin",
       "Fighter",
       "Cleric"
-    ]
+    ],
+    "Id": "item/base/shield-1"
   },
   {
     "ImageId": 164,
@@ -443,6 +458,7 @@
       "Cleric",
       "Monk",
       "Rogue"
-    ]
+    ],
+    "Id": "item/base/shortbow-1"
   }
 ]

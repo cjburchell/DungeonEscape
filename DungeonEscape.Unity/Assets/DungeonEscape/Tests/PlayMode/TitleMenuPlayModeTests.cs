@@ -46,7 +46,7 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
 
             Assert.That(gameState, Is.Not.Null);
             Assert.That(party, Is.Not.Null);
-            Assert.That(UiPlayModeTestHelper.GetPropertyValue(party, "CurrentMapId"), Is.EqualTo("overworld"));
+            Assert.That(UiPlayModeTestHelper.GetPropertyValue(party, "CurrentMapId"), Is.EqualTo("map/original/overworld"));
             Assert.That(((System.Collections.IEnumerable)UiPlayModeTestHelper.GetPropertyValue(party, "ActiveMembers")).Cast<object>().Count(), Is.GreaterThanOrEqualTo(1));
         }
     }

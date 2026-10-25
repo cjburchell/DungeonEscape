@@ -236,7 +236,7 @@ namespace DungeonEscape.Core.Test.Rules
 
             var concentrationSpell = new Spell
             {
-                Name = "Slow",
+                Id = "spell/test/slow", Name = "Slow",
                 DndSpell = "Slow",
                 SpellLevel = 3,
                 School = "Transmutation"

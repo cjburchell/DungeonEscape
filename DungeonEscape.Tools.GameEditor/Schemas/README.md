@@ -16,6 +16,7 @@ Use the per-file schemas for editor validation or future CI checks:
 | `nonmagicitems.json` | `customitems.schema.json` |
 | `weaponitems.json` | `customitems.schema.json` |
 | `armoritems.json` | `customitems.schema.json` |
+| `maps.json` | `maps.schema.json` |
 | `quests.json` | `quests.schema.json` |
 | `dialog.json` | `dialog.schema.json` |
 | `classlevels.json` | `classlevels.schema.json` |

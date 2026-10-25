@@ -440,7 +440,7 @@ namespace Redpoint.DungeonEscape.State
 
         private static string GetSpellId(Spell spell)
         {
-            return spell == null ? null : string.IsNullOrWhiteSpace(spell.DndSpell) ? spell.Name : spell.DndSpell;
+            return spell?.Id;
         }
 
         private static bool IsSpellId(string id, Spell spell)
@@ -450,8 +450,7 @@ namespace Redpoint.DungeonEscape.State
                 return false;
             }
 
-            return string.Equals(id, spell.Name, StringComparison.OrdinalIgnoreCase) ||
-                   string.Equals(id, spell.DndSpell, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(id, spell.Id, StringComparison.Ordinal);
         }
 
         private static bool IsClass(string className, Class heroClass)

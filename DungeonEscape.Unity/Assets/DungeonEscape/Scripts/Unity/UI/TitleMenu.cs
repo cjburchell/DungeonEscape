@@ -72,7 +72,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private Vector2 createMenuScrollPosition;
         private Vector2 loadQuestScrollPosition;
         private Hero createPreviewHero;
-        private string createPlayerBackground = "Acolyte";
+        private string createPlayerBackground = "background/base/acolyte";
         private int createStep;
         private int[] createAbilityScores;
         private List<string> createSkillProficiencies = new List<string>();

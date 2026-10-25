@@ -157,10 +157,8 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
             return loadedItems
                 .Where(item => item != null)
-                .GroupBy(item => string.IsNullOrWhiteSpace(item.Id)
-                    ? string.Format("{0}|{1}|{2}", item.Name ?? "", item.Type, item.MinLevel)
-                    : item.Id)
-                .Select(group => group.First())
+                .GroupBy(item => item.Id, StringComparer.Ordinal)
+                .SelectMany(group => string.IsNullOrWhiteSpace(group.Key) ? group : group.Take(1))
                 .ToList();
         }
 

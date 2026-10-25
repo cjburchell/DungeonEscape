@@ -1,0 +1,140 @@
+[
+  {
+    "Id": "map/original/dungeon-first",
+    "Name": "First",
+    "AssetPath": "Assets/DungeonEscape/Maps/dungeon/first.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/dungeon/first_monsters.json"
+  },
+  {
+    "Id": "map/original/forest-tower-floor1",
+    "Name": "Floor1",
+    "AssetPath": "Assets/DungeonEscape/Maps/forest_tower/floor1.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/forest_tower/floor1_monsters.json"
+  },
+  {
+    "Id": "map/original/forest-tower-floor2",
+    "Name": "Floor2",
+    "AssetPath": "Assets/DungeonEscape/Maps/forest_tower/floor2.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/forest_tower/floor2_monsters.json"
+  },
+  {
+    "Id": "map/original/forest-tower-floor3",
+    "Name": "Floor3",
+    "AssetPath": "Assets/DungeonEscape/Maps/forest_tower/floor3.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/forest_tower/floor3_monsters.json"
+  },
+  {
+    "Id": "map/original/forest-tower-floor4",
+    "Name": "Floor4",
+    "AssetPath": "Assets/DungeonEscape/Maps/forest_tower/floor4.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/forest_tower/floor4_monsters.json"
+  },
+  {
+    "Id": "map/original/island-tower-floor1",
+    "Name": "Floor1",
+    "AssetPath": "Assets/DungeonEscape/Maps/island_tower/floor1.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/island_tower/floor1_monsters.json"
+  },
+  {
+    "Id": "map/original/island-tower-floor2",
+    "Name": "Floor2",
+    "AssetPath": "Assets/DungeonEscape/Maps/island_tower/floor2.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/island_tower/floor2_monsters.json"
+  },
+  {
+    "Id": "map/original/island-tower-floor3",
+    "Name": "Floor3",
+    "AssetPath": "Assets/DungeonEscape/Maps/island_tower/floor3.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/island_tower/floor3_monsters.json"
+  },
+  {
+    "Id": "map/original/island-tower-floor4",
+    "Name": "Floor4",
+    "AssetPath": "Assets/DungeonEscape/Maps/island_tower/floor4.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/island_tower/floor4_monsters.json"
+  },
+  {
+    "Id": "map/original/island-tower-floor5",
+    "Name": "Floor5",
+    "AssetPath": "Assets/DungeonEscape/Maps/island_tower/floor5.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/island_tower/floor5_monsters.json"
+  },
+  {
+    "Id": "map/original/overworld",
+    "Name": "Overworld",
+    "AssetPath": "Assets/DungeonEscape/Maps/overworld.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/overworld_monsters.json"
+  },
+  {
+    "Id": "map/original/pyramid-basement",
+    "Name": "Basement",
+    "AssetPath": "Assets/DungeonEscape/Maps/pyramid/basement.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/pyramid/basement_monsters.json"
+  },
+  {
+    "Id": "map/original/pyramid-main",
+    "Name": "Main",
+    "AssetPath": "Assets/DungeonEscape/Maps/pyramid/main.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/pyramid/main_monsters.json"
+  },
+  {
+    "Id": "map/original/shrine-first",
+    "Name": "First",
+    "AssetPath": "Assets/DungeonEscape/Maps/shrine/first.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/shrine/first_monsters.json"
+  },
+  {
+    "Id": "map/original/shrine-heal",
+    "Name": "Heal",
+    "AssetPath": "Assets/DungeonEscape/Maps/shrine/heal.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/shrine/heal_monsters.json"
+  },
+  {
+    "Id": "map/original/shrine-ice",
+    "Name": "Ice",
+    "AssetPath": "Assets/DungeonEscape/Maps/shrine/ice.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/shrine/ice_monsters.json"
+  },
+  {
+    "Id": "map/original/towns-coast",
+    "Name": "Coast",
+    "AssetPath": "Assets/DungeonEscape/Maps/towns/coast.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/towns/coast_monsters.json"
+  },
+  {
+    "Id": "map/original/towns-forest",
+    "Name": "Forest",
+    "AssetPath": "Assets/DungeonEscape/Maps/towns/forest.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/towns/forest_monsters.json"
+  },
+  {
+    "Id": "map/original/towns-isis",
+    "Name": "Isis",
+    "AssetPath": "Assets/DungeonEscape/Maps/towns/isis.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/towns/isis_monsters.json"
+  },
+  {
+    "Id": "map/original/towns-oasis",
+    "Name": "Oasis",
+    "AssetPath": "Assets/DungeonEscape/Maps/towns/oasis.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/towns/oasis_monsters.json"
+  },
+  {
+    "Id": "map/original/towns-walled",
+    "Name": "Walled",
+    "AssetPath": "Assets/DungeonEscape/Maps/towns/walled.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/towns/walled_monsters.json"
+  },
+  {
+    "Id": "map/original/tunnel-area1",
+    "Name": "Area1",
+    "AssetPath": "Assets/DungeonEscape/Maps/tunnel/area1.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/tunnel/area1_monsters.json"
+  },
+  {
+    "Id": "map/original/tunnel-area2",
+    "Name": "Area2",
+    "AssetPath": "Assets/DungeonEscape/Maps/tunnel/area2.tmx",
+    "EncounterAssetPath": "Assets/DungeonEscape/Data/maps/tunnel/area2_monsters.json"
+  }
+]

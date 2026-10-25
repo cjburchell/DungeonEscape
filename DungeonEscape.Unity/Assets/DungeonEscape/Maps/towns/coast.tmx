@@ -250,7 +250,7 @@
     <object id="24" name="Ship" class="HiddenItem" gid="222" x="864" y="256" width="32" height="56">
       <properties>
         <property name="Collideable" type="bool" value="true" />
-        <property name="ItemId" value="Deed to the ship" />
+        <property name="ItemId" value="item/original/deed-to-the-ship" />
         <property name="MoveRadius" type="int" value="0" />
       </properties>
     </object>
@@ -354,21 +354,21 @@
       <properties>
         <property name="Collideable" type="bool" value="false" />
         <property name="MoveRadius" type="int" value="0" />
-        <property name="WarpMap" value="maps/overworld" />
+        <property name="WarpMap" value="map/original/overworld" />
       </properties>
     </object>
     <object id="52" name="Exit 0" class="Warp" x="672" y="1120" width="160" height="32">
       <properties>
         <property name="Collideable" type="bool" value="false" />
         <property name="MoveRadius" type="int" value="0" />
-        <property name="WarpMap" value="maps/overworld" />
+        <property name="WarpMap" value="map/original/overworld" />
       </properties>
     </object>
     <object id="53" name="Exit 0" class="Warp" x="800" y="1056" width="32" height="64">
       <properties>
         <property name="Collideable" type="bool" value="false" />
         <property name="MoveRadius" type="int" value="0" />
-        <property name="WarpMap" value="maps/overworld" />
+        <property name="WarpMap" value="map/original/overworld" />
       </properties>
     </object>
   </objectgroup>
@@ -405,13 +405,13 @@
       <properties>
         <property name="Collideable" type="bool" value="true" />
         <property name="MoveRadius" type="int" value="0" />
-        <property name="Dialog" value="Coast_Guard_Dialog" />
+        <property name="Dialog" value="dialog/original/coast-guard-dialog" />
       </properties>
     </object>
     <object id="57" name="Old Man" class="Npc" gid="27" x="960" y="448" width="32" height="48">
       <properties>
         <property name="Collideable" type="bool" value="true" />
-        <property name="Dialog" value="Find_Ship_Old_Man" />
+        <property name="Dialog" value="dialog/original/find-ship-old-man" />
         <property name="MoveRadius" type="int" value="3" />
       </properties>
     </object>

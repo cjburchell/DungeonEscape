@@ -51,7 +51,7 @@ namespace Redpoint.DungeonEscape.State
 
         public override IEnumerable<Spell> GetSpells(IEnumerable<Spell> availableSpells)
         {
-            return _info.SpellList.Select(spellId => availableSpells.FirstOrDefault(item => item.Name == spellId))
+            return _info.SpellList.Select(spellId => availableSpells.FirstOrDefault(item => item.Id == spellId))
                 .Where(spell => spell != null).ToList();
         }
 

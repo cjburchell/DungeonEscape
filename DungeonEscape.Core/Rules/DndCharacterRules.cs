@@ -129,16 +129,16 @@ namespace Redpoint.DungeonEscape.Rules
         {
             return new List<BackgroundDefinition>
             {
-                new BackgroundDefinition { Id = "Acolyte", Name = "Acolyte", Wisdom = 2, Charisma = 1, SkillProficiencies = new List<string> { "Insight", "Religion" } },
-                new BackgroundDefinition { Id = "Artisan", Name = "Artisan", Intelligence = 1, Charisma = 2, SkillProficiencies = new List<string> { "Investigation", "Persuasion" } },
-                new BackgroundDefinition { Id = "Criminal", Name = "Criminal", Dexterity = 2, Intelligence = 1, SkillProficiencies = new List<string> { "Deception", "Stealth" } },
-                new BackgroundDefinition { Id = "Entertainer", Name = "Entertainer", Dexterity = 1, Charisma = 2, SkillProficiencies = new List<string> { "Acrobatics", "Performance" } },
-                new BackgroundDefinition { Id = "Guard", Name = "Guard", Strength = 2, Wisdom = 1, SkillProficiencies = new List<string> { "Athletics", "Perception" } },
-                new BackgroundDefinition { Id = "Guide", Name = "Guide", Dexterity = 1, Wisdom = 2, SkillProficiencies = new List<string> { "Nature", "Survival" } },
-                new BackgroundDefinition { Id = "Noble", Name = "Noble", Intelligence = 1, Charisma = 2, SkillProficiencies = new List<string> { "History", "Persuasion" } },
-                new BackgroundDefinition { Id = "Sage", Name = "Sage", Intelligence = 2, Wisdom = 1, SkillProficiencies = new List<string> { "Arcana", "History" } },
-                new BackgroundDefinition { Id = "Sailor", Name = "Sailor", Strength = 1, Dexterity = 2, SkillProficiencies = new List<string> { "Athletics", "Perception" } },
-                new BackgroundDefinition { Id = "Soldier", Name = "Soldier", Strength = 2, Constitution = 1, SkillProficiencies = new List<string> { "Athletics", "Intimidation" } }
+                new BackgroundDefinition { Id = "background/base/acolyte", Name = "Acolyte", Wisdom = 2, Charisma = 1, SkillProficiencies = new List<string> { "Insight", "Religion" } },
+                new BackgroundDefinition { Id = "background/base/artisan", Name = "Artisan", Intelligence = 1, Charisma = 2, SkillProficiencies = new List<string> { "Investigation", "Persuasion" } },
+                new BackgroundDefinition { Id = "background/base/criminal", Name = "Criminal", Dexterity = 2, Intelligence = 1, SkillProficiencies = new List<string> { "Deception", "Stealth" } },
+                new BackgroundDefinition { Id = "background/base/entertainer", Name = "Entertainer", Dexterity = 1, Charisma = 2, SkillProficiencies = new List<string> { "Acrobatics", "Performance" } },
+                new BackgroundDefinition { Id = "background/base/guard", Name = "Guard", Strength = 2, Wisdom = 1, SkillProficiencies = new List<string> { "Athletics", "Perception" } },
+                new BackgroundDefinition { Id = "background/base/guide", Name = "Guide", Dexterity = 1, Wisdom = 2, SkillProficiencies = new List<string> { "Nature", "Survival" } },
+                new BackgroundDefinition { Id = "background/base/noble", Name = "Noble", Intelligence = 1, Charisma = 2, SkillProficiencies = new List<string> { "History", "Persuasion" } },
+                new BackgroundDefinition { Id = "background/base/sage", Name = "Sage", Intelligence = 2, Wisdom = 1, SkillProficiencies = new List<string> { "Arcana", "History" } },
+                new BackgroundDefinition { Id = "background/base/sailor", Name = "Sailor", Strength = 1, Dexterity = 2, SkillProficiencies = new List<string> { "Athletics", "Perception" } },
+                new BackgroundDefinition { Id = "background/base/soldier", Name = "Soldier", Strength = 2, Constitution = 1, SkillProficiencies = new List<string> { "Athletics", "Intimidation" } }
             };
         }
 
@@ -171,8 +171,7 @@ namespace Redpoint.DungeonEscape.Rules
             }
 
             return backgroundList.FirstOrDefault(item =>
-                       string.Equals(item.Id, backgroundId, System.StringComparison.OrdinalIgnoreCase) ||
-                       string.Equals(item.Name, backgroundId, System.StringComparison.OrdinalIgnoreCase)) ??
+                       string.Equals(item.Id, backgroundId, System.StringComparison.Ordinal)) ??
                    backgroundList.FirstOrDefault() ??
                    GetDefaultBackgrounds().First();
         }
@@ -225,68 +224,68 @@ namespace Redpoint.DungeonEscape.Rules
                 case Class.Paladin:
                     return new List<Item>
                     {
-                        CreateStartingArmor(heroClass, "Chain Mail", Slot.Chest, 3),
-                        CreateStartingWeapon(heroClass, "Longsword", Slot.PrimaryHand, 2, 1, 8, 2),
-                        CreateStartingArmor(heroClass, "Shield", Slot.OffHand, 2)
+                        CreateStartingArmor(heroClass, "Chain Mail", "item/base/chain-mail", Slot.Chest, 3),
+                        CreateStartingWeapon(heroClass, "Longsword", "item/base/longsword", Slot.PrimaryHand, 2, 1, 8, 2),
+                        CreateStartingArmor(heroClass, "Shield", "item/base/shield", Slot.OffHand, 2)
                     };
                 case Class.Fighter:
                     return new List<Item>
                     {
-                        CreateStartingArmor(heroClass, "Chain Mail", Slot.Chest, 3),
-                        CreateStartingWeapon(heroClass, "Longsword", Slot.PrimaryHand, 2, 1, 8, 2),
-                        CreateStartingArmor(heroClass, "Shield", Slot.OffHand, 2)
+                        CreateStartingArmor(heroClass, "Chain Mail", "item/base/chain-mail", Slot.Chest, 3),
+                        CreateStartingWeapon(heroClass, "Longsword", "item/base/longsword", Slot.PrimaryHand, 2, 1, 8, 2),
+                        CreateStartingArmor(heroClass, "Shield", "item/base/shield", Slot.OffHand, 2)
                     };
                 case Class.Cleric:
                     return new List<Item>
                     {
-                        CreateStartingArmor(heroClass, "Scale Mail", Slot.Chest, 2),
-                        CreateStartingWeapon(heroClass, "Mace", Slot.PrimaryHand, 1, 1, 6, 1),
-                        CreateStartingArmor(heroClass, "Shield", Slot.OffHand, 2)
+                        CreateStartingArmor(heroClass, "Scale Mail", "item/base/scale-mail", Slot.Chest, 2),
+                        CreateStartingWeapon(heroClass, "Mace", "item/base/mace", Slot.PrimaryHand, 1, 1, 6, 1),
+                        CreateStartingArmor(heroClass, "Shield", "item/base/shield", Slot.OffHand, 2)
                     };
                 case Class.Wizard:
                     return new List<Item>
                     {
-                        CreateStartingArmor(heroClass, "Robe", Slot.Chest, 1),
-                        CreateStartingWeapon(heroClass, "Dagger", Slot.PrimaryHand, 1, 1, 4, 0)
+                        CreateStartingArmor(heroClass, "Robe", "item/base/robe", Slot.Chest, 1),
+                        CreateStartingWeapon(heroClass, "Dagger", "item/base/dagger", Slot.PrimaryHand, 1, 1, 4, 0)
                     };
                 case Class.Monk:
                     return new List<Item>
                     {
-                        CreateStartingArmor(heroClass, "Leather Armor", Slot.Chest, 1),
-                        CreateStartingWeapon(heroClass, "Quarterstaff", Slot.PrimaryHand, 1, 1, 6, 0)
+                        CreateStartingArmor(heroClass, "Leather Armor", "item/base/leather-armor", Slot.Chest, 1),
+                        CreateStartingWeapon(heroClass, "Quarterstaff", "item/base/quarterstaff", Slot.PrimaryHand, 1, 1, 6, 0)
                     };
                 case Class.Warlock:
                     return new List<Item>
                     {
-                        CreateStartingArmor(heroClass, "Leather Armor", Slot.Chest, 1),
-                        CreateStartingWeapon(heroClass, "Light Crossbow", Slot.PrimaryHand, 1, 1, 8, 0),
-                        CreateStartingWeapon(heroClass, "Dagger", Slot.OffHand, 1, 1, 4, 0)
+                        CreateStartingArmor(heroClass, "Leather Armor", "item/base/leather-armor", Slot.Chest, 1),
+                        CreateStartingWeapon(heroClass, "Light Crossbow", "item/base/light-crossbow", Slot.PrimaryHand, 1, 1, 8, 0),
+                        CreateStartingWeapon(heroClass, "Dagger", "item/base/dagger", Slot.OffHand, 1, 1, 4, 0)
                     };
                 case Class.Bard:
                     return new List<Item>
                     {
-                        CreateStartingArmor(heroClass, "Leather Armor", Slot.Chest, 1),
-                        CreateStartingWeapon(heroClass, "Rapier", Slot.PrimaryHand, 2, 1, 8, 2),
-                        CreateStartingWeapon(heroClass, "Dagger", Slot.OffHand, 1, 1, 4, 0)
+                        CreateStartingArmor(heroClass, "Leather Armor", "item/base/leather-armor", Slot.Chest, 1),
+                        CreateStartingWeapon(heroClass, "Rapier", "item/base/rapier", Slot.PrimaryHand, 2, 1, 8, 2),
+                        CreateStartingWeapon(heroClass, "Dagger", "item/base/dagger", Slot.OffHand, 1, 1, 4, 0)
                     };
                 case Class.Rogue:
                     return new List<Item>
                     {
-                        CreateStartingArmor(heroClass, "Leather Armor", Slot.Chest, 1),
-                        CreateStartingWeapon(heroClass, "Rapier", Slot.PrimaryHand, 2, 1, 8, 2),
-                        CreateStartingWeapon(heroClass, "Dagger", Slot.OffHand, 1, 1, 4, 0)
+                        CreateStartingArmor(heroClass, "Leather Armor", "item/base/leather-armor", Slot.Chest, 1),
+                        CreateStartingWeapon(heroClass, "Rapier", "item/base/rapier", Slot.PrimaryHand, 2, 1, 8, 2),
+                        CreateStartingWeapon(heroClass, "Dagger", "item/base/dagger", Slot.OffHand, 1, 1, 4, 0)
                     };
                 case Class.Sorcerer:
                     return new List<Item>
                     {
-                        CreateStartingArmor(heroClass, "Robe", Slot.Chest, 1),
-                        CreateStartingWeapon(heroClass, "Dagger", Slot.PrimaryHand, 1, 1, 4, 0)
+                        CreateStartingArmor(heroClass, "Robe", "item/base/robe", Slot.Chest, 1),
+                        CreateStartingWeapon(heroClass, "Dagger", "item/base/dagger", Slot.PrimaryHand, 1, 1, 4, 0)
                     };
                 default:
                     return new List<Item>
                     {
-                        CreateStartingArmor(heroClass, "Leather Armor", Slot.Chest, 1),
-                        CreateStartingWeapon(heroClass, "Dagger", Slot.PrimaryHand, 1, 1, 4, 0)
+                        CreateStartingArmor(heroClass, "Leather Armor", "item/base/leather-armor", Slot.Chest, 1),
+                        CreateStartingWeapon(heroClass, "Dagger", "item/base/dagger", Slot.PrimaryHand, 1, 1, 4, 0)
                     };
             }
         }
@@ -363,10 +362,11 @@ namespace Redpoint.DungeonEscape.Rules
             hero.Charisma += definition.Charisma;
         }
 
-        private static Item CreateStartingArmor(Class heroClass, string name, Slot slot, int defenceBonus)
+        private static Item CreateStartingArmor(Class heroClass, string name, string id, Slot slot, int defenceBonus)
         {
             return new Item
             {
+                Id = id,
                 ImageId = GetStartingItemImageId(name),
                 Name = name,
                 Type = ItemType.Armor,
@@ -385,6 +385,7 @@ namespace Redpoint.DungeonEscape.Rules
         private static Item CreateStartingWeapon(
             Class heroClass,
             string name,
+            string id,
             Slot slot,
             int attackBonus,
             int damageDice,
@@ -393,6 +394,7 @@ namespace Redpoint.DungeonEscape.Rules
         {
             return new Item
             {
+                Id = id,
                 ImageId = GetStartingItemImageId(name),
                 Name = name,
                 Type = ItemType.Weapon,

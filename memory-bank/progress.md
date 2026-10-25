@@ -2,6 +2,8 @@
 
 ## Done
 
+- Campaign foundation: stable monster IDs, 13 migrated map encounter tables, ID-based editor references/validation, completed one-time data conversion, and rename/duplicate-name regression tests. See CAMPAIGNS.md for remaining phases.
+
 - CI stabilization: temporarily disabled the repeatedly failing `resharper-scan` job by default in
   both GitHub Actions and GitLab CI. The rest of the build/test/package pipeline remains enabled, and
   ReSharper can still be exercised explicitly with `RESHARPER_SCAN_ENABLED=true`. GitHub issue #37

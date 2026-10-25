@@ -54,12 +54,13 @@ public sealed class DataValidationService
             .Append(DataSourceCatalog.RandomItemId));
         var questIds = NameSet(data.Quests.Select(quest => quest.Id));
         var dialogIds = NameSet(data.Dialogs.Select(dialog => dialog.Id));
-        var monsterNames = NameSet(data.Monsters.Select(monster => monster.Name));
+        var monsterIds = new HashSet<string>(data.Monsters.Where(monster => !string.IsNullOrWhiteSpace(monster.Id)).Select(monster => monster.Id), StringComparer.Ordinal);
         var classValues = NameSet(data.ClassLevels.Select(classStats => classStats.Class));
         var backgroundValues = NameSet(data.Backgrounds.Select(background => background.Id)
             .Concat(data.Backgrounds.Select(background => background.Name)));
         var mapIds = NameSet(data.Maps.Select(map => map.Id).Concat(data.Maps.Select(map => "maps/" + map.Id)));
 
+        ValidateRequiredNames(issues, "Monster ID", data.Monsters.Select((item, index) => (index, Value: (string?)item.Id)));
         ValidateRequiredNames(issues, "Monster", data.Monsters.Select((item, index) => (index, Value: (string?)item.Name)));
         ValidateRequiredNames(issues, "Spell", data.Spells.Select((item, index) => (index, Value: (string?)item.Name)));
         ValidateRequiredNames(issues, "Skill", data.Skills.Select((item, index) => (index, Value: (string?)item.Name)));
@@ -71,7 +72,7 @@ public sealed class DataValidationService
         ValidateRequiredNames(issues, "Background", data.Backgrounds.Select((item, index) => (index, Value: (string?)item.Id)));
         ValidateRequiredNames(issues, "Background", data.Backgrounds.Select((item, index) => (index, Value: (string?)item.Name)));
 
-        ValidateDuplicates(issues, "Monster name", data.Monsters.Select(monster => monster.Name));
+        ValidateDuplicates(issues, "Monster ID", data.Monsters.Select(monster => monster.Id));
         ValidateDuplicates(issues, "Spell name", data.Spells.Select(spell => spell.Name));
         ValidateDuplicates(issues, "Skill name", data.Skills.Select(skill => skill.Name));
         ValidateDuplicates(issues, "Item name", data.Items.Select(item => item.Name));
@@ -88,11 +89,11 @@ public sealed class DataValidationService
         ValidateSpells(issues, skillNames, classValues);
         ValidateItems(issues, skillNames, questIds, classValues);
         ValidateQuests(issues, itemRefs);
-        ValidateDialogs(issues, questIds, itemRefs, monsterNames);
+        ValidateDialogs(issues, questIds, itemRefs, monsterIds);
         ValidateClassLevels(issues);
         ValidateSpecies(issues);
         ValidateBackgrounds(issues);
-        ValidateMaps(issues, itemRefs, dialogIds, monsterNames, mapIds, classValues, backgroundValues);
+        ValidateMaps(issues, itemRefs, dialogIds, monsterIds, mapIds, classValues, backgroundValues);
         ValidateAssetFiles(issues);
 
         return issues
@@ -110,6 +111,12 @@ public sealed class DataValidationService
         {
             var monster = data.Monsters[i];
             var location = Label("Monster", monster.Name, i);
+            if (!System.Text.RegularExpressions.Regex.IsMatch(monster.Id ?? string.Empty,
+                    @"^monster/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$"))
+            {
+                issues.Add(new DataValidationIssue(DataValidationSeverity.Error, location,
+                    "Monster ID must use monster/<scope>/<key> with lowercase letters, digits, and hyphens."));
+            }
             if (monsterImages.Entries.Count > 0 && !monsterImages.TryGet(monster.ImageId, out _))
             {
                 Warning(issues, location, $"Image #{monster.ImageId} was not found in allmonsters.tsx.");
@@ -253,7 +260,7 @@ public sealed class DataValidationService
         List<DataValidationIssue> issues,
         HashSet<string> questIds,
         HashSet<string> itemRefs,
-        HashSet<string> monsterNames)
+        HashSet<string> monsterIds)
     {
         for (var i = 0; i < data.Dialogs.Count; i++)
         {
@@ -276,7 +283,7 @@ public sealed class DataValidationService
 
                 ValidateReference(issues, headLocation, "quest", head.Quest, questIds);
                 ValidateDialogStages(issues, headLocation, head);
-                ValidateChoices(issues, headLocation, head.Choices, questIds, itemRefs, monsterNames, head.Quest);
+                ValidateChoices(issues, headLocation, head.Choices, questIds, itemRefs, monsterIds, head.Quest);
             }
         }
     }
@@ -304,7 +311,7 @@ public sealed class DataValidationService
         IReadOnlyList<Choice>? choices,
         HashSet<string> questIds,
         HashSet<string> itemRefs,
-        HashSet<string> monsterNames,
+        HashSet<string> monsterIds,
         string? parentQuestId)
     {
         if (choices == null)
@@ -324,7 +331,7 @@ public sealed class DataValidationService
             ValidateReference(issues, choiceLocation, "quest", choice.Quest, questIds);
             ValidateReference(issues, choiceLocation, "item", choice.ItemId, itemRefs);
             ValidateReferences(issues, choiceLocation, "item", choice.Items, itemRefs);
-            ValidateReference(issues, choiceLocation, "monster", choice.Monster, monsterNames);
+            ValidateReference(issues, choiceLocation, "monster", choice.Monster, monsterIds);
 
             var effectiveQuestId = string.IsNullOrWhiteSpace(choice.Quest) ? parentQuestId : choice.Quest;
             if (choice.NextQuestStage.HasValue && choice.NextQuestStage.Value != 0 && string.IsNullOrWhiteSpace(effectiveQuestId))
@@ -348,7 +355,7 @@ public sealed class DataValidationService
                     Warning(issues, choiceLocation, "Nested dialog text is empty.");
                 }
 
-                ValidateChoices(issues, choiceLocation + " nested dialog", choice.Dialog.Choices, questIds, itemRefs, monsterNames, effectiveQuestId);
+                ValidateChoices(issues, choiceLocation + " nested dialog", choice.Dialog.Choices, questIds, itemRefs, monsterIds, effectiveQuestId);
             }
         }
     }
@@ -374,7 +381,7 @@ public sealed class DataValidationService
         List<DataValidationIssue> issues,
         HashSet<string> itemRefs,
         HashSet<string> dialogIds,
-        HashSet<string> monsterNames,
+        HashSet<string> monsterIds,
         HashSet<string> mapIds,
         HashSet<string> classValues,
         HashSet<string> backgroundValues)
@@ -389,7 +396,11 @@ public sealed class DataValidationService
 
             foreach (var randomMonster in map.RandomMonsters)
             {
-                ValidateReference(issues, location + " random monsters", "monster", randomMonster.Name, monsterNames);
+                if (string.IsNullOrWhiteSpace(randomMonster.MonsterId))
+                {
+                    Error(issues, location + " random monsters", "MonsterId is required. Migrate legacy name-based encounter files before saving.");
+                }
+                ValidateReference(issues, location + " random monsters", "monster", randomMonster.MonsterId, monsterIds);
             }
 
             foreach (var mapObject in map.Objects)

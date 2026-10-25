@@ -20,7 +20,7 @@ else
             <div class="card-row">
                 <div class="card-row-title">Monster @(rowIndex + 1)</div>
                 <div class="field-grid compact-grid">
-                    <MonsterReferenceSelect Label="Name" Value="@row.Name" ValueChanged="value => SetName(row, value)" />
+                    <MonsterReferenceSelect Label="Monster" Value="@row.MonsterId" ValueChanged="value => SetName(row, value)" />
                     <div class="field">
                         <label>Rarity</label>
                         <select value="@row.Rarity" @onchange="e => SetRarity(row, e.Value?.ToString())">
@@ -57,7 +57,7 @@ else
 
         Map.RandomMonsters.Add(new RandomMonster
         {
-            Name = DataSources.Monsters.FirstOrDefault() ?? string.Empty,
+            MonsterId = DataSources.Monsters.FirstOrDefault() ?? string.Empty,
             Rarity = Rarity.Common
         });
         await OnChanged.InvokeAsync();
@@ -71,7 +71,7 @@ else
         }
 
         var source = Map.RandomMonsters[index];
-        Map.RandomMonsters.Insert(index + 1, new RandomMonster { Name = source.Name, Rarity = source.Rarity });
+        Map.RandomMonsters.Insert(index + 1, new RandomMonster { MonsterId = source.MonsterId, Rarity = source.Rarity });
         await OnChanged.InvokeAsync();
     }
 
@@ -88,7 +88,7 @@ else
 
     private async Task SetName(RandomMonster row, string? value)
     {
-        row.Name = value ?? string.Empty;
+        row.MonsterId = value ?? string.Empty;
         await OnChanged.InvokeAsync();
     }
 

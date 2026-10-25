@@ -32,7 +32,7 @@
                     <button type="button"
                             class="image-dropdown-option @(IsSelected(option) ? "selected" : null)"
                             @onclick="() => SelectValue(option)">
-                        <ImageDropdownRow ImageSource="@GetImageSource(option)" Text="@option" />
+                        <ImageDropdownRow ImageSource="@GetImageSource(option)" Text="@DisplayName(option)" />
                     </button>
                 }
             </div>
@@ -65,7 +65,13 @@
         !string.IsNullOrWhiteSpace(CurrentValue) &&
         !CleanOptions.Any(option => string.Equals(option, CurrentValue, StringComparison.OrdinalIgnoreCase));
 
-    private string SelectedDisplayName => string.IsNullOrEmpty(CurrentValue) ? NoneLabel : CurrentValue;
+    private string SelectedDisplayName => string.IsNullOrEmpty(CurrentValue) ? NoneLabel : DisplayName(CurrentValue);
+
+    private string DisplayName(string id)
+    {
+        var monster = Data.Monsters.FirstOrDefault(candidate => candidate.Id == id);
+        return monster == null ? id : $"{monster.Name} ({id})";
+    }
 
     private string SelectedImageSource => GetImageSource(CurrentValue);
 
@@ -81,7 +87,7 @@
 
     private string GetImageSource(string? value)
     {
-        var monster = Data.Monsters.FirstOrDefault(candidate => string.Equals(candidate.Name, value, StringComparison.OrdinalIgnoreCase));
+        var monster = Data.Monsters.FirstOrDefault(candidate => string.Equals(candidate.Id, value, StringComparison.OrdinalIgnoreCase));
         return monster == null ? string.Empty : Images.GetImageDataUri(monster.ImageId) ?? string.Empty;
     }
 }

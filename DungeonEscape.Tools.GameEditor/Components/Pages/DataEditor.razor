@@ -557,7 +557,7 @@ else
         switch (activeTab)
         {
             case EditorTab.Monsters:
-                selectedMonster = new Monster { Name = "New Monster" };
+                selectedMonster = new Monster { Id = "monster/base/" + Guid.NewGuid().ToString("N"), Name = "New Monster" };
                 Data.Monsters.Add(selectedMonster);
                 break;
             case EditorTab.Spells:
@@ -641,6 +641,7 @@ else
         {
             case EditorTab.Monsters when selectedMonster != null:
                 selectedMonster = Clone(selectedMonster, Data.Monsters, m => m.Name, (m, n) => m.Name = n);
+                selectedMonster.Id = "monster/base/" + Guid.NewGuid().ToString("N");
                 break;
             case EditorTab.Spells when selectedSpell != null:
                 selectedSpell = Clone(selectedSpell, Data.Spells, s => s.Name, (s, n) => s.Name = n);

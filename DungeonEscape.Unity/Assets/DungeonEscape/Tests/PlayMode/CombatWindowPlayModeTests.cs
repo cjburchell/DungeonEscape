@@ -50,7 +50,7 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
             var combatWindow = UiPlayModeTestHelper.FindObject("Redpoint.DungeonEscape.Unity.UI.CombatWindow");
             AdvanceEncounterMessageToActionSelection(combatWindow);
 
-            UiPlayModeTestHelper.InvokePrivate(combatWindow, "BeginTargetSelection");
+            UiPlayModeTestHelper.InvokePrivate(combatWindow, "BeginFightTargetSelection", new object[] { null });
             yield return null;
 
             Assert.That(UiPlayModeTestHelper.GetNonPublicPropertyValue(combatWindow, "state").ToString(), Is.EqualTo("ChooseTarget"));

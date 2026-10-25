@@ -1,18 +1,18 @@
 [
   {
-    "Name": "Goblin Archer",
+    "MonsterId": "monster/base/goblin-archer",
     "Rarity": "Uncommon"
   },
   {
-    "Name": "Gray Ooze",
+    "MonsterId": "monster/base/gray-ooze",
     "Rarity": "Common"
   },
   {
-    "Name": "Troll",
+    "MonsterId": "monster/base/troll",
     "Rarity": "Uncommon"
   },
   {
-    "Name": "Giant Rat",
+    "MonsterId": "monster/base/giant-rat",
     "Rarity": "Common"
   }
 ]

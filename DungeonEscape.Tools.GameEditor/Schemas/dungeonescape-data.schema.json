@@ -84,8 +84,9 @@
     "monster": {
       "type": "object",
       "additionalProperties": true,
-      "required": ["Name"],
+      "required": ["Id", "Name"],
       "properties": {
+        "Id": { "type": "string", "pattern": "^monster/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$" },
         "Name": { "type": "string", "minLength": 1 },
         "ImageId": { "type": "integer", "minimum": 0 },
         "MinLevel": { "type": "integer", "minimum": 0 },
@@ -301,9 +302,9 @@
     "randomMonster": {
       "type": "object",
       "additionalProperties": true,
-      "required": ["Name"],
+      "required": ["MonsterId"],
       "properties": {
-        "Name": { "type": "string", "minLength": 1 },
+        "MonsterId": { "type": "string", "minLength": 1 },
         "Rarity": { "$ref": "#/$defs/rarity" }
       }
     }

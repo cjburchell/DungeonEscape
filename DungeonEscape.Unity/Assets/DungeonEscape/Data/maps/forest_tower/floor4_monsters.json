@@ -1,9 +1,9 @@
 [
   {
-    "Name": "Swarm of Insects"
+    "MonsterId": "monster/base/swarm-of-insects"
   },
   {
-    "Name": "Green Dragon Wyrmling",
+    "MonsterId": "monster/base/green-dragon-wyrmling",
     "Rarity": "Epic"
   }
 ]

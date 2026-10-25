@@ -1,23 +1,23 @@
 [
   {
-    "Name": "Goblin Archer"
+    "MonsterId": "monster/base/goblin-archer"
   },
   {
-    "Name": "Troll",
+    "MonsterId": "monster/base/troll",
     "Rarity": "Uncommon"
   },
   {
-    "Name": "Dire Troll",
+    "MonsterId": "monster/base/dire-troll",
     "Rarity": "Rare"
   },
   {
-    "Name": "Giant Rat"
+    "MonsterId": "monster/base/giant-rat"
   },
   {
-    "Name": "Animated Walking Stick"
+    "MonsterId": "monster/base/animated-walking-stick"
   },
   {
-    "Name": "Dire Wolf",
+    "MonsterId": "monster/base/dire-wolf",
     "Rarity": "Uncommon"
   }
 ]

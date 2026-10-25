@@ -11,6 +11,7 @@ This folder keeps durable project context for Dungeon Escape after the Unity mig
 - `ARCHITECTURE_BACKLOG.md` tracks active and future architecture cleanup ideas.
 - `ARCHITECTURE_COMPLETED.md` archives completed architecture cleanup.
 - `FUTURE_FEATURES.md` tracks post-migration feature and architecture ideas.
+- `CAMPAIGNS.md` records the campaign and stable content ID investigation and proposed implementation sequence.
 - `BUGS.md` tracks known bugs and rough edges to investigate later.
 - `UNITY_MIGRATION.md` tracks current post-migration status and deferred post-migration work.
 - `UNITY_MIGRATION_COMPLETED.md` archives the completed Unity migration record.

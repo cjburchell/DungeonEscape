@@ -4,6 +4,7 @@ This file tracks post-migration feature and architecture ideas. Items here are n
 
 ## Gameplay And Content
 
+- Campaign support and stable content IDs: requirements, current code findings, proposed content ownership, save migration, editor changes, and implementation sequence are recorded in [CAMPAIGNS.md](CAMPAIGNS.md). Investigation only; implementation has not started.
 - Add more quests.
 - Create a basic storyline.
 - Grow the world map with more places.

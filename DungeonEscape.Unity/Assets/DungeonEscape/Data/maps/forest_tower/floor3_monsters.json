@@ -1,23 +1,23 @@
 [
   {
-    "Name": "Swarm of Insects"
+    "MonsterId": "monster/base/swarm-of-insects"
   },
   {
-    "Name": "Twig Blight"
+    "MonsterId": "monster/base/twig-blight"
   },
   {
-    "Name": "Giant Fire Beetle"
+    "MonsterId": "monster/base/giant-fire-beetle"
   },
   {
-    "Name": "Dire Troll"
+    "MonsterId": "monster/base/dire-troll"
   },
   {
-    "Name": "Animated Walking Stick"
+    "MonsterId": "monster/base/animated-walking-stick"
   },
   {
-    "Name": "Wyvern Matriarch"
+    "MonsterId": "monster/base/wyvern-matriarch"
   },
   {
-    "Name": "Venomous Giant Wasp"
+    "MonsterId": "monster/base/venomous-giant-wasp"
   }
 ]

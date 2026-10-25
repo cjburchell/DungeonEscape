@@ -200,10 +200,10 @@
 
             foreach (var monster in encounter)
             {
-                if (!rows.TryGetValue(monster.Name, out var row))
+                if (!rows.TryGetValue(monster.Id, out var row))
                 {
                     row = new SimulationRow(monster.Name, monster.MinLevel, monster.Rarity);
-                    rows[monster.Name] = row;
+                    rows[monster.Id] = row;
                 }
 
                 row.Appearances++;
@@ -241,7 +241,7 @@
 
         return map.RandomMonsters.Select(monster => new RandomMonster
         {
-            Name = monster.Name,
+            MonsterId = monster.MonsterId,
             Rarity = monster.Rarity,
             IsOverworld = false
         });

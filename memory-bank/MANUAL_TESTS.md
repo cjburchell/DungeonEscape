@@ -1239,3 +1239,11 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 - Expected: per-file schemas exist for all editor-owned JSON data files and shared definitions live in `dungeonescape-data.schema.json`.
 - Temporarily point a map `song` property or item image ID at a missing value in a reversible working copy.
 - Expected: the validation panel warns for missing map music and missing item image references, then clears after reverting the edit.
+
+## Stable Monster IDs (2026-10-24)
+
+- [ ] Rename a monster used by a map encounter, save/reopen the editor, and verify the selector retains the same ID and updated name/image; validation and the encounter simulator still resolve it.
+- [ ] Duplicate a monster and confirm its ID differs from the original. Give both the same display name and select each independently in map encounters.
+- [ ] Create a monster, edit its display name, save/reopen, and verify its generated ID remains unchanged and read-only.
+- [ ] Enter a dungeon with a migrated encounter table and verify normal monster encounters/combat. Overworld encounters should remain unchanged.
+- [ ] Open an unmigrated external encounter file and confirm validation reports missing references; replace legacy names with the corresponding catalog MonsterId values before using it.

@@ -1,8 +1,8 @@
 [
   {
-    "Name": "Troll"
+    "MonsterId": "monster/base/troll"
   },
   {
-    "Name": "Dire Troll"
+    "MonsterId": "monster/base/dire-troll"
   }
 ]

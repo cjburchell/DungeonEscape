@@ -1,9 +1,9 @@
 [
   {
-    "Name": "Dire Bear"
+    "MonsterId": "monster/base/dire-bear"
   },
   {
-    "Name": "Metal Ooze",
+    "MonsterId": "monster/base/metal-ooze",
     "Rarity": "Epic"
   }
 ]

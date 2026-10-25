@@ -1,5 +1,6 @@
 [
   {
+    "Id": "monster/base/giant-centipede",
     "ImageId": 1,
     "MinLevel": 5,
     "GroupSize": 5,
@@ -48,6 +49,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/goblin-archer",
     "ImageId": 2,
     "MinLevel": 1,
     "GroupSize": 5,
@@ -105,6 +107,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/giant-wasp",
     "ImageId": 3,
     "MinLevel": 5,
     "GroupSize": 5,
@@ -153,6 +156,7 @@
     "Rarity": "Uncommon"
   },
   {
+    "Id": "monster/base/giant-fire-beetle",
     "ImageId": 4,
     "MinLevel": 1,
     "GroupSize": 8,
@@ -207,6 +211,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/minotaur",
     "ImageId": 5,
     "MinLevel": 10,
     "GroupSize": 3,
@@ -283,6 +288,7 @@
     "Rarity": "Uncommon"
   },
   {
+    "Id": "monster/base/scout-archer",
     "ImageId": 6,
     "MinLevel": 5,
     "GroupSize": 3,
@@ -340,6 +346,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/venomous-giant-wasp",
     "ImageId": 7,
     "MinLevel": 10,
     "GroupSize": 4,
@@ -388,6 +395,7 @@
     "Rarity": "Uncommon"
   },
   {
+    "Id": "monster/base/gray-ooze",
     "ImageId": 8,
     "MinLevel": 1,
     "GroupSize": 10,
@@ -450,6 +458,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/swarm-of-insects",
     "ImageId": 9,
     "MinLevel": 1,
     "GroupSize": 10,
@@ -505,6 +514,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/tiger",
     "ImageId": 10,
     "MinLevel": 10,
     "GroupSize": 3,
@@ -563,6 +573,7 @@
     "Rarity": "Rare"
   },
   {
+    "Id": "monster/base/metal-ooze",
     "ImageId": 11,
     "MinLevel": 1,
     "GroupSize": 1,
@@ -618,6 +629,7 @@
     "Rarity": "Epic"
   },
   {
+    "Id": "monster/base/young-blue-dragon",
     "ImageId": 12,
     "MinLevel": 20,
     "GroupSize": 1,
@@ -669,6 +681,7 @@
     "Rarity": "Epic"
   },
   {
+    "Id": "monster/base/giant-constrictor-snake",
     "ImageId": 13,
     "MinLevel": 15,
     "GroupSize": 3,
@@ -716,6 +729,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/water-weird",
     "ImageId": 14,
     "MinLevel": 10,
     "GroupSize": 2,
@@ -774,6 +788,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/giant-poisonous-snake",
     "ImageId": 15,
     "GroupSize": 3,
     "Xp": 50,
@@ -820,6 +835,7 @@
     "Rarity": "Uncommon"
   },
   {
+    "Id": "monster/base/giant-shark",
     "ImageId": 16,
     "MinLevel": 15,
     "GroupSize": 2,
@@ -877,6 +893,7 @@
     "Rarity": "Rare"
   },
   {
+    "Id": "monster/base/wyvern",
     "ImageId": 17,
     "MinLevel": 15,
     "GroupSize": 3,
@@ -924,6 +941,7 @@
     "Rarity": "Rare"
   },
   {
+    "Id": "monster/base/ochre-jelly",
     "ImageId": 18,
     "MinLevel": 10,
     "GroupSize": 4,
@@ -981,6 +999,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/aberrant-eye",
     "ImageId": 19,
     "MinLevel": 10,
     "GroupSize": 3,
@@ -1031,6 +1050,7 @@
     "Rarity": "Uncommon"
   },
   {
+    "Id": "monster/base/kraken-spawn",
     "ImageId": 20,
     "MinLevel": 20,
     "GroupSize": 2,
@@ -1092,6 +1112,7 @@
     "Rarity": "Uncommon"
   },
   {
+    "Id": "monster/base/phase-serpent",
     "ImageId": 21,
     "MinLevel": 10,
     "GroupSize": 1,
@@ -1153,6 +1174,7 @@
     "Rarity": "Rare"
   },
   {
+    "Id": "monster/base/giant-octopus",
     "ImageId": 22,
     "MinLevel": 15,
     "GroupSize": 1,
@@ -1214,6 +1236,7 @@
     "Rarity": "Rare"
   },
   {
+    "Id": "monster/base/triceratops",
     "ImageId": 23,
     "MinLevel": 20,
     "GroupSize": 1,
@@ -1267,6 +1290,7 @@
     "Rarity": "Epic"
   },
   {
+    "Id": "monster/base/lesser-wyvern",
     "ImageId": 24,
     "MinLevel": 15,
     "GroupSize": 2,
@@ -1314,6 +1338,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/poisonous-snake",
     "ImageId": 25,
     "MinLevel": 1,
     "GroupSize": 3,
@@ -1361,6 +1386,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/giant-cobra",
     "ImageId": 26,
     "MinLevel": 10,
     "GroupSize": 3,
@@ -1408,6 +1434,7 @@
     "Rarity": "Uncommon"
   },
   {
+    "Id": "monster/base/shadow",
     "ImageId": 27,
     "MinLevel": 10,
     "GroupSize": 3,
@@ -1469,6 +1496,7 @@
     "Rarity": "Uncommon"
   },
   {
+    "Id": "monster/base/giant-scorpion",
     "ImageId": 28,
     "MinLevel": 5,
     "GroupSize": 3,
@@ -1516,6 +1544,7 @@
     "Rarity": "Uncommon"
   },
   {
+    "Id": "monster/base/twig-blight",
     "ImageId": 29,
     "MinLevel": 1,
     "GroupSize": 3,
@@ -1570,6 +1599,7 @@
     "Rarity": "Uncommon"
   },
   {
+    "Id": "monster/base/giant-eagle",
     "ImageId": 30,
     "MinLevel": 10,
     "GroupSize": 2,
@@ -1626,6 +1656,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/troll",
     "ImageId": 31,
     "MinLevel": 15,
     "GroupSize": 2,
@@ -1681,6 +1712,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/wyvern-matriarch",
     "ImageId": 32,
     "MinLevel": 20,
     "GroupSize": 1,
@@ -1728,6 +1760,7 @@
     "Rarity": "Uncommon"
   },
   {
+    "Id": "monster/base/manticore",
     "ImageId": 33,
     "MinLevel": 15,
     "GroupSize": 2,
@@ -1795,6 +1828,7 @@
     "Rarity": "Rare"
   },
   {
+    "Id": "monster/base/chimera",
     "ImageId": 34,
     "MinLevel": 20,
     "GroupSize": 2,
@@ -1876,6 +1910,7 @@
     "Rarity": "Epic"
   },
   {
+    "Id": "monster/base/horned-devil",
     "ImageId": 35,
     "MinLevel": 20,
     "GroupSize": 1,
@@ -1943,6 +1978,7 @@
     "Rarity": "Epic"
   },
   {
+    "Id": "monster/base/ape",
     "ImageId": 36,
     "MinLevel": 5,
     "GroupSize": 2,
@@ -1990,6 +2026,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/baboon",
     "ImageId": 37,
     "MinLevel": 5,
     "GroupSize": 3,
@@ -2043,6 +2080,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/brown-bear",
     "ImageId": 38,
     "MinLevel": 10,
     "GroupSize": 3,
@@ -2096,6 +2134,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/dire-troll",
     "ImageId": 39,
     "MinLevel": 15,
     "GroupSize": 2,
@@ -2151,6 +2190,7 @@
     "Rarity": "Uncommon"
   },
   {
+    "Id": "monster/base/giant-rat",
     "ImageId": 40,
     "MinLevel": 1,
     "GroupSize": 4,
@@ -2208,6 +2248,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/animated-walking-stick",
     "ImageId": 41,
     "MinLevel": 1,
     "GroupSize": 3,
@@ -2261,6 +2302,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/dire-wolf",
     "ImageId": 42,
     "MinLevel": 5,
     "GroupSize": 2,
@@ -2318,6 +2360,7 @@
     "Rarity": "Uncommon"
   },
   {
+    "Id": "monster/base/griffon",
     "ImageId": 43,
     "MinLevel": 10,
     "GroupSize": 3,
@@ -2371,6 +2414,7 @@
     "Rarity": "Rare"
   },
   {
+    "Id": "monster/base/polar-bear",
     "ImageId": 44,
     "MinLevel": 15,
     "GroupSize": 2,
@@ -2424,6 +2468,7 @@
     "Rarity": "Uncommon"
   },
   {
+    "Id": "monster/base/saber-toothed-tiger",
     "ImageId": 45,
     "MinLevel": 10,
     "GroupSize": 2,
@@ -2481,6 +2526,7 @@
     "Rarity": "Uncommon"
   },
   {
+    "Id": "monster/base/green-dragon-wyrmling",
     "ImageId": 46,
     "MinLevel": 10,
     "GroupSize": 1,
@@ -2536,6 +2582,7 @@
     "Rarity": "Epic"
   },
   {
+    "Id": "monster/base/dire-bear",
     "ImageId": 47,
     "MinLevel": 20,
     "GroupSize": 2,
@@ -2580,6 +2627,7 @@
     "Rarity": "Rare"
   },
   {
+    "Id": "monster/base/giant-crab",
     "ImageId": 48,
     "MinLevel": 1,
     "GroupSize": 4,
@@ -2633,6 +2681,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/shelled-ooze",
     "ImageId": 49,
     "MinLevel": 1,
     "GroupSize": 4,
@@ -2694,6 +2743,7 @@
     "Rarity": "Common"
   },
   {
+    "Id": "monster/base/sea-ooze",
     "ImageId": 50,
     "MinLevel": 5,
     "GroupSize": 4,

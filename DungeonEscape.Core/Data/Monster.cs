@@ -8,6 +8,7 @@ namespace Redpoint.DungeonEscape.Data
 {
     public class Monster
     {
+        public string Id { get; set; }
         public int ImageId { get; set; }
         public int MinLevel { get; set; }
         public int GroupSize { get; set; }

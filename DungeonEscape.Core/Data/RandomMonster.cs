@@ -15,7 +15,7 @@ namespace Redpoint.DungeonEscape.Data
 
     public class RandomMonster
     {
-        public string Name { get; set; }
+        public string MonsterId { get; set; }
         
         [JsonIgnore]
         public Monster Data { get; set; }

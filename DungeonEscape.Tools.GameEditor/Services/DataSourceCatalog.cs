@@ -38,7 +38,7 @@ public sealed class DataSourceCatalog
         Items = Items.Prepend(RandomItemId).ToList();
         Quests = Names(data.Quests.Select(q => q.Id));
         Dialogs = Names(data.Dialogs.Select(d => d.Id));
-        Monsters = Names(data.Monsters.Select(m => m.Name));
+        Monsters = Names(data.Monsters.Select(m => m.Id));
         Classes = data.ClassLevels
             .Select(classStats => classStats.Class)
             .Where(value => !string.IsNullOrWhiteSpace(value))

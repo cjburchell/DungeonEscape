@@ -34,7 +34,7 @@ namespace Redpoint.DungeonEscape.Rules
                 .Select(monster => new RandomMonster
                 {
                     Data = monster,
-                    Name = monster.Name,
+                    MonsterId = monster.Id,
                     Rarity = monster.Rarity,
                     IsOverworld = true
                 })
@@ -46,13 +46,13 @@ namespace Redpoint.DungeonEscape.Rules
             var monsterList = (monsters ?? new List<Monster>()).ToList();
             foreach (var randomMonster in randomMonsters ?? new List<RandomMonster>())
             {
-                if (randomMonster == null || string.IsNullOrEmpty(randomMonster.Name))
+                if (randomMonster == null)
                 {
                     continue;
                 }
 
-                randomMonster.Data = monsterList.FirstOrDefault(monster =>
-                    string.Equals(monster.Name, randomMonster.Name, StringComparison.OrdinalIgnoreCase));
+                randomMonster.Data = string.IsNullOrEmpty(randomMonster.MonsterId) ? null : monsterList.FirstOrDefault(monster =>
+                    string.Equals(monster.Id, randomMonster.MonsterId, StringComparison.Ordinal));
             }
         }
 
@@ -94,14 +94,14 @@ namespace Redpoint.DungeonEscape.Rules
             var usedMonsters = new List<string>();
             for (var group = 0; group < MaxMonsterGroups - 1 && totalMonsters < numberOfMonsters; group++)
             {
-                var available = weightedMonsters.Where(candidate => !usedMonsters.Contains(candidate.Name)).ToArray();
+                var available = weightedMonsters.Where(candidate => !usedMonsters.Contains(candidate.Id)).ToArray();
                 if (available.Length == 0)
                 {
                     break;
                 }
 
                 var monster = available[Next(nextInt, available.Length)];
-                usedMonsters.Add(monster.Name);
+                usedMonsters.Add(monster.Id);
                 var groupSize = Math.Max(1, monster.GroupSize);
                 var numberInGroup = Next(nextInt, Math.Min(numberOfMonsters - totalMonsters, groupSize)) + 1;
                 AddMonsterGroup(monsters, monster, numberInGroup);
@@ -110,7 +110,7 @@ namespace Redpoint.DungeonEscape.Rules
 
             if (totalMonsters < numberOfMonsters)
             {
-                var available = weightedMonsters.Where(monster => !usedMonsters.Contains(monster.Name)).ToArray();
+                var available = weightedMonsters.Where(monster => !usedMonsters.Contains(monster.Id)).ToArray();
                 if (available.Length > 0)
                 {
                     var monster = available[Next(nextInt, available.Length)];

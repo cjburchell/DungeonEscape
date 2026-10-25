@@ -10,6 +10,33 @@ namespace DungeonEscape.Core.Test.Rules
     public sealed class EncounterRulesTests
     {
         [Fact]
+        public void MonsterReferencesSurviveRenamesAndDistinguishIdenticalNames()
+        {
+            var first = new Monster { Id = "monster/base/001", Name = "Guard" };
+            var second = new Monster { Id = "monster/campaign1/guard", Name = "Guard" };
+            var reference = new RandomMonster { MonsterId = second.Id };
+            EncounterRules.LinkRandomMonsters(new[] { reference }, new[] { first, second });
+            Assert.Same(second, reference.Data);
+            second.Name = "Renamed Sentinel";
+            EncounterRules.LinkRandomMonsters(new[] { reference }, new[] { first, second });
+            Assert.Same(second, reference.Data);
+        }
+
+        [Fact]
+        public void RelinkingUnknownOrEmptyIdClearsPreviouslyResolvedMonster()
+        {
+            var monster = new Monster { Id = "monster/base/001", Name = "Guard" };
+            var reference = new RandomMonster { MonsterId = monster.Id, Data = monster };
+            reference.MonsterId = monster.Name;
+            EncounterRules.LinkRandomMonsters(new[] { reference }, new[] { monster });
+            Assert.Null(reference.Data);
+            reference.Data = monster;
+            reference.MonsterId = null;
+            EncounterRules.LinkRandomMonsters(new[] { reference }, new[] { monster });
+            Assert.Null(reference.Data);
+        }
+
+        [Fact]
         public void FilterRandomMonstersAppliesBiomeAndLevelBounds()
         {
             var cave = CreateRandomMonster("Cave", Biome.Cave, 3, Rarity.Common);
@@ -335,7 +362,7 @@ namespace DungeonEscape.Core.Test.Rules
         {
             return new RandomMonster
             {
-                Name = name,
+                MonsterId = "monster/base/" + name.ToLowerInvariant(),
                 Rarity = rarity,
                 Data = CreateMonster(name, biome, minLevel, rarity, groupSize),
                 IsOverworld = true
@@ -346,6 +373,7 @@ namespace DungeonEscape.Core.Test.Rules
         {
             return new Monster
             {
+                Id = "monster/base/" + name.ToLowerInvariant(),
                 Name = name,
                 MinLevel = minLevel,
                 Rarity = rarity,

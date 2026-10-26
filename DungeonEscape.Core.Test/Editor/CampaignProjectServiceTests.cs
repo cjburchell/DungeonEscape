@@ -30,6 +30,33 @@ public sealed class CampaignProjectServiceTests : IDisposable
     }
 
     [Fact]
+    public void TiledObjectTypesLoadAndSaveAsCanonicalClassesWithoutLosingMetadata()
+    {
+        data.CreateCampaign("tiled-roundtrip", "Tiled Roundtrip", "");
+        var campaign = data.SelectedCampaign!;
+        var path = data.Maps.Single().FilePath;
+        var xml = System.Xml.Linq.XDocument.Load(path);
+        var spawn = xml.Descendants("object").Single();
+        spawn.SetAttributeValue("type", (string?)spawn.Attribute("class"));
+        spawn.Attribute("class")!.Remove();
+        xml.Save(path);
+        var service = new MapDocumentService(assets);
+        var map = service.LoadMaps(campaign).Single();
+        var loaded = Assert.Single(map.Objects);
+        Assert.Equal("Spawn", loaded.Class);
+        Assert.Equal("start", loaded.Name);
+        Assert.Equal("true", loaded.Properties["DefaultSpawn"]);
+        loaded.Name = "updated-start";
+        map.IsDirty = true;
+        service.SaveMaps(new[] { map });
+        var saved = System.Xml.Linq.XDocument.Load(path).Descendants("object").Single();
+        Assert.Equal("Spawn", (string?)saved.Attribute("class"));
+        Assert.Null(saved.Attribute("type"));
+        Assert.Equal("updated-start", (string?)saved.Attribute("name"));
+        Assert.Equal("true", (string?)saved.Element("properties")!.Element("property")!.Attribute("value"));
+    }
+
+    [Fact]
     public void CreationRegistersAPlayableProjectWithoutChangingSharedOrOriginalFiles()
     {
         var sharedBefore = Fingerprints(Path.Combine(sandbox, "Data"));

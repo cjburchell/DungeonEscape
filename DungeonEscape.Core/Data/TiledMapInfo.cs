@@ -83,7 +83,8 @@ namespace Redpoint.DungeonEscape.Data
                     {
                         Id = GetInt(mapObject, "id"),
                         Name = GetString(mapObject, "name"),
-                        Class = GetString(mapObject, "class"),
+                        // Tiled 1.10+ writes object classes as "type" again.
+                        Class = GetString(mapObject, "class") ?? GetString(mapObject, "type"),
                         Gid = GetGid(mapObject, "gid"),
                         X = GetFloat(mapObject, "x"),
                         Y = GetFloat(mapObject, "y"),

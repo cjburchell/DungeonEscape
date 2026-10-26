@@ -1,5 +1,9 @@
 # System Patterns
 
+## Tiled Object Class Input And Canonical Output
+
+Checked-in TMX objects use `class="Spawn"`, `class="Warp"`, etc. Tiled 1.10+ intentionally serializes the object class as `type` again. Core TiledMapInfo and Game Editor import accept both, preferring `class` when present; tile metadata/rendering also support the alias. Game Editor saves canonical object `class` and removes object `type`. Keep primitive property types such as `<property type="bool">` unchanged. A Tiled save must not silently discard spawn/NPC/warp/monster behavior. See https://docs.mapeditor.org/en/stable/reference/tmx-changelog/ .
+
 ## Shared-Core First
 
 Engine-neutral rules belong in `DungeonEscape.Core`. Unity should call into the shared models rather than duplicating rules when possible.

@@ -1,5 +1,13 @@
 # Manual Test Plan
 
+## Tiled Save And Spawn Compatibility (2026-10-26)
+
+Automated checks passed: Core 294/294, Unity Edit Mode 17/17 and Play Mode 20/20 in an isolated Unity 6000.4.4f1 copy. Native startup exercises a type-based Spawn; editor round-trip tests ensure canonical class output. Fresh/cached type-based group previews verified. Tile painting, sprite choices and placements in the two edited maps were preserved.
+
+- [ ] Open Keep and Cave A in Tiled, edit and save, then restart Unity Play Mode. New Quest must recognize the Keep `start` object at tile (7,10); warden/NPCs, exits and the four-monster encounter must retain behavior even when Tiled writes object `type` attributes.
+- [ ] Open that saved map in Game Editor. Object classes should be populated. Save an edited object: XML must contain canonical object `class` without duplicate object `type`, retain custom properties and primitive property types, and preserve tile art and positions.
+- [ ] In Tiled's Objects panel, locate `objects` -> `start` (id 1). The spawn is a rectangle with Class Spawn and DefaultSpawn true; it does not need a sprite. The return spawn `gate` remains separate from the starting spawn.
+
 ## Borderlands Fourteen-Map World (2026-10-26)
 
 - [ ] Start a new Heroes of the Borderlands campaign (content 0.2). Check Keep courtyard, warden, fortress, inn, temple, provisioner and guild spaces; inn rest costs 5 gold. Provisioner and guild are descriptive placeholders.

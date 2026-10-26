@@ -14,6 +14,7 @@ This folder keeps durable project context for Dungeon Escape after the Unity mig
 - `CAMPAIGNS.md` records the campaign and stable content ID investigation and proposed implementation sequence.
 - `HEROES_OF_THE_BORDERLANDS.md` records public campaign research, current engine gaps, adaptation scope, and staged implementation gates.
 - `BORDERLANDS_WORLD.md` records the fourteen-map Borderlands layout, routes, stable identities, content status and validation.
+- `BORDERLANDS_ROADMAP.md` prioritizes remaining quest systems and campaign content, with dependencies and completion criteria.
 - `BUGS.md` tracks known bugs and rough edges to investigate later.
 - `UNITY_MIGRATION.md` tracks current post-migration status and deferred post-migration work.
 - `UNITY_MIGRATION_COMPLETED.md` archives the completed Unity migration record.

@@ -1,5 +1,9 @@
 # Progress
 
+- Tiled spawn compatibility (2026-10-26): restored class metadata for the edited Borderlands Keep/Cave A without changing the user's painting/positions. Added object-type input support to Core/Game Editor/preview and canonical class output on editor save. Core parser/editor round-trip tests pass (294 total); build has zero warnings/errors. Native startup regression exercises a type-based Spawn. Isolated Unity Edit Mode 17/17 and Play Mode 20/20 passed. Fresh/cached map previews also verified with type-based objects.
+
+- Borderlands planning (2026-10-26): added a prioritized feature backlog with dependencies, completion criteria and a recommended first quest-state slice. See BORDERLANDS_ROADMAP.md. Documentation only; no new runtime behavior or test run.
+
 - Campaign starting parties (2026-10-26): added optional `MaxStartingPartyMembers` (default 1) to manifests/editor settings and multi-character New Quest creation via Add another on review. Start builds ordered, active, independently equipped heroes; Back restores prior draft choices and cancel preserves the live session. Campaign and active-party limits apply before activation; save format remains 1.3. Solution build passed with zero warnings/errors, Core 268/268, Unity Edit Mode 17/17 and Play Mode 17/17 passed. Unity validation used an isolated project/cache copy because the main editor was open; initial cold-copy importer failures were resolved by copying the existing cache. Visual/controller QA remains in MANUAL_TESTS.md.
 
 - Overworld roster placement follow-up (2026-10-25): moved roster out of campaign settings into the selected overworld map's Random Monsters area, titled Overworld encounter roster. Collapsible biome groups show matching monsters and selected counts, with search/selected filters. Multi-biome monsters retain one campaign eligibility selection across groups. Editor build passed with zero warnings/errors; native visual verification pending.

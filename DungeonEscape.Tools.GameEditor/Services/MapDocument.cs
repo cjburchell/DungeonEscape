@@ -95,7 +95,7 @@ public sealed class MapDocumentService(AssetContext assets)
             map.Objects.Add(new MapObjectDocument
             {
                 MapId = map.Id, GroupName = GetString(objectGroup, "name"), Id = GetInt(mapObject, "id"),
-                Name = GetString(mapObject, "name"), Class = GetString(mapObject, "class"), Gid = GetGid(mapObject, "gid"),
+                Name = GetString(mapObject, "name"), Class = (string?)mapObject.Attribute("class") ?? (string?)mapObject.Attribute("type") ?? string.Empty, Gid = GetGid(mapObject, "gid"),
                 X = GetFloat(mapObject, "x"), Y = GetFloat(mapObject, "y"), Width = GetFloat(mapObject, "width"), Height = GetFloat(mapObject, "height"),
                 Properties = ReadProperties(mapObject), Element = mapObject
             });
@@ -122,6 +122,7 @@ public sealed class MapDocumentService(AssetContext assets)
 
             SetOptionalAttribute(mapObject.Element, "name", mapObject.Name);
             SetOptionalAttribute(mapObject.Element, "class", mapObject.Class);
+            mapObject.Element.Attribute("type")?.Remove();
             WriteProperties(mapObject.Element, mapObject.Properties);
         }
 

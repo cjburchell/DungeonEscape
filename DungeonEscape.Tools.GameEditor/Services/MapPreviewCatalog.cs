@@ -207,7 +207,7 @@ public sealed class MapPreviewCatalog
             var height = ReadFloat(mapObject.Attribute("height"), fallbackTileHeight);
             var x = ReadFloat(mapObject.Attribute("x"), 0);
             var y = ReadFloat(mapObject.Attribute("y"), 0) - height;
-            if (StaticEncounterRules.IsEncounter((string?)mapObject.Attribute("class")))
+            if (StaticEncounterRules.IsEncounter((string?)mapObject.Attribute("class") ?? (string?)mapObject.Attribute("type")))
             {
                 var count = GetEncounterCount(mapObject);
                 usageCounts[gid] += count - 1;
@@ -265,7 +265,7 @@ public sealed class MapPreviewCatalog
 
     private static int GetEncounterCount(XElement mapObject)
     {
-        if (!StaticEncounterRules.IsEncounter((string?)mapObject.Attribute("class"))) return 1;
+        if (!StaticEncounterRules.IsEncounter((string?)mapObject.Attribute("class") ?? (string?)mapObject.Attribute("type"))) return 1;
         var value = (string?)mapObject.Element("properties")?.Elements("property")
             .FirstOrDefault(property => (string?)property.Attribute("name") == "Count")?.Attribute("value");
         return int.TryParse(value, out var count) ? Math.Clamp(count, 1, EncounterRules.MaxMonstersToFight) : 1;

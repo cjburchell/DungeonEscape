@@ -37,6 +37,8 @@ Campaign manifests optionally set `MaxStartingPartyMembers` (integer >= 1, defau
 
 ## Static map encounters
 
+Tiled 1.10+ writes object classes using the XML `type` attribute. Runtime and editor import accept that spelling as well as canonical `class`. Game Editor save writes object `class` and removes object `type`; primitive custom property types are preserved. Checked-in maps continue to use `class`.
+
 Place a tile object with `class="Monster"` in Tiled, using an existing sprite `gid`. The Maps object form exposes these properties:
 
 | Property | Meaning |

@@ -99,7 +99,7 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
         }
 
         [UnityTest]
-        public IEnumerator GeneratedCampaignStartsOnItsOwnMapWithoutOriginalStoryContent()
+        public IEnumerator TiledSavedCampaignStartsOnItsOwnSpawnWithoutOriginalStoryContent()
         {
             yield return UiPlayModeTestHelper.StartNewGame();
             var state = UiPlayModeTestHelper.FindObject("Redpoint.DungeonEscape.Unity.Core.GameState");
@@ -124,7 +124,13 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
                     var path = Path.GetFullPath(Path.Combine(Application.dataPath, asset.Substring("Assets/".Length)));
                     Assert.That(path.StartsWith(directory + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase), Is.True);
                     Directory.CreateDirectory(Path.GetDirectoryName(path));
-                    File.WriteAllText(path, (string)entry.GetType().GetProperty("Value").GetValue(entry));
+                    var contents = (string)entry.GetType().GetProperty("Value").GetValue(entry);
+                    if (path.EndsWith(".tmx", StringComparison.OrdinalIgnoreCase))
+                    {
+                        contents = contents.Replace("class=\"Spawn\"", "type=\"Spawn\"");
+                        Assert.That(contents, Does.Contain("type=\"Spawn\""), "Exercise Tiled's saved object-class spelling.");
+                    }
+                    File.WriteAllText(path, contents);
                 }
                 var existing = ((IEnumerable)originalCatalog.GetType().GetProperty("Campaigns").GetValue(originalCatalog)).Cast<object>().ToList();
                 var installed = Array.CreateInstance(campaign.GetType(), existing.Count + 1);

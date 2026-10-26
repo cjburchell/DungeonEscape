@@ -4,7 +4,10 @@
 }
 else if (Map.IsOverworld)
 {
-    <div class="tag-empty">Overworld encounters are generated from each monster's biome list. Edit monster biomes on the Monsters tab.</div>
+    @if (Data.SelectedCampaign != null)
+    {
+        <OverworldEncounterRoster Campaign="Data.SelectedCampaign" Monsters="Data.Monsters" OnChanged="OnChanged" @key="Data.SelectedCampaign.Id" />
+    }
 }
 else
 {
@@ -44,6 +47,7 @@ else
 
 @code {
     [Inject] public DataSourceCatalog DataSources { get; set; } = null!;
+    [Inject] public DataFolderService Data { get; set; } = null!;
 
     [Parameter] public MapDocument? Map { get; set; }
     [Parameter] public EventCallback OnChanged { get; set; }

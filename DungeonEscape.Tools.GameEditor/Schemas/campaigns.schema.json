@@ -8,7 +8,7 @@
     "DefaultCampaignId": { "type": ["string", "null"], "pattern": "^campaign/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$" },
     "Manifests": {
       "type": "array", "minItems": 0, "uniqueItems": true,
-      "items": { "type": "string", "pattern": "^Assets/DungeonEscape/Data/.+\\.json$" }
+      "items": { "type": "string", "pattern": "^Assets/DungeonEscape/Campaigns/[a-z0-9-]+/.+\\.json$" }
     }
   }
 }

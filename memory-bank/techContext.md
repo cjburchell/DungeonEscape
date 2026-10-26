@@ -17,8 +17,9 @@
 
 - Unity project: `DungeonEscape.Unity/`
 - Unity scripts: `DungeonEscape.Unity/Assets/DungeonEscape/Scripts/Unity/`
-- Unity maps: `DungeonEscape.Unity/Assets/DungeonEscape/Maps/`
-- Unity data: `DungeonEscape.Unity/Assets/DungeonEscape/Data/`
+- Unity campaign maps: `DungeonEscape.Unity/Assets/DungeonEscape/Campaigns/<key>/Maps/`
+- Shared Unity data/index: `DungeonEscape.Unity/Assets/DungeonEscape/Data/`
+- Campaign manifests/data: `DungeonEscape.Unity/Assets/DungeonEscape/Campaigns/<key>/`
 - Unity tilesets: `DungeonEscape.Unity/Assets/DungeonEscape/Tilesets/`
 - Shared core: `DungeonEscape.Core/`
 - Shared tests: `DungeonEscape.Core.Test/`

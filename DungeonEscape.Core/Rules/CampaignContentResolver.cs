@@ -46,7 +46,9 @@ namespace Redpoint.DungeonEscape.Rules
             data = JsonConvert.DeserializeObject<DungeonEscapeDataSet>(JsonConvert.SerializeObject(data));
             var catalog = new MapCatalog(maps);
             foreach (var map in catalog.Maps)
-                if (!map.Id.StartsWith("map/" + scope + "/", StringComparison.Ordinal))
+                if (!map.Id.StartsWith("map/" + scope + "/", StringComparison.Ordinal) ||
+                    !ContentPaths.IsCampaignPath(map.AssetPath, scope, ".tmx") ||
+                    (!string.IsNullOrEmpty(map.EncounterAssetPath) && !ContentPaths.IsCampaignPath(map.EncounterAssetPath, scope, ".json")))
                     throw new ArgumentException("Map belongs to another campaign: " + map.Id);
             catalog.Get(campaign.StartMapId);
             catalog.Get(campaign.OverworldMapId);

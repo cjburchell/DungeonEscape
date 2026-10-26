@@ -1,6 +1,12 @@
 # Progress
 
+- Overworld roster placement follow-up (2026-10-25): moved roster out of campaign settings into the selected overworld map's Random Monsters area, titled Overworld encounter roster. Collapsible biome groups show matching monsters and selected counts, with search/selected filters. Multi-biome monsters retain one campaign eligibility selection across groups. Editor build passed with zero warnings/errors; native visual verification pending.
+
+- Campaign roster readability follow-up (2026-10-25): replaced inline ID-heavy checkboxes with rows showing names and biomes, search/biome/selected filters, and selection counts. Added instructions connecting campaign eligibility, monster Biomes, and the Tiled biome layer. Editor build passed with zero warnings/errors using a temporary output directory because the running editor locks its normal executable; native UI validation remains pending.
+
 ## Done
+
+- Campaign organization/creation: moved original story, maps, encounters and custom content under Campaigns/original with preserved Unity GUIDs; added scoped Game Editor selection, protected shared definitions, campaign settings and transactional starter-campaign creation. Core/editor tests 261/261, Edit Mode 17/17, Play Mode 15/15, Windows build passed.
 
 - Campaign selection/persistence: added one/multiple/no-campaign New Quest flow, candidate preparation without activating during creation, campaign-tagged 1.3 saves, per-campaign quick/autosaves, most-recent Continue, and validation before restoring a cloned snapshot. Campaign editor authoring and a complete authored second campaign remain next.
 

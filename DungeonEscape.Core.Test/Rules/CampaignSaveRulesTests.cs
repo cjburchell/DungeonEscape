@@ -82,10 +82,10 @@ public class CampaignSaveRulesTests
         {
             Id = "campaign/" + scope + "/main", Name = scope, ContentVersion = "1.0",
             StartMapId = "map/" + scope + "/world", OverworldMapId = "map/" + scope + "/world",
-            ItemsAssetPath = "Assets/DungeonEscape/Data/items.json", MapsAssetPath = "Assets/DungeonEscape/Data/maps.json",
-            QuestsAssetPath = "Assets/DungeonEscape/Data/quests.json", DialogsAssetPath = "Assets/DungeonEscape/Data/dialog.json"
+            ItemsAssetPath = "Assets/DungeonEscape/Campaigns/" + scope + "/Data/items.json", MapsAssetPath = "Assets/DungeonEscape/Campaigns/" + scope + "/Data/maps.json",
+            QuestsAssetPath = "Assets/DungeonEscape/Campaigns/" + scope + "/Data/quests.json", DialogsAssetPath = "Assets/DungeonEscape/Campaigns/" + scope + "/Data/dialog.json"
         };
         return CampaignContentResolver.Resolve(campaign, new DungeonEscapeDataSet(), new DungeonEscapeDataSet(),
-            new[] { new MapDefinition { Id = campaign.StartMapId, Name = "World", AssetPath = "Assets/DungeonEscape/Maps/" + scope + ".tmx" } });
+            new[] { new MapDefinition { Id = campaign.StartMapId, Name = "World", AssetPath = "Assets/DungeonEscape/Campaigns/" + scope + "/Maps/world.tmx" } });
     }
 }

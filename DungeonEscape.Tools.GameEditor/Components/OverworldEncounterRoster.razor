@@ -1,0 +1,45 @@
+<p>Choose the monsters allowed on this overworld, grouped by their Biomes settings. A monster listed in several biomes shares one selection across those groups. The map's biome layer, level limits and rarity determine encounters.</p>
+<div class="roster-toolbar">
+    <label>Search monsters <input type="search" placeholder="Search by name" @bind="search" @bind:event="oninput" /></label>
+    <label class="roster-selected"><input type="checkbox" @bind="selectedOnly" /> Selected only</label>
+    <span>@Campaign.OverworldMonsterIds.Count selected</span>
+</div>
+@foreach (var biome in Enum.GetValues<Biome>().Where(value => value != Biome.None))
+{
+    var monsters = VisibleMonsters.Where(monster => monster.Biomes?.Contains(biome) == true).ToList();
+    <details class="roster-biome" open>
+        <summary>@biome <small>(@monsters.Count(monster => Campaign.OverworldMonsterIds.Contains(monster.Id)) selected / @monsters.Count shown)</small></summary>
+        <div class="campaign-roster">
+            @foreach (var monster in monsters)
+            {
+                <label class="roster-monster" title="@monster.Id" @key="monster.Id">
+                    <input type="checkbox" checked="@Campaign.OverworldMonsterIds.Contains(monster.Id)" @onchange="e => ToggleMonster(monster.Id, (bool)(e.Value ?? false))" />
+                    <span>@monster.Name</span>
+                    <small>@monster.Rarity</small>
+                </label>
+            }
+        </div>
+        @if (monsters.Count == 0) { <p>No monsters match these filters in this biome.</p> }
+    </details>
+}
+<p>Edit terrain assignments under Monsters &gt; Biomes. Duplicate a shared monster into this campaign to customize it. Monsters without biomes cannot appear randomly. Leave all unchecked for a peaceful overworld.</p>
+
+@code {
+    [Parameter] public CampaignDefinition Campaign { get; set; } = null!;
+    [Parameter] public IReadOnlyList<Monster> Monsters { get; set; } = Array.Empty<Monster>();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private string search = string.Empty;
+    private bool selectedOnly;
+    private IEnumerable<Monster> VisibleMonsters => Monsters
+        .Where(monster => monster.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
+        .Where(monster => !selectedOnly || Campaign.OverworldMonsterIds.Contains(monster.Id))
+        .OrderBy(monster => monster.Name);
+
+    private async Task ToggleMonster(string id, bool enabled)
+    {
+        Campaign.OverworldMonsterIds.RemoveAll(value => value == id);
+        if (enabled) Campaign.OverworldMonsterIds.Add(id);
+        await OnChanged.InvokeAsync();
+    }
+}

@@ -16,7 +16,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
         private const float CameraMarginTiles = 4f;
 
         [SerializeField]
-        private string mapAssetPath = "Assets/DungeonEscape/Maps/overworld.tmx";
+        private string mapAssetPath;
 
         [SerializeField]
         private int columns = 32;
@@ -74,7 +74,11 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             transform.position = Vector3.zero;
             ClearRenderedChildren();
             rendererPool = new SpriteRendererPool(transform);
-            if (CampaignRuntime.Catalog.Campaigns.Count > 0) RenderPreview();
+            if (CampaignRuntime.Catalog.Campaigns.Count > 0)
+            {
+                mapAssetPath = CampaignRuntime.Campaign.StartMapId;
+                RenderPreview();
+            }
         }
 
         private void LateUpdate()

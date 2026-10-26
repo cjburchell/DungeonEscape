@@ -1,4 +1,6 @@
+#nullable enable
 using System.IO;
+using Redpoint.DungeonEscape.Rules;
 
 namespace DungeonEscape.Tools.GameEditor.Services;
 
@@ -37,11 +39,14 @@ public sealed class AssetContext
     public string? DataDirectory =>
         AssetRoot == null ? null : Path.Combine(AssetRoot, "Data");
 
-    public string? MapsDirectory =>
-        AssetRoot == null ? null : Path.Combine(AssetRoot, "Maps");
-
-    public string? MapDataDirectory =>
-        AssetRoot == null ? null : Path.Combine(AssetRoot, "Data", "maps");
+    public string ResolveAssetPath(string assetPath)
+    {
+        if (AssetRoot == null) throw new InvalidOperationException("Open a Dungeon Escape project first.");
+        var path = Path.GetFullPath(Path.Combine(AssetRoot, ContentPaths.RelativeToRoot(assetPath)));
+        var root = Path.GetFullPath(AssetRoot).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+        if (!path.StartsWith(root, StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException("Asset is outside the project.");
+        return path;
+    }
 
     public string? MusicDirectory =>
         AssetRoot == null ? null : Path.Combine(AssetRoot, "Audio", "music");

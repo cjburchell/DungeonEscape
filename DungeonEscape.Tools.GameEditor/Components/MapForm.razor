@@ -128,7 +128,7 @@ else
     </fieldset>
 
     <fieldset>
-        <legend>Random Monsters</legend>
+        <legend>@(Map.IsOverworld ? "Overworld encounter roster" : "Random Monsters")</legend>
         <MapRandomMonsterListEditor Map="Map" OnChanged="RaiseChanged" />
     </fieldset>
 }

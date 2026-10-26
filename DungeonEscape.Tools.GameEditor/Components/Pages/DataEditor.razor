@@ -23,6 +23,17 @@
             </div>
         }
     </div>
+    @if (Data.HasDocument)
+    {
+        <select aria-label="Editing scope" value="@(Data.SelectedCampaign?.Id ?? "base")" @onchange="SwitchCampaign">
+            <option value="base">Shared Library</option>
+            @foreach (var campaign in Data.Campaigns)
+            {
+                <option value="@campaign.Id">@campaign.Name</option>
+            }
+        </select>
+        <button @onclick="() => showCampaignCreation = true">New Campaign</button>
+    }
     <span class="spacer"></span>
 
     <span class="file-name">
@@ -41,6 +52,21 @@
     </span>
 </div>
 
+@if (showCampaignCreation && Data.HasDocument)
+{
+    <section class="campaign-create">
+        <h2>New Campaign</h2>
+        <div class="field-grid">
+            <div class="field"><label>Name</label><input @bind="newCampaignName" /></div>
+            <div class="field"><label>Permanent key</label><input @bind="newCampaignKey" placeholder="forest-realm" /></div>
+            <div class="field"><label>Description</label><input @bind="newCampaignDescription" /></div>
+        </div>
+        <p>Creates a 16 x 16 starter overworld with shared tiles, empty story content, and no random encounters. The permanent key cannot be changed later.</p>
+        <button @onclick="CreateCampaign">Create Campaign</button>
+        <button @onclick="() => showCampaignCreation = false">Cancel</button>
+    </section>
+}
+
 @if (!Data.HasDocument)
 {
     <div class="empty-state">
@@ -50,6 +76,13 @@
 }
 else
 {
+    @if (Data.SelectedCampaign != null)
+    {
+        <details class="campaign-settings">
+            <summary>Campaign settings ? @Data.SelectedCampaign.Name</summary>
+            <CampaignForm Campaign="Data.SelectedCampaign" Maps="Data.Maps" OnChanged="OnDataChanged" />
+        </details>
+    }
     <div class="tabs">
         @foreach (var tab in Enum.GetValues<EditorTab>())
         {
@@ -97,7 +130,7 @@ else
             <div class="list-actions">
                 <button @onclick="AddItem" disabled="@AreListActionsDisabled">+ Add</button>
                 <button @onclick="DuplicateItem" disabled="@(SelectedObject == null || AreListActionsDisabled)">Duplicate</button>
-                <button class="danger" @onclick="RemoveItem" disabled="@(SelectedObject == null || AreListActionsDisabled)">Remove</button>
+                <button class="danger" @onclick="RemoveItem" disabled="@(SelectedObject == null || AreListActionsDisabled || !Data.CanEdit(SelectedObject))">Remove</button>
             </div>
             <div class="monster-list">
                 @switch (activeTab)
@@ -245,6 +278,11 @@ else
         }
 
         <div class="form-pane">
+            @if (!IsToolTab && SelectedObject != null && !Data.CanEdit(SelectedObject))
+            {
+                <p class="read-only-note">Shared definition ? read-only here. Duplicate monsters or items to customize them in this campaign, or select Shared Library to edit shared rules.</p>
+            }
+            <fieldset class="content-editor" disabled="@(!IsToolTab && !Data.CanEdit(SelectedObject))">
             @switch (activeTab)
             {
                 case EditorTab.Monsters:
@@ -284,9 +322,10 @@ else
                     <QuestDialogGraph />
                     break;
                 case EditorTab.EncounterSimulator:
-                    <EncounterSimulator />
+                    <EncounterSimulator @key="Data.SelectedCampaign" />
                     break;
             }
+            </fieldset>
         </div>
     </div>
 }
@@ -360,6 +399,38 @@ else
         {
             // If the remembered folder can't be loaded, fall back to the empty state.
         }
+    }
+
+    private bool showCampaignCreation;
+    private string newCampaignName = "";
+    private string newCampaignKey = "";
+    private string newCampaignDescription = "";
+
+    private void SwitchCampaign(ChangeEventArgs args)
+    {
+        if (!ConfirmDiscardChanges()) return;
+        try
+        {
+            var id = args.Value?.ToString();
+            Data.SelectCampaign(id == "base" ? null : id, true);
+            ResetSelections(); RefreshValidation();
+        }
+        catch (Exception exception) { Window.ShowInfo("Open Campaign Failed", exception.Message); }
+    }
+
+    private void CreateCampaign()
+    {
+        if (!ConfirmDiscardChanges()) return;
+        try
+        {
+            if (Data.IsDirty) Data.Reload();
+            Data.CreateCampaign(newCampaignKey, newCampaignName, newCampaignDescription);
+            showCampaignCreation = false;
+            newCampaignKey = newCampaignName = newCampaignDescription = "";
+            ResetSelections(); activeTab = EditorTab.Maps; RefreshValidation();
+            ShowToast("Created campaign with a playable starter map");
+        }
+        catch (Exception exception) { Window.ShowInfo("Create Campaign Failed", exception.Message); }
     }
 
     private void OpenFolder()
@@ -482,7 +553,13 @@ else
     private bool IsSingleObjectTab => activeTab == EditorTab.Names;
     private bool IsMapTab => activeTab == EditorTab.Maps;
     private bool IsToolTab => activeTab == EditorTab.QuestGraph || activeTab == EditorTab.EncounterSimulator;
-    private bool AreListActionsDisabled => IsSingleObjectTab || IsMapTab || IsToolTab;
+    private string ActiveKind => activeTab switch
+    {
+        EditorTab.Monsters => "monster", EditorTab.Items => "item", EditorTab.Quests => "quest", EditorTab.Dialogs => "dialog",
+        EditorTab.Spells => "spell", EditorTab.Skills => "skill", EditorTab.Classes => "class", EditorTab.Species => "species",
+        EditorTab.Backgrounds => "background", EditorTab.Names => "names", _ => "map"
+    };
+    private bool AreListActionsDisabled => IsSingleObjectTab || IsMapTab || IsToolTab || !Data.CanEditKind(ActiveKind);
 
     private object? SelectedObject => activeTab switch
     {
@@ -554,28 +631,29 @@ else
 
     private void AddItem()
     {
+        if (!Data.CanEditKind(ActiveKind)) return;
         switch (activeTab)
         {
             case EditorTab.Monsters:
-                selectedMonster = new Monster { Id = "monster/base/" + Guid.NewGuid().ToString("N"), Name = "New Monster" };
+                selectedMonster = new Monster { Id = ContentId.Create("monster", Data.EditScope), Name = "New Monster" };
                 Data.Monsters.Add(selectedMonster);
                 break;
             case EditorTab.Spells:
-                selectedSpell = new Spell { Id = ContentId.Create("spell", "base"), Name = "New Spell", Classes = new List<string>() };
+                selectedSpell = new Spell { Id = ContentId.Create("spell", Data.EditScope), Name = "New Spell", Classes = new List<string>() };
                 Data.Spells.Add(selectedSpell);
                 break;
             case EditorTab.Skills:
-                selectedSkill = new Skill { Id = "skill/base/" + Guid.NewGuid().ToString("N"), Name = "New Skill" };
+                selectedSkill = new Skill { Id = ContentId.Create("skill", Data.EditScope), Name = "New Skill" };
                 Data.Skills.Add(selectedSkill);
                 break;
             case EditorTab.Items:
-                selectedItem = new Item { Id = ContentId.Create("item", "original"), Name = "New Item" };
+                selectedItem = new Item { Id = ContentId.Create("item", Data.EditScope), Name = "New Item" };
                 Data.Items.Add(selectedItem);
                 break;
             case EditorTab.Quests:
                 selectedQuest = new Quest
                 {
-                    Id = ContentId.Create("quest", "original"),
+                    Id = ContentId.Create("quest", Data.EditScope),
                     Name = "New Quest",
                     Description = string.Empty,
                     Items = new List<string>(),
@@ -586,7 +664,7 @@ else
             case EditorTab.Dialogs:
                 selectedDialog = new Dialog
                 {
-                    Id = ContentId.Create("dialog", "original"),
+                    Id = ContentId.Create("dialog", Data.EditScope),
                     Dialogs = new List<DialogHead>
                     {
                         new()
@@ -624,7 +702,7 @@ else
             case EditorTab.Backgrounds:
                 selectedBackground = new BackgroundDefinition
                 {
-                    Id = ContentId.Create("background", "base"),
+                    Id = ContentId.Create("background", Data.EditScope),
                     Name = "New Background",
                     SkillProficiencies = new List<string>()
                 };
@@ -637,31 +715,32 @@ else
 
     private void DuplicateItem()
     {
+        if (!Data.CanEditKind(ActiveKind)) return;
         switch (activeTab)
         {
             case EditorTab.Monsters when selectedMonster != null:
                 selectedMonster = Clone(selectedMonster, Data.Monsters, m => m.Name, (m, n) => m.Name = n);
-                selectedMonster.Id = "monster/base/" + Guid.NewGuid().ToString("N");
+                selectedMonster.Id = ContentId.Create("monster", Data.EditScope);
                 break;
             case EditorTab.Spells when selectedSpell != null:
                 selectedSpell = Clone(selectedSpell, Data.Spells, s => s.Name, (s, n) => s.Name = n);
-                selectedSpell.Id = ContentId.Create("spell", "base");
+                selectedSpell.Id = ContentId.Create("spell", Data.EditScope);
                 break;
             case EditorTab.Skills when selectedSkill != null:
                 selectedSkill = Clone(selectedSkill, Data.Skills, s => s.Name, (s, n) => s.Name = n);
-                selectedSkill.Id = "skill/base/" + Guid.NewGuid().ToString("N");
+                selectedSkill.Id = ContentId.Create("skill", Data.EditScope);
                 break;
             case EditorTab.Items when selectedItem != null:
                 selectedItem = Clone(selectedItem, Data.Items, i => i.Name, (i, n) => i.Name = n);
-                selectedItem.Id = ContentId.Create("item", "original");
+                selectedItem.Id = ContentId.Create("item", Data.EditScope);
                 break;
             case EditorTab.Quests when selectedQuest != null:
                 selectedQuest = Clone(selectedQuest, Data.Quests, q => q.Name, (q, n) => q.Name = n);
-                selectedQuest.Id = ContentId.Create("quest", "original");
+                selectedQuest.Id = ContentId.Create("quest", Data.EditScope);
                 break;
             case EditorTab.Dialogs when selectedDialog != null:
                 selectedDialog = Clone(selectedDialog, Data.Dialogs, d => d.Id, (_, _) => { });
-                selectedDialog.Id = ContentId.Create("dialog", "original");
+                selectedDialog.Id = ContentId.Create("dialog", Data.EditScope);
                 break;
             case EditorTab.Classes when selectedClassStats != null:
                 selectedClassStats = Clone(selectedClassStats, Data.ClassLevels, c => c.Class, (_, _) => { });
@@ -673,7 +752,7 @@ else
                 break;
             case EditorTab.Backgrounds when selectedBackground != null:
                 selectedBackground = Clone(selectedBackground, Data.Backgrounds, b => b.Name, (b, n) => b.Name = n);
-                selectedBackground.Id = ContentId.Create("background", "base");
+                selectedBackground.Id = ContentId.Create("background", Data.EditScope);
                 break;
         }
 
@@ -778,7 +857,7 @@ else
             _ => null
         };
 
-        if (SelectedObject == null)
+        if (SelectedObject == null || !Data.CanEdit(SelectedObject))
         {
             return;
         }

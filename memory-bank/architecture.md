@@ -52,7 +52,7 @@ Important scripts:
 Unity data lives under:
 
 - `DungeonEscape.Unity/Assets/DungeonEscape/Data`
-- `DungeonEscape.Unity/Assets/DungeonEscape/Maps`
+- `DungeonEscape.Unity/Assets/DungeonEscape/Campaigns/<key>/Maps`
 - `DungeonEscape.Unity/Assets/DungeonEscape/Tilesets`
 - `DungeonEscape.Unity/Assets/DungeonEscape/Images`
 - `DungeonEscape.Unity/Assets/DungeonEscape/Audio`
@@ -132,20 +132,26 @@ Windows Unity builds are stored as downloadable artifacts when enabled.
 
 Authored monster, skill, item, spell, quest, dialog, background, and map definitions use immutable lowercase `<kind>/<scope>/<key>` IDs. `base` holds reusable definitions; `original` scopes the existing adventure. Display names do not participate in reference lookup. Class/species enums, tile/image indices, Unity GUIDs, spawn IDs, and mutable item/placement identities are separate contracts.
 
-`Data/maps.json` is the map registry: each entry contains `Id`, `Name`, `AssetPath`, and optional `EncounterAssetPath`. Shared `MapCatalog` validates unique IDs/files and resolves IDs independently of filenames. Unity Loader and Game Editor use the registry. TMX WarpMap and saved map locations store canonical map IDs. Physical TMX/TSX paths remain unchanged, preserving relative tileset links; the build processor copies the Data folder including maps.json into StreamingAssets.
+Each campaign manifest's `MapsAssetPath` points to its map registry (normally `Campaigns/<key>/Data/maps.json`): each entry contains `Id`, `Name`, `AssetPath`, and optional `EncounterAssetPath`. Shared `MapCatalog` validates unique IDs/files and resolves IDs independently of filenames. Unity Loader and Game Editor use the registry. TMX WarpMap and saved map locations store canonical map IDs. Physical TMX/TSX paths remain unchanged, preserving relative tileset links; the build processor copies the Data folder including maps.json into StreamingAssets.
 
 The save format is 1.2 after this conversion. Per user instruction, prior-save migration is intentionally omitted; unsupported versions use the existing archive policy.
 
 ## Campaign Runtime Context
 
-`Data/campaigns.json` lists manifest asset paths and the default campaign ID. The original manifest is `Data/campaigns/original/campaign.json` with ID `campaign/original/main`. It owns explicit narrative/item/map file paths, start map/spawn/coordinates, designated overworld, and its overworld encounter roster. Shared reusable definitions remain in existing files under the `base` namespace. Physical assets have not been relocated.
+`Data/campaigns.json` lists manifest asset paths and the default campaign ID. The original manifest is `Campaigns/original/campaign.json` with ID `campaign/original/main`. It owns explicit narrative/item/map file paths, start map/spawn/coordinates, designated overworld, and its overworld encounter roster. Shared reusable definitions remain in existing files under the `base` namespace. Campaign-specific assets now live below `Campaigns/<key>/`; shared rules/images/audio/tilesets remain at the content root.
 
 Core `CampaignCatalog`, `CampaignContentLoader`, `CampaignContentResolver`, and `CampaignContentContext` validate ownership, ID uniqueness, references, files, starting location, maps, and encounters. Resolution clones definitions before linking effects. Unity `CampaignRuntime` builds the configured default context; Bootstrap publishes its data, Loader uses its map catalog, and runtime overworld checks use manifest metadata. Game Editor Save exports each indexed campaign's scoped item definitions to its declared item file.
 
-Startup uses the configured default campaign for a transient title preview. New Quest prepares the chosen campaign without activating it; Start and validated Load activate the context and clear map/encounter/name caches. Source Boot scene references are still present; the campaign content loader supersedes their narrative selection after base loading. Campaign editor workflows and reusable NPC/placement identity remain future work.
+Startup uses the configured default campaign for a transient title preview. New Quest prepares the chosen campaign without activating it; Start and validated Load activate the context and clear map/encounter/name caches. Bootstrap and the Boot scene have no direct original-story references; the manifest selects narrative and the starting map. Campaign editor workflows and reusable NPC/placement identity remain future work.
 
 ## Campaign-Aware Save Flow
 
 Save format 1.3 adds CampaignId, CampaignName, and CampaignContentVersion to GameSave. CampaignSaveRules chooses the latest quick save globally for Continue, filters by active campaign for in-game quick load, and replaces quick entries only within the same campaign. Manual saves remain a shared list labeled with campaign names. Prior versions use the existing unsupported-version archive policy; there is no migration.
 
 Loading prepares the installed campaign context, validates exact content version and saved map/content references, and clones the snapshot before committing it. Validation failures leave the current context/save intact. CampaignRuntime.Activate publishes GameDataCache and Loader state; GameState clears encounter/name caches and invokes SaveLoaded to rebuild the rendered view and party trail. Character creation cancellation never activates its candidate. The title preview is not a persisted quick save.
+
+## Campaign Authoring Layout
+
+`Assets/DungeonEscape/Campaigns/<key>/campaign.json` owns `Data/items.json`, `monsters.json`, `quests.json`, `dialog.json`, `maps.json`, `Data/Encounters/`, and `Maps/`. Shared Data contains base-scoped definitions and the installed `campaigns.json` index. Shared Tilesets/Images/Audio are reused by map-relative references. ContentPaths validates paths and resolves TMX/TSX references; owned payloads cannot reference another campaign's file locations.
+
+The Game Editor DataFolderService loads shared data plus one selected campaign. Campaign forms expose base definitions read-only; saves write campaign-owned content only. Shared Library is an explicit editing mode. CampaignProjectTemplate builds a starter manifest/map/catalog set; CampaignProjectService validates it, stages a new directory, and registers the index last with rollback on failure. Existing campaigns/default selection are preserved. Additional map painting/object placement is still done in Tiled; the editor handles map gameplay metadata.

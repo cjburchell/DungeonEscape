@@ -14,9 +14,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
     public sealed class Bootstrap : MonoBehaviour
     {
         [SerializeField]
-        private TextAsset questItemsJson;
-
-        [SerializeField]
         private TextAsset magicItemsJson;
 
         [SerializeField]
@@ -38,12 +35,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
         private TextAsset monstersJson;
 
         [SerializeField]
-        private TextAsset questsJson;
-
-        [SerializeField]
-        private TextAsset dialogJson;
-
-        [SerializeField]
         [FormerlySerializedAs("classLevelsJson")]
         private TextAsset classesJson;
 
@@ -55,12 +46,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         [SerializeField]
         private TextAsset namesJson;
-
-        [SerializeField]
-        private TextAsset testMapTmx;
-
-        [SerializeField]
-        private string testMapAssetPath = "Assets/DungeonEscape/Maps/overworld.tmx";
 
         public DungeonEscapeDataSet Data { get; private set; }
         public Settings Settings { get; private set; }
@@ -102,17 +87,14 @@ namespace Redpoint.DungeonEscape.Unity.Core
             }
             Data = new DungeonEscapeDataSet
             {
-                CustomItems = LoadCustomItems(questItemsJson, magicItemsJson, nonMagicItemsJson, weaponItemsJson, armorItemsJson),
+                CustomItems = LoadCustomItems(magicItemsJson, nonMagicItemsJson, weaponItemsJson, armorItemsJson),
                 Skills = LoadJson<List<Skill>>(skillsJson, "skills"),
                 Spells = LoadJson<List<Spell>>(spellsJson, "spells"),
                 Monsters = LoadJson<List<Monster>>(monstersJson, "monsters"),
-                Quests = LoadJson<List<Quest>>(questsJson, "quests"),
-                Dialogs = LoadJson<List<Dialog>>(dialogJson, "dialog"),
                 ClassLevels = LoadJson<List<ClassStats>>(classesJson, "classes", "Assets/DungeonEscape/Data/class.json"),
                 Species = LoadJson<List<SpeciesDefinition>>(speciesJson, "species", "Assets/DungeonEscape/Data/species.json") ?? DndCharacterRules.GetDefaultSpeciesDefinitions(),
                 Backgrounds = LoadJson<List<BackgroundDefinition>>(backgroundsJson, "backgrounds", "Assets/DungeonEscape/Data/backgrounds.json") ?? DndCharacterRules.GetDefaultBackgrounds(),
-                Names = LoadJson<Names>(namesJson, "names"),
-                TestMap = LoadTiledMap(testMapTmx, testMapAssetPath, "test map")
+                Names = LoadJson<Names>(namesJson, "names")
             };
 
             var context = CampaignRuntime.Initialize(Data);
@@ -271,7 +253,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                     continue;
                 }
 
-                tileset.UnityTilesetPath = ResolveTilesetAssetPath(tileset.Source);
+                tileset.UnityTilesetPath = ContentPaths.ResolveRelative(mapAssetPath, tileset.Source);
                 var tilesetFullPath = ToFullAssetPath(tileset.UnityTilesetPath);
                 tileset.TilesetFound = File.Exists(tilesetFullPath);
 
@@ -282,7 +264,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
                 }
 
                 tileset.Document = TiledTilesetDocumentInfo.Parse(File.ReadAllText(tilesetFullPath));
-                tileset.UnityImagePath = ResolveTilesetImageAssetPath(tileset.Document.ImageSource);
+                tileset.UnityImagePath = ContentPaths.ResolveRelative(tileset.UnityTilesetPath, tileset.Document.ImageSource);
                 tileset.ImageFound = File.Exists(ToFullAssetPath(tileset.UnityImagePath));
 
                 if (!tileset.ImageFound)
@@ -290,28 +272,6 @@ namespace Redpoint.DungeonEscape.Unity.Core
                     Debug.LogWarning("Tileset image not found: " + tileset.UnityImagePath);
                 }
             }
-        }
-
-        private static string ResolveTilesetAssetPath(string source)
-        {
-            return "Assets/DungeonEscape/Tilesets/" + Path.GetFileName(source);
-        }
-
-        private static string ResolveTilesetImageAssetPath(string source)
-        {
-            if (string.IsNullOrEmpty(source))
-            {
-                return null;
-            }
-
-            var normalized = source.Replace('\\', '/');
-            const string imagesPrefix = "images/";
-            if (normalized.StartsWith(imagesPrefix, StringComparison.OrdinalIgnoreCase))
-            {
-                normalized = normalized.Substring(imagesPrefix.Length);
-            }
-
-            return "Assets/DungeonEscape/Images/" + normalized;
         }
 
         private static string ToFullAssetPath(string assetPath)

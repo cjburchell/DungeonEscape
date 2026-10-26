@@ -33,12 +33,7 @@ namespace Redpoint.DungeonEscape.Rules
 
         public static string GetScope(CampaignDefinition campaign) => campaign.Id.Split('/')[1];
 
-        public static bool IsDataAssetPath(string path)
-        {
-            return path != null && path.StartsWith("Assets/DungeonEscape/Data/", StringComparison.Ordinal) &&
-                   path.EndsWith(".json", StringComparison.Ordinal) && !path.Contains("\\") &&
-                   !path.Split('/').Any(part => part == "." || part == ".." || part.Length == 0);
-        }
+        public static bool IsDataAssetPath(string path) => ContentPaths.IsJsonPath(path);
 
         public static void Validate(CampaignDefinition campaign)
         {
@@ -51,9 +46,9 @@ namespace Redpoint.DungeonEscape.Rules
                 !ContentId.IsValid(campaign.OverworldMapId, "map") ||
                 !campaign.OverworldMapId.StartsWith("map/" + scope + "/", StringComparison.Ordinal) ||
                 campaign.StartColumn < 0 || campaign.StartRow < 0 ||
-                !IsDataAssetPath(campaign.MapsAssetPath) || !IsDataAssetPath(campaign.ItemsAssetPath) ||
-                !IsDataAssetPath(campaign.QuestsAssetPath) || !IsDataAssetPath(campaign.DialogsAssetPath) ||
-                (!string.IsNullOrEmpty(campaign.MonstersAssetPath) && !IsDataAssetPath(campaign.MonstersAssetPath)) ||
+                !ContentPaths.IsCampaignPath(campaign.MapsAssetPath, scope, ".json") || !ContentPaths.IsCampaignPath(campaign.ItemsAssetPath, scope, ".json") ||
+                !ContentPaths.IsCampaignPath(campaign.QuestsAssetPath, scope, ".json") || !ContentPaths.IsCampaignPath(campaign.DialogsAssetPath, scope, ".json") ||
+                (!string.IsNullOrEmpty(campaign.MonstersAssetPath) && !ContentPaths.IsCampaignPath(campaign.MonstersAssetPath, scope, ".json")) ||
                 campaign.OverworldMonsterIds == null || campaign.OverworldMonsterIds.Distinct(StringComparer.Ordinal).Count() != campaign.OverworldMonsterIds.Count)
                 throw new ArgumentException("Invalid campaign scope, paths, start location, or roster: " + campaign.Id);
         }

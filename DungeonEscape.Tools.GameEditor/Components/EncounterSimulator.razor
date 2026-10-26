@@ -14,7 +14,7 @@
             <div class="field">
                 <label>Source</label>
                 <select @bind="sourceKey">
-                    <option value="overworld">Overworld biome monsters</option>
+                    <option value="overworld">@(Data.SelectedCampaign == null ? "Shared monster biomes" : "Campaign overworld roster")</option>
                     @foreach (var map in Data.Maps.Where(map => !map.IsOverworld).OrderBy(map => map.Id, StringComparer.OrdinalIgnoreCase))
                     {
                         <option value="map:@map.Id">Map: @map.Id (@map.RandomMonsters.Count)</option>
@@ -236,7 +236,7 @@
         var map = SelectedMap;
         if (map == null)
         {
-            return EncounterRules.CreateOverworldRandomMonsters(Data.Monsters);
+            return EncounterRules.CreateOverworldRandomMonsters(Data.GetOverworldMonsters());
         }
 
         return map.RandomMonsters.Select(monster => new RandomMonster

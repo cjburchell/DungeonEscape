@@ -1286,3 +1286,18 @@ Implementation evidence as of the current roadmap cleanup: the Game Editor is im
 - [ ] Remove a saved campaign from the index or change its ContentVersion. Failed loading should display a reason and preserve the currently active context/save and saved file.
 - [ ] Confirm 1.2 saves use the existing archive policy and a new 1.3 game starts without migration.
 - [ ] Perform an authored second-campaign playthrough and packaged Windows validation. Automated chooser coverage currently uses temporary in-memory campaign metadata; a second shipped adventure is not included yet.
+
+## Campaign Organization And Creation (2026-10-25)
+
+- [ ] Verify Overworld encounter roster appears only when editing the campaign's overworld map, and is absent from campaign settings and ordinary maps. Check biome groups, search, Selected only, and shared selection updates for monsters listed in multiple biomes; save/reopen to verify persistence.
+
+- [ ] Verify campaign roster rows remain readable at narrow widths; search, biome filter, and Selected only combine correctly without changing hidden selections. Hover a row to see its stable ID. Biome assignments are edited in Monsters → Biomes; customize shared definitions by duplicating into the campaign.
+
+- [ ] Open the project's Data folder in Game Editor. Select the original campaign and verify relocated map previews, music, object metadata, dialogs, quests and item references.
+- [ ] Click New Campaign, enter a name/permanent lowercase key/description, and create. Confirm the campaign is selected, its starter map previews, and all generated files are under Campaigns/<key>/.
+- [ ] Restart the game/re-enter Play Mode, select the new campaign, and start. Verify grass rendering, movement bounds, spawn, menu/save behavior, empty quest journal, and no random encounters until a roster is chosen.
+- [ ] Duplicate a shared monster/item into the new campaign; verify a new scoped ID and editable owned definition, while the shared source stays read-only. Save/reopen and confirm shared and original-campaign files are unchanged.
+- [ ] Change campaign settings and roster, save/restart, and verify runtime and Encounter Simulator agree. Changing content version should invalidate incompatible saves as already designed.
+- [ ] Switch scopes with unsaved changes; test save/discard/cancel behavior. Select Shared Library and verify shared edits are explicit.
+- [ ] Reject duplicate/reserved/invalid keys without overwriting existing campaigns. Cancel New Campaign without creating files.
+- [ ] Paint/add objects to the starter TMX in Tiled and verify shared tileset references remain valid. Additional map registry management and reusable NPC/media import UI remain follow-up.

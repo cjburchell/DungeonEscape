@@ -14,7 +14,7 @@ namespace Redpoint.DungeonEscape.UnityEditor
             "Assets/DungeonEscape/Data",
             "Assets/DungeonEscape/Audio",
             "Assets/DungeonEscape/Images",
-            "Assets/DungeonEscape/Maps",
+            "Assets/DungeonEscape/Campaigns",
             "Assets/DungeonEscape/Tilesets"
         };
 

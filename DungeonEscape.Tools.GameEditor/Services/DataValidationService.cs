@@ -47,6 +47,26 @@ public sealed class DataValidationService
         }
 
         var issues = new List<DataValidationIssue>();
+        if (data.SelectedCampaign is CampaignDefinition campaign)
+        {
+            try { CampaignCatalog.Validate(campaign); }
+            catch (ArgumentException exception) { Error(issues, "Campaign", exception.Message); }
+            var start = data.Maps.FirstOrDefault(map => map.Id == campaign.StartMapId);
+            var overworld = data.Maps.FirstOrDefault(map => map.Id == campaign.OverworldMapId);
+            if (start == null) Error(issues, "Campaign", "Starting map is not registered.");
+            else
+            {
+                if (!string.IsNullOrEmpty(campaign.StartSpawnId) && !start.Objects.Any(item => item.Class == "Spawn" && item.Name == campaign.StartSpawnId))
+                    Error(issues, "Campaign", "Starting spawn does not exist on the starting map.");
+                var root = start.Xml?.Root;
+                if (campaign.StartColumn >= (int?)root?.Attribute("width") || campaign.StartRow >= (int?)root?.Attribute("height"))
+                    Error(issues, "Campaign", "Starting coordinates are outside the map.");
+            }
+            if (overworld == null || overworld.Class != "Overworld") Error(issues, "Campaign", "Choose an overworld map with the Overworld class.");
+            foreach (var id in campaign.OverworldMonsterIds ?? new List<string>())
+                if (!data.Monsters.Any(monster => monster.Id == id)) Error(issues, "Campaign roster", "Unknown monster: " + id);
+        }
+
         var skillIds = new HashSet<string>(data.Skills.Where(skill => !string.IsNullOrWhiteSpace(skill.Id)).Select(skill => skill.Id), StringComparer.Ordinal);
         var itemRefs = new HashSet<string>(data.Items.Select(item => item.Id).Append(DataSourceCatalog.RandomItemId), StringComparer.Ordinal);
         var questIds = NameSet(data.Quests.Select(quest => quest.Id));

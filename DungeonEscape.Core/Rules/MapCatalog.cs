@@ -17,8 +17,8 @@ namespace Redpoint.DungeonEscape.Rules
             foreach (var map in maps ?? Enumerable.Empty<MapDefinition>())
             {
                 if (map == null || !ContentId.IsValid(map.Id, "map") || string.IsNullOrWhiteSpace(map.Name) ||
-                    !IsAssetPath(map.AssetPath, "Maps/", ".tmx") ||
-                    (!string.IsNullOrEmpty(map.EncounterAssetPath) && !IsAssetPath(map.EncounterAssetPath, "Data/maps/", ".json")))
+                    !(IsAssetPath(map.AssetPath, "Maps/", ".tmx") || ContentPaths.IsCampaignPath(map.AssetPath, map.Id.Split('/')[1], ".tmx")) ||
+                    (!string.IsNullOrEmpty(map.EncounterAssetPath) && !(IsAssetPath(map.EncounterAssetPath, "Data/maps/", ".json") || ContentPaths.IsCampaignPath(map.EncounterAssetPath, map.Id.Split('/')[1], ".json"))))
                 {
                     throw new ArgumentException("Invalid map catalog entry: " + map?.Id);
                 }

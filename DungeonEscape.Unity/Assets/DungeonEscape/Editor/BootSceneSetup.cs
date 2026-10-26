@@ -31,7 +31,6 @@ namespace Redpoint.DungeonEscape.UnityEditor
 
             CreateCamera();
 
-            AssignTextAsset(bootstrap, "questItemsJson", "Assets/DungeonEscape/Data/questitems.json");
             AssignTextAsset(bootstrap, "magicItemsJson", "Assets/DungeonEscape/Data/magicitems.json");
             AssignTextAsset(bootstrap, "nonMagicItemsJson", "Assets/DungeonEscape/Data/nonmagicitems.json");
             AssignTextAsset(bootstrap, "weaponItemsJson", "Assets/DungeonEscape/Data/weaponitems.json");
@@ -39,12 +38,9 @@ namespace Redpoint.DungeonEscape.UnityEditor
             AssignTextAsset(bootstrap, "skillsJson", "Assets/DungeonEscape/Data/skills.json");
             AssignTextAsset(bootstrap, "spellsJson", "Assets/DungeonEscape/Data/spells.json");
             AssignTextAsset(bootstrap, "monstersJson", "Assets/DungeonEscape/Data/allmonsters.json");
-            AssignTextAsset(bootstrap, "questsJson", "Assets/DungeonEscape/Data/quests.json");
-            AssignTextAsset(bootstrap, "dialogJson", "Assets/DungeonEscape/Data/dialog.json");
             AssignTextAsset(bootstrap, "classesJson", "Assets/DungeonEscape/Data/class.json");
             AssignTextAsset(bootstrap, "speciesJson", "Assets/DungeonEscape/Data/species.json");
             AssignTextAsset(bootstrap, "namesJson", "Assets/DungeonEscape/Data/names.json");
-            AssignString(bootstrap, "testMapAssetPath", "Assets/DungeonEscape/Maps/overworld.tmx");
 
             CreatePreviewStatusView();
             var mapView = CreateView();
@@ -102,11 +98,5 @@ namespace Redpoint.DungeonEscape.UnityEditor
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void AssignString(Bootstrap bootstrap, string fieldName, string value)
-        {
-            var serializedObject = new SerializedObject(bootstrap);
-            serializedObject.FindProperty(fieldName).stringValue = value;
-            serializedObject.ApplyModifiedPropertiesWithoutUndo();
-        }
     }
 }

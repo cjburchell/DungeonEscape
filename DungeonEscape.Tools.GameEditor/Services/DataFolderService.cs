@@ -1,3 +1,4 @@
+#nullable enable
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -41,11 +42,14 @@ public sealed class DataFolderService
 
     private readonly AssetContext assetContext;
     private readonly MapDocumentService maps;
+    private readonly CampaignProjectService projects;
+    private Dictionary<string, string> manifestPaths = new(StringComparer.Ordinal);
 
-    public DataFolderService(AssetContext assetContext, MapDocumentService maps)
+    public DataFolderService(AssetContext assetContext, MapDocumentService maps, CampaignProjectService projects)
     {
         this.assetContext = assetContext;
         this.maps = maps;
+        this.projects = projects;
     }
 
     /// <summary>Raised whenever the folder, selection or dirty state changes.</summary>
@@ -80,122 +84,149 @@ public sealed class DataFolderService
 
     public bool HasDocument { get; private set; }
 
-    public string DisplayName =>
-        FolderPath == null ? "No folder" : new DirectoryInfo(FolderPath).Name;
+    public IReadOnlyList<CampaignDefinition> Campaigns { get; private set; } = Array.Empty<CampaignDefinition>();
+    public CampaignDefinition? SelectedCampaign { get; private set; }
+    public string EditScope => SelectedCampaign == null ? "base" : CampaignCatalog.GetScope(SelectedCampaign);
+    public string DisplayName => SelectedCampaign?.Name ?? "Shared Library";
+
+    public bool CanEditKind(string kind) => SelectedCampaign == null
+        ? kind != "quest" && kind != "dialog" && kind != "map"
+        : kind == "monster" || kind == "item" || kind == "quest" || kind == "dialog" || kind == "map";
+
+    public bool CanEdit(object? value) => value switch
+    {
+        Monster item => Owns(item.Id), Item item => Owns(item.Id), Quest item => Owns(item.Id), Dialog item => Owns(item.Id),
+        Spell item => SelectedCampaign == null && Owns(item.Id), Skill item => SelectedCampaign == null && Owns(item.Id),
+        BackgroundDefinition item => SelectedCampaign == null && Owns(item.Id), MapDocument map => SelectedCampaign != null && Maps.Contains(map),
+        null => false, _ => SelectedCampaign == null
+    };
+
+    private bool Owns(string? id) => id != null && id.Split('/').Length == 3 && id.Split('/')[1] == EditScope;
 
     public void Load(string folderPath)
     {
-        if (!Directory.Exists(folderPath))
+        if (!assetContext.TryDetectFrom(folderPath) || assetContext.DataDirectory == null)
+            throw new DirectoryNotFoundException("Choose a Dungeon Escape project or campaign directory.");
+        FolderPath = assetContext.DataDirectory;
+        RefreshCampaigns();
+        var index = LoadObject(Path.Combine(FolderPath, "campaigns.json"), new CampaignIndex());
+        var requested = Path.GetFullPath(folderPath).TrimEnd(Path.DirectorySeparatorChar);
+        var campaignAtPath = Campaigns.FirstOrDefault(campaign =>
         {
-            throw new DirectoryNotFoundException($"Folder not found: {folderPath}");
-        }
-
-        Monsters = LoadList<Monster>(Path.Combine(folderPath, MonstersFileName));
-        Spells = LoadList<Spell>(Path.Combine(folderPath, SpellsFileName));
-        Skills = LoadList<Skill>(Path.Combine(folderPath, SkillsFileName));
-        CustomItems = LoadList<Item>(Path.Combine(folderPath, ItemsFileName));
-        MagicItems = LoadList<Item>(Path.Combine(folderPath, MagicItemsFileName));
-        NonMagicItems = LoadList<Item>(Path.Combine(folderPath, NonMagicItemsFileName));
-        WeaponItems = LoadList<Item>(Path.Combine(folderPath, WeaponItemsFileName));
-        ArmorItems = LoadList<Item>(Path.Combine(folderPath, ArmorItemsFileName));
-        Items = MergeItemCatalogs(CustomItems, MagicItems, NonMagicItems, WeaponItems, ArmorItems);
-        Quests = LoadList<Quest>(Path.Combine(folderPath, QuestsFileName));
-        Dialogs = LoadList<Dialog>(Path.Combine(folderPath, DialogsFileName));
-        ClassLevels = LoadList<ClassStats>(Path.Combine(folderPath, ClassesFileName));
-        Species = LoadList<SpeciesDefinition>(Path.Combine(folderPath, SpeciesFileName));
-        if (Species.Count == 0)
-        {
-            Species = DndCharacterRules.GetDefaultSpeciesDefinitions();
-        }
-
-        Backgrounds = LoadList<BackgroundDefinition>(Path.Combine(folderPath, BackgroundsFileName));
-        if (Backgrounds.Count == 0)
-        {
-            Backgrounds = DndCharacterRules.GetDefaultBackgrounds();
-        }
-
-        Names = LoadObject(Path.Combine(folderPath, NamesFileName), new Names());
-        Names.Male ??= new List<string>();
-        Names.Female ??= new List<string>();
-
-        FolderPath = folderPath;
-        IsDirty = false;
-        HasDocument = true;
-
-        // Resolve images/tilesets relative to the opened folder.
-        assetContext.TryDetectFrom(folderPath);
-        Maps = maps.LoadMaps(assetContext.MapsDirectory, assetContext.MapDataDirectory);
-
-        NotifyDataChanged();
-        NotifyChanged();
+            var root = Path.GetDirectoryName(assetContext.ResolveAssetPath(manifestPaths[campaign.Id]))!;
+            return requested.Equals(root, StringComparison.OrdinalIgnoreCase) || requested.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+        });
+        SelectCampaign(campaignAtPath?.Id ?? index.DefaultCampaignId, true);
     }
+
+    private void RefreshCampaigns()
+    {
+        var index = LoadObject(Path.Combine(FolderPath!, "campaigns.json"), new CampaignIndex());
+        if (index.SchemaVersion != 1 || index.Manifests == null) throw new InvalidDataException("Unsupported campaign index.");
+        manifestPaths = new Dictionary<string, string>(StringComparer.Ordinal);
+        var list = new List<CampaignDefinition>();
+        foreach (var path in index.Manifests)
+        {
+            if (!CampaignCatalog.IsDataAssetPath(path)) throw new InvalidDataException("Invalid campaign manifest path.");
+            var campaign = JsonConvert.DeserializeObject<CampaignDefinition>(File.ReadAllText(assetContext.ResolveAssetPath(path)))
+                ?? throw new InvalidDataException("Invalid campaign manifest.");
+            CampaignCatalog.Validate(campaign);
+            if (!ContentPaths.IsCampaignPath(path, CampaignCatalog.GetScope(campaign), ".json"))
+                throw new InvalidDataException("The manifest must be inside its campaign directory.");
+            manifestPaths.Add(campaign.Id, path);
+            list.Add(campaign);
+        }
+        _ = new CampaignCatalog(list, index.DefaultCampaignId);
+        Campaigns = list;
+    }
+
+    public void SelectCampaign(string? id, bool discardChanges = false)
+    {
+        if (IsDirty && !discardChanges) throw new InvalidOperationException("Save or discard changes before switching campaigns.");
+        RefreshCampaigns();
+        var campaign = id == null ? null : Campaigns.FirstOrDefault(value => value.Id == id)
+            ?? (id == null ? null : throw new InvalidOperationException("Campaign is not installed."));
+        var shared = ReadShared();
+        var ownItems = campaign == null ? new List<Item>() : LoadList<Item>(assetContext.ResolveAssetPath(campaign.ItemsAssetPath));
+        var ownMonsters = campaign == null || string.IsNullOrEmpty(campaign.MonstersAssetPath) ? new List<Monster>() : LoadList<Monster>(assetContext.ResolveAssetPath(campaign.MonstersAssetPath));
+        var mapDocuments = maps.LoadMaps(campaign);
+        Monsters = shared.Monsters.Concat(ownMonsters).ToList();
+        Items = shared.CustomItems.Concat(ownItems).ToList();
+        Skills = shared.Skills; Spells = shared.Spells; ClassLevels = shared.ClassLevels; Species = shared.Species;
+        Backgrounds = shared.Backgrounds; Names = shared.Names;
+        Quests = campaign == null ? new List<Quest>() : LoadList<Quest>(assetContext.ResolveAssetPath(campaign.QuestsAssetPath));
+        Dialogs = campaign == null ? new List<Dialog>() : LoadList<Dialog>(assetContext.ResolveAssetPath(campaign.DialogsAssetPath));
+        SelectedCampaign = campaign; Maps = mapDocuments;
+        HasDocument = true; IsDirty = false;
+        NotifyDataChanged(); NotifyChanged();
+    }
+
+    private DungeonEscapeDataSet ReadShared()
+    {
+        var folder = FolderPath!;
+        return CampaignContentResolver.ExtractBase(new DungeonEscapeDataSet
+        {
+            Monsters = LoadList<Monster>(Path.Combine(folder, MonstersFileName)), Spells = LoadList<Spell>(Path.Combine(folder, SpellsFileName)),
+            Skills = LoadList<Skill>(Path.Combine(folder, SkillsFileName)),
+            CustomItems = MergeItemCatalogs(LoadList<Item>(Path.Combine(folder, ItemsFileName)), LoadList<Item>(Path.Combine(folder, MagicItemsFileName)),
+                LoadList<Item>(Path.Combine(folder, NonMagicItemsFileName)), LoadList<Item>(Path.Combine(folder, WeaponItemsFileName)), LoadList<Item>(Path.Combine(folder, ArmorItemsFileName))),
+            ClassLevels = LoadList<ClassStats>(Path.Combine(folder, ClassesFileName)), Species = LoadList<SpeciesDefinition>(Path.Combine(folder, SpeciesFileName)),
+            Backgrounds = LoadList<BackgroundDefinition>(Path.Combine(folder, BackgroundsFileName)), Names = LoadObject(Path.Combine(folder, NamesFileName), new Names { Male = new(), Female = new() })
+        });
+    }
+
+    public void CreateCampaign(string key, string name, string description)
+    {
+        if (IsDirty) throw new InvalidOperationException("Save or discard changes before creating a campaign.");
+        var campaign = projects.Create(key, name, description, ReadShared());
+        SelectCampaign(campaign.Id);
+    }
+
+    public IEnumerable<Monster> GetOverworldMonsters() => SelectedCampaign == null ? Monsters :
+        Monsters.Where(monster => SelectedCampaign.OverworldMonsterIds.Contains(monster.Id, StringComparer.Ordinal));
 
     public void Reload()
     {
-        if (FolderPath != null)
-        {
-            Load(FolderPath);
-        }
+        if (FolderPath != null) SelectCampaign(SelectedCampaign?.Id, true);
     }
 
     public void Save()
     {
-        if (string.IsNullOrEmpty(FolderPath))
+        if (FolderPath == null) throw new InvalidOperationException("No project is open.");
+        if (SelectedCampaign is CampaignDefinition campaign)
         {
-            throw new InvalidOperationException("No folder open to save to.");
+            CampaignCatalog.Validate(campaign);
+            if (Quests.Any(item => !Owns(item.Id)) || Dialogs.Any(item => !Owns(item.Id)))
+                throw new InvalidDataException("Narrative definitions must belong to the selected campaign.");
+            SaveList(assetContext.ResolveAssetPath(campaign.ItemsAssetPath), Items.Where(item => Owns(item.Id)).ToList());
+            if (string.IsNullOrEmpty(campaign.MonstersAssetPath))
+                campaign.MonstersAssetPath = ContentPaths.AssetPrefix + "Campaigns/" + EditScope + "/Data/monsters.json";
+            SaveList(assetContext.ResolveAssetPath(campaign.MonstersAssetPath), Monsters.Where(item => Owns(item.Id)).ToList());
+            SaveList(assetContext.ResolveAssetPath(campaign.QuestsAssetPath), Quests);
+            SaveList(assetContext.ResolveAssetPath(campaign.DialogsAssetPath), Dialogs);
+            File.WriteAllText(assetContext.ResolveAssetPath(manifestPaths[campaign.Id]), JsonConvert.SerializeObject(campaign, SerializerSettings));
+            maps.SaveMaps(Maps);
         }
-
-        SaveList(Path.Combine(FolderPath, MonstersFileName), Monsters);
-        SaveList(Path.Combine(FolderPath, SpellsFileName), Spells);
-        SaveList(Path.Combine(FolderPath, SkillsFileName), Skills);
-        CustomItems = Items.Where(item => !item.IsMagicItem && item.Type != ItemType.Weapon && item.Type != ItemType.Armor && item.Type != ItemType.OneUse && item.Type != ItemType.RepeatableUse && item.Type != ItemType.Gold).ToList();
-        MagicItems = Items.Where(item => item.IsMagicItem).ToList();
-        NonMagicItems = Items.Where(item => !item.IsMagicItem && (item.Type == ItemType.OneUse || item.Type == ItemType.RepeatableUse || item.Type == ItemType.Gold)).ToList();
-        WeaponItems = Items.Where(item => item.Type == ItemType.Weapon).ToList();
-        ArmorItems = Items.Where(item => item.Type == ItemType.Armor).ToList();
-        SaveList(Path.Combine(FolderPath, ItemsFileName), CustomItems);
-        SaveList(Path.Combine(FolderPath, MagicItemsFileName), MagicItems);
-        SaveList(Path.Combine(FolderPath, NonMagicItemsFileName), NonMagicItems);
-        SaveList(Path.Combine(FolderPath, WeaponItemsFileName), WeaponItems);
-        SaveList(Path.Combine(FolderPath, ArmorItemsFileName), ArmorItems);
-        SaveList(Path.Combine(FolderPath, QuestsFileName), Quests);
-        SaveList(Path.Combine(FolderPath, DialogsFileName), Dialogs);
-        SaveList(Path.Combine(FolderPath, ClassesFileName), ClassLevels);
-        SaveList(Path.Combine(FolderPath, SpeciesFileName), Species);
-        SaveList(Path.Combine(FolderPath, BackgroundsFileName), Backgrounds);
-        SaveObject(Path.Combine(FolderPath, NamesFileName), Names);
-        SaveCampaignItems();
-        maps.SaveMaps(Maps, assetContext.MapDataDirectory);
-
-        IsDirty = false;
-        NotifyChanged();
-    }
-
-    private void SaveCampaignItems()
-    {
-        var indexPath = Path.Combine(FolderPath!, "campaigns.json");
-        if (!File.Exists(indexPath)) return;
-        var index = JsonConvert.DeserializeObject<CampaignIndex>(File.ReadAllText(indexPath))
-            ?? throw new InvalidDataException("Invalid campaign index.");
-        var definitions = index.Manifests.Select(path =>
+        else
         {
-            if (!CampaignCatalog.IsDataAssetPath(path)) throw new InvalidDataException("Invalid campaign manifest path.");
-            var relative = path["Assets/DungeonEscape/Data/".Length..];
-            return JsonConvert.DeserializeObject<CampaignDefinition>(File.ReadAllText(Path.Combine(FolderPath!, relative)))!;
-        }).ToList();
-        var catalog = new CampaignCatalog(definitions, index.DefaultCampaignId);
-        foreach (var campaign in catalog.Campaigns)
-        {
-            var prefix = "item/" + CampaignCatalog.GetScope(campaign) + "/";
-            var relative = campaign.ItemsAssetPath["Assets/DungeonEscape/Data/".Length..];
-            SaveList(Path.Combine(FolderPath!, relative), Items.Where(item => item.Id != null && item.Id.StartsWith(prefix, StringComparison.Ordinal)).ToList());
+            SaveList(Path.Combine(FolderPath, MonstersFileName), Monsters);
+            SaveList(Path.Combine(FolderPath, SpellsFileName), Spells); SaveList(Path.Combine(FolderPath, SkillsFileName), Skills);
+            CustomItems = Items.Where(item => !item.IsMagicItem && item.Type != ItemType.Weapon && item.Type != ItemType.Armor && item.Type != ItemType.OneUse && item.Type != ItemType.RepeatableUse && item.Type != ItemType.Gold).ToList();
+            MagicItems = Items.Where(item => item.IsMagicItem).ToList(); NonMagicItems = Items.Where(item => !item.IsMagicItem && (item.Type == ItemType.OneUse || item.Type == ItemType.RepeatableUse || item.Type == ItemType.Gold)).ToList();
+            WeaponItems = Items.Where(item => item.Type == ItemType.Weapon).ToList(); ArmorItems = Items.Where(item => item.Type == ItemType.Armor).ToList();
+            SaveList(Path.Combine(FolderPath, ItemsFileName), CustomItems); SaveList(Path.Combine(FolderPath, MagicItemsFileName), MagicItems);
+            SaveList(Path.Combine(FolderPath, NonMagicItemsFileName), NonMagicItems); SaveList(Path.Combine(FolderPath, WeaponItemsFileName), WeaponItems); SaveList(Path.Combine(FolderPath, ArmorItemsFileName), ArmorItems);
+            SaveList(Path.Combine(FolderPath, ClassesFileName), ClassLevels); SaveList(Path.Combine(FolderPath, SpeciesFileName), Species); SaveList(Path.Combine(FolderPath, BackgroundsFileName), Backgrounds);
+            SaveObject(Path.Combine(FolderPath, NamesFileName), Names);
         }
+        IsDirty = false; NotifyChanged();
     }
 
     /// <summary>Flag the project as having unsaved changes and notify listeners.</summary>
     public void MarkDirty()
     {
         IsDirty = true;
+        foreach (var map in Maps) map.IsOverworld = map.Id == SelectedCampaign?.OverworldMapId;
         NotifyDataChanged();
         NotifyChanged();
     }
@@ -225,6 +256,7 @@ public sealed class DataFolderService
     private static void SaveList<T>(string path, List<T> items)
     {
         var json = SerializeData(items);
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         File.WriteAllText(path, json);
     }
 

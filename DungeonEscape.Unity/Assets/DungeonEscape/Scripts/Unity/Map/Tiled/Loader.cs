@@ -73,7 +73,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                 .ToList();
 
             var info = TiledMapInfo.Parse(text);
-            ValidateTilesets(info);
+            ValidateTilesets(info, mapAssetPath);
             ValidateWarps(info, mapAssetPath);
 
             var loadedMap = new LoadedMap
@@ -109,7 +109,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             return GetMapDefinition(mapIdOrAssetPath).Id;
         }
 
-        private static void ValidateTilesets(TiledMapInfo map)
+        private static void ValidateTilesets(TiledMapInfo map, string mapAssetPath)
         {
             if (map == null || map.Tilesets == null)
             {
@@ -125,7 +125,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                     continue;
                 }
 
-                tileset.UnityTilesetPath = ResolveTilesetAssetPath(tileset.Source);
+                tileset.UnityTilesetPath = ContentPaths.ResolveRelative(mapAssetPath, tileset.Source);
                 var tilesetFullPath = ToFullAssetPath(tileset.UnityTilesetPath);
                 tileset.TilesetFound = File.Exists(tilesetFullPath);
                 if (!tileset.TilesetFound)
@@ -142,7 +142,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                 }
 
                 tileset.Document = document;
-                tileset.UnityImagePath = ResolveTilesetImageAssetPath(tileset.Document.ImageSource);
+                tileset.UnityImagePath = ContentPaths.ResolveRelative(tileset.UnityTilesetPath, tileset.Document.ImageSource);
                 tileset.ImageFound = File.Exists(ToFullAssetPath(tileset.UnityImagePath));
                 if (!tileset.ImageFound)
                 {
@@ -231,16 +231,6 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
             }
 
             return false;
-        }
-
-        private static string ResolveTilesetAssetPath(string source)
-        {
-            return TiledMapPaths.ResolveTilesetAssetPath(source);
-        }
-
-        private static string ResolveTilesetImageAssetPath(string source)
-        {
-            return TiledMapPaths.ResolveTilesetImageAssetPath(source);
         }
 
         private static bool IsRenderableLayer(XElement layer)

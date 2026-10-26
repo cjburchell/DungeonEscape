@@ -1008,3 +1008,25 @@ legend {
 #blazor-error-ui {
     display: none;
 }
+
+.campaign-create, .campaign-settings { margin: 12px; padding: 16px; border: 1px solid #454b55; border-radius: 6px; }
+.campaign-settings summary { cursor: pointer; margin-bottom: 12px; }
+.campaign-create p, .campaign-settings p, .read-only-note { color: #aeb9c8; }
+.campaign-roster { max-height: 320px; overflow-y: auto; border-top: 1px solid #454b55; }
+.roster-toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin-bottom: 12px; }
+.roster-toolbar > label { display: flex; flex-direction: column; gap: 4px; }
+.roster-toolbar > .roster-selected { flex-direction: row; align-items: center; padding-bottom: 6px; }
+.roster-toolbar > span { color: #aeb9c8; padding-bottom: 6px; }
+.roster-monster { display: grid; grid-template-columns: auto minmax(150px, 1fr) minmax(180px, 2fr); align-items: center; gap: 12px; padding: 9px 8px; border-bottom: 1px solid #343943; cursor: pointer; }
+.roster-monster:hover { background: #282d35; }
+.roster-monster small { color: #aeb9c8; }
+.roster-biome { margin: 12px 0; border: 1px solid #454b55; border-radius: 4px; padding: 10px; }
+.roster-biome > summary { cursor: pointer; color: #ffd54f; }
+.roster-biome > summary small { color: #aeb9c8; }
+.roster-biome .campaign-roster { margin-top: 8px; }
+@media (max-width: 700px) {
+    .roster-monster { grid-template-columns: auto 1fr; }
+    .roster-monster small { grid-column: 2; }
+}
+.content-editor { border: 0; padding: 0; margin: 0; min-width: 0; }
+.read-only-note { padding: 10px; border-left: 3px solid #607d9e; }

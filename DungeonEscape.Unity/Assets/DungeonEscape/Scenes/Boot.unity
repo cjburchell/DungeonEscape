@@ -148,7 +148,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36b25e74ad814254b92e875d30ef5f63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Redpoint.DungeonEscape.Unity.Map.Tiled.View
-  mapAssetPath: Assets/DungeonEscape/Maps/overworld.tmx
   columns: 32
   rows: 18
   startColumn: 25
@@ -197,18 +196,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 223be9a4c2bcb2d4c97b2896015582c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Redpoint.DungeonEscape.Unity.Core.Bootstrap
-  itemDefinitionsJson: {fileID: 4900000, guid: b86214a1691bf914a84131d6cd48b993, type: 3}
-  customItemsJson: {fileID: 4900000, guid: a46d7a79b023700479c4377f739d15e6, type: 3}
   skillsJson: {fileID: 4900000, guid: bde2986cb358d254da795fdcfa9bef6d, type: 3}
   spellsJson: {fileID: 4900000, guid: 6d09693861884644dab27c4d99456cc4, type: 3}
   monstersJson: {fileID: 4900000, guid: 227f412c557b8b342b692c8d3a70c2e0, type: 3}
-  questsJson: {fileID: 4900000, guid: c2dcb9dd440031747b977a4dda466dee, type: 3}
-  dialogJson: {fileID: 4900000, guid: 952758235487cca45be489138796e11b, type: 3}
   classLevelsJson: {fileID: 4900000, guid: e739b9ee30cbd7e46a4daf049b6fbe4c, type: 3}
   namesJson: {fileID: 4900000, guid: 42c138937aa4f9f4f8f43260fa7d7bb6, type: 3}
-  statNamesJson: {fileID: 4900000, guid: 0e8809985289b1242a59ba59b1d0136d, type: 3}
-  testMapTmx: {fileID: 0}
-  testMapAssetPath: Assets/DungeonEscape/Maps/overworld.tmx
 --- !u!4 &454262364
 Transform:
   m_ObjectHideFlags: 0

@@ -1,0 +1,36 @@
+<div class="field-grid">
+    <div class="field"><label>ID</label><input value="@Campaign.Id" readonly /></div>
+    <div class="field"><label>Name</label><input value="@Campaign.Name" @onchange="e => Set(() => Campaign.Name = e.Value?.ToString() ?? string.Empty)" /></div>
+    <div class="field"><label>Content version</label><input value="@Campaign.ContentVersion" @onchange="e => Set(() => Campaign.ContentVersion = e.Value?.ToString() ?? string.Empty)" /></div>
+    <div class="field"><label>Description</label><input value="@Campaign.Description" @onchange="e => Set(() => Campaign.Description = e.Value?.ToString() ?? string.Empty)" /></div>
+    <div class="field">
+        <label>Starting map</label>
+        <select value="@Campaign.StartMapId" @onchange="e => Set(() => Campaign.StartMapId = e.Value?.ToString() ?? string.Empty)">
+            @foreach (var map in Maps) { <option value="@map.Id">@map.Name (@map.Id)</option> }
+        </select>
+    </div>
+    <div class="field"><label>Starting spawn (blank uses coordinates)</label><input value="@Campaign.StartSpawnId" @onchange="e => Set(() => Campaign.StartSpawnId = e.Value?.ToString())" /></div>
+    <NumberField Label="Starting column" Value="Campaign.StartColumn" ValueChanged="value => Set(() => Campaign.StartColumn = value)" />
+    <NumberField Label="Starting row" Value="Campaign.StartRow" ValueChanged="value => Set(() => Campaign.StartRow = value)" />
+    <div class="field">
+        <label>Overworld map</label>
+        <select value="@Campaign.OverworldMapId" @onchange="SetOverworld">
+            @foreach (var map in Maps) { <option value="@map.Id">@map.Name (@map.Id)</option> }
+        </select>
+    </div>
+</div>
+<p>Save these settings before restarting the game. Changing the content version makes older saves incompatible.</p>
+@code {
+    [Parameter] public CampaignDefinition Campaign { get; set; } = null!;
+    [Parameter] public IReadOnlyList<MapDocument> Maps { get; set; } = Array.Empty<MapDocument>();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private async Task Set(Action edit) { edit(); await OnChanged.InvokeAsync(); }
+    private async Task SetOverworld(ChangeEventArgs args)
+    {
+        Campaign.OverworldMapId = args.Value?.ToString() ?? string.Empty;
+        var map = Maps.FirstOrDefault(map => map.Id == Campaign.OverworldMapId);
+        if (map != null) { map.Class = "Overworld"; map.IsDirty = true; }
+        await OnChanged.InvokeAsync();
+    }
+}

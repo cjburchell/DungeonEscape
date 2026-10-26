@@ -49,26 +49,35 @@ public class GameDataReferenceTests
     {
         var assetRoot = Path.Combine(FindRepositoryRoot(), "DungeonEscape.Unity", "Assets", "DungeonEscape");
         var folder = Path.Combine(assetRoot, "Data");
-        var itemFiles = new[] { "customitems", "questitems", "magicitems", "nonmagicitems", "weaponitems", "armoritems" };
+        string Physical(string path) => Path.Combine(assetRoot, ContentPaths.RelativeToRoot(path));
+        var index = ReadJson<CampaignIndex>(Path.Combine(folder, "campaigns.json"));
+        var campaigns = index.Manifests.Select(path => ReadJson<CampaignDefinition>(Physical(path))).ToList();
+        var groups = new Dictionary<string, List<string>>
+        {
+            ["item"] = new[] { "customitems", "magicitems", "nonmagicitems", "weaponitems", "armoritems" }.Select(name => Path.Combine(folder, name + ".json")).ToList(),
+            ["spell"] = new() { Path.Combine(folder, "spells.json") }, ["skill"] = new() { Path.Combine(folder, "skills.json") },
+            ["monster"] = new() { Path.Combine(folder, "allmonsters.json") }, ["background"] = new() { Path.Combine(folder, "backgrounds.json") },
+            ["quest"] = new(), ["dialog"] = new(), ["map"] = new()
+        };
+        foreach (var campaign in campaigns)
+        {
+            groups["item"].Add(Physical(campaign.ItemsAssetPath));
+            if (!string.IsNullOrEmpty(campaign.MonstersAssetPath)) groups["monster"].Add(Physical(campaign.MonstersAssetPath));
+            groups["quest"].Add(Physical(campaign.QuestsAssetPath)); groups["dialog"].Add(Physical(campaign.DialogsAssetPath)); groups["map"].Add(Physical(campaign.MapsAssetPath));
+        }
         var sets = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
-        foreach (var group in new Dictionary<string, string[]>
-                 {
-                     ["item"] = itemFiles, ["spell"] = new[] { "spells" }, ["quest"] = new[] { "quests" },
-                     ["dialog"] = new[] { "dialog" }, ["background"] = new[] { "backgrounds" },
-                     ["monster"] = new[] { "allmonsters" }, ["skill"] = new[] { "skills" }, ["map"] = new[] { "maps" }
-                 })
+        foreach (var group in groups)
         {
             sets[group.Key] = new HashSet<string>(StringComparer.Ordinal);
             foreach (var file in group.Value)
             {
-                var rows = JArray.Parse(File.ReadAllText(Path.Combine(folder, file + ".json")));
+                var rows = JArray.Parse(File.ReadAllText(file));
                 var ids = rows.Select(row => (string)row["Id"]!).ToList();
                 Assert.All(ids, id => Assert.True(ContentId.IsValid(id, group.Key), "Invalid " + group.Key + " ID: " + id));
                 Assert.Equal(ids.Count, ids.Distinct(StringComparer.Ordinal).Count());
                 sets[group.Key].UnionWith(ids);
             }
         }
-
         var referenceKinds = new Dictionary<string, string>
         {
             ["Quest"] = "quest", ["QuestId"] = "quest", ["Dialog"] = "dialog", ["DialogId"] = "dialog",
@@ -80,28 +89,28 @@ public class GameDataReferenceTests
             if (string.IsNullOrEmpty(reference) || reference == "#Random#") return;
             Assert.True(sets[kind].Contains(reference), "Unresolved " + kind + " reference: " + reference);
         }
-        foreach (var path in Directory.EnumerateFiles(folder, "*.json", SearchOption.AllDirectories))
+        foreach (var path in Directory.EnumerateFiles(folder, "*.json", SearchOption.AllDirectories)
+                     .Concat(Directory.EnumerateFiles(Path.Combine(assetRoot, "Campaigns"), "*.json", SearchOption.AllDirectories)))
+        foreach (var property in ((JContainer)JToken.Parse(File.ReadAllText(path))).Descendants().OfType<JProperty>())
         {
-            foreach (var property in ((JContainer)JToken.Parse(File.ReadAllText(path))).Descendants().OfType<JProperty>())
-            {
-                if (property.Value.Type == JTokenType.String && referenceKinds.TryGetValue(property.Name, out var kind))
-                    Check(kind, (string)property.Value);
-                if ((property.Name == "Items" || property.Name == "Spells") && property.Value is JArray refs)
-                    foreach (var reference in refs.Where(value => value.Type == JTokenType.String))
-                        Check(property.Name == "Items" ? "item" : "spell", (string)reference);
-            }
+            if (property.Value.Type == JTokenType.String && referenceKinds.TryGetValue(property.Name, out var kind)) Check(kind, (string)property.Value);
+            if ((property.Name == "Items" || property.Name == "Spells") && property.Value is JArray refs)
+                foreach (var reference in refs.Where(value => value.Type == JTokenType.String)) Check(property.Name == "Items" ? "item" : "spell", (string)reference);
         }
-        var maps = ReadJson<List<MapDefinition>>(Path.Combine(folder, "maps.json"));
+        var maps = groups["map"].SelectMany(path => ReadJson<List<MapDefinition>>(path)).ToList();
         var catalog = new MapCatalog(maps);
-        Assert.Equal(Directory.GetFiles(Path.Combine(assetRoot, "Maps"), "*.tmx", SearchOption.AllDirectories).Length, maps.Count);
+        Assert.Equal(Directory.GetFiles(Path.Combine(assetRoot, "Campaigns"), "*.tmx", SearchOption.AllDirectories).Length, maps.Count);
         foreach (var map in maps)
         {
-            var path = Path.Combine(assetRoot, map.AssetPath["Assets/DungeonEscape/".Length..]);
+            Assert.True(ContentPaths.IsCampaignPath(map.AssetPath, map.Id.Split('/')[1], ".tmx"));
+            var path = Physical(map.AssetPath);
             Assert.True(File.Exists(path), map.AssetPath);
             Assert.Equal(map.Id, catalog.Get(map.AssetPath).Id);
-            foreach (var property in XDocument.Load(path).Descendants("property"))
-                if (referenceKinds.TryGetValue((string)property.Attribute("name") ?? "", out var kind))
-                    Check(kind, (string)property.Attribute("value"));
+            var xml = XDocument.Load(path);
+            foreach (var property in xml.Descendants("property"))
+                if (referenceKinds.TryGetValue((string)property.Attribute("name") ?? "", out var kind)) Check(kind, (string)property.Attribute("value"));
+            foreach (var source in xml.Descendants().Attributes("source"))
+                Assert.True(File.Exists(Physical(ContentPaths.ResolveRelative(map.AssetPath, source.Value))), "Missing relative map asset: " + source.Value);
         }
     }
 

@@ -15,10 +15,23 @@ namespace Redpoint.DungeonEscape.UnityEditor
         {
             var failed = false;
             failed |= !ValidateAsset(BootScenePath);
-            failed |= !ValidateAsset("Assets/DungeonEscape/Data/quests.json");
-            failed |= !ValidateAsset("Assets/DungeonEscape/Data/maps.json");
-            failed |= !ValidateAsset("Assets/DungeonEscape/Data/dialog.json");
-            failed |= !ValidateAsset("Assets/DungeonEscape/Maps/overworld.tmx");
+            failed |= !ValidateAsset("Assets/DungeonEscape/Data/campaigns.json");
+            try
+            {
+                foreach (var campaign in Redpoint.DungeonEscape.Unity.Core.CampaignRuntime.Catalog.Campaigns)
+                {
+                    failed |= !ValidateAsset(campaign.MapsAssetPath);
+                    failed |= !ValidateAsset(campaign.ItemsAssetPath);
+                    failed |= !ValidateAsset(campaign.QuestsAssetPath);
+                    failed |= !ValidateAsset(campaign.DialogsAssetPath);
+                    if (!string.IsNullOrEmpty(campaign.MonstersAssetPath)) failed |= !ValidateAsset(campaign.MonstersAssetPath);
+                }
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError("Campaign index validation failed: " + exception.Message);
+                failed = true;
+            }
             failed |= !ValidateAsset("Assets/DungeonEscape/Images/sprites/hero.png");
             failed |= !ValidateAsset("Assets/DungeonEscape/Images/sprites/cart.png");
             failed |= !ValidateAsset("Assets/DungeonEscape/Images/sprites/ship2.png");

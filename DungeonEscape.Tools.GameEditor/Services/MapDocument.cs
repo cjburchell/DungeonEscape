@@ -1,3 +1,4 @@
+#nullable enable
 using System.Globalization;
 using System.Xml.Linq;
 using Newtonsoft.Json;
@@ -19,7 +20,7 @@ public sealed class MapDocument
     public List<RandomMonster> RandomMonsters { get; set; } = new();
     public bool RandomMonstersFileExists { get; set; }
     public bool IsDirty { get; set; }
-    public bool IsOverworld => string.Equals(Id, ContentId.OriginalOverworld, StringComparison.Ordinal);
+    public bool IsOverworld { get; set; }
 
     internal XDocument? Xml { get; set; }
 }
@@ -43,7 +44,7 @@ public sealed class MapObjectDocument
     public string DisplayName => string.IsNullOrWhiteSpace(Name) ? $"Object {Id}" : Name;
 }
 
-public sealed class MapDocumentService
+public sealed class MapDocumentService(AssetContext assets)
 {
     private const uint TiledGidMask = 0x1FFFFFFF;
     private const string OverworldMapClass = "Overworld";
@@ -55,77 +56,50 @@ public sealed class MapDocumentService
         DefaultValueHandling = DefaultValueHandling.Include
     };
 
-    public List<MapDocument> LoadMaps(string? mapsDirectory, string? mapDataDirectory)
+    public List<MapDocument> LoadMaps(CampaignDefinition? campaign)
     {
-        if (string.IsNullOrEmpty(mapsDirectory) || !Directory.Exists(mapsDirectory))
-        {
-            return new List<MapDocument>();
-        }
-
-        var catalogPath = Path.Combine(Directory.GetParent(mapsDirectory)!.FullName, "Data", "maps.json");
-        var catalog = new MapCatalog(JsonConvert.DeserializeObject<List<MapDefinition>>(File.ReadAllText(catalogPath)));
-        return Directory
-            .EnumerateFiles(mapsDirectory, "*.tmx", SearchOption.AllDirectories)
-            .OrderBy(path => path, StringComparer.Ordinal)
-            .Select(path => LoadMap(path, mapDataDirectory, catalog.Get("Assets/DungeonEscape/Maps/" + Path.GetRelativePath(mapsDirectory, path).Replace('\\', '/'))))
-            .ToList();
+        if (campaign == null) return new List<MapDocument>();
+        var catalog = new MapCatalog(JsonConvert.DeserializeObject<List<MapDefinition>>(File.ReadAllText(assets.ResolveAssetPath(campaign.MapsAssetPath))));
+        var scope = CampaignCatalog.GetScope(campaign);
+        if (catalog.Maps.Any(map => !map.Id.StartsWith("map/" + scope + "/", StringComparison.Ordinal) ||
+            !ContentPaths.IsCampaignPath(map.AssetPath, scope, ".tmx") ||
+            (!string.IsNullOrEmpty(map.EncounterAssetPath) && !ContentPaths.IsCampaignPath(map.EncounterAssetPath, scope, ".json"))))
+            throw new InvalidDataException("The map catalog references files outside this campaign.");
+        return catalog.Maps.OrderBy(map => map.Name, StringComparer.Ordinal).Select(definition => LoadMap(definition, campaign)).ToList();
     }
 
-    public void SaveMaps(IEnumerable<MapDocument> maps, string? mapDataDirectory)
+    public void SaveMaps(IEnumerable<MapDocument> maps)
     {
-        foreach (var map in maps ?? Array.Empty<MapDocument>())
+        foreach (var map in maps)
         {
-            if (!map.IsDirty)
-            {
-                continue;
-            }
-
+            if (!map.IsDirty) continue;
             SaveMap(map);
-            SaveRandomMonsters(map, mapDataDirectory);
+            SaveRandomMonsters(map);
             map.IsDirty = false;
         }
     }
 
-    private static MapDocument LoadMap(string path, string? mapDataDirectory, MapDefinition definition)
+    private MapDocument LoadMap(MapDefinition definition, CampaignDefinition campaign)
     {
+        var path = assets.ResolveAssetPath(definition.AssetPath);
         var xml = XDocument.Load(path, LoadOptions.PreserveWhitespace);
         var root = xml.Root ?? new XElement("map");
-        var id = definition.Id;
         var map = new MapDocument
         {
-            Id = id,
-            Name = definition.Name,
-            EncounterAssetPath = definition.EncounterAssetPath,
-            FilePath = path,
-            Class = NormalizeMapClass(GetString(root, "class")),
-            Properties = ReadProperties(root),
-            Xml = xml
+            Id = definition.Id, Name = definition.Name, EncounterAssetPath = definition.EncounterAssetPath,
+            IsOverworld = definition.Id == campaign.OverworldMapId, FilePath = path,
+            Class = NormalizeMapClass(GetString(root, "class")), Properties = ReadProperties(root), Xml = xml
         };
-
         foreach (var objectGroup in root.Elements("objectgroup"))
-        {
-            var groupName = GetString(objectGroup, "name");
-            foreach (var mapObject in objectGroup.Elements("object"))
+        foreach (var mapObject in objectGroup.Elements("object"))
+            map.Objects.Add(new MapObjectDocument
             {
-                map.Objects.Add(new MapObjectDocument
-                {
-                    MapId = id,
-                    GroupName = groupName,
-                    Id = GetInt(mapObject, "id"),
-                    Name = GetString(mapObject, "name"),
-                    Class = GetString(mapObject, "class"),
-                    Gid = GetGid(mapObject, "gid"),
-                    X = GetFloat(mapObject, "x"),
-                    Y = GetFloat(mapObject, "y"),
-                    Width = GetFloat(mapObject, "width"),
-                    Height = GetFloat(mapObject, "height"),
-                    Properties = ReadProperties(mapObject),
-                    Element = mapObject
-                });
-            }
-        }
-
-        LoadRandomMonsters(map, mapDataDirectory);
+                MapId = map.Id, GroupName = GetString(objectGroup, "name"), Id = GetInt(mapObject, "id"),
+                Name = GetString(mapObject, "name"), Class = GetString(mapObject, "class"), Gid = GetGid(mapObject, "gid"),
+                X = GetFloat(mapObject, "x"), Y = GetFloat(mapObject, "y"), Width = GetFloat(mapObject, "width"), Height = GetFloat(mapObject, "height"),
+                Properties = ReadProperties(mapObject), Element = mapObject
+            });
+        LoadRandomMonsters(map);
         return map;
     }
 
@@ -154,9 +128,9 @@ public sealed class MapDocumentService
         map.Xml.Save(map.FilePath, SaveOptions.DisableFormatting);
     }
 
-    private static void LoadRandomMonsters(MapDocument map, string? mapDataDirectory)
+    private void LoadRandomMonsters(MapDocument map)
     {
-        var path = GetRandomMonstersPath(map, mapDataDirectory);
+        var path = GetRandomMonstersPath(map);
         map.RandomMonstersFileExists = path != null && File.Exists(path);
         if (!map.RandomMonstersFileExists || path == null)
         {
@@ -168,7 +142,7 @@ public sealed class MapDocumentService
         map.RandomMonsters = JsonConvert.DeserializeObject<List<RandomMonster>>(json) ?? new List<RandomMonster>();
     }
 
-    private static void SaveRandomMonsters(MapDocument map, string? mapDataDirectory)
+    private void SaveRandomMonsters(MapDocument map)
     {
         if (map.IsOverworld || (!map.RandomMonstersFileExists && map.RandomMonsters.Count == 0))
         {
@@ -179,7 +153,7 @@ public sealed class MapDocumentService
         {
             throw new InvalidOperationException("Add EncounterAssetPath to the map catalog before adding encounters to " + map.Id);
         }
-        var path = GetRandomMonstersPath(map, mapDataDirectory);
+        var path = GetRandomMonstersPath(map);
         if (path == null)
         {
             return;
@@ -193,12 +167,8 @@ public sealed class MapDocumentService
         map.RandomMonstersFileExists = true;
     }
 
-    private static string? GetRandomMonstersPath(MapDocument map, string? mapDataDirectory)
-    {
-        return string.IsNullOrEmpty(mapDataDirectory) || string.IsNullOrEmpty(map.EncounterAssetPath)
-            ? null
-            : Path.Combine(mapDataDirectory, map.EncounterAssetPath["Assets/DungeonEscape/Data/maps/".Length..].Replace('/', Path.DirectorySeparatorChar));
-    }
+    private string? GetRandomMonstersPath(MapDocument map) =>
+        string.IsNullOrEmpty(map.EncounterAssetPath) ? null : assets.ResolveAssetPath(map.EncounterAssetPath);
 
     private static Dictionary<string, string> ReadProperties(XElement element)
     {

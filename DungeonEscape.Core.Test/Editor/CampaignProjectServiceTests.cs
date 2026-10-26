@@ -22,7 +22,7 @@ public sealed class CampaignProjectServiceTests : IDisposable
         sandbox = Path.Combine(Path.GetTempPath(), "DungeonEscape.CampaignTests", Guid.NewGuid().ToString("N"));
         Copy(Path.Combine(source, "Data"), Path.Combine(sandbox, "Data"));
         Copy(Path.Combine(source, "Tilesets"), Path.Combine(sandbox, "Tilesets"));
-        Copy(Path.Combine(source, "Campaigns", "original"), Path.Combine(sandbox, "Campaigns", "original"));
+        Copy(Path.Combine(source, "Campaigns"), Path.Combine(sandbox, "Campaigns"));
         Directory.CreateDirectory(Path.Combine(sandbox, "Images", "monsters"));
         assets = new AssetContext();
         data = new DataFolderService(assets, new MapDocumentService(assets), new CampaignProjectService(assets));
@@ -34,9 +34,10 @@ public sealed class CampaignProjectServiceTests : IDisposable
     {
         var sharedBefore = Fingerprints(Path.Combine(sandbox, "Data"));
         var originalBefore = Fingerprints(Path.Combine(sandbox, "Campaigns", "original"));
+        var campaignCount = data.Campaigns.Count;
         data.CreateCampaign("new-realm", "New Realm", "Fresh story");
         Assert.Equal("campaign/new-realm/main", data.SelectedCampaign!.Id);
-        Assert.Equal(2, data.Campaigns.Count);
+        Assert.Equal(campaignCount + 1, data.Campaigns.Count);
         Assert.True(Assert.Single(data.Maps).IsOverworld);
         Assert.Empty(data.GetOverworldMonsters());
         Assert.False(data.CanEdit(data.Monsters[0]));
@@ -45,8 +46,12 @@ public sealed class CampaignProjectServiceTests : IDisposable
         data.Monsters.Add(clone);
         data.Items.Add(new Item { Id = "item/new-realm/token", Name = "Token" });
         data.SelectedCampaign.OverworldMonsterIds.Add(clone.Id);
+        data.SelectedCampaign.MaxStartingPartyMembers = 3;
         data.MarkDirty();
         data.Save();
+        var savedCampaign = JsonConvert.DeserializeObject<CampaignDefinition>(File.ReadAllText(
+            Path.Combine(sandbox, "Campaigns", "new-realm", "campaign.json")))!;
+        Assert.Equal(3, savedCampaign.MaxStartingPartyMembers);
         var shared = CampaignContentResolver.ExtractBase(new DungeonEscapeDataSet
         {
             CustomItems = data.Items, Monsters = data.Monsters, Skills = data.Skills, Spells = data.Spells, Backgrounds = data.Backgrounds

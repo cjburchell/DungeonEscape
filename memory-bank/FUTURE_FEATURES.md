@@ -4,6 +4,8 @@ This file tracks post-migration feature and architecture ideas. Items here are n
 
 ## Gameplay And Content
 
+- Heroes of the Borderlands campaign: [research and implementation plan](HEROES_OF_THE_BORDERLANDS.md), [fourteen-map world](BORDERLANDS_WORLD.md). Keep, overworld, entrance ravine and eleven distinct lairs are explorable using existing assets. Cave A retains the four-kobold warden quest. Populate B–K, Keep contracts, provisioner stock, wilderness events and the shrine finale next; broader adventure content still needs source verification. User chose current combat presentation and quest focus.
+
 - Campaign support and stable content IDs: requirements, current code findings, proposed content ownership, save migration, editor changes, and implementation sequence are recorded in [CAMPAIGNS.md](CAMPAIGNS.md). Content IDs, campaign manifest/context loading, selection, and campaign-aware saves are implemented; campaign directory organization and initial scoped Game Editor creation are also implemented; further map management, NPC definitions/placements, media import, and a fuller authored second campaign remain future work.
 - Add more quests.
 - Create a basic storyline.

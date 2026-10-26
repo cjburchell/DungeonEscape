@@ -10,6 +10,16 @@ namespace DungeonEscape.Core.Test.Rules;
 
 public class CampaignContentTests
 {
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void CatalogRejectsInvalidStartingPartyLimit(int limit)
+    {
+        var campaign = Campaign("first");
+        campaign.MaxStartingPartyMembers = limit;
+        Assert.Throws<ArgumentException>(() => CampaignCatalog.Validate(campaign));
+    }
+
     [Fact]
     public void ContextsCombineSharedDefinitionsWithOnlyTheirOwnContent()
     {

@@ -12,6 +12,93 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
     public sealed class CampaignFlowPlayModeTests
     {
         [UnityTest]
+        public IEnumerator StartingPartyCreatesDistinctEquippedHeroesAndSurvivesSaveRestore()
+        {
+            yield return UiPlayModeTestHelper.OpenTitleMenu();
+            var title = UiPlayModeTestHelper.FindObject("Redpoint.DungeonEscape.Unity.UI.TitleMenu");
+            var state = UiPlayModeTestHelper.FindObject("Redpoint.DungeonEscape.Unity.Core.GameState");
+            UiPlayModeTestHelper.InvokePrivate(title, "ShowCreateMenu");
+            UiPlayModeTestHelper.SelectOriginalCampaign(title);
+            var context = UiPlayModeTestHelper.GetNonPublicFieldValue(title, "pendingCampaign");
+            var campaign = UiPlayModeTestHelper.GetPropertyValue(context, "Campaign");
+            var originalLimit = UiPlayModeTestHelper.GetPropertyValue(campaign, "MaxStartingPartyMembers");
+            try
+            {
+                Set(campaign, "MaxStartingPartyMembers", 2);
+                SetPrivateProperty(title, "createPlayerName", "First hero");
+                UiPlayModeTestHelper.InvokePrivate(title, "ShowCreateReviewPage");
+                UiPlayModeTestHelper.InvokePrivate(title, "AddStartingMember");
+                SetPrivateProperty(title, "createPlayerName", "Second hero");
+                SetPrivateProperty(title, "createPlayerClass", UiPlayModeTestHelper.GetEnumValue("Redpoint.DungeonEscape.State.Class", "Wizard"));
+                UiPlayModeTestHelper.InvokePrivate(title, "ResetCreateBuildChoices");
+                UiPlayModeTestHelper.InvokePrivate(title, "ShowCreateReviewPage");
+                UiPlayModeTestHelper.InvokePrivate(title, "AddStartingMember");
+                var completed = (IList)UiPlayModeTestHelper.GetNonPublicFieldValue(title, "completedCharacters");
+                Assert.That(completed.Count, Is.EqualTo(1), "Cannot queue another hero at the campaign limit.");
+                UiPlayModeTestHelper.InvokePrivate(title, "StartCreatedGame");
+                yield return null;
+                var save = UiPlayModeTestHelper.GetPropertyValue(state, "CurrentSave");
+                AssertStartingParty(save);
+                var clone = state.GetType().GetMethod("CloneGameSave", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new[] { save });
+                var restored = state.GetType().GetMethod("TryRestoreSave", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(state, new[] { clone });
+                Assert.That(restored, Is.EqualTo(true));
+                AssertStartingParty(UiPlayModeTestHelper.GetPropertyValue(state, "CurrentSave"));
+            }
+            finally { Set(campaign, "MaxStartingPartyMembers", originalLimit); }
+        }
+
+        [UnityTest]
+        public IEnumerator StartingPartyBackRestoresPreviousDraftAndCancelPreservesSave()
+        {
+            yield return UiPlayModeTestHelper.OpenTitleMenu();
+            var title = UiPlayModeTestHelper.FindObject("Redpoint.DungeonEscape.Unity.UI.TitleMenu");
+            var state = UiPlayModeTestHelper.FindObject("Redpoint.DungeonEscape.Unity.Core.GameState");
+            var save = UiPlayModeTestHelper.GetPropertyValue(state, "CurrentSave");
+            var active = RuntimeType().GetProperty("Current").GetValue(null);
+            UiPlayModeTestHelper.InvokePrivate(title, "ShowCreateMenu");
+            UiPlayModeTestHelper.SelectOriginalCampaign(title);
+            var campaign = UiPlayModeTestHelper.GetPropertyValue(UiPlayModeTestHelper.GetNonPublicFieldValue(title, "pendingCampaign"), "Campaign");
+            var originalLimit = UiPlayModeTestHelper.GetPropertyValue(campaign, "MaxStartingPartyMembers");
+            try
+            {
+                Set(campaign, "MaxStartingPartyMembers", 3);
+                SetPrivateProperty(title, "createPlayerName", "Keep my choices");
+                UiPlayModeTestHelper.InvokePrivate(title, "ShowCreateReviewPage");
+                var scores = ((int[])UiPlayModeTestHelper.GetNonPublicFieldValue(title, "createAbilityScores")).ToArray();
+                UiPlayModeTestHelper.InvokePrivate(title, "AddStartingMember");
+                var currentScores = (int[])UiPlayModeTestHelper.GetNonPublicFieldValue(title, "createAbilityScores");
+                currentScores[0] = 8;
+                UiPlayModeTestHelper.InvokePrivate(title, "ActivateCreateBackAction");
+                Assert.That(UiPlayModeTestHelper.GetNonPublicPropertyValue(title, "createPlayerName"), Is.EqualTo("Keep my choices"));
+                Assert.That((int[])UiPlayModeTestHelper.GetNonPublicFieldValue(title, "createAbilityScores"), Is.EqualTo(scores));
+                UiPlayModeTestHelper.InvokePrivate(title, "ActivateCreateBackAction");
+                UiPlayModeTestHelper.InvokePrivate(title, "ActivateCreateBackAction");
+                UiPlayModeTestHelper.InvokePrivate(title, "ActivateCreateBackAction");
+                Assert.That(UiPlayModeTestHelper.GetPropertyValue(state, "CurrentSave"), Is.SameAs(save));
+                Assert.That(RuntimeType().GetProperty("Current").GetValue(null), Is.SameAs(active));
+            }
+            finally { Set(campaign, "MaxStartingPartyMembers", originalLimit); }
+        }
+
+        private static void SetPrivateProperty(object instance, string name, object value) =>
+            instance.GetType().GetProperty(name, BindingFlags.NonPublic | BindingFlags.Instance).SetValue(instance, value);
+
+        private static void AssertStartingParty(object save)
+        {
+            var party = UiPlayModeTestHelper.GetPropertyValue(save, "Party");
+            var heroes = ((IEnumerable)UiPlayModeTestHelper.GetPropertyValue(party, "Members")).Cast<object>().ToList();
+            Assert.That(heroes.Count, Is.EqualTo(2));
+            Assert.That(heroes.Select(hero => UiPlayModeTestHelper.GetPropertyValue(hero, "Name")), Is.EqualTo(new[] { "First hero", "Second hero" }));
+            Assert.That(heroes.Select(hero => UiPlayModeTestHelper.GetPropertyValue(hero, "Order")), Is.EqualTo(new[] { 0, 1 }));
+            Assert.That(UiPlayModeTestHelper.GetPropertyValue(heroes[1], "Class").ToString(), Is.EqualTo("Wizard"));
+            foreach (var hero in heroes)
+            {
+                Assert.That(UiPlayModeTestHelper.GetPropertyValue(hero, "IsActive"), Is.EqualTo(true));
+                Assert.That(((IEnumerable)UiPlayModeTestHelper.GetPropertyValue(hero, "Items")).Cast<object>(), Is.Not.Empty);
+            }
+        }
+
+        [UnityTest]
         public IEnumerator GeneratedCampaignStartsOnItsOwnMapWithoutOriginalStoryContent()
         {
             yield return UiPlayModeTestHelper.StartNewGame();

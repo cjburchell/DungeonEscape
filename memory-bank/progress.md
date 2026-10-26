@@ -1,10 +1,16 @@
 # Progress
 
+- Campaign starting parties (2026-10-26): added optional `MaxStartingPartyMembers` (default 1) to manifests/editor settings and multi-character New Quest creation via Add another on review. Start builds ordered, active, independently equipped heroes; Back restores prior draft choices and cancel preserves the live session. Campaign and active-party limits apply before activation; save format remains 1.3. Solution build passed with zero warnings/errors, Core 268/268, Unity Edit Mode 17/17 and Play Mode 17/17 passed. Unity validation used an isolated project/cache copy because the main editor was open; initial cold-copy importer failures were resolved by copying the existing cache. Visual/controller QA remains in MANUAL_TESTS.md.
+
 - Overworld roster placement follow-up (2026-10-25): moved roster out of campaign settings into the selected overworld map's Random Monsters area, titled Overworld encounter roster. Collapsible biome groups show matching monsters and selected counts, with search/selected filters. Multi-biome monsters retain one campaign eligibility selection across groups. Editor build passed with zero warnings/errors; native visual verification pending.
 
 - Campaign roster readability follow-up (2026-10-25): replaced inline ID-heavy checkboxes with rows showing names and biomes, search/biome/selected filters, and selection counts. Added instructions connecting campaign eligibility, monster Biomes, and the Tiled biome layer. Editor build passed with zero warnings/errors using a temporary output directory because the running editor locks its normal executable; native UI validation remains pending.
 
 ## Done
+
+- Borderlands world (2026-10-26): authored fourteen connected maps using shared assets: expanded Keep, true overworld, entrance ravine and eleven distinct lairs A–K. Added named round-trip spawns, region/directory signs, inn rest and descriptive Keep NPCs, and updated the Cave A quest route. Campaign title is Heroes of the Borderlands, content 0.2; 0.1 prototype saves require a new game. Solution build passed with zero warnings/errors; Core 287/287, isolated Edit Mode 17/17 and Play Mode 20/20 passed. All fourteen map previews rendered/inspected; fresh/cached preview checks passed. B–K are explorable layouts awaiting encounters/quests. See BORDERLANDS_WORLD.md.
+
+- Static encounter quest prototype (2026-10-26): exact-count map groups, stable per-map defeated IDs, victory-only quest callbacks, persistent art/collision removal, and Game Editor authoring/validation with grouped map previews. Added selectable Borderlands: First Expedition with a warden/four-kobold cave/return-reward loop using existing game assets. Core 284/284, build zero warnings/errors, isolated Edit Mode 17/17 and Play Mode 19/19 passed. Map previews visually inspected; fresh/cached group counts verified. Main-project Unity runs are blocked by the open editor; isolated validation uses Unity 6000.4.4f1.
 
 - Campaign organization/creation: moved original story, maps, encounters and custom content under Campaigns/original with preserved Unity GUIDs; added scoped Game Editor selection, protected shared definitions, campaign settings and transactional starter-campaign creation. Core/editor tests 261/261, Edit Mode 17/17, Play Mode 15/15, Windows build passed.
 

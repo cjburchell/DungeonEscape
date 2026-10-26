@@ -420,6 +420,13 @@ public sealed class DataValidationService
         foreach (var map in data.Maps)
         {
             var location = $"Map '{map.Id}'";
+            try
+            {
+                StaticEncounterRules.ValidateMap(map.Id,
+                    map.Objects.Where(item => StaticEncounterRules.IsEncounter(item.Class)).Select(item => (IReadOnlyDictionary<string, string>)item.Properties),
+                    data.Monsters, data.Quests);
+            }
+            catch (ArgumentException error) { Error(issues, location, error.Message); }
             ValidateMapClass(issues, location, map.Class);
             ValidateMapSong(issues, location, map.Properties);
             ValidateMapBiome(issues, location, map.Properties);

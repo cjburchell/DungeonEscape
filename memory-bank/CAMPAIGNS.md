@@ -1,5 +1,13 @@
 # Campaigns And Stable Content IDs
 
+## Starting Party Creation (2026-10-26)
+
+- Campaign manifests expose `MaxStartingPartyMembers`, defaulting to 1 when omitted. Campaign settings in Game Editor edit the positive limit; the game's active party capacity additionally caps creation, without changing later recruitment rules.
+- New Quest keeps identity/build/review steps per character. Review offers Add another until the limit; Start enters with completed characters plus the current one, allowing fewer than the maximum. The first character remains leader/PlayerName. All start active at level 1 with their own choices, equipment and party order.
+- Drafts stay separate from the live session until Start. Back from an added character's identity page discards that draft and restores the previous character's review/build choices. Canceling or selecting another campaign clears the queued party. Save format remains 1.3; party serialization already supports multiple members.
+- Core rules enforce nonempty parties and campaign/active limits before session activation. No migration or one-time scripts are required.
+- Validation: solution build zero warnings/errors, Core 268/268, Unity Edit Mode 17/17 and Play Mode 17/17. The open main editor required an isolated project/cache copy for Unity checks; an initial cold-copy importer problem was isolated from feature failures. New regressions cover distinct equipped heroes/save restore, prior-draft restoration, cancellation, limits and editor manifest persistence. Manual mouse/controller/small-window checks remain pending.
+
 Investigation: 2026-10-24. Implementation started with stable monster and encounter IDs. The remaining campaign design below is proposed.
 
 ## Requirements

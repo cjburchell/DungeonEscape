@@ -36,6 +36,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private const int CreateImageIndex = TitleViewModel.CreateImageIndex;
         private const int CreateStartIndex = TitleViewModel.CreateStartIndex;
         private const int CreateBackIndex = TitleViewModel.CreateBackIndex;
+        private const int CreateAddMemberIndex = 8;
         private const float CreateDropdownLabelWidth = 104f;
         private const string MainMenuBackgroundAssetPath = "Assets/DungeonEscape/Images/ui/mainmenue.png";
         private const string SecondaryMenuBackgroundAssetPath = "Assets/DungeonEscape/Images/ui/menu2.png";
@@ -86,6 +87,21 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private bool ownsSecondaryMenuBackground;
         private int createAbilityBonusTwoIndex;
         private int createAbilityBonusOneIndex = 1;
+        private readonly List<CharacterDraft> completedCharacters = new List<CharacterDraft>();
+
+        private sealed class CharacterDraft
+        {
+            public StartingCharacter Character;
+            public int SpriteIndex;
+            public int[] BaseScores;
+            public int BonusTwoIndex;
+            public int BonusOneIndex;
+        }
+
+        private int StartingPartyLimit => pendingCampaign == null ? 1 : StartingPartyRules.GetLimit(
+            pendingCampaign.Campaign, SettingsCache.Current == null || SettingsCache.Current.MaxPartyMembers <= 0
+                ? 4 : SettingsCache.Current.MaxPartyMembers);
+        private bool CanAddStartingMember => completedCharacters.Count + 1 < StartingPartyLimit;
         private bool waitingForConfirmRelease;
         private bool titleActionPending;
         private Texture2D leftArrowTexture;
@@ -718,6 +734,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             var width = Mathf.Min(660f * scale, Screen.width - 32f * scale);
             var bodyContentHeight = createStep == 0 ? 282f * scale : createStep == 1 ? 500f * scale : 342f * scale;
+            if (StartingPartyLimit > 1) bodyContentHeight += (completedCharacters.Count + 1) * 26f * scale;
             var actionGap = 12f * scale;
             var actionHeight = 32f * scale;
             var footerPadding = 6f * scale;
@@ -755,6 +772,12 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
             var previousEnabled = GUI.enabled;
             var dropdownOpen = activeCreateDropdown != CreateDropdown.None;
+            if (StartingPartyLimit > 1)
+            {
+                GUILayout.Label("Character " + (completedCharacters.Count + 1) + " of up to " + StartingPartyLimit, labelStyle);
+                foreach (var draft in completedCharacters)
+                    GUILayout.Label(draft.Character.Name + " - " + draft.Character.Class, labelStyle);
+            }
             if (createStep == 0)
             {
                 DrawCreateIdentityPage(scale, previousEnabled, dropdownOpen);
@@ -783,6 +806,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             GUILayout.Space(10f * scale);
+            if (createStep == 2 && CanAddStartingMember)
+            {
+                if (UiControls.Button("Add another", selectedIndex == CreateAddMemberIndex, uiTheme, GUILayout.Width(126f * scale), GUILayout.Height(32f * scale)) &&
+                    !waitingForConfirmRelease)
+                    AddStartingMember();
+                GUILayout.Space(10f * scale);
+            }
             if (UiControls.Button("Back", selectedIndex == CreateBackIndex, uiTheme, GUILayout.Width(82f * scale), GUILayout.Height(32f * scale)) &&
                 !waitingForConfirmRelease)
             {
@@ -1671,6 +1701,11 @@ namespace Redpoint.DungeonEscape.Unity.UI
         {
             if (createStep == 0)
             {
+                if (completedCharacters.Count > 0)
+                {
+                    RestorePreviousStartingMember();
+                    return;
+                }
                 pendingCampaign = null;
                 if (viewModel.Campaigns.Count > 1) mode = TitleMode.Campaign;
                 else ShowMainMenu();
@@ -2028,6 +2063,18 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void HandleCreateNavigation()
         {
+            if (createStep == 2)
+            {
+                var move = GetMenuMoveY();
+                var horizontal = GetMenuMoveX();
+                if (horizontal != 0) move = horizontal;
+                var actions = CanAddStartingMember
+                    ? new[] { CreateStartIndex, CreateAddMemberIndex, CreateBackIndex }
+                    : new[] { CreateStartIndex, CreateBackIndex };
+                var current = Array.IndexOf(actions, selectedIndex);
+                SetSelectedIndex(actions[Mathf.Clamp(Math.Max(0, current) + move, 0, actions.Length - 1)]);
+                return;
+            }
             var moveY = GetMenuMoveY();
             if (moveY < 0)
             {
@@ -2216,6 +2263,9 @@ namespace Redpoint.DungeonEscape.Unity.UI
                     break;
                 case CreateBackIndex:
                     ActivateCreateBackAction();
+                    break;
+                case CreateAddMemberIndex:
+                    AddStartingMember();
                     break;
             }
         }
@@ -2465,6 +2515,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
             try
             {
                 pendingCampaign = CampaignRuntime.Prepare(campaignId);
+                completedCharacters.Clear();
                 titleError = null;
                 mode = TitleMode.Create;
                 selectedIndex = 0;
@@ -2486,6 +2537,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ShowMainMenu()
         {
+            completedCharacters.Clear();
             pendingCampaign = null;
             titleError = null;
             mode = TitleMode.Main;
@@ -2494,16 +2546,70 @@ namespace Redpoint.DungeonEscape.Unity.UI
             ResetNavigationRepeat();
         }
 
+        private CharacterDraft CaptureStartingMember()
+        {
+            EnsureCreateBuildChoices();
+            return new CharacterDraft
+            {
+                Character = new StartingCharacter
+                {
+                    Name = createPlayerName, Class = createPlayerClass, Gender = createPlayerGender,
+                    Species = createPlayerSpecies, Background = createPlayerBackground,
+                    SpriteFrameIndex = GetCreatePlayerSpriteFrameIndex(),
+                    AbilityScores = GetCreateFinalAbilityScores().ToArray(),
+                    SkillProficiencies = createSkillProficiencies.ToList()
+                },
+                SpriteIndex = createPlayerSpriteIndex,
+                BaseScores = createAbilityScores.ToArray(),
+                BonusTwoIndex = createAbilityBonusTwoIndex,
+                BonusOneIndex = createAbilityBonusOneIndex
+            };
+        }
+
+        private void AddStartingMember()
+        {
+            if (createStep != 2 || !CanAddStartingMember) return;
+            completedCharacters.Add(CaptureStartingMember());
+            createStep = 0;
+            selectedIndex = CreateNameIndex;
+            GenerateRandomPlayerName();
+            ResetCreateBuildChoices();
+            EnsureCreateBuildChoices();
+            RerollCreatePreviewHero();
+            createMenuScrollPosition = Vector2.zero;
+            activeCreateDropdown = CreateDropdown.None;
+            WaitForConfirmRelease();
+            ResetNavigationRepeat();
+        }
+
+        private void RestorePreviousStartingMember()
+        {
+            var draft = completedCharacters[completedCharacters.Count - 1];
+            completedCharacters.RemoveAt(completedCharacters.Count - 1);
+            var character = draft.Character;
+            createPlayerName = character.Name;
+            createPlayerClass = character.Class;
+            createPlayerGender = character.Gender;
+            createPlayerSpecies = character.Species;
+            createPlayerBackground = character.Background;
+            viewModel.SetCreatePlayerSpriteIndex(draft.SpriteIndex);
+            createAbilityScores = draft.BaseScores.ToArray();
+            createAbilityBonusTwoIndex = draft.BonusTwoIndex;
+            createAbilityBonusOneIndex = draft.BonusOneIndex;
+            createSkillProficiencies = character.SkillProficiencies.ToList();
+            ShowCreateReviewPage();
+        }
+
         private void StartCreatedGame()
         {
             if (gameState == null || pendingCampaign == null) return;
             try
             {
                 EnsureCreateBuildChoices();
-                gameState.RestartNewGame(
-                    createPlayerName, createPlayerClass, createPlayerGender, createPlayerSpecies,
-                    createPlayerBackground, GetCreatePlayerSpriteFrameIndex(), GetCreateFinalAbilityScores(),
-                    createSkillProficiencies, pendingCampaign);
+                var characters = completedCharacters.Select(draft => draft.Character).ToList();
+                characters.Add(CaptureStartingMember().Character);
+                gameState.RestartNewGame(characters, pendingCampaign);
+                completedCharacters.Clear();
                 pendingCampaign = null;
                 Close();
             }

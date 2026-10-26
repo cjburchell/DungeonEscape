@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Redpoint.DungeonEscape.State;
+using Redpoint.DungeonEscape.Rules;
 using UnityEngine;
 
 using Redpoint.DungeonEscape.Unity.Core;
@@ -210,6 +211,11 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                     continue;
                 }
 
+                string encounterId;
+                if (gameState != null && StaticEncounterRules.IsEncounter(GetObjectClass(mapObject)) &&
+                    TryGetStringProperty(mapObject, "EncounterId", out encounterId) &&
+                    gameState.IsEncounterDefeated(mapId, encounterId)) continue;
+
                 if (!CanRenderPickupObject(mapObject, mapId, gameState))
                 {
                     continue;
@@ -254,24 +260,37 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                 }
 
                 var key = "Object|" + sortingOrder + "|" + groupName + "|" + GetString(mapObject, "id");
-                pool.Show(
-                    key,
-                    sprite,
-                    animationFrames,
-                    GetObjectLocalPosition(
-                        x,
-                        y,
-                        width,
-                        height,
-                        tileWidth,
-                        tileHeight,
-                        gid == 0),
-                    GetObjectLocalScale(width, height, tileWidth, tileHeight, gid == 0),
-                    GetObjectSortingOrder(
-                        sortingOrder,
-                        GetObjectSortRow(mapObject, y, height, tileHeight, gid == 0)),
-                    "Object_" + groupName + "_" + GetString(mapObject, "name"));
-                renderedObjectCount++;
+                var count = StaticEncounterRules.IsEncounter(GetObjectClass(mapObject))
+                    ? Math.Max(1, Math.Min(EncounterRules.MaxMonstersToFight, GetIntProperty(mapObject, "Count", 1))) : 1;
+                var groupColumns = (int)Math.Ceiling(Math.Sqrt(count));
+                var groupRows = (int)Math.Ceiling((double)count / groupColumns);
+                for (var member = 0; member < count; member++)
+                {
+                    var memberWidth = width / groupColumns;
+                    var memberHeight = height / groupRows;
+                    var memberX = x + member % groupColumns * memberWidth;
+                    var memberY = y - height + (member / groupColumns + 1) * memberHeight;
+                    pool.Show(
+                        key + "|" + member,
+                        sprite,
+                        animationFrames,
+                        GetObjectLocalPosition(
+                            memberX,
+                            gid == 0 ? y : memberY,
+                            memberWidth,
+                            memberHeight,
+                            tileWidth,
+                            tileHeight,
+                            gid == 0),
+                        StaticEncounterRules.IsEncounter(GetObjectClass(mapObject)) && gid != 0
+                            ? GetEncounterSpriteScale(sprite, memberWidth, memberHeight, tileWidth, tileHeight)
+                            : GetObjectLocalScale(memberWidth, memberHeight, tileWidth, tileHeight, gid == 0),
+                        GetObjectSortingOrder(
+                            sortingOrder,
+                            GetObjectSortRow(mapObject, y, height, tileHeight, gid == 0)),
+                        "Object_" + groupName + "_" + GetString(mapObject, "name"));
+                    renderedObjectCount++;
+                }
             }
 
             return renderedObjectCount;
@@ -460,6 +479,12 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
                 centerX - 0.5f,
                 -centerY + 0.5f,
                 -0.1f);
+        }
+
+        private static Vector3 GetEncounterSpriteScale(Sprite sprite, float width, float height, int tileWidth, int tileHeight)
+        {
+            var scale = Mathf.Min(width / tileWidth / sprite.bounds.size.x, height / tileHeight / sprite.bounds.size.y);
+            return new Vector3(scale, scale, 1f);
         }
 
         private static Vector3 GetObjectLocalScale(float width, float height, int tileWidth, int tileHeight, bool useObjectBounds)

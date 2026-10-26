@@ -1,0 +1,42 @@
+[
+  {
+    "Id": "monster/borderlands/kobold",
+    "Name": "Kobold",
+    "ImageId": 2,
+    "MinLevel": 1,
+    "GroupSize": 1,
+    "Xp": 25,
+    "Gold": 0,
+    "HitPoints": 5,
+    "Strength": 7,
+    "Dexterity": 15,
+    "Constitution": 9,
+    "Intelligence": 8,
+    "Wisdom": 7,
+    "Charisma": 8,
+    "ArmorClass": 12,
+    "ProficiencyBonus": 2,
+    "AttackBonus": 4,
+    "DamageDice": 1,
+    "DamageDie": 4,
+    "DamageBonus": 2,
+    "ChallengeRating": "1/8",
+    "Size": "Small",
+    "MonsterType": "Humanoid",
+    "Hostile": true,
+    "Actions": [
+      {
+        "Name": "Dagger",
+        "AttackBonus": 4,
+        "DamageDice": 1,
+        "DamageDie": 4,
+        "DamageBonus": 2,
+        "Count": 1,
+        "DamageType": "Piercing"
+      }
+    ],
+    "Items": [],
+    "Spells": [],
+    "Traits": []
+  }
+]

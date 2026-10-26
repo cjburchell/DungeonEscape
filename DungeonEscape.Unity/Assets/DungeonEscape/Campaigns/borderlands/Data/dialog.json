@@ -1,0 +1,75 @@
+[
+  {
+    "Id": "dialog/borderlands/warden",
+    "Dialogs": [
+      {
+        "Quest": "quest/borderlands/clear-the-entrance",
+        "StartQuest": true,
+        "Text": "Four kobolds have taken over Cave A in the Caves of Chaos. Leave by the south gate, follow the Borderlands trail northeast, and enter the ravine. Clear their lair and return for your reward.",
+        "Choices": [
+          {
+            "Text": "I will clear the entrance.",
+            "NextQuestStage": 1
+          },
+          {
+            "Text": "I need to prepare first."
+          }
+        ]
+      },
+      {
+        "Quest": "quest/borderlands/clear-the-entrance",
+        "QuestStage": [
+          0,
+          1
+        ],
+        "Text": "Leave by the south gate and follow the trail northeast to the Caves of Chaos. In the ravine, Cave A is the first mouth on the northern ledge. Return here after defeating its four kobolds.",
+        "Choices": [
+          {
+            "Text": "Understood.",
+            "NextQuestStage": 1
+          }
+        ]
+      },
+      {
+        "Quest": "quest/borderlands/clear-the-entrance",
+        "QuestStage": [
+          2
+        ],
+        "Text": "The entrance is clear! Thank you. Here is the reward I promised.",
+        "Choices": [
+          {
+            "Text": "Collect reward.",
+            "NextQuestStage": 3
+          }
+        ]
+      },
+      {
+        "Text": "The road is safer thanks to you. You are welcome at the Keep.",
+        "Choices": [
+          {
+            "Text": "Farewell."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Id": "dialog/borderlands/kobolds",
+    "Dialogs": [
+      {
+        "Text": "Four kobolds block the chamber. They clutch their weapons and refuse to move.",
+        "Choices": [
+          {
+            "Text": "Fight the four kobolds.",
+            "Actions": [
+              "Fight"
+            ]
+          },
+          {
+            "Text": "Leave them for now."
+          }
+        ]
+      }
+    ]
+  }
+]

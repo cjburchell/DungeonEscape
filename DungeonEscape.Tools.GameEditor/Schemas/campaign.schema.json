@@ -9,6 +9,7 @@
     "Name": { "type": "string", "minLength": 1 },
     "Description": { "type": "string" },
     "ContentVersion": { "type": "string", "minLength": 1 },
+    "MaxStartingPartyMembers": { "type": "integer", "minimum": 1, "default": 1 },
     "StartMapId": { "$ref": "#/$defs/mapId" },
     "OverworldMapId": { "$ref": "#/$defs/mapId" },
     "StartSpawnId": { "type": ["string", "null"] },

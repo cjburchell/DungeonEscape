@@ -571,6 +571,7 @@ namespace Redpoint.DungeonEscape.Unity.Map.Tiled
 
         private bool IsMapObjectVisible(string mapId, TiledObjectInfo mapObject)
         {
+            if (gameState != null && gameState.IsMapObjectRemoved(mapId, mapObject)) return false;
             if (IsDoorObject(mapObject) && gameState != null && gameState.IsObjectOpen(mapId, mapObject.Id))
             {
                 return false;

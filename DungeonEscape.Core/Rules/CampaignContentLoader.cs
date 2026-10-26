@@ -46,6 +46,9 @@ namespace Redpoint.DungeonEscape.Rules
             {
                 var xml = readAsset(definition.AssetPath) ?? throw new ArgumentException("Campaign map is missing: " + definition.AssetPath);
                 var map = TiledMapInfo.Parse(xml);
+                StaticEncounterRules.ValidateMap(definition.Id,
+                    map.ObjectGroups.SelectMany(group => group.Objects).Where(item => StaticEncounterRules.IsEncounter(item.Class)).Select(item => (IReadOnlyDictionary<string, string>)item.Properties),
+                    context.Data.Monsters, context.Data.Quests);
                 if (map.Width <= 0 || map.Height <= 0 || map.TileWidth <= 0 || map.TileHeight <= 0)
                     throw new ArgumentException("Campaign map has invalid dimensions: " + definition.Id);
                 if (definition.Id == context.Campaign.StartMapId)

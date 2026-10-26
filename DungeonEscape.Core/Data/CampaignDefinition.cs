@@ -9,6 +9,7 @@ namespace Redpoint.DungeonEscape.Data
         public string Name { get; set; }
         public string Description { get; set; }
         public string ContentVersion { get; set; }
+        public int MaxStartingPartyMembers { get; set; } = 1;
         public string StartMapId { get; set; }
         public string StartSpawnId { get; set; }
         public int StartColumn { get; set; }

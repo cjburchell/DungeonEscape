@@ -14,6 +14,21 @@ namespace DungeonEscape.Core.Test.Data;
 public class GameDataReferenceTests
 {
     [Fact]
+    public void CampaignMapTilesetsUseAtlasImagesSupportedByTheMapLoader()
+    {
+        var root = Path.Combine(FindRepositoryRoot(), "DungeonEscape.Unity", "Assets", "DungeonEscape", "Campaigns");
+        foreach (var path in Directory.EnumerateFiles(root, "*.tmx", SearchOption.AllDirectories))
+        foreach (var tileset in XDocument.Load(path).Root.Elements("tileset"))
+        {
+            var source = (string)tileset.Attribute("source");
+            if (string.IsNullOrEmpty(source)) continue; // Inline metadata-only tilesets are supported separately.
+            var document = XDocument.Load(Path.GetFullPath(Path.Combine(Path.GetDirectoryName(path), source))).Root;
+            Assert.False(string.IsNullOrWhiteSpace((string)document.Element("image")?.Attribute("source")),
+                "Map rendering requires an atlas image, not a combat image-collection tileset: " + path);
+        }
+    }
+
+    [Fact]
     public void OriginalCampaignLoadsAndValidatesAllItsMapsAndContent()
     {
         var repo = FindRepositoryRoot();
@@ -34,6 +49,8 @@ public class GameDataReferenceTests
             Spells = ReadJson<List<Spell>>(Path.Combine(folder, "spells.json")),
             Backgrounds = ReadJson<List<BackgroundDefinition>>(Path.Combine(folder, "backgrounds.json"))
         };
+        foreach (var campaign in catalog.Campaigns)
+            CampaignContentLoader.Load(campaign, CampaignContentResolver.ExtractBase(source), ReadAsset);
         var context = CampaignContentLoader.Load(catalog.Default, CampaignContentResolver.ExtractBase(source), ReadAsset);
         Assert.Equal("campaign/original/main", context.Campaign.Id);
         Assert.Equal(23, context.Maps.Maps.Count);

@@ -2,6 +2,11 @@
     <div class="field"><label>ID</label><input value="@Campaign.Id" readonly /></div>
     <div class="field"><label>Name</label><input value="@Campaign.Name" @onchange="e => Set(() => Campaign.Name = e.Value?.ToString() ?? string.Empty)" /></div>
     <div class="field"><label>Content version</label><input value="@Campaign.ContentVersion" @onchange="e => Set(() => Campaign.ContentVersion = e.Value?.ToString() ?? string.Empty)" /></div>
+    <div class="field">
+        <label>Maximum starting party members</label>
+        <input type="number" min="1" value="@Campaign.MaxStartingPartyMembers" @onchange="SetStartingPartyLimit" />
+        <small>Players can start with one up to this many characters, capped by the game's active party limit.</small>
+    </div>
     <div class="field"><label>Description</label><input value="@Campaign.Description" @onchange="e => Set(() => Campaign.Description = e.Value?.ToString() ?? string.Empty)" /></div>
     <div class="field">
         <label>Starting map</label>
@@ -26,6 +31,11 @@
     [Parameter] public EventCallback OnChanged { get; set; }
 
     private async Task Set(Action edit) { edit(); await OnChanged.InvokeAsync(); }
+    private async Task SetStartingPartyLimit(ChangeEventArgs args)
+    {
+        if (int.TryParse(args.Value?.ToString(), out var value) && value >= 1)
+            await Set(() => Campaign.MaxStartingPartyMembers = value);
+    }
     private async Task SetOverworld(ChangeEventArgs args)
     {
         Campaign.OverworldMapId = args.Value?.ToString() ?? string.Empty;

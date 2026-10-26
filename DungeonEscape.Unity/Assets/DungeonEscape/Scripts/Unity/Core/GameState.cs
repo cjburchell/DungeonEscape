@@ -830,7 +830,25 @@ namespace Redpoint.DungeonEscape.Unity.Core
         public bool IsMapObjectRemoved(string mapId, TiledObjectInfo mapObject)
         {
             EnsureInitialized();
+            if (mapObject != null && StaticEncounterRules.IsEncounter(mapObject.Class))
+                return IsEncounterDefeated(mapId, StaticEncounterRules.Get(mapObject.Properties, "EncounterId"));
             return IsHiddenItemObject(mapObject) && IsObjectOpen(mapId, mapObject.Id);
+        }
+
+        public bool IsEncounterDefeated(string mapId, string encounterId)
+        {
+            EnsureInitialized();
+            return StaticEncounterRules.IsDefeated(GetMapState(mapId, false), encounterId);
+        }
+
+        public string CompleteStaticEncounter(string mapId, StaticEncounter encounter)
+        {
+            EnsureInitialized();
+            if (!StaticEncounterRules.CompleteVictory(GetMapState(mapId, true), encounter)) return "";
+            MarkDirty();
+            return encounter.VictoryQuestStage.HasValue
+                ? AdvanceQuest(encounter.VictoryQuestId, encounter.VictoryQuestStage)
+                : "";
         }
 
         public bool IsMapObjectRemoved(string mapId, int objectId, string objectClass)
@@ -2841,9 +2859,31 @@ namespace Redpoint.DungeonEscape.Unity.Core
             CampaignContentContext campaign = null)
         {
             var candidate = campaign ?? CampaignRuntime.Prepare(CampaignRuntime.Campaign.Id);
+            RestartNewGame(new[] { new StartingCharacter
+            {
+                Name = playerName, Class = playerClass, Gender = gender, Species = species,
+                Background = background, SpriteFrameIndex = spriteFrameIndex,
+                AbilityScores = abilityScores, SkillProficiencies = skillProficiencies?.ToList()
+            } }, candidate);
+        }
+
+        public void RestartNewGame(IReadOnlyList<StartingCharacter> characters, CampaignContentContext campaign)
+        {
+            StartingPartyRules.Validate(characters, campaign?.Campaign, GetMaxPartyMembers());
             GameFile = LoadGameFile();
-            ActivateCampaign(candidate);
-            CurrentSave = CreateDefaultSave(playerName, playerClass, gender, species, background, spriteFrameIndex, abilityScores, skillProficiencies);
+            ActivateCampaign(campaign);
+            var first = characters[0];
+            var save = CreateDefaultSave(first.Name, first.Class, first.Gender, first.Species, first.Background,
+                first.SpriteFrameIndex, first.AbilityScores, first.SkillProficiencies);
+            for (var index = 1; index < characters.Count; index++)
+            {
+                var character = characters[index];
+                var hero = CreateHero(character.Name, character.Class, character.Gender, character.Species,
+                    character.Background, 1, true, character.SpriteFrameIndex, character.AbilityScores, character.SkillProficiencies);
+                hero.Order = index;
+                save.Party.Members.Add(hero);
+            }
+            CurrentSave = save;
             CurrentSave.IsQuick = false;
             ShouldApplyInitialSpawn = true;
             MarkDirty();

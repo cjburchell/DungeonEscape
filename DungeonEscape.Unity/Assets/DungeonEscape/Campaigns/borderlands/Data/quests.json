@@ -1,0 +1,30 @@
+[
+  {
+    "Id": "quest/borderlands/clear-the-entrance",
+    "Name": "Clear the Cave Entrance",
+    "Description": "Speak to the warden in the Keep. Travel through the Borderlands to the entrance ravine, clear the four kobolds in Cave A, and return for your reward.",
+    "MinimumLevel": 1,
+    "Xp": 50,
+    "Gold": 20,
+    "Items": [],
+    "Stages": [
+      {
+        "Number": 0,
+        "Description": "Speak to the warden."
+      },
+      {
+        "Number": 1,
+        "Description": "Follow Keep south gate -> Borderlands trail northeast -> entrance ravine -> Cave A. Defeat the four kobolds."
+      },
+      {
+        "Number": 2,
+        "Description": "Return to the warden at the Keep."
+      },
+      {
+        "Number": 3,
+        "Description": "The entrance is clear and the warden has rewarded you.",
+        "CompleteQuest": true
+      }
+    ]
+  }
+]

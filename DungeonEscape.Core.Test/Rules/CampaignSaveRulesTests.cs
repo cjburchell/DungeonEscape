@@ -76,6 +76,19 @@ public class CampaignSaveRulesTests
         Time = new DateTime(2026, 10, 24, 12, 0, 0)
     };
 
+    [Theory]
+    [InlineData("encounter/second/guards")]
+    [InlineData("monster/first/guards")]
+    [InlineData("guards")]
+    public void DefeatedEncountersMustUseTheirCampaignIdentity(string invalidId)
+    {
+        var save = Save("first");
+        save.MapStates.Add(new MapState { Id = "map/first/world", DefeatedEncounterIds = new() { "encounter/first/guards" } });
+        CampaignSaveRules.Validate(save, Context("first"));
+        save.MapStates[0].DefeatedEncounterIds[0] = invalidId;
+        Assert.Throws<ArgumentException>(() => CampaignSaveRules.Validate(save, Context("first")));
+    }
+
     private static CampaignContentContext Context(string scope)
     {
         var campaign = new CampaignDefinition

@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Text;
 using Redpoint.DungeonEscape.State;
+using Redpoint.DungeonEscape.Rules;
 using UnityEngine;
 
 using Redpoint.DungeonEscape.Unity.Core;
@@ -644,6 +645,12 @@ namespace Redpoint.DungeonEscape.Unity.Map
                 return;
             }
 
+            if (StaticEncounterRules.IsEncounter(mapObject.Class))
+            {
+                ShowStaticEncounterDialog(mapObject);
+                return;
+            }
+
             if (IsPartyMemberObject(mapObject))
             {
                 ShowRecruitDialog(mapObject);
@@ -689,7 +696,7 @@ namespace Redpoint.DungeonEscape.Unity.Map
                         gameState == null ? null : gameState.Party,
                         out dialogText))
                 {
-                    ShowDialog(mapObject.Name, dialogText, null);
+                    ShowDialog(mapObject.Name, dialogText, null, mapObject);
                 }
                 else
                 {
@@ -716,6 +723,46 @@ namespace Redpoint.DungeonEscape.Unity.Map
             }
 
             messageBox.Show(mapObject.Name, string.IsNullOrEmpty(mapObject.Class) ? "Nothing happens." : mapObject.Class);
+        }
+
+        private void ShowStaticEncounterDialog(TiledObjectInfo mapObject)
+        {
+            if (gameState == null || gameState.Party == null || gameState.IsMapObjectRemoved(gameState.Party.CurrentMapId, mapObject)) return;
+            string dialogId;
+            DialogText dialog;
+            if (TryGetProperty(mapObject, "Dialog", out dialogId) && !string.IsNullOrEmpty(dialogId))
+            {
+                if (GameDataCache.Current.TryGetDialog(dialogId, gameState.Party, out dialog))
+                    ShowDialog(GetObjectDisplayName(mapObject), dialog, null, mapObject);
+                else messageBox.Show(mapObject.Name, "Missing dialog: " + dialogId);
+                return;
+            }
+            messageBox.Show(GetObjectDisplayName(mapObject), GetStringProperty(mapObject, "Text", "The group watches your approach."),
+                new[] { "Fight", "Leave" }, selected => { if (selected == 0) StartStaticEncounter(mapObject); });
+        }
+
+        private void StartStaticEncounter(TiledObjectInfo mapObject)
+        {
+            if (CombatWindow.IsOpen || gameState == null || gameState.Party == null) return;
+            var mapId = gameState.Party.CurrentMapId;
+            if (gameState.IsMapObjectRemoved(mapId, mapObject)) return;
+            try
+            {
+                var encounter = StaticEncounterRules.Read(mapObject.Properties);
+                var roster = StaticEncounterRules.Build(encounter, GameDataCache.Current.Monsters);
+                var save = gameState.CurrentSave;
+                CombatWindow.OpenAuthored(roster, gameState.Party.CurrentBiome, () =>
+                {
+                    if (!ReferenceEquals(save, gameState.CurrentSave)) return "";
+                    var result = gameState.CompleteStaticEncounter(mapId, encounter);
+                    if (mapView != null && mapView.CurrentMapId == mapId) mapView.RefreshObjectState();
+                    return result;
+                });
+            }
+            catch (ArgumentException error)
+            {
+                messageBox.Show(GetObjectDisplayName(mapObject), error.Message);
+            }
         }
 
         private void ShowRecruitDialog(TiledObjectInfo mapObject)
@@ -1145,6 +1192,14 @@ namespace Redpoint.DungeonEscape.Unity.Map
         {
             if (choice == null)
             {
+                return;
+            }
+
+            // Fight outcomes, rather than choosing Fight, drive quest progression.
+            if (choice.Actions != null && choice.Actions.Contains(QuestAction.Fight) &&
+                sourceObject != null && StaticEncounterRules.IsEncounter(sourceObject.Class))
+            {
+                StartStaticEncounter(sourceObject);
                 return;
             }
 

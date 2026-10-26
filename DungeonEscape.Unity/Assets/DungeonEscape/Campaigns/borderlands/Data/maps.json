@@ -1,0 +1,72 @@
+[
+  {
+    "Id": "map/borderlands/keep",
+    "Name": "Keep on the Borderlands",
+    "AssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Maps/keep.tmx"
+  },
+  {
+    "Id": "map/borderlands/overworld",
+    "Name": "The Borderlands",
+    "AssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Maps/overworld.tmx"
+  },
+  {
+    "Id": "map/borderlands/cave-entrance",
+    "Name": "Caves of Chaos: Entrance Ravine",
+    "AssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Maps/cave-entrance.tmx"
+  },
+  {
+    "Id": "map/borderlands/cave",
+    "Name": "A: Kobold Lair",
+    "AssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Maps/cave.tmx"
+  },
+  {
+    "Id": "map/borderlands/cave-b",
+    "Name": "B: Mephit Lair",
+    "AssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Maps/cave-b.tmx"
+  },
+  {
+    "Id": "map/borderlands/cave-c",
+    "Name": "C: Nothic Lair",
+    "AssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Maps/cave-c.tmx"
+  },
+  {
+    "Id": "map/borderlands/cave-d",
+    "Name": "D: Goblin Lair",
+    "AssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Maps/cave-d.tmx"
+  },
+  {
+    "Id": "map/borderlands/cave-e",
+    "Name": "E: Ogre Lair",
+    "AssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Maps/cave-e.tmx"
+  },
+  {
+    "Id": "map/borderlands/cave-f",
+    "Name": "F: Hobgoblin Lair",
+    "AssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Maps/cave-f.tmx"
+  },
+  {
+    "Id": "map/borderlands/cave-g",
+    "Name": "G: Shunned Caves",
+    "AssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Maps/cave-g.tmx"
+  },
+  {
+    "Id": "map/borderlands/cave-h",
+    "Name": "H: Bugbear Lair",
+    "AssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Maps/cave-h.tmx"
+  },
+  {
+    "Id": "map/borderlands/cave-i",
+    "Name": "I: Minotaur Lair",
+    "AssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Maps/cave-i.tmx"
+  },
+  {
+    "Id": "map/borderlands/cave-j",
+    "Name": "J: Gnoll Lair",
+    "AssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Maps/cave-j.tmx"
+  },
+  {
+    "Id": "map/borderlands/cave-k",
+    "Name": "K: Shrine of Evil Chaos",
+    "AssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Maps/cave-k.tmx"
+  }
+]

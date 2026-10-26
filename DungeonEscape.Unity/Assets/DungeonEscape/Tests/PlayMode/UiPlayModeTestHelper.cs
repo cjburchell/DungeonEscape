@@ -39,6 +39,7 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
 
             var titleMenu = FindObject("Redpoint.DungeonEscape.Unity.UI.TitleMenu");
             InvokePrivate(titleMenu, "ShowCreateMenu");
+            SelectOriginalCampaign(titleMenu);
             yield return null;
             InvokePrivate(titleMenu, "StartCreatedGame");
             yield return WaitUntil(() => !GetStaticBool("Redpoint.DungeonEscape.Unity.UI.TitleMenu", "IsOpen"));
@@ -55,6 +56,12 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
             }
 
             yield return WaitUntil(() => !GetStaticBool("Redpoint.DungeonEscape.Unity.UI.SplashScreen", "IsVisible"));
+        }
+
+        public static void SelectOriginalCampaign(object titleMenu)
+        {
+            if (GetNonPublicPropertyValue(titleMenu, "mode").ToString() == "Campaign")
+                InvokePrivate(titleMenu, "ChooseCampaign", 0);
         }
 
         public static IEnumerator WaitForObject(string typeName)

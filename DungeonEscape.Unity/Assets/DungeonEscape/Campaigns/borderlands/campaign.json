@@ -1,0 +1,19 @@
+{
+  "SchemaVersion": 1,
+  "Id": "campaign/borderlands/main",
+  "Name": "Heroes of the Borderlands",
+  "Description": "Explore the Keep, four wilderness regions, the entrance ravine, and eleven distinct cave lairs. The first kobold quest is playable; further quests and encounters are still being authored.",
+  "ContentVersion": "0.2",
+  "MaxStartingPartyMembers": 4,
+  "StartMapId": "map/borderlands/keep",
+  "StartSpawnId": "start",
+  "StartColumn": 7,
+  "StartRow": 10,
+  "OverworldMapId": "map/borderlands/overworld",
+  "OverworldMonsterIds": [],
+  "MapsAssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Data/maps.json",
+  "ItemsAssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Data/items.json",
+  "MonstersAssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Data/monsters.json",
+  "QuestsAssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Data/quests.json",
+  "DialogsAssetPath": "Assets/DungeonEscape/Campaigns/borderlands/Data/dialog.json"
+}

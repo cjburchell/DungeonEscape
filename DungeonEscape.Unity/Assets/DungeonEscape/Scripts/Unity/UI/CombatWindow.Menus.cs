@@ -549,6 +549,7 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void Close(bool restoreMapMusic)
         {
+            onVictory = null;
             ClearRoundStatusEffects();
             IsOpen = false;
             GameState.AutoSaveBlocked = false;

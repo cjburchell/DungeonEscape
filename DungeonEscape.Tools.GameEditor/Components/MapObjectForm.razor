@@ -29,7 +29,21 @@ else
 
     <fieldset>
         <legend>@FriendlyLegend</legend>
-        @if (IsNpc)
+        @if (IsEncounter)
+        {
+            <div class="field-grid">
+                @PropertyField("Encounter ID (permanent)", "EncounterId")
+                @PropertySelect("Monster", "MonsterId", DataSources.Monsters, true)
+                @PropertyNumber("Monster count (1–10)", "Count")
+                @PropertySelect("Victory quest", "VictoryQuestId", DataSources.Quests, true)
+                @PropertyField("Victory quest stage (blank without quest)", "VictoryQuestStage")
+                @PropertySelect("Dialog (optional; use Fight action)", "Dialog", DataSources.Dialogs, true)
+                @PropertyTextArea("Approach text (without dialog)", "Text")
+                @PropertyBool("Collideable", "Collideable")
+            </div>
+            <p>Victory removes this group permanently. Leave, escape, and defeat keep it available. Place its visible sprite in Tiled.</p>
+        }
+        else if (IsNpc)
         {
             <div class="field-grid">
                 @PropertySelect("Dialog", "Dialog", DataSources.Dialogs, true)
@@ -108,7 +122,7 @@ else
 
     private static readonly IReadOnlyList<string> ObjectClasses = new[]
     {
-        "Chest", "Door", "HiddenItem", "Npc", "NpcHeal", "NpcKey", "NpcPartyMember", "NpcSave", "NpcStore", "Spawn", "Warp"
+        "Chest", "Door", "HiddenItem", "Monster", "Npc", "NpcHeal", "NpcKey", "NpcPartyMember", "NpcSave", "NpcStore", "Spawn", "Warp"
     };
 
     private static readonly IReadOnlyList<string> DirectionOptions = Enum.GetValues<Direction>().Select(value => value.ToString()).ToList();
@@ -122,6 +136,7 @@ else
     private IReadOnlyList<string> SpawnOptionsForWarp => MapReferenceOptions.GetSpawnOptions(Maps, GetProperty("WarpMap"));
 
     private bool IsNpc => Object?.Class.StartsWith("Npc", StringComparison.OrdinalIgnoreCase) == true;
+    private bool IsEncounter => StaticEncounterRules.IsEncounter(Object?.Class);
     private bool IsPartyMember => string.Equals(Object?.Class, "NpcPartyMember", StringComparison.OrdinalIgnoreCase);
     private bool IsPickup => string.Equals(Object?.Class, "Chest", StringComparison.OrdinalIgnoreCase) ||
                              string.Equals(Object?.Class, "HiddenItem", StringComparison.OrdinalIgnoreCase);
@@ -132,6 +147,7 @@ else
     private string FriendlyLegend => Object?.Class switch
     {
         "Chest" => "Chest Gameplay",
+        "Monster" => "Static Monster Encounter",
         "HiddenItem" => "Hidden Item Gameplay",
         "Door" => "Door Gameplay",
         "Warp" => "Warp Gameplay",

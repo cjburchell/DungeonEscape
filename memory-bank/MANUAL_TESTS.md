@@ -1,5 +1,35 @@
 # Manual Test Plan
 
+## Borderlands Fourteen-Map World (2026-10-26)
+
+- [ ] Start a new Heroes of the Borderlands campaign (content 0.2). Check Keep courtyard, warden, fortress, inn, temple, provisioner and guild spaces; inn rest costs 5 gold. Provisioner and guild are descriptive placeholders.
+- [ ] Leave through the south gate. Follow the main trail northeast or the Woods shortcut, inspect Tamarack Stand and Fens signs/pools, and enter the cave ravine. Walk along terrain/collision edges and verify return spawns do not trigger an immediate warp.
+- [ ] Inspect the directory and enter/leave all eleven cave mouths A–K. Each must lead to the matching named lair and return to that entrance's nearby spawn. Explore every room and inspect signs. B–K currently have layouts/landmarks without populated quest encounters.
+- [ ] Complete the warden's quest via Keep → overworld → ravine → Cave A → ravine → overworld → Keep. Check the four-figure interaction, victory removal, journal route, return reward and save/reload.
+- [ ] Verify New Quest campaign labeling, gamepad/keyboard navigation, followers on narrow passages, and the distinction between Town Keep and the true overworld (camping, return positions, transition saves).
+- [ ] Verify old Borderlands 0.1 prototype saves report the content-version mismatch while original-campaign saves remain compatible. No migration is provided.
+
+Validation passed: solution build with zero warnings/errors, Core 287/287, Unity Edit Mode 17/17 and Play Mode 20/20 (Unity 6000.4.4f1, isolated copy because the main editor is open). Automated geometry coverage checks reachable rooms/spawns/warps, named reciprocal returns and no warp/spawn overlap across all fourteen maps. Runtime tests visit every cave and retain the full-route Cave A quest. Fresh/cached Game Editor previews were rendered and visually inspected. Human controls and balance remain unverified.
+
+## Static Encounter Quest Prototype (2026-10-26)
+
+Automated verification: Core 284/284, Unity Edit Mode 17/17 and Play Mode 19/19 passed (isolated project, Unity 6000.4.4f1; main project is open). Runtime tests cover four rendered sprites/opponents, sprite bounds, collision removal, quest stages/reward idempotency, snapshot restore, escape, cancellation and defeat. Fresh/cached Game Editor previews render the correct group count; both map previews visually inspected. Human keyboard/gamepad and balance checks below remain pending.
+
+- [ ] New Quest → Borderlands: First Expedition. Create a viable party (campaign allows up to four), speak with the warden, and accept Clear the Cave Entrance.
+- [ ] Enter the cave via the eastern stairs. Confirm four visible figures occupy the northern chamber; interacting anywhere within their footprint shows Fight/Leave. Leave preserves the group.
+- [ ] Fight opens the normal combat screen with exactly four Kobolds. Escape leaves the group and quest unchanged; re-entry starts the full encounter. Party defeat must not record a victory.
+- [ ] Win: all four figures disappear and their tiles become walkable. Journal asks for a return to the warden. Leave/re-enter and save/load: the group remains gone.
+- [ ] Return and collect the reward. Repeated conversations and save/load must not repeat the reward or respawn the group.
+- [ ] In Game Editor Maps, edit a Monster object's exact count, monster, permanent ID and optional victory quest/stage. Save/reopen; duplicate IDs across layers, invalid counts and broken references must fail validation. Renaming or renumbering the Tiled object must not reset its saved defeated state.
+- [ ] Original campaign random combat, title selection, recruitment, chests and doors still behave normally. Check keyboard/gamepad interaction and small windows.
+
+## Campaign Starting Party (2026-10-26)
+
+- [ ] Set Maximum starting party members in campaign settings, save/restart, and verify limits 1, 2 and the active party capacity. Missing setting should retain a one-character start; zero/negative manifest values should fail validation.
+- [ ] Create different characters using Add another on review. Check name/class/species/background, scores, skills and image independently; Start with fewer than the maximum and at the maximum. First character leads; every character has equipment and participates in movement/combat/menus.
+- [ ] Navigate review Start/Add another/Back with mouse, keyboard and controller. At capacity Add another must disappear. Back from an added identity page should restore prior character choices; cancel creation and change campaign without altering the current session.
+- [ ] Save/load a multi-character starting party and verify order, active flags, names and build choices. Check small-window scrolling and review readability.
+
 This file tracks manual Unity play-test checks for gameplay. Update it after each implemented gameplay step so verification stays tied to the work that changed.
 
 Status legend:

@@ -2,6 +2,7 @@
   "SchemaVersion": 1,
   "DefaultCampaignId": "campaign/original/main",
   "Manifests": [
-    "Assets/DungeonEscape/Campaigns/original/campaign.json"
+    "Assets/DungeonEscape/Campaigns/original/campaign.json",
+    "Assets/DungeonEscape/Campaigns/borderlands/campaign.json"
   ]
 }

@@ -474,9 +474,16 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         private void ShowVictoryMessage()
         {
+            if (victoryApplied) return;
+            victoryApplied = true;
+            var message = GetVictoryMessage();
+            var callback = onVictory;
+            onVictory = null;
+            var result = callback == null ? "" : callback();
+            if (!string.IsNullOrEmpty(result)) message += "\n" + result;
             Audio.GetOrCreate().PlaySoundEffect("victory", true);
             Audio.GetOrCreate().PlayMusic(EndFightSong);
-            ShowMessage(GetVictoryMessage(), null);
+            ShowMessage(message, null);
         }
 
         private void ShowDefeatMessage()

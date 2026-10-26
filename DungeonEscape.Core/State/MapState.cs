@@ -11,5 +11,6 @@ namespace Redpoint.DungeonEscape.State
         public List<ObjectState> Objects { get; set; } = new List<ObjectState>();
         
         public List<SpriteState> Sprites { get; set; } = new List<SpriteState>();
+        public List<string> DefeatedEncounterIds { get; set; } = new List<string>();
     }
 }

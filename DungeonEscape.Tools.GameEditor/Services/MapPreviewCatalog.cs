@@ -207,6 +207,24 @@ public sealed class MapPreviewCatalog
             var height = ReadFloat(mapObject.Attribute("height"), fallbackTileHeight);
             var x = ReadFloat(mapObject.Attribute("x"), 0);
             var y = ReadFloat(mapObject.Attribute("y"), 0) - height;
+            if (StaticEncounterRules.IsEncounter((string?)mapObject.Attribute("class")))
+            {
+                var count = GetEncounterCount(mapObject);
+                usageCounts[gid] += count - 1;
+                var columns = (int)Math.Ceiling(Math.Sqrt(count));
+                var rows = (int)Math.Ceiling((double)count / columns);
+                var cellWidth = width / columns;
+                var cellHeight = height / rows;
+                var scale = Math.Min(cellWidth / source.Width, cellHeight / source.Height);
+                var spriteWidth = source.Width * scale;
+                var spriteHeight = source.Height * scale;
+                for (var member = 0; member < count; member++)
+                    graphics.DrawImage(tileset.Image, Rectangle.Round(new RectangleF(
+                        x + member % columns * cellWidth + (cellWidth - spriteWidth) / 2,
+                        y + member / columns * cellHeight + (cellHeight - spriteHeight) / 2,
+                        spriteWidth, spriteHeight)), source, GraphicsUnit.Pixel);
+                continue;
+            }
             graphics.DrawImage(
                 tileset.Image,
                 Rectangle.Round(new RectangleF(x, y, width, height)),
@@ -235,14 +253,22 @@ public sealed class MapPreviewCatalog
             }
             else if (element.Name.LocalName == "objectgroup")
             {
-                foreach (var gid in element.Elements("object")
-                             .Select(item => ReadGid(item.Attribute("gid")))
-                             .Where(gid => gid > 0))
+                foreach (var mapObject in element.Elements("object"))
                 {
-                    usageCounts[gid] = usageCounts.GetValueOrDefault(gid) + 1;
+                    var gid = ReadGid(mapObject.Attribute("gid"));
+                    if (gid <= 0) continue;
+                    usageCounts[gid] = usageCounts.GetValueOrDefault(gid) + GetEncounterCount(mapObject);
                 }
             }
         }
+    }
+
+    private static int GetEncounterCount(XElement mapObject)
+    {
+        if (!StaticEncounterRules.IsEncounter((string?)mapObject.Attribute("class"))) return 1;
+        var value = (string?)mapObject.Element("properties")?.Elements("property")
+            .FirstOrDefault(property => (string?)property.Attribute("name") == "Count")?.Attribute("value");
+        return int.TryParse(value, out var count) ? Math.Clamp(count, 1, EncounterRules.MaxMonstersToFight) : 1;
     }
 
     private static MapPreviewTile BuildUsedTile(

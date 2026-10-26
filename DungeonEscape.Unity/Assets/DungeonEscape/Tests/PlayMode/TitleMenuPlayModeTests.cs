@@ -24,6 +24,8 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
 
             var titleMenu = UiPlayModeTestHelper.FindObject("Redpoint.DungeonEscape.Unity.UI.TitleMenu");
             UiPlayModeTestHelper.InvokePrivate(titleMenu, "ShowCreateMenu");
+            Assert.That(UiPlayModeTestHelper.GetNonPublicPropertyValue(titleMenu, "mode").ToString(), Is.EqualTo("Campaign"));
+            UiPlayModeTestHelper.SelectOriginalCampaign(titleMenu);
             yield return null;
 
             var mode = UiPlayModeTestHelper.GetNonPublicPropertyValue(titleMenu, "mode");
@@ -37,6 +39,7 @@ namespace Redpoint.DungeonEscape.Unity.Tests.PlayMode
 
             var titleMenu = UiPlayModeTestHelper.FindObject("Redpoint.DungeonEscape.Unity.UI.TitleMenu");
             UiPlayModeTestHelper.InvokePrivate(titleMenu, "ShowCreateMenu");
+            UiPlayModeTestHelper.SelectOriginalCampaign(titleMenu);
             yield return null;
             UiPlayModeTestHelper.InvokePrivate(titleMenu, "StartCreatedGame");
             yield return UiPlayModeTestHelper.WaitUntil(() => !UiPlayModeTestHelper.GetStaticBool("Redpoint.DungeonEscape.Unity.UI.TitleMenu", "IsOpen"));

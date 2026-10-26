@@ -41,6 +41,8 @@ namespace Redpoint.DungeonEscape.Rules
                 string.IsNullOrWhiteSpace(campaign.Name) || string.IsNullOrWhiteSpace(campaign.ContentVersion))
                 throw new ArgumentException("Invalid campaign manifest.");
             var scope = GetScope(campaign);
+            if (campaign.MaxStartingPartyMembers < 1)
+                throw new ArgumentException("Maximum starting party members must be at least one: " + campaign.Id);
             if (scope == "base" || !ContentId.IsValid(campaign.StartMapId, "map") ||
                 !campaign.StartMapId.StartsWith("map/" + scope + "/", StringComparison.Ordinal) ||
                 !ContentId.IsValid(campaign.OverworldMapId, "map") ||

@@ -1,5 +1,13 @@
 # Architecture
 
+## Static Map Encounters
+
+TMX `class="Monster"` tile objects define a single authored group using `EncounterId`, `MonsterId`, `Count`, optional `Dialog`/`Text`, and paired `VictoryQuestId`/`VictoryQuestStage`. `StaticEncounterRules` in Core parses and validates the shared runtime/editor contract and builds an exact roster, independent of random encounter scaling. Campaign loading and Game Editor validation reject duplicate per-map EncounterIds across layers and broken roster/outcome references. Keep EncounterId stable when renaming or renumbering the Tiled object.
+
+`PlayerGridController` offers Fight/Leave or the referenced branching dialogue, forwarding the source object through nested choices. A Fight action for a Monster object opens existing `CombatWindow.OpenAuthored`, which runs a one-time victory callback alongside normal combat rewards. Victory records the ID in `MapState.DefeatedEncounterIds`, advances the optional quest stage and refreshes the map. Rendering, interaction visibility and collision consult the same defeated state. Leave/escape/defeat/cancellation never invoke victory. Failed encounters restart with a full fresh roster. Map rendering repeats the existing sprite Count times within the authored object bounds; four 32px figures fit a 64×64 object.
+
+This is additive map save state under the existing save format, with no old-save conversion logic. The `borderlands` campaign is a small original quest prototype using existing game assets, not a complete published adventure conversion. Original campaign remains default.
+
 ## Repository Shape
 
 Dungeon Escape now runs from the Unity project, with portable game/domain logic preserved in shared C# code.

@@ -38,6 +38,9 @@ namespace Redpoint.DungeonEscape.Rules
             {
                 if (!ContentId.IsValid(map.Id, "map")) throw new ArgumentException("Invalid saved map identity.");
                 context.Maps.Get(map.Id);
+                foreach (var encounterId in map.DefeatedEncounterIds ?? new List<string>())
+                    if (!ContentId.IsValid(encounterId, "encounter") || encounterId.Split('/')[1] != scope)
+                        throw new ArgumentException("Invalid defeated encounter identity in save: " + encounterId);
             }
             var sets = new Dictionary<string, HashSet<string>>
             {

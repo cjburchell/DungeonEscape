@@ -58,6 +58,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
         private string lastThemeSignature;
         private string messageText;
         private Action afterMessage;
+        private Func<string> onVictory;
+        private bool victoryApplied;
         private Hero actingHero;
         private Action<List<IFighter>> targetSelectionDone;
         private List<IFighter> targetSelectionCandidates = new List<IFighter>();
@@ -167,7 +169,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
 
         public static void Open(IEnumerable<Monster> encounterMonsters, Biome encounterBiome)
         {
+            OpenAuthored(encounterMonsters, encounterBiome, null);
+        }
+
+        public static void OpenAuthored(IEnumerable<Monster> encounterMonsters, Biome encounterBiome, Func<string> onVictory)
+        {
             var window = OpenInternal(encounterMonsters, encounterBiome);
+            window.onVictory = onVictory;
             window.ShowMessage(window.GetEncounterMessage(), window.BeginRound);
         }
 
@@ -202,6 +210,8 @@ namespace Redpoint.DungeonEscape.Unity.UI
             }
 
             window.monsters.Clear();
+            window.onVictory = null;
+            window.victoryApplied = false;
             window.roundActions.Clear();
             window.pendingHeroes.Clear();
             window.selectionMemory.Clear();

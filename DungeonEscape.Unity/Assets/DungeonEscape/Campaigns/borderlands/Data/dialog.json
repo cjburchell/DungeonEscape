@@ -5,7 +5,7 @@
       {
         "Quest": "quest/borderlands/clear-the-entrance",
         "StartQuest": true,
-        "Text": "Four kobolds have taken over Cave A in the Caves of Chaos. Leave by the south gate, follow the Borderlands trail northeast, and enter the ravine. Clear their lair and return for your reward.",
+        "Text": "Two separate kobold groups occupy Cave A: four guards in the northern entrance chamber and four in the eastern store room. Clear both groups, in either order, then return for 20 gold and 50 XP. Leave through the south gate and follow the Borderlands trail northeast to the ravine.",
         "Choices": [
           {
             "Text": "I will clear the entrance.",
@@ -18,33 +18,82 @@
       },
       {
         "Quest": "quest/borderlands/clear-the-entrance",
-        "QuestStage": [
-          0,
-          1
+        "QuestCompleted": false,
+        "RequiredObjectives": [
+          "entrance-guards"
         ],
-        "Text": "Leave by the south gate and follow the trail northeast to the Caves of Chaos. In the ravine, Cave A is the first mouth on the northern ledge. Return here after defeating its four kobolds.",
+        "MissingObjectives": [
+          "store-guards"
+        ],
+        "Text": "You cleared the entrance guards, but the store-room guards remain in the eastern chamber of Cave A. Finish that group before I can pay you. Your progress is recorded.",
         "Choices": [
           {
-            "Text": "Understood.",
-            "NextQuestStage": 1
+            "Text": "I will return to the eastern store room."
           }
         ]
       },
       {
         "Quest": "quest/borderlands/clear-the-entrance",
-        "QuestStage": [
-          2
+        "QuestCompleted": false,
+        "RequiredObjectives": [
+          "store-guards"
         ],
-        "Text": "The entrance is clear! Thank you. Here is the reward I promised.",
+        "MissingObjectives": [
+          "entrance-guards"
+        ],
+        "Text": "You cleared the store-room guards, but the entrance guards remain in the northern chamber of Cave A. Finish that group before I can pay you. Your progress is recorded.",
         "Choices": [
           {
-            "Text": "Collect reward.",
-            "NextQuestStage": 3
+            "Text": "I will return to the northern chamber."
           }
         ]
       },
       {
-        "Text": "The road is safer thanks to you. You are welcome at the Keep.",
+        "Quest": "quest/borderlands/clear-the-entrance",
+        "QuestCompleted": false,
+        "RequiredObjectives": [
+          "entrance-guards",
+          "store-guards"
+        ],
+        "MissingObjectives": [],
+        "Text": "Both kobold groups are cleared! Report your success to collect the promised reward.",
+        "Choices": [
+          {
+            "Text": "Collect the reward.",
+            "NextQuestStage": 3
+          },
+          {
+            "Text": "I will collect it later."
+          }
+        ]
+      },
+      {
+        "Quest": "quest/borderlands/clear-the-entrance",
+        "QuestCompleted": false,
+        "RequiredObjectives": [],
+        "MissingObjectives": [
+          "entrance-guards",
+          "store-guards"
+        ],
+        "Text": "Both kobold groups still need clearing. From the south gate, follow the trail northeast to the ravine, then enter Cave A on its northern ledge.",
+        "Choices": [
+          {
+            "Text": "Understood."
+          }
+        ]
+      },
+      {
+        "Quest": "quest/borderlands/clear-the-entrance",
+        "QuestCompleted": true,
+        "Text": "You cleared both kobold groups and have already received your reward. The Keep is safer thanks to you.",
+        "Choices": [
+          {
+            "Text": "Farewell."
+          }
+        ]
+      },
+      {
+        "Text": "Safe travels in the Borderlands.",
         "Choices": [
           {
             "Text": "Farewell."
@@ -61,6 +110,25 @@
         "Choices": [
           {
             "Text": "Fight the four kobolds.",
+            "Actions": [
+              "Fight"
+            ]
+          },
+          {
+            "Text": "Leave them for now."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Id": "dialog/borderlands/store-kobolds",
+    "Dialogs": [
+      {
+        "Text": "Four kobolds guard supplies in the eastern store room. They raise their weapons as you approach.",
+        "Choices": [
+          {
+            "Text": "Fight the store-room guards.",
             "Actions": [
               "Fight"
             ]

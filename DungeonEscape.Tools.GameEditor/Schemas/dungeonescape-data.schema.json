@@ -175,6 +175,16 @@
         "Target": { "$ref": "#/$defs/target" }
       }
     },
+    "questObjective": {
+      "type": "object",
+      "required": ["Id", "Description", "MapId", "EncounterId"],
+      "properties": {
+        "Id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "Description": { "type": "string", "minLength": 1 },
+        "MapId": { "type": "string", "pattern": "^map/" },
+        "EncounterId": { "type": "string", "pattern": "^encounter/" }
+      }
+    },
     "questStage": {
       "type": "object",
       "additionalProperties": true,
@@ -194,7 +204,9 @@
         "Description": { "type": "string" },
         "MinimumLevel": { "type": "integer", "minimum": 0 },
         "Items": { "type": "array", "items": { "type": "string" } },
-        "Stages": { "type": "array", "items": { "$ref": "#/$defs/questStage" } }
+        "Stages": { "type": "array", "items": { "$ref": "#/$defs/questStage" } },
+        "Objectives": { "type": "array", "items": { "$ref": "#/$defs/questObjective" } },
+        "ObjectivesCompleteStage": { "type": ["integer", "null"], "minimum": 0 }
       }
     },
     "choice": {
@@ -231,7 +243,10 @@
             "Quest": { "type": "string" },
             "QuestStage": { "type": "array", "items": { "type": "integer" } },
             "ForQuestStage": { "type": "array", "items": { "type": "integer" } },
-            "StartQuest": { "type": "boolean" }
+            "StartQuest": { "type": "boolean" },
+            "QuestCompleted": { "type": ["boolean", "null"] },
+            "RequiredObjectives": { "type": "array", "items": { "type": "string" } },
+            "MissingObjectives": { "type": "array", "items": { "type": "string" } }
           }
         }
       ]

@@ -18,5 +18,8 @@ namespace Redpoint.DungeonEscape.Data
         public List<int> QuestStage { get; set; }
         public List<int> ForQuestStage { get; set; }
         public bool StartQuest { get; set; }
+        public bool? QuestCompleted { get; set; }
+        public List<string> RequiredObjectives { get; set; } = new List<string>();
+        public List<string> MissingObjectives { get; set; } = new List<string>();
     }
 }

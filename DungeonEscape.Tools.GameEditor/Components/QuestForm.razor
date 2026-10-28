@@ -41,6 +41,15 @@ else
         <legend>Stages</legend>
         <QuestStageListEditor Items="EnsureStages()" OnChanged="RaiseChanged" />
     </fieldset>
+    <fieldset>
+        <legend>Encounter Objectives</legend>
+        <div class="field">
+            <label>Stage when all objectives are complete (blank without objectives)</label>
+            <input type="number" min="0" value="@Quest.ObjectivesCompleteStage" @onchange="SetReadyStage" />
+        </div>
+        <QuestObjectiveListEditor Items="@(Quest.Objectives ??= new List<QuestObjective>())" OnChanged="RaiseChanged" />
+        <p>Use a separate Complete Quest stage for returning to collect the one-time reward.</p>
+    </fieldset>
 }
 
 @code {
@@ -57,4 +66,5 @@ else
     }
 
     private async Task RaiseChanged() => await OnChanged.InvokeAsync();
+    private Task SetReadyStage(ChangeEventArgs args) => Set(() => Quest!.ObjectivesCompleteStage = int.TryParse(args.Value?.ToString(), out var stage) ? stage : null);
 }

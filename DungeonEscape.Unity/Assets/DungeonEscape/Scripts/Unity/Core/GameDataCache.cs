@@ -1,4 +1,4 @@
-﻿using Redpoint.DungeonEscape.Data;
+using Redpoint.DungeonEscape.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -126,57 +126,7 @@ namespace Redpoint.DungeonEscape.Unity.Core
 
         private static DialogHead GetDialogHead(Dialog dialog, Party party)
         {
-            var dialogs = (dialog.Dialogs ?? Enumerable.Empty<DialogHead>()).ToList();
-            var startQuestDialog = dialogs.FirstOrDefault(item =>
-                item.StartQuest &&
-                party != null &&
-                party.ActiveQuests.All(quest => item.Quest != quest.Id));
-
-            if (startQuestDialog != null)
-            {
-                return startQuestDialog;
-            }
-
-            if (party != null)
-            {
-                foreach (var activeQuest in party.ActiveQuests)
-                {
-                    if (activeQuest.Completed)
-                    {
-                        continue;
-                    }
-
-                    var questDialog = dialogs.FirstOrDefault(item =>
-                        item.Quest == activeQuest.Id &&
-                        GetDialogQuestStages(item).Contains(activeQuest.CurrentStage));
-
-                    if (questDialog != null)
-                    {
-                        return questDialog;
-                    }
-                }
-            }
-
-            return GetDefaultDialogHead(dialogs);
-        }
-
-        private static DialogHead GetDefaultDialogHead(IReadOnlyList<DialogHead> dialogs)
-        {
-            return dialogs.FirstOrDefault(item =>
-                       !item.StartQuest &&
-                       string.IsNullOrEmpty(item.Quest) &&
-                       !GetDialogQuestStages(item).Any()) ??
-                   dialogs.FirstOrDefault();
-        }
-
-        private static IEnumerable<int> GetDialogQuestStages(DialogHead dialog)
-        {
-            if (dialog == null)
-            {
-                return Enumerable.Empty<int>();
-            }
-
-            return dialog.QuestStage ?? dialog.ForQuestStage ?? Enumerable.Empty<int>();
+            return Redpoint.DungeonEscape.Rules.DialogRules.SelectHead(dialog, party);
         }
 
         private static string BuildDialogText(DialogText dialog)

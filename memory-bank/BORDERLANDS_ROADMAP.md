@@ -2,6 +2,8 @@
 
 Created 2026-10-26. Proposed implementation priorities following the fourteen-map world expansion.
 
+Implementation update: the recommended first BL-01/02 slice is complete. See [QUEST_OBJECTIVES.md](QUEST_OBJECTIVES.md): two independent encounter objectives, saved progress, state-dependent warden dialogue, guarded one-time reward and authoring/validation. This covers encounter-based quest facts, not the entire general world-flag/multi-type objective backlog. Borderlands content is now 0.3. Broader BL-03 journal work and the complete Cave A adventure remain future work.
+
 ## Direction
 
 Keep the current combat screen and reuse existing game assets. Focus on authored quests, NPC conversations, exploration and persistent consequences. Complete one substantial cave adventure before populating all remaining caves.

@@ -42,10 +42,13 @@ namespace Redpoint.DungeonEscape.Rules
                 ["Background"] = Ids(context.Data.Backgrounds.Select(item => item.Id))
             };
             var monsterIds = Ids(context.Data.Monsters.Select(item => item.Id));
+            var placements = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
             foreach (var definition in context.Maps.Maps)
             {
                 var xml = readAsset(definition.AssetPath) ?? throw new ArgumentException("Campaign map is missing: " + definition.AssetPath);
                 var map = TiledMapInfo.Parse(xml);
+                placements[definition.Id] = Ids(map.ObjectGroups.SelectMany(group => group.Objects)
+                    .Where(item => StaticEncounterRules.IsEncounter(item.Class)).Select(item => StaticEncounterRules.Get(item.Properties, "EncounterId")));
                 StaticEncounterRules.ValidateMap(definition.Id,
                     map.ObjectGroups.SelectMany(group => group.Objects).Where(item => StaticEncounterRules.IsEncounter(item.Class)).Select(item => (IReadOnlyDictionary<string, string>)item.Properties),
                     context.Data.Monsters, context.Data.Quests);
@@ -77,6 +80,8 @@ namespace Redpoint.DungeonEscape.Rules
                             throw new ArgumentException("Unknown map encounter monster in " + definition.Id + ": " + monster.MonsterId);
                 }
             }
+            QuestObjectiveRules.ValidatePlacements(context.Data.Quests,
+                (mapId, encounterId) => placements.ContainsKey(mapId) && placements[mapId].Contains(encounterId));
         }
 
         private static HashSet<string> Ids(IEnumerable<string> values) => new HashSet<string>(values, StringComparer.Ordinal);

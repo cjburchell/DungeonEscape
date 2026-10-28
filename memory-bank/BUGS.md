@@ -8,7 +8,7 @@ This file tracks bugs and rough edges to investigate later. Items are not triage
 
 ## Map Movement And NPCs
 
-- No active known bugs.
+- Borderlands resized Keep: return spawn `gate` at tile (45,62) is not reachable from `start` (32,35). World connectivity Core test fails; inspect the gate corridor before considering the edited map verified. Recorded 2026-10-26; biome repair does not change Keep painting.
 
 ## Quests
 

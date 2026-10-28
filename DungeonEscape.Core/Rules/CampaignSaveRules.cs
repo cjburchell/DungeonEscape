@@ -50,6 +50,15 @@ namespace Redpoint.DungeonEscape.Rules
                 ["monster"] = Ids(context.Data.Monsters.Select(item => item.Id)),
                 ["background"] = Ids(context.Data.Backgrounds.Select(item => item.Id))
             };
+            foreach (var active in save.Party.ActiveQuests ?? new List<ActiveQuest>())
+            {
+                var quest = context.Data.Quests.FirstOrDefault(item => item.Id == active.Id);
+                var completed = active.CompletedObjectiveIds ?? new List<string>();
+                if (completed.Count != completed.Distinct(StringComparer.Ordinal).Count() || completed.Any(id => quest?.Objectives?.Any(objective => objective.Id == id) != true))
+                    throw new ArgumentException("Invalid saved quest objective progress: " + active.Id);
+                if (quest?.Objectives?.Count > 0 && active.Completed && !QuestObjectiveRules.AllComplete(quest, active))
+                    throw new ArgumentException("Completed quest is missing required objectives: " + active.Id);
+            }
             foreach (var property in JObject.FromObject(save).Descendants().OfType<JProperty>())
             {
                 if (property.Value.Type == JTokenType.String &&

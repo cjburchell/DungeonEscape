@@ -49,6 +49,10 @@
                         </div>
 
                         <div class="graph-stages">
+                            @foreach (var objective in quest.Objectives ?? new List<QuestObjective>())
+                            {
+                                <div class="graph-stage"><strong>Objective @objective.Id</strong><span>@objective.Description</span><span>@objective.MapId / @objective.EncounterId</span></div>
+                            }
                             @foreach (var stage in (quest.Stages ?? new List<QuestStage>()).OrderBy(stage => stage.Number))
                             {
                                 <div class="graph-stage @(stage.CompleteQuest ? "complete" : string.Empty)">
@@ -86,6 +90,14 @@
                                     <span>@QuestStageSummary(head)</span>
                                 </div>
                                 <p>@Display(head.Text, "(empty text)")</p>
+                                @if (DialogRules.HasConditions(head))
+                                {
+                                    <div class="graph-tags">
+                                        <span>Quest completed: @(head.QuestCompleted?.ToString() ?? "any")</span>
+                                        <span>Requires: @string.Join(", ", head.RequiredObjectives ?? new List<string>())</span>
+                                        <span>Missing: @string.Join(", ", head.MissingObjectives ?? new List<string>())</span>
+                                    </div>
+                                }
                                 <div class="graph-tags">
                                     @if (!string.IsNullOrWhiteSpace(head.Quest))
                                     {

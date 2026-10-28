@@ -73,14 +73,27 @@ public class BorderlandsWorldTests
         var caves = maps.Where(pair => pair.Key == "cave" || pair.Key.StartsWith("cave-") && pair.Key != "cave-entrance").ToList();
         Assert.Equal(11, caves.Select(pair => pair.Value.Root.Elements("layer").Single(layer => (string)layer.Attribute("name") == "walls").Value).Distinct().Count());
         var info = TiledMapInfo.Parse(maps["cave"].ToString());
-        var group = info.ObjectGroups.SelectMany(item => item.Objects).Single(item => item.Class == "Monster");
+        var groups = info.ObjectGroups.SelectMany(item => item.Objects).Where(item => item.Class == "Monster").ToList();
+        Assert.Equal(2, groups.Count);
+        var group = groups.Single(item => StaticEncounterRules.Get(item.Properties, "EncounterId") == "encounter/borderlands/entrance-kobolds");
         var encounter = StaticEncounterRules.Read(group.Properties);
         Assert.Equal("encounter/borderlands/entrance-kobolds", encounter.Id);
         Assert.Equal(4, encounter.Count);
-        Assert.Equal(2, encounter.VictoryQuestStage);
+        Assert.Null(encounter.VictoryQuestStage); // Objective events, rather than an individual group, now control readiness.
         var wilderness = maps["overworld"].Root.Elements("layer").Single(layer => (string)layer.Attribute("name") == "biomes");
         Assert.Equal("0", (string)wilderness.Attribute("visible"));
-        Assert.Contains(3006, TiledTileData.ParseCsvTileData(wilderness.Element("data").Value));
+        var biomeFirstGid = (int)maps["overworld"].Root.Elements("tileset")
+            .Single(tile => ((string)tile.Attribute("source")).EndsWith("/biomes.tsx")).Attribute("firstgid");
+        var biomeData = TiledTileData.ParseCsvTileData(wilderness.Element("data").Value);
+        Assert.Equal((int)wilderness.Attribute("width") * (int)wilderness.Attribute("height"), biomeData.Count);
+        Assert.All(biomeData, gid => Assert.InRange(gid - biomeFirstGid, 0, 5));
+        foreach (var biome in new[] { 0, 1, 2, 3, 5 }) Assert.Contains(biomeFirstGid + biome, biomeData);
+        // Representative painted regions after the map expansion: forest, grass, fens and river.
+        var width = (int)wilderness.Attribute("width");
+        Assert.Equal(biomeFirstGid + 1, biomeData[3 * width + 3]);
+        Assert.Equal(biomeFirstGid, biomeData[55 * width + 3]);
+        Assert.Equal(biomeFirstGid + 5, biomeData[80 * width + 65]);
+        Assert.Equal(biomeFirstGid + 2, biomeData[65 * width + 15]);
     }
 
     private Dictionary<string, XDocument> Maps() => Directory.EnumerateFiles(Path.Combine(root, "Maps"), "*.tmx")

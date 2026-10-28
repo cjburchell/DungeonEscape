@@ -1,5 +1,6 @@
-﻿using Redpoint.DungeonEscape.Data;
+using Redpoint.DungeonEscape.Data;
 using System.Linq;
+using Redpoint.DungeonEscape.Rules;
 using Redpoint.DungeonEscape.State;
 using Redpoint.DungeonEscape.Unity.Core;
 using UnityEngine;
@@ -121,6 +122,13 @@ namespace Redpoint.DungeonEscape.Unity.UI
                 }
 
                 GUILayout.Space(8f * Menu.GetPixelScale());
+                if (quest.Objectives != null && quest.Objectives.Count > 0)
+                {
+                    GUILayout.Label("Objectives", Menu.labelStyle);
+                    foreach (var objective in quest.Objectives)
+                        GUILayout.Label((QuestObjectiveRules.IsComplete(activeQuest, objective.Id) ? "[Done] " : "[ ] ") + objective.Description, Menu.smallStyle);
+                    GUILayout.Space(8f * Menu.GetPixelScale());
+                }
                 GUILayout.Label("Rewards", Menu.labelStyle);
                 GUILayout.Label("XP: " + quest.Xp + "    Gold: " + quest.Gold, Menu.smallStyle);
                 if (quest.Items != null && quest.Items.Count > 0)

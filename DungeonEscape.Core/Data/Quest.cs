@@ -16,5 +16,7 @@ namespace Redpoint.DungeonEscape.Data
         public List<string> Items { get; set; }
         // ReSharper disable once CollectionNeverUpdated.Global
         public List<QuestStage> Stages { get; set; }
+        public List<QuestObjective> Objectives { get; set; } = new List<QuestObjective>();
+        public int? ObjectivesCompleteStage { get; set; }
     }
 }

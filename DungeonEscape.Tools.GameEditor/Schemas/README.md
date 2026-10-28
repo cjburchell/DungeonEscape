@@ -37,6 +37,8 @@ Campaign manifests optionally set `MaxStartingPartyMembers` (integer >= 1, defau
 
 ## Static map encounters
 
+Quest-based encounter objectives are defined by `Quest.Objectives` entries (`Id`, `Description`, `MapId`, `EncounterId`). Local IDs are stable within their quest. `ObjectivesCompleteStage` must point to a non-completing ready stage, with a separate completion stage for collecting rewards. The editor exposes objective/map/placement selectors. Dialogue heads support nullable `QuestCompleted`, `RequiredObjectives` and `MissingObjectives`; explicit false means active and is preserved on save. Runtime and editor validate these references and conditions. Objective-based groups do not need a direct VictoryQuestStage; each victory emits progress and the quest decides when it is ready. See memory-bank/QUEST_OBJECTIVES.md.
+
 Tiled 1.10+ writes object classes using the XML `type` attribute. Runtime and editor import accept that spelling as well as canonical `class`. Game Editor save writes object `class` and removes object `type`; primitive custom property types are preserved. Checked-in maps continue to use `class`.
 
 Place a tile object with `class="Monster"` in Tiled, using an existing sprite `gid`. The Maps object form exposes these properties:

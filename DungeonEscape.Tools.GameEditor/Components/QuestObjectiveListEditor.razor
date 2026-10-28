@@ -1,0 +1,28 @@
+@inject DataFolderService Data
+
+<p>Each objective references one placed monster group. IDs stay stable when descriptions change.</p>
+@foreach (var objective in Items.ToList())
+{
+    <div class="card-row">
+        <div class="field-grid">
+            <div class="field"><label>Objective ID (permanent)</label><input value="@objective.Id" @onchange="e => Set(() => objective.Id = e.Value?.ToString() ?? string.Empty)" /></div>
+            <div class="field"><label>Description</label><input value="@objective.Description" @onchange="e => Set(() => objective.Description = e.Value?.ToString() ?? string.Empty)" /></div>
+            <TextReferenceSelect Label="Map" Value="@objective.MapId" ValueChanged="value => Set(() => objective.MapId = value)" Options="MapIds" IncludeNone="true" />
+            <TextReferenceSelect Label="Placed encounter" Value="@objective.EncounterId" ValueChanged="value => Set(() => objective.EncounterId = value)" Options="EncounterIds(objective.MapId)" IncludeNone="true" />
+        </div>
+        <button class="danger" @onclick="() => Remove(objective)">Remove Objective</button>
+    </div>
+}
+<button @onclick="Add">+ Add Objective</button>
+
+@code {
+    [Parameter] public List<QuestObjective> Items { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+    private IReadOnlyList<string> MapIds => Data.Maps.Select(map => map.Id).ToList();
+    private IReadOnlyList<string> EncounterIds(string? mapId) => Data.Maps.Where(map => map.Id == mapId)
+        .SelectMany(map => map.Objects).Where(item => StaticEncounterRules.IsEncounter(item.Class))
+        .Select(item => StaticEncounterRules.Get(item.Properties, "EncounterId")).Where(id => !string.IsNullOrEmpty(id)).ToList();
+    private async Task Set(Action edit) { edit(); await OnChanged.InvokeAsync(); }
+    private Task Add() => Set(() => Items.Add(new QuestObjective { Id = "objective-" + Guid.NewGuid().ToString("N"), Description = "Defeat the group" }));
+    private Task Remove(QuestObjective objective) => Set(() => Items.Remove(objective));
+}

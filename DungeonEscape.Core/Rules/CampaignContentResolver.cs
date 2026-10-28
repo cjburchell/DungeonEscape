@@ -53,6 +53,7 @@ namespace Redpoint.DungeonEscape.Rules
             catalog.Get(campaign.StartMapId);
             catalog.Get(campaign.OverworldMapId);
             ValidateReferences(data, catalog);
+            QuestObjectiveRules.Validate(data.Quests, data.Dialogs);
             var roster = campaign.OverworldMonsterIds.Select(id => data.Monsters.SingleOrDefault(monster => monster.Id == id) ??
                 throw new ArgumentException("Unknown campaign encounter monster: " + id)).ToList();
             data.Link();

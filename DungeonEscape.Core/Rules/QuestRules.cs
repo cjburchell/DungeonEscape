@@ -43,6 +43,10 @@ namespace Redpoint.DungeonEscape.Rules
             }
 
             var activeQuest = party.ActiveQuests.FirstOrDefault(item => item.Id == quest.Id);
+            var targetStage = nextStage ?? activeQuest?.CurrentStage ?? 0;
+            var requestedStage = quest.Stages?.FirstOrDefault(stage => stage.Number == targetStage);
+            if (quest.Objectives?.Count > 0 && (requestedStage?.CompleteQuest == true || targetStage == quest.ObjectivesCompleteStage) && !QuestObjectiveRules.AllComplete(quest, activeQuest))
+                return "Complete all quest objectives before reporting success.";
             if (activeQuest == null)
             {
                 activeQuest = CreateActiveQuest(quest);

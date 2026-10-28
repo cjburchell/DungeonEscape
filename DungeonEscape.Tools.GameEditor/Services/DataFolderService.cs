@@ -292,6 +292,9 @@ public sealed class DataFolderService
             case JTokenType.Object:
                 foreach (var property in token.Children<JProperty>().ToList())
                 {
+                    // These nullable values distinguish an explicit false/zero from an omitted condition/stage.
+                    if ((property.Name == nameof(DialogHead.QuestCompleted) && property.Value.Type == JTokenType.Boolean) ||
+                        (property.Name == nameof(Quest.ObjectivesCompleteStage) && property.Value.Type == JTokenType.Integer)) continue;
                     if (PruneDefaultValues(property.Value))
                     {
                         property.Remove();

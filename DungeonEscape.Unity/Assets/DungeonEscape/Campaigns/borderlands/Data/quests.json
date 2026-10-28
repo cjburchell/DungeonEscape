@@ -1,8 +1,8 @@
 [
   {
     "Id": "quest/borderlands/clear-the-entrance",
-    "Name": "Clear the Cave Entrance",
-    "Description": "Speak to the warden in the Keep. Travel through the Borderlands to the entrance ravine, clear the four kobolds in Cave A, and return for your reward.",
+    "Name": "Clear the Kobold Lair",
+    "Description": "The warden needs both kobold groups in Cave A cleared. Defeat the entrance guards and the store-room guards in either order, then return to the Keep for payment.",
     "MinimumLevel": 1,
     "Xp": 50,
     "Gold": 20,
@@ -10,20 +10,35 @@
     "Stages": [
       {
         "Number": 0,
-        "Description": "Speak to the warden."
+        "Description": "Speak to the warden, or continue clearing the two kobold groups in Cave A."
       },
       {
         "Number": 1,
-        "Description": "Follow Keep south gate -> Borderlands trail northeast -> entrance ravine -> Cave A. Defeat the four kobolds."
+        "Description": "Clear both kobold groups in Cave A: northern entrance chamber and eastern store room."
       },
       {
         "Number": 2,
-        "Description": "Return to the warden at the Keep."
+        "Description": "Both groups are cleared. Return to the warden in the Keep to collect your reward."
       },
       {
         "Number": 3,
         "Description": "The entrance is clear and the warden has rewarded you.",
         "CompleteQuest": true
+      }
+    ],
+    "ObjectivesCompleteStage": 2,
+    "Objectives": [
+      {
+        "Id": "entrance-guards",
+        "Description": "Defeat the four entrance guards in the northern chamber.",
+        "MapId": "map/borderlands/cave",
+        "EncounterId": "encounter/borderlands/entrance-kobolds"
+      },
+      {
+        "Id": "store-guards",
+        "Description": "Defeat the four store-room guards in the eastern chamber.",
+        "MapId": "map/borderlands/cave",
+        "EncounterId": "encounter/borderlands/store-kobolds"
       }
     ]
   }

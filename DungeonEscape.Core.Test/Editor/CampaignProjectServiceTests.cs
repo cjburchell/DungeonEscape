@@ -30,6 +30,25 @@ public sealed class CampaignProjectServiceTests : IDisposable
     }
 
     [Fact]
+    public void CampaignSaveRoundTripsObjectiveBindingsAndDialogueConditions()
+    {
+        data.SelectCampaign("campaign/borderlands/main");
+        var quest = Assert.Single(data.Quests);
+        Assert.Equal(2, quest.Objectives.Count);
+        quest.Objectives[0].Description = "Edited entrance objective";
+        var conditional = data.Dialogs.SelectMany(dialog => dialog.Dialogs).First(head => head.RequiredObjectives.Count == 1);
+        conditional.Text = "Edited conditional dialogue";
+        data.MarkDirty(); data.Save();
+        var savedQuests = JsonConvert.DeserializeObject<List<Quest>>(File.ReadAllText(assets.ResolveAssetPath(data.SelectedCampaign!.QuestsAssetPath)))!;
+        var savedDialogs = JsonConvert.DeserializeObject<List<Dialog>>(File.ReadAllText(assets.ResolveAssetPath(data.SelectedCampaign.DialogsAssetPath)))!;
+        Assert.Equal("Edited entrance objective", Assert.Single(savedQuests).Objectives[0].Description);
+        Assert.Equal(2, savedQuests[0].ObjectivesCompleteStage);
+        var savedHead = savedDialogs.SelectMany(dialog => dialog.Dialogs).Single(head => head.Text == "Edited conditional dialogue");
+        Assert.False(savedHead.QuestCompleted);
+        Assert.Single(savedHead.RequiredObjectives); Assert.Single(savedHead.MissingObjectives);
+    }
+
+    [Fact]
     public void TiledObjectTypesLoadAndSaveAsCanonicalClassesWithoutLosingMetadata()
     {
         data.CreateCampaign("tiled-roundtrip", "Tiled Roundtrip", "");

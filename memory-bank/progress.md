@@ -1,5 +1,7 @@
 # Progress
 
+- Two-group quest foundation (2026-10-26): added stable local encounter objectives, saved partial progress, conditional dialogue by objective/completion state, guarded ready/turn-in stages and journal objective markers. Borderlands 0.3 demonstrates two groups in Cave A with either-order completion and one-time warden reward. Added editor controls/schema/graph/validation and fixed pruning of explicit nullable false/zero fields. Core 309/309, isolated Unity Edit Mode 17/17 and Play Mode 21/21 pass; zero-warning solution build. See QUEST_OBJECTIVES.md.
+
 - Tiled spawn compatibility (2026-10-26): restored class metadata for the edited Borderlands Keep/Cave A without changing the user's painting/positions. Added object-type input support to Core/Game Editor/preview and canonical class output on editor save. Core parser/editor round-trip tests pass (294 total); build has zero warnings/errors. Native startup regression exercises a type-based Spawn. Isolated Unity Edit Mode 17/17 and Play Mode 20/20 passed. Fresh/cached map previews also verified with type-based objects.
 
 - Borderlands planning (2026-10-26): added a prioritized feature backlog with dependencies, completion criteria and a recommended first quest-state slice. See BORDERLANDS_ROADMAP.md. Documentation only; no new runtime behavior or test run.

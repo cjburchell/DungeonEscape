@@ -120,6 +120,13 @@ public sealed class DataValidationService
         ValidateSpells(issues, skillIds, classValues);
         ValidateItems(issues, skillIds, questIds, classValues);
         ValidateQuests(issues, itemRefs);
+        try
+        {
+            QuestObjectiveRules.Validate(data.Quests, data.Dialogs);
+            QuestObjectiveRules.ValidatePlacements(data.Quests, (mapId, encounterId) => data.Maps.Where(map => map.Id == mapId)
+                .SelectMany(map => map.Objects).Any(item => StaticEncounterRules.IsEncounter(item.Class) && StaticEncounterRules.Get(item.Properties, "EncounterId") == encounterId));
+        }
+        catch (ArgumentException error) { Error(issues, "Quest objectives and dialogue conditions", error.Message); }
         ValidateDialogs(issues, questIds, itemRefs, monsterIds);
         ValidateClassLevels(issues);
         ValidateSpecies(issues);

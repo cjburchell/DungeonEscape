@@ -845,10 +845,12 @@ namespace Redpoint.DungeonEscape.Unity.Core
         {
             EnsureInitialized();
             if (!StaticEncounterRules.CompleteVictory(GetMapState(mapId, true), encounter)) return "";
+            var objectivesChanged = QuestObjectiveRules.RecordEncounterVictory(Party, GameDataCache.Current.Quests, mapId, encounter.Id);
             MarkDirty();
-            return encounter.VictoryQuestStage.HasValue
+            var result = encounter.VictoryQuestStage.HasValue
                 ? AdvanceQuest(encounter.VictoryQuestId, encounter.VictoryQuestStage)
                 : "";
+            return objectivesChanged ? (result + "\nQuest progress updated.").Trim() : result;
         }
 
         public bool IsMapObjectRemoved(string mapId, int objectId, string objectClass)

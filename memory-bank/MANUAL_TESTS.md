@@ -1,5 +1,22 @@
 # Manual Test Plan
 
+## Resized Borderlands Overworld Biomes (2026-10-26)
+
+- [ ] Open the 80×120 overworld in Tiled and toggle the hidden biomes layer: forests, fens, river and highlands should match the visible terrain, including the southern expansion. Hide it again before saving.
+- [ ] Travel through these regions in Unity and verify the current biome changes appropriately. Visible artwork, spawns and warps are unchanged by the metadata repair.
+- Core coverage checks pass for the complete biome layer and representative terrain. Overall Core suite: 308/309; Keep gate connectivity remains a separate known failure.
+- Isolated Unity 6000.4.4f1 validation: Edit Mode 17/17 and focused travel/quest Play Mode 4/4 pass. Updated the Play Mode travel helper to accept Tiled's object `type` alias, matching runtime support. Reports: `TestResults/biome-validation/`. These tests exercise transitions, not walking through the blocked Keep gate or visual biome inspection.
+
+## Two-Group Quest And Conditional Dialogue (2026-10-26)
+
+Automated checks passed: Core 309/309, isolated Unity Edit Mode 17/17 and Play Mode 21/21. Both completion orders, partial reload, conditional warden dialogue, postponed collection, one-time reward and permanent group removal are exercised. Human controls/readability and balance remain pending.
+
+- [ ] Start a new Borderlands 0.3 game, accept Clear the Kobold Lair and inspect its two journal objectives. Verify the existing northern entrance guards and new eastern store-room guards both show four figures and open normal four-opponent combat.
+- [ ] Clear only the entrance group, save/load and return to the warden. He must mention the remaining store-room guards, and no return reward should be available. Repeat with the reverse order in a fresh game.
+- [ ] Clear the second group. The journal must show both objectives done and ask for a return to the Keep. Choose to collect later, reopen dialogue, then collect. Verify 20 gold and the existing 50 quest XP award only once, including after reload and repeat conversations.
+- [ ] Escape, cancel or lose a fight: neither its disappearance nor objective progress should be recorded. Clear groups before accepting the quest and verify the warden recognizes that progress.
+- [ ] In Game Editor, edit an objective description/binding, ready stage and dialogue active/completed/required/missing filters. Save/reopen and confirm filters survive. Unknown objective IDs, duplicate placement bindings, missing groups and invalid ready stages must fail validation.
+
 ## Tiled Save And Spawn Compatibility (2026-10-26)
 
 Automated checks passed: Core 294/294, Unity Edit Mode 17/17 and Play Mode 20/20 in an isolated Unity 6000.4.4f1 copy. Native startup exercises a type-based Spawn; editor round-trip tests ensure canonical class output. Fresh/cached type-based group previews verified. Tile painting, sprite choices and placements in the two edited maps were preserved.

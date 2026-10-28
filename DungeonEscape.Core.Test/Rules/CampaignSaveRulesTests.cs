@@ -55,6 +55,20 @@ public class CampaignSaveRulesTests
         Assert.Throws<ArgumentException>(() => CampaignSaveRules.Validate(save, Context("first")));
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void InvalidSavedObjectiveProgressIsRejected(bool duplicate)
+    {
+        var context = Context("first");
+        context.Data.Quests.Add(new Quest { Id = "quest/first/clear", Objectives = new List<QuestObjective> { new() { Id = "guards" } } });
+        var save = Save("first");
+        save.Party.ActiveQuests.Add(new ActiveQuest { Id = "quest/first/clear", CompletedObjectiveIds = new() { "guards" } });
+        CampaignSaveRules.Validate(save, context);
+        save.Party.ActiveQuests[0].CompletedObjectiveIds.Add(duplicate ? "guards" : "unknown");
+        Assert.Throws<ArgumentException>(() => CampaignSaveRules.Validate(save, context));
+    }
+
     [Fact]
     public void CrossCampaignItemsMapsAndUnknownPreparedSpellsAreRejected()
     {

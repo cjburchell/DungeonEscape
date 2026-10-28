@@ -2,6 +2,8 @@
 
 Authored 2026-10-26. Campaign content version **0.2**, title **Heroes of the Borderlands**.
 
+Current content update: version **0.3** adds a second four-kobold group in Cave A's eastern chamber and replaces its direct victory-stage jump with a two-objective quest. Warden dialogue and journal distinguish partial, ready and completed states. Layout/art remain as edited in Tiled. See [QUEST_OBJECTIVES.md](QUEST_OBJECTIVES.md); the table below describes the original world expansion.
+
 The user requested a Keep, overworld, shared cave entrance, and eleven cave maps, retaining the current combat and existing game assets. All fourteen maps are installed and explorable. These are original layouts for quest development, not verified reproductions of the published room plans. Cave A retains the playable four-kobold quest; B–K currently provide connected room layouts, environmental landmarks and room descriptions for future quests/encounters.
 
 ## Connections
@@ -24,6 +26,8 @@ flowchart LR
 ```
 
 ## Map Registry
+
+2026-10-26 Tiled update: Keep is now 100×100 and overworld 80×120. The overworld biome layer has been rebuilt to cover the expanded terrain, including Forest, Grassland, Swamp, Water and Hills (shared lowest-level biome row, MaxMonsterLevel 5). The older dimensions/coordinates below describe the initial authored layout. Keep return-spawn connectivity currently fails automated verification; see BUGS.md.
 
 All IDs below have prefix `map/borderlands/`. Files live in `Assets/DungeonEscape/Campaigns/borderlands/Maps/` and are registered in the campaign's `Data/maps.json`.
 
